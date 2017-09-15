@@ -2,14 +2,18 @@
   "name": "wallet",
   "version": "1.0.0",
   "description": "Hello",
-  "main": "index.js",
+  "main": "main.js",
   "directories": {
     "example": "examples"
   },
   "dependencies": {
-    "keythereum": "^1.0.2"
+    "electron": "^1.8.0",
+    "keythereum": "^1.0.2",
+    "web3": "^1.0.0-beta.20"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "electron-rebuild": "^1.6.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
