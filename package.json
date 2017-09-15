@@ -1,0 +1,26 @@
+{
+  "name": "wallet",
+  "version": "1.0.0",
+  "description": "Hello",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "keythereum": "^1.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sonm-io/Wallet.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sonm-io/Wallet/issues"
+  },
+  "homepage": "https://github.com/sonm-io/Wallet#readme"
+}
