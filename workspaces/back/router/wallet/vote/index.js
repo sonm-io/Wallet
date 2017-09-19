@@ -1,6 +1,6 @@
 'use strict';
 
 module.exports = {
-    auth: require('./auth'),
-    balance: require('./balance')
+    list: require('../list'),
+    info: require('../info')
 };
