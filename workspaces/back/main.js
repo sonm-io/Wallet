@@ -41,7 +41,7 @@ app.on('activate', () => {
     }
 });
 
-const routes = require('./router');
+const routes = require('./router/index');
 
 for ( const namespace in routes ) {
     for ( const action in routes[namespace] ) {

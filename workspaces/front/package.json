@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "wallet",
+  "name": "wallet-front",
   "version": "1.0.0",
   "description": "Hello",
   "main": "main.js",
@@ -8,10 +8,13 @@
     "example": "examples"
   },
   "dependencies": {
-    "electron": "^1.8.0"
-  },
-  "devDependencies": {
-    "electron-rebuild": "^1.6.0"
+    "electron": "^1.8.0",
+    "fs-extra": "^4.0.2",
+    "js-yaml": "^3.10.0",
+    "keythereum": "^1.0.2",
+    "lodash": "^4.17.4",
+    "truffle-contract": "^3.0.0",
+    "web3": "^1.0.0-beta.20"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,8 +28,5 @@
   "bugs": {
     "url": "https://github.com/sonm-io/Wallet/issues"
   },
-  "homepage": "https://github.com/sonm-io/Wallet#readme",
-  "workspaces": [
-    "workspaces/*"
-  ]
+  "homepage": "https://github.com/sonm-io/Wallet#readme"
 }
