@@ -7,7 +7,7 @@ const _ = require('lodash');
 const fs = require('fs-extra');
 const contract = require('truffle-contract');
 const yaml = require('js-yaml');
-const {app} = require('electron');
+const { app } = require('electron');
 
 const routes = require('./router/index');
 
@@ -35,7 +35,7 @@ const init = async () => {
             provider: provider,
             account: accounts[0],
             config: config,
-        }
+        };
 
         await routes.wallet.balance();
 
@@ -55,7 +55,7 @@ const init = async () => {
     } catch ( err ) {
         console.log(err.stack);
     }
-}
+};
 
 init();
 

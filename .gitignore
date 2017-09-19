@@ -2,3 +2,5 @@
 .idea
 /node_modules/
 /package-lock.json
+workspaces/back/node_modules/
+workspaces/front/node_modules/
