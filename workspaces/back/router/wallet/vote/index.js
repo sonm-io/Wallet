@@ -1,6 +1,6 @@
 'use strict';
 
 module.exports = {
-    list: require('../list'),
-    info: require('../info')
+    list: require('./list'),
+    info: require('./info')
 };

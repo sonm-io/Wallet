@@ -7,39 +7,7 @@ const _ = require('lodash');
 const fs = require('fs-extra');
 const contract = require('truffle-contract');
 const yaml = require('js-yaml');
-const {app, BrowserWindow} = require('electron');
-
-let win;
-
-function createWindow () {
-    win = new BrowserWindow({width: 800, height: 600});
-
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
-        protocol: 'file:',
-        slashes: true
-    }));
-
-    win.webContents.openDevTools();
-
-    win.on('closed', () => {
-        win = null
-    });
-}
-
-app.on('ready', createWindow);
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
-
-app.on('activate', () => {
-    if (win === null) {
-        createWindow();
-    }
-});
+const {app} = require('electron');
 
 const routes = require('./router/index');
 
@@ -57,7 +25,7 @@ for ( const namespace in routes ) {
 
 const init = async () => {
     try {
-        const config = yaml.safeLoad(fs.readFileSync('./config/default.yml', 'utf8'));
+        const config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
         const provider = new Web3.providers.HttpProvider(_.get(config, "connection.host"));
         const web3 = new Web3(provider);
         const accounts =  await web3.eth.getAccounts();
