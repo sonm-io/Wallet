@@ -2,6 +2,5 @@
 
 module.exports = {
     auth: require('./auth'),
-    balance: require('./balance'),
-    vote: require('./vote')
+    balance: require('./balance')
 };
