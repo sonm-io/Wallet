@@ -2,7 +2,7 @@
 
 const keythereum = require("keythereum");
 
-module.exports = function() {
+module.exports = async function(app) {
     console.log('111');
 
     const datadir = "/Users/dmitrypisanko/Library/Ethereum/rinkeby";
