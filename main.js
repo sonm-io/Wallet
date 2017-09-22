@@ -23,6 +23,7 @@ function initialize () {
   loadMainProcess();
 
   app.on('ready', function () {
+    registerFrontendRoot();
     createWindow();
     autoUpdater.initialize();
   });
@@ -45,7 +46,7 @@ function createWindow () {
     width: 1080,
     minWidth: 680,
     height: 840,
-    title: app.getName()
+    title: app.getName(),
   };
 
   if (process.platform === 'linux') {
@@ -53,7 +54,7 @@ function createWindow () {
   }
 
   mainWindow = new BrowserWindow(windowOptions);
-  mainWindow.loadURL(path.join('file://', __dirname, '/index.html'));
+  mainWindow.loadURL(path.join('file://', __dirname, 'workspaces/front/assets/entry.html'));
 
   // Launch fullscreen with DevTools open, usage: npm run debug
   if (debug) {
@@ -95,7 +96,7 @@ function loadMainProcess () {
   // files.forEach(function (file) {
   //   require(file)
   // })
-  require('./workspaces/back/main');
+  // require('./workspaces/back/main');
   autoUpdater.updateMenu();
 }
 
@@ -114,3 +115,24 @@ switch (process.argv[1]) {
   default:
     initialize();
 }
+
+function registerFrontendRoot() {
+  electron.protocol.interceptFileProtocol('file', (request, callback) => {
+    const filePath = request.url.substr(7); // remove protocol file://
+    let result;
+
+    if (filePath.startsWith('src/')) {
+      result = path.join(__dirname, 'workspaces/front/src', filePath.substr(5));
+    } else {
+      result = filePath;
+    }
+
+    console.log('referrer', request.referrer);
+    console.log('filePath', filePath);
+    callback(result);
+  }, error => {
+    if (error) {
+      console.error('Failed to intercept file protocol', error);
+    }
+  });
+};

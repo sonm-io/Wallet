@@ -1,111 +1,125 @@
-const app = require('electron').app
-const autoUpdater = require('electron').autoUpdater
-const ChildProcess = require('child_process')
-const Menu = require('electron').Menu
-const path = require('path')
+const app = require('electron').app;
+const autoUpdater = require('electron').autoUpdater;
+const ChildProcess = require('child_process');
+const Menu = require('electron').Menu;
+const path = require('path');
 
-var state = 'checking'
+let state = 'checking';
 
-exports.initialize = function () {
-  if (process.mas) return
+exports.initialize = () => {
+  if (process.mas) {
+    return;
+  }
 
-  autoUpdater.on('checking-for-update', function () {
-    state = 'checking'
-    exports.updateMenu()
-  })
+  autoUpdater.on('checking-for-update', () => {
+    state = 'checking';
+    exports.updateMenu();
+  });
 
-  autoUpdater.on('update-available', function () {
-    state = 'checking'
-    exports.updateMenu()
-  })
+  autoUpdater.on('update-available', () => {
+    state = 'checking';
+    exports.updateMenu();
+  });
 
-  autoUpdater.on('update-downloaded', function () {
-    state = 'installed'
-    exports.updateMenu()
-  })
+  autoUpdater.on('update-downloaded', () => {
+    state = 'installed';
+    exports.updateMenu();
+  });
 
-  autoUpdater.on('update-not-available', function () {
-    state = 'no-update'
-    exports.updateMenu()
-  })
+  autoUpdater.on('update-not-available', () => {
+    state = 'no-update';
+    exports.updateMenu();
+  });
 
-  autoUpdater.on('error', function () {
-    state = 'no-update'
-    exports.updateMenu()
-  })
+  autoUpdater.on('error', () => {
+    state = 'no-update';
+    exports.updateMenu();
+  });
 
-  autoUpdater.setFeedURL(`https://electron-api-demos.githubapp.com/updates?version=${app.getVersion()}`)
-  autoUpdater.checkForUpdates()
-}
+  autoUpdater.setFeedURL(`https://electron-api-demos.githubapp.com/updates?version=${app.getVersion()}`);
+  autoUpdater.checkForUpdates();
+};
 
 exports.updateMenu = function () {
-  if (process.mas) return
+  if (process.mas) {
+    return;
+  }
 
-  var menu = Menu.getApplicationMenu()
-  if (!menu) return
+  const menu = Menu.getApplicationMenu();
+  if (!menu) {
+    return;
+  }
 
   menu.items.forEach(function (item) {
     if (item.submenu) {
-      item.submenu.items.forEach(function (item) {
+      item.submenu.items.forEach(item => {
         switch (item.key) {
           case 'checkForUpdate':
-            item.visible = state === 'no-update'
-            break
+            item.visible = state === 'no-update';
+            break;
           case 'checkingForUpdate':
-            item.visible = state === 'checking'
-            break
+            item.visible = state === 'checking';
+            break;
           case 'restartToUpdate':
-            item.visible = state === 'installed'
-            break
+            item.visible = state === 'installed';
+            break;
         }
-      })
+      });
     }
-  })
-}
+  });
+};
 
-exports.createShortcut = function (callback) {
+exports.createShortcut = callback => {
   spawnUpdate([
     '--createShortcut',
     path.basename(process.execPath),
     '--shortcut-locations',
-    'StartMenu'
-  ], callback)
-}
+    'StartMenu',
+  ], callback);
+};
 
-exports.removeShortcut = function (callback) {
+exports.removeShortcut = callback => {
   spawnUpdate([
     '--removeShortcut',
-    path.basename(process.execPath)
-  ], callback)
-}
+    path.basename(process.execPath),
+  ], callback);
+};
 
 function spawnUpdate (args, callback) {
-  var updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe')
-  var stdout = ''
-  var spawned = null
+  const updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
+  let stdout = '';
+  let spawned = null;
 
   try {
-    spawned = ChildProcess.spawn(updateExe, args)
+    spawned = ChildProcess.spawn(updateExe, args);
   } catch (error) {
-    if (error && error.stdout == null) error.stdout = stdout
-    process.nextTick(function () { callback(error) })
-    return
+    if (error && error.stdout == null) {
+      error.stdout = stdout;
+    }
+    process.nextTick( () => callback(error) );
+    return '';
   }
 
-  var error = null
+  let error = null;
 
-  spawned.stdout.on('data', function (data) { stdout += data })
+  spawned.stdout.on('data', data => stdout += data);
 
-  spawned.on('error', function (processError) {
-    if (!error) error = processError
-  })
-
-  spawned.on('close', function (code, signal) {
-    if (!error && code !== 0) {
-      error = new Error('Command failed: ' + code + ' ' + signal)
+  spawned.on('error', processError => {
+    if (!error) {
+      error = processError;
     }
-    if (error && error.code == null) error.code = code
-    if (error && error.stdout == null) error.stdout = stdout
-    callback(error)
-  })
+  });
+
+  spawned.on('close', (code, signal) => {
+    if (!error && code !== 0) {
+      error = new Error('Command failed: ' + code + ' ' + signal);
+    }
+    if (error && error.code == null) {
+      error.code = code;
+    }
+    if (error && error.stdout == null) {
+      error.stdout = stdout;
+    }
+    callback(error);
+  });
 }
