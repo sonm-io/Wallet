@@ -2,18 +2,16 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { Form, Button, Input, Icon, Upload, Spin } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
-import { api, IPrivateKey } from 'api';
+import { api } from 'api';
 import { inject } from 'mobx-react';
-import {Simulate} from 'react-dom/test-utils';
-import change = Simulate.change;
 
 export interface IProps extends FormComponentProps {
   className?: string;
-  privateKey?: IPrivateKey;
+  privateKey: string;
 }
 
 export interface IState extends FormComponentProps {
-  privateKey?: IPrivateKey;
+  privateKey: string;
 }
 
 @inject('privateKey')
