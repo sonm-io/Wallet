@@ -92,10 +92,6 @@ function checkSingleInstance () {
 
 // Require each JS file in the main-process dir
 function loadMainProcess () {
-  // var files = glob.sync(path.join(__dirname, 'main-process/**/*.js'))
-  // files.forEach(function (file) {
-  //   require(file)
-  // })
   require('./workspaces/back/main');
   autoUpdater.updateMenu();
 }
@@ -135,4 +131,5 @@ function registerFrontendRoot() {
       console.error('Failed to intercept file protocol', error);
     }
   });
-};
+}
+
