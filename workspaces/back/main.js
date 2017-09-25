@@ -5,7 +5,6 @@ const path = require('path');
 const url = require('url');
 const _ = require('lodash');
 const fs = require('fs-extra');
-const contract = require('truffle-contract');
 const yaml = require('js-yaml');
 const { app } = require('electron');
 
@@ -15,10 +14,14 @@ for ( const namespace in routes ) {
     for ( const action in routes[namespace] ) {
         if ( _.isObject(routes[namespace][action]) ) {
             for ( const subaction in routes[namespace][action] ) {
-                app.on(`sonm.${namespace}.${action}.${subaction}`, routes[namespace][action][subaction] );
+                app.on(`sonm.${namespace}.${action}.${subaction}`, async function() {
+                    return await routes[namespace][action][subaction](app)
+                });
             }
         } else {
-            app.on(`sonm.${namespace}.${action}`, routes[namespace][action] );
+            app.on(`sonm.${namespace}.${action}`, async function() {
+                return await routes[namespace][action](app)
+            });
         }
     }
 }
@@ -37,26 +40,16 @@ const init = async () => {
             config: config,
         };
 
-        await routes.wallet.balance();
-
-        //app.contracts = {}
-        //const balance = await web3.eth.getBalance('0x23ea8516453f743b729a57b53369a6b50d98ae2c');
-        // const balance = await web3.eth.getBalance(account);
-        // console.log(balance);
-        //
-        // const data =  await fs.readJson('./contracts/TutorialToken.json');
-        //
-        // const tutorialToken = contract(await fs.readJson('./contracts/TutorialToken.json'));
-        // tutorialToken.setProvider(provider);
-        //
-        // const cc = await tutorialToken.at('0x244329ed8d654472aa4c9a955a31fda91f5a2b0e');
-        //
-        // console.log((await cc.balanceOf(account)).c[0]);
+        try {
+            console.log('Try to get balance');
+            const res = await routes.wallet.balance(app);
+            console.log(res);
+        } catch ( err ) {
+            console.log(err.stack);
+        }
     } catch ( err ) {
         console.log(err.stack);
     }
 };
 
 init();
-
-console.log('Start');
