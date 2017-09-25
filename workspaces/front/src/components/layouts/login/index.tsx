@@ -1,9 +1,11 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { Form, Button, Input, Icon } from 'antd';
+import { Form, Button, Input, Icon, Upload, Spin } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import { api, IPrivateKey } from 'api';
 import { inject } from 'mobx-react';
+import {Simulate} from 'react-dom/test-utils';
+import change = Simulate.change;
 
 export interface IProps extends FormComponentProps {
   className?: string;
@@ -18,6 +20,7 @@ export interface IState extends FormComponentProps {
 class LoginInner extends React.Component<IProps, object> {
   public state = {
     privateKey: this.props.privateKey,
+    isLoading: false,
   };
 
   public render() {
@@ -26,54 +29,83 @@ class LoginInner extends React.Component<IProps, object> {
       form,
     } = this.props;
 
-    const {
-      privateKey,
-    } = this.props;
-
-    if (privateKey !== null) {
-      return this.renderFileOpen();
-    }
-
     return (
       <div className="sonm-login">
         <div className={cn('sonm-login__inner', className)}>
-          <Form onSubmit={this.handleSubmit} className="sonm-login__form">
-            <Form.Item>
-              {form.getFieldDecorator('password', {
-                rules: [
-                  { required: true, message: 'Please input your Password!' },
-                ],
-              })(
-                <Input
-                  prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
-                  type="password"
-                  placeholder="Password"
-                />,
-              )}
-            </Form.Item>
-            <Button type="primary" htmlType="submit" className="sonm-login__button">
-              Log in
-            </Button>
-          </Form>
+          <Spin spinning={this.state.isLoading} tip="Loading...">
+            <Form onSubmit={this.handleSubmit} className="sonm-login__form">
+              <Form.Item>
+                <Upload
+                  showUploadList
+                  action=""
+                  multiple={false}
+                  beforeUpload={this.handleSelectFile}
+                >
+                  <Button className="sonm-login__file">
+                    <Icon type="upload" /> Click to {this.state.privateKey ? 'change' : 'set'} file path
+                  </Button>
+                </Upload>
+                {form.getFieldDecorator('path', {
+                  rules: [
+                    { required: true, message: 'Please select file' },
+                  ],
+                })(
+                  <Input
+                    readOnly
+                    type="text"
+                    placeholder="/path/to/file"
+                  />,
+                )}
+              </Form.Item>
+              <Form.Item>
+                {form.getFieldDecorator('password', {
+                  rules: [
+                    { required: true, message: 'Please input your Password!' },
+                  ],
+                })(
+                  <Input
+                    prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                    type="password"
+                    placeholder="Password"
+                  />,
+                )}
+              </Form.Item>
+              <Button type="primary" htmlType="submit" className="sonm-login__button">
+                Log in
+              </Button>
+            </Form>
+          </Spin>
         </div>
       </div>
     );
   }
 
-  private renderFileOpen = () => {
-    return (
-      <div className="sonm-open-key">
+  private handleSelectFile = (event: any) => {
+    this.setState({ privateKey: event.path });
 
-      </div>
-    );
+    this.props.form.setFieldsValue({
+      path: event.path,
+    });
+
+    return false;
   }
 
   public handleSubmit = (event: React.FormEvent<Form>) => {
     event.preventDefault();
 
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        api.login();
+    this.props.form.validateFields(async (err, { path, password }) => {
+      if (err) {
+        return;
+      }
+
+      this.setState({ isLoading: true });
+      try {
+        await api.login(path, password);
+
+      } catch (e) {
+
+      } finally {
+        this.setState({ isLoading: false });
       }
     });
   }

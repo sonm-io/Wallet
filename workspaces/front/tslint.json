@@ -19,6 +19,9 @@
     "ordered-imports": false,
     "no-var-requires": false,
     "no-empty-interface": false,
-    "jsx-no-multiline-js": false
+    "jsx-no-multiline-js": false,
+    "member-ordering": false,
+    "jsx-boolean-value": false,
+    "no-trailing-whitespace": true
   }
 }

@@ -5,14 +5,14 @@ import { history } from './router/history';
 import * as queryStr from 'query-string';
 import { Provider } from 'mobx-react';
 import * as stores from './stores';
-import { api, IPrivateKey } from './api';
+import { api } from './api';
 
 interface ILocationParams {
   pathname: string;
   search: string;
 }
 
-let privateKey: IPrivateKey | null;
+let privateKey: string;
 
 /**
  * Renders app with state corresponding to given location
@@ -31,7 +31,7 @@ async function renderByPath({ pathname, search }: ILocationParams) {
   );
 }
 
-const waitForKeys = api.getPrivateKeys().then(x => privateKey = x);
+const waitForKeys = api.readPrivateKey().then(x => privateKey = x);
 const waitForLoad = new Promise(done => {
   window.addEventListener('DOMContentLoaded', done);
 });

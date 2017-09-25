@@ -96,7 +96,7 @@ function loadMainProcess () {
   // files.forEach(function (file) {
   //   require(file)
   // })
-  // require('./workspaces/back/main');
+  require('./workspaces/back/main');
   autoUpdater.updateMenu();
 }
 
