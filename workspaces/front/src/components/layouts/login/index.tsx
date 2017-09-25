@@ -60,7 +60,7 @@ class LoginInner extends React.Component<IProps, object> {
     );
   }
 
-  private renderFileOpen() {
+  private renderFileOpen = () => {
     return (
       <div className="sonm-open-key">
 
@@ -68,7 +68,7 @@ class LoginInner extends React.Component<IProps, object> {
     );
   }
 
-  public handleSubmit(event: React.FormEvent<Form>) {
+  public handleSubmit = (event: React.FormEvent<Form>) => {
     event.preventDefault();
 
     this.props.form.validateFields((err, values) => {
