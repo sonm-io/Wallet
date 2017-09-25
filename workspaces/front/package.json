@@ -9,15 +9,12 @@
   },
   "dependencies": {
     "antd": "2.13.3",
-    "awesome-typescript-loader": "^3.2.3",
-    "css-modules-require-hook": "^4.2.2",
-    "electron": "^1.8.0",
-    "emotion": "^7.3.2",
-    "less": "^2.7.2",
+    "app-module-path": "^2.2.0",
+    "electron": "1.8.0",
+    "less": "2.7.2",
     "lodash": "4.17.4",
     "prop-types": "15.5.10",
-    "react-emotion": "^7.3.2",
-    "tsc": "^1.20150623.0"
+    "tsc": "1.20150623.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

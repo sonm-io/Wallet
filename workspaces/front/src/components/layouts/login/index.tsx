@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { Form, Button, Input, Icon } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
-import { api } from 'src/api';
+import { api } from 'api';
 
 export interface IProps extends FormComponentProps {
   className?: string;

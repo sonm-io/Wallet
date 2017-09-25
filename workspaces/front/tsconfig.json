@@ -22,7 +22,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": "./"
+    "baseUrl": "./src"
   },
   "include": [
     "src/**/*.ts",

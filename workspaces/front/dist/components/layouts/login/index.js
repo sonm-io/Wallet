@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const cn = require("classnames");
 const antd_1 = require("antd");
-const api_1 = require("src/api");
+const api_1 = require("api");
 class LoginInner extends React.Component {
     render() {
         const { className, form, } = this.props;

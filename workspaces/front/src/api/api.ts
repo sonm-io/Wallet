@@ -1,11 +1,31 @@
 export interface IApi {
-  login: () => void;
+  login: () => Promise<void>;
+  getPrivateKeys: () => Promise<IPrivateKey | null>;
+}
+
+export interface IPrivateKey {
+
+}
+
+async function login() {
+
+}
+
+async function getPrivateKeys() {
+  let result: IPrivateKey | null;
+
+  try {
+    result = window.localStorage.getItem('key');
+  } catch (e) {
+    result = null;
+  }
+
+  return result;
 }
 
 const api: IApi = {
-  login() {
-    console.log('api login');
-  },
+  login,
+  getPrivateKeys,
 };
 
 export { api };

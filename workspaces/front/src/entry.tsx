@@ -5,12 +5,14 @@ import { history } from './router/history';
 import * as queryStr from 'query-string';
 import { Provider } from 'mobx-react';
 import * as stores from './stores';
-import { api } from 'src/api';
+import { api, IPrivateKey } from './api';
 
 interface ILocationParams {
   pathname: string;
   search: string;
 }
+
+let privateKey: IPrivateKey | null;
 
 /**
  * Renders app with state corresponding to given location
@@ -22,15 +24,22 @@ async function renderByPath({ pathname, search }: ILocationParams) {
   window.document.title = title;
 
   render(
-    <Provider {...stores} api={api} key="app-root">
+    <Provider {...stores} api={api} privateKey={privateKey} key="app-root">
       {content}
     </Provider>,
     window.document.querySelector('#root'),
   );
 }
 
-history.listen(renderByPath);
-
-window.addEventListener('DOMContentLoaded', () => {
-  renderByPath({ pathname: '/login', search: '' });
+const waitForKeys = api.getPrivateKeys().then(x => privateKey = x);
+const waitForLoad = new Promise(done => {
+  window.addEventListener('DOMContentLoaded', done);
 });
+
+async function init() {
+  await Promise.all([waitForKeys, waitForLoad]);
+  history.listen(renderByPath);
+  renderByPath({ pathname: '/login', search: '' });
+}
+
+init();
