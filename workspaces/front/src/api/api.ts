@@ -29,7 +29,7 @@ function createPromise<TResult>(type: string, payload: any, maxDelay: number = M
 
     (ipcRenderer as any).send('sonm', {
       requestId,
-      type: 'login',
+      type,
       payload,
     });
   });
