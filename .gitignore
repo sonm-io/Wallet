@@ -1,0 +1,6 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+/node_modules/
+/workspaces/back/node_modules/
+/workspaces/front/node_modules/
+/temp/
