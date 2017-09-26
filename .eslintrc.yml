@@ -4,9 +4,9 @@ extends:
 plugins:
   - lodash-fp
 
-parser: 'babel-eslint'
+parser: babel-eslint
 parserOptions:
-  sourceType: 'module'
+  sourceType: module
   ecmaVersion: 2017
   ecmaFeatures:
 
@@ -16,15 +16,23 @@ env:
   node: true
 
 rules:
+    comma-dangle:
+      - error
+      - always-multiline
+    no-cond-assign:
+      - error
+      - always
+
+    curly: error
     no-unused-vars:
-      - "error"
-      - "vars": "all"
-        "args": "none"
-        "ignoreRestSiblings": false
+      - error
+      - vars: all
+        args: none
+        ignoreRestSiblings: false
 
     no-console: 0
-    semi: ["error", "always"]
-    arrow-parens: ['error', 'as-needed']
+    semi: [error, always]
+    arrow-parens: [error, as-needed]
 
     lodash-fp/consistent-compose: off
     lodash-fp/consistent-name:

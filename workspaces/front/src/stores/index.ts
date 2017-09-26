@@ -1,0 +1,5 @@
+const user = {};
+
+export {
+  user,
+};
