@@ -37,7 +37,7 @@
   },
   "scripts": {
     "start": "electron .",
-    "dev": "electron . --debug",
+    "dev": "npm run build:front && electron . --debug",
     "test": "mocha && standard",
     "package": "npm-run-all package:*",
     "package:mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --out=out --icon=assets/app-icon/mac/app.icns --osx-sign.identity='Developer ID Application: SONM' --extend-info=assets/mac/info.plist",
