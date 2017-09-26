@@ -38,7 +38,7 @@ function createPromise<TResult>(type: string, payload: any, maxDelay: number = M
 export class Api {
   public async login(path: string, password: string): Promise<boolean> {
     return createPromise<boolean>(
-      'login',
+      'user.login',
       { path, password },
     );
   }
