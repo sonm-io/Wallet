@@ -1,5 +1,7 @@
 'use strict';
 
 module.exports = {
-    wallet: require('./wallet/index')
+    user: require('./user/index'),
+    vote: require('./vote/index'),
+    market: require('./market/index'),
 };
