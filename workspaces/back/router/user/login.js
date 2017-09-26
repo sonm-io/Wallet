@@ -15,7 +15,9 @@ module.exports = async function(data) {
             const privateKey = keythereum.recover(data.password, json);
 
             return {
-                succcess: true
+                data: {
+                    address: json.address
+                }
             };
         } catch ( err ) {
             return {
