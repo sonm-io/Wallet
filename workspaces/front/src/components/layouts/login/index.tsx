@@ -7,7 +7,7 @@ import { inject } from 'mobx-react';
 
 export interface IProps extends FormComponentProps {
   className?: string;
-  privateKey: string;
+  privateKey?: string;
 }
 
 export interface IState extends FormComponentProps {
