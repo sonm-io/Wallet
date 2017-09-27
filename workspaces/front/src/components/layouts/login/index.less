@@ -1,24 +1,21 @@
-@logo-size: 200px;
-
 .sonm-login {
-  position: relative;
   display: flex;
   height: 100%;
+  align-items: center;
+  flex-direction: column;
 
   &__remember {
     user-select: none;
   }
 
   &__inner {
-    margin: auto;
+    flex: 2;
   }
 
   &__logo {
-    position: absolute;
-    width: @logo-size;
-    left: 50%;
-    top: 20px;
-    transform: translate(-50%, 0);
+    padding: 20px;
+    height: 80%;
+    flex: 1;
   }
 
   &__button {
