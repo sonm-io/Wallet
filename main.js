@@ -11,6 +11,8 @@ if (process.mas) {
   app.setName('SONM Wallet');
 }
 
+console.log('process.version (node-js)', process.version);
+
 let mainWindow = null;
 
 function initialize () {
