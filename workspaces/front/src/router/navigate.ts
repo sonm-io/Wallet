@@ -4,8 +4,8 @@ import { get } from 'lodash/fp';
 
 export interface INavigateArgument {
   path?: string;
-  query: any;
-  mergeQuery: any;
+  query?: any;
+  mergeQuery?: any;
 }
 
 const getLocation = get('location.pathname');
@@ -42,6 +42,7 @@ export function navigate({ path, query, mergeQuery }: INavigateArgument): string
     ? `${path}?${queryStr.stringify(query)}`
     : path;
 
+  debugger;
   (history as any).push(url);
 
   return url || '';

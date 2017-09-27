@@ -4,6 +4,7 @@ import { Form, Button, Input, Icon, Upload, Spin, Checkbox } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import * as api from 'api';
 import { inject } from 'mobx-react';
+import { navigate} from '../../../router/navigate';
 
 export interface IProps extends FormComponentProps {
   className?: string;
@@ -53,7 +54,6 @@ class LoginInner extends React.Component<IProps, any> {
                   ],
                 })(
                   <Input
-                    readOnly
                     type="text"
                     placeholder="/path/to/file"
                   />,
@@ -125,9 +125,18 @@ class LoginInner extends React.Component<IProps, any> {
       }
 
       if (response.success) {
-
+        navigate({ path: '/main' });
       } else {
-
+        if (response.validation) {
+          this.props.form.setFields({
+            password: {
+              errors: [response.validation.password],
+            },
+            path: {
+              errors: [response.validation.path],
+            },
+          });
+        }
       }
     });
   }

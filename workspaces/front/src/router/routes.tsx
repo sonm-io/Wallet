@@ -30,7 +30,7 @@ const routes = [
     },
     children: [
       {
-        path: '/balance',
+        path: '/main',
         action: defaultAction = (ctx: IContext) => ({
           title: 'Balance',
           content: <div />,
