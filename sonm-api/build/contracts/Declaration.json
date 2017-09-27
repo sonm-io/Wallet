@@ -1,8 +1,0 @@
-{
-  "contract_name": "Declaration",
-  "abi": [],
-  "unlinked_binary": "0x60606040523415600e57600080fd5b5b603680601c6000396000f30060606040525b600080fd00a165627a7a72305820d5245be9cb7fc66cb5252c96eb1ed6b8ccab8fe6cf04fc3e851f61ad52c8a3400029",
-  "networks": {},
-  "schema_version": "0.0.5",
-  "updated_at": 1506090047629
-}

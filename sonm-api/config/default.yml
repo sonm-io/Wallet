@@ -1,0 +1,5 @@
+development:
+  PigToken: "0x917cc8f2180e469c733abc67e1b36b0ab3aeff60"
+
+production:
+  PigToken: "0x917cc8f2180e469c733abc67e1b36b0ab3aeff60"

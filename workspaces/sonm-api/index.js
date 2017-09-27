@@ -6,10 +6,13 @@ const path = require('path');
 const contract = require('truffle-contract');
 const Web3 = require('web3');
 const tx = require('ethereumjs-tx');
+const yaml = require('js-yaml');
 
 class Profile {
     constructor( config ) {
         (async () => {
+            const configFile = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
+
             if ( !config.user ) {
                 throw new Error('You forget user');
             }
@@ -17,6 +20,8 @@ class Profile {
             if ( !config.connectionUrl ) {
                 throw new Error('You forget RPC url');
             }
+
+            const environment  = config.environment || 'development';
 
             this.user = config.user;
             this.provider = new Web3.providers.HttpProvider(config.connectionUrl);
@@ -27,17 +32,26 @@ class Profile {
             const files = fs.readdirSync(dir);
 
             for (const file of files) {
-                const name = path.basename(file, '.json');
+                if ( file.includes(".json") ) {
+                    const name = path.basename(file, '.json');
 
-                try {
-                    this.contracts[name] = contract(await fs.readJson(`${dir}${file}`));
-                    this.contracts[name].setProvider(this.provider);
+                    try {
+                        const contractObject = contract(await fs.readJson(`${dir}${file}`));
+                        contractObject.setProvider(this.provider);
 
-                    this.contracts[name].currentProvider.sendAsync = function () {
-                        return this.contracts[name].currentProvider.send.apply(this.contracts[name].currentProvider, arguments);
-                    };
-                } catch ( err ) {
-                    console.log('FAILED TO LOAD', file);
+                        contractObject.currentProvider.sendAsync = function () {
+                            return contractObject.currentProvider.send.apply(contractObject.currentProvider, arguments);
+                        };
+
+                        //console.log(contractObject);
+                        //console.log(configFile[environment][name]);
+
+                        this.contracts[name] = await contractObject.deployed(); //configFile[environment][name]
+
+                    } catch (err) {
+                        console.log('FAILED TO LOAD', file);
+                        console.log(err.stack);
+                    }
                 }
             }
         })();
@@ -52,10 +66,7 @@ class Profile {
 
     getTokenBalance() {
         return (async () => {
-            //const cc = await this.contracts[name].at(ADDRESS);
-            //return _.get(await cc.balanceOf(app.data.account), 'c[0]', 0);
-
-            return 0;
+            return _.get(await this.contracts['PigToken'].balanceOf(this.user.address), 'c[0]', 0);
         })();
     }
 
