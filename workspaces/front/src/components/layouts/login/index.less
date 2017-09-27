@@ -5,6 +5,10 @@
   display: flex;
   height: 100%;
 
+  &__remember {
+    user-select: none;
+  }
+
   &__inner {
     margin: auto;
   }
@@ -32,16 +36,17 @@
     margin-bottom: 5px;
 
     &__text {
-
+      font-size: 20px;
     }
 
     &__icon {
-      color: @color-dark-gray;
+      margin-top: 10px;
+      color: @color-light-gray;
       font-size: 50px;
     }
 
     &__hint {
-
+      color: @color-dark-gray
     }
   }
 }
