@@ -32,8 +32,7 @@
   "dependencies": {
     "electron-settings": "^3.0.7",
     "electron-shortcut-normalizer": "^1.0.0",
-    "glob": "^7.1.2",
-    "truffle-contract": "^3.0.0"
+    "glob": "^7.1.2"
   },
   "scripts": {
     "start": "electron .",
