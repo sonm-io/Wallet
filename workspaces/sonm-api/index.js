@@ -57,6 +57,10 @@ class Profile {
         })();
     }
 
+    init() {
+
+    }
+
     getBalance() {
         return (async () => {
             return await this.web3.eth.getBalance(this.user.address);
@@ -93,7 +97,7 @@ class Profile {
                 gasPrice: gasPriceHex,
                 value: valueHex,
                 to: addressTo,
-                chainId: 4
+                chainId: 4,
             };
 
             const tx = new tx(rawTx);

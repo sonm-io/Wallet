@@ -16,6 +16,7 @@
     "devtron": "1.3.0",
     "electron": "1.7.8",
     "electron-packager": "^8.6.0",
+    "electron-rebuild": "^1.6.0",
     "electron-winstaller": "^2.2.0",
     "eslint-plugin-lodash-fp": "2.1.3",
     "eslint-plugin-react": "7.3.0",
