@@ -23,11 +23,11 @@ ipcMain.on('sonm', async (event, request) => {
 
         console.log(result);
 
-        event.sender.send(request.requestId, result)
+        event.sender.send(request.requestId, result);
     } else {
         event.sender.send(request.requestId, {
             error: 'endpoint_not_found',
-        })
+        });
     }
 });
 

@@ -1,4 +1,7 @@
+@logo-size: 200px;
+
 .sonm-login {
+  position: relative;
   display: flex;
   height: 100%;
 
@@ -6,9 +9,39 @@
     margin: auto;
   }
 
-  &__file,
+  &__logo {
+    position: absolute;
+    width: @logo-size;
+    left: 50%;
+    top: 20px;
+    transform: translate(-50%, 0);
+  }
+
   &__button {
+    flex: 1;
+  }
+
+  &__button-container {
+    display: flex;
+    align-items: center;
+  }
+
+  &__drag {
     width: 300px;
-    display: inline-block;
+    display: block;
+    margin-bottom: 5px;
+
+    &__text {
+
+    }
+
+    &__icon {
+      color: @color-dark-gray;
+      font-size: 50px;
+    }
+
+    &__hint {
+
+    }
   }
 }

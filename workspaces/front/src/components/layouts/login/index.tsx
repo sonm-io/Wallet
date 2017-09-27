@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { Form, Button, Input, Icon, Upload, Spin } from 'antd';
+import { Form, Button, Input, Icon, Upload, Spin, Checkbox } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
-import { api } from 'api';
+import * as api from 'api';
 import { inject } from 'mobx-react';
 
 export interface IProps extends FormComponentProps {
@@ -10,14 +10,10 @@ export interface IProps extends FormComponentProps {
   privateKey?: string;
 }
 
-export interface IState extends FormComponentProps {
-  privateKey: string;
-}
-
-@inject('privateKey')
-class LoginInner extends React.Component<IProps, object> {
+@inject('navigate')
+class LoginInner extends React.Component<IProps, any> {
   public state = {
-    privateKey: this.props.privateKey,
+    privateKey: this.readPrivateKey(),
     isLoading: false,
   };
 
@@ -29,20 +25,28 @@ class LoginInner extends React.Component<IProps, object> {
 
     return (
       <div className="sonm-login">
+        <img src="../assets/img/sonm-logo-white-bg.svg" className="sonm-login__logo" />
         <div className={cn('sonm-login__inner', className)}>
           <Spin spinning={this.state.isLoading} tip="Loading...">
             <Form onSubmit={this.handleSubmit} className="sonm-login__form">
               <Form.Item>
-                <Upload
-                  showUploadList
+                <Upload.Dragger
+                  showUploadList={false}
                   action=""
                   multiple={false}
                   beforeUpload={this.handleSelectFile}
+                  className="sonm-login__drag"
                 >
-                  <Button className="sonm-login__file">
-                    <Icon type="upload" /> Click to {this.state.privateKey ? 'change' : 'set'} file path
-                  </Button>
-                </Upload>
+                  <p className="sonm-login__drag__icon">
+                    <Icon type="inbox" />
+                  </p>
+                  <p className="sonm-login__drag__text">
+                    Click or drag to {this.state.privateKey ? 'change' : 'set'} file path
+                  </p>
+                  <p className="sonm-login__drag__hint">
+                    Support for xxx file
+                  </p>
+                </Upload.Dragger>
                 {form.getFieldDecorator('path', {
                   rules: [
                     { required: true, message: 'Please select file' },
@@ -68,9 +72,19 @@ class LoginInner extends React.Component<IProps, object> {
                   />,
                 )}
               </Form.Item>
-              <Button type="primary" htmlType="submit" className="sonm-login__button">
-                Log in
-              </Button>
+              <div className="sonm-login__button-container">
+                {form.getFieldDecorator('remember', {
+                  valuePropName: 'checked',
+                  initialValue: this.state.privateKey !== '',
+                })(
+                  <Checkbox className="sonm-login__remember">
+                    Remember file path
+                  </Checkbox>,
+                )}
+                <Button type="primary" htmlType="submit" className="sonm-login__button">
+                  Log in
+                </Button>
+              </div>
             </Form>
           </Spin>
         </div>
@@ -96,16 +110,38 @@ class LoginInner extends React.Component<IProps, object> {
         return;
       }
 
+      let response: api.ILoginResponse;
+
       this.setState({ isLoading: true });
       try {
-        await api.login(path, password);
-
+        response = await api.api.login(path, password);
       } catch (e) {
-
+        response = {
+          success: false,
+          error:  e.message,
+        };
       } finally {
         this.setState({ isLoading: false });
       }
+
+      if (response.success) {
+
+      } else {
+
+      }
     });
+  }
+
+  private readPrivateKey() {
+    let result: string;
+
+    try {
+      result = window.localStorage.getItem('private-key') || '';
+    } catch (e) {
+      result = '';
+    }
+
+    return result;
   }
 }
 

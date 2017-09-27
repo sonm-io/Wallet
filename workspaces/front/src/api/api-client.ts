@@ -1,3 +1,0 @@
-const apiClient = {};
-
-export { apiClient };
