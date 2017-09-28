@@ -9,105 +9,93 @@ const tx = require('ethereumjs-tx');
 const yaml = require('js-yaml');
 
 class Profile {
-    constructor( config ) {
-        (async () => {
-            const configFile = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
 
-            if ( !config.user ) {
-                throw new Error('You forget user');
-            }
+    async init(config) {
+        const configFile = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
 
-            if ( !config.connectionUrl ) {
-                throw new Error('You forget RPC url');
-            }
+        if (!config.user) {
+            throw new Error('You forget user');
+        }
 
-            const environment  = config.environment || 'development';
+        if (!config.connectionUrl) {
+            throw new Error('You forget RPC url');
+        }
 
-            this.user = config.user;
-            this.provider = new Web3.providers.HttpProvider(config.connectionUrl);
-            this.web3 = new Web3(this.provider);
+        const environment = config.environment || 'development';
 
-            this.contracts = {};
-            const dir = __dirname + '/build/contracts/';
-            const files = fs.readdirSync(dir);
+        this.user = config.user;
+        this.provider = new Web3.providers.HttpProvider(config.connectionUrl);
+        this.web3 = new Web3(this.provider);
 
-            for (const file of files) {
-                if ( file.includes(".json") ) {
-                    const name = path.basename(file, '.json');
+        this.contracts = {};
+        const dir = __dirname + '/build/contracts/';
+        const files = fs.readdirSync(dir);
 
-                    try {
-                        const contractObject = contract(await fs.readJson(`${dir}${file}`));
-                        contractObject.setProvider(this.provider);
+        for (const file of files) {
+            if (file.includes(".json")) {
+                const name = path.basename(file, '.json');
 
-                        contractObject.currentProvider.sendAsync = function () {
-                            return contractObject.currentProvider.send.apply(contractObject.currentProvider, arguments);
-                        };
+                try {
+                    const contractObject = contract(await fs.readJson(`${dir}${file}`));
+                    contractObject.setProvider(this.provider);
 
-                        //console.log(contractObject);
-                        //console.log(configFile[environment][name]);
+                    contractObject.currentProvider.sendAsync = function () {
+                        return contractObject.currentProvider.send.apply(contractObject.currentProvider, arguments);
+                    };
 
-                        this.contracts[name] = await contractObject.deployed(); //configFile[environment][name]
+                    //console.log(contractObject);
+                    //console.log(configFile[environment][name]);
 
-                    } catch (err) {
-                        console.log('FAILED TO LOAD', file);
-                        console.log(err.stack);
-                    }
+                    this.contracts[name] = await contractObject.deployed(); //configFile[environment][name]
+
+                } catch (err) {
+                    console.log('FAILED TO LOAD', file);
+                    console.log(err.stack);
                 }
             }
-        })();
+        }
+    };
+
+    async getBalance() {
+        return await this.web3.eth.getBalance(this.user.address);
     }
 
-    init() {
-
+    async getTokenBalance() {
+        return _.get(await this.contracts['PigToken'].balanceOf(this.user.address), 'c[0]', 0);
     }
 
-    getBalance() {
-        return (async () => {
-            return await this.web3.eth.getBalance(this.user.address);
-        })();
+    async sendToken(addressTo, amount) {
+        const user = this.user;
+        const web3 = this.web3;
+
+        const privateKey = new Buffer(user.privateKey, 'hex');
+
+        const txCount = await web3.eth.getTransactionCount(user.address);
+        const gasPrice = web3.utils.toWei(100, "gwei");
+        const gasLimit = 32000;
+        const value = web3.utils.toWei(amount, "ether");
+
+        const gasPriceHex = web3.utils.toHex(gasPrice);
+        const gasLimitHex = web3.utils.toHex(gasLimit);
+        const valueHex = web3.utils.toHex(value);
+
+        const rawTx = {
+            nonce: web3.utils.toHex(txCount),
+            from: user.address,
+            gasLimit: gasLimitHex,
+            gasPrice: gasPriceHex,
+            value: valueHex,
+            to: addressTo,
+            chainId: 4,
+        };
+
+        const tx = new tx(rawTx);
+        tx.sign(privateKey);
+
+        return await web3.eth.sendSignedTransaction('0x' + tx.serialize().toString('hex'));
     }
 
-
-    getTokenBalance() {
-        return (async () => {
-            return _.get(await this.contracts['PigToken'].balanceOf(this.user.address), 'c[0]', 0);
-        })();
-    }
-
-    sendToken( addressTo, amount ) {
-        return (async () => {
-            const user = this.user;
-            const web3 = this.web3;
-
-            const privateKey = new Buffer(user.privateKey, 'hex');
-
-            const txCount = await web3.eth.getTransactionCount(user.address);
-            const gasPrice = web3.utils.toWei(100, "gwei");
-            const gasLimit = 32000;
-            const value = web3.utils.toWei(amount, "ether");
-
-            const gasPriceHex = web3.utils.toHex(gasPrice);
-            const gasLimitHex = web3.utils.toHex(gasLimit);
-            const valueHex = web3.utils.toHex(value);
-
-            const rawTx = {
-                nonce: web3.utils.toHex(txCount),
-                from: user.address,
-                gasLimit: gasLimitHex,
-                gasPrice: gasPriceHex,
-                value: valueHex,
-                to: addressTo,
-                chainId: 4,
-            };
-
-            const tx = new tx(rawTx);
-            tx.sign(privateKey);
-
-            return await web3.eth.sendSignedTransaction('0x' + tx.serialize().toString('hex'));
-        })();
-    }
-
-    transactionHistory() {
+    async transactionHistory() {
         // const web3 = app.data.web3;
         // const addressFrom = app.data.auth.address;
         //
@@ -156,4 +144,4 @@ class Profile {
     }
 }
 
-module.exports = Profile;
+module.exports = new Profile();

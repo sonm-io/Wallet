@@ -9,7 +9,7 @@ const { ipcMain } = require('electron');
 const routes = require('./router/index');
 const handlers = {};
 
-const Api = require('../sonm-api/');
+const api = require('../sonm-api/');
 
 for ( const namespace in routes ) {
     for (const action in routes[namespace]) {
@@ -38,7 +38,7 @@ const init = async () => {
     try {
         const config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
 
-        const api = new Api({
+        await api.init({
             user: {
                 address: '0x6Ffc014F1dEee1175Cb1c35ADD333fcBE135527f',
                 privateKey: 'e3d90c923a8b1b324b6483d1fbf640d80d9971ed982afb63c75f35fa54dc5edc',
