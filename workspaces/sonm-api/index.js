@@ -23,8 +23,6 @@ class Profile {
 
         const environment = config.environment || 'development';
 
-
-
         this.user = config.user;
         this.provider = new Web3.providers.HttpProvider(config.connectionUrl);
         this.web3 = new Web3(this.provider);
@@ -45,11 +43,12 @@ class Profile {
                         return contractObject.currentProvider.send.apply(contractObject.currentProvider, arguments);
                     };
 
-                    // //console.log(contractObject);
-                    // //console.log(configFile[environment][name]);
-                    //
+                    //this.contracts[name] = await contractObject.deployed();
+                    //configFile[environment][name]
+                    //console.log(configFile[environment][name]);
 
-                    //this.contracts[name] = await contractObject.deployed(); //configFile[environment][name]
+                    console.log(name, configFile[environment][name]);
+
                     this.contracts[name] = await contractObject.at(configFile[environment][name]);
 
                 } catch (err) {
@@ -65,10 +64,14 @@ class Profile {
     }
 
     async getTokenBalance() {
-        return _.get(await this.contracts['PigToken'].balanceOf(this.user.address), 'c[0]', 0);
+        return _.get(await this.contracts['SNMT'].balanceOf(this.user.address), 'c[0]', 0);
     }
 
-    async sendToken(addressTo, amount) {
+    async sendToken( to, amount ) {
+        return await this.contracts['SNMT'].transfer(to, this.web3.utils.toHex(amount));
+    }
+
+    async sendTransaction(addressTo, amount) {
         const user = this.user;
         const web3 = this.web3;
 

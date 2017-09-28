@@ -1,5 +1,5 @@
 connection:
-  url: https://rinkeby.infura.io
+  url: https://rinkeby.infura.io/WyuEpW1GkB6dVcaAv4Kj
 
 contracts:
   TutorialToken: "0x244329ed8d654472aa4c9a955a31fda91f5a2b0e"

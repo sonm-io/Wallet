@@ -5,7 +5,7 @@ const api = require('./workspaces/sonm-api');
 
 let main = async function() {
     try {
-        const web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io'));
+        const web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/WyuEpW1GkB6dVcaAv4Kj'));
         console.log(await web3.eth.getBalance('0x6Ffc014F1dEee1175Cb1c35ADD333fcBE135527f'));
 
         await api.init({
@@ -17,6 +17,7 @@ let main = async function() {
         });
 
         console.log(await api.getBalance());
+        console.log(await api.getTokenBalance());
 
         console.log('1111');
     } catch ( err ) {
