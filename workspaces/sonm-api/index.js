@@ -5,8 +5,9 @@ const fs = require('fs-extra');
 const path = require('path');
 const contract = require('truffle-contract');
 const Web3 = require('web3');
-const tx = require('ethereumjs-tx');
+const Tx = require('ethereumjs-tx');
 const yaml = require('js-yaml');
+const XHR2 = require('xhr2');
 
 class Profile {
 
@@ -24,8 +25,87 @@ class Profile {
         const environment = config.environment || 'development';
 
         this.user = config.user;
+        this.user.bufferPrivateKey = new Buffer(this.user.privateKey, 'hex');
+
         this.provider = new Web3.providers.HttpProvider(config.connectionUrl);
-        this.web3 = new Web3(this.provider);
+
+        //this.provider._privateKey(config.user.privateKey);
+
+        const web3 = new Web3(this.provider);
+        this.web3 = web3;
+
+        this.provider.send = async function (payload, callback) {
+            const _this = this;
+            const request = new XHR2();
+
+            request.open('POST', this.host, true);
+            request.setRequestHeader('Content-Type','application/json');
+
+            request.onreadystatechange = function() {
+                if (request.readyState === 4 && request.timeout !== 1) {
+                    var result = request.responseText;
+                    var error = null;
+
+                    try {
+                        result = JSON.parse(result);
+                    } catch(e) {
+                        console.log(e.stack);
+
+                        //throw e;
+                        //error = errors.InvalidResponse(request.responseText);
+                    }
+
+                    _this.connected = true;
+                    callback(error, result);
+                }
+            };
+
+            request.ontimeout = function() {
+                _this.connected = false;
+                callback(errors.ConnectionTimeout(this.timeout));
+            };
+
+            try {
+                // { jsonrpc: '2.0',
+                //     id: 3,
+                //     method: 'eth_sendRawTransaction',
+                //     params: [ '0xf86b0585174876e800827d0094a1fdfef08324d1865047c206735df2933daf5f7e87b1a2bc2ec50000802ba0daedda45bd129b70f056b555cb84294bfe142697d134021fb2195dd14bd2fb87a02b163ce9120db11eec4889ba0c8c55706d0db8ec2a59096790c0ed34a97134d0' ] }
+
+                if ( payload.method === 'eth_sendTransaction' ) {
+                    const txCount = await web3.eth.getTransactionCount(config.user.address);
+                    const gasPrice = web3.utils.toWei(100, "gwei");
+                    const gasLimit = 32000;
+
+                    const gasPriceHex = web3.utils.toHex(gasPrice);
+                    const gasLimitHex = web3.utils.toHex(gasLimit);
+
+                    const rawTx = {
+                        nonce: web3.utils.toHex(txCount),
+                        from: payload.params[0].from,
+                        to: payload.params[0].to,
+                        data: payload.params[0].data,
+                        chainId: 4,
+                        gasLimit: gasLimitHex,
+                        gasPrice: gasPriceHex,
+                    };
+
+                    const tx = new Tx(rawTx);
+                    tx.sign(new Buffer(config.user.privateKey, 'hex'));
+
+                    payload.method = 'eth_sendRawTransaction';
+                    payload.params = ['0x' + tx.serialize().toString('hex')];
+                }
+
+                console.log('REQUEST 123!!!!', payload);
+                request.send(JSON.stringify(payload));
+            } catch(error) {
+                console.log(error.stack);
+
+                //throw error;
+                //this.connected = false;
+                //callback(new Web3().helpers.errors.InvalidConnection(this.host));
+            }
+        };
 
         this.contracts = {};
         const dir = __dirname + '/build/contracts/';
@@ -47,9 +127,9 @@ class Profile {
                     //configFile[environment][name]
                     //console.log(configFile[environment][name]);
 
-                    console.log(name, configFile[environment][name]);
-
                     this.contracts[name] = await contractObject.at(configFile[environment][name]);
+
+                    //console.log(this.contracts[name].sendTransaction.toString());
 
                 } catch (err) {
                     console.log('FAILED TO LOAD', file);
@@ -68,7 +148,7 @@ class Profile {
     }
 
     async sendToken( to, amount ) {
-        return await this.contracts['SNMT'].transfer(to, this.web3.utils.toHex(amount));
+        return await this.contracts['SNMT'].transfer(to, amount, {from: this.user.address});
     }
 
     async sendTransaction(addressTo, amount) {
@@ -96,7 +176,7 @@ class Profile {
             chainId: 4,
         };
 
-        const tx = new tx(rawTx);
+        const tx = new Tx(rawTx);
         tx.sign(privateKey);
 
         return await web3.eth.sendSignedTransaction('0x' + tx.serialize().toString('hex'));

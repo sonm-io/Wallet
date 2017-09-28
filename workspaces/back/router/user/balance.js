@@ -5,7 +5,9 @@ module.exports = async function (api) {
     const tokenBalance = await api.getTokenBalance();
 
     return {
-        balance: balance,
-        token_balance: tokenBalance,
+        data: {
+            balance: balance,
+            token_balance: tokenBalance,
+        },
     }
 };
