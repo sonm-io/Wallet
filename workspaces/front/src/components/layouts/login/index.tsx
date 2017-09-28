@@ -3,15 +3,13 @@ import * as cn from 'classnames';
 import { Form, Button, Input, Icon, Upload, Spin, Checkbox } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import * as api from 'api';
-import { inject } from 'mobx-react';
-import { navigate} from '../../../router/navigate';
+import { navigate } from 'router';
 
 export interface IProps extends FormComponentProps {
   className?: string;
   privateKey?: string;
 }
 
-@inject('navigate')
 class LoginInner extends React.Component<IProps, any> {
   public state = {
     privateKey: this.readPrivateKey(),
@@ -114,7 +112,7 @@ class LoginInner extends React.Component<IProps, any> {
 
       this.setState({ isLoading: true });
       try {
-        response = await api.api.login(path, password);
+        response = await api.methods.login(path, password);
       } catch (e) {
         response = {
           success: false,
@@ -124,20 +122,22 @@ class LoginInner extends React.Component<IProps, any> {
         this.setState({ isLoading: false });
       }
 
-      if (response.success) {
-        navigate({ path: '/main' });
-      } else {
-        if (response.validation) {
-          this.props.form.setFields({
-            password: {
-              errors: [response.validation.password],
-            },
-            path: {
-              errors: [response.validation.path],
-            },
-          });
-        }
-      }
+      navigate({ path: '/main' });
+
+      // if (response.success) {
+      //   navigate({ path: '/main' });
+      // } else {
+      //   if (response.validation) {
+      //     this.props.form.setFields({
+      //       password: {
+      //         errors: [response.validation.password],
+      //       },
+      //       path: {
+      //         errors: [response.validation.path],
+      //       },
+      //     });
+      //   }
+      // }
     });
   }
 

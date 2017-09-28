@@ -5,7 +5,7 @@ import { history } from './router/history';
 import * as queryStr from 'query-string';
 import { Provider } from 'mobx-react';
 import * as stores from './stores';
-import { api } from './api';
+import * as api from './api';
 import { navigate } from './router/navigate';
 
 interface ILocationParams {

@@ -38,14 +38,28 @@ function createPromise<TResult>(type: string, payload: any, maxDelay: number = M
 }
 
 export class Api {
+  private constructor() {
+  }
+
   public async login(path: string, password: string): Promise<t.ILoginResponse> {
     return createPromise<t.ILoginResponse>(
       'user.login',
       { path, password },
     );
   }
+
+  public async readBalance(): Promise<t.IBalanceResponse> {
+    return createPromise<t.IBalanceResponse>(
+      'user.login',
+      null,
+    );
+  }
+
+  public async checkAuth(): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+
+  static instance = new Api();
 }
 
-const api = new Api();
-
-export { api };
+export const methods = Api.instance;

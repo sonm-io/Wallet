@@ -16,6 +16,7 @@ export interface ILoginResponse extends IResponse {
 
 export interface IBalanceResponse extends IResponse {
   data: {
-    balance: number;
+    balance: string;
+    tokenBalance: string;
   };
 }

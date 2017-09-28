@@ -1,5 +1,5 @@
 import queryStr from 'query-string';
-import history from './history';
+import { history } from './history';
 import { get } from 'lodash/fp';
 
 export interface INavigateArgument {
@@ -42,7 +42,6 @@ export function navigate({ path, query, mergeQuery }: INavigateArgument): string
     ? `${path}?${queryStr.stringify(query)}`
     : path;
 
-  debugger;
   (history as any).push(url);
 
   return url || '';
