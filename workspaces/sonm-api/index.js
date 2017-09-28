@@ -23,6 +23,8 @@ class Profile {
 
         const environment = config.environment || 'development';
 
+
+
         this.user = config.user;
         this.provider = new Web3.providers.HttpProvider(config.connectionUrl);
         this.web3 = new Web3(this.provider);
@@ -43,10 +45,12 @@ class Profile {
                         return contractObject.currentProvider.send.apply(contractObject.currentProvider, arguments);
                     };
 
-                    //console.log(contractObject);
-                    //console.log(configFile[environment][name]);
+                    // //console.log(contractObject);
+                    // //console.log(configFile[environment][name]);
+                    //
 
-                    this.contracts[name] = await contractObject.deployed(); //configFile[environment][name]
+                    //this.contracts[name] = await contractObject.deployed(); //configFile[environment][name]
+                    this.contracts[name] = await contractObject.at(configFile[environment][name]);
 
                 } catch (err) {
                     console.log('FAILED TO LOAD', file);
