@@ -1,10 +1,13 @@
-import { observable, action } from 'mobx';
+import { observable, action, computable } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'api';
 
 export class UserStore {
   @observable
-  public balance = '';
+  public ethBalance = '';
+
+  @observable
+  public snmBalance = '';
 
   @observable
   public isLoading = false;
@@ -13,11 +16,16 @@ export class UserStore {
   public error = false;
 
   @observable
-  public isAuth = false;
+  public address = '';
+
+  @computable
+  public get isAuth() {
+    return this.address !== '';
+  }
 
   @action
-  public setAuth(value: boolean) {
-    this.isAuth = value;
+  public setAddress(address: string) {
+    this.address = address;
   }
 
   @asyncAction
@@ -26,6 +34,8 @@ export class UserStore {
 
     try {
       const response: api.IBalanceResponse = await api.methods.readBalance();
+      this.ethBalance = response.data.balance;
+      this.snmBalance = response.data.tokenBalance;
 
     } catch (e) {
       this.error = e.message;

@@ -9,9 +9,10 @@ interface IProps {
   route: string;
   children: any;
   userStore: {
-    balance: string;
-    tokenBalance: string;
+    ethBalance: string;
+    snmBalance: string;
     isAuth: boolean;
+    fetch: () => void;
   };
 }
 
@@ -19,8 +20,11 @@ interface IProps {
 @observer
 export class App extends React.Component<IProps, any> {
   public componentWillMount() {
+    debugger;
     if (!this.props.userStore.isAuth) {
       navigate({ path: '/login' });
+    } else {
+      this.props.userStore.fetch();
     }
   }
 
@@ -30,18 +34,18 @@ export class App extends React.Component<IProps, any> {
       route,
       children,
       userStore: {
-        balance,
-        tokenBalance,
+        ethBalance,
+        snmBalance,
       },
     } = this.props;
 
     return (
       <div className={cn('sonm-app', className)}>
         <h2 className="sonm-app__eth-balance">
-          Eth balance {balance}
+          Eth balance {ethBalance}
         </h2>
         <h2 className="sonm-app__sonm-balance">
-          SONM balance {tokenBalance}
+          SONM balance {snmBalance}
         </h2>
         <Tabs defaultActiveKey={route} className="sonm-app__tabs">
           <Tabs.TabPane tab="Main" key="Main" />

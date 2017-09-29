@@ -22,7 +22,11 @@ function createPromise<TResult extends t.IFormResponse>(type: string, payload: a
         response.validation = processValidation(response.validation);
       }
 
-      done(response);
+      if (response.success) {
+        done(response);
+      } else {
+        reject(response.error);
+      }
     };
 
     watchTask = setInterval(

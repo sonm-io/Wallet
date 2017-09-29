@@ -96,8 +96,6 @@ class LoginInner extends React.Component<IProps, any> {
   }
 
   private handleSelectFile = (event: any) => {
-    this.setState({ privateKey: event.path });
-
     this.props.form.setFieldsValue({
       path: event.path,
     });
@@ -121,17 +119,20 @@ class LoginInner extends React.Component<IProps, any> {
       } catch (e) {
         response = {
           success: false,
-          error:  e.message,
+          error:  String(e),
         };
       } finally {
         this.setState({ isLoading: false });
       }
 
-      debugger;
+      if (this.props.form.getFieldValue('remember')) {
+        this.writePrivateKey(this.props.form.getFieldValue('path'));
+      }
+
       if (response.success) {
         navigate({ path: '/main' });
 
-        this.props.userStore.setAuth(true);
+        this.props.userStore.setAddress(response.data.address);
 
       } else {
         if (response.validation) {
@@ -158,6 +159,15 @@ class LoginInner extends React.Component<IProps, any> {
     }
 
     return result;
+  }
+
+  private writePrivateKey(privateKey: string) {
+    try {
+      window.localStorage.setItem('private-key', privateKey);
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 }
 
