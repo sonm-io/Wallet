@@ -139,8 +139,8 @@ class Profile {
         }
     };
 
-    async getBalance() {
-        return await this.web3.eth.getBalance(this.user.address);
+    async getBalance( format = 'ether' ) {
+        return this.web3.utils.fromWei(await this.web3.eth.getBalance(this.user.address), format);
     }
 
     async getTokenBalance() {
