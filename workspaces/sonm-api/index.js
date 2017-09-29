@@ -74,7 +74,7 @@ class Profile {
                 if ( payload.method === 'eth_sendTransaction' ) {
                     const txCount = await web3.eth.getTransactionCount(config.user.address);
                     const gasPrice = web3.utils.toWei(100, "gwei");
-                    const gasLimit = 32000;
+                    const gasLimit = 64000;
 
                     const gasPriceHex = web3.utils.toHex(gasPrice);
                     const gasLimitHex = web3.utils.toHex(gasLimit);
@@ -148,7 +148,7 @@ class Profile {
     }
 
     async sendToken( to, amount ) {
-        return await this.contracts['SNMT'].transfer(to, amount, {from: this.user.address});
+        return await this.contracts['SNMT'].transfer(to, this.web3.utils.toHex(amount), {from: this.user.address});
     }
 
     async sendTransaction(addressTo, amount) {
