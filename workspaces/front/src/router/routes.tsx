@@ -13,7 +13,7 @@ const routes = [
     }),
   },
   {
-    path: '/',
+    path: /^\//,
     async action({ next }: IContext) {
       const route = await next();
 
@@ -30,18 +30,14 @@ const routes = [
     },
     children: [
       {
-        path: '/main',
+        path: 'main',
         action: defaultAction = (ctx: IContext) => ({
-          title: 'Balance',
-          content: <div />,
+          title: 'Main',
+          content: <div>Main Page</div>,
         }),
       },
       {
-        path: '/',
-        action: defaultAction,
-      },
-      {
-        path: '*',
+        path: /.*/,
         action: () => ({
           title: 'Wrong way',
           content: <div>WRONG WAY</div>,

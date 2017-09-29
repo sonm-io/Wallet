@@ -3,15 +3,18 @@ import * as cn from 'classnames';
 import { Form, Button, Input, Icon, Upload, Spin, Checkbox } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import * as api from 'api';
+import { navigate } from 'router';
 import { inject } from 'mobx-react';
-import { navigate} from '../../../router/navigate';
 
 export interface IProps extends FormComponentProps {
   className?: string;
   privateKey?: string;
+  userStore: {
+    setAuth: (v: boolean) => void;
+  };
 }
 
-@inject('navigate')
+@inject('userStore')
 class LoginInner extends React.Component<IProps, any> {
   public state = {
     privateKey: this.readPrivateKey(),
@@ -93,8 +96,6 @@ class LoginInner extends React.Component<IProps, any> {
   }
 
   private handleSelectFile = (event: any) => {
-    this.setState({ privateKey: event.path });
-
     this.props.form.setFieldsValue({
       path: event.path,
     });
@@ -114,18 +115,25 @@ class LoginInner extends React.Component<IProps, any> {
 
       this.setState({ isLoading: true });
       try {
-        response = await api.api.login(path, password);
+        response = await api.methods.login(path, password);
       } catch (e) {
         response = {
           success: false,
-          error:  e.message,
+          error:  String(e),
         };
       } finally {
         this.setState({ isLoading: false });
       }
 
+      if (this.props.form.getFieldValue('remember')) {
+        this.writePrivateKey(this.props.form.getFieldValue('path'));
+      }
+
       if (response.success) {
         navigate({ path: '/main' });
+
+        this.props.userStore.setAddress(response.data.address);
+
       } else {
         if (response.validation) {
           this.props.form.setFields({
@@ -151,6 +159,15 @@ class LoginInner extends React.Component<IProps, any> {
     }
 
     return result;
+  }
+
+  private writePrivateKey(privateKey: string) {
+    try {
+      window.localStorage.setItem('private-key', privateKey);
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 }
 

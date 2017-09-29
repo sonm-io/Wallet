@@ -1,5 +1,7 @@
-const user = {};
+import { useStrict } from 'mobx';
 
-export {
-  user,
-};
+import { UserStore } from './user';
+
+useStrict(true);
+
+export const userStore = new UserStore();

@@ -4,7 +4,11 @@ export interface IResponse {
   error?: string;
 }
 
-export interface ILoginResponse extends IResponse {
+export interface IFormResponse extends IResponse {
+  validation?: object;
+}
+
+export interface ILoginResponse extends IFormResponse {
   validation?: {
     path?: string;
     password?: string;
@@ -16,6 +20,7 @@ export interface ILoginResponse extends IResponse {
 
 export interface IBalanceResponse extends IResponse {
   data: {
-    balance: number;
+    balance: string;
+    tokenBalance: string;
   };
 }
