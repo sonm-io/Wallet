@@ -37,7 +37,7 @@ for ( const namespace in routes ) {
 const init = async () => {
     try {
         const config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
-
+        
         await api.init({
             user: {
                 address: '0x6Ffc014F1dEee1175Cb1c35ADD333fcBE135527f',
@@ -76,7 +76,7 @@ const init = async () => {
 
             // res = await routes.user.send_token(api, {
             //     to: '0xa1fdfef08324d1865047c206735df2933daf5f7e',
-            //     amount: 5,
+            //     amount: 9,
             // });
             // console.log(res);
 
