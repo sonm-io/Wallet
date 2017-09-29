@@ -11,6 +11,7 @@ module.exports = async function(api, data) {
             keythereum.recover(data.password, json);
 
             return {
+                success: true,
                 data: {
                     address: json.address
                 }

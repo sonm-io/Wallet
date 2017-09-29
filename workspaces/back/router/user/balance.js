@@ -5,9 +5,10 @@ module.exports = async function (api) {
     const tokenBalance = await api.getTokenBalance();
 
     return {
-        data: {
-            balance: balance,
-            token_balance: tokenBalance,
-        },
+      success: true,
+      data: {
+        balance: balance,
+        token_balance: tokenBalance,
+      },
     }
 };
