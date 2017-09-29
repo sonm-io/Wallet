@@ -5,8 +5,6 @@ import { history } from './router/history';
 import * as queryStr from 'query-string';
 import { Provider } from 'mobx-react';
 import * as stores from './stores';
-import * as api from './api';
-import { navigate } from './router/navigate';
 
 interface ILocationParams {
   pathname: string;
@@ -23,7 +21,7 @@ async function renderByPath({ pathname, search }: ILocationParams) {
   window.document.title = title;
 
   render(
-    <Provider {...stores} api={api} navigate={navigate} key="app-root">
+    <Provider {...stores} key="app-root">
       {content}
     </Provider>,
     window.document.querySelector('#root'),

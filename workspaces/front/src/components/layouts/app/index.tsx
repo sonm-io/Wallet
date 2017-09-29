@@ -3,27 +3,23 @@ import { Tabs } from 'antd';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { navigate } from 'router';
-import * as api from 'api';
 
 interface IProps {
   className?: string;
   route: string;
   children: any;
-  user: {
+  userStore: {
     balance: string;
     tokenBalance: string;
+    isAuth: boolean;
   };
 }
 
-@inject('user')
+@inject('userStore')
 @observer
 export class App extends React.Component<IProps, any> {
   public componentWillMount() {
-    this.checkAuth();
-  }
-
-  private async checkAuth() {
-    if (!api.methods.checkAuth()) {
+    if (!this.props.userStore.isAuth) {
       navigate({ path: '/login' });
     }
   }
@@ -33,7 +29,7 @@ export class App extends React.Component<IProps, any> {
       className,
       route,
       children,
-      user: {
+      userStore: {
         balance,
         tokenBalance,
       },

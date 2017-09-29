@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { observable, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'api';
 
@@ -11,6 +11,14 @@ export class UserStore {
 
   @observable
   public error = false;
+
+  @observable
+  public isAuth = false;
+
+  @action
+  public setAuth(value: boolean) {
+    this.isAuth = value;
+  }
 
   @asyncAction
   public async fetch() {

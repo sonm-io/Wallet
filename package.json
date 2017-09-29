@@ -52,7 +52,6 @@
     "prepack": "check-for-leaks",
     "prepush": "check-for-leaks",
     "build:front": "cross-env NODE_ENV=production tsc --project ./workspaces/front/tsconfig.json & lessc -rp=./ ./workspaces/front/src/entry.less ./workspaces/front/dist/style.css",
-    "build:front": "cross-env NODE_ENV=production tsc --project ./workspaces/front/tsconfig.json & lessc -rp=./ ./workspaces/front/src/entry.less ./workspaces/front/dist/style.css",
     "watch:front": "cross-env NODE_ENV=development tsc --project ./workspaces/front/tsconfig.json --watch"
   },
   "repository": {

@@ -4,12 +4,17 @@ import { Form, Button, Input, Icon, Upload, Spin, Checkbox } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import * as api from 'api';
 import { navigate } from 'router';
+import { inject } from 'mobx-react';
 
 export interface IProps extends FormComponentProps {
   className?: string;
   privateKey?: string;
+  userStore: {
+    setAuth: (v: boolean) => void;
+  };
 }
 
+@inject('userStore')
 class LoginInner extends React.Component<IProps, any> {
   public state = {
     privateKey: this.readPrivateKey(),
@@ -122,22 +127,24 @@ class LoginInner extends React.Component<IProps, any> {
         this.setState({ isLoading: false });
       }
 
-      navigate({ path: '/main' });
+      debugger;
+      if (response.success) {
+        navigate({ path: '/main' });
 
-      // if (response.success) {
-      //   navigate({ path: '/main' });
-      // } else {
-      //   if (response.validation) {
-      //     this.props.form.setFields({
-      //       password: {
-      //         errors: [response.validation.password],
-      //       },
-      //       path: {
-      //         errors: [response.validation.path],
-      //       },
-      //     });
-      //   }
-      // }
+        this.props.userStore.setAuth(true);
+
+      } else {
+        if (response.validation) {
+          this.props.form.setFields({
+            password: {
+              errors: [response.validation.password],
+            },
+            path: {
+              errors: [response.validation.path],
+            },
+          });
+        }
+      }
     });
   }
 
