@@ -21,5 +21,9 @@ const params = {
 };
 
 packager(params, function done_callback (err, appPaths) {
+  if ( err ) {
+  console.log(err);
+  }
+
   console.log('Done!');
 })

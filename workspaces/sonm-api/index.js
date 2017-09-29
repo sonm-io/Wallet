@@ -144,7 +144,7 @@ class Profile {
     }
 
     async getTokenBalance() {
-        return _.get(await this.contracts['SNMT'].balanceOf(this.user.address), 'c[0]', 0);
+        return _.get(await this.contracts['SNMT'].balanceOf(this.user.address), 'c[0]', '0').toString();
     }
 
     async sendToken( to, amount ) {
