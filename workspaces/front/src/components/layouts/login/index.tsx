@@ -9,8 +9,8 @@ import { inject } from 'mobx-react';
 export interface IProps extends FormComponentProps {
   className?: string;
   privateKey?: string;
-  userStore: {
-    setAuth: (v: boolean) => void;
+  userStore?: {
+    setAddress: (s: string) => void;
   };
 }
 
@@ -52,6 +52,7 @@ class LoginInner extends React.Component<IProps, any> {
                   </p>
                 </Upload.Dragger>
                 {form.getFieldDecorator('path', {
+                  initialValue: this.state.privateKey,
                   rules: [
                     { required: true, message: 'Please select file' },
                   ],
@@ -132,7 +133,9 @@ class LoginInner extends React.Component<IProps, any> {
       if (response.success) {
         navigate({ path: '/main' });
 
-        this.props.userStore.setAddress(response.data.address);
+        if (this.props.userStore && response.data) {
+          this.props.userStore.setAddress(response.data.address);
+        }
 
       } else {
         if (response.validation) {

@@ -67,7 +67,7 @@ export class Api {
 
   public async readBalance(): Promise<t.IBalanceResponse> {
     return createPromise<t.IBalanceResponse>(
-      'user.login',
+      'user.balance',
       null,
     );
   }

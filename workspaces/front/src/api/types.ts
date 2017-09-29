@@ -21,6 +21,6 @@ export interface ILoginResponse extends IFormResponse {
 export interface IBalanceResponse extends IResponse {
   data: {
     balance: string;
-    tokenBalance: string;
+    token_balance: string;
   };
 }

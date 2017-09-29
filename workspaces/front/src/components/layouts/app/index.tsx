@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tabs } from 'antd';
+import { Tabs, Alert } from 'antd';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { navigate } from 'router';
@@ -12,6 +12,7 @@ interface IProps {
     ethBalance: string;
     snmBalance: string;
     isAuth: boolean;
+    error: string;
     fetch: () => void;
   };
 }
@@ -20,7 +21,6 @@ interface IProps {
 @observer
 export class App extends React.Component<IProps, any> {
   public componentWillMount() {
-    debugger;
     if (!this.props.userStore.isAuth) {
       navigate({ path: '/login' });
     } else {
@@ -36,11 +36,13 @@ export class App extends React.Component<IProps, any> {
       userStore: {
         ethBalance,
         snmBalance,
+        error,
       },
     } = this.props;
 
     return (
       <div className={cn('sonm-app', className)}>
+        {error ? <Alert message={error} /> : null}
         <h2 className="sonm-app__eth-balance">
           Eth balance {ethBalance}
         </h2>
