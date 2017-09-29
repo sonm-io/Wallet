@@ -3,16 +3,12 @@
 const keythereum = require("keythereum");
 const fs = require("fs-extra");
 
-module.exports = async function(data) {
-
-    //data.path = '/Users/dmitrypisanko/Library/Ethereum/rinkeby/keystore/UTC--2017-09-15T07-23-42.468863488Z--23ea8516453f743b729a57b53369a6b50d98ae2c';
-    //console.log(data.path);
-
+module.exports = async function(api, data) {
     try {
         const json = await fs.readJson(data.path);
 
         try {
-            const privateKey = keythereum.recover(data.password, json);
+            keythereum.recover(data.password, json);
 
             return {
                 data: {
@@ -21,16 +17,16 @@ module.exports = async function(data) {
             };
         } catch ( err ) {
             return {
-                error: {
+                validation: {
                     password: 'password_not_valid'
                 },
             };
         }
     } catch ( err ) {
         return {
-          error: {
+            validation: {
               path: 'path_not_valid'
-          },
+            },
         };
     }
 

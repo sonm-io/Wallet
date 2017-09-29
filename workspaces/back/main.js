@@ -50,7 +50,7 @@ const init = async () => {
             console.log(request);
 
             if ( request && request.type && handlers[request.type] ) {
-                const result = await handlers[request.type](request.payload);
+                const result = await handlers[request.type](api, request.payload);
 
                 console.log(result);
 
@@ -65,12 +65,22 @@ const init = async () => {
         });
 
         try {
+
+            //
+
             //await routes.wallet.auth(app);
 
             console.log('Try to get balance');
-            const res = await routes.user.balance(api);
+            let res = await routes.user.balance(api);
             console.log(res);
 
+            // res = await routes.user.send_token(api, {
+            //     to: '0xa1fdfef08324d1865047c206735df2933daf5f7e',
+            //     amount: 5,
+            // });
+            // console.log(res);
+
+            //console.log(await api.sendTransaction('0xa1fdfef08324d1865047c206735df2933daf5f7e', 0.05));
             //await routes.wallet.transaction_history(app);
 
         } catch ( err ) {
