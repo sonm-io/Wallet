@@ -3652,6 +3652,13 @@ lerna@^2.0.0:
     write-pkg "^3.1.0"
     yargs "^8.0.2"
 
+less-plugin-glob@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/less-plugin-glob/-/less-plugin-glob-2.0.1.tgz#4588cc0333657617fceed5f47b315633a75d31ad"
+  dependencies:
+    globby "^6.1.0"
+    promise "^8.0.1"
+
 less@2.7.2:
   version "2.7.2"
   resolved "https://registry.yarnpkg.com/less/-/less-2.7.2.tgz#368d6cc73e1fb03981183280918743c5dcf9b3df"
@@ -4515,6 +4522,12 @@ progress@^2.0.0:
 promise@^7.1.1:
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/promise/-/promise-7.3.1.tgz#064b72602b18f90f29192b8b1bc418ffd1ebd3bf"
+  dependencies:
+    asap "~2.0.3"
+
+promise@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/promise/-/promise-8.0.1.tgz#e45d68b00a17647b6da711bf85ed6ed47208f450"
   dependencies:
     asap "~2.0.3"
 
