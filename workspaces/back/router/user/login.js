@@ -8,7 +8,8 @@ module.exports = async function(api, data) {
         const json = await fs.readJson(data.path);
 
         try {
-            keythereum.recover(data.password, json);
+            json.privateKey = keythereum.recover(data.password, json);
+            api.setUser(json);
 
             return {
                 success: true,
