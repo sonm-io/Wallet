@@ -72,6 +72,25 @@ export class Api {
     );
   }
 
+  public async processTransaction(
+    from: string,
+    to: string,
+    qty: string,
+    gasPrice: string,
+    gasLimit: string,
+  ) {
+    return createPromise<t.IBalanceResponse>(
+      'user.send_ether',
+      {
+        from,
+        to,
+        qty,
+        gasPrice,
+        gasLimit,
+      },
+    );
+  }
+
   static instance = new Api();
 }
 

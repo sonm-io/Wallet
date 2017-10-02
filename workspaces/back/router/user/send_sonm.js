@@ -6,10 +6,10 @@ module.exports = async function (api, data) {
     if ( result ) {
         return {
             success: true,
-        }
+        };
     } else {
         return {
             error: 'send_token_false',
-        }
+        };
     }
 };

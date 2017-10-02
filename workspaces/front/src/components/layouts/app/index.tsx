@@ -44,10 +44,10 @@ export class App extends React.Component<IProps, any> {
       <div className={cn('sonm-app', className)}>
         {error ? <Alert message={error} /> : null}
         <h2 className="sonm-app__eth-balance">
-          Eth balance {ethBalance}
+          ETH: {ethBalance}
         </h2>
         <h2 className="sonm-app__sonm-balance">
-          SONM balance {snmBalance}
+          SONM: {snmBalance}
         </h2>
         <Tabs defaultActiveKey={route} className="sonm-app__tabs">
           <Tabs.TabPane tab="Main" key="Main" />

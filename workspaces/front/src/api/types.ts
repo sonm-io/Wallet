@@ -4,6 +4,13 @@ export interface IResponse {
   error?: string;
 }
 
+export interface ISubscribeResponse {
+  success: boolean;
+  done: boolean;
+  data?: any;
+  error?: string;
+}
+
 export interface IFormResponse extends IResponse {
   validation?: object;
 }
