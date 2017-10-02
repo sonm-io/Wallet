@@ -19,6 +19,7 @@ module.exports = async function(api, data) {
             };
         } catch ( err ) {
             return {
+                success: false,
                 validation: {
                     password: 'password_not_valid'
                 },
@@ -26,8 +27,9 @@ module.exports = async function(api, data) {
         }
     } catch ( err ) {
         return {
+            success: false,
             validation: {
-              path: 'path_not_valid'
+                path: 'path_not_valid'
             },
         };
     }
