@@ -26,19 +26,13 @@ export class TransactionsStore {
   @observable
   public transactions: ITransaction[] = [];
 
-  @action.addTransaction()
-  public setAddress(address: string) {
-    this.address = address;
-  }
-
   @asyncAction
-  public *fetch() {
+  public *processTransaction(transaction: ITransaction) {
     this.isLoading = true;
 
     try {
-      const response: api.IBalanceResponse = yield api.methods.readBalance();
-      this.ethBalance = response.data.balance;
-      this.snmBalance = response.data.token_balance;
+      const response = yield api.methods.processTransaction();
+      debugger;
 
     } catch (e) {
       this.error = String(e);

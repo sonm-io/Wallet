@@ -1,5 +1,6 @@
 import { App } from '../components/layouts/app';
 import { Login } from '../components/layouts/login';
+import { Transaction } from '../components/layouts/transaction';
 import * as React from 'react';
 
 let defaultAction;
@@ -33,7 +34,7 @@ const routes = [
         path: 'main',
         action: defaultAction = (ctx: IContext) => ({
           title: 'Main',
-          content: <div>Main Page</div>,
+          content: <Transaction />,
         }),
       },
       {
