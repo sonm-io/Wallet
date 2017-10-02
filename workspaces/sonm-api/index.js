@@ -58,7 +58,7 @@ class Profile {
 
             request.ontimeout = function() {
                 _this.connected = false;
-                callback(errors.ConnectionTimeout(this.timeout));
+                //callback(errors.ConnectionTimeout(this.timeout));
             };
 
             try {

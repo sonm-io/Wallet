@@ -39,10 +39,10 @@ const init = async () => {
         const config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
         
         await api.init({
-            user: {
-                address: '0x6Ffc014F1dEee1175Cb1c35ADD333fcBE135527f',
-                privateKey: 'e3d90c923a8b1b324b6483d1fbf640d80d9971ed982afb63c75f35fa54dc5edc',
-            },
+            // user: {
+            //     address: '0x6Ffc014F1dEee1175Cb1c35ADD333fcBE135527f',
+            //     privateKey: 'e3d90c923a8b1b324b6483d1fbf640d80d9971ed982afb63c75f35fa54dc5edc',
+            // },
             connectionUrl: _.get(config, "connection.url"),
         });
 
@@ -50,16 +50,19 @@ const init = async () => {
             console.log(request);
 
             if ( request && request.type && handlers[request.type] ) {
-                const result = await handlers[request.type](api, request.payload);
+                event.sender.send(request.requestId, {
+                  success: true,
+                });
 
-                console.log(result);
+                const result = await handlers[request.type](api);
 
                 event.sender.send(request.requestId, result);
             } else {
                 event.sender.send(request.requestId, {
-                    error: {
-                        $fatal: 'endpoint_not_found',
-                    },
+                  success: false,
+                  error: {
+                    $fatal: 'endpoint_not_found',
+                  },
                 });
             }
         });
