@@ -37,12 +37,12 @@ for ( const namespace in routes ) {
 const init = async () => {
     try {
         const config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
-        
+
         await api.init({
-            user: {
-                address: '0x6Ffc014F1dEee1175Cb1c35ADD333fcBE135527f',
-                privateKey: 'e3d90c923a8b1b324b6483d1fbf640d80d9971ed982afb63c75f35fa54dc5edc',
-            },
+            // user: {
+            //     address: '0x88057F14236687831e1fd205e8EFB9E45166Fe72',
+            //     privateKey: 'e3d90c923a8b1b324b6483d1fbf640d80d9971ed982afb63c75f35fa54dc5edc',
+            // },
             connectionUrl: _.get(config, "connection.url")
         });
 
@@ -66,9 +66,11 @@ const init = async () => {
 
         try {
             //await routes.wallet.auth(app);
+
             // console.log('Try to get balance');
             // let res = await routes.user.balance(api);
             // console.log(res);
+
             // res = await routes.user.send_token(api, {
             //     to: '0xa1fdfef08324d1865047c206735df2933daf5f7e',
             //     amount: 9,

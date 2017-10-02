@@ -18,6 +18,10 @@ class Profile {
             throw new Error('You forget RPC url');
         }
 
+        if ( config.user ) {
+            this.user = config.user;
+        }
+
         const environment = config.environment || 'development';
         this.provider = new Web3.providers.HttpProvider(config.connectionUrl);
 
@@ -140,13 +144,7 @@ class Profile {
     }
 
     async getTokenBalance() {
-        try {
-          return _.get(await this.contracts['SNMT'].balanceOf(this.user.address), 'c[0]', '0').toString();
-        } catch (err) {
-            console.log(err.stack)
-        }
-
-        return '0';
+      return _.get(await this.contracts['SNMT'].balanceOf(this.user.address), 'c[0]', '0').toString();
     }
 
     async sendToken( to, amount ) {
