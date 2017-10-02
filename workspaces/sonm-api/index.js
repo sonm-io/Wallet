@@ -39,11 +39,13 @@ class Profile {
 
             request.onreadystatechange = function() {
                 if (request.readyState === 4 && request.timeout !== 1) {
-                    var result = request.responseText;
-                    var error = null;
+                    let result = request.responseText;
+                    let error = null;
 
                     try {
                         result = JSON.parse(result);
+
+                        console.log(result);
                     } catch(e) {
                         console.log(e.stack);
 

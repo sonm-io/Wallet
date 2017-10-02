@@ -17,6 +17,7 @@ for ( const namespace in routes ) {
     }
 }
 
+// https://github.com/ethjs/ethjs-provider-signer
 // for ( const namespace in routes ) {
 //     for ( const action in routes[namespace] ) {
 //         if ( _.isObject(routes[namespace][action]) ) {
@@ -62,7 +63,7 @@ const init = async () => {
                   console.log('RESPONSE', result);
 
                   event.sender.send(request.requestId, result);
-                }).catch( error => {
+                }).catch( _ => {
                   event.sender.send(request.requestId, {
                     done: true,
                     success: false,
