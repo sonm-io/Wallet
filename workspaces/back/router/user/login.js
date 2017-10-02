@@ -14,22 +14,22 @@ module.exports = async function(api, data) {
             return {
                 success: true,
                 data: {
-                    address: json.address
-                }
+                    address: json.address,
+                },
             };
         } catch ( err ) {
             return {
-                success: false,
+                success: true,
                 validation: {
-                    password: 'password_not_valid'
+                    password: 'password_not_valid',
                 },
             };
         }
     } catch ( err ) {
         return {
-            success: false,
+            success: true,
             validation: {
-                path: 'path_not_valid'
+                path: 'path_not_valid',
             },
         };
     }

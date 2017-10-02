@@ -65,6 +65,7 @@ class LoginInner extends React.Component<IProps, any> {
               </Form.Item>
               <Form.Item>
                 {form.getFieldDecorator('password', {
+                  initialValue: '11111111',
                   rules: [
                     { required: true, message: 'Please input your Password!' },
                   ],

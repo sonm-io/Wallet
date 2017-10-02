@@ -2,14 +2,6 @@ import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'api';
 
-export interface ITransaction {
-  from: string;
-  to: string;
-  qty: string;
-  gasPrice: string;
-  gasLimit: string;
-}
-
 export class TransactionStore {
   @observable
   public gasLimit = '';
@@ -27,12 +19,19 @@ export class TransactionStore {
   public transactions: ITransaction[] = [];
 
   @asyncAction
-  public *processTransaction(transaction: ITransaction) {
+  public *processTransaction(
+    from: string,
+    to: string,
+    qty: string,
+    gasPrice: string,
+    gasLimit: string,
+  ) {
     this.isLoading = true;
 
     try {
-      const response = yield api.methods.processTransaction();
-      debugger;
+      const response = yield api.methods.processTransaction(
+        from, to, qty, gasPrice, gasLimit,
+      );
 
     } catch (e) {
       this.error = String(e);
