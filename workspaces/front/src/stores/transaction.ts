@@ -10,7 +10,7 @@ export interface ITransaction {
   gasLimit: string;
 }
 
-export class TransactionsStore {
+export class TransactionStore {
   @observable
   public gasLimit = '';
 
