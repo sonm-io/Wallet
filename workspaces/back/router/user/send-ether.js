@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = async function (api, data) {
-  api.sendTransaction(data.to, data.amount).then( result => {
+  api.sendEther(data.to, data.amount).then( result => {
     console.log(result);
   }).catch( err => {
     console.log(err);

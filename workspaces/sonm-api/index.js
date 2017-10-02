@@ -153,7 +153,7 @@ class Profile {
         return await this.contracts['SNMT'].transfer(to, this.web3.utils.toHex(amount), {from: this.user.address});
     }
 
-    async sendTransaction(addressTo, amount) {
+    async sendEther(addressTo, amount) {
         const user = this.user;
         const web3 = this.web3;
 
