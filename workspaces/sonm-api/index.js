@@ -157,8 +157,6 @@ class Profile {
         const user = this.user;
         const web3 = this.web3;
 
-        const privateKey = new Buffer(user.privateKey, 'hex');
-
         const txCount = await web3.eth.getTransactionCount(user.address);
         const gasPrice = web3.utils.toWei(100, "gwei");
         const gasLimit = 32000;
@@ -179,7 +177,7 @@ class Profile {
         };
 
         const tx = new Tx(rawTx);
-        tx.sign(privateKey);
+        tx.sign(this.user.privateKey);
 
         return await web3.eth.sendSignedTransaction('0x' + tx.serialize().toString('hex'));
     }
