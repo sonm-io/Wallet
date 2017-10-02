@@ -11,5 +11,5 @@ module.exports = async function (api) {
         balance: balance,
         token_balance: tokenBalance,
       },
-    }
+    };
 };

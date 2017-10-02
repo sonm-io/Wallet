@@ -16,14 +16,14 @@ module.exports = async function(api, data) {
             return {
                 success: true,
                 data: {
-                    address: json.address
-                }
+                    address: json.address,
+                },
             };
         } catch ( err ) {
             return {
                 success: false,
                 validation: {
-                    password: 'password_not_valid'
+                    password: 'password_not_valid',
                 },
             };
         }
@@ -31,7 +31,7 @@ module.exports = async function(api, data) {
         return {
             success: false,
             validation: {
-                path: 'path_not_valid'
+                path: 'path_not_valid',
             },
         };
     }
