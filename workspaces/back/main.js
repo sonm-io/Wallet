@@ -47,16 +47,30 @@ const init = async () => {
         });
 
         ipcMain.on('sonm', async (event, request) => {
-            console.log(request);
+            console.log('REQUEST', request);
 
             if ( request && request.type && handlers[request.type] ) {
                 event.sender.send(request.requestId, {
+                  done: false,
                   success: true,
                 });
 
-                const result = await handlers[request.type](api);
+                handlers[request.type](api, request.payload).then( result => {
+                  result.success = true;
+                  result.done = true;
 
-                event.sender.send(request.requestId, result);
+                  console.log('RESPONSE', result);
+
+                  event.sender.send(request.requestId, result);
+                }).catch( error => {
+                  event.sender.send(request.requestId, {
+                    done: true,
+                    success: false,
+                    error: {
+                      $fatal: 'something_wrong',
+                    },
+                  });
+                });
             } else {
                 event.sender.send(request.requestId, {
                   success: false,

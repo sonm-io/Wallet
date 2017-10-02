@@ -9,19 +9,17 @@ module.exports = async function(api, data) {
 
         try {
             json.privateKey = keythereum.recover(data.password, json);
-            json.address = `0x${json.address}`
+            json.address = `0x${json.address}`;
 
             api.setUser(json);
 
             return {
-                success: true,
                 data: {
                     address: json.address,
                 },
             };
         } catch ( err ) {
             return {
-                success: true,
                 validation: {
                     password: 'password_not_valid',
                 },
@@ -29,7 +27,6 @@ module.exports = async function(api, data) {
         }
     } catch ( err ) {
         return {
-            success: true,
             validation: {
                 path: 'path_not_valid',
             },
