@@ -43,7 +43,7 @@ const init = async () => {
                 address: '0x6Ffc014F1dEee1175Cb1c35ADD333fcBE135527f',
                 privateKey: 'e3d90c923a8b1b324b6483d1fbf640d80d9971ed982afb63c75f35fa54dc5edc',
             },
-            connectionUrl: _.get(config, "connection.url")
+            connectionUrl: _.get(config, "connection.url"),
         });
 
         ipcMain.on('sonm', async (event, request) => {
@@ -58,9 +58,9 @@ const init = async () => {
             } else {
                 event.sender.send(request.requestId, {
                     error: {
-                        $fatal: 'endpoint_not_found'
+                        $fatal: 'endpoint_not_found',
                     },
-                })
+                });
             }
         });
 

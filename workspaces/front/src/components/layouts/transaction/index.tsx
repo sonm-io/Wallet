@@ -39,7 +39,7 @@ class Me extends React.Component<IProps, any> {
     return (
       <div className={cn('sonm-wallet', className)}>
         <h2 className="sonm-wallet__address">
-          Your address: {address}
+          Your address: 0x{address}
         </h2>
         <Spin spinning={this.state.isPending} tip="Loading...">
           <Form onSubmit={this.handleSubmit} className="sonm-transaction__form">
@@ -61,8 +61,9 @@ class Me extends React.Component<IProps, any> {
               <Col span={8}>
                 <Form.Item {...Me.numberInputLayout} label="Wallet id">
                   {form.getFieldDecorator('to', {
+                    normalize: Me.normalizeWalletId,
                     rules: [
-                      { required: true, message: 'Please input wallet id' },
+                      { required: true, validator: Me.walletIdValidator },
                     ],
                   })(
                     <Input
@@ -124,7 +125,6 @@ class Me extends React.Component<IProps, any> {
           gasLimit,
         )
       ) {
-
         this.props.form.setFields({
           password: {
             errors: '',
@@ -137,8 +137,21 @@ class Me extends React.Component<IProps, any> {
     });
   }
 
-  public static ethFormater(value: string): string {
-    return `ETH ${value}`;
+  public static normalizeWalletId(value: string) {
+    if (value && value.length === 40) {
+      return '0x' + value;
+    }
+    return value;
+  }
+
+  public static walletIdValidator(rule: any, value: string, callback: (msg?: string) => void) {
+    if (value.length !== 42) {
+      return callback('Etherium id length should be 42');
+    }
+    if (!value.startsWith('0x')) {
+      return callback('Etherium id should starts with "0x"');
+    }
+    callback();
   }
 
   public static numberInputLayout = {

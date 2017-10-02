@@ -80,7 +80,7 @@ export class Api {
     gasLimit: string,
   ) {
     return createPromise<t.IBalanceResponse>(
-      'user.send-ether',
+      'user.send_ether',
       {
         from,
         to,

@@ -1,16 +1,16 @@
 'use strict';
 
 module.exports = async function (api, data) {
-  api.sendTransaction(data.to, data.amount).then( result => {
+  api.sendTransaction(data.to, data.qty).then( result => {
     console.log(result);
   }).catch( err => {
     console.log(err);
-  })
+  });
 
   return {
       done: false,
       success: true,
-  }
+  };
 
   // const result = await api.sendToken(data.to, data.amount);
   //
