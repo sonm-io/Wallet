@@ -14,19 +14,11 @@ class Profile {
     async init(config) {
         const configFile = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
 
-        if (!config.user) {
-            throw new Error('You forget user');
-        }
-
         if (!config.connectionUrl) {
             throw new Error('You forget RPC url');
         }
 
         const environment = config.environment || 'development';
-
-        this.user = config.user;
-        this.user.bufferPrivateKey = new Buffer(this.user.privateKey, 'hex');
-
         this.provider = new Web3.providers.HttpProvider(config.connectionUrl);
 
         //this.provider._privateKey(config.user.privateKey);
@@ -139,12 +131,22 @@ class Profile {
         }
     };
 
+    setUser( user ) {
+      this.user = user;
+    }
+
     async getBalance( format = 'ether' ) {
         return this.web3.utils.fromWei(await this.web3.eth.getBalance(this.user.address), format);
     }
 
     async getTokenBalance() {
-        return _.get(await this.contracts['SNMT'].balanceOf(this.user.address), 'c[0]', '0').toString();
+        try {
+          return _.get(await this.contracts['SNMT'].balanceOf(this.user.address), 'c[0]', '0').toString();
+        } catch (err) {
+            console.log(err.stack)
+        }
+
+        return '0';
     }
 
     async sendToken( to, amount ) {
