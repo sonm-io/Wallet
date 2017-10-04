@@ -1,10 +1,10 @@
 'use strict';
 
 const path = require('path');
+const { ipcMain } = require('electron');
 const _ = require('lodash');
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
-const { ipcMain } = require('electron');
 
 const routes = require('./router/index');
 const handlers = {};
@@ -38,7 +38,9 @@ for ( const namespace in routes ) {
 const init = async () => {
     try {
         const config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, './config/default.yml'), 'utf8'));
-        
+
+        console.log(config);
+
         await api.init({
             // user: {
             //     address: '0x6Ffc014F1dEee1175Cb1c35ADD333fcBE135527f',
@@ -51,18 +53,22 @@ const init = async () => {
             console.log('REQUEST', request);
 
             if ( request && request.type && handlers[request.type] ) {
-                event.sender.send(request.requestId, {
-                  done: false,
-                  success: true,
-                });
+                // event.sender.send(request.requestId, {
+                //   done: false,
+                //   success: true,
+                // });
 
                 handlers[request.type](api, request.payload).then( result => {
-                  result.success = true;
-                  result.done = true;
+                  console.log(result);
 
-                  console.log('RESPONSE', result);
+                  if ( result ) {
+                    result.success = true;
+                    result.done = true;
 
-                  event.sender.send(request.requestId, result);
+                    console.log('RESPONSE', result);
+
+                    event.sender.send(request.requestId, result);
+                  }
                 }).catch( _ => {
                   event.sender.send(request.requestId, {
                     done: true,

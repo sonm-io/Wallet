@@ -45,7 +45,7 @@ class Profile {
                     try {
                         result = JSON.parse(result);
 
-                        console.log(result);
+                        //console.log(result);
                     } catch(e) {
                         console.log(e.stack);
 
