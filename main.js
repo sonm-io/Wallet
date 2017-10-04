@@ -1,4 +1,5 @@
 const path = require('path')
+const url = require('url')
 const electron = require('electron')
 const autoUpdater = require('./auto-updater')
 
@@ -25,7 +26,6 @@ function initialize () {
   loadMainProcess()
 
   app.on('ready', function () {
-    registerFrontendRoot()
     createWindow()
     autoUpdater.initialize()
   })
@@ -59,7 +59,11 @@ function createWindow () {
   }
 
   mainWindow = new BrowserWindow(windowOptions)
-  mainWindow.loadURL(path.join('file://', __dirname, 'workspaces/front/assets/entry.html'))
+  mainWindow.loadURL(url.format({
+    protocol: 'file',
+    slashes: true,
+    pathname: path.join(__dirname, 'workspaces/front/assets/entry.html')
+  }))
 
   // Launch fullscreen with DevTools open, usage: npm run debug
   if (debug) {
@@ -115,26 +119,5 @@ switch (process.argv[1]) {
     break
   default:
     initialize()
-}
-
-function registerFrontendRoot () {
-  electron.protocol.interceptFileProtocol('file', (request, callback) => {
-    const filePath = request.url.substr(7) // remove protocol file://
-    let result
-
-    if (filePath.startsWith('src/')) {
-      result = path.join(__dirname, 'workspaces/front/src', filePath.substr(5))
-    } else {
-      result = filePath
-    }
-
-    console.log('referrer', request.referrer)
-    console.log('filePath', filePath)
-    callback(result)
-  }, error => {
-    if (error) {
-      console.error('Failed to intercept file protocol', error)
-    }
-  })
 }
 
