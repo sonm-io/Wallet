@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package sonm;
+
+message Capabilities {
+    repeated CPUDevice cpu = 1;
+    RAMDevice mem = 2;
+    repeated GPUDevice gpu = 3;
+}
+
+message CPUDevice {
+    string name = 1;
+    string vendor = 2;
+    int32 cores = 3;
+    double mhz = 4;
+    map<string, string> ext = 5;
+}
+
+message RAMDevice {
+    uint64 total = 1;
+    uint64 used = 2;
+}
+
+message GPUDevice {
+    // Name describes full GPU device name.
+    string name = 1;
+    // Vendor describes vendor name, for example "NVIDIA" or "AMD".
+    string vendorName = 2;
+    // Total maximum memory size the device can hold.
+    uint64 maxMemorySize = 3;
+}
