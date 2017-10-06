@@ -3,9 +3,12 @@
 const keythereum = require("keythereum");
 const fs = require("fs-extra");
 
-module.exports = async function(api, data) {
-    try {
-        const json = await fs.readJson(data.path);
+module.exports = async function(params) {
+  const api = params.api;
+  const data = params.data;
+
+  try {
+        const json = fs.readJsonSync(data.path);
 
         try {
             json.privateKey = keythereum.recover(data.password, json);
@@ -19,6 +22,8 @@ module.exports = async function(api, data) {
                 },
             };
         } catch ( err ) {
+          console.log(err.stack);
+
             return {
                 validation: {
                     password: 'password_not_valid',
@@ -26,6 +31,8 @@ module.exports = async function(api, data) {
             };
         }
     } catch ( err ) {
+        console.log(err.stack);
+
         return {
             validation: {
                 path: 'path_not_valid',

@@ -1,6 +1,7 @@
 'use strict';
 
-module.exports = async function (api) {
+module.exports = async function (params) {
+    const api = params.api;
 
     const balance = await api.getBalance();
     const tokenBalance = await api.getTokenBalance();
