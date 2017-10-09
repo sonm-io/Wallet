@@ -4,6 +4,10 @@ import { Form, Button, InputNumber, Input, Icon, Upload, Spin, Checkbox, Col, Ro
 import { FormComponentProps } from 'antd/lib/form/Form';
 import { inject } from 'mobx-react';
 import { Send, IResult } from './sub/send';
+import { TCurrency } from 'api/types';
+
+const TITLE_ETHER = 'Etherium';
+const TITLE_SNM = 'Sonm token';
 
 export interface IProps extends FormComponentProps {
   className?: string;
@@ -12,7 +16,14 @@ export interface IProps extends FormComponentProps {
     address: string;
   };
   transactionStore: {
-    processTransaction: (from: string, to: string, qty: string, gasPrice: string, gasLimit: string) => void;
+    processTransaction: (
+      from: string,
+      to: string,
+      qty: string,
+      gasPrice: string,
+      gasLimit: string,
+      currency: string,
+    ) => void;
   };
 }
 
@@ -38,7 +49,14 @@ export class Transaction extends React.Component<IProps, any> {
   }
 
   public handleSubmit = (params: IResult) => {
+    const { userStore } = this.props;
+    const { to, qty, gasLimit, gasPrice } = params;
+    const currency = params.title === TITLE_ETHER
+      ? 'eth'
+      : 'snm';
 
+    this.props.transactionStore.processTransaction(
+      userStore.address, to, qty, gasPrice, gasLimit, currency,
+    );
   }
 }
-

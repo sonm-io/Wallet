@@ -27,14 +27,15 @@ export class TransactionStore {
     from: string,
     to: string,
     qty: string,
-    gasPrice: string,
-    gasLimit: string,
+    currency: api.TCurrency,
+    gasPrice?: string,
+    gasLimit?: string,
   ) {
     this.isLoading = true;
 
     try {
       const response = yield api.methods.processTransaction(
-        from, to, qty, gasPrice, gasLimit,
+        from, to, qty, currency, gasPrice, gasLimit,
       );
 
     } catch (e) {

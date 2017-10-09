@@ -31,3 +31,5 @@ export interface IBalanceResponse extends IResponse {
     token_balance: string;
   };
 }
+
+export type TCurrency = 'snm' | 'eth';

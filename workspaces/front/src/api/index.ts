@@ -76,8 +76,9 @@ export class Api {
     from: string,
     to: string,
     qty: string,
-    gasPrice: string,
-    gasLimit: string,
+    currency: t.TCurrency,
+    gasPrice?: string,
+    gasLimit?: string,
   ) {
     return createPromise<t.IBalanceResponse>(
       'user.send_ether',
@@ -87,11 +88,12 @@ export class Api {
         qty,
         gasPrice,
         gasLimit,
+        currency,
       },
     );
   }
 
-  static instance = new Api();
+  public static instance = new Api();
 }
 
 export const methods = Api.instance;
