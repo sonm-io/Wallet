@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const { ipcMain } = require('electron');
+const { ipcMain, ipcRenderer } = require('electron');
 const _ = require('lodash');
 const fs = require('fs-extra');
 const yaml = require('js-yaml');

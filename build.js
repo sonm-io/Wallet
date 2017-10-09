@@ -2,6 +2,7 @@
 
 const packager = require('electron-packager');
 const rimraf = require('rimraf');
+const pjson = require('./package.json');
 
 const params = {
   dir: '.',

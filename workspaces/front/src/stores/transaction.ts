@@ -2,6 +2,10 @@ import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'api';
 
+export interface ITransaction {
+
+}
+
 export class TransactionStore {
   @observable
   public gasLimit = '';

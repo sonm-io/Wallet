@@ -12,7 +12,6 @@
     "app-module-path": "2.2.0",
     "classnames": "2.2.5",
     "history": "4.7.2",
-    "less-plugin-glob": "2.0.1",
     "lodash": "4.17.4",
     "mobx": "3.3.0",
     "mobx-react": "4.3.2",
@@ -23,7 +22,9 @@
     "universal-router": "4.1.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bundle": "cross-env NODE_ENV=production tsc --project ./tsconfig.json & lessc -rp=./ ./src/entry.less ./dist/style.css",
+    "watch": "cross-env NODE_ENV=development tsc --project ./tsconfig.json --watch"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
     "@types/react-dom": "15.5.4",
     "@types/universal-router": "1.2.1",
     "less": "2.7.2",
+    "less-plugin-glob": "2.0.1",
     "tslib": "1.7.1",
     "tslint": "5.7.0",
     "tslint-react": "3.2.0",
