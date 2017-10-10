@@ -1,6 +1,6 @@
 import queryStr from 'query-string';
 import { history } from './history';
-import { get } from 'lodash/fp';
+import get from 'lodash/fp/get';
 
 export interface INavigateArgument {
   path?: string;

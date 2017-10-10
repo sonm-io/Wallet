@@ -24,7 +24,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "bundle": "cross-env NODE_ENV=production tsc --project ./tsconfig.json & lessc -rp=./ ./src/entry.less ./dist/style.css",
-    "watch": "cross-env NODE_ENV=development tsc --project ./tsconfig.json --watch"
+    "watch": "cross-env NODE_ENV=development tsc --project ./tsconfig.json --watch",
+    "rollup": "cross-env NODE_ENV=production rollup --config ./config/rollup.config.js"
   },
   "repository": {
     "type": "git",
@@ -47,6 +48,9 @@
     "@types/universal-router": "1.2.1",
     "less": "2.7.2",
     "less-plugin-glob": "2.0.1",
+    "rollup": "0.50.0",
+    "rollup-plugin-commonjs": "8.2.1",
+    "rollup-plugin-typescript": "0.8.1",
     "tslib": "1.7.1",
     "tslint": "5.7.0",
     "tslint-react": "3.2.0",

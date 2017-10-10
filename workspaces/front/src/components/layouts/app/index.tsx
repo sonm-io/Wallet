@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tabs, Alert } from 'antd';
-import * as cn from 'classnames';
+import { default as cn } from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { navigate } from 'router';
 

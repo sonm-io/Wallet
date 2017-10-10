@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as cn from 'classnames';
+import { default as cn } from 'classnames';
 import { Form, Button, InputNumber, Input, Icon, Upload, Spin, Checkbox, Col, Row } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import { inject } from 'mobx-react';
@@ -56,7 +56,7 @@ export class Transaction extends React.Component<IProps, any> {
       : 'snm';
 
     this.props.transactionStore.processTransaction(
-      userStore.address, to, qty, gasPrice, gasLimit, currency,
+      userStore.address, to, qty, currency, gasPrice, gasLimit,
     );
   }
 }

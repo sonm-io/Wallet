@@ -1,3 +1,4 @@
-declare module 'lodash/fp' {
-  export function get(path: string): (obj: object) => any;
+declare module 'lodash/fp/get' {
+  function get(path: string): (obj: object) => any;
+  export = get;
 }
