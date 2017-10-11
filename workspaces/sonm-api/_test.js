@@ -1,7 +1,7 @@
 'use strict'
 
 const Web3 = require('web3');
-const api = require('./index');
+const api = require('./_sandbox');
 
 let main = async function() {
     try {
