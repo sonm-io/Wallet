@@ -1,18 +1,21 @@
 'use strict';
 
 const get = require('lodash/fp/get');
-// const invariant = require('fbjs/lib/invariant');
-const Entity = require('./Entity');
+const invariant = require('fbjs/lib/invariant');
+const Entity = require('./_Entity');
 
 const getBalance = get('c[0][0]');
 const SNMT = 'snmt';
 
 class Profile extends Entity {
-  constructor(user, ethUnit, snmtContract) {
-    super({ [SNMT]: snmtContract });
+  constructor({ provider, address0x, ethQtyUnit = 'wei', snmtContract }) {
+    super(provider, { [SNMT]: snmtContract });
 
-    this.user = user;
-    this.unit = ethUnit;
+    invariant(address0x, 'address is not defined');
+    invariant(address0x.startsWith('0x'), 'address should starts with 0x');
+
+    this.address = address0x;
+    this.unit = ethQtyUnit;
   }
 
   async getBalance() {
@@ -23,13 +26,13 @@ class Profile extends Entity {
   }
 
   async getTokenBalance() {
-    const result = await this.getContract(SNMT).balanceOf(this.user.address);
+    const result = await this.getContract(SNMT).balanceOf(this.address);
 
-    return getBalance(result).toString();
+    return await getBalance(result).toString();
   }
 
   getAddress() {
-    return this.user.address;
+    return this.address;
   }
 
   getGasLimitWei() {
@@ -40,7 +43,7 @@ class Profile extends Entity {
     return 100000;
   }
 
-  sendToken(addressTo, amount) {
+  sendTokens(addressTo, amount) {
     return this.getContract(SNMT).transfer(
       addressTo,
       this.web3.utils.toHex(amount),
@@ -56,9 +59,10 @@ class Profile extends Entity {
       value: this.web3.utils.toWei(amount, this.unit),
       to: addressTo,
     };
+    const signed = await this.web3.eth.signTransaction(tx);
 
-    return this.web3.eth.sendTransaction(tx);
+    return this.web3.eth.sendSignedTransaction(signed);
   }
 }
 
-module.exports = new Profile();
+module.exports = Profile;
