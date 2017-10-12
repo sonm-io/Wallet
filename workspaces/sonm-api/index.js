@@ -10,12 +10,13 @@ function createProfile(remoteEthNodeUrl, address, privateKey) {
   const privateKey0x = add0x(privateKey);
   const provider = providerFactory(remoteEthNodeUrl, address0x, privateKey0x);
   const snmtContractAddr = config.contractAddress.SNMT;
-  const snmtContract = contract(snmtContractJson).at(snmtContractAddr);
+  const snmtContract = contract(snmtContractJson);
+  snmtContract.setProvider(provider);
 
   return new Profile({
     address0x,
     provider,
-    snmtContract,
+    snmtContract: snmtContract.at(snmtContractAddr),
   });
 }
 

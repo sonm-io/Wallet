@@ -1,25 +1,8 @@
 'use strict';
 
 const invariant = require('fbjs/lib/invariant');
-const Web3 = require('web3');
 
 class Entity {
-  constructor(provider, mapNameToContract) {
-    invariant(mapNameToContract, 'mapNameToContract is not defined');
-    invariant(provider, 'provider is not defined');
-
-    this.contracts = Object.assign({}, mapNameToContract);
-    for (const contract in this.contracts) {
-      contract.setProvider(provider);
-    }
-
-    this.web3 = new Web3(provider);
-  }
-
-  getContract(name) {
-    return this.contracts[name];
-  }
-
   getTxIterator(web3TxPromise) {
     const updateQueue = [];
     const promiseQueue = [];

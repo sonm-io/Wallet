@@ -3,17 +3,21 @@
 const get = require('lodash/fp/get');
 const invariant = require('fbjs/lib/invariant');
 const Entity = require('./_Entity');
+const Web3 = require('web3');
 
-const getBalance = get('c[0][0]');
-const SNMT = 'snmt';
+const getBalance = get('c[0]');
 
 class Profile extends Entity {
   constructor({ provider, address0x, ethQtyUnit = 'wei', snmtContract }) {
-    super(provider, { [SNMT]: snmtContract });
+    super();
 
+    invariant(provider, 'provider is not defined');
+    invariant(snmtContract && snmtContract.constructor.name === "TruffleContract", 'snmtContract is not valid');
     invariant(address0x, 'address is not defined');
     invariant(address0x.startsWith('0x'), 'address should starts with 0x');
 
+    this.web3 = new Web3(provider);
+    this.contract = snmtContract;
     this.address = address0x;
     this.unit = ethQtyUnit;
   }
@@ -26,9 +30,9 @@ class Profile extends Entity {
   }
 
   async getTokenBalance() {
-    const result = await this.getContract(SNMT).balanceOf(this.address);
+    const result = await this.contract.balanceOf(this.address);
 
-    return await getBalance(result).toString();
+    return String(await getBalance(result));
   }
 
   getAddress() {
@@ -43,25 +47,29 @@ class Profile extends Entity {
     return 100000;
   }
 
-  sendTokens(addressTo, amount) {
-    return this.getContract(SNMT).transfer(
-      addressTo,
+  sendTokens(to, amount) {
+    return this.contract.transfer(
+      this.normalizeTarget(to),
       this.web3.utils.toHex(amount),
       { from: this.getAddress() }
     );
   }
 
-  sendEther(addressTo, amount) {
+  sendEther(to, amount) {
     const tx = {
       from: this.getAddress(),
       gasLimit: this.getGasLimitWei(),
       gasPrice: this.getGasPriceWei(),
       value: this.web3.utils.toWei(amount, this.unit),
-      to: addressTo,
+      to: this.normalizeTarget(to),
     };
-    const signed = await this.web3.eth.signTransaction(tx);
+    return this.web3.eth.sendTransaction(tx);
+  }
 
-    return this.web3.eth.sendSignedTransaction(signed);
+  normalizeTarget(to) {
+    return to instanceof Profile
+      ? to.address
+      : to; 
   }
 }
 

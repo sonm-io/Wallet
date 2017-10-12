@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const contract = require('truffle-contract');
 const Web3 = require('web3');
-const Tx = require('ethereumjs-tx');
+const tx = require('ethereumjs-tx');
 const yaml = require('js-yaml');
 const XHR2 = require('xhr2');
 
