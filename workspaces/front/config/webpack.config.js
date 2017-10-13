@@ -1,31 +1,18 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const { CheckerPlugin } = require('awesome-typescript-loader');
 const { getFullPath } = require('./utils');
 
 const {
-  TITLE,
   PORT,
-  WEBPACK_DEV_SERVER_PORT,
-  DIR_ASSETS,
   DIR_DIST,
 } = require('./config');
 
 const isDev = process.env.NODE_ENV !== 'production';
-const cwd = process.cwd();
 
 module.exports = {
-  entry: isDev ? [
-    `webpack-hot-middleware/client?http://localhost:${PORT}/`,
-    'webpack/hot/only-dev-server',
-    getFullPath('./src/entry.jsx'),
-  ] : [
-    getFullPath('./src/entry.jsx'),
-  ],
+  entry: getFullPath('./src/entry.tsx'),
 
   output: {
     filename: isDev ? '[name].bundle.js' : '[name].[hash].js',
@@ -53,15 +40,6 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.pug/,
-        loaders: 'pug-loader',
-      },
-      {
-        test: /\.svg/,
-        issuer: /\.less/,
-        loaders: 'svg-url-loader',
-      },
-      {
         test: /\.jpg/,
         issuer: /\.jsx/,
         loaders: 'file-loader',
@@ -73,33 +51,7 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        loader: 'awesome-typescript-loader',
-      },
-      {
-        test: /\.css/,
-        loader: ['style-loader', 'css-loader'],
-      },
-      {
-        test: /\.less/,
-        issuer: /.jsx?/,
-        loaders: (() => {
-          const use = [
-            {
-              loader: 'css-loader',
-              options: {
-                modules: true,
-                camelCase: true,
-                localIdentName: '[name]-[local]-[hash:base64:5]',
-                importLoaders: 1,
-                minimize: !isDev,
-              },
-            },
-            'postcss-loader',
-            'less-loader',
-          ];
-
-          return isDev ? ['style-loader', ...use] : ExtractTextPlugin.extract({ use });
-        })(),
+        loader: 'ts-loader',
       },
     ],
   },
@@ -128,52 +80,11 @@ module.exports = {
         },
       }),
       new webpack.optimize.CommonsChunkPlugin({ name: 'manifest' }),
-      new HtmlWebpackPlugin({
-        hash: false,
-        title: TITLE,
-        template: './src/entry.html',
-      }),
+      new webpack.optimize.UglifyJsPlugin(),
+      new ExtractTextPlugin({ filename: '[name].[contenthash].css', allChunks: true }),
+      new BundleAnalyzerPlugin(),
     ];
 
-    const extraPlugins = isDev
-      ? [
-        new webpack.ProvidePlugin({
-          DevTool: 'mobx-react-devtools',
-        }),
-        new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
-      ]
-      : [
-        new webpack.optimize.UglifyJsPlugin(),
-        new ExtractTextPlugin({ filename: '[name].[contenthash].css', allChunks: true }),
-        new CopyPlugin(
-          [
-            {
-              context: path.join(cwd, DIR_ASSETS),
-              from: '**/*',
-              to: path.join(cwd, DIR_DIST),
-            },
-          ],
-        ),
-      ];
-
-    if (process.env.ANALYZE) {
-      extraPlugins.push(new BundleAnalyzerPlugin());
-    }
-
-    return [...plugins, ...extraPlugins];
+    return [...plugins];
   })(),
-
-  devServer: {
-    contentBase: path.join(cwd, DIR_ASSETS),
-    quiet: false,
-    stats: {
-      errors: true,
-      colors: true,
-    },
-    compress: true,
-    hot: isDev,
-    port: WEBPACK_DEV_SERVER_PORT,
-    headers: { 'Access-Control-Allow-Origin': '*' },
-  },
 };

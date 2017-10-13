@@ -19,13 +19,14 @@
     "query-string": "5.0.0",
     "react": "15.6.1",
     "react-dom": "15.6.1",
-    "universal-router": "4.1.0"
+    "universal-router": "4.1.0",
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "bundle": "cross-env NODE_ENV=production tsc --project ./tsconfig.json & lessc -rp=./ ./src/entry.less ./dist/style.css",
     "watch": "cross-env NODE_ENV=development tsc --project ./tsconfig.json --watch",
-    "rollup": "cross-env NODE_ENV=production rollup --config ./config/rollup.config.js"
+    "rollup": "cross-env NODE_ENV=production rollup --config ./config/rollup.config.js",
+    "analyze": "cross-env NODE_ENV=production webpack --config ./config/webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -46,14 +47,18 @@
     "@types/react": "16.0.5",
     "@types/react-dom": "15.5.4",
     "@types/universal-router": "1.2.1",
+    "extract-text-webpack-plugin": "3.0.1",
     "less": "2.7.2",
     "less-plugin-glob": "2.0.1",
     "rollup": "0.50.0",
     "rollup-plugin-commonjs": "8.2.1",
     "rollup-plugin-typescript": "0.8.1",
+    "ts-loader": "^2.3.7",
     "tslib": "1.7.1",
     "tslint": "5.7.0",
     "tslint-react": "3.2.0",
-    "typescript": "2.5.2"
+    "typescript": "2.5.2",
+    "webpack": "3.7.1",
+    "webpack-bundle-analyzer": "2.9.0"
   }
 }
