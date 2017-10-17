@@ -35,7 +35,7 @@ class TxResult {
         this._hash = val;
       } else if (val && TxResult.checkTxReceipt(val.receipt)) {
         this._receipt = val.receipt;
-        this._ash = val.receipt.transactionHash;
+        this._hash = val.receipt.transactionHash;
       }
     }
 

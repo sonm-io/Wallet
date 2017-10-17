@@ -34,7 +34,7 @@ before(async function() {
 });
 
 describe('Profile entity', function() {
-  describe('tokens', function() {
+  xdescribe('tokens', function() {
     it('should send sonm tokens from VASYA to PETYA', async function() {
       this.timeout(+Infinity);
   
@@ -56,7 +56,7 @@ describe('Profile entity', function() {
     });
   });
 
-  xdescribe('ether', function() {
+  describe('ether', function() {
     it('should send ether from VASYA to PETYA', async function() {
       this.timeout(+Infinity);
   
