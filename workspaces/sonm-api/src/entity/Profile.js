@@ -8,17 +8,17 @@ const toHex = require('../utils/to-hex');
 
 const getBalance = get('c[0]');
 const GAS_LIMIT_DEFAULT = 50000;
-const GAS_PRICE_MAX = new BN(100000);
+const GAS_PRICE_MAX = new BN(50000);
 
 class Profile {
-  constructor({ gethClient, address0x, snmtContract, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError }) {
+  constructor({ gethClient, address0x, snmtContract, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError = false }) {
 
     invariant(gethClient, 'gethClient is not defined');
     invariant(snmtContract && snmtContract.constructor.name === "TruffleContract", 'snmtContract is not valid');
     invariant(address0x, 'address is not defined');
     invariant(address0x.startsWith('0x'), 'address should starts with 0x');
 
-    this.throwGasPriceError = !!throwGasPriceError;
+    this.throwGasPriceError = throwGasPriceError;
     this.limitGasPrice = new BN(limitGasPrice);
     this.geth = gethClient;
     this.contract = snmtContract;
@@ -52,7 +52,7 @@ class Profile {
 
     if (result.gt(this.limitGasPrice)) {
       if (this.throwGasPriceError) {
-        throw new Error('Too big gas price ' + result.toFormat());
+        throw new Error('Too much gas price ' + result.toFormat());
       }
       result = GAS_PRICE_MAX;
     }

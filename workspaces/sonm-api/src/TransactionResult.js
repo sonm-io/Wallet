@@ -5,24 +5,37 @@ const MAX_TIMEOUT = MINUTE * 10;
 
 class TxResult {
     constructor(src, gethClient) {
-      if (src instanceof Promise) {
-        this.promise = src.then(result => this.processPromiseResult(result));
+      this._timestamp = Date.now();
+      this._geth = gethClient;
+      this._receipt = null;
+      this._hash = null;
+      this._promise = null;
+
+      if (src instanceof TxResult) {
+        this._copyCtr(src);
+      } else if (src instanceof Promise) {
+        this._promise = src.then(result => this._processPromiseResult(result));
       } else if (TxResult.checkTxHash(src)) {
-        this.hash = src;
+        this._hash = src;
       } else {
         throw new Error('Unknown transaction src');
       }
-      this.timestamp = Date.now();
-      this.geth = gethClient;
-      this.receipt = null;
     }
 
-    processPromiseResult(val) {
+    _copyCtr(txResult) {
+      if (txResult._hash) {
+        this._hash = txResult._hash;
+      } else {
+        this._promise = txResult._promise.then(result => this._processPromiseResult(result));
+      }
+    }
+
+    _processPromiseResult(val) {
       if (TxResult.checkTxHash(val)) {
-        this.hash = val;
+        this._hash = val;
       } else if (val && TxResult.checkTxReceipt(val.receipt)) {
-        this.receipt = val.receipt;
-        this.hash = val.receipt.transactionHash;
+        this._receipt = val.receipt;
+        this._ash = val.receipt.transactionHash;
       }
     }
 
@@ -36,52 +49,50 @@ class TxResult {
     }
 
     async getHash() {
-      await this.promise;
+      await this._promise;
 
-      return this.hash;
+      return this._hash;
     }
 
     async getTxPrice() {
-      const [ receipt, gasPrice ] = await Promise.all([ this.getReceipt(), this.geth.getGasPrice() ]);
+      const [ receipt, gasPrice ] = await Promise.all([ this.getReceipt(), this._geth.getGasPrice() ]);
 
-      return gasPrice.times(receipt.gasUsed);
+      return gasPrice.mul(receipt.gasUsed);
     }
 
     async getReceipt() {
       let result;  
 
-      if (this.promise) {
-        await this.promise;
-      }
+      await this._promise;
 
-      if (!this.receipt) {
+      if (!this._receipt) {
         const hash = await this.getHash();
         const promise = new Promise((done, reject) => {
           const timeoutTask = setTimeout(() => reject(`getReceipt timeout: ${MAX_TIMEOUT}`), MAX_TIMEOUT);
 
           const check = async () => {
-            const result = await this.geth.method('getTransactionReceipt')(hash);
+            const result = await this._geth.method('getTransactionReceipt')(hash);
 
             if (result) {
               clearTimeout(timeoutTask);
               done(result);
             } else {
-              setTimeout(check, this.getPollingInterval());
+              setTimeout(check, this._getPollingInterval());
             }
           };
 
           check();
         });
 
-        await promise.then(receipt => this.receipt = receipt);
+        await promise.then(receipt => this._receipt = receipt);
       }
 
-      result = this.receipt;
+      result = this._receipt;
 
       return result;
     }
 
-    getPollingInterval() {
+    _getPollingInterval() {
       const age = Date.now() - this.timestamp;
 
       const result = age > MINUTE
@@ -92,7 +103,7 @@ class TxResult {
     }
 
     async getInfo() {
-      return this.geth.method('getTransaction')(await this.getHash());
+      return this._geth.method('getTransaction')(await this.getHash());
     }
 }
 

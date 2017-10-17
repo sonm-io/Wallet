@@ -25,13 +25,16 @@ before(async function() {
   console.log('done');
 
   console.log('Creating test profiles...');
-  VASYA = createProfile(URL_REMOTE_GETH_NODE, vasyaCfg.address, vasyaPrivateKey.toString('hex'));
-  PETYA = createProfile(URL_REMOTE_GETH_NODE, petyaCfg.address, petyaPrivateKey.toString('hex'));
+  VASYA = createProfile(URL_REMOTE_GETH_NODE, vasyaCfg.address, vasyaPrivateKey.toString('hex'), { limitGasPrice: new BN('30000000000') });
+  PETYA = createProfile(URL_REMOTE_GETH_NODE, petyaCfg.address, petyaPrivateKey.toString('hex'), { limitGasPrice: new BN('30000000000') });
   console.log('done');
+
+  const gasPrice = await VASYA.getGasPrice();
+  console.log('Gas price: ', gasPrice.toFormat());
 });
 
 describe('Profile entity', function() {
-  xdescribe('tokens', function() {
+  describe('tokens', function() {
     it('should send sonm tokens from VASYA to PETYA', async function() {
       this.timeout(+Infinity);
   
@@ -53,7 +56,7 @@ describe('Profile entity', function() {
     });
   });
 
-  describe('ether', function() {
+  xdescribe('ether', function() {
     it('should send ether from VASYA to PETYA', async function() {
       this.timeout(+Infinity);
   

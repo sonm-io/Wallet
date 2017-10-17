@@ -15,7 +15,7 @@ const snmtContract = contract(snmtContractJson);
  * @param {string} address 
  * @param {string} privateKey 
  */
-function createProfile(remoteEthNodeUrl, address, privateKey) {
+function createProfile(remoteEthNodeUrl, address, privateKey, params = {}) {
   const address0x = add0x(address);
   const privateKey0x = add0x(privateKey);
   const provider = providerFactory(remoteEthNodeUrl, address0x, privateKey0x);
@@ -28,6 +28,7 @@ function createProfile(remoteEthNodeUrl, address, privateKey) {
     address0x,
     gethClient,
     snmtContract: snmtContract.at(snmtContractAddr),
+    ...params,
   });
 }
 
