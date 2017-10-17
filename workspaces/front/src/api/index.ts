@@ -10,7 +10,11 @@ function nextRequestId(): string {
   return 'request' + count++;
 }
 
-function createPromise<TResult extends t.IFormResponse>(type: string, payload: any, maxDelay: number = MAX_DELAY_DEFAULT): Promise<TResult> {
+function createPromise<TResult extends t.IFormResponse>(
+  type: string,
+  payload: any,
+  maxDelay: number = MAX_DELAY_DEFAULT)
+: Promise<TResult> {
   return new Promise((done, reject) => {
     const requestId = nextRequestId();
     let watchTask: any;
@@ -72,7 +76,7 @@ export class Api {
     );
   }
 
-  public async processTransaction(
+  public async send(
     from: string,
     to: string,
     qty: string,

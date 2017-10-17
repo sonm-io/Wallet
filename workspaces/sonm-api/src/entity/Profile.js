@@ -7,16 +7,19 @@ const BN = require('bignumber.js');
 const toHex = require('../utils/to-hex');
 
 const getBalance = get('c[0]');
-const GAS_LIMIT_DEFAULT = 100000;
+const GAS_LIMIT_DEFAULT = 50000;
+const GAS_PRICE_MAX = new BN(100000);
 
 class Profile {
-  constructor({ gethClient, address0x, snmtContract }) {
+  constructor({ gethClient, address0x, snmtContract, limitGasPrice = GAS_PRICE_MAX, throwGasPriceError }) {
 
     invariant(gethClient, 'gethClient is not defined');
     invariant(snmtContract && snmtContract.constructor.name === "TruffleContract", 'snmtContract is not valid');
     invariant(address0x, 'address is not defined');
     invariant(address0x.startsWith('0x'), 'address should starts with 0x');
 
+    this.throwGasPriceError = !!throwGasPriceError;
+    this.limitGasPrice = new BN(limitGasPrice);
     this.geth = gethClient;
     this.contract = snmtContract;
     this.address = address0x;
@@ -44,10 +47,23 @@ class Profile {
     return GAS_LIMIT_DEFAULT;
   }
 
+  async getGasPrice() {
+    let result = await this.geth.method('getGasPrice')();
+
+    if (result.gt(this.limitGasPrice)) {
+      if (this.throwGasPriceError) {
+        throw new Error('Too big gas price ' + result.toFormat());
+      }
+      result = GAS_PRICE_MAX;
+    }
+
+    return result;
+  }
+
   async sendTokens(to, amount) {
     const qty = toHex(amount);
     const gasLimit = toHex(await this.getGasLimit());
-    const gasPrice = toHex(await this.geth.getGasPrice());
+    const gasPrice = toHex(await this.getGasPrice());
 
     const resultPromise =  this.contract.transfer(
       this.normalizeTarget(to),
@@ -64,7 +80,7 @@ class Profile {
 
   async sendEther(to, value) {
     const gasLimit = await this.getGasLimit();
-    const gasPrice = await this.geth.getGasPrice();
+    const gasPrice = await this.getGasPrice();
 
     const tx = {
       from: this.getAddress(),

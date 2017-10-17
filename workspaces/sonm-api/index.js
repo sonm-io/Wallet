@@ -6,6 +6,9 @@ const contract = require('truffle-contract');
 const add0x = require('./src/utils/add-0x');
 const GethClient = require('./src/GethClient');
 
+const snmtContractAddr = config.contractAddress.SNMT;
+const snmtContract = contract(snmtContractJson);
+
 /**
  * create API entity Profile 
  * @param {string} remoteEthNodeUrl 
@@ -16,8 +19,6 @@ function createProfile(remoteEthNodeUrl, address, privateKey) {
   const address0x = add0x(address);
   const privateKey0x = add0x(privateKey);
   const provider = providerFactory(remoteEthNodeUrl, address0x, privateKey0x);
-  const snmtContractAddr = config.contractAddress.SNMT;
-  const snmtContract = contract(snmtContractJson);
   const gethClient = new GethClient(provider);
 
   snmtContract.setProvider(provider);

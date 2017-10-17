@@ -31,16 +31,18 @@ before(async function() {
 });
 
 describe('Profile entity', function() {
-  describe('tokens', function() {
+  xdescribe('tokens', function() {
     it('should send sonm tokens from VASYA to PETYA', async function() {
       this.timeout(+Infinity);
   
       const qty = 2;
   
-      const vasyaBalance = await VASYA.getTokenBalance();
-      const petyaBalance = await PETYA.getTokenBalance();
+      const [ vasyaBalance, petyaBalance] = await Promise.all([
+        VASYA.getTokenBalance(),
+        PETYA.getTokenBalance(),
+      ]);
 
-      console.log(`Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
+      console.log(`sonm balance Vasya: ${vasyaBalance.toString()} Petya: ${petyaBalance.toString()}`);
 
       const txResult = await VASYA.sendTokens(PETYA, qty);
 
@@ -51,16 +53,18 @@ describe('Profile entity', function() {
     });
   });
 
-  xdescribe('ether', function() {
+  describe('ether', function() {
     it('should send ether from VASYA to PETYA', async function() {
       this.timeout(+Infinity);
   
       const qty = '1';
 
-      const vasyaBalance = await VASYA.getBalance();
-      const petyaBalance = await PETYA.getBalance();
+      const [ vasyaBalance, petyaBalance] = await Promise.all([
+        VASYA.getBalance(),
+        PETYA.getBalance(),
+      ]);
 
-      console.log(`Vasya: ${vasyaBalance} Petya: ${petyaBalance}`);
+      console.log(`ether balance Vasya: ${vasyaBalance} Petya: ${petyaBalance}`);
 
       const txResult = await VASYA.sendEther(PETYA, qty);
 
@@ -68,8 +72,13 @@ describe('Profile entity', function() {
 
       const txPrice = await txResult.getTxPrice();
 
-      expect('' + await VASYA.getBalance()).equal('' + new BN(vasyaBalance).minus(qty).minus(txPrice));
-      expect('' + await PETYA.getBalance()).equal('' + new BN(vasyaBalance).plus(qty));
+      const [ newVasyaBalance, newPetyaBalance] = await Promise.all([
+        VASYA.getBalance(),
+        PETYA.getBalance(),
+      ]);
+
+      expect('' + newVasyaBalance).equal('' + new BN(vasyaBalance).minus(qty).minus(txPrice));
+      expect('' + newPetyaBalance).equal('' + new BN(petyaBalance).plus(qty));
     });
   });
 });

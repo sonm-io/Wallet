@@ -42,7 +42,7 @@ class TxResult {
     }
 
     async getTxPrice() {
-      const [ receipt, gasPrice ] = Promise.all([ this.getReceipt(), this.geth.getGasPrice() ]);
+      const [ receipt, gasPrice ] = await Promise.all([ this.getReceipt(), this.geth.getGasPrice() ]);
 
       return gasPrice.times(receipt.gasUsed);
     }
