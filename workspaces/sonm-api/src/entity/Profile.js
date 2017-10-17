@@ -78,14 +78,15 @@ class Profile {
     return new TransactionResult(resultPromise, this.geth);
   }
 
-  async sendEther(to, value) {
-    const gasLimit = await this.getGasLimit();
-    const gasPrice = await this.getGasPrice();
+  async sendEther(to, amount) {
+    const gasLimit = toHex(await this.getGasLimit());
+    const gasPrice = toHex(await this.getGasPrice());
+    const value = toHex(amount);
 
     const tx = {
       from: this.getAddress(),
       gasLimit,
-      gasPrice: `0x${gasPrice.toString(16)}`,
+      gasPrice,
       value,
       to: this.normalizeTarget(to),
     };

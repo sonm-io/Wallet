@@ -14,28 +14,10 @@ const handlers = {};
 const api = require('../sonm-api/');
 
 for ( const namespace in routes ) {
-    for (const action in routes[namespace]) {
-        handlers[`${namespace}.${action}`] = routes[namespace][action];
-    }
+  for (const action in routes[namespace]) {
+    handlers[`${namespace}.${action}`] = routes[namespace][action];
+  }
 }
-
-// https://github.com/ethjs/ethjs-provider-signer
-// for ( const namespace in routes ) {
-//     for ( const action in routes[namespace] ) {
-//         if ( _.isObject(routes[namespace][action]) ) {
-//             for ( const subaction in routes[namespace][action] ) {
-//                 app.on(`sonm.${namespace}.${action}.${subaction}`, async function() {
-//                     return await routes[namespace][action][subaction](app)
-//                 });
-//             }
-//         } else {
-//             app.on(`sonm.${namespace}.${action}`, async function() {
-//                 return await routes[namespace][action](app)
-//             });
-//         }
-//     }
-// }
-
 
 const init = async () => {
     try {
