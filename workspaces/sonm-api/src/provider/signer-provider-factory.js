@@ -6,4 +6,5 @@ module.exports = function create(remoteGethNodeUrl, accountAddress0x, privateKey
     signTransaction: (rawTx, cb) => cb(null, sign(rawTx, privateKey0x, false)),
     accounts: cb => cb(null, [accountAddress0x]),
   });
-};
+}
+
