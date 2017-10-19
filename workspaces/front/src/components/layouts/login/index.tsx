@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { default as cn } from 'classnames';
+import * as cn from 'classnames';
 import { Form, Button, Input, Icon, Upload, Spin, Checkbox } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import * as api from 'api';
