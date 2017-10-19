@@ -9,7 +9,8 @@
   },
   "devDependencies": {
     "babel-eslint": "8.0.0",
-    "cross-env": "5.0.5",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "cross-env": "^5.1.0",
     "devtron": "1.3.0",
     "electron": "1.8.1",
     "electron-packager": "8.6.0",
@@ -28,19 +29,15 @@
   },
   "dependencies": {
     "electron-settings": "3.0.7",
-    "electron-shortcut-normalizer": "1.0.0",
-    "sonm-api": "file:workspaces/sonm-api",
-    "wallet-back": "file:workspaces/back",
-    "wallet-front": "file:workspaces/front"
+    "electron-shortcut-normalizer": "1.0.0"
   },
   "scripts": {
     "start": "electron .",
     "dev": "electron . --debug",
-    "modules-rebuild": "cross-env LDFLAGS=-L/usr/local/opt/openssl/lib CPPFLAGS=-I/usr/local/opt/openssl/include electron-rebuild -f -m ./workspaces/back/ && electron-rebuild -f -m ./workspaces/sonm-api/ &&  electron-rebuild -f",
+    "modules-rebuild": "cross-env LDFLAGS=-L/usr/local/opt/openssl/lib CPPFLAGS=-I/usr/local/opt/openssl/include electron-rebuild -f -m ./workspaces/sonm-api/ &&  electron-rebuild -f",
     "postinstall": "npm run subinstall",
-    "subinstall": "npm run subinstall:front && npm run subinstall:back && npm run subinstall:api",
+    "subinstall": "npm run subinstall:front && npm run subinstall:api",
     "subinstall:front": "cd workspaces/front/  && npm i && cd ../..",
-    "subinstall:back": "cd workspaces/back/ && npm i && cd ../..",
     "subinstall:api": "cd workspaces/sonm-api/ && npm i && cd ../..",
     "postsubinstall": "npm run modules-rebuild",
     "bundle": "cd workspaces/front/ && npm run bundle"
@@ -55,7 +52,7 @@
     "url": "https://github.com/sonm-io/Wallet/issues"
   },
   "homepage": "https://github.com/sonm-io/Wallet#readme",
-  "--workspaces": [
+  "workspaces": [
     "workspaces/*"
   ]
 }

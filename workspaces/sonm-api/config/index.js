@@ -1,20 +1,6 @@
-const path = require('path');
-const yaml = require('js-yaml');
-const fs = require('fs');
-
-function readYaml(fileName) {
-  let result = {};
-  const filePath = path.join(__dirname, fileName);
-
-  if (fs.existsSync(filePath)) {
-    result = yaml.safeLoad(fs.readFileSync(filePath, 'utf8'));
-  }
-  
-  return result;
-}
-
-const environment  = process.env.NODE_ENV || 'development';
-const baseConfig = readYaml('default.yml');
-const envOverrides = readYaml(`${environment}.yml`);
-
-module.exports = Object.assign(baseConfig, envOverrides);
+module.exports = {
+  "contractAddress": {
+    "PigToken": "0x917cc8f2180e469c733abc67e1b36b0ab3aeff60",
+    "SNMT": "0x225b929916daadd5044d5934936313001f55d8f0",
+  },
+};

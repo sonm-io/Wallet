@@ -22,17 +22,18 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "strict": true
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
+    "src/app/**/*.ts",
+    "src/app/**/*.tsx",
     "node_modules/@types/**/*.d.ts",
     "typings/**/*.d.ts"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "bundle"
   ],
   "typeAcquisition": {
     "enable": true

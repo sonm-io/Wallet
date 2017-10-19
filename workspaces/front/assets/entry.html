@@ -9,12 +9,13 @@
 <script>
   {
     if (process.env.NODE_ENV === 'production') {
-      require('../bundle/bundle.js');
+      require('../bundle/app.bundle.js');
     } else {
-      require('../lib/add-paths.js');
-      require('../dist/entry.js');
+      require('../bundle/manifest.bundle.js');
+      require('../bundle/vendor.bundle.js');
+      require('../bundle/app.bundle.js');
     }
   }
-</script>
+</script>q
 </body>
 </html>

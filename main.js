@@ -101,7 +101,6 @@ function checkSingleInstance () {
 
 // Require each JS file in the main-process dir
 function loadMainProcess () {
-  require('./workspaces/back/main')
   autoUpdater.updateMenu()
 }
 

@@ -2,22 +2,25 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const { getFullPath } = require('./utils');
+const { getFullPath, readJson } = require('./utils');
 
 const {
   PORT,
-  DIR_DIST,
+  DIR_BUNDLE,
 } = require('./config');
 
 const isDev = process.env.NODE_ENV !== 'production';
 
 module.exports = {
-  entry: getFullPath('./src/entry.tsx'),
+  entry: {
+    app: getFullPath('./src/app/entry.tsx'),
+    worker: getFullPath('./src/worker/index.js')
+  },
 
   output: {
     filename: isDev ? '[name].bundle.js' : '[name].[hash].js',
     chunkFilename: isDev ? '[name].chunk.js' : '[name].[hash].js',
-    path: getFullPath(DIR_DIST),
+    path: getFullPath(DIR_BUNDLE),
     publicPath: isDev ? `http://localhost:${PORT}/` : '/',
     hotUpdateChunkFilename: '[id].[hash].hot-update.js',
     hotUpdateMainFilename: '[hash].hot-update.json',
@@ -25,15 +28,11 @@ module.exports = {
 
   resolve: {
     modules: ['node_modules'],
-    extensions: ['.js', '.json', '.jsx', '.css'],
+    extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
     alias: {
       './guide.less$': getFullPath('src/app/components/guide.less'),
-      components: getFullPath('src/app/components'),
-      layouts: getFullPath('src/app/components/layouts'),
-      stores: getFullPath('src/app/stores'),
-      lib: getFullPath('src/lib'),
-      const: getFullPath('src/const'),
-      app: getFullPath('src/app'),
+      'src/app': getFullPath('src/app'),
+      'worker': getFullPath('src/worker'),
     },
   },
 
@@ -48,6 +47,7 @@ module.exports = {
         test: /.jsx?/,
         loader: 'babel-loader',
         exclude: /node_modules/,
+        options: readJson(getFullPath('.babelrc')),
       },
       {
         test: /\.tsx?$/,
@@ -62,29 +62,45 @@ module.exports = {
 
   plugins: (() => {
     const plugins = [
+
+      new webpack.NoEmitOnErrorsPlugin(),
+
       new webpack.ContextReplacementPlugin(
         /moment[/\\]locale/,
         /en-gb\.js/
       ),
       new webpack.EnvironmentPlugin(['NODE_ENV']),
+
       new webpack.optimize.CommonsChunkPlugin({
-        name: 'main',
+        name: 'app',
         children: true,
-        minChunks: 2,
       }),
+
+      new webpack.optimize.CommonsChunkPlugin({
+        name: 'worker',
+        children: true,
+      }),
+
       new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
-        chunks: ['main'],
+        chunks: ['app', 'worker'],
         minChunks({ context }) {
           return context && context.indexOf('node_modules') !== -1;
         },
       }),
       new webpack.optimize.CommonsChunkPlugin({ name: 'manifest' }),
-      new webpack.optimize.UglifyJsPlugin(),
+
+      1 || isDev
+        ? null
+        : new webpack.optimize.UglifyJsPlugin(),
+
       new ExtractTextPlugin({ filename: '[name].[contenthash].css', allChunks: true }),
-      new BundleAnalyzerPlugin(),
+
+      process.env.WEBPACK_ANALYZE
+        ? new BundleAnalyzerPlugin()
+        : false,
     ];
 
-    return [...plugins];
+    return plugins.filter(x => x);
   })(),
 };

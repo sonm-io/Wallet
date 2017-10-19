@@ -34,7 +34,7 @@ before(async function() {
 });
 
 describe('Profile entity', function() {
-  xdescribe('tokens', function() {
+  describe('tokens', function() {
     it('should send sonm tokens from VASYA to PETYA', async function() {
       this.timeout(+Infinity);
   
@@ -62,7 +62,7 @@ describe('Profile entity', function() {
   
       const qty = '1';
 
-      const [ vasyaBalance, petyaBalance] = await Promise.all([
+      const [vasyaBalance, petyaBalance] = await Promise.all([
         VASYA.getBalance(),
         PETYA.getBalance(),
       ]);
