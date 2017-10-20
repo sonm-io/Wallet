@@ -1,4 +1,4 @@
-import * as Router from 'universal-router';
+import { default as Router } from 'universal-router';
 import { routes } from './routes';
 import { navigate } from './navigate';
 

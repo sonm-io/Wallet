@@ -1,106 +1,152 @@
-const path = require('path');
-const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const { getFullPath, readJson } = require('./utils');
+(async () => {
+  const path = require('path');
+  const webpack = require('webpack');
+  const ExtractTextPlugin = require('extract-text-webpack-plugin');
+  const HtmlWebpackPlugin = require('html-webpack-plugin');
+  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+  const { getFullPath, readJson } = require('./utils');
+  const extractLess = new ExtractTextPlugin('./style.css');
+  const del = require('del');
 
-const {
-  PORT,
-  DIR_BUNDLE,
-} = require('./config');
+  const {
+    DIR_BUNDLE,
+    WEBPACK_DEV_SERVER_PORT,
+  } = require('./config');
 
-const isDev = process.env.NODE_ENV !== 'production';
+  const isDev = process.env.NODE_ENV !== 'production';
+  const cwd = process.cwd();
 
-module.exports = {
-  entry: {
-    app: getFullPath('./src/app/entry.tsx'),
-    worker: getFullPath('./src/worker/index.js')
-  },
+  del('./bundle/**');
 
-  output: {
-    filename: isDev ? '[name].bundle.js' : '[name].[hash].js',
-    chunkFilename: isDev ? '[name].chunk.js' : '[name].[hash].js',
-    path: getFullPath(DIR_BUNDLE),
-    publicPath: isDev ? `http://localhost:${PORT}/` : '/',
-    hotUpdateChunkFilename: '[id].[hash].hot-update.js',
-    hotUpdateMainFilename: '[hash].hot-update.json',
-  },
-
-  resolve: {
-    modules: ['node_modules'],
-    extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
-    alias: {
-      './guide.less$': getFullPath('src/app/components/guide.less'),
-      'src/app': getFullPath('src/app'),
-      'worker': getFullPath('src/worker'),
+  module.exports = {
+    entry: {
+      app: getFullPath('./src/entry.js'),
+      style: getFullPath('./src/entry.less'),
     },
-  },
 
-  module: {
-    rules: [
-      {
-        test: /\.jpg/,
-        issuer: /\.jsx/,
-        loaders: 'file-loader',
+    output: {
+      filename: isDev ? '[name].bundle.js' : '[name].[hash].js',
+      chunkFilename: isDev ? '[name].chunk.js' : '[name].[hash].js',
+      path: getFullPath(DIR_BUNDLE),
+      publicPath: isDev ? '' : '/',
+      hotUpdateChunkFilename: '[id].[hash].hot-update.js',
+      hotUpdateMainFilename: '[hash].hot-update.json',
+    },
+
+    resolve: {
+      modules: ['node_modules'],
+      extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
+      alias: {
+        './guide.less$': getFullPath('src/guide.less'),
+        'src/app': getFullPath('src/app'),
+        'worker': getFullPath('src/worker'),
       },
-      {
-        test: /.jsx?/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-        options: readJson(getFullPath('.babelrc')),
-      },
-      {
-        test: /\.tsx?$/,
-        loader: 'ts-loader',
-      },
-    ],
-  },
+    },
 
-  watch: isDev,
-
-  devtool: isDev ? 'source-map' : false,
-
-  plugins: (() => {
-    const plugins = [
-
-      new webpack.NoEmitOnErrorsPlugin(),
-
-      new webpack.ContextReplacementPlugin(
-        /moment[/\\]locale/,
-        /en-gb\.js/
-      ),
-      new webpack.EnvironmentPlugin(['NODE_ENV']),
-
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'app',
-        children: true,
-      }),
-
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'worker',
-        children: true,
-      }),
-
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        chunks: ['app', 'worker'],
-        minChunks({ context }) {
-          return context && context.indexOf('node_modules') !== -1;
+    module: {
+      rules: [
+        {
+          test: /\.(ttf|jpg)$/,
+          loader: 'file-loader',
         },
-      }),
-      new webpack.optimize.CommonsChunkPlugin({ name: 'manifest' }),
+        {
+          test: /.worker.js$/,
+          loader: 'worker-loader',
+        },
+        {
+          test: /.jsx?$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/,
+          options: readJson(getFullPath('.babelrc')),
+        },
+        {
+          test: /\.tsx?$/,
+          loader: 'ts-loader',
+        },
+        {
+          test: /\.less$/,
+          use: extractLess.extract({
+            fallback: 'style-loader',
+            use: ['css-loader', 'less-loader'],
+          }),
+        },
+      ],
+    },
 
-      1 || isDev
-        ? null
-        : new webpack.optimize.UglifyJsPlugin(),
+    watch: isDev,
 
-      new ExtractTextPlugin({ filename: '[name].[contenthash].css', allChunks: true }),
+    devtool: isDev ? 'source-map' : false,
 
-      process.env.WEBPACK_ANALYZE
-        ? new BundleAnalyzerPlugin()
-        : false,
-    ];
+    plugins: (() => {
+      const plugins = [
 
-    return plugins.filter(x => x);
-  })(),
-};
+        new webpack.optimize.ModuleConcatenationPlugin(),
+
+        extractLess,
+
+        new webpack.NoEmitOnErrorsPlugin(),
+
+        new webpack.ContextReplacementPlugin(
+          /moment[/\\]locale/,
+          /en-gb\.js/
+        ),
+        new webpack.EnvironmentPlugin(['NODE_ENV']),
+
+        new webpack.optimize.CommonsChunkPlugin({
+          name: 'app',
+          children: true,
+        }),
+
+        new webpack.optimize.CommonsChunkPlugin({
+          name: 'vendor',
+          chunks: ['app', 'worker'],
+          minChunks({ context }) {
+            return context && context.indexOf('node_modules') !== -1;
+          },
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+          name: 'manifest',
+        }),
+
+        // isDev
+        //   ? null
+        //   : new webpack.optimize.UglifyJsPlugin(),
+
+        new HtmlWebpackPlugin({
+          template: './assets/entry.html',
+        }),
+
+        process.env.WEBPACK_ANALYZE
+          ? new BundleAnalyzerPlugin()
+          : false,
+
+        isDev
+          ? new webpack.NamedModulesPlugin()
+          : null,
+
+        // isDev
+        //   ? new webpack.HotModuleReplacementPlugin()
+        //   : null,
+
+      ];
+
+      return plugins.filter(x => x);
+    })(),
+
+    devServer: {
+      contentBase: path.join(cwd, DIR_BUNDLE),
+      quiet: false,
+      stats: {
+        errors: true,
+        colors: true,
+      },
+      compress: true,
+      hot: isDev,
+      port: WEBPACK_DEV_SERVER_PORT,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    },
+  };
+
+})();
+
+

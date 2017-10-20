@@ -1,4 +1,4 @@
-import sonmApi from 'sonm-api';
+import sonmApi from '../../../../sonm-api';
 import keythereum from '../../../vendor/keythereum.min';
 
 const { createProfile, createGethClient, createProvider } = sonmApi;

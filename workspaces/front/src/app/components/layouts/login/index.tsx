@@ -41,13 +41,13 @@ class Me extends React.Component<IProps, any> {
                   beforeUpload={this.handleSelectFile}
                   className="sonm-login__drag"
                 >
-                  <p className="sonm-login__drag__icon">
+                  <p className="sonm-login__drag-icon">
                     <Icon type="inbox" />
                   </p>
-                  <p className="sonm-login__drag__text">
+                  <p className="sonm-login__drag-text">
                     Click or drag to {this.state.privateKey ? 'change' : 'set'} file path
                   </p>
-                  <p className="sonm-login__drag__hint">
+                  <p className="sonm-login__drag-hint">
                     Support for xxx file
                   </p>
                 </Upload.Dragger>

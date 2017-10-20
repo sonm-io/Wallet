@@ -62,7 +62,7 @@ function createWindow () {
   mainWindow.loadURL(url.format({
     protocol: 'file',
     slashes: true,
-    pathname: path.join(__dirname, 'workspaces/front/assets/entry.html')
+    pathname: path.join(__dirname, 'workspaces/front/bundle/index.html')
   }))
 
   // Launch fullscreen with DevTools open, usage: npm run debug
