@@ -1,8 +1,7 @@
-import sonmApi from '../../../../sonm-api';
-import keythereum from '../../../vendor/keythereum.min';
+import sonmApi from 'sonm-api';
 
 const { createProfile, createGethClient, createProvider } = sonmApi;
-const recoverKey = (password, params) => new Promise(done => keythereum.recover(password, params, done));
+const recoverKey = (password, params) => new Promise(done => sonmApi.utils.recoverPrivateKey(password, params, done));
 
 let walletOwnerProfile;
 let gethClient;

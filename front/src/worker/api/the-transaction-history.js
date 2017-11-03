@@ -1,4 +1,4 @@
-import sonmApi from '../../../../sonm-api';
+import sonmApi from 'sonm-api';
 import TheSession from './the-session';
 
 const transactions = {

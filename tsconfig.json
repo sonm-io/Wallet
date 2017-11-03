@@ -26,10 +26,10 @@
     "strict": true
   },
   "include": [
+    "front/typings/**/*.d.ts",
     "src/app/**/*.ts",
     "src/app/**/*.tsx",
-    "node_modules/@types/**/*.d.ts",
-    "typings/**/*.d.ts"
+    "node_modules/@types/**/*.d.ts"
   ],
   "exclude": [
     "dist",

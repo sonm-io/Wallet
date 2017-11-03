@@ -1,0 +1,18 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": [
+            "Edge > 15",
+            "Firefox > 55",
+            "Chrome > 60",
+            "Safari > 10"
+          ]
+        }
+      }
+    ]
+  ],
+  "plugins": ["external-helpers"]
+}
