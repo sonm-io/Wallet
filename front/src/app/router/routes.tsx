@@ -1,26 +1,26 @@
+import { Send } from '../components/layouts/send';
+import { Wallets } from '../components/layouts/wallets';
 import { App } from '../components/layouts/app';
-import { Login } from '../components/layouts/login';
-import { Transaction } from '../components/layouts/transaction';
+import { History } from '../components/layouts/history';
+import { Votes } from '../components/layouts/votes';
 import * as React from 'react';
 
 let defaultAction;
 
 const routes = [
   {
-    path: '/login',
-    action: () => ({
-      content: <Login />,
-      title: 'Login',
-    }),
-  },
-  {
-    path: /^\//,
-    async action({ next }: IContext) {
-      const route = await next();
+    path: '/',
+    async action(ctx: IContext) {
+      const route = await ctx.next();
 
       return {
         content: (
           <App
+            selectedNavMenuItem={
+              ctx.pathname === '/'
+                ? '/wallets'
+                : ctx.pathname
+            }
             {...route.props}
           >
             {route.content}
@@ -31,18 +31,36 @@ const routes = [
     },
     children: [
       {
-        path: 'main',
+        path: '/send',
+        action: (ctx: IContext) => ({
+          title: 'Send',
+          content: <Send />,
+        }),
+      },
+      {
+        path: '/history',
+        action: (ctx: IContext) => ({
+          title: 'History',
+          content: <History />,
+        }),
+      },
+      {
+        path: '/votes',
+        action: (ctx: IContext) => ({
+          title: 'Votes',
+          content: <Votes />,
+        }),
+      },
+      {
+        path: '/wallets',
         action: defaultAction = (ctx: IContext) => ({
-          title: 'Main',
-          content: <Transaction />,
+            title: 'Wallets',
+            content: <Wallets />,
         }),
       },
       {
         path: /.*/,
-        action: () => ({
-          title: 'Wrong way',
-          content: <div>WRONG WAY</div>,
-        }),
+        action: defaultAction,
       },
     ],
   },
@@ -50,6 +68,7 @@ const routes = [
 
 interface IContext {
   query: object;
+  pathname: string;
   next: () => IRouterResult;
 }
 

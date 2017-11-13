@@ -1,58 +1,85 @@
 import * as React from 'react';
-import { Tabs, Alert } from 'antd';
+import { Menu, Alert } from 'antd';
+import { ClickParam } from 'antd/lib/menu/';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
-import { navigate } from 'src/app/router';
+import { navigate } from '../../../../app/router';
 
 interface IProps {
   className?: string;
-  route: string;
   children: any;
+  error: string;
+  selectedNavMenuItem: string;
   userStore: {
-    ethBalance: string;
-    snmBalance: string;
-    isAuth: boolean;
-    error: string;
-    fetch: () => void;
+    totalEthereumBalance: string;
+    totalSonmBalance: string;
   };
 }
 
 @inject('userStore')
 @observer
 export class App extends React.Component<IProps, any> {
-  public componentWillMount() {
-    if (!this.props.userStore.isAuth) {
-      navigate({ path: '/login' });
-    } else {
-      this.props.userStore.fetch();
-    }
+
+  public handleMenuClick(param: ClickParam) {
+    navigate({ path: param.key });
   }
 
   public render() {
     const {
       className,
-      route,
+      error,
+      selectedNavMenuItem,
       children,
       userStore: {
-        ethBalance,
-        snmBalance,
-        error,
+        totalEthereumBalance,
+        totalSonmBalance,
       },
     } = this.props;
 
     return (
       <div className={cn('sonm-app', className)}>
-        {error ? <Alert message={error} /> : null}
-        <h2 className="sonm-app__eth-balance">
-          ETH: {ethBalance}
-        </h2>
-        <h2 className="sonm-app__sonm-balance">
-          SONM: {snmBalance}
-        </h2>
-        <Tabs defaultActiveKey={route} className="sonm-app__tabs">
-          <Tabs.TabPane tab="Main" key="Main" />
-          <Tabs.TabPane tab="Something" key="Something" />
-        </Tabs>
+        {
+          error
+            ? <Alert message={error} className="sonm_app__alert" />
+            : null
+        }
+        <div className="sonm_app__nav">
+          <div className="sonm_nav">
+            <div className="sonm_nav__logo"/>
+            <Menu
+              onClick={this.handleMenuClick}
+              className="sonm-nav__menu"
+              selectedKeys={[selectedNavMenuItem]}
+              theme="dark"
+              mode="horizontal"
+              style={{
+                borderColor: 'transparent'
+              }}
+            >
+              <Menu.Item key="/wallets" className="sonm-nav__menu-item">
+                Wallet
+              </Menu.Item>
+              <Menu.Item key="/send" className="sonm-nav__menu-item">
+                Send
+              </Menu.Item>
+              <Menu.Item key="/history" className="sonm-nav__menu-item">
+                History
+              </Menu.Item>
+              <Menu.Item key="/votes" className="sonm-nav__menu-item">
+                Votes
+              </Menu.Item>
+            </Menu>
+            <div className="sonm_nav__total">
+              <div className="sonm_nav__total-eth">
+                {totalEthereumBalance}
+              </div>
+              <div className="sonm_nav__total-sonm">
+                {totalSonmBalance}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="sonm_app__content">
           {children}
         </div>

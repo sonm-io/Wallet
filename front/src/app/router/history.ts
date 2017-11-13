@@ -1,8 +1,6 @@
-import { createMemoryHistory, History } from 'history';
+import { createHashHistory, History } from 'history';
 
-const history: History = createMemoryHistory({
-  initialEntries: [ '/main' ],
-  initialIndex: 0,
+const history: History = createHashHistory({
 });
 
 (window as any)._history = history;

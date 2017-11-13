@@ -16,7 +16,8 @@ interface ILocationParams {
  * @param {Object} location
  */
 async function renderByPath({ pathname, search }: ILocationParams) {
-  const { content, title } = await resolve({ pathname, query: queryStr.parse(search) });
+  const query = queryStr.parse(search);
+  const { content, title } = await resolve({ pathname, query });
 
   window.document.title = title;
 
@@ -35,7 +36,7 @@ const waitForLoad = new Promise(done => {
 async function init() {
   await waitForLoad;
   history.listen(renderByPath);
-  renderByPath({ pathname: '/login', search: '' });
+  renderByPath({ pathname: '/', search: '' });
 }
 
 init();

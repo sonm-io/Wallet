@@ -6,20 +6,17 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const { getFullPath, readJson } = require('./utils');
 const extractLess = new ExtractTextPlugin('./style.css');
 const ShakePlugin = require('webpack-common-shake').Plugin;
-// const del = require('del');
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isAnalyze = process.env.WEBPACK_ANALYZE;
-
-// del('./bundle/**');
 
 console.log(getFullPath('./src/entry.js'));
 
 module.exports = {
   entry: {
-    app: getFullPath('./src/entry.js'),
+    app: getFullPath('./src/app/index.tsx'),
     worker: getFullPath('./src/worker/back.worker.js'),
-    style: getFullPath('./src/entry.less'),
+    style: getFullPath('./src/app/less/entry.less'),
   },
 
   output: {
@@ -32,7 +29,7 @@ module.exports = {
     modules: ['node_modules'],
     extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
     alias: {
-      './guide.less$': getFullPath('src/guide.less'),
+      './guide.less$': getFullPath('src/app/less/guide.less'),
       'src/app': getFullPath('src/app'),
       'worker': getFullPath('src/worker'),
     },
@@ -78,7 +75,7 @@ module.exports = {
         ? new BundleAnalyzerPlugin()
         : false,
 
-      new ShakePlugin(),
+      // new ShakePlugin(),
 
       new HtmlWebpackPlugin({
         template: getFullPath('./assets/entry.html'),
@@ -93,18 +90,15 @@ module.exports = {
         /en-gb\.js/
       ),
 
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        minChunks(params) {
-          const { context } = params;
+      // new webpack.optimize.CommonsChunkPlugin({
+      //   name: 'vendor',
+      //   minChunks(params) {
+      //     const { context } = params;
+      //     return context && context.indexOf('node_modules') !== -1;
+      //   },
+      // }),
 
-          console.log(Object.keys(params));
-
-          return context && context.indexOf('node_modules') !== -1;
-        },
-      }),
-
-      // new webpack.optimize.ModuleConcatenationPlugin(),
+      new webpack.optimize.ModuleConcatenationPlugin(),
 
       // isDev
       //   ? null
