@@ -5,26 +5,21 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { getFullPath, readJson } = require('./utils');
 const extractLess = new ExtractTextPlugin('./style.css');
+const ShakePlugin = require('webpack-common-shake').Plugin;
 // const del = require('del');
 
 const isDev = process.env.NODE_ENV !== 'production';
+const isAnalyze = process.env.WEBPACK_ANALYZE;
 
 // del('./bundle/**');
 
 console.log(getFullPath('./src/entry.js'));
 
 module.exports = {
-  entry: () => {
-    const entries = {
-      app: getFullPath('./src/entry.js'),
-      style: getFullPath('./src/entry.less'),
-    };
-
-    if (process.env.WEBPACK_ANALYZE) {
-      entries.worker = getFullPath('./src/worker/back.worker.js');
-    }
-
-    return entries;
+  entry: {
+    app: getFullPath('./src/entry.js'),
+    worker: getFullPath('./src/worker/back.worker.js'),
+    style: getFullPath('./src/entry.less'),
   },
 
   output: {
@@ -44,33 +39,33 @@ module.exports = {
   },
 
   module: {
-    rules: [
-      {
-        test: /\.(ttf|jpg)$/,
-        loader: 'file-loader',
-      },
-      {
-        test: /.worker.js$/,
-        loader: 'worker-loader',
-      },
-      {
-        test: /.jsx?$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-        options: readJson('.babelrc'),
-      },
-      {
-        test: /\.tsx?$/,
-        loader: 'ts-loader',
-      },
-      {
-        test: /\.less$/,
-        use: extractLess.extract({
-          fallback: 'style-loader',
-          use: ['css-loader', 'less-loader'],
-        }),
-      },
-    ],
+    rules: (() => {
+      const rules = [
+        {
+          test: /\.(ttf|jpg)$/,
+          loader: 'file-loader',
+        },
+        {
+          test: /.jsx?$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/,
+          options: readJson('.babelrc'),
+        },
+        {
+          test: /\.tsx?$/,
+          loader: 'ts-loader',
+        },
+        {
+          test: /\.less$/,
+          use: extractLess.extract({
+            fallback: 'style-loader',
+            use: ['css-loader', 'less-loader'],
+          }),
+        },
+      ];
+
+      return rules.filter(x => x);
+    })(),
   },
 
   watch: isDev,
@@ -79,8 +74,15 @@ module.exports = {
 
   plugins: (() => {
     const plugins = [
+      process.env.WEBPACK_ANALYZE
+        ? new BundleAnalyzerPlugin()
+        : false,
 
-      new webpack.optimize.ModuleConcatenationPlugin(),
+      new ShakePlugin(),
+
+      new HtmlWebpackPlugin({
+        template: getFullPath('./assets/entry.html'),
+      }),
 
       extractLess,
 
@@ -90,33 +92,33 @@ module.exports = {
         /moment[/\\]locale/,
         /en-gb\.js/
       ),
-      
-      new webpack.EnvironmentPlugin(['NODE_ENV']),
 
       new webpack.optimize.CommonsChunkPlugin({
-        children: true,
+        name: 'vendor',
+        minChunks(params) {
+          const { context } = params;
+
+          console.log(Object.keys(params));
+
+          return context && context.indexOf('node_modules') !== -1;
+        },
       }),
+
+      // new webpack.optimize.ModuleConcatenationPlugin(),
 
       // isDev
       //   ? null
       //   : new webpack.optimize.UglifyJsPlugin(),
 
-      new HtmlWebpackPlugin({
-        template: getFullPath('./assets/entry.html'),
-      }),
-
-      process.env.WEBPACK_ANALYZE
-        ? new BundleAnalyzerPlugin()
-        : false,
-
-      isDev
-        ? new webpack.NamedModulesPlugin()
-        : null,
+      // isDev
+      //   ? new webpack.NamedModulesPlugin()
+      //   : false,
 
       // isDev
       //   ? new webpack.HotModuleReplacementPlugin()
       //   : null,
 
+      new webpack.EnvironmentPlugin(['NODE_ENV']),
     ];
 
     return plugins.filter(x => x);

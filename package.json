@@ -58,6 +58,7 @@
     "typescript": "2.5.2",
     "webpack": "3.7.1",
     "webpack-bundle-analyzer": "^2.9.0",
+    "webpack-common-shake": "^1.5.3",
     "worker-loader": "^1.0.0"
   },
   "dependencies": {
