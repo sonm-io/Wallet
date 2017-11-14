@@ -36,7 +36,7 @@ const waitForLoad = new Promise(done => {
 async function init() {
   await waitForLoad;
   history.listen(renderByPath);
-  renderByPath({ pathname: '/', search: '' });
+  renderByPath((history as any).location);
 }
 
 init();

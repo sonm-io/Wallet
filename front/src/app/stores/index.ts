@@ -1,10 +1,10 @@
 import { useStrict } from 'mobx';
 
 import { UserStore } from './user';
-import { TransactionStore } from './transaction';
+import { SendStore } from './send';
 
 useStrict(true);
 
 export const Store = new UserStore();
 export const userStore = new UserStore();
-export const transactionStore = new TransactionStore();
+export const sendStore = new SendStore();

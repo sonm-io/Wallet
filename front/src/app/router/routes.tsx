@@ -11,28 +11,24 @@ const routes = [
   {
     path: '/',
     async action(ctx: IContext) {
-      const route = await ctx.next();
+      const inner = await ctx.next();
 
       return {
         content: (
           <App
-            selectedNavMenuItem={
-              ctx.pathname === '/'
-                ? '/wallets'
-                : ctx.pathname
-            }
-            {...route.props}
+            selectedNavMenuItem={ctx.pathname}
+            {...inner.props}
           >
-            {route.content}
+            {inner && inner.content}
           </App>
         ),
-        title: route.title,
+        title: inner.title,
       };
     },
     children: [
       {
         path: '/send',
-        action: (ctx: IContext) => ({
+        action: (ctx: IContext, params: IUrlParams) => ({
           title: 'Send',
           content: <Send />,
         }),
@@ -53,10 +49,32 @@ const routes = [
       },
       {
         path: '/wallets',
-        action: defaultAction = (ctx: IContext) => ({
+        action: defaultAction = async (ctx: IContext) => {
+          const inner = await ctx.next();
+
+          return {
             title: 'Wallets',
-            content: <Wallets />,
-        }),
+            content: (
+              <Wallets>
+                {inner && inner.content}
+              </Wallets>
+            ),
+          };
+        },
+        children: [
+          {
+            path: '/add',
+            action: (ctx: IContext) => ({
+              content: 'Add',
+            }),
+          },
+          {
+            path: '/delete/:address',
+            action: (ctx: IContext, params: IUrlParams) => ({
+              content: 'Delete ' + JSON.stringify(params),
+            }),
+          },
+        ],
       },
       {
         path: /.*/,
@@ -65,6 +83,10 @@ const routes = [
     ],
   },
 ];
+
+export interface IUrlParams {
+  [key: string]: string;
+}
 
 interface IContext {
   query: object;

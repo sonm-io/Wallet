@@ -32,4 +32,24 @@ export interface IBalanceResponse extends IResponse {
   };
 }
 
-export type TCurrency = 'snm' | 'eth';
+export interface ICurrencyInfo {
+  symbol: string;
+  fullName: string;
+  address: string;
+}
+
+export interface ICurrencyBalanceMap {
+  [currencyAddr: string]: string;
+}
+
+export interface IAccountInfo {
+  name: string;
+  address: string;
+  currencyBalanceMap: ICurrencyBalanceMap;
+}
+
+export interface IGasPricePriorityMap {
+  low: string;
+  normal: string;
+  hight: string;
+}

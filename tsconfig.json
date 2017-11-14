@@ -4,6 +4,7 @@
     "module": "commonjs",
     "jsx": "react",
     "lib": [
+      "es6",
       "ES2015",
       "dom",
       "dom.iterable",
@@ -28,6 +29,8 @@
   },
   "include": [
     "front/typings/**/*.d.ts",
+    "front/src/**/*.ts",
+    "front/src/**/*.tsx",
     "node_modules/@types/**/*.d.ts"
   ],
   "exclude": [

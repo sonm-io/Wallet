@@ -47,6 +47,10 @@ function processValidation(obj: any): IValidation {
   }, {});
 }
 
+async function delay(timeout: number) {
+  return new Promise((resolve, reject) => setTimeout(resolve, timeout));
+}
+
 export class Api {
   private constructor() {
   }
@@ -69,9 +73,10 @@ export class Api {
     from: string,
     to: string,
     qty: string,
-    currency: t.TCurrency,
-    gasPrice?: string,
-    gasLimit?: string,
+    currency: string,
+    gasPrice: string,
+    gasLimit: string,
+    password: string,
   ) {
     return createPromise<t.IBalanceResponse>(
       'user.send_ether',
@@ -85,6 +90,28 @@ export class Api {
       },
     );
   }
+
+  public async getAccountList(): Promise<t.IAccountInfo[]> {
+    await delay(10);
+
+    return [];
+  }
+
+  public async getCurrencyList(): Promise<t.ICurrencyInfo[]> {
+    await delay(10);
+    
+    return [];
+  }
+
+  public async getGasPricePriorityMap(): Promise<t.IGasPricePriorityMap> {
+    await delay(10);
+
+    return {
+      low: '10',
+      normal: '1000',
+      hight: '10000000',
+    }
+  } 
 
   public static instance = new Api();
 }

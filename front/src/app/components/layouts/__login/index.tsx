@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { Form, Button, Input, Icon, Upload, Spin, Checkbox } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
-import * as api from 'src/app/api';
-import { navigate } from 'src/app/router';
+import * as api from 'app/api';
+import { navigate } from 'app/router';
 import { inject } from 'mobx-react';
 
 export interface IProps extends FormComponentProps {

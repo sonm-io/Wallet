@@ -1,6 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import * as api from 'src/app/api';
+import * as api from 'app/api';
 
 export class UserStore {
   @observable

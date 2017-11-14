@@ -30,7 +30,7 @@ module.exports = {
     extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
     alias: {
       './guide.less$': getFullPath('src/app/less/guide.less'),
-      'src/app': getFullPath('src/app'),
+      'app': getFullPath('src/app'),
       'worker': getFullPath('src/worker'),
     },
   },
