@@ -1,4 +1,4 @@
-import * as createWorker from 'worker/back.worker.js';
+const createWorker = require('worker/back.worker.ts');
 
 type messageHandler = (...args: any[]) => void;
 
