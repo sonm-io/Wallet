@@ -32,7 +32,7 @@ function createPromise<TResult extends t.IFormResponse>(
 
         ipc.once(requestId, callback);
 
-        (ipc as any).send('sonm', {
+        (ipc as any).send({
             requestId,
             type,
             payload,
@@ -53,6 +53,10 @@ async function delay(timeout: number) {
 
 export class Api {
     private constructor() {}
+
+    public async ping(): Promise<t.IResponse> {
+        return createPromise<t.IResponse>('ping', {ping: true});
+    }
 
     public async login(path: string, password: string): Promise<t.ILoginResponse> {
         return createPromise<t.ILoginResponse>('user.login', { path, password });
