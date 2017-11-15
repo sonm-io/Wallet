@@ -1,6 +1,6 @@
 import router from './router/routes/index';
 import { Response } from './ipc/messages';
-import ipc from './ipc/ipc';
+import * as ipc from './ipc/ipc';
 
 const ctx = {}; // do not use me
 
