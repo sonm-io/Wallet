@@ -1,10 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
-**/node_modules/
-**/package-lock.json
-/temp/
-**/yarn.lock
-
-
+/node_modules/
+/package-lock.json
 /yarn.lock
-/go/
+/front/dist

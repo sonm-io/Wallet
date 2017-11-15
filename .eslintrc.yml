@@ -3,6 +3,7 @@ extends:
 
 plugins:
   - lodash-fp
+  - mocha
 
 parser: babel-eslint
 parserOptions:
@@ -50,9 +51,7 @@ rules:
     lodash-fp/no-unused-result: error
     lodash-fp/prefer-compact: error
     lodash-fp/prefer-composition-grouping: error
-    lodash-fp/prefer-constant:
-      - error
-      - arrowFunctions: false
+    lodash-fp/prefer-constant: off
     lodash-fp/prefer-flat-map: error
     lodash-fp/prefer-get: error
     lodash-fp/prefer-identity:

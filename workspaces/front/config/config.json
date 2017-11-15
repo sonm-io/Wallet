@@ -1,7 +1,0 @@
-{
-  "TITLE": "SONM Wallet",
-  "PORT": 3000,
-  "WEBPACK_DEV_SERVER_PORT": 9000,
-  "DIR_ASSETS": "assets",
-  "DIR_DIST": "dist"
-}

@@ -1,0 +1,49 @@
+.sonm-login {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  flex-direction: column;
+
+  &__remember {
+    user-select: none;
+  }
+
+  &__inner {
+    flex: 2;
+  }
+
+  &__logo {
+    padding: 20px;
+    height: 80%;
+    flex: 1;
+  }
+
+  &__button {
+    flex: 1;
+  }
+
+  &__button-container {
+    display: flex;
+    align-items: center;
+  }
+
+  &__drag {
+    width: 300px;
+    display: block;
+    margin-bottom: 5px;
+
+    &-text {
+      font-size: 20px;
+    }
+
+    &-icon {
+      margin-top: 10px;
+      color: @color-light-gray;
+      font-size: 50px;
+    }
+
+    &-hint {
+      color: @color-dark-gray
+    }
+  }
+}
