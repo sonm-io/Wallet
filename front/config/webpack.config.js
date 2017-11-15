@@ -15,7 +15,7 @@ console.log(getFullPath('./src/entry.js'));
 module.exports = {
   entry: {
     app: getFullPath('./src/app/index.tsx'),
-    worker: getFullPath('./src/worker/back.worker.js'),
+    worker: getFullPath('./src/worker/back.worker.ts'),
     style: getFullPath('./src/app/less/entry.less'),
   },
 
