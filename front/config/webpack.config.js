@@ -60,13 +60,15 @@ module.exports = {
         },
         {
           test: /\.worker\.ts$/,
-          use: {
+          use: [{
             loader: 'worker-loader',
             options: {
               name: '[name].js',
               inline: true,
             }
-          }
+          }, {
+            loader: 'ts-loader',
+          }]
         },
       ];
 
