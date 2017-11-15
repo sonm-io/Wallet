@@ -1,14 +1,13 @@
-let worker: Worker;
+import * as createWorker from 'worker/back.worker.js';
 
 type messageHandler = (...args: any[]) => void;
 
+const worker = createWorker();
+
+worker.onmessage = onMessage;
+
 const allListeners = new Map<string, Set<messageHandler>>();
 
-export function createProcess(pathToJS: string) {
-    worker = new Worker(pathToJS);
-
-    worker.onmessage = onMessage;
-}
 
 export async function on(requestId: string, handler: messageHandler) {
     const listeners = getListeners(requestId);

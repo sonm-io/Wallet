@@ -15,7 +15,6 @@ console.log(getFullPath('./src/entry.js'));
 module.exports = {
   entry: {
     app: getFullPath('./src/app/index.tsx'),
-    worker: getFullPath('./src/worker/back.worker.ts'),
     style: getFullPath('./src/app/less/entry.less'),
   },
 
@@ -58,6 +57,16 @@ module.exports = {
             fallback: 'style-loader',
             use: ['css-loader', 'less-loader'],
           }),
+        },
+        {
+          test: /\.worker\.js$/,
+          use: {
+            loader: 'worker-loader',
+            options: {
+              name: '[name].js',
+              inline: true,
+            }
+          }
         },
       ];
 
