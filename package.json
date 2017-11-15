@@ -43,6 +43,7 @@
     "less": "2.7.3",
     "less-loader": "^4.0.5",
     "less-plugin-glob": "2.0.1",
+    "prettier": "1.8.2",
     "request": "2.83.0",
     "rimraf": "^2.6.2",
     "rollup": "0.51.5",
@@ -53,7 +54,7 @@
     "style-loader": "^0.19.0",
     "ts-loader": "^3.1.1",
     "tslib": "1.8.0",
-    "tslint": "5.8.0",
+    "tslint": "^5.8.0",
     "tslint-react": "3.2.0",
     "typescript": "2.6.1",
     "webpack": "3.8.1",
@@ -88,7 +89,8 @@
     "rollup": "cross-env NODE_ENV=production rollup --config ./config/rollup.config.js",
     "analyze": "cross-env NODE_ENV=production WEBPACK_ANALYZE=1 webpack --config ./front/config/webpack.config.js",
     "webpack": "cross-env NODE_ENV=development webpack --config ./front/config/webpack.config.js",
-    "webpack:prod": "cross-env NODE_ENV=production webpack --config ./front/config/webpack.config.js"
+    "webpack:prod": "cross-env NODE_ENV=production webpack --config ./front/config/webpack.config.js",
+    "prety": "prettier --write front/src/**/*.tsx && prettier --write front/src/**/*.ts"
   },
   "repository": {
     "type": "git",

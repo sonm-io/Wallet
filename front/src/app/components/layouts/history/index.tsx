@@ -4,22 +4,22 @@ import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 
 interface IProps {
-  className?: string;
+    className?: string;
 }
 
 @inject('Store')
 @observer
 export class History extends React.Component<IProps, any> {
 
-  public render() {
-    const {
-      className,
-    } = this.props;
+    public render() {
+        const {
+            className,
+        } = this.props;
 
-    return (
-      <div className={cn('sonm-send', className)}>
-        history
-      </div>
-    );
-  }
+        return (
+            <div className={cn('sonm-send', className)}>
+                history
+            </div>
+        );
+    }
 }

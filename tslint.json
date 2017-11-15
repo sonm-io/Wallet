@@ -3,7 +3,8 @@
   "rules": {
     "indent": [
       true,
-      2
+      "spaces",
+      4
     ],
     "quotemark": [
       true,

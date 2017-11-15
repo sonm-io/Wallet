@@ -7,8 +7,8 @@ import { history } from './router/history';
 import * as stores from './stores';
 
 interface ILocationParams {
-  pathname: string;
-  search: string;
+    pathname: string;
+    search: string;
 }
 
 /**
@@ -16,27 +16,27 @@ interface ILocationParams {
  * @param {Object} location
  */
 async function renderByPath({ pathname, search }: ILocationParams) {
-  const query = queryStr.parse(search);
-  const { content, title } = await resolve({ pathname, query });
+    const query = queryStr.parse(search);
+    const { content, title } = await resolve({ pathname, query });
 
-  window.document.title = title;
+    window.document.title = title;
 
-  render(
-    <Provider {...stores} key="app-root">
-      {content}
-    </Provider>,
-    window.document.querySelector('#root'),
-  );
+    render(
+        <Provider {...stores} key="app-root">
+            {content}
+        </Provider>,
+        window.document.querySelector('#root'),
+    );
 }
 
 const waitForLoad = new Promise(done => {
-  window.addEventListener('DOMContentLoaded', done);
+    window.addEventListener('DOMContentLoaded', done);
 });
 
 async function init() {
-  await waitForLoad;
-  history.listen(renderByPath);
-  renderByPath((history as any).location);
+    await waitForLoad;
+    history.listen(renderByPath);
+    renderByPath((history as any).location);
 }
 
 init();
