@@ -14,5 +14,5 @@ export function on(handler: (params: any) => void) {
 }
 
 export function send(response: object) {
-    postMessage(response, '*');
+    worker.postMessage(response);
 }

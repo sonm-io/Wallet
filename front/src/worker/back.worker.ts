@@ -1,8 +1,11 @@
 import { Response, Request } from './ipc/messages';
 import * as ipc from './ipc/ipc';
 
-ipc.on((request: Request) => {
+ipc.on((request: any) => {
     // processRequest(request, ctx);
-    const response = new Response(request.requestId, {success: true}, false, false);
+    const response = new Response(request.requestId, {
+        pong: true,
+    }, null, null);
+
     ipc.send(response.toJS());
 });

@@ -8,7 +8,6 @@ worker.onmessage = onMessage;
 
 const allListeners = new Map<string, Set<messageHandler>>();
 
-
 export async function on(requestId: string, handler: messageHandler) {
     const listeners = getListeners(requestId);
 
@@ -47,6 +46,6 @@ function onMessage(e: MessageEvent) {
 
     const listeners = getListeners(requestId);
     listeners.forEach(handler => {
-        handler(requestId);
+        handler(requestId, message);
     });
 }
