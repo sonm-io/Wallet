@@ -38,6 +38,7 @@
       "check-typecast",
       "check-type-operator",
       "check-preblock"
-    ]
+    ],
+    "no-implicit-dependencies": true
   }
 }
