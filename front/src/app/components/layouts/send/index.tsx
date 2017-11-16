@@ -53,23 +53,23 @@ export class SendSrc extends React.Component<IProps, any> {
                             className="sonm-send__account-select"
                         >
                             {form.getFieldDecorator('from', {
-                                initialValue: 'qwertyuiopasdfgh',
+                                initialValue: '0x01602E49e4413Ce46Cd559E86d4c9939e2332B28',
                                 rules: [
                                     {required: true, message: 'Please select wallet'},
                                 ],
                             })(
                                 <BigSelect>
-                                    <Option value="qwertyuiopasdfgh">
+                                    <Option value="0x01602E49e4413Ce46Cd559E86d4c9939e2332B28">
                                         <AccountItem
-                                            address="qwertyuiopasdfgh"
-                                            name="Wallet1"
+                                            address="0x01602E49e4413Ce46Cd559E86d4c9939e2332B28"
+                                            name="Wallet 0x"
                                             etherBalance="5555"
                                             sonmBalance="777"
                                         />
                                     </Option>
-                                    <Option value="adcsdcadscadc">
+                                    <Option value="01602E49e4413Ce46Cd559E86d4c9939e2332B28">
                                         <AccountItem
-                                            address="adcsdcadscadc"
+                                            address="01602E49e4413Ce46Cd559E86d4c9939e2332B28"
                                             name="Wallet1"
                                             etherBalance="1000"
                                             sonmBalance="999"
