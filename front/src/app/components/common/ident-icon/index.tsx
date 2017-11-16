@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import * as invariant from 'fbjs/lib/invariant';
 // import { render } from 'ethereum-blockies';
 const ICON_PIXEL_SIZE = 8;
 
+
 export interface IProps {
     address: string;
-    className: string;
+    className?: string;
     width?: number;
 }
 
@@ -23,8 +25,19 @@ export class IdentIcon extends React.Component<IProps, any> {
     }
 
     private updateDataUrl(props: IProps | null, nextProps: IProps) {
-        if (props === null || props.address !== nextProps.address || props.width !== nextProps.width) {
-            this.draw(nextProps.address);
+        const address = nextProps.address;
+
+        invariant(
+            address.length === 40
+            || (
+                address.length === 42
+                && address.startsWith('0x')
+            ),
+            `Incorrect address ${address}`
+        );
+
+        if (props === null || props.address !== address || props.width !== nextProps.width) {
+            this.draw(address);
         }
     }
 
@@ -34,6 +47,8 @@ export class IdentIcon extends React.Component<IProps, any> {
         if (this.canvas === null) {
             return;
         }
+
+        const seed = address.length === 42 ? address : '0x' + address;
 
         const canvasSize = this.getCanvasSize();
 
@@ -132,17 +147,20 @@ export class IdentIcon extends React.Component<IProps, any> {
             }
         }
 
-        seedrand(address);
+        seedrand(seed);
         const scale = canvasSize / 8;
         const imageData = createImageData(8);
+        const color = createColor();
+        const bgcolor = createColor();
+        const spotcolor = createColor();
 
         setCanvas(
             this.canvas,
             imageData,
-            createColor(),
+            color,
             scale,
-            createColor(),
-            createColor()
+            bgcolor,
+            spotcolor
         );
     }
 
@@ -187,3 +205,5 @@ export class IdentIcon extends React.Component<IProps, any> {
         );
     }
 }
+
+export default IdentIcon;

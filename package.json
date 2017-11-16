@@ -44,6 +44,8 @@
     "less-loader": "^4.0.5",
     "less-plugin-glob": "2.0.1",
     "prettier": "1.8.2",
+    "react-docgen-typescript": "^1.1.0",
+    "react-styleguidist": "^6.0.33",
     "request": "2.83.0",
     "rimraf": "^2.6.2",
     "rollup": "0.51.5",
@@ -68,6 +70,7 @@
     "classnames": "2.2.5",
     "electron-settings": "3.1.4",
     "electron-shortcut-normalizer": "1.0.0",
+    "fbjs": "^0.8.16",
     "history": "4.7.2",
     "lodash": "4.17.4",
     "mobx": "3.3.1",
@@ -89,7 +92,8 @@
     "analyze": "cross-env NODE_ENV=production WEBPACK_ANALYZE=1 webpack --config ./front/config/webpack.config.js",
     "webpack": "cross-env NODE_ENV=development webpack --config ./front/config/webpack.config.js",
     "webpack:prod": "cross-env NODE_ENV=production webpack --config ./front/config/webpack.config.js",
-    "prety": "prettier --write front/src/**/*.tsx && prettier --write front/src/**/*.ts"
+    "prety": "prettier --write front/src/**/*.tsx && prettier --write front/src/**/*.ts",
+    "sg": "styleguidist server"
   },
   "repository": {
     "type": "git",

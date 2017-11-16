@@ -1,4 +1,4 @@
-import { Response, Request } from './ipc/messages';
+import { Response } from './ipc/messages';
 import * as ipc from './ipc/ipc';
 
 ipc.on((request: any) => {
