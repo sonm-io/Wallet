@@ -1,0 +1,55 @@
+@import "guide.less";
+
+@account-item-size: @big-select-height;
+
+.sonm-account-item {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 100px 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+
+  &__blockies {
+    margin: 5px;
+    grid-column: 1;
+    grid-row: 2 span;
+  }
+
+  &__name,
+  &__address,
+  &__ether,
+  &__sonm {
+    font-size: 18px;
+    color: @color-dark-gray;
+    padding: 5px;
+  }
+
+  &__name,
+  &__ether {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  &__sonm {
+    grid-column: 3;
+    grid-row: 2;
+    text-align: right;
+  }
+
+  &__ether {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: right;
+  }
+
+  &__name {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  &__address {
+    font-size: 14px;
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
