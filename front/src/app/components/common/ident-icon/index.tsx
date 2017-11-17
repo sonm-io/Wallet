@@ -4,7 +4,6 @@ import * as invariant from 'fbjs/lib/invariant';
 // import { render } from 'ethereum-blockies';
 const ICON_PIXEL_SIZE = 8;
 
-
 export interface IProps {
     address: string;
     className?: string;
@@ -33,7 +32,7 @@ export class IdentIcon extends React.Component<IProps, any> {
                 address.length === 42
                 && address.startsWith('0x')
             ),
-            `Incorrect address "${address}"`
+            `Incorrect address "${address}"`,
         );
 
         if (props === null || props.address !== address || props.width !== nextProps.width) {
@@ -54,12 +53,12 @@ export class IdentIcon extends React.Component<IProps, any> {
         // The random number is a js implementation of the Xorshift PRNG
         const randseed: number[] = new Array(4); // Xorshift: [x, y, z, w] 32 bit values
 
-        function seedrand(seed: string) {
-            for (var i = 0; i < randseed.length; i++) {
+        function seedrand(seedStr: string) {
+            for (let i = 0; i < randseed.length; i++) {
                 randseed[i] = 0;
             }
-            for (var i = 0; i < seed.length; i++) {
-                randseed[i%4] = ((randseed[i%4] << 5) - randseed[i%4]) + seed.charCodeAt(i);
+            for (let i = 0; i < seedStr.length; i++) {
+                randseed[i % 4] = ((randseed[i % 4] << 5) - randseed[i % 4]) + seed.charCodeAt(i);
             }
         }
 
@@ -151,7 +150,6 @@ export class IdentIcon extends React.Component<IProps, any> {
             return canvas;
         }
 
-
         const opts = buildOpts(seed);
 
         renderIcon(opts, this.canvas);
@@ -161,9 +159,8 @@ export class IdentIcon extends React.Component<IProps, any> {
         if (canvas !== this.canvas) {
             this.canvas = canvas;
             this.draw(this.props.address);
-            //render({ seed: this.props.address }, this.canvas as HTMLCanvasElement)
         }
-    };
+    }
 
     public shouldComponentUpdate() {
         return false;

@@ -1,0 +1,28 @@
+@import "guide.less";
+
+@currency-item-size: @big-select-height;
+
+.sonm-currency-item {
+  padding: 0;
+  display: block;
+  font-weight: normal;
+  color: @color-font;
+  height: @currency-item-size;
+
+  &__name {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 10px;
+    height: 50%;
+    font-size: 18px;
+  }
+
+  &__amount,
+  &__symbol {
+    vertical-align: baseline;
+    display: inline-block;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+}
