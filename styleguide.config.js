@@ -19,5 +19,6 @@ module.exports = {
   propsParser: require('react-docgen-typescript').withDefaultConfig().parse,
   require: [
     './front/src/app/components/index.less',
+    './front/src/app/less/antd-theme.less',
   ],
 };

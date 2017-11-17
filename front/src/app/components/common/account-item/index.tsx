@@ -11,7 +11,6 @@ export interface IAccountItemProps {
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {
-
     public render() {
         const {
             className,

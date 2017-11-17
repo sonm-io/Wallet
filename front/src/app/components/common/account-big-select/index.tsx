@@ -22,15 +22,18 @@ export class AccountBigSelect extends React.Component<IAccountBigSelectProps, an
         return (
             <BigSelect
                 value={value}
-                className={cn("sonm-account-big-select", className)}
+                className={cn('sonm-account-big-select', className)}
                 dropdownClassName="sonm-account-big-select__dropdown"
                 onChange={this.handleChange}
             >
                 {
                     accounts.map(account => {
                         return (
-                            <Option value={account.address}>
-                                <AccountItem {...account} />
+                            <Option
+                                value={account.address}
+                                key={account.address}
+                            >
+                                <AccountItem {...account} className="sonm-account-big-select__option"/>
                             </Option>
                         );
                     })
@@ -39,9 +42,11 @@ export class AccountBigSelect extends React.Component<IAccountBigSelectProps, an
         );
     }
 
-    protected handleChange(address: string) {
+    protected handleChange = (address: any) => {
         if (this.props.onChange) {
-            this.props.onChange(this.props.accounts.find(x => x.address === address));
+            this.props.onChange(this.props.accounts.find(x => x.address as string === address));
         }
     }
 }
+
+export default AccountBigSelect;
