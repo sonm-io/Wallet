@@ -5,9 +5,9 @@
 .sonm-currency-item {
   padding: 0;
   display: block;
-  font-weight: normal;
   color: @color-font;
   height: @currency-item-size;
+  font-weight: 500;
 
   &__name {
     display: flex;
@@ -22,7 +22,14 @@
   &__symbol {
     vertical-align: baseline;
     display: inline-block;
-    padding: 0 10px;
-    font-size: 14px;
+    font-size: 16px;
+  }
+
+  &__amount {
+    padding: 0 5px 0 10px;
+  }
+
+  &__symbol {
+    padding: 0;
   }
 }
