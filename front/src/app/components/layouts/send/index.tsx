@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Button, InputNumber, Spin, Input, Radio, Select } from 'antd';
+import { Form, Button, InputNumber, Spin, Input, Select } from 'antd';
 import { BigSelect } from 'app/components/common/big-select';
 import { AccountItem } from 'app/components/common/account-item';
 import { FormComponentProps } from 'antd/lib/form/Form';
@@ -160,11 +160,6 @@ export class SendSrc extends React.Component<IProps, any> {
                                     />,
                                 )
                             }
-                            <Radio.Group className="sonm-send__gas-price-buttons" value="normal">
-                                <Radio.Button value="low">Low</Radio.Button>
-                                <Radio.Button value="normal">Normal</Radio.Button>
-                                <Radio.Button value="hight">Hight</Radio.Button>
-                            </Radio.Group>
                         </Form.Item>
                     </Form>
                 </Spin>
