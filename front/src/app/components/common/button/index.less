@@ -1,0 +1,47 @@
+@sonm-button-height: 40px;
+
+.sonm-button {
+  display: inline-block;
+  height: @sonm-button-height;
+  line-height: @sonm-button-height - 2px;
+  box-shadow: @shadow;
+  padding: 0 (@sonm-button-height / 2);
+  outline: dotted 1px @color-dark-gray;
+  outline-offset: 3px;
+
+  &--color-violet {
+    --color: @color-violet;
+    --color-active: desaturate(@color-violet, 20%)
+  }
+
+  &--color-blue {
+    --color: @color-blue;
+    --color-active: desaturate(@color-blue, 20%)
+  }
+
+  &--color-pink {
+    --color: @color-pink;
+    --color-active: desaturate(@color-pink, 20%)
+  }
+
+  border-radius: (@sonm-button-height / 2);
+  background-color: var(--color);
+  border: solid 1px var(--color);
+  color: white;
+
+  &:active {
+    box-shadow: none;
+    transform: translate(2px, 2px);
+    background-color: var(--color-active);
+    border-color: var(--color-active);
+  }
+
+  &--transparent {
+    background-color: transparent !important;
+    color: var(--color);
+  }
+
+  &--square-pants {
+    border-radius: 0 !important;
+  }
+}
