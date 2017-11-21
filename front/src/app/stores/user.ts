@@ -28,9 +28,9 @@ export class UserStore {
         this.isLoading = true;
 
         try {
-            const response: api.IBalanceResponse = yield api.methods.readBalance();
-            this.ethBalance = response.data.balance;
-            this.snmBalance = response.data.token_balance;
+            const response: api.IResponse = yield api.methods.getBalance(this.address);
+            this.ethBalance = response.data.eth;
+            this.snmBalance = response.data.snmt;
         } catch (e) {
             this.error = String(e);
         } finally {

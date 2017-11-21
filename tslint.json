@@ -17,6 +17,7 @@
       "ban-single-arg-parens"
     ],
     "no-submodule-imports": false,
+    "only-arrow-functions": [false],
     "ordered-imports": false,
     "no-var-requires": false,
     "no-empty-interface": false,
@@ -40,6 +41,6 @@
       "check-type-operator",
       "check-preblock"
     ],
-    "no-implicit-dependencies": true
+    "no-implicit-dependencies": false
   }
 }
