@@ -32,7 +32,7 @@ export class SendSrc extends React.Component<IProps, any> {
         priority: 'normal',
     };
 
-    public handleSubmit = (event: React.FormEvent<Form>) => {
+    private handleSubmit = (event: React.FormEvent<Form>) => {
         this.props.form.validateFields(async (err, {path, password}) => {
             if (err) {
                 return;
@@ -46,6 +46,10 @@ export class SendSrc extends React.Component<IProps, any> {
         if (value !== this.state.addressTarget) {
             this.setState({ addressTarget: value });
         }
+    }
+
+    private handleChangeGasPrice = () => {
+
     }
 
     public render() {
@@ -176,31 +180,42 @@ export class SendSrc extends React.Component<IProps, any> {
                                 <InputNumber
                                     className="sonm-send__input"
                                     placeholder="Gas price"
+                                    onChange={this.handleChangeGasPrice}
                                 />,
                             )}
                         </Form.Item>
-                        <Form.Item
-                            label="Gas price"
-                            className="sonm-send__gas-price"
-                        >
-                            {
-                                form.getFieldDecorator('gasLimit', {
-                                    initialValue: '',
-                                    rules: [
-                                        {required: true, message: 'Please define gas limit'},
-                                    ],
-                                })(
-                                    <InputNumber
-                                        className="sonm-send__input"
-                                        placeholder="Gas limit"
-                                    />,
-                                )
-                            }
-                            <ButtonGroup
-                                valueList={['low', 'normal', 'hight']}
-                                value={this.state.priority}
-                            />
-                        </Form.Item>
+                        <div className="sonm-send__last-line">
+                            <Form.Item
+                                label="Gas price"
+                                className="sonm-send__gas-price"
+                            >
+                                {
+                                    form.getFieldDecorator('gasLimit', {
+                                        initialValue: '',
+                                        rules: [
+                                            {required: true, message: 'Please define gas limit'},
+                                        ],
+                                    })(
+                                        <InputNumber
+                                            className="sonm-send__input"
+                                            placeholder="Gas limit"
+                                        />,
+                                    )
+                                }
+                                <ButtonGroup
+                                    valueList={['low', 'normal', 'hight']}
+                                    value={this.state.priority}
+                                />
+                            </Form.Item>
+                            <Button
+                                onClick={this.handleSubmit}
+                                type="submit"
+                                color="violet"
+                                className="sonm-send__submit"
+                            >
+                                NEXT
+                            </Button>
+                        </div>
                     </Form>
                 </Spin>
             </div>

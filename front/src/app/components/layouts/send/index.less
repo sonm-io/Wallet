@@ -7,6 +7,24 @@
     vertical-align: bottom;
   }
 
+  & &__gas-price {
+    display: inline-block;
+  }
+
+  &__last-line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  &__submit {
+    display: inline-block;
+    vertical-align: bottom;
+    margin: 0 0 24px;
+  }
+
+
   &__form-second-line {
     display: flex;
     flex-direction: row;
@@ -17,6 +35,10 @@
   & &__target,
   & &__currency-select {
     margin: 0;
+  }
+
+  & &__target {
+    align-self: flex-start;
   }
 
   & &__target-icon {
