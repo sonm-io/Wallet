@@ -4,13 +4,13 @@ buttons:
     
 transparent:
 
-    <Button color="violet" isTransparent>123</Button>
+    <Button color="violet" transparent>123</Button>
     
 rect:
      
-    <Button color="pink" isSquare>123</Button>
+    <Button color="pink" square>123</Button>
     
 height:
          
-    <Button color="pink" isSquare height={50}>50px height</Button>
+    <Button color="pink" square height={50}>50px height</Button>
     

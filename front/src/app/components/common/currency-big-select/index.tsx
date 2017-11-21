@@ -7,8 +7,9 @@ import * as cn from 'classnames';
 export interface ICurrencyBigSelectProps {
     className?: string;
     currencies: ICurrencyItemProps[];
-    value: string;
+    value?: string;
     onChange?: (value: any) => void;
+    returnPrimitive?: boolean;
 }
 
 export class CurrencyBigSelect extends React.Component<ICurrencyBigSelectProps, any> {
@@ -44,7 +45,11 @@ export class CurrencyBigSelect extends React.Component<ICurrencyBigSelectProps, 
 
     protected handleChange = (address: any) => {
         if (this.props.onChange) {
-            this.props.onChange(this.props.currencies.find(x => x.address as string === address));
+            if (this.props.returnPrimitive) {
+                this.props.onChange(address as string);
+            } else {
+                this.props.onChange(this.props.currencies.find(x => x.address as string === address));
+            }
         }
     }
 }

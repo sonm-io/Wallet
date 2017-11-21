@@ -40,6 +40,7 @@
       "check-type-operator",
       "check-preblock"
     ],
-    "no-implicit-dependencies": false
+    "no-implicit-dependencies": false,
+    "no-bitwise": false
   }
 }

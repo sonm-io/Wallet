@@ -9,3 +9,7 @@ address format is variable:
 but will check for valid:
 
     <IdentIcon address="ololo" />
+    
+address 0:
+
+    <IdentIcon address="0x0" />

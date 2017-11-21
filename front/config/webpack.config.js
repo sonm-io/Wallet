@@ -22,6 +22,7 @@ module.exports = {
     filename: '[name].bundled.js',
     path: getFullPath('dist'),
     publicPath: isDev ? '' : '/',
+    crossOriginLoading: "use-credentials",
   },
 
   resolve: {
@@ -78,7 +79,7 @@ module.exports = {
 
   watch: isDev,
 
-  devtool: isDev ? 'source-map' : false,
+  devtool: false,
 
   plugins: (() => {
     const plugins = [

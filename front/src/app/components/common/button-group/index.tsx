@@ -7,7 +7,7 @@ import * as cn from 'classnames';
 const toString = (x: any) => String(x);
 
 export interface IButtonGroupProps<TValue> {
-  value: TValue;
+  value?: TValue;
   valueList: TValue[];
   displayValuePath?: string;
   keyValuePath?: string;
