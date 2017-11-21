@@ -5,10 +5,16 @@
 
   &__item {
     padding: 0;
+
+    &:focus {
+      outline: dotted 1px @color-dark-gray;
+      outline-offset: 3px;
+    }
   }
 
   &__radio {
-    display: none;
+    position: absolute;
+    opacity: 0;
   }
 
   &__button {
@@ -27,5 +33,10 @@
   &__radio:checked + &__button {
     background-color: @color-dark-gray-bg;
     color: @color-white;
+  }
+
+  &__radio:focus + &__button {
+    outline: dotted 1px @color-dark-gray;
+    outline-offset: 3px;
   }
 }

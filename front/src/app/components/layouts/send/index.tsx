@@ -6,7 +6,7 @@ import { FormComponentProps } from 'antd/lib/form/Form';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { Button } from 'app/components/common/button';
-// import { ButtonGroup } from 'app/components/common/button-group';
+import { ButtonGroup } from 'app/components/common/button-group';
 import IdentIcon from '../../common/ident-icon/index';
 
 interface IProps extends FormComponentProps {
@@ -196,10 +196,10 @@ export class SendSrc extends React.Component<IProps, any> {
                                     />,
                                 )
                             }
-                            {/*<ButtonGroup*/}
-                                {/*valueList={['low', 'normal', 'hight']}*/}
-                                {/*value={this.state.priority}*/}
-                            {/*/>*/}
+                            <ButtonGroup
+                                valueList={['low', 'normal', 'hight']}
+                                value={this.state.priority}
+                            />
                         </Form.Item>
                     </Form>
                 </Spin>
