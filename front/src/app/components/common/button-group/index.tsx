@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Group, Button } from 'antd/lib/radio';
 import get from 'lodash/fp/get';
 
 import * as cn from 'classnames';
@@ -13,27 +12,52 @@ export interface IButtonGroupProps<TValue> {
   keyValuePath?: string;
   onChange?: (value: TValue) => void;
   className?: string;
+  name?: string;
+}
+
+let uniqIdx = 0;
+function nextUniqId() {
+    return 'btnGrp' + uniqIdx++;
 }
 
 export class ButtonGroup<TValue> extends React.Component<IButtonGroupProps<TValue>, any> {
-    public handleChange = (e: any) => {
-        const {
-            onChange,
-            keyValuePath,
-            valueList,
-        } = this.props;
+    private buttonGroupName: string;
 
-        if  (e.target.checked) {
-            const key = e.target.value;
-            const getKeyValue = keyValuePath !== undefined
-                ? get(keyValuePath)
-                : toString;
-            const value = valueList.find(x => String(getKeyValue(x)) === key);
+    constructor(props: IButtonGroupProps<TValue>) {
+        super(props);
 
-            if (onChange) {
-                onChange(value as TValue);
-            }
+        this.buttonGroupName = props.name === undefined
+            ? nextUniqId()
+            : props.name;
+    }
+
+    protected handleChange = (event: any) => {
+        if (event.target.checked === false) {
+            return;
         }
+
+        if (this.props.onChange) {
+            const key = event.target.value;
+            const value = this.props.valueList.find(x => this.getKeyValue(x) === key);
+
+            this.props.onChange(value as TValue);
+        }
+    }
+
+    private getDisplayValue(raw: any) {
+        const getter = this.props.displayValuePath !== undefined
+            ? get(this.props.displayValuePath)
+            : toString;
+
+        return getter(raw);
+    }
+
+    private getKeyValue(raw: any) {
+        const getter = this.props.keyValuePath !== undefined
+            ? get(this.props.keyValuePath)
+            : toString;
+
+        return getter(raw);
     }
 
     public render() {
@@ -41,39 +65,34 @@ export class ButtonGroup<TValue> extends React.Component<IButtonGroupProps<TValu
             valueList,
             value,
             className,
-            displayValuePath,
-            keyValuePath,
         } = this.props;
 
-        const getDisplayValue = displayValuePath !== undefined
-            ? get(displayValuePath)
-            : toString;
-
-        const getKeyValue = keyValuePath !== undefined
-            ? get(keyValuePath)
-            : toString;
-
         return (
-          <Group
-              className={cn('sonm-button-group', className)}
-              value={value}
-              onChange={this.handleChange}
-          >
+          <div className={cn('sonm-button-group', className)}>
               {valueList.map(x => {
-                  const key = getKeyValue(x);
+                  const key = this.getKeyValue(x);
 
                   return (
-                      <Button
+                      <label
                           key={key}
                           className="sonm-button-group__item"
-                          value={key}
                       >
-                          {getDisplayValue(x)}
-                      </Button>
+                          <input
+                              className="sonm-button-group__radio"
+                              type="radio"
+                              value={key}
+                              name={this.buttonGroupName}
+                              checked={key === value}
+                              onChange={this.handleChange}
+                          />
+                          <span className="sonm-button-group__button">
+                            {this.getDisplayValue(x)}
+                          </span>
+                      </label>
                   );
               })}
 
-          </Group>
+          </div>
         );
     }
 }

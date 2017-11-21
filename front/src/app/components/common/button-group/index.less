@@ -1,15 +1,31 @@
 .sonm-button-group {
+  display: inline-block;
+  height: @sonm-input-height;
+  line-height: calc(@sonm-input-height - 2px);
 
   &__item {
-    border-color :@color-dark-gray-bg !important;
+    padding: 0;
+  }
 
-    &.ant-radio-button-wrapper-checked {
-      color: @color-white;
-      background-color: @color-dark-gray-bg;
+  &__radio {
+    display: none;
+  }
 
-      &:hover {
-        color: @color-white;
-      }
+  &__button {
+    display: inline-block;
+    border: solid 1px @color-dark-gray-bg;
+    color: @color-dark-gray;
+    height: 100%;
+    padding: 0 10px;
+    border-right-width: 0;
+
+    .sonm-button-group__item:last-child & {
+      border-right-width: 1px;
     }
+  }
+
+  &__radio:checked + &__button {
+    background-color: @color-dark-gray-bg;
+    color: @color-white;
   }
 }
