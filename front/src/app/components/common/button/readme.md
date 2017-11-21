@@ -10,3 +10,7 @@ rect:
      
     <Button color="pink" isSquare>123</Button>
     
+height:
+         
+    <Button color="pink" isSquare height={50}>50px height</Button>
+    

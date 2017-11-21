@@ -6,9 +6,15 @@ export interface IButtonProps extends React.ButtonHTMLAttributes<any> {
     isTransparent: boolean;
     isSquare: boolean;
     children: any;
+    height?: number;
 }
 
-export function Button({ color = 'blue', isSquare, isTransparent, children, ...rest }: IButtonProps) {
+export function Button({ color = 'blue', isSquare, isTransparent, children, height, ...rest }: IButtonProps) {
+    const style =
+        height
+            ? { '--height': `${height}px` }
+            : undefined;
+
     return (
         <button
             className={cn(
@@ -19,6 +25,7 @@ export function Button({ color = 'blue', isSquare, isTransparent, children, ...r
                     'sonm-button--transparent': isTransparent,
                 },
             )}
+            style={style}
             {...rest}
         >
             {children}

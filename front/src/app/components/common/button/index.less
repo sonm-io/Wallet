@@ -1,30 +1,45 @@
 @sonm-button-height: 40px;
 
 .sonm-button {
+  --height: @sonm-button-height;
+  --half-height: ~"calc(var(--height) / 2)";
+
+  &--square-pants {
+    border-radius: 0;
+    --height: @sonm-input-height;
+  }
+  border-radius: var(--half-height);
+
   display: inline-block;
-  height: @sonm-button-height;
-  line-height: @sonm-button-height - 2px;
+  height: var(--height);
+  line-height: ~"calc(var(--height) - 2px)";
   box-shadow: @shadow;
-  padding: 0 (@sonm-button-height / 2);
+  padding: 0 var(--half-height);
   outline: dotted 1px @color-dark-gray;
   outline-offset: 3px;
+  font-size: 15px;
+  font-weight: 500;
 
-  &--color-violet {
+  //&--color-violet {
     --color: @color-violet;
-    --color-active: desaturate(@color-violet, 20%)
-  }
+    --color-active: desaturate(@color-violet, 20%);
+  //}
 
   &--color-blue {
     --color: @color-blue;
-    --color-active: desaturate(@color-blue, 20%)
+    --color-active: desaturate(@color-blue, 20%);
   }
 
   &--color-pink {
     --color: @color-pink;
-    --color-active: desaturate(@color-pink, 20%)
+    --color-active: desaturate(@color-pink, 20%);
   }
 
-  border-radius: (@sonm-button-height / 2);
+  &--color-gray {
+    --color: @color-gray-bg;
+    --color-active: desaturate(@color-gray-bg, 20%);
+  }
+
   background-color: var(--color);
   border: solid 1px var(--color);
   color: white;
@@ -36,12 +51,8 @@
     border-color: var(--color-active);
   }
 
-  &--transparent {
+  &--transparent:not(:hover) {
     background-color: transparent !important;
     color: var(--color);
-  }
-
-  &--square-pants {
-    border-radius: 0 !important;
   }
 }
