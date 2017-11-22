@@ -1,5 +1,5 @@
+import { AES, enc } from 'crypto-js';
 
-import * as CryptoJS from 'crypto-js';
 import * as ipc from './ipc';
 export * from './types';
 import * as t from './types';
@@ -49,9 +49,9 @@ function processValidation(obj: any): IValidation {
     }, {});
 }
 
-async function delay(timeout: number) {
-    return new Promise((resolve, reject) => setTimeout(resolve, timeout));
-}
+// async function delay(timeout: number) {
+//     return new Promise((resolve, reject) => setTimeout(resolve, timeout));
+// }
 
 class MyLocalStorage {
     public storage: any;
@@ -63,15 +63,11 @@ class MyLocalStorage {
     }
 
     public get(key: string): any {
-        try {
-            return JSON.parse(CryptoJS.AES.decrypt(this.storage.getItem(key) || null, this.secretKey).toString(CryptoJS.enc.Utf8));
-        } catch (err) {
-            return null;
-        }
+        return JSON.parse(AES.decrypt(this.storage.getItem(key) || null, this.secretKey).toString(enc.Utf8));
     }
 
     public set(key: string, value: any) {
-        this.storage.setItem(key, CryptoJS.AES.encrypt(JSON.stringify(value), this.secretKey).toString());
+        this.storage.setItem(key, AES.encrypt(JSON.stringify(value), this.secretKey).toString());
     }
 
     public addToValue(key: string, value: any) {
@@ -137,7 +133,7 @@ export class Api {
         for (const address of Object.keys(accounts)) {
             const balances = await this.getCurrencyBalances(address);
 
-            let balanceMap: t.ICurrencyBalanceMap = {};
+            const balanceMap: t.ICurrencyBalanceMap = {};
 
             for (const key of Object.keys(balances.data)) {
                  balanceMap[key] = balances.data[key];
@@ -223,14 +219,8 @@ export class Api {
         return await createPromise<t.IResponse>('transaction.list', { filters, limit, offset});
     }
 
-    public async getGasPricePriorityMap(): Promise<t.IGasPricePriorityMap> {
-        await delay(10);
-
-        return {
-            low: '10',
-            normal: '1000',
-            hight: '10000000',
-        };
+    public async getGasPrice(): Promise<t.IResponse> {
+        return await createPromise<t.IResponse>('account.getGasPrice', {});
     }
 
     public static instance = new Api();

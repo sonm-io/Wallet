@@ -44,6 +44,7 @@ class Api {
 
             'account.check': this.checkAccount,
             'account.getBalance': this.getBalance,
+            'account.getGasPrice': this.getGasPrice,
             'account.getCurrencyBalances': this.getCurrencyBalances,
             'account.getCurrencies': this.getCurrencies,
             'account.send': this.send,
@@ -126,6 +127,14 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
+    }
+
+    public getGasPrice = async (data: IPayload): Promise<IResponse> => {
+        const client = this.accounts[Object.keys(this.accounts)[0]];
+
+        return {
+            data: (await client.account.getGasPrice()).toString(),
+        };
     }
 
     public checkAccount = async (data: IPayload): Promise<IResponse> => {

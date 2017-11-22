@@ -41,6 +41,9 @@ export class Wallets extends React.Component<IProps, any> {
             const currency = await api.methods.getCurrencyList();
             console.log(currency);
 
+            const gasPrice = await api.methods.getGasPrice();
+            console.log(gasPrice);
+
             const t1 = await api.methods.getTransactionList();
             console.log(t1);
             console.log('111111');
