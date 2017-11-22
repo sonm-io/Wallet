@@ -1,4 +1,5 @@
-import { AES, enc } from 'crypto-js';
+import * as AES from 'crypto-js/aes';
+import * as Utf8 from 'crypto-js/enc-utf8';
 
 import * as ipc from './ipc';
 export * from './types';
@@ -63,7 +64,7 @@ class MyLocalStorage {
     }
 
     public get(key: string): any {
-        return JSON.parse(AES.decrypt(this.storage.getItem(key) || null, this.secretKey).toString(enc.Utf8));
+        return JSON.parse(AES.decrypt(this.storage.getItem(key) || null, this.secretKey).toString(Utf8));
     }
 
     public set(key: string, value: any) {
