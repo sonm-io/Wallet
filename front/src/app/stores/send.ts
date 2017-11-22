@@ -30,6 +30,12 @@ export interface ICurrencyMap {
     [currencyAddr: string]: api.ICurrencyInfo;
 }
 
+export interface ICurrencyInfo {
+    symbol: string;
+    name: string;
+    address: string;
+}
+
 export interface ISendForm {
     from: string;
     to: string;
@@ -100,7 +106,7 @@ export class SendStore implements ISendStore {
     public *loadCurrencies() {
         try {
             this.accountMap = (yield api.methods.getCurrencyList()).reduce(
-                (acc: ICurrencyMap, currency: api.ICurrencyInfo) => {
+                (acc: ICurrencyMap, currency: ICurrencyInfo) => {
                     acc[currency.address] = currency;
 
                     return acc;
