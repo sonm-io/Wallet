@@ -9,7 +9,7 @@ interface IProps {
 
 @inject('Store')
 @observer
-export class History extends React.Component<IProps, any> {
+export class Wallets extends React.Component<IProps, any> {
 
     public render() {
         const {

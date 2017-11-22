@@ -1,8 +1,3 @@
-export interface IWalletJson {
-    address: string;
-    crypto: object;
-}
-
 export interface IResponse {
     success: boolean;
     data?: any;
@@ -16,7 +11,7 @@ export interface IFormResponse extends IResponse {
 export interface IAccountInfo {
     name: string;
     address: string;
-    currencyBalanceMap?: ICurrencyBalanceMap;
+    currencyBalanceMap: ICurrencyBalanceMap;
 }
 
 export interface ICurrencyBalanceMap {
@@ -29,12 +24,14 @@ export interface ICurrencyInfo {
     address: string;
 }
 
-export interface IAccounts {
-    [address: string]: {
-        json: IWalletJson,
-        name: string,
-        address: string,
-    };
+export interface IRawAccount {
+    json: string;
+    name: string;
+    address: string;
+}
+
+export interface IRawAccountMap { // TODO rename to IRawAccountMap
+    [address: string]: IRawAccount;
 }
 
 export interface IAccountCheckResponse extends IFormResponse {

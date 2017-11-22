@@ -142,11 +142,9 @@ class Api {
             try {
                 const privateKey = await utils.recoverPrivateKey(data.json, data.password);
 
-                const account = await this.initAccount(data.address);
+                const account = await this.initAccount(data.json.address);
                 account.password = data.password;
-
-                const gethClient = await this.initAccount(data.address);
-                gethClient.client.setPrivateKey(privateKey.toString('hex'));
+                account.client.setPrivateKey(privateKey.toString('hex'));
 
                 return {};
             } catch (err) {

@@ -38,6 +38,8 @@ export class SendStore implements ISendStore {
         currency: '',
     };
 
+    @observable public averageGasPrice = '';
+
     @observable public error = '';
 
     @observable public currencyList: api.ICurrencyInfo[];
@@ -65,5 +67,22 @@ export class SendStore implements ISendStore {
         } catch (e) {
             this.error = String(e);
         }
+    }
+
+    @asyncAction
+    public *init() {
+        const [
+            averageGasPrice,
+            accountList,
+            currencyList,
+        ] = yield Promise.all([
+            api.methods.getGasPrice(),
+            api.methods.getAccountList(),
+            api.methods.getCurrencyList(),
+        ]);
+
+        this.averageGasPrice = averageGasPrice;
+        this.accountList = accountList;
+        this.currencyList = currencyList;
     }
 }

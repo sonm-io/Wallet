@@ -27,6 +27,7 @@ function createPromise<TResult extends t.IFormResponse>(
             }
 
             if (response.success) {
+                console.log(response, 'request ', type);
                 done(response);
             } else {
                 reject(response.error);
@@ -54,17 +55,24 @@ function processValidation(obj: any): IValidation {
 //     return new Promise((resolve, reject) => setTimeout(resolve, timeout));
 // }
 
-class MyLocalStorage {
+class Storage {
     public storage: any;
     private secretKey: string;
 
     constructor(key: string) {
-        this.storage = localStorage;
+        this.storage = window.localStorage;
         this.secretKey = key;
     }
 
     public get(key: string): any {
-        return JSON.parse(AES.decrypt(this.storage.getItem(key) || null, this.secretKey).toString(Utf8));
+        let result;
+        const raw = this.storage.getItem(key);
+
+        result = raw !== null
+            ? JSON.parse(AES.decrypt(raw, this.secretKey).toString(Utf8))
+            : result = null;
+
+        return result;
     }
 
     public set(key: string, value: any) {
@@ -80,13 +88,22 @@ class MyLocalStorage {
 }
 
 export class Api {
-    private localStorage: MyLocalStorage;
+    private storage: Storage | undefined;
 
-    private constructor() {
-        this.localStorage = new MyLocalStorage('my secret key');
+    public setSecretKey(password: string) {
+        this.storage = new Storage(password);
     }
 
-    public async addAccount(json: t.IWalletJson, password: string, name: string): Promise<t.IAccountCheckResponse> {
+    private get localStorage(): Storage {
+        if (this.storage === undefined) {
+            throw new Error('not initialized');
+        }
+        return this.storage;
+    }
+
+    public async addAccount(jsonRaw: string, password: string, name: string): Promise<t.IAccountCheckResponse> {
+        const json = JSON.parse(jsonRaw);
+
         const response = await createPromise<t.IAccountCheckResponse>('account.check', { json, password });
 
         if (response.success) {
@@ -122,12 +139,12 @@ export class Api {
         }
     }
 
-    private getAccounts(): t.IAccounts {
+    private getAccounts(): t.IRawAccountMap {
         return this.localStorage.get('accounts') || {};
     }
 
     public async getAccountList(): Promise<t.IAccountInfo[]> {
-        let response: t.IAccountInfo[] = [];
+        const response: t.IAccountInfo[] = [];
 
         const accounts = this.getAccounts();
 
@@ -147,10 +164,10 @@ export class Api {
             });
         }
 
-        //init transactons
-        await createPromise<t.IResponse>('transaction.set', {
-            transactions: this.localStorage.get('transactions'),
-        });
+        // init transactons
+        // await createPromise<t.IResponse>('transaction.set', {
+        //     transactions: this.localStorage.get('transactions'),
+        // });
 
         return response;
     }
@@ -200,7 +217,7 @@ export class Api {
             json: accounts[from].json,
         });
 
-        //save transactions
+        // save transactions
         this.localStorage.set('transactions', (await createPromise<t.IResponse>('transaction.get', {})).data || []);
 
         return response;
@@ -217,14 +234,24 @@ export class Api {
         limit?: number,
         offset?: number,
     ): Promise<t.IResponse> {
-        return await createPromise<t.IResponse>('transaction.list', { filters, limit, offset});
+        return createPromise<t.IResponse>('transaction.list', { filters, limit, offset});
     }
 
     public async getGasPrice(): Promise<t.IResponse> {
-        return await createPromise<t.IResponse>('account.getGasPrice', {});
+        return createPromise<t.IResponse>('account.getGasPrice', {});
     }
 
     public static instance = new Api();
 }
 
 export const methods = Api.instance;
+
+Api.instance.setSecretKey('123'); // TODO
+
+// (async () => {
+//     await methods.addAccount(
+//         `{"address":"88057f14236687831e1fd205e8efb9e45166fe72","crypto":{"cipher":"aes-128-ctr","ciphertext":"c5ba5234a2ee63ba3d6227ec76badc1c1b90d3cb89c67e6b3838b5ea151a871f","cipherparams":{"iv":"c0bba37aabca014fb2e167d950dda52e"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"4774e694dc2f374e5a1e78dba432a6af172f3cc58cf4283fa3e6b1d70a1ec1d5"},"mac":"7e91f97c19321c996c3fab95f52e35cd56172ac1de224bc224446ea0a8e33179"},"id":"c9356318-8835-413c-932e-4f9e3ad472f2","version":3}`,
+//         '11111111',
+//         'Vasya',
+//     );
+// })();

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { IdentIcon } from '../ident-icon';
 import * as cn from 'classnames';
 
-export interface ICurrencyInfo {
+export interface ICurrencyDetails {
     symbol: string;
     balance: string;
     address: string;
@@ -10,7 +10,7 @@ export interface ICurrencyInfo {
 
 export interface ICurrencyBalanceListProps {
     className?: string;
-    currencyBalanceList: ICurrencyInfo[];
+    currencyBalanceList: ICurrencyDetails[];
 }
 
 export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListProps, any> {

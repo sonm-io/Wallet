@@ -21,9 +21,11 @@ interface IProps extends FormComponentProps {
             gasPrice: string,
         },
     };
+    mainStore?: {
+    };
 }
 
-@inject('sendStore')
+@inject('sendStore', 'mainStore')
 @observer
 export class SendSrc extends React.Component<IProps, any> {
     public state = {
