@@ -1,12 +1,12 @@
 export class Response {
     public error: any;
-    public payload: any;
+    public data: any;
     public validation: any;
     public requestId: number;
 
-    constructor(requestId: number, payload?: any, validation?: any, error?: any) {
+    constructor(requestId: number, data?: any, validation?: any, error?: any) {
         this.error = error === undefined ? null : error;
-        this.payload = payload === undefined ? null : payload;
+        this.data = data === undefined ? null : data;
         this.validation = validation === undefined ? null : validation;
         this.requestId = requestId;
     }
@@ -24,7 +24,7 @@ export class Response {
         return {
             success: this.isSuccess(),
             error: this.error,
-            payload: this.payload,
+            data: this.data,
             validation: this.validation,
             requestId: this.requestId,
         };

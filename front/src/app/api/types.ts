@@ -1,7 +1,47 @@
+export interface IWalletJson {
+    address: string;
+    crypto: object;
+}
+
 export interface IResponse {
     success: boolean;
     data?: any;
     error?: string;
+}
+
+export interface IFormResponse extends IResponse {
+    validation?: object;
+}
+
+export interface IAccountInfo {
+    name: string;
+    address: string;
+    currencyBalanceMap?: ICurrencyBalanceMap;
+}
+
+export interface ICurrencyBalanceMap {
+    [address: string]: string;
+}
+
+export interface ICurrencyInfo {
+    symbol: string;
+    name: string;
+    address: string;
+}
+
+export interface IAccounts {
+    [address: string]: {
+        json: IWalletJson,
+        name: string,
+        address: string,
+    };
+}
+
+export interface IAccountCheckResponse extends IFormResponse {
+    validation?: {
+        path?: string;
+        password?: string;
+    };
 }
 
 export interface ISubscribeResponse {
@@ -9,10 +49,6 @@ export interface ISubscribeResponse {
     done: boolean;
     data?: any;
     error?: string;
-}
-
-export interface IFormResponse extends IResponse {
-    validation?: object;
 }
 
 export interface ILoginResponse extends IFormResponse {
@@ -23,29 +59,6 @@ export interface ILoginResponse extends IFormResponse {
     data?: {
         address: string;
     };
-}
-
-export interface IBalanceResponse extends IResponse {
-    data: {
-        balance: string;
-        token_balance: string;
-    };
-}
-
-export interface ICurrencyInfo {
-    symbol: string;
-    fullName: string;
-    address: string;
-}
-
-export interface ICurrencyBalanceMap {
-    [currencyAddr: string]: string;
-}
-
-export interface IAccountInfo {
-    name: string;
-    address: string;
-    currencyBalanceMap: ICurrencyBalanceMap;
 }
 
 export interface IGasPricePriorityMap {

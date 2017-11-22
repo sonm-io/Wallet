@@ -12,22 +12,10 @@ export interface ISendStore {
         gasPrice: string;
     };
 
-    currencyMap: ICurrencyMap;
-    accountMap: IAccountMap;
-
-    loadCurrencies(): void;
-
-    loadAccounts(): void;
+    currencyList: api.ICurrencyInfo[];
+    accountList: api.IAccountInfo[];
 
     submitTransaction(form: ISendForm, password: string): void;
-}
-
-export interface IAccountMap {
-    [accountAddr: string]: api.IAccountInfo;
-}
-
-export interface ICurrencyMap {
-    [currencyAddr: string]: api.ICurrencyInfo;
 }
 
 export interface ISendForm {
@@ -52,9 +40,9 @@ export class SendStore implements ISendStore {
 
     @observable public error = '';
 
-    @observable public currencyMap: ICurrencyMap = {};
+    @observable public currencyList: api.ICurrencyInfo[];
 
-    @observable public accountMap: IAccountMap;
+    @observable public accountList: api.IAccountInfo[];
 
     @action
     public useMaximum() {
@@ -73,39 +61,6 @@ export class SendStore implements ISendStore {
                 form.gasLimit,
 
                 password,
-            );
-        } catch (e) {
-            this.error = String(e);
-        }
-    }
-
-    @asyncAction
-    public *loadAccounts() {
-        try {
-            const accounts = yield api.methods.getAccountList();
-
-            this.accountMap = accounts.reduce((acc: IAccountMap, account: api.IAccountInfo) => {
-                acc[account.address] = account;
-
-                return acc;
-            }, {});
-
-            this.form.amount = accounts[0].address;
-        } catch (e) {
-            this.error = String(e);
-        }
-    }
-
-    @asyncAction
-    public *loadCurrencies() {
-        try {
-            this.accountMap = (yield api.methods.getCurrencyList()).reduce(
-                (acc: ICurrencyMap, currency: api.ICurrencyInfo) => {
-                    acc[currency.address] = currency;
-
-                    return acc;
-                },
-                {},
             );
         } catch (e) {
             this.error = String(e);
