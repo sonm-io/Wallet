@@ -102,9 +102,19 @@ class Api {
     }
 
     public async getAccountList(): Promise<IResponse> {
+        const accounts = await this.getAccounts();
+
+        console.log(accounts);
+
         return {
-            data: await createPromise('get', { key: 'accounts' }),
+            data: {},
         };
+    }
+
+    private async getAccounts(): Promise<t.IAccounts> {
+        const accounts = await createPromise('get', { key: 'accounts' });
+
+        return await this.decrypt(accounts) as t.IAccounts;
     }
 
     public async ping(): Promise<IResponse> {
