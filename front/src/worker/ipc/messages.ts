@@ -1,10 +1,12 @@
 export class Response {
+    public type: string;
     public error: any;
     public data: any;
     public validation: any;
     public requestId: number;
 
-    constructor(requestId: number, data?: any, validation?: any, error?: any) {
+    constructor(type: string, requestId: number, data?: any, validation?: any, error?: any) {
+        this.type = type;
         this.error = error === undefined ? null : error;
         this.data = data === undefined ? null : data;
         this.validation = validation === undefined ? null : validation;
@@ -22,6 +24,7 @@ export class Response {
 
     public toJS() {
         return {
+            type: this.type,
             success: this.isSuccess(),
             error: this.error,
             data: this.data,

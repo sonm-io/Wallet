@@ -1,6 +1,3 @@
-import * as AES from 'crypto-js/aes';
-import * as Utf8 from 'crypto-js/enc-utf8';
-
 import * as ipc from './ipc';
 export * from './types';
 import * as t from './types';
@@ -56,26 +53,31 @@ function processValidation(obj: any): IValidation {
 
 class MyLocalStorage {
     public storage: any;
-    private secretKey: string;
 
-    constructor(key: string) {
+    constructor() {
         this.storage = localStorage;
-        this.secretKey = key;
     }
 
-    public get(key: string): any {
-        return JSON.parse(AES.decrypt(this.storage.getItem(key) || null, this.secretKey).toString(Utf8));
+    public async get(key: string): Promise<any> {
+        const value = this.storage.getItem(key);
+
+        if (value) {
+            const response = await createPromise<t.IResponse>('decrypt', {
+                data: value,
+            });
+
+            return JSON.parse(response.data);
+        } else {
+            return null;
+        }
     }
 
-    public set(key: string, value: any) {
-        this.storage.setItem(key, AES.encrypt(JSON.stringify(value), this.secretKey).toString());
-    }
+    public async set(key: string, value: any): Promise<any> {
+        const response = await createPromise<t.IResponse>('encrypt', {
+            data: JSON.stringify(value),
+        });
 
-    public addToValue(key: string, value: any) {
-        const data = this.get(key);
-        data.push(value);
-
-        this.set(key, value);
+        this.storage.setItem(key, response.data);
     }
 }
 
@@ -83,14 +85,18 @@ export class Api {
     private localStorage: MyLocalStorage;
 
     private constructor() {
-        this.localStorage = new MyLocalStorage('my secret key');
+        this.localStorage = new MyLocalStorage();
+    }
+
+    public async setSecretKey(key: string): Promise<t.IResponse> {
+        return await createPromise<t.IResponse>('account.setSecretKey', { key });
     }
 
     public async addAccount(json: t.IWalletJson, password: string, name: string): Promise<t.IAccountCheckResponse> {
         const response = await createPromise<t.IAccountCheckResponse>('account.check', { json, password });
 
         if (response.success) {
-            const accounts = this.getAccounts();
+            const accounts = await this.getAccounts();
 
             accounts[json.address] = {
                 address: json.address,
@@ -98,38 +104,41 @@ export class Api {
                 name: name || 'wallet',
             };
 
-            this.localStorage.set('accounts', accounts);
+            await this.localStorage.set('accounts', accounts);
         }
 
         return response;
     }
 
     public async removeAccount(address: string): Promise<void> {
-        const accounts = this.getAccounts();
+        const accounts = await this.getAccounts();
 
         if (accounts[address]) {
             delete accounts[address]
-            this.localStorage.set('accounts', accounts);
+            await this.localStorage.set('accounts', accounts);
         }
     }
 
     public async renameAccount(address: string, name: string): Promise<void> {
-        const accounts = this.getAccounts();
+        const accounts = await this.getAccounts();
 
         if (accounts[address]) {
             accounts[address].name = name;
-            this.localStorage.set('accounts', accounts);
+            await this.localStorage.set('accounts', accounts);
         }
     }
 
-    private getAccounts(): t.IAccounts {
-        return this.localStorage.get('accounts') || {};
+    private async getAccounts(): Promise<t.IAccounts> {
+        return await this.localStorage.get('accounts') as t.IAccounts;
     }
 
     public async getAccountList(): Promise<t.IAccountInfo[]> {
-        let response: t.IAccountInfo[] = [];
+        const response1 = await createPromise<t.IResponse>('account.list', {});
+        console.log('1111', response1);
 
-        const accounts = this.getAccounts();
+        const response: t.IAccountInfo[] = [];
+
+        const accounts = await this.getAccounts();
 
         for (const address of Object.keys(accounts)) {
             const balances = await this.getCurrencyBalances(address);
@@ -149,7 +158,7 @@ export class Api {
 
         //init transactons
         await createPromise<t.IResponse>('transaction.set', {
-            transactions: this.localStorage.get('transactions'),
+            transactions: await this.localStorage.get('transactions'),
         });
 
         return response;
@@ -187,7 +196,7 @@ export class Api {
         gasLimit: string,
         password: string,
     ): Promise<t.IResponse> {
-        const accounts = this.getAccounts();
+        const accounts = await this.getAccounts();
 
         const response = await createPromise<t.IResponse>('account.send', {
             from,
@@ -201,7 +210,7 @@ export class Api {
         });
 
         //save transactions
-        this.localStorage.set('transactions', (await createPromise<t.IResponse>('transaction.get', {})).data || []);
+        await this.localStorage.set('transactions', (await createPromise<t.IResponse>('transaction.get', {})).data || []);
 
         return response;
     }

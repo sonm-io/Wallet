@@ -1,8 +1,12 @@
 const createWorker = require('worker/back.worker.ts');
 
+import { init } from 'worker/helpers.ts';
+
 type messageHandler = (...args: any[]) => void;
 
 const worker = createWorker();
+
+init(worker);
 
 worker.onmessage = onMessage;
 
@@ -42,10 +46,13 @@ function getListeners(requestId: string) {
 
 function onMessage(e: MessageEvent) {
     const message = e.data;
-    const requestId = message.requestId as string;
 
-    const listeners = getListeners(requestId);
-    listeners.forEach(handler => {
-        handler(requestId, message);
-    });
+    if (message.type && message.type === 'api') {
+        const requestId = message.requestId as string;
+
+        const listeners = getListeners(requestId);
+        listeners.forEach(handler => {
+            handler(requestId, message);
+        });
+    }
 }

@@ -1,5 +1,8 @@
-import {Request} from '../ipc/messages';
+import { Request } from '../ipc/messages';
 import * as sonmApi from 'sonm-api';
+import * as AES from 'crypto-js/aes';
+import * as Utf8 from 'crypto-js/enc-utf8';
+import * as ipc from '../ipc/ipc';
 
 const { createClient, utils } = sonmApi;
 
@@ -23,6 +26,23 @@ interface ITransaction {
     fee: string;
 }
 
+function createPromise(
+    action: string,
+    payload: any,
+): Promise<any> {
+    return new Promise((resolve, reject) => {
+        (ipc as any).send({
+            type: 'storage',
+            action,
+            payload,
+        });
+
+        (ipc as any).listen((response: any) => {
+            resolve(response.data);
+        });
+    });
+}
+
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
 
 class Api {
@@ -36,6 +56,8 @@ class Api {
 
     public transactions: ITransaction[];
 
+    private secretKey: string;
+
     private constructor() {
         this.accounts = {};
 
@@ -48,13 +70,41 @@ class Api {
             'account.getCurrencyBalances': this.getCurrencyBalances,
             'account.getCurrencies': this.getCurrencies,
             'account.send': this.send,
+            'account.list': this.getAccountList,
+            'account.setSecretKey': this.setSecretKey,
 
             'transaction.list': this.getTransactionList,
             'transaction.set': this.setTransactions,
             'transaction.get': this.getTransactions,
+
+            'decrypt': this.decrypt,
+            'encrypt': this.encrypt,
         };
 
         this.transactions = [];
+    }
+
+    public decrypt = async (payload: IPayload): Promise<IResponse> => {
+        return {
+            data: AES.decrypt(payload.data, this.secretKey).toString(Utf8),
+        };
+    }
+
+    public encrypt = async (payload: IPayload): Promise<IResponse> => {
+        return {
+            data: AES.encrypt(payload.data, this.secretKey).toString(),
+        };
+    }
+
+    public setSecretKey = async (data: IPayload): Promise<IResponse> => {
+        this.secretKey = data.key;
+        return {};
+    }
+
+    public async getAccountList(): Promise<IResponse> {
+        return {
+            data: await createPromise('get', { key: 'accounts' }),
+        };
     }
 
     public async ping(): Promise<IResponse> {
@@ -176,7 +226,9 @@ class Api {
             gethClient.password = password;
         }
 
-        const txResult = (currency === '0x' ? await gethClient.account.sendEther(to, qty) : await gethClient.account.sendTokens(to, parseInt(qty), currency));
+        const txResult = (currency === '0x'
+            ? await gethClient.account.sendEther(to, qty)
+            : await gethClient.account.sendTokens(to, parseInt(qty, 10), currency));
         const receipt = await txResult.getReceipt();
         const fee = await txResult.getTxPrice();
 
@@ -185,8 +237,8 @@ class Api {
             datetime: new Date().valueOf(),
             from_address: from,
             to_address: to,
-            qty: qty,
-            currency: currency,
+            qty,
+            currency,
             fee: fee.toString(),
         });
 
@@ -202,25 +254,7 @@ class Api {
         limit = limit || 10;
         offset = offset || 0;
 
-        // let where = [] as string[];
-        //
-        // for (const type of ['from_address', 'to_address', 'currency']) {
-        //     if (filters[type]) {
-        //         where.push(`${type} = '${filters[type]}'`);
-        //     }
-        // }
-        //
-        // if (filters.date_start) {
-        //     where.push(`datetime >= '${filters.date_start}'`);
-        // }
-        //
-        // if (filters.date_end) {
-        //     where.push(`datetime <= '${filters.date_end}'`);
-        // }
-        //
-        // data: alasql(`SELECT * FROM ? ${ where.length ? ' WHERE ' + where.join(' and ') : ''} LIMIT ${limit} OFFSET ${offset}`, [this.transactions]),
-
-        let transactions = [];
+        const transactions = [];
 
         for (const item of this.transactions) {
             let ok = true;

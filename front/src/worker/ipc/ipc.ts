@@ -16,3 +16,12 @@ export function on(handler: (params: any) => void) {
 export function send(response: object) {
     worker.postMessage(response);
 }
+
+export function listen(handler: (params: any) => void) {
+    worker.addEventListener('message', (e: any) => {
+        if (e.data.type && e.data.type === 'responseFromStorage') {
+            handler(e.data);
+            worker.removeEventListener('message', e);
+        }
+    });
+}
