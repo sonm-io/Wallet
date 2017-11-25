@@ -3,8 +3,9 @@ import * as sonmApi from 'sonm-api';
 import * as AES from 'crypto-js/aes';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as ipc from '../ipc/ipc';
+import * as t from '../../app/api/types';
 
-const { createClient, utils } = sonmApi;
+const { createSonmFactory, utils } = sonmApi;
 
 interface IPayload {
     [index: string]: any;
@@ -64,8 +65,10 @@ class Api {
         this.routes = {
             'ping': this.ping,
 
-            'account.check': this.checkAccount,
-            'account.getBalance': this.getBalance,
+            'account.add': this.addAccount,
+            'account.remove': this.removeAccount,
+            'account.rename': this.renameAccount,
+
             'account.getGasPrice': this.getGasPrice,
             'account.getCurrencyBalances': this.getCurrencyBalances,
             'account.getCurrencies': this.getCurrencies,
@@ -74,26 +77,17 @@ class Api {
             'account.setSecretKey': this.setSecretKey,
 
             'transaction.list': this.getTransactionList,
-            'transaction.set': this.setTransactions,
-            'transaction.get': this.getTransactions,
-
-            'decrypt': this.decrypt,
-            'encrypt': this.encrypt,
         };
 
         this.transactions = [];
     }
 
-    public decrypt = async (payload: IPayload): Promise<IResponse> => {
-        return {
-            data: AES.decrypt(payload.data, this.secretKey).toString(Utf8),
-        };
+    public decrypt = (data: string): any => {
+        return data ? JSON.parse(AES.decrypt(data, this.secretKey).toString(Utf8)) : null;
     }
 
-    public encrypt = async (payload: IPayload): Promise<IResponse> => {
-        return {
-            data: AES.encrypt(payload.data, this.secretKey).toString(),
-        };
+    public encrypt = (data: any): string => {
+        return AES.encrypt( data ? JSON.stringify(data) : null, this.secretKey).toString();
     }
 
     public setSecretKey = async (data: IPayload): Promise<IResponse> => {
@@ -101,20 +95,50 @@ class Api {
         return {};
     }
 
-    public async getAccountList(): Promise<IResponse> {
-        const accounts = await this.getAccounts();
+    public getAccountList = async(): Promise<IResponse> => {
+        const accounts = await this.getAccounts() || {};
+        const addresses = Object.keys(accounts);
 
-        console.log(accounts);
+        let requests = [];
+        for ( const address in accounts ) {
+            requests.push(this.getCurrencyBalances(address))
+        }
+
+        const balancies = await Promise.all(requests);
+
+        let list = [];
+        for(const index in addresses) {
+            const address = addresses[index];
+
+            list.push({
+                address: address,
+                name: accounts[address].name,
+                currencyBalanceMap: balancies[index]
+            })
+        }
 
         return {
-            data: {},
-        };
+            data: list,
+        } as IResponse;
     }
 
-    private async getAccounts(): Promise<t.IAccounts> {
-        const accounts = await createPromise('get', { key: 'accounts' });
+    private saveData = async(key: string, data: any): Promise<IResponse> => {
+        const encryptedData = await this.encrypt(data);
 
-        return await this.decrypt(accounts) as t.IAccounts;
+        return await createPromise('set', {
+            key,
+            value: encryptedData,
+        });
+    }
+
+    private getAccounts = async(): Promise<t.IAccounts | null> => {
+        const data = await createPromise('get', { key: 'accounts' });
+
+        if (data) {
+            return this.decrypt(data) as t.IAccounts;
+        } else {
+            return null;
+        }
     }
 
     public async ping(): Promise<IResponse> {
@@ -125,27 +149,13 @@ class Api {
         };
     }
 
-    public setTransactions = async (data: IPayload): Promise<IResponse> => {
-        if (data.transactions) {
-            this.transactions = data.transactions;
-        }
-
-        return {};
-    }
-
-    public getTransactions = async (): Promise<IResponse> => {
-        return {
-            data: this.transactions,
-        };
-    }
-
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
-            const client = createClient(URL_REMOTE_GETH_NODE, address);
+            const geth = createSonmFactory(URL_REMOTE_GETH_NODE, address);
 
             this.accounts[address] = {
-                client,
-                account: await client.createAccount(),
+                geth,
+                account: await geth.createAccount(),
                 password: null,
             };
         }
@@ -153,33 +163,16 @@ class Api {
         return this.accounts[address];
     }
 
-    public getBalance = async (data: IPayload): Promise<IResponse> => {
-        if (data.address) {
-            const client = await this.initAccount(data.address);
-
-            return {
-                data: await client.account.getBalance(),
-            };
-        } else {
-            throw new Error('required_params_missed');
-        }
-    }
-
-    public getCurrencyBalances = async (data: IPayload): Promise<IResponse> => {
-        if (data.address) {
-            const client = await this.initAccount(data.address);
-
-            return {
-                data: await client.account.getCurrencyBalances(),
-            };
-        } else {
-            throw new Error('required_params_missed');
-        }
+    public getCurrencyBalances = async (address: string) => {
+        const client = await this.initAccount(address);
+        return await client.account.getCurrencyBalances();
     }
 
     public getCurrencies = async (data: IPayload): Promise<IResponse> => {
-        if (data.address) {
-            const client = await this.initAccount(data.address);
+        const accounts = await this.getAccounts() || {};
+
+        if (accounts) {
+            const client = await this.initAccount(Object.keys(accounts)[0]);
 
             return {
                 data: await client.account.getCurrencies(),
@@ -197,16 +190,25 @@ class Api {
         };
     }
 
-    public checkAccount = async (data: IPayload): Promise<IResponse> => {
+    public addAccount = async (data: IPayload): Promise<IResponse> => {
         if (data.json && data.password) {
             try {
-                const privateKey = await utils.recoverPrivateKey(data.json, data.password);
+                const json = JSON.parse(data.json);
+                const privateKey = await utils.recoverPrivateKey(json, data.password);
 
-                const account = await this.initAccount(data.address);
+                const account = await this.initAccount(json.address);
                 account.password = data.password;
+                account.geth.setPrivateKey(privateKey.toString('hex'));
 
-                const gethClient = await this.initAccount(data.address);
-                gethClient.client.setPrivateKey(privateKey.toString('hex'));
+                const accounts = await this.getAccounts() || {};
+                const address = `0x${json.address}`
+                accounts[address] = {
+                    json,
+                    address,
+                    name: data.name,
+                };
+
+                await this.saveData('accounts', accounts);
 
                 return {};
             } catch (err) {
@@ -221,8 +223,48 @@ class Api {
         }
     }
 
+    public renameAccount = async (data: IPayload): Promise<IResponse> => {
+        if (data.address && data.name) {
+            const accounts = await this.getAccounts() || {};
+            if ( accounts[data.address] ) {
+                accounts[data.address].name = data.name;
+                await this.saveData('accounts', accounts);
+            }
+
+            return {};
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
+    public removeAccount = async (data: IPayload): Promise<IResponse> => {
+        if (data.address) {
+            const address = data.address;
+            const accounts = await this.getAccounts() || {};
+
+            if ( accounts[address] ) {
+                delete accounts[address];
+                await this.saveData('accounts', accounts);
+            }
+
+            return {};
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
+    public getTransactions = async () => {
+        const data = await createPromise('get', { key: 'transactions' });
+
+        if (data) {
+            return this.decrypt(data) || [];
+        } else {
+            return null;
+        }
+    }
+
     public send = async (data: IPayload): Promise<IResponse> => {
-        const { from, to, qty, currency, password, json } = data;
+        const { from, to, qty, currency, password } = data;
 
         const gethClient = await this.initAccount(from);
 
@@ -231,26 +273,46 @@ class Api {
                 throw new Error('password_not_matched');
             }
         } else {
-            const privateKey = await utils.recoverPrivateKey(json, password);
-            gethClient.client.setPrivateKey(privateKey.toString('hex'));
-            gethClient.password = password;
+            const accounts = await this.getAccounts() || {};
+
+            try {
+                const privateKey = await utils.recoverPrivateKey(accounts[from].json, password);
+                gethClient.geth.setPrivateKey(privateKey.toString('hex'));
+                gethClient.password = password;
+            } catch (err) {
+                return {
+                    validation: {
+                        password: 'password_not_valid',
+                    },
+                };
+            }
         }
+
+        const transactions = await this.getTransactions();
+        const count = transactions.length;
+
+        await this.saveData('transactions', transactions);
 
         const txResult = (currency === '0x'
             ? await gethClient.account.sendEther(to, qty)
             : await gethClient.account.sendTokens(to, parseInt(qty, 10), currency));
-        const receipt = await txResult.getReceipt();
-        const fee = await txResult.getTxPrice();
 
-        this.transactions.push({
-            hash: receipt.transactionHash,
+        //presave
+        transactions[count] = {
+            hash: await txResult.getHash(),
             datetime: new Date().valueOf(),
             from_address: from,
             to_address: to,
             qty,
             currency,
-            fee: fee.toString(),
-        });
+        };
+
+        const receipt = await txResult.getReceipt();
+        const fee = await txResult.getTxPrice();
+
+        transactions[count].fee = fee.toString();
+
+        await this.saveData('transactions', transactions);
 
         return {
             data: receipt,
@@ -264,9 +326,10 @@ class Api {
         limit = limit || 10;
         offset = offset || 0;
 
-        const transactions = [];
+        const transactions = await this.getTransactions();
+        let filtered = [];
 
-        for (const item of this.transactions) {
+        for (const item of transactions) {
             let ok = true;
 
             if (Object.keys(filters).length) {
@@ -286,12 +349,14 @@ class Api {
             }
 
             if (ok === true) {
-                transactions.push(item);
+                filtered.push(item);
             }
         }
 
+        filtered = filtered.slice(offset, offset + limit);
+
         return {
-            data: transactions,
+            data: filtered,
         };
     }
 

@@ -38,6 +38,8 @@ export interface IAccounts {
 }
 
 export interface IAccountCheckResponse extends IFormResponse {
+    success: boolean;
+    error?: string;
     validation?: {
         path?: string;
         password?: string;

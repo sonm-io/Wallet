@@ -7,6 +7,7 @@ ipc.on(async (request: Request) => {
 
     try {
         const {data, validation} = await api.resolve(request);
+
         response = new Response('api', request.requestId, data, validation, null);
     } catch (err) {
         response = new Response('api', request.requestId, null, null, err.message);
