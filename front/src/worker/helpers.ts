@@ -16,7 +16,7 @@ class MyLocalStorage {
 
 const storage = new MyLocalStorage();
 
-export function init(worker: any) {
+module.exports = function init(worker: any) {
     worker.addEventListener('message', (e: any) => {
         const data = e.data;
 

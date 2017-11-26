@@ -1,6 +1,5 @@
 const createWorker = require('worker/back.worker.ts');
-
-import { init } from 'worker/helpers.ts';
+const init = require('worker/helpers.ts');
 
 type messageHandler = (...args: any[]) => void;
 
