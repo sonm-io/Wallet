@@ -6,6 +6,7 @@ export interface ICurrencyDetails {
     symbol: string;
     balance: string;
     address: string;
+    name: string;
 }
 
 export interface ICurrencyBalanceListProps {

@@ -6,13 +6,13 @@ import * as cn from 'classnames';
 
 export interface IAccountBigSelectProps {
     className?: string;
-    accounts: IAccountItemProps[];
+    accounts?: IAccountItemProps[];
     value?: string;
     onChange?: (value: any) => void;
     returnPrimitive?: boolean;
 }
 
-export class AccountBigSelect extends React.Component<IAccountBigSelectProps, any> {
+export class AccountBigSelect extends React.PureComponent<IAccountBigSelectProps, any> {
     public render() {
         const {
             value,
@@ -28,7 +28,7 @@ export class AccountBigSelect extends React.Component<IAccountBigSelectProps, an
                 onChange={this.handleChange}
             >
                 {
-                    accounts.map(account => {
+                    accounts && accounts.map(account => {
                         return (
                             <Option
                                 value={account.address}
@@ -44,7 +44,7 @@ export class AccountBigSelect extends React.Component<IAccountBigSelectProps, an
     }
 
     protected handleChange = (address: any) => {
-        if (this.props.onChange) {
+        if (this.props.onChange && this.props.accounts) {
             if (this.props.returnPrimitive) {
                 this.props.onChange(address as string);
             } else {

@@ -1,11 +1,27 @@
-export interface IResponse {
-    success: boolean;
-    data?: any;
-    error?: string;
+export interface IRawAccount {
+    json: string;
+    name: string;
+    address: string;
 }
 
-export interface IFormResponse extends IResponse {
-    validation?: object;
+export interface ISendTransactionParams {
+    fromAddress: string;
+    toAddress: string;
+    amount: string;
+    currencyAddress: string;
+    gasPrice: string;
+    gasLimit: string;
+    password: string;
+}
+
+export interface ISendTransactionResult {
+    timestamp: number;
+    fromAddress: string;
+    toAddress: string;
+    amount: string;
+    fee: string;
+    currencyAddress: string;
+    confirmCount: number;
 }
 
 export interface IAccountInfo {
@@ -15,7 +31,7 @@ export interface IAccountInfo {
 }
 
 export interface ICurrencyBalanceMap {
-    [address: string]: string;
+    [address: string]: string; // address => balance
 }
 
 export interface ICurrencyInfo {
@@ -24,42 +40,4 @@ export interface ICurrencyInfo {
     address: string;
 }
 
-export interface IRawAccount {
-    json: string;
-    name: string;
-    address: string;
-}
-
-export interface IRawAccountMap { // TODO rename to IRawAccountMap
-    [address: string]: IRawAccount;
-}
-
-export interface IAccountCheckResponse extends IFormResponse {
-    validation?: {
-        path?: string;
-        password?: string;
-    };
-}
-
-export interface ISubscribeResponse {
-    success: boolean;
-    done: boolean;
-    data?: any;
-    error?: string;
-}
-
-export interface ILoginResponse extends IFormResponse {
-    validation?: {
-        path?: string;
-        password?: string;
-    };
-    data?: {
-        address: string;
-    };
-}
-
-export interface IGasPricePriorityMap {
-    low: string;
-    normal: string;
-    hight: string;
-}
+export { IResult, IValidation, TResultPromise } from 'ipc/types';

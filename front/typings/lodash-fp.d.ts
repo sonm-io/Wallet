@@ -5,7 +5,7 @@ declare module 'lodash/fp/get' {
 }
 
 declare module 'lodash/fp/sortBy' {
-    function sortBy(sortArgs: any): (obj: any[]) => any;
+    function sortBy<T>(sortArgs: any): (iterable: T[]) => T[];
     namespace sortBy {}
     export = sortBy;
 }

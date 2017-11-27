@@ -1,16 +1,15 @@
-import { Response } from './ipc/messages';
-import * as ipc from './ipc/ipc';
-import { api } from './api';
+import { IPC } from '../ipc';
 
-ipc.on(async (request: Request) => {
-    let response;
+function delay(timeout: number) {
+    return new Promise((resolve, reject) => setTimeout(resolve, timeout));
+}
 
-    try {
-        const {data, validation} = await api.resolve(request);
-        response = new Response(request.requestId, data, validation, null);
-    } catch (err) {
-        response = new Response(request.requestId, null, null, err.message);
-    }
+const ipc = new IPC();
 
-    ipc.send(response.toJS());
+ipc.setRequestProcessor(async (method: string, payload: any) => {
+    delay(10);
+
+    return {
+        data: 1,
+    };
 });

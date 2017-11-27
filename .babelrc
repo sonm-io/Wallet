@@ -6,11 +6,14 @@
         "targets": {
           "browsers": [
             "Edge > 15",
-            "Firefox > 55",
+            "Firefox > 57",
             "Chrome > 60",
-            "Safari > 10"
+            "Safari > 10.1"
           ]
-        }
+        },
+        "exclude": [
+          "transform-regenerator"
+        ]
       }
     ]
   ]

@@ -2,6 +2,8 @@ import { observable, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 
+const Api = api.Api;
+
 export interface ISendStore {
     form: {
         from: string;
@@ -15,7 +17,7 @@ export interface ISendStore {
     currencyList: api.ICurrencyInfo[];
     accountList: api.IAccountInfo[];
 
-    submitTransaction(form: ISendForm, password: string): void;
+    submitTransaction(form: api.ISendTransactionParams, password: string): void;
 }
 
 export interface ISendForm {
@@ -52,18 +54,11 @@ export class SendStore implements ISendStore {
     }
 
     @asyncAction
-    public *submitTransaction(form: ISendForm, password: string) {
+    public *submitTransaction(form: api.ISendTransactionParams, password: string) {
         try {
-            yield api.methods.send(
-                form.from,
-                form.to,
-                form.amount,
-                form.currency,
-                form.gasPrice,
-                form.gasLimit,
+            const result = yield Api.send(form);
 
-                password,
-            );
+            console.log(result);
         } catch (e) {
             this.error = String(e);
         }
@@ -72,13 +67,13 @@ export class SendStore implements ISendStore {
     @asyncAction
     public *init() {
         const [
-            averageGasPrice,
-            accountList,
-            currencyList,
+            { data: averageGasPrice },
+            { data: accountList },
+            { dsata: currencyList},
         ] = yield Promise.all([
-            api.methods.getGasPrice(),
-            api.methods.getAccountList(),
-            api.methods.getCurrencyList(),
+            Api.getGasPrice(),
+            Api.getAccountList(),
+            Api.getCurrencyList(),
         ]);
 
         this.averageGasPrice = averageGasPrice;

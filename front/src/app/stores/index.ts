@@ -12,3 +12,5 @@ export const sendStore = new SendStore();
 export const mainStore = new MainStore();
 
 mainStore.init();
+
+(window as any).___main = mainStore;

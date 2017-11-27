@@ -8,22 +8,15 @@ import { inject, observer } from 'mobx-react';
 import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
 import IdentIcon from '../../common/ident-icon/index';
+import { MainStore } from 'app/stores/main';
 
 interface IProps extends FormComponentProps {
     className?: string;
-    sendStore?: {
-        form: {
-            from: string,
-            to: string,
-            amount: string,
-            currency: string,
-            gasLimit: string,
-            gasPrice: string,
-        },
-    };
-    mainStore?: {
-    };
+    mainStore?: MainStore;
 }
+
+type PriorityInput = new () => ButtonGroup<string>;
+const PriorityInput = ButtonGroup as PriorityInput;
 
 @inject('sendStore', 'mainStore')
 @observer
@@ -42,6 +35,41 @@ export class SendSrc extends React.Component<IProps, any> {
         });
     }
 
+    private handleChangeAccount = (address: string) => {
+        if (this.props.mainStore === undefined) {
+            throw new Error('this.props.mainStore is undefined');
+        }
+
+        this.props.mainStore.setSelectedAccount(address);
+    }
+
+    private handleChangeCurrency = (address: string) => {
+        if (this.props.mainStore === undefined) {
+            throw new Error('this.props.mainStore is undefined');
+        }
+
+        this.props.mainStore.setSelectedCurrency(address);
+    }
+
+    // TODO
+    private handleChangePriority = (value: string) => {
+        if (this.props.mainStore) {
+            const [min, max] = this.props.mainStore.gasPriceThresholds;
+            let gasPrice = this.props.mainStore.averageGasPrice;
+
+            if (value === 'low') {
+                gasPrice = min;
+            } else if (value === 'high') {
+                gasPrice = max;
+            }
+
+            this.props.form.setFieldsValue({
+                gasPrice,
+            });
+            this.props.mainStore.setUserGasPrice(gasPrice);
+        }
+    }
+
     private handleChangeTargetAddress = (event: any) => {
         const value = normalizeAddress(event.target.value);
 
@@ -50,15 +78,27 @@ export class SendSrc extends React.Component<IProps, any> {
         }
     }
 
-    private handleChangeGasPrice = () => {
+    private handleChangeGasPrice = (value: string | number | undefined) => {
+        if (value === undefined || this.props.mainStore === undefined) {
+            return;
+        }
 
+        this.props.mainStore.setUserGasPrice(String(value));
     }
 
     public render() {
         const {
             className,
             form,
+            mainStore,
         } = this.props;
+
+        const balanceList = mainStore && mainStore.currentBalanceList;
+        const accountList = mainStore && mainStore.accountList;
+        const selectedAccountAddress =  mainStore && mainStore.selectedAccountAddress;
+        const selectedCurrencyAddress =  mainStore && mainStore.selectedCurrencyAddress;
+        const gasPrice =  mainStore && mainStore.userGasPrice;
+        const priority = mainStore && mainStore.priority;
 
         return (
             <div className={cn('sonm-send', className)}>
@@ -68,22 +108,12 @@ export class SendSrc extends React.Component<IProps, any> {
                             label="From"
                             className="sonm-send__account-select"
                         >
-                            {form.getFieldDecorator('from', {
-                                initialValue: '0x01602E49e4413Ce46Cd559E86d4c9939e2332B28',
-                                rules: [
-                                    { required: true, message: 'Please select wallet' },
-                                ],
-                            })(
-                                <AccountBigSelect
-                                    returnPrimitive
-                                    accounts={[{
-                                        address: '0x01602E49e4413Ce46Cd559E86d4c9939e2332B28',
-                                        name: 'Wallet1',
-                                        etherBalance: '100.0000000000000000001',
-                                        sonmBalance: '1232354246535',
-                                    }]}
-                                />,
-                            )}
+                            <AccountBigSelect
+                                returnPrimitive
+                                onChange={this.handleChangeAccount}
+                                accounts={accountList}
+                                value={selectedAccountAddress}
+                            />,
                         </Form.Item>
                         <div className="sonm-send__form-second-line">
                             <Form.Item
@@ -94,7 +124,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                     form.getFieldDecorator('to', {
                                         initialValue: '',
                                         rules: [
-                                            {required: true, message: 'Please input quanity'},
+                                            { required: true, message: 'Please input quanity' },
                                         ],
                                     })(
                                         <Input
@@ -107,43 +137,13 @@ export class SendSrc extends React.Component<IProps, any> {
                             <div className="sonm-send__target-icon">
                                 <IdentIcon address={this.state.addressTarget} />
                             </div>
-                            <Form.Item
+                            <CurrencyBigSelect
                                 className="sonm-send__currency-select"
-                            >
-                                {
-                                    form.getFieldDecorator('currency', {
-                                        initialValue: '0x11112E49e4413Ce46Cd559E86d4c9939e2332B28',
-                                        rules: [
-                                            { required: true, message: 'Please select currency'} ,
-                                        ],
-                                    })(
-                                        <CurrencyBigSelect
-                                            returnPrimitive
-                                            currencies={[
-                                                {
-                                                    fullName: 'Ethereum',
-                                                    address: '0x11112E49e4413Ce46Cd559E86d4c9939e2332B28',
-                                                    symbol: 'ETH',
-                                                    amount: '110000000000000000',
-                                                },
-                                                {
-                                                    fullName: 'Sonm',
-                                                    address: '0x00002E49e4413Ce46Cd559E86d4c9939e2332B28',
-                                                    symbol: 'SNM',
-                                                    amount: '11000000000000000000',
-
-                                                },
-                                                {
-                                                    fullName: 'Scam coin',
-                                                    address: '0x55552E49e4413Ce46Cd559E86d4c9939e2332B28',
-                                                    symbol: 'SCM',
-                                                    amount: '110000000000000000000',
-                                                },
-                                            ]}
-                                        />,
-                                    )
-                                }
-                            </Form.Item>
+                                returnPrimitive
+                                currencies={balanceList}
+                                onChange={this.handleChangeCurrency}
+                                value={selectedCurrencyAddress}
+                            />
                         </div>
                         <Form.Item
                             label="Amount"
@@ -173,15 +173,15 @@ export class SendSrc extends React.Component<IProps, any> {
                             label="Gas limit"
                             className="sonm-send__gas-limit"
                         >
-                            {form.getFieldDecorator('gasPrice', {
-                                initialValue: '',
+                            {form.getFieldDecorator('gasLimit', {
+                                initialValue: '10000',
                                 rules: [
-                                    {required: true, message: 'Please define gas price'},
+                                    {required: true, message: 'Please define gas limit'},
                                 ],
                             })(
                                 <InputNumber
                                     className="sonm-send__input"
-                                    placeholder="Gas price"
+                                    placeholder="Gas limit"
                                     onChange={this.handleChangeGasPrice}
                                 />,
                             )}
@@ -192,21 +192,23 @@ export class SendSrc extends React.Component<IProps, any> {
                                 className="sonm-send__gas-price"
                             >
                                 {
-                                    form.getFieldDecorator('gasLimit', {
-                                        initialValue: '',
+                                    form.getFieldDecorator('gasPrice', {
+                                        initialValue: gasPrice,
                                         rules: [
-                                            {required: true, message: 'Please define gas limit'},
+                                            {required: true, message: 'Please define gas price'},
                                         ],
                                     })(
                                         <InputNumber
                                             className="sonm-send__input"
-                                            placeholder="Gas limit"
+                                            placeholder="Gas price"
+                                            onChange={this.handleChangeGasPrice}
                                         />,
                                     )
                                 }
-                                <ButtonGroup
-                                    valueList={['low', 'normal', 'hight']}
-                                    value={this.state.priority}
+                                <PriorityInput
+                                    valueList={['low', 'normal', 'high']}
+                                    value={priority}
+                                    onChange={this.handleChangePriority}
                                 />
                             </Form.Item>
                             <Button
