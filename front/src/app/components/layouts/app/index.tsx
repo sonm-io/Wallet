@@ -80,7 +80,7 @@ export class App extends React.Component<IProps, any> {
                     </div>
                 </div>
 
-                <div className="sonm_app__content">
+                <div className="sonm-app__content">
                     {children}
                 </div>
             </div>

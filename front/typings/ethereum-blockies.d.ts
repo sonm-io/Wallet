@@ -3,5 +3,6 @@ declare module 'ethereum-blockies' {
       seed: string | undefined;
   }
   function create(params: IParams): HTMLCanvasElement;
-  export { create };
+  function render(params: IParams, target: HTMLCanvasElement): void;
+  export { create, render };
 }

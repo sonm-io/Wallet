@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select } from 'antd';
+import { Select  } from 'antd';
 import { SelectProps } from 'antd/lib/select';
 
 import * as cn from 'classnames';
@@ -16,3 +16,5 @@ export class BigSelect extends React.Component<SelectProps, any> {
         );
     }
 }
+
+export const { Option } = Select;

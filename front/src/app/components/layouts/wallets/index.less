@@ -1,0 +1,29 @@
+@import "sub/deletable-item/index";
+
+.sonm-wallets {
+  display: grid;
+  grid-template-rows: 50px 1fr repeat(auto-fill, 50px);
+  grid-template-columns: 1fr 350px;
+  grid-gap: 10px;
+
+  &__header {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  &__list {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  &__add-button {
+    grid-column: 1;
+    grid-row: 3;
+    width: 200px;
+  }
+
+  &__balances {
+    grid-column: 2;
+    grid-row: ~"2 / 4";
+  }
+}
