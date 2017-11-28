@@ -37,7 +37,7 @@ function createPromise(
             }
 
             if (response.success) {
-                console.log(response);
+                console.log(type, response);
                 done(response);
             } else {
                 reject(response.error);
