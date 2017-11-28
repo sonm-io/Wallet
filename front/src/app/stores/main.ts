@@ -13,6 +13,8 @@ import { ISendTransactionParams } from '../api/types';
 
 const sortByName = sortBy(['name', 'address']);
 
+const DEFAULT_GAS_LIMIT = '50000';
+
 export interface IHasAddress {
     address: string;
 }
@@ -32,9 +34,9 @@ export class MainStore {
 
     @observable public currencyMap =  new Map<string, ICurrencyInfo>();
 
-    @observable public selectedAccountAddress = '';
+    @observable private userSelectedAccountAddress = '';
 
-    @observable public selectedCurrencyAddress = '0x';
+    @observable public userSelectedCurrencyAddress = '';
 
     @observable public userGasPrice = '';
 
@@ -200,13 +202,35 @@ export class MainStore {
     }
 
     @action.bound
-    public setSelectedAccount(accountAddr: string) {
-        this.selectedAccountAddress = accountAddr;
+    public selectAccount(accountAddr: string) {
+        this.userSelectedAccountAddress = accountAddr;
     }
 
     @action.bound
-    public setSelectedCurrency(currencyAddr: string) {
-        this.selectedCurrencyAddress = currencyAddr;
+    public selectCurrency(currencyAddr: string) {
+        this.userSelectedCurrencyAddress = currencyAddr;
+    }
+
+    @computed public get selectedAccountAddress(): string {
+        const addr = this.userSelectedAccountAddress;
+
+        return this.accountMap.has(addr)
+            ? addr
+            : (this.accountMap.size > 0)
+                ? this.accountMap.keys().next().value
+                : '';
+
+    }
+
+    @computed public get selectedCurrencyAddress(): string {
+        const addr = this.userSelectedCurrencyAddress;
+
+        return this.currencyMap.has(addr)
+            ? addr
+            : (this.currencyMap.size > 0)
+                ? this.currencyMap.keys().next().value
+                : '';
+
     }
 
     @action.bound
@@ -236,10 +260,6 @@ export class MainStore {
         listToMap<IAccountInfo>(accountList, this.accountMap);
         listToMap<ICurrencyInfo>(currencyList, this.currencyMap);
 
-        if (this.selectedAccountAddress === '') {
-            this.selectedAccountAddress = this.accountList[0].address;
-        }
-
         this.isReady = true;
     }
 
@@ -251,6 +271,28 @@ export class MainStore {
         console.log(validation); // TODO
 
         this.accountMap.set(data.address, data);
+    }
+
+    public getMaxValue(gasPrice: string, gasLimit: string) {
+        let gp;
+        let gl;
+
+        try {
+            gp = new BigNumber(gasPrice);
+            gl = new BigNumber(gasLimit);
+        } catch (e) {
+            gp = new BigNumber(this.averageGasPrice);
+            gl = new BigNumber(DEFAULT_GAS_LIMIT);
+        }
+
+        const amount = (this.accountMap.get(this.selectedAccountAddress) as IAccountInfo)
+            .currencyBalanceMap[this.selectedCurrencyAddress];
+
+        if (this.etherTokenAddress === this.selectedCurrencyAddress) {
+            return (new BigNumber(amount).minus(new BigNumber(gp).mul(gl))).toString();
+        } else {
+            return amount;
+        }
     }
 }
 

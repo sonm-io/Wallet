@@ -45,7 +45,7 @@ export class SendSrc extends React.Component<IProps, any> {
             throw new Error('this.props.mainStore is undefined');
         }
 
-        this.props.mainStore.setSelectedAccount(address);
+        this.props.mainStore.selectAccount(address);
     }
 
     private handleChangeCurrency = (address: string) => {
@@ -53,7 +53,17 @@ export class SendSrc extends React.Component<IProps, any> {
             throw new Error('this.props.mainStore is undefined');
         }
 
-        this.props.mainStore.setSelectedCurrency(address);
+        this.props.mainStore.selectCurrency(address);
+    }
+
+    private handleSetMaximum = () => {
+        if (this.props.mainStore) {
+
+            const {gasPrice, gasValue} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
+            this.props.form.setFieldsValue({
+                amount: this.props.mainStore.getMaxValue(gasPrice, gasValue),
+            });
+        }
     }
 
     // TODO
@@ -183,6 +193,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                     color="blue"
                                     transparent
                                     square
+                                    onClick={this.handleSetMaximum}
                                 >
                                     Add maximum
                                 </Button>
@@ -200,7 +211,6 @@ export class SendSrc extends React.Component<IProps, any> {
                                     <InputNumber
                                         className="sonm-send__input"
                                         placeholder="Gas limit"
-                                        onChange={this.handleChangeGasPrice}
                                     />,
                                 )}
                             </Form.Item>
@@ -223,6 +233,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                             />,
                                         )
                                     }
+                                    <span className="sonm-send__input-suffix">WEI</span>
                                     <PriorityInput
                                         valueList={['low', 'normal', 'high']}
                                         value={priority}
