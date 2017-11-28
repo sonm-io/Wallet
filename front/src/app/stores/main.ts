@@ -108,11 +108,11 @@ export class MainStore {
     }
 
     @computed public get sonmTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, 'SNMT');
+        return MainStore.findCurrencyBySymbol(this.currencyMap, 'snmt');
     }
 
     @computed public get etherTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, 'ETH');
+        return MainStore.findCurrencyBySymbol(this.currencyMap, 'wei');
     }
 
     @computed public get accountList(): IAccountItemProps[] {

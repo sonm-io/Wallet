@@ -14,7 +14,6 @@ export function on(handler: (params: any) => void) {
 }
 
 export function send(response: object) {
-    console.log(response);
     worker.postMessage(response);
 }
 

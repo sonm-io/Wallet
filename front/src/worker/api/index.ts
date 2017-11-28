@@ -192,11 +192,17 @@ class Api {
     }
 
     public getGasPrice = async (data: IPayload): Promise<IResponse> => {
-        const client = this.accounts[Object.keys(this.accounts)[0]];
+        const accounts = await this.getAccounts() || {};
 
-        return {
-            data: (await client.account.getGasPrice()).toString(),
-        };
+        if (accounts) {
+            const client = await this.initAccount(Object.keys(accounts)[0]);
+
+            return {
+                data: (await client.account.getGasPrice()).toString(),
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
     }
 
     public addAccount = async (data: IPayload): Promise<IResponse> => {

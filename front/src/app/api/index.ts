@@ -37,6 +37,7 @@ function createPromise(
             }
 
             if (response.success) {
+                console.log(response);
                 done(response);
             } else {
                 reject(response.error);
@@ -113,5 +114,7 @@ export class Api {
         return createPromise('account.getGasPrice');
     }
 }
+
+Api.setSecretKey('my secret key');
 
 export default Api;
