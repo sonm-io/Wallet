@@ -91,7 +91,7 @@ export function send(params: t.ISendTransactionParams): t.IResult<t.ISendTransac
         data: undefined,
     };
 
-    if (params.password !== '12345678') {
+    if (params.password !== 'password') {
         result.validation = {
             password: 'wrong_password',
         };

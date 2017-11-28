@@ -9,11 +9,8 @@ import {
 import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import { IAccountItemProps } from 'app/components/common/account-item';
-import { ISendTransactionParams } from '../api/types';
 
 const sortByName = sortBy(['name', 'address']);
-
-const DEFAULT_GAS_LIMIT = '50000';
 
 export interface IHasAddress {
     address: string;
@@ -23,9 +20,18 @@ export interface IAddressMap<T extends IHasAddress> {
     [address: string]: T;
 }
 
+export interface ISendFormValues {
+    amount: string;
+    gasPrice: string;
+    gasLimit: string;
+    toAddress: string;
+}
+
 export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore {
+    public static DEFAULT_GAS_LIMIT = '50000';
+
     @observable public averageGasPrice = '';
 
     @observable public notification = [];
@@ -44,7 +50,7 @@ export class MainStore {
 
     @observable public isReady = false;
 
-    public values = {
+    public values: ISendFormValues = {
         toAddress: '',
         amount: '',
         gasPrice: '',
@@ -234,9 +240,23 @@ export class MainStore {
     }
 
     @action.bound
-    public setSendParams(values: ISendTransactionParams) {
+    public setSendParams(values: ISendFormValues) {
         this.values = values;
-        this.showConfirmDialog = true;
+    }
+
+    @asyncAction
+    public *confirmTransaction(password: string) {
+        const result = yield Api.send({
+            password,
+            toAddress: this.values.toAddress,
+            amount: this.values.amount,
+            fromAddress: this.selectedAccountAddress,
+            currencyAddress: this.selectedCurrencyAddress,
+            gasPrice: this.values.gasPrice,
+            gasLimit: this.values.gasLimit,
+        });
+
+        window.alert(JSON.stringify(result));
     }
 
     @asyncAction
@@ -282,7 +302,7 @@ export class MainStore {
             gl = new BigNumber(gasLimit);
         } catch (e) {
             gp = new BigNumber(this.averageGasPrice);
-            gl = new BigNumber(DEFAULT_GAS_LIMIT);
+            gl = new BigNumber(MainStore.DEFAULT_GAS_LIMIT);
         }
 
         const amount = (this.accountMap.get(this.selectedAccountAddress) as IAccountInfo)
