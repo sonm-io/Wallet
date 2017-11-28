@@ -9,6 +9,7 @@ export class BigSelect extends React.Component<SelectProps, any> {
         return (
             <Select
                 {...this.props}
+                notFoundContent="Nothing to show"
                 className={cn('sonm-big-select', this.props.className)}
                 dropdownClassName="sonm-big-select__dropdown"
                 optionFilterProp="value"

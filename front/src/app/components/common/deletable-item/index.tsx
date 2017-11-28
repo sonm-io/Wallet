@@ -4,13 +4,13 @@ import * as cn from 'classnames';
 export interface IDeletableItemProps {
     className?: string;
     children?: any;
-    onClose: (id: string) => void;
+    onDelete: (id: string) => void;
     id: string;
 }
 
 export class DeletableItem extends React.PureComponent<IDeletableItemProps, any> {
-    private handleClose() {
-        this.props.onClose(this.props.id);
+    private handleDelete = () => {
+        this.props.onDelete(this.props.id);
     }
 
     public render() {
@@ -25,7 +25,8 @@ export class DeletableItem extends React.PureComponent<IDeletableItemProps, any>
                     {children}
                 </div>
                 <button
-                    onClick={this.handleClose}
+                    type="button"
+                    onClick={this.handleDelete}
                     className="sonm-deletable-item__close"
                 />
             </div>

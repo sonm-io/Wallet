@@ -5,12 +5,10 @@ import {
     Api,
     IAccountInfo,
     ICurrencyInfo,
-
 } from 'app/api';
 import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import { IAccountItemProps } from 'app/components/common/account-item';
-import { ISendTransactionParams } from '../api/types';
 
 const sortByName = sortBy(['name', 'address']);
 
@@ -22,9 +20,18 @@ export interface IAddressMap<T extends IHasAddress> {
     [address: string]: T;
 }
 
+export interface ISendFormValues {
+    amount: string;
+    gasPrice: string;
+    gasLimit: string;
+    toAddress: string;
+}
+
 export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore {
+    public static DEFAULT_GAS_LIMIT = '50000';
+
     @observable public averageGasPrice = '';
 
     @observable public notification = [];
@@ -33,9 +40,9 @@ export class MainStore {
 
     @observable public currencyMap =  new Map<string, ICurrencyInfo>();
 
-    @observable public selectedAccountAddress = '';
+    @observable private userSelectedAccountAddress = '';
 
-    @observable public selectedCurrencyAddress = '0x';
+    @observable public userSelectedCurrencyAddress = '';
 
     @observable public userGasPrice = '';
 
@@ -43,7 +50,7 @@ export class MainStore {
 
     @observable public isReady = false;
 
-    public values = {
+    public values: ISendFormValues = {
         toAddress: '',
         amount: '',
         gasPrice: '',
@@ -154,7 +161,9 @@ export class MainStore {
     }
 
     @computed public get fullBalanceList(): ICurrencyItemProps[]  {
-        return this.getBalanceListFor(...Object.keys(this.accountMap));
+        const allAccounts = Array.from(this.accountMap.keys());
+
+        return this.getBalanceListFor(...allAccounts);
     }
 
     @computed public get currentBalanceList(): ICurrencyItemProps[] {
@@ -175,9 +184,16 @@ export class MainStore {
         }
     }
 
-    @action.bound
-    public deleteAccount(deleteAddress: string): void {
+    @asyncAction
+    public *deleteAccount(deleteAddress: string) {
+        const { data: success } = yield Api.removeAccount(deleteAddress);
 
+        if (success) {
+            this.accountMap.delete(deleteAddress);
+        } else {
+            // TODO
+            window.alert('Error deleting account');
+        }
     }
 
     @action.bound
@@ -192,19 +208,55 @@ export class MainStore {
     }
 
     @action.bound
-    public setSelectedAccount(accountAddr: string) {
-        this.selectedAccountAddress = accountAddr;
+    public selectAccount(accountAddr: string) {
+        this.userSelectedAccountAddress = accountAddr;
     }
 
     @action.bound
-    public setSelectedCurrency(currencyAddr: string) {
-        this.selectedCurrencyAddress = currencyAddr;
+    public selectCurrency(currencyAddr: string) {
+        this.userSelectedCurrencyAddress = currencyAddr;
+    }
+
+    @computed public get selectedAccountAddress(): string {
+        const addr = this.userSelectedAccountAddress;
+
+        return this.accountMap.has(addr)
+            ? addr
+            : (this.accountMap.size > 0)
+                ? this.accountMap.keys().next().value
+                : '';
+
+    }
+
+    @computed public get selectedCurrencyAddress(): string {
+        const addr = this.userSelectedCurrencyAddress;
+
+        return this.currencyMap.has(addr)
+            ? addr
+            : (this.currencyMap.size > 0)
+                ? this.currencyMap.keys().next().value
+                : '';
+
     }
 
     @action.bound
-    public setSendParams(values: ISendTransactionParams) {
+    public setSendParams(values: ISendFormValues) {
         this.values = values;
-        this.showConfirmDialog = true;
+    }
+
+    @asyncAction
+    public *confirmTransaction(password: string) {
+        const result = yield Api.send({
+            password,
+            toAddress: this.values.toAddress,
+            amount: this.values.amount,
+            fromAddress: this.selectedAccountAddress,
+            currencyAddress: this.selectedCurrencyAddress,
+            gasPrice: this.values.gasPrice,
+            gasLimit: this.values.gasLimit,
+        });
+
+        window.alert(JSON.stringify(result));
     }
 
     @asyncAction
@@ -228,11 +280,39 @@ export class MainStore {
         listToMap<IAccountInfo>(accountList, this.accountMap);
         listToMap<ICurrencyInfo>(currencyList, this.currencyMap);
 
-        if (this.selectedAccountAddress === '') {
-            this.selectedAccountAddress = this.accountList[0].address;
+        this.isReady = true;
+    }
+
+    @asyncAction
+    public *addAccount(json: string, password: string, name: string) {
+
+        const { data, validation } = yield Api.addAccount(json, password, name);
+
+        console.log(validation); // TODO
+
+        this.accountMap.set(data.address, data);
+    }
+
+    public getMaxValue(gasPrice: string, gasLimit: string) {
+        let gp;
+        let gl;
+
+        try {
+            gp = new BigNumber(gasPrice);
+            gl = new BigNumber(gasLimit);
+        } catch (e) {
+            gp = new BigNumber(this.averageGasPrice);
+            gl = new BigNumber(MainStore.DEFAULT_GAS_LIMIT);
         }
 
-        this.isReady = true;
+        const amount = (this.accountMap.get(this.selectedAccountAddress) as IAccountInfo)
+            .currencyBalanceMap[this.selectedCurrencyAddress];
+
+        if (this.etherTokenAddress === this.selectedCurrencyAddress) {
+            return (new BigNumber(amount).minus(new BigNumber(gp).mul(gl))).toString();
+        } else {
+            return amount;
+        }
     }
 }
 

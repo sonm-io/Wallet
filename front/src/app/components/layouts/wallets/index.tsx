@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react';
 import { MainStore } from 'app/stores/main';
 import AccountItem from '../../common/account-item/index';
 import CurrencyBalanceList from '../../common/currency-balance-list/index';
-import DeletableItem from './sub/deletable-item/index';
+import DeletableItem from '../../common/deletable-item/index';
 import Header from '../../common/header';
 import Upload from '../../common/upload';
 
@@ -21,13 +21,31 @@ export class Wallets extends React.Component<IProps, any> {
         deleteAddress: '',
     }
 
-    private handleDelete(deleteAddress: string) {
-        // this.setState({ deleteAddress });
-        // this.props.mainStore.deleteAccount(deleteAddress);
+    private handleDelete = (deleteAddress: string) => {
+        if (this.props.mainStore === undefined) {
+            return;
+        }
+
+        this.props.mainStore.deleteAccount(deleteAddress);
     }
 
-    private handleStartUpload(event: any) {
-        debugger;
+    private handleOpenTextFile = (text?: string, error?: any) => {
+        if (this.props.mainStore === undefined) {
+            return;
+        }
+
+        if (error || !text) {
+            window.alert(JSON.stringify(error || 'Empty account json'));
+            return;
+        }
+
+        const password = window.prompt('password') || '';
+
+        this.props.mainStore.addAccount(
+            text,
+            password,
+            Math.random().toString(36).slice(3),
+        );
     }
 
     public render() {
@@ -50,7 +68,7 @@ export class Wallets extends React.Component<IProps, any> {
                         return (
                             <DeletableItem
                                 className="sonm-wallets__list-item"
-                                onClose={this.handleDelete}
+                                onDelete={this.handleDelete}
                                 key={x.address}
                                 id={x.address}
                             >
@@ -61,10 +79,10 @@ export class Wallets extends React.Component<IProps, any> {
                 </div>
                 <CurrencyBalanceList
                     className="sonm-wallets__balances"
-                    currencyBalanceList={mainStore.currentBalanceList}
+                    currencyBalanceList={mainStore.fullBalanceList}
                 />
                 <Upload
-                    onStartUpload={this.handleStartUpload}
+                    onOpenTextFile={this.handleOpenTextFile}
                     className="sonm-wallets__add-button"
                 >
                     + Add account

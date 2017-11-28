@@ -8,8 +8,7 @@ import { inject, observer } from 'mobx-react';
 import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
 import IdentIcon from '../../common/ident-icon/index';
-import { MainStore } from 'app/stores/main';
-import { ISendTransactionParams } from 'app/api/types';
+import { MainStore, ISendFormValues } from 'app/stores/main';
 
 interface IProps extends FormComponentProps {
     className?: string;
@@ -29,14 +28,16 @@ export class SendSrc extends React.Component<IProps, any> {
     private handleSubmit = (event: React.FormEvent<Form>) => {
         event.preventDefault();
 
-        this.props.form.validateFields(async (err, {path, password}) => {
+        this.props.form.validateFields(async (err, values: ISendFormValues) => {
             if (err || this.props.mainStore === undefined) {
                 return;
             }
 
-            const values = this.props.form.getFieldsValue();
+            this.props.mainStore.setSendParams(values);
 
-            this.props.mainStore.setSendParams(values as ISendTransactionParams);
+            // TODO
+            const password = prompt('Password please') || '';
+            this.props.mainStore.confirmTransaction(password);
         });
     }
 
@@ -45,7 +46,7 @@ export class SendSrc extends React.Component<IProps, any> {
             throw new Error('this.props.mainStore is undefined');
         }
 
-        this.props.mainStore.setSelectedAccount(address);
+        this.props.mainStore.selectAccount(address);
     }
 
     private handleChangeCurrency = (address: string) => {
@@ -53,7 +54,17 @@ export class SendSrc extends React.Component<IProps, any> {
             throw new Error('this.props.mainStore is undefined');
         }
 
-        this.props.mainStore.setSelectedCurrency(address);
+        this.props.mainStore.selectCurrency(address);
+    }
+
+    private handleSetMaximum = () => {
+        if (this.props.mainStore) {
+
+            const {gasPrice, gasValue} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
+            this.props.form.setFieldsValue({
+                amount: this.props.mainStore.getMaxValue(gasPrice, gasValue),
+            });
+        }
     }
 
     // TODO
@@ -111,6 +122,7 @@ export class SendSrc extends React.Component<IProps, any> {
         const selectedAccountAddress =  mainStore && mainStore.selectedAccountAddress;
         const selectedCurrencyAddress =  mainStore && mainStore.selectedCurrencyAddress;
         const gasPrice =  mainStore && mainStore.userGasPrice;
+        const gasLimit =  mainStore && (mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT);
         const priority = mainStore && mainStore.priority;
         const showConfirmDialog = mainStore && mainStore.showConfirmDialog;
         const isReady = mainStore && mainStore.isReady;
@@ -142,7 +154,11 @@ export class SendSrc extends React.Component<IProps, any> {
                                         form.getFieldDecorator('toAddress', {
                                             initialValue: values && values.toAddress,
                                             rules: [
-                                                {required: true, message: 'Please input quanity'},
+                                                {required: true, message: 'Please input address'},
+                                                {
+                                                    pattern: /^(0x)?[0-9a-fA-F]{40}$/i,
+                                                    message: 'Please input correct address',
+                                                },
                                             ],
                                         })(
                                             <Input
@@ -170,10 +186,11 @@ export class SendSrc extends React.Component<IProps, any> {
                                 {form.getFieldDecorator('amount', {
                                     initialValue: values && values.amount,
                                     rules: [
-                                        {required: true, message: 'Please input amount'},
+                                        { required: true, message: 'Please input amount' },
                                     ],
                                 })(
                                     <InputNumber
+                                        min={0}
                                         className="sonm-send__input"
                                         placeholder="Ammount"
                                     />,
@@ -183,6 +200,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                     color="blue"
                                     transparent
                                     square
+                                    onClick={this.handleSetMaximum}
                                 >
                                     Add maximum
                                 </Button>
@@ -192,15 +210,15 @@ export class SendSrc extends React.Component<IProps, any> {
                                 className="sonm-send__gas-limit"
                             >
                                 {form.getFieldDecorator('gasLimit', {
-                                    initialValue: '10000',
+                                    initialValue: gasLimit,
                                     rules: [
                                         {required: true, message: 'Please define gas limit'},
                                     ],
                                 })(
                                     <InputNumber
+                                        min={0}
                                         className="sonm-send__input"
                                         placeholder="Gas limit"
-                                        onChange={this.handleChangeGasPrice}
                                     />,
                                 )}
                             </Form.Item>
@@ -217,12 +235,14 @@ export class SendSrc extends React.Component<IProps, any> {
                                             ],
                                         })(
                                             <InputNumber
+                                                min={0}
                                                 className="sonm-send__input"
                                                 placeholder="Gas price"
                                                 onChange={this.handleChangeGasPrice}
                                             />,
                                         )
                                     }
+                                    <span className="sonm-send__input-suffix">WEI</span>
                                     <PriorityInput
                                         valueList={['low', 'normal', 'high']}
                                         value={priority}
