@@ -89,6 +89,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             return [
                 <input
                     required
+                    spellCheck={false}
                     defaultValue={this.props.name}
                     ref={this.saveRef}
                     key="c"
