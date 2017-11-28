@@ -88,6 +88,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         if (this.state.isEdit) {
             return [
                 <input
+                    required
                     defaultValue={this.props.name}
                     ref={this.saveRef}
                     key="c"
