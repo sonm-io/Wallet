@@ -2,6 +2,8 @@ import { observable, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 
+const Api = api.Api;
+
 export interface ISendStore {
     form: {
         from: string;
@@ -12,28 +14,10 @@ export interface ISendStore {
         gasPrice: string;
     };
 
-    currencyMap: ICurrencyMap;
-    accountMap: IAccountMap;
+    currencyList: api.ICurrencyInfo[];
+    accountList: api.IAccountInfo[];
 
-    loadCurrencies(): void;
-
-    loadAccounts(): void;
-
-    submitTransaction(form: ISendForm, password: string): void;
-}
-
-export interface IAccountMap {
-    [accountAddr: string]: api.IAccountInfo;
-}
-
-export interface ICurrencyMap {
-    [currencyAddr: string]: api.ICurrencyInfo;
-}
-
-export interface ICurrencyInfo {
-    symbol: string;
-    name: string;
-    address: string;
+    submitTransaction(form: api.ISendTransactionParams, password: string): void;
 }
 
 export interface ISendForm {
@@ -56,11 +40,13 @@ export class SendStore implements ISendStore {
         currency: '',
     };
 
+    @observable public averageGasPrice = '';
+
     @observable public error = '';
 
-    @observable public currencyMap: ICurrencyMap = {};
+    @observable public currencyList: api.ICurrencyInfo[];
 
-    @observable public accountMap: IAccountMap;
+    @observable public accountList: api.IAccountInfo[];
 
     @action
     public useMaximum() {
@@ -68,53 +54,30 @@ export class SendStore implements ISendStore {
     }
 
     @asyncAction
-    public *submitTransaction(form: ISendForm, password: string) {
+    public *submitTransaction(form: api.ISendTransactionParams, password: string) {
         try {
-            yield api.methods.send(
-                form.from,
-                form.to,
-                form.amount,
-                form.currency,
-                form.gasPrice,
-                form.gasLimit,
+            const result = yield Api.send(form);
 
-                password,
-            );
+            console.log(result);
         } catch (e) {
             this.error = String(e);
         }
     }
 
     @asyncAction
-    public *loadAccounts() {
-        try {
-            const accounts = yield api.methods.getAccountList();
+    public *init() {
+        const [
+            { data: averageGasPrice },
+            { data: accountList },
+            { dsata: currencyList},
+        ] = yield Promise.all([
+            Api.getGasPrice(),
+            Api.getAccountList(),
+            Api.getCurrencyList(),
+        ]);
 
-            this.accountMap = accounts.reduce((acc: IAccountMap, account: api.IAccountInfo) => {
-                acc[account.address] = account;
-
-                return acc;
-            }, {});
-
-            this.form.amount = accounts[0].address;
-        } catch (e) {
-            this.error = String(e);
-        }
-    }
-
-    @asyncAction
-    public *loadCurrencies() {
-        try {
-            this.accountMap = (yield api.methods.getCurrencyList()).reduce(
-                (acc: ICurrencyMap, currency: ICurrencyInfo) => {
-                    acc[currency.address] = currency;
-
-                    return acc;
-                },
-                {},
-            );
-        } catch (e) {
-            this.error = String(e);
-        }
+        this.averageGasPrice = averageGasPrice;
+        this.accountList = accountList;
+        this.currencyList = currencyList;
     }
 }

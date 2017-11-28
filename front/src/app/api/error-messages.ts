@@ -1,10 +1,8 @@
-export interface IValidation {
-    [key: string]: string;
-}
+import { IValidation } from 'ipc/types';
 
-const messages: IValidation = {
+export const messages: IValidation = {
     path_not_valid: 'Incorrect file path',
     password_not_valid: 'Password is not valid',
 };
 
-export { messages };
+export default messages;
