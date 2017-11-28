@@ -10,6 +10,7 @@ import {
 import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import { IAccountItemProps } from 'app/components/common/account-item';
+import { ISendTransactionParams } from '../api/types';
 
 const sortByName = sortBy(['name', 'address']);
 
@@ -28,15 +29,26 @@ export class MainStore {
 
     @observable public notification = [];
 
-    @observable public accountMap: IAddressMap<IAccountInfo>;
+    @observable public accountMap = new Map<string, IAccountInfo>();
 
-    @observable public currencyMap: IAddressMap<ICurrencyInfo>;
+    @observable public currencyMap =  new Map<string, ICurrencyInfo>();
 
     @observable public selectedAccountAddress = '';
 
     @observable public selectedCurrencyAddress = '0x';
 
     @observable public userGasPrice = '';
+
+    @observable public showConfirmDialog = false;
+
+    @observable public isReady = false;
+
+    public values = {
+        toAddress: '',
+        amount: '',
+        gasPrice: '',
+        gasLimit: '',
+    };
 
     @computed public get priority(): TGasPricePriority {
         let result: TGasPricePriority = 'normal';
@@ -68,24 +80,32 @@ export class MainStore {
         return [min, max];
     }
 
-    @computed public get sonmTokenAddress(): string {
-        const result = Object.keys(this.currencyMap).find(
-            addr => this.currencyMap[addr].symbol.toUpperCase() === 'SNMT',
+    private static findCurrencyBySymbol(map: Map<string, ICurrencyInfo>, symbol: string) {
+        let result;
+
+        if (map.size === 0) {
+            return '';
+        }
+
+        map.forEach(
+            (value, key) => {
+                if (value.symbol.toUpperCase() === symbol) {
+                    result = value.address;
+                }
+            },
         );
 
-        if (result == null) { throw new Error('sonmTokenAddress not found'); }
+        if (result === undefined) { throw new Error(`token ${symbol} address  not found`); }
 
         return result;
     }
 
+    @computed public get sonmTokenAddress(): string {
+        return MainStore.findCurrencyBySymbol(this.currencyMap, 'SNMT');
+    }
+
     @computed public get etherTokenAddress(): string {
-        const result =  Object.keys(this.currencyMap).find(
-            addr => this.currencyMap[addr].symbol.toUpperCase() === 'ETH',
-        );
-
-        if (result == null) { throw new Error('etherTokenAddress not found'); }
-
-        return result;
+        return MainStore.findCurrencyBySymbol(this.currencyMap, 'ETH');
     }
 
     @computed public get accountList(): IAccountItemProps[] {
@@ -96,12 +116,12 @@ export class MainStore {
         const sonmTokenAddress = this.sonmTokenAddress;
         const etherTokenAddress = this.etherTokenAddress;
 
-        const result = Object.keys(this.accountMap).map(accountAddr => {
+        const result = Array.from(this.accountMap.values()).map(account => {
             return {
-                address: accountAddr,
-                name: this.accountMap[accountAddr].name,
-                sonmBalance: this.accountMap[accountAddr].currencyBalanceMap[sonmTokenAddress],
-                etherBalance: this.accountMap[accountAddr].currencyBalanceMap[etherTokenAddress],
+                address: account.address,
+                name: account.name,
+                sonmBalance: account.currencyBalanceMap[sonmTokenAddress],
+                etherBalance: account.currencyBalanceMap[etherTokenAddress],
             };
         });
 
@@ -113,18 +133,20 @@ export class MainStore {
             return [];
         }
 
-        const result = Object.keys(this.currencyMap).map((currencyAddr: string): ICurrencyItemProps => {
-            const currency = this.currencyMap[currencyAddr];
-
+        const result = Array.from(this.currencyMap.values()).map((currency): ICurrencyItemProps => {
             return {
                 name: currency.name,
                 symbol: currency.symbol,
                 balance: accounts.reduce((sum: any, accountAddr: string) => {
-                    sum = sum.plus(this.accountMap[accountAddr].currencyBalanceMap[currencyAddr]);
+                    const account = this.accountMap.get(accountAddr);
+
+                    if (account) {
+                        sum = sum.plus(account.currencyBalanceMap[currency.address]);
+                    }
 
                     return sum;
                 }, new BigNumber(0)).toString(),
-                address: currencyAddr,
+                address: currency.address,
             };
         });
 
@@ -154,8 +176,13 @@ export class MainStore {
     }
 
     @action.bound
+    public deleteAccount(deleteAddress: string): void {
+
+    }
+
+    @action.bound
     public decreaseBalance(accountAddress: string, currencyAddress: string, amount: string) {
-        const account = this.accountMap[accountAddress] as IAccountInfo;
+        const account = this.accountMap.get(accountAddress) as IAccountInfo;
         if (account === undefined) { throw new Error(`Unknown accountAddress ${accountAddress}`); }
 
         const balance = account.currencyBalanceMap[currencyAddress];
@@ -174,18 +201,20 @@ export class MainStore {
         this.selectedCurrencyAddress = currencyAddr;
     }
 
+    @action.bound
+    public setSendParams(values: ISendTransactionParams) {
+        this.values = values;
+        this.showConfirmDialog = true;
+    }
+
     @asyncAction
     public *init() {
         const result = yield Promise.all([
             Api.getGasPrice(),
             Api.getAccountList(),
             Api.getCurrencyList(),
-        ]);
-
-        result.forEach((x: any) => {
-            if (x instanceof Error) {
-                throw x;
-            }
+        ]).catch(error => {
+            throw new Error(error);
         });
 
         const [
@@ -196,26 +225,17 @@ export class MainStore {
 
         this.averageGasPrice = averageGasPrice;
         this.userGasPrice = averageGasPrice;
-        this.accountMap = listToMap(accountList);
-        this.currencyMap = listToMap(currencyList);
+        listToMap<IAccountInfo>(accountList, this.accountMap);
+        listToMap<ICurrencyInfo>(currencyList, this.currencyMap);
 
         if (this.selectedAccountAddress === '') {
             this.selectedAccountAddress = this.accountList[0].address;
         }
+
+        this.isReady = true;
     }
 }
 
-function listToMap<T extends IHasAddress>(map: T[]): IAddressMap<T> {
-    const result: IAddressMap<T> = {};
-
-    map.reduce(
-        (acc: IAddressMap<T>, item: T) => {
-            acc[item.address] = item;
-
-            return acc;
-        },
-        result,
-    );
-
-    return result;
+function listToMap<T extends IHasAddress>(list: T[], map: Map<string, T>): void {
+    list.forEach(item  => map.set(item.address, item));
 }

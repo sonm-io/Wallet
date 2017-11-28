@@ -9,6 +9,7 @@ import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
 import IdentIcon from '../../common/ident-icon/index';
 import { MainStore } from 'app/stores/main';
+import { ISendTransactionParams } from 'app/api/types';
 
 interface IProps extends FormComponentProps {
     className?: string;
@@ -22,16 +23,20 @@ const PriorityInput = ButtonGroup as PriorityInput;
 @observer
 export class SendSrc extends React.Component<IProps, any> {
     public state = {
-        isPending: false,
         addressTarget: '0x',
-        priority: 'normal',
     };
 
     private handleSubmit = (event: React.FormEvent<Form>) => {
+        event.preventDefault();
+
         this.props.form.validateFields(async (err, {path, password}) => {
-            if (err) {
+            if (err || this.props.mainStore === undefined) {
                 return;
             }
+
+            const values = this.props.form.getFieldsValue();
+
+            this.props.mainStore.setSendParams(values as ISendTransactionParams);
         });
     }
 
@@ -86,6 +91,10 @@ export class SendSrc extends React.Component<IProps, any> {
         this.props.mainStore.setUserGasPrice(String(value));
     }
 
+    public renderConfirm() {
+        return null;
+    }
+
     public render() {
         const {
             className,
@@ -93,135 +102,145 @@ export class SendSrc extends React.Component<IProps, any> {
             mainStore,
         } = this.props;
 
+        const {
+
+        } = mainStore;
+
         const balanceList = mainStore && mainStore.currentBalanceList;
         const accountList = mainStore && mainStore.accountList;
         const selectedAccountAddress =  mainStore && mainStore.selectedAccountAddress;
         const selectedCurrencyAddress =  mainStore && mainStore.selectedCurrencyAddress;
         const gasPrice =  mainStore && mainStore.userGasPrice;
         const priority = mainStore && mainStore.priority;
+        const showConfirmDialog = mainStore && mainStore.showConfirmDialog;
+        const isReady = mainStore && mainStore.isReady;
+        const values = mainStore && mainStore.values;
 
         return (
             <div className={cn('sonm-send', className)}>
-                <Spin spinning={this.state.isPending}>
-                    <Form onSubmit={this.handleSubmit} className="sonm-send__form">
-                        <Form.Item
-                            label="From"
-                            className="sonm-send__account-select"
-                        >
-                            <AccountBigSelect
-                                returnPrimitive
-                                onChange={this.handleChangeAccount}
-                                accounts={accountList}
-                                value={selectedAccountAddress}
-                            />,
-                        </Form.Item>
-                        <div className="sonm-send__form-second-line">
+                {showConfirmDialog
+                    ? this.renderConfirm()
+                    : <Spin spinning={!isReady}>
+                        <Form onSubmit={this.handleSubmit} className="sonm-send__form">
                             <Form.Item
-                                label="To"
-                                className="sonm-send__target"
+                                label="From"
+                                className="sonm-send__account-select"
                             >
-                                {
-                                    form.getFieldDecorator('to', {
-                                        initialValue: '',
-                                        rules: [
-                                            { required: true, message: 'Please input quanity' },
-                                        ],
-                                    })(
-                                        <Input
-                                            onChange={this.handleChangeTargetAddress}
-                                            placeholder="Address"
-                                        />,
-                                    )
-                                }
+                                <AccountBigSelect
+                                    returnPrimitive
+                                    onChange={this.handleChangeAccount}
+                                    accounts={accountList}
+                                    value={selectedAccountAddress}
+                                />,
                             </Form.Item>
-                            <div className="sonm-send__target-icon">
-                                <IdentIcon address={this.state.addressTarget} />
-                            </div>
-                            <CurrencyBigSelect
-                                className="sonm-send__currency-select"
-                                returnPrimitive
-                                currencies={balanceList}
-                                onChange={this.handleChangeCurrency}
-                                value={selectedCurrencyAddress}
-                            />
-                        </div>
-                        <Form.Item
-                            label="Amount"
-                            className="sonm-send__currency-amount"
-                        >
-                            {form.getFieldDecorator('amount', {
-                                initialValue: '',
-                                rules: [
-                                    {required: true, message: 'Please input amount'},
-                                ],
-                            })(
-                                <InputNumber
-                                    className="sonm-send__input"
-                                    placeholder="Ammount"
-                                />,
-                            )}
-                            <Button
-                                className="sonm-send__set-max"
-                                color="blue"
-                                transparent
-                                square
-                            >
-                                Add maximum
-                            </Button>
-                        </Form.Item>
-                        <Form.Item
-                            label="Gas limit"
-                            className="sonm-send__gas-limit"
-                        >
-                            {form.getFieldDecorator('gasLimit', {
-                                initialValue: '10000',
-                                rules: [
-                                    {required: true, message: 'Please define gas limit'},
-                                ],
-                            })(
-                                <InputNumber
-                                    className="sonm-send__input"
-                                    placeholder="Gas limit"
-                                    onChange={this.handleChangeGasPrice}
-                                />,
-                            )}
-                        </Form.Item>
-                        <div className="sonm-send__last-line">
-                            <Form.Item
-                                label="Gas price"
-                                className="sonm-send__gas-price"
-                            >
-                                {
-                                    form.getFieldDecorator('gasPrice', {
-                                        initialValue: gasPrice,
-                                        rules: [
-                                            {required: true, message: 'Please define gas price'},
-                                        ],
-                                    })(
-                                        <InputNumber
-                                            className="sonm-send__input"
-                                            placeholder="Gas price"
-                                            onChange={this.handleChangeGasPrice}
-                                        />,
-                                    )
-                                }
-                                <PriorityInput
-                                    valueList={['low', 'normal', 'high']}
-                                    value={priority}
-                                    onChange={this.handleChangePriority}
+                            <div className="sonm-send__form-second-line">
+                                <Form.Item
+                                    label="To"
+                                    className="sonm-send__target"
+                                >
+                                    {
+                                        form.getFieldDecorator('toAddress', {
+                                            initialValue: values && values.toAddress,
+                                            rules: [
+                                                {required: true, message: 'Please input quanity'},
+                                            ],
+                                        })(
+                                            <Input
+                                                onChange={this.handleChangeTargetAddress}
+                                                placeholder="Address"
+                                            />,
+                                        )
+                                    }
+                                </Form.Item>
+                                <div className="sonm-send__target-icon">
+                                    <IdentIcon address={this.state.addressTarget}/>
+                                </div>
+                                <CurrencyBigSelect
+                                    className="sonm-send__currency-select"
+                                    returnPrimitive
+                                    currencies={balanceList}
+                                    onChange={this.handleChangeCurrency}
+                                    value={selectedCurrencyAddress}
                                 />
-                            </Form.Item>
-                            <Button
-                                onClick={this.handleSubmit}
-                                type="submit"
-                                color="violet"
-                                className="sonm-send__submit"
+                            </div>
+                            <Form.Item
+                                label="Amount"
+                                className="sonm-send__currency-amount"
                             >
-                                NEXT
-                            </Button>
-                        </div>
-                    </Form>
-                </Spin>
+                                {form.getFieldDecorator('amount', {
+                                    initialValue: values && values.amount,
+                                    rules: [
+                                        {required: true, message: 'Please input amount'},
+                                    ],
+                                })(
+                                    <InputNumber
+                                        className="sonm-send__input"
+                                        placeholder="Ammount"
+                                    />,
+                                )}
+                                <Button
+                                    className="sonm-send__set-max"
+                                    color="blue"
+                                    transparent
+                                    square
+                                >
+                                    Add maximum
+                                </Button>
+                            </Form.Item>
+                            <Form.Item
+                                label="Gas limit"
+                                className="sonm-send__gas-limit"
+                            >
+                                {form.getFieldDecorator('gasLimit', {
+                                    initialValue: '10000',
+                                    rules: [
+                                        {required: true, message: 'Please define gas limit'},
+                                    ],
+                                })(
+                                    <InputNumber
+                                        className="sonm-send__input"
+                                        placeholder="Gas limit"
+                                        onChange={this.handleChangeGasPrice}
+                                    />,
+                                )}
+                            </Form.Item>
+                            <div className="sonm-send__last-line">
+                                <Form.Item
+                                    label="Gas price"
+                                    className="sonm-send__gas-price"
+                                >
+                                    {
+                                        form.getFieldDecorator('gasPrice', {
+                                            initialValue: gasPrice,
+                                            rules: [
+                                                {required: true, message: 'Please define gas price'},
+                                            ],
+                                        })(
+                                            <InputNumber
+                                                className="sonm-send__input"
+                                                placeholder="Gas price"
+                                                onChange={this.handleChangeGasPrice}
+                                            />,
+                                        )
+                                    }
+                                    <PriorityInput
+                                        valueList={['low', 'normal', 'high']}
+                                        value={priority}
+                                        onChange={this.handleChangePriority}
+                                    />
+                                </Form.Item>
+                                <Button
+                                    onClick={this.handleSubmit}
+                                    type="submit"
+                                    color="violet"
+                                    className="sonm-send__submit"
+                                >
+                                    NEXT
+                                </Button>
+                            </div>
+                        </Form>
+                    </Spin>
+                }
             </div>
         );
     }
