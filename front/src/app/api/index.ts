@@ -30,12 +30,12 @@ export class Api {
         };
     }
 
-    public static async addAccount(jsonRaw: string, password: string, name: string): Promise<IResult<boolean>> {
+    public static async addAccount(jsonRaw: string, password: string, name: string): Promise<IResult<IAccountInfo>> {
 
         await mock.delay(10);
 
         return {
-            data: true, // TODO
+            data: mock.newAccount,
         };
     }
 

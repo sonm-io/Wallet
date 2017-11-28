@@ -5,7 +5,6 @@ import {
     Api,
     IAccountInfo,
     ICurrencyInfo,
-
 } from 'app/api';
 import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
@@ -154,7 +153,9 @@ export class MainStore {
     }
 
     @computed public get fullBalanceList(): ICurrencyItemProps[]  {
-        return this.getBalanceListFor(...Object.keys(this.accountMap));
+        const allAccounts = Array.from(this.accountMap.keys());
+
+        return this.getBalanceListFor(...allAccounts);
     }
 
     @computed public get currentBalanceList(): ICurrencyItemProps[] {
@@ -175,9 +176,16 @@ export class MainStore {
         }
     }
 
-    @action.bound
-    public deleteAccount(deleteAddress: string): void {
+    @asyncAction
+    public *deleteAccount(deleteAddress: string) {
+        const { data: success } = yield Api.removeAccount(deleteAddress);
 
+        if (success) {
+            this.accountMap.delete(deleteAddress);
+        } else {
+            // TODO
+            window.alert('Error deleting account');
+        }
     }
 
     @action.bound
@@ -233,6 +241,16 @@ export class MainStore {
         }
 
         this.isReady = true;
+    }
+
+    @asyncAction
+    public *addAccount(json: string, password: string, name: string) {
+
+        const { data, validation } = yield Api.addAccount(json, password, name);
+
+        console.log(validation); // TODO
+
+        this.accountMap.set(data.address, data);
     }
 }
 

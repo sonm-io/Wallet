@@ -49,6 +49,17 @@ export const currencyListResult: t.IResult<t.ICurrencyInfo[]> = {
     ],
 };
 
+export const newAccount =  {
+    name: 'John',
+    address: '0x00000000000000000000000000330000000022',
+    currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
+        (acc: t.ICurrencyBalanceMap, currency) => {
+            acc[currency.address] = String(Math.random() * 100).substr(0, 15);
+
+            return acc;
+        }, {}),
+};
+
 export const accountListResult: t.IResult<t.IAccountInfo[]> = {
     data: [
         {
