@@ -87,7 +87,7 @@ class Api {
     }
 
     public encrypt = (data: any): string => {
-        return AES.encrypt( data ? JSON.stringify(data) : null, this.secretKey).toString();
+        return AES.encrypt(data ? JSON.stringify(data) : null, this.secretKey).toString();
     }
 
     public setSecretKey = async (data: IPayload): Promise<IResponse> => {
@@ -95,26 +95,26 @@ class Api {
         return {};
     }
 
-    public getAccountList = async(): Promise<IResponse> => {
+    public getAccountList = async (): Promise<IResponse> => {
         const accounts = await this.getAccounts() || {};
         const addresses = Object.keys(accounts);
 
-        let requests = [];
-        for ( const address in accounts ) {
-            requests.push(this.getCurrencyBalances(address))
+        const requests = [];
+        for (const address of Object.keys(accounts)) {
+            requests.push(this.getCurrencyBalances(address));
         }
 
         const balancies = await Promise.all(requests);
 
-        let list = [];
-        for(const index in addresses) {
-            const address = addresses[index];
+        const list = [];
+        for (let i = 0; i < addresses.length; i++) {
+            const address = addresses[i];
 
             list.push({
-                address: address,
+                address,
                 name: accounts[address].name,
-                currencyBalanceMap: balancies[index]
-            })
+                currencyBalanceMap: balancies[i],
+            });
         }
 
         return {
@@ -122,16 +122,16 @@ class Api {
         } as IResponse;
     }
 
-    private saveData = async(key: string, data: any): Promise<IResponse> => {
+    private saveData = async (key: string, data: any): Promise<void> => {
         const encryptedData = await this.encrypt(data);
 
-        return await createPromise('set', {
+        await createPromise('set', {
             key,
             value: encryptedData,
         });
     }
 
-    private getAccounts = async(): Promise<t.IAccounts | null> => {
+    private getAccounts = async (): Promise<t.IAccounts | null> => {
         const data = await createPromise('get', { key: 'accounts' });
 
         if (data) {
@@ -163,7 +163,7 @@ class Api {
         return this.accounts[address];
     }
 
-    public getCurrencyBalances = async (address: string) => {
+    public getCurrencyBalances = async (address: string): Promise<any> => {
         const client = await this.initAccount(address);
         return await client.account.getCurrencyBalances();
     }
@@ -201,7 +201,7 @@ class Api {
                 account.geth.setPrivateKey(privateKey.toString('hex'));
 
                 const accounts = await this.getAccounts() || {};
-                const address = `0x${json.address}`
+                const address = `0x${json.address}`;
                 accounts[address] = {
                     json,
                     address,
@@ -226,7 +226,7 @@ class Api {
     public renameAccount = async (data: IPayload): Promise<IResponse> => {
         if (data.address && data.name) {
             const accounts = await this.getAccounts() || {};
-            if ( accounts[data.address] ) {
+            if (accounts[data.address]) {
                 accounts[data.address].name = data.name;
                 await this.saveData('accounts', accounts);
             }
@@ -242,7 +242,7 @@ class Api {
             const address = data.address;
             const accounts = await this.getAccounts() || {};
 
-            if ( accounts[address] ) {
+            if (accounts[address]) {
                 delete accounts[address];
                 await this.saveData('accounts', accounts);
             }
@@ -259,12 +259,12 @@ class Api {
         if (data) {
             return this.decrypt(data) || [];
         } else {
-            return null;
+            return [];
         }
     }
 
     public send = async (data: IPayload): Promise<IResponse> => {
-        const { from, to, qty, currency, password } = data;
+        const { from, to, qty, currency, password, gasPrice, gasLimit } = data;
 
         const gethClient = await this.initAccount(from);
 
@@ -294,10 +294,10 @@ class Api {
         await this.saveData('transactions', transactions);
 
         const txResult = (currency === '0x'
-            ? await gethClient.account.sendEther(to, qty)
-            : await gethClient.account.sendTokens(to, parseInt(qty, 10), currency));
+            ? await gethClient.account.sendEther(to, qty, gasLimit, gasPrice)
+            : await gethClient.account.sendTokens(to, parseInt(qty, 10), currency, gasLimit, gasPrice));
 
-        //presave
+        // presave
         transactions[count] = {
             hash: await txResult.getHash(),
             datetime: new Date().valueOf(),
