@@ -1,10 +1,11 @@
 const {expect} = require('chai');
+
 const vasyaCfg = require('./data/Vasya_11111111.json');
 const json = JSON.stringify(vasyaCfg);
 const address = `0x${vasyaCfg.address}`;
 const password = '11111111';
 
-import * as api from 'app/api';
+import { Api } from 'app/api';
 
 before(async function() {
     this.timeout(+Infinity);
@@ -12,102 +13,133 @@ before(async function() {
     localStorage.removeItem('accounts');
     localStorage.removeItem('transactions');
 
-    await api.methods.setSecretKey('my secret key');
+    await Api.setSecretKey('my secret key');
 });
 describe('Api',  async function() {
     this.timeout(+Infinity);
 
+    it('should ping', async function() {
+        const response = await Api.ping();
+        expect(response.success).equal(true);
+        expect(response).to.have.nested.property('data.pong');
+    });
+
     it('should return error in add account', async function() {
-        const response = await api.methods.addAccount(json, '1111111', 'Wallet 1');
+        const response = await Api.addAccount(json, '1111111', 'Wallet 1');
         expect(response).to.have.nested.property('validation.password');
     });
 
     it('should add account', async function() {
         const name = 'Wallet 1';
 
-        let response = await api.methods.addAccount(json, password, name);
-        expect(response.success).equal(true);
+        const response1 = await Api.addAccount(json, password, name);
+        expect(response1.success).equal(true);
 
-        response = await api.methods.getAccountList();
-        expect(response.success).equal(true);
-        expect(response.data).to.have.lengthOf(1);
-        expect(response.data[0].name).equal(name);
-        expect(response.data[0].address).equal(address);
+        const response2 = await Api.getAccountList();
+        expect(response2.success).equal(true);
+        expect(response2.data).to.have.lengthOf(1);
+
+        if (response2.data) {
+            expect(response2.data[0].name).equal(name);
+            expect(response2.data[0].address).equal(address);
+        }
     });
 
     it('should recieve gasPrice', async function() {
-        const response = await api.methods.getGasPrice();
+        const response = await Api.getGasPrice();
         expect(response.success).equal(true);
         expect(response.data).to.be.a('string');
     });
 
     it('should recieve currenciesList', async function() {
-        const response = await api.methods.getCurrencyList();
+        const response = await Api.getCurrencyList();
         expect(response.success).equal(true);
         expect(response.data).to.have.lengthOf(2);
-        expect(response.data[0].symbol).equal('wei');
-        expect(response.data[1].symbol).equal('snmt');
+        if (response.data) {
+            expect(response.data[0].symbol).equal('wei');
+            expect(response.data[1].symbol).equal('snmt');
+        }
     });
 
     it('should send ether and snmt', async function() {
-        const qty = '2';
+        const amount = '2';
         const to = 'fd0c80ba15cbf19770319e5e76ae05012314608f';
+        const tx = {
+            fromAddress: address,
+            toAddress: to,
+            amount,
+            currencyAddress: '0x',
+            gasLimit: '',
+            gasPrice: '',
+            password: '1111111',
+        };
 
-        let response = await api.methods.send(address, '0x', qty, '0x', '', '', '1111111');
-        expect(response.success).equal(true);
-        expect(response).to.have.nested.property('validation.password');
+        // error transaction
+        const response1 = await Api.send(tx);
+        expect(response1.success).equal(true);
+        expect(response1).to.have.nested.property('validation.password');
 
-        response = await api.methods.send(address, to, qty, '0x', '', '', password);
-        expect(response.success).equal(true);
+        tx.password = password;
+        const response2 = await Api.send(tx);
+        expect(response2.success).equal(true);
 
-        response = await api.methods.getTransactionList();
-        expect(response.success).equal(true);
-        expect(response.data).to.have.lengthOf(1);
-        expect(response.data[0].from_address).equal(address);
-        expect(response.data[0].to_address).equal(to);
-        expect(response.data[0].qty).equal(qty);
-        expect(response.data[0].currency).equal('0x');
+        const response3 = await Api.getSendTransactionList();
+        expect(response3.success).equal(true);
+        expect(response3.data).to.have.lengthOf(1);
+        if (response3.data) {
+            expect(response3.data[0].fromAddress).equal(address);
+            expect(response3.data[0].toAddress).equal(to);
+            expect(response3.data[0].amount).equal(amount);
+            expect(response3.data[0].currencyAddress).equal('0x');
+        }
 
-        const currencies = await api.methods.getCurrencyList();
+        const currencies = await Api.getCurrencyList();
+        if (currencies.data) {
+            tx.currencyAddress = currencies.data[1].address;
 
-        response = await api.methods.send(address, to, qty, currencies.data[1].address, '', '', password);
-        expect(response.success).equal(true);
+            const response4 = await Api.send(tx);
+            expect(response4.success).equal(true);
 
-        response = await api.methods.getTransactionList();
-        expect(response.success).equal(true);
-        expect(response.data).to.have.lengthOf(2);
-        expect(response.data[1].from_address).equal(address);
-        expect(response.data[1].to_address).equal(to);
-        expect(response.data[1].qty).equal(qty);
-        expect(response.data[1].currency).equal(currencies.data[1].address);
+            const response5 = await Api.getSendTransactionList();
+            expect(response5.success).equal(true);
+            if (response5.data) {
+                expect(response5.data).to.have.lengthOf(2);
+                expect(response5.data[1].fromAddress).equal(address);
+                expect(response5.data[1].toAddress).equal(to);
+                expect(response5.data[1].amount).equal(amount);
+                expect(response5.data[1].currencyAddress).equal(currencies.data[1].address);
+            }
 
-        // check filters
-        response = await api.methods.getTransactionList({
-            currency: currencies.data[1].address,
-        });
-        expect(response.success).equal(true);
-        expect(response.data).to.have.lengthOf(1);
+            const response6 = await Api.getSendTransactionList({
+                currencyAddress: currencies.data[1].address,
+            });
+            expect(response6.success).equal(true);
+            expect(response6.data).to.have.lengthOf(1);
+        }
     });
 
     it('should rename account', async function() {
         const name = 'Wallet 2';
 
-        let response = await api.methods.renameAccount(address, name);
-        expect(response.success).equal(true);
+        const response1 = await Api.renameAccount(address, name);
+        expect(response1.success).equal(true);
 
-        response = await api.methods.getAccountList();
-        expect(response.success).equal(true);
-        expect(response.data).to.have.lengthOf(1);
-        expect(response.data[0].name).equal(name);
-        expect(response.data[0].address).equal(address);
+        const response2 = await Api.getAccountList();
+        expect(response2.success).equal(true);
+        expect(response2.data).to.have.lengthOf(1);
+
+        if (response2.data) {
+            expect(response2.data[0].name).equal(name);
+            expect(response2.data[0].address).equal(address);
+        }
     });
 
     it('should remove account', async function() {
-        let response = await api.methods.removeAccount(address);
-        expect(response.success).equal(true);
+        const response1 = await Api.removeAccount(address);
+        expect(response1.success).equal(true);
 
-        response = await api.methods.getAccountList();
-        expect(response.success).equal(true);
-        expect(response.data).to.have.lengthOf(0);
+        const response2 = await Api.getAccountList();
+        expect(response2.success).equal(true);
+        expect(response2.data).to.have.lengthOf(0);
     });
 });

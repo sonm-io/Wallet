@@ -22,6 +22,7 @@ module.exports = function init(worker: any) {
 
         if (data.type === 'storage') {
             let result;
+
             if (data.action === 'get') {
                 result = storage.get(data.payload.key);
             } else if (data.action === 'set') {

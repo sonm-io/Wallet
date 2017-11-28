@@ -8,6 +8,7 @@
     "example": "examples"
   },
   "devDependencies": {
+    "@types/mocha": "^2.2.44",
     "@types/bignumber.js": "^4.0.3",
     "@types/chai": "^4.0.5",
     "@types/classnames": "2.2.3",

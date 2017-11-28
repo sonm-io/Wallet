@@ -11,20 +11,22 @@ interface IPayload {
     [index: string]: any;
 }
 
-interface IResponse {
-    data?: object;
-    validation?: object;
+interface IWalletJson {
+    address: string;
+    crypto: object;
 }
 
-interface ITransaction {
-    [index: string]: any;
-    hash: string;
-    datetime: number;
-    from_address: string;
-    to_address: string;
-    qty: string;
-    currency: string;
-    fee: string;
+interface IAccounts {
+    [address: string]: {
+        json: IWalletJson,
+        name: string,
+        address: string,
+    };
+}
+
+interface IResponse {
+    data?: any;
+    validation?: object;
 }
 
 function createPromise(
@@ -55,8 +57,6 @@ class Api {
         [index: string]: any,
     };
 
-    public transactions: ITransaction[];
-
     private secretKey: string;
 
     private constructor() {
@@ -78,8 +78,6 @@ class Api {
 
             'transaction.list': this.getTransactionList,
         };
-
-        this.transactions = [];
     }
 
     public decrypt = (data: string): any => {
@@ -91,8 +89,19 @@ class Api {
     }
 
     public setSecretKey = async (data: IPayload): Promise<IResponse> => {
-        this.secretKey = data.key;
-        return {};
+        if (data.password) {
+            this.secretKey = data.password;
+
+            return {
+                data: true,
+            };
+        } else {
+            return {
+                validation: {
+                    password: 'password_empty',
+                },
+            };
+        }
     }
 
     public getAccountList = async (): Promise<IResponse> => {
@@ -106,7 +115,7 @@ class Api {
 
         const balancies = await Promise.all(requests);
 
-        const list = [];
+        const list = [] as t.IAccountInfo[];
         for (let i = 0; i < addresses.length; i++) {
             const address = addresses[i];
 
@@ -119,11 +128,11 @@ class Api {
 
         return {
             data: list,
-        } as IResponse;
+        };
     }
 
     private saveData = async (key: string, data: any): Promise<void> => {
-        const encryptedData = await this.encrypt(data);
+        const encryptedData = this.encrypt(data);
 
         await createPromise('set', {
             key,
@@ -131,11 +140,11 @@ class Api {
         });
     }
 
-    private getAccounts = async (): Promise<t.IAccounts | null> => {
+    private getAccounts = async (): Promise<IAccounts | null> => {
         const data = await createPromise('get', { key: 'accounts' });
 
         if (data) {
-            return this.decrypt(data) as t.IAccounts;
+            return this.decrypt(data) as IAccounts;
         } else {
             return null;
         }
@@ -210,7 +219,13 @@ class Api {
 
                 await this.saveData('accounts', accounts);
 
-                return {};
+                return {
+                    data: {
+                        address,
+                        name: data.name,
+                        currencyBalanceMap: await this.getCurrencyBalances(address),
+                    },
+                };
             } catch (err) {
                 return {
                     validation: {
@@ -264,9 +279,10 @@ class Api {
     }
 
     public send = async (data: IPayload): Promise<IResponse> => {
-        const { from, to, qty, currency, password, gasPrice, gasLimit } = data;
 
-        const gethClient = await this.initAccount(from);
+        const { fromAddress, toAddress, amount, currencyAddress, password, gasPrice, gasLimit } = data;
+
+        const gethClient = await this.initAccount(fromAddress);
 
         if (gethClient && gethClient.password) {
             if (gethClient.password !== password) {
@@ -276,7 +292,7 @@ class Api {
             const accounts = await this.getAccounts() || {};
 
             try {
-                const privateKey = await utils.recoverPrivateKey(accounts[from].json, password);
+                const privateKey = await utils.recoverPrivateKey(accounts[fromAddress].json, password);
                 gethClient.geth.setPrivateKey(privateKey.toString('hex'));
                 gethClient.password = password;
             } catch (err) {
@@ -293,21 +309,21 @@ class Api {
 
         await this.saveData('transactions', transactions);
 
-        const txResult = (currency === '0x'
-            ? await gethClient.account.sendEther(to, qty, gasLimit, gasPrice)
-            : await gethClient.account.sendTokens(to, parseInt(qty, 10), currency, gasLimit, gasPrice));
+        const txResult = (currencyAddress === '0x'
+            ? await gethClient.account.sendEther(toAddress, amount, gasLimit, gasPrice)
+            : await gethClient.account.sendTokens(toAddress, parseInt(amount, 10), currencyAddress, gasLimit, gasPrice));
 
         // presave
         transactions[count] = {
             hash: await txResult.getHash(),
-            datetime: new Date().valueOf(),
-            from_address: from,
-            to_address: to,
-            qty,
-            currency,
+            timestamp: new Date().valueOf(),
+            fromAddress,
+            toAddress,
+            amount,
+            currencyAddress,
         };
 
-        const receipt = await txResult.getReceipt();
+        await txResult.getReceipt();
         const fee = await txResult.getTxPrice();
 
         transactions[count].fee = fee.toString();
@@ -315,7 +331,7 @@ class Api {
         await this.saveData('transactions', transactions);
 
         return {
-            data: receipt,
+            data: transactions[count],
         };
     }
 
@@ -333,17 +349,17 @@ class Api {
             let ok = true;
 
             if (Object.keys(filters).length) {
-                for (const type of ['from_address', 'to_address', 'currency']) {
+                for (const type of ['fromAddress', 'toAddress', 'currencyAddress']) {
                     if (filters[type] && item[type] !== filters[type]) {
                         ok = false;
                     }
                 }
 
-                if (filters.date_start && item.datetime < filters.date_start) {
+                if (filters.dateStart && item.timestamp < filters.dateStart) {
                     ok = false;
                 }
 
-                if (filters.date_end && item.datetime > filters.date_end) {
+                if (filters.dateEnd && item.timestamp > filters.dateEnd) {
                     ok = false;
                 }
             }
