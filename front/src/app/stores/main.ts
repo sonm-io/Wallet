@@ -245,6 +245,15 @@ export class MainStore {
     }
 
     @asyncAction
+    public *renameAccount(address: string, name: string) {
+        const success = yield Api.renameAccount(address, name);
+
+        if (success) {
+            (this.accountMap.get(address) as IAccountInfo).name = name;
+        }
+    }
+
+    @asyncAction
     public *confirmTransaction(password: string) {
         const result = yield Api.send({
             password,
