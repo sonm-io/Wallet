@@ -3,11 +3,11 @@ import {} from 'antd';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { MainStore } from 'app/stores/main';
-import Button from '../../common/button/index';
 import AccountItem from '../../common/account-item/index';
 import CurrencyBalanceList from '../../common/currency-balance-list/index';
 import DeletableItem from './sub/deletable-item/index';
 import Header from '../../common/header';
+import Upload from '../../common/upload';
 
 interface IProps {
     className?: string;
@@ -21,9 +21,13 @@ export class Wallets extends React.Component<IProps, any> {
         deleteAddress: '',
     }
 
-    private handleClose(deleteAddress: string) {
+    private handleDelete(deleteAddress: string) {
         // this.setState({ deleteAddress });
         // this.props.mainStore.deleteAccount(deleteAddress);
+    }
+
+    private handleStartUpload(event: any) {
+        debugger;
     }
 
     public render() {
@@ -46,7 +50,7 @@ export class Wallets extends React.Component<IProps, any> {
                         return (
                             <DeletableItem
                                 className="sonm-wallets__list-item"
-                                onClose={this.handleClose}
+                                onClose={this.handleDelete}
                                 key={x.address}
                                 id={x.address}
                             >
@@ -55,11 +59,16 @@ export class Wallets extends React.Component<IProps, any> {
                         );
                     })}
                 </div>
-                <Button className="sonm-wallets__add-button">+ Add wallet</Button>
                 <CurrencyBalanceList
                     className="sonm-wallets__balances"
                     currencyBalanceList={mainStore.currentBalanceList}
                 />
+                <Upload
+                    onStartUpload={this.handleStartUpload}
+                    className="sonm-wallets__add-button"
+                >
+                    + Add account
+                </Upload>
             </div>
         );
     }
