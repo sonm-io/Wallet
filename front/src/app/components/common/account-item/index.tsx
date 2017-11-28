@@ -6,8 +6,8 @@ export interface IAccountItemProps {
     className?: string;
     address: string;
     name: string;
-    etherBalance: string;
-    sonmBalance: string;
+    firstBalance: string;
+    secondBalance: string;
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {
@@ -16,17 +16,17 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             className,
             address,
             name,
-            etherBalance,
-            sonmBalance,
+            firstBalance,
+            secondBalance,
         } = this.props;
 
         return (
             <div className={cn('sonm-account-item', className)}>
                 <IdentIcon address={address} className="sonm-account-item__blockies"/>
                 <span className="sonm-account-item__name">{name}</span>
-                <span className="sonm-account-item__ether">{etherBalance} ETH</span>
+                <span className="sonm-account-item__ether">{firstBalance}</span>
                 <span className="sonm-account-item__address">{address}</span>
-                <span className="sonm-account-item__sonm">{sonmBalance} SNM</span>
+                <span className="sonm-account-item__sonm">{secondBalance}</span>
             </div>
         );
     }
