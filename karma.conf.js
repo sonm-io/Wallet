@@ -1,26 +1,25 @@
 module.exports = function (config) {
 	config.set({
 		browserNoActivityTimeout: 60000,
-		frameworks: ['mocha', 'karma-typescript'],
+		frameworks: ['mocha'],
+        plugins: ['karma-webpack', 'karma-mocha', 'karma-chrome-launcher'],
+
 		preprocessors: {
-			'./front/src/worker/**/*.ts': ['karma-typescript'],
-			'./test/**/*.ts': ['karma-typescript'],
+			'./test/**/*.ts': ['webpack'],
 		},
 
-		reporters: ['progress', 'karma-typescript'],
+		reporters: ['progress'],
 		browsers: ['Chrome'],
-		singleRun: true,
+		singleRun: false,
+
 		files: [
-			'./front/src/worker/**/*.ts',
 			'./test/*.test.ts'
 		],
-		karmaTypescriptConfig: {
-			tsconfig: './tsconfig.json',
-			include: ['test'],
 
-			coverageOptions: {
-				instrumentation: false,
-			},
-		}
+		mime: {
+			'text/x-typescript': ['ts','tsx']
+		},
+
+		webpack: require('./front/config/webpack.config'),
 	})
 }

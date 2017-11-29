@@ -11,6 +11,8 @@ import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import { IAccountItemProps } from 'app/components/common/account-item';
 
 const sortByName = sortBy(['name', 'address']);
+const SYMBOL_SONM = 'snmt';
+const SYMBOL_ETHER = 'wei';
 
 export interface IHasAddress {
     address: string;
@@ -94,9 +96,11 @@ export class MainStore {
             return '';
         }
 
+        const s = symbol.toUpperCase();
+
         map.forEach(
             (value, key) => {
-                if (value.symbol.toUpperCase() === symbol) {
+                if (value.symbol.toUpperCase() === s) {
                     result = value.address;
                 }
             },
@@ -108,11 +112,11 @@ export class MainStore {
     }
 
     @computed public get sonmTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, 'SNMT');
+        return MainStore.findCurrencyBySymbol(this.currencyMap, SYMBOL_SONM);
     }
 
     @computed public get etherTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, 'ETH');
+        return MainStore.findCurrencyBySymbol(this.currencyMap, SYMBOL_ETHER);
     }
 
     @computed public get accountList(): IAccountItemProps[] {
@@ -124,12 +128,14 @@ export class MainStore {
         const etherTokenAddress = this.etherTokenAddress;
 
         const result = Array.from(this.accountMap.values()).map(account => {
-            return {
+            const props: IAccountItemProps = {
                 address: account.address,
                 name: account.name,
-                sonmBalance: account.currencyBalanceMap[sonmTokenAddress],
-                etherBalance: account.currencyBalanceMap[etherTokenAddress],
+                firstBalance: `${account.currencyBalanceMap[sonmTokenAddress]} ${SYMBOL_SONM}`,
+                secondBalance: `${account.currencyBalanceMap[etherTokenAddress]} ${SYMBOL_ETHER}`,
             };
+
+            return props;
         });
 
         return sortByName(result) as IAccountItemProps[];

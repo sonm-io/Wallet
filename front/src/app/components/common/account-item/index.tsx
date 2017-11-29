@@ -7,8 +7,8 @@ export interface IAccountItemProps {
     className?: string;
     address: string;
     name: string;
-    etherBalance: string;
-    sonmBalance: string;
+    firstBalance: string;
+    secondBalance: string;
     onRename: (newName: string, address: string) => void;
 }
 

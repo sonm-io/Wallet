@@ -68,7 +68,7 @@ export class IPC implements InterfaceIPC {
                 const success = result !== undefined;
 
                 const response: t.IResponse<any> = {
-                    done: true, // see contimuation
+                    done: true, // see continuation
                     data: undefined,
                     requestId,
                     sign,
