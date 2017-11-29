@@ -160,11 +160,11 @@ class Api {
 
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
-            const geth = createSonmFactory(URL_REMOTE_GETH_NODE, address);
+            const geth = createSonmFactory(URL_REMOTE_GETH_NODE);
 
             this.accounts[address] = {
                 geth,
-                account: await geth.createAccount(),
+                account: await geth.createAccount(address),
                 password: null,
             };
         }
@@ -191,47 +191,49 @@ class Api {
         }
     }
 
-    public getGasPrice = async (data: IPayload): Promise<IResponse> => {
-        const accounts = await this.getAccounts() || {};
+    public getGasPrice = async (): Promise<IResponse> => {
+        const geth = createSonmFactory(URL_REMOTE_GETH_NODE);
 
-        if (accounts) {
-            const client = await this.initAccount(Object.keys(accounts)[0]);
-
-            return {
-                data: (await client.account.getGasPrice()).toString(),
-            };
-        } else {
-            throw new Error('required_params_missed');
-        }
+        return {
+            data: (await geth.getGasPrice()).toString(),
+        };
     }
 
     public addAccount = async (data: IPayload): Promise<IResponse> => {
         if (data.json && data.password) {
             try {
                 const json = JSON.parse(data.json);
-                const privateKey = await utils.recoverPrivateKey(json, data.password);
-
-                const account = await this.initAccount(json.address);
-                account.password = data.password;
-                account.geth.setPrivateKey(privateKey.toString('hex'));
 
                 const accounts = await this.getAccounts() || {};
                 const address = `0x${json.address}`;
-                accounts[address] = {
-                    json,
-                    address,
-                    name: data.name,
-                };
 
-                await this.saveData('accounts', accounts);
+                if (!accounts[address]) {
+                    const privateKey = await utils.recoverPrivateKey(json, data.password);
 
-                return {
-                    data: {
+                    const account = await this.initAccount(json.address);
+                    account.password = data.password;
+                    account.geth.setPrivateKey(privateKey.toString('hex'));
+
+                    const accounts = await this.getAccounts() || {};
+                    const address = `0x${json.address}`;
+                    accounts[address] = {
+                        json,
                         address,
                         name: data.name,
-                        currencyBalanceMap: await this.getCurrencyBalances(address),
-                    },
-                };
+                    };
+
+                    await this.saveData('accounts', accounts);
+
+                    return {
+                        data: {
+                            address,
+                            name: data.name,
+                            currencyBalanceMap: await this.getCurrencyBalances(address),
+                        },
+                    };
+                } else {
+                    throw new Error('account_exists');
+                }
             } catch (err) {
                 return {
                     validation: {
@@ -250,9 +252,13 @@ class Api {
             if (accounts[data.address]) {
                 accounts[data.address].name = data.name;
                 await this.saveData('accounts', accounts);
-            }
 
-            return {};
+                return {
+                    data: true,
+                };
+            } else {
+                throw new Error('account_not_found');
+            }
         } else {
             throw new Error('required_params_missed');
         }
@@ -266,9 +272,13 @@ class Api {
             if (accounts[address]) {
                 delete accounts[address];
                 await this.saveData('accounts', accounts);
-            }
 
-            return {};
+                return {
+                    data: true,
+                };
+            } else {
+                throw new Error('account_not_found');
+            }
         } else {
             throw new Error('required_params_missed');
         }
