@@ -35,7 +35,8 @@ export interface ICurrencyBalanceMap {
 }
 
 export interface ICurrencyInfo {
-    symbol: string;
+    symbol: string,
+    decimals: number,
     name: string;
     address: string;
 }
