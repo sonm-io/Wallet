@@ -9,7 +9,7 @@ export interface IAccountItemProps {
     name: string;
     firstBalance: string;
     secondBalance: string;
-    onRename: (newName: string, address: string) => void;
+    onRename?: (newName: string, address: string) => void;
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {
@@ -23,8 +23,8 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         const {
             className,
             address,
-            etherBalance,
-            sonmBalance,
+            firstBalance,
+            secondBalance,
         } = this.props;
 
         return (
@@ -35,9 +35,9 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                         {this.renderName()}
                     </span>
                 </span>
-                <span className="sonm-account-item__ether">{etherBalance} ETH</span>
+                <span className="sonm-account-item__ether">{firstBalance}</span>
                 <span className="sonm-account-item__address">{address}</span>
-                <span className="sonm-account-item__sonm">{sonmBalance} SNM</span>
+                <span className="sonm-account-item__sonm">{secondBalance}</span>
             </div>
         );
     }
@@ -62,10 +62,17 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
     }
 
     private stopEdit = () => {
-        const text = this.inputRef.value;
+        if (this.props.onRename) {
+            const text = this.inputRef.value;
+            this.props.onRename(this.props.address, text);
+        }
 
-        this.props.onRename(this.props.address, text);
+        this.setState({
+            isEdit: false,
+        });
+    }
 
+    private cancelEdit = () => {
         this.setState({
             isEdit: false,
         });
@@ -92,6 +99,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     spellCheck={false}
                     defaultValue={this.props.name}
                     ref={this.saveRef}
+                    onBlur={this.cancelEdit}
                     key="c"
                     type="text"
                     className="sonm-account-item__edit-name "
@@ -101,12 +109,9 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         } else {
             return [
                 name,
-                <Icon
-                    key="i"
-                    className="sonm-account-item__edit-icon"
-                    type="edit"
-                    onClick={this.startEdit}
-                />,
+                <button key="i" className="sonm-account-item__edit-icon" onClick={this.startEdit}>
+                    <Icon type="edit" />
+                </button>,
             ];
         }
     }
