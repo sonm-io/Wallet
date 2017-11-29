@@ -178,7 +178,7 @@ class Api {
 
     public getCurrencyBalances = async (address: string): Promise<any> => {
         const client = await this.initAccount(address);
-        return await client.account.getCurrencyBalances();
+        return client.account.getCurrencyBalances();
     }
 
     public getCurrencies = async (data: IPayload): Promise<IResponse> => {
@@ -217,9 +217,6 @@ class Api {
                     const account = await this.initAccount(json.address);
                     account.password = data.password;
                     account.geth.setPrivateKey(privateKey.toString('hex'));
-
-                    const accounts = await this.getAccounts() || {};
-                    const address = `0x${json.address}`;
                     accounts[address] = {
                         json,
                         address,
@@ -331,7 +328,13 @@ class Api {
 
         const txResult = (currencyAddress === '0x'
             ? await gethClient.account.sendEther(toAddress, amount, gasLimit, gasPrice)
-            : await gethClient.account.sendTokens(toAddress, parseInt(amount, 10), currencyAddress, gasLimit, gasPrice));
+            : await gethClient.account.sendTokens(
+                toAddress,
+                parseInt(amount, 10),
+                currencyAddress,
+                gasLimit,
+                gasPrice,
+            ));
 
         // presave
         transactions[count] = {
