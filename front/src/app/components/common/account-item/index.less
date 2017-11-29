@@ -57,6 +57,14 @@
 
   &__edit-icon {
     cursor: pointer;
+    border: 0;
+    background-color: transparent;
+    margin: 0 5px;
+
+    &:focus {
+      outline: @outline;
+      outline-offset: 3px;
+    }
   }
 
   &__edit-name {
