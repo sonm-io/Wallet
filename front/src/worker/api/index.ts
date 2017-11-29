@@ -31,7 +31,7 @@ interface IResponse {
 
 function createPromise(
     action: string,
-    payload: any,
+    payload?: any,
 ): Promise<any> {
     return new Promise((resolve, reject) => {
         (ipc as any).send({
@@ -86,6 +86,10 @@ class Api {
 
     public encrypt = (data: any): string => {
         return AES.encrypt(data ? JSON.stringify(data) : null, this.secretKey).toString();
+    }
+
+    public hasSavedData = async (): Promise<IResponse> => {
+        return createPromise('hasSavedData');
     }
 
     public setSecretKey = async (data: IPayload): Promise<IResponse> => {

@@ -66,6 +66,10 @@ export class Api {
         return createPromise('account.setSecretKey', { password });
     }
 
+    public static async hasSavedData(password: string): Promise<IResult<boolean>>  {
+        return createPromise('account.hasSavedData');
+    }
+
     public static async addAccount(jsonRaw: string, password: string, name: string): Promise<IResult<IAccountInfo>> {
         return createPromise('account.add', { json: jsonRaw, password, name });
     }

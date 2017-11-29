@@ -24,6 +24,12 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('data.pong');
     });
 
+    it('should not found saved data', async function() {
+        const response = await Api.hasSavedData();
+        expect(response.success).equal(true);
+        expect(response.data).equal(false);
+    });
+
     it('should return error in add account', async function() {
         const response = await Api.addAccount(json, '1111111', 'Wallet 1');
         expect(response).to.have.nested.property('validation.password');
@@ -43,6 +49,12 @@ describe('Api',  async function() {
             expect(response2.data[0].name).equal(name);
             expect(response2.data[0].address).equal(address);
         }
+    });
+
+    it('should found saved data', async function() {
+        const response = await Api.hasSavedData();
+        expect(response.success).equal(true);
+        expect(response.data).equal(true);
     });
 
     it('should recieve gasPrice', async function() {
