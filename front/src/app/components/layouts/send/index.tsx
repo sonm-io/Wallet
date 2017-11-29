@@ -9,6 +9,7 @@ import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
 import IdentIcon from '../../common/ident-icon/index';
 import { MainStore, ISendFormValues } from 'app/stores/main';
+import Header from '../../common/header';
 
 interface IProps extends FormComponentProps {
     className?: string;
@@ -133,6 +134,9 @@ export class SendSrc extends React.Component<IProps, any> {
                 {showConfirmDialog
                     ? this.renderConfirm()
                     : <Spin spinning={!isReady}>
+                        <Header className="sonm-send__header">
+                            Transfer
+                        </Header>
                         <Form onSubmit={this.handleSubmit} className="sonm-send__form">
                             <Form.Item
                                 label="From"

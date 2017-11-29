@@ -71,6 +71,12 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         });
     }
 
+    private cancelEdit = () => {
+        this.setState({
+            isEdit: false,
+        });
+    }
+
     private saveRef = (ref: any) => {
         this.inputRef = ref;
     }
@@ -92,6 +98,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     spellCheck={false}
                     defaultValue={this.props.name}
                     ref={this.saveRef}
+                    onBlur={this.cancelEdit}
                     key="c"
                     type="text"
                     className="sonm-account-item__edit-name "
