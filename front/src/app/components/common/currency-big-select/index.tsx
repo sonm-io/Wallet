@@ -33,6 +33,7 @@ export class CurrencyBigSelect extends React.PureComponent<ICurrencyBigSelectPro
                     currencies && currencies.map(currency => {
                         return (
                             <Option
+                                title={currency.name}
                                 value={currency.address}
                                 key={currency.address}
                             >

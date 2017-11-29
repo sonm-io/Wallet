@@ -31,6 +31,7 @@ export class AccountBigSelect extends React.PureComponent<IAccountBigSelectProps
                     accounts && accounts.map(account => {
                         return (
                             <Option
+                                title={account.name}
                                 value={account.address}
                                 key={account.address}
                             >
