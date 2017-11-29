@@ -35,6 +35,12 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('validation.password');
     });
 
+    it('should recieve gasPrice without account list', async function() {
+        const response = await Api.getGasPrice();
+        expect(response.success).equal(true);
+        expect(response.data).to.be.a('string');
+    });
+
     it('should add account', async function() {
         const name = 'Wallet 1';
 
@@ -55,12 +61,6 @@ describe('Api',  async function() {
         const response = await Api.hasSavedData();
         expect(response.success).equal(true);
         expect(response.data).equal(true);
-    });
-
-    it('should recieve gasPrice', async function() {
-        const response = await Api.getGasPrice();
-        expect(response.success).equal(true);
-        expect(response.data).to.be.a('string');
     });
 
     it('should recieve currenciesList', async function() {
