@@ -306,20 +306,22 @@ export class MainStore {
 
     public startAutoUpdate(interval: number) {
         const iteration = async () => {
-            window.console.time('update')
+            try {
+                window.console.time('update')
 
-            const result = await Promise.all([
-                Api.getGasPrice(),
-                Api.getAccountList(),
-            ]).catch(error => {
-                this.errors.push(error);
-            });
+                const result = await Promise.all([
+                    Api.getGasPrice(),
+                    Api.getAccountList(),
+                ]);
 
-            this.update(result);
-
-            window.console.timeEnd('update')
-
-            setTimeout(iteration, interval);
+                this.update(result);
+            } catch (e) {
+                console.log(e);
+                this.errors.push(e);
+            } finally {
+                window.console.timeEnd('update');
+                setTimeout(iteration, interval);
+            }
         };
 
         return iteration();
