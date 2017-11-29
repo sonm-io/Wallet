@@ -48,6 +48,14 @@ export class Wallets extends React.Component<IProps, any> {
         );
     }
 
+    private handleRename = (address: string, name: string) => {
+        if (this.props.mainStore === undefined) {
+            return;
+        }
+
+        this.props.mainStore.renameAccount(address, name);
+    }
+
     public render() {
         const {
             className,
@@ -72,7 +80,7 @@ export class Wallets extends React.Component<IProps, any> {
                                 key={x.address}
                                 id={x.address}
                             >
-                                <AccountItem {...x} />
+                                <AccountItem {...x} onRename={this.handleRename}/>
                             </DeletableItem>
                         );
                     })}
