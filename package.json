@@ -89,7 +89,7 @@
     "react": "^16.1.0",
     "react-dom": "^16.1.0",
     "universal-router": "^4.3.0",
-    "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v0.1.1"
+    "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v0.1.4"
   },
   "scripts": {
     "start": "electron .",

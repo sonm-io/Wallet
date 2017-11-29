@@ -407,7 +407,9 @@ class Api {
                 throw new Error(err);
             }
         } else {
-            throw new Error('wrong_route');
+            return {
+                data: false,
+            };
         }
     }
 
