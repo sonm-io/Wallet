@@ -11,8 +11,6 @@ import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import { IAccountItemProps } from 'app/components/common/account-item';
 
 const sortByName = sortBy(['name', 'address']);
-const SYMBOL_SONM = 'snmt';
-const SYMBOL_ETHER = 'wei';
 const UPDATE_INTERVAL = 5000;
 
 export interface IHasAddress {
@@ -33,6 +31,8 @@ export interface ISendFormValues {
 export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore {
+    public static SYMBOL_SONM = 'snmt';
+    public static SYMBOL_ETHER = 'wei';
     public static DEFAULT_GAS_LIMIT = '50000';
 
     @observable public averageGasPrice = '';
@@ -114,12 +114,26 @@ export class MainStore {
         return result;
     }
 
-    @computed public get sonmTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, SYMBOL_SONM);
+    @computed public get firstTokenAddress(): string {
+        return MainStore.findCurrencyBySymbol(this.currencyMap, MainStore.SYMBOL_SONM);
     }
 
-    @computed public get etherTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, SYMBOL_ETHER);
+    @computed public get secondTokenAddress(): string {
+        return MainStore.findCurrencyBySymbol(this.currencyMap, MainStore.SYMBOL_ETHER);
+    }
+
+    @computed public get firstTokenBalance(): string {
+        return MainStore.getTokenBalance(this.fullBalanceList, this.firstTokenAddress);
+    }
+
+    @computed public get secondTokenBalance(): string {
+        return MainStore.getTokenBalance(this.fullBalanceList, this.secondTokenAddress);
+    }
+
+    private static getTokenBalance(fullList: ICurrencyItemProps[], address: string) {
+        const f = fullList.find(x => x.address === address);
+
+        return f ? `${f.balance} ${f.symbol}` : `Token ${address} not found`;
     }
 
     @computed public get accountList(): IAccountItemProps[] {
@@ -127,15 +141,15 @@ export class MainStore {
             return [];
         }
 
-        const sonmTokenAddress = this.sonmTokenAddress;
-        const etherTokenAddress = this.etherTokenAddress;
+        const firstTokenAddress = this.firstTokenAddress;
+        const secondTokenAddress = this.secondTokenAddress;
 
         const result = Array.from(this.accountMap.values()).map(account => {
             const props: IAccountItemProps = {
                 address: account.address,
                 name: account.name,
-                firstBalance: `${account.currencyBalanceMap[sonmTokenAddress]} ${SYMBOL_SONM}`,
-                secondBalance: `${account.currencyBalanceMap[etherTokenAddress]} ${SYMBOL_ETHER}`,
+                firstBalance: `${account.currencyBalanceMap[firstTokenAddress]} ${MainStore.SYMBOL_SONM}`,
+                secondBalance: `${account.currencyBalanceMap[secondTokenAddress]} ${MainStore.SYMBOL_ETHER}`,
             };
 
             return props;
@@ -189,19 +203,20 @@ export class MainStore {
             const bn = new BigNumber(value);
             this.userGasPrice = bn.toString();
         } catch (e) {
-            console.error(e);
+            this.handleError(e);
         }
     }
 
     @asyncAction
     public *deleteAccount(deleteAddress: string) {
-        const { data: success } = yield Api.removeAccount(deleteAddress);
+        try {
+            const { data: success } = yield Api.removeAccount(deleteAddress);
 
-        if (success) {
-            this.accountMap.delete(deleteAddress);
-        } else {
-            // TODO
-            window.alert('Error deleting account');
+            if (success) {
+                this.accountMap.delete(deleteAddress);
+            }
+        } catch (e) {
+            this.handleError(e);
         }
     }
 
@@ -255,42 +270,54 @@ export class MainStore {
 
     @asyncAction
     public *renameAccount(address: string, name: string) {
-        const success = yield Api.renameAccount(address, name);
+        try {
+            const success = yield Api.renameAccount(address, name);
 
-        if (success) {
-            (this.accountMap.get(address) as IAccountInfo).name = name;
+            if (success) {
+                (this.accountMap.get(address) as IAccountInfo).name = name;
+            }
+        } catch (e) {
+            this.handleError(e);
         }
     }
 
     @asyncAction
     public *confirmTransaction(password: string) {
-        const result = yield Api.send({
-            password,
-            toAddress: this.values.toAddress,
-            amount: this.values.amount,
-            fromAddress: this.selectedAccountAddress,
-            currencyAddress: this.selectedCurrencyAddress,
-            gasPrice: this.values.gasPrice,
-            gasLimit: this.values.gasLimit,
-        });
+        try {
+            const result = yield Api.send({
+                password,
+                toAddress: this.values.toAddress,
+                amount: this.values.amount,
+                fromAddress: this.selectedAccountAddress,
+                currencyAddress: this.selectedCurrencyAddress,
+                gasPrice: this.values.gasPrice,
+                gasLimit: this.values.gasLimit,
+            });
 
-        window.alert(JSON.stringify(result));
+            window.alert(JSON.stringify(result));
+        } catch (e) {
+            this.handleError(e);
+        }
     }
 
     @asyncAction
     public *init() {
-        this.isReady = false;
+        try {
+            this.isReady = false;
 
-        const [{ data: currencyList }] = yield Promise.all([
-            Api.getCurrencyList(),
-            this.startAutoUpdate(UPDATE_INTERVAL), // wait for first update
-        ]);
+            const [{data: currencyList}] = yield Promise.all([
+                Api.getCurrencyList(),
+                this.startAutoUpdate(UPDATE_INTERVAL), // wait for first update
+            ]);
 
-        listToMap<ICurrencyInfo>(currencyList, this.currencyMap);
+            listToMap<ICurrencyInfo>(currencyList, this.currencyMap);
 
-        this.userGasPrice = this.averageGasPrice;
-
-        this.isReady = true;
+            this.userGasPrice = this.averageGasPrice;
+        } catch (e) {
+            this.handleError(e);
+        } finally {
+            this.isReady = true;
+        }
     }
 
     @action
@@ -306,20 +333,21 @@ export class MainStore {
 
     public startAutoUpdate(interval: number) {
         const iteration = async () => {
-            window.console.time('update')
+            try {
+                window.console.time('update')
 
-            const result = await Promise.all([
-                Api.getGasPrice(),
-                Api.getAccountList(),
-            ]).catch(error => {
-                this.errors.push(error);
-            });
+                const result = await Promise.all([
+                    Api.getGasPrice(),
+                    Api.getAccountList(),
+                ]);
 
-            this.update(result);
-
-            window.console.timeEnd('update')
-
-            setTimeout(iteration, interval);
+                this.update(result);
+            } catch (e) {
+                this.handleError(e);
+            } finally {
+                window.console.timeEnd('update');
+                setTimeout(iteration, interval);
+            }
         };
 
         return iteration();
@@ -327,12 +355,16 @@ export class MainStore {
 
     @asyncAction
     public *addAccount(json: string, password: string, name: string) {
+        try {
 
-        const { data, validation } = yield Api.addAccount(json, password, name);
+            const {data, validation} = yield Api.addAccount(json, password, name);
 
-        console.log(validation); // TODO
+            console.log(validation); // TODO
 
-        this.accountMap.set(data.address, data);
+            this.accountMap.set(data.address, data);
+        } catch (e) {
+            this.handleError(e);
+        }
     }
 
     public getMaxValue(gasPrice: string, gasLimit: string) {
@@ -350,11 +382,18 @@ export class MainStore {
         const amount = (this.accountMap.get(this.selectedAccountAddress) as IAccountInfo)
             .currencyBalanceMap[this.selectedCurrencyAddress];
 
-        if (this.etherTokenAddress === this.selectedCurrencyAddress) {
+        if (this.secondTokenAddress === this.selectedCurrencyAddress) {
             return (new BigNumber(amount).minus(new BigNumber(gp).mul(gl))).toString();
         } else {
             return amount;
         }
+    }
+
+    @action
+    private handleError(e: Error) {
+        console.error(e);
+
+        this.errors.push(e.message);
     }
 }
 

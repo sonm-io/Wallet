@@ -4,19 +4,17 @@ import { ClickParam } from 'antd/lib/menu/';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { navigate } from '../../../../app/router';
+import { MainStore } from '../../../stores/main';
 
 interface IProps {
     className?: string;
     children: any;
     error: string;
     selectedNavMenuItem: string;
-    userStore: {
-        totalEthereumBalance: string;
-        totalSonmBalance: string;
-    };
+    mainStore: MainStore;
 }
 
-@inject('userStore')
+@inject('mainStore')
 @observer
 export class App extends React.Component<IProps, any> {
 
@@ -27,20 +25,20 @@ export class App extends React.Component<IProps, any> {
     public render() {
         const {
             className,
-            error,
             selectedNavMenuItem,
             children,
-            userStore: {
-                totalEthereumBalance,
-                totalSonmBalance,
+            mainStore: {
+                errors,
+                firstTokenBalance,
+                secondTokenBalance,
             },
         } = this.props;
 
         return (
             <div className={cn('sonm-app', className)}>
                 {
-                    error
-                        ? <Alert message={error} className="sonm_app__alert"/>
+                    errors.length > 0
+                        ? errors.map((e, idx) => <Alert message={e} className="sonm_app__alert" key={idx}/>)
                         : null
                 }
                 <div className="sonm_app__nav">
@@ -71,10 +69,10 @@ export class App extends React.Component<IProps, any> {
                         </Menu>
                         <div className="sonm_nav__total">
                             <div className="sonm_nav__total-eth">
-                                {totalEthereumBalance}
+                                {firstTokenBalance}
                             </div>
                             <div className="sonm_nav__total-sonm">
-                                {totalSonmBalance}
+                                {secondTokenBalance}
                             </div>
                         </div>
                     </div>
