@@ -389,6 +389,7 @@ export class MainStore {
         }
     }
 
+    @action
     private handleError(e: Error) {
         console.error(e);
 

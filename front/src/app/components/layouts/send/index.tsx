@@ -20,6 +20,8 @@ interface IProps extends FormComponentProps {
 type PriorityInput = new () => ButtonGroup<string>;
 const PriorityInput = ButtonGroup as PriorityInput;
 
+const ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/i;
+
 @inject('sendStore', 'mainStore')
 @observer
 export class SendSrc extends React.Component<IProps, any> {
@@ -114,6 +116,22 @@ export class SendSrc extends React.Component<IProps, any> {
         }
     }
 
+    protected validateTargetAddress = (rule: any, value: string, cb: (msg?: string) => void) => {
+        if (value === '') {
+            return cb('Please input address');
+        }
+
+        if (!ADDRESS_REGEX.test(value)) {
+            return cb('Please input correct address');
+        }
+
+        if (this.props.mainStore && this.props.mainStore.selectedAccountAddress === value) {
+            return cb('No no no');
+        }
+
+        cb();
+    }
+
     protected static validateAmount(rule: any, value: string, cb: (msg?: string) => void) {
         if (value === '') {
             return cb('Required value');
@@ -194,11 +212,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                         form.getFieldDecorator('toAddress', {
                                             initialValue: values && values.toAddress,
                                             rules: [
-                                                {required: true, message: 'Please input address'},
-                                                {
-                                                    pattern: /^(0x)?[0-9a-fA-F]{40}$/i,
-                                                    message: 'Please input correct address',
-                                                },
+                                                { validator: this.validateTargetAddress },
                                             ],
                                         })(
                                             <Input
