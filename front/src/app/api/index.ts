@@ -66,7 +66,7 @@ export class Api {
         return createPromise('account.setSecretKey', { password });
     }
 
-    public static async hasSavedData(password: string): Promise<IResult<boolean>>  {
+    public static async hasSavedData(): Promise<IResult<boolean>>  {
         return createPromise('account.hasSavedData');
     }
 

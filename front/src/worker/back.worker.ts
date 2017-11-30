@@ -10,6 +10,8 @@ ipc.on(async (request: Request) => {
 
         response = new Response('api', request.requestId, data, validation, null);
     } catch (err) {
+        console.log(err);
+
         if (err.message.includes('Invalid JSON RPC response from provider')) {
             err.message = 'network_error';
         }

@@ -34,6 +34,7 @@ module.exports = function init(worker: any) {
             worker.postMessage({
                 type: 'responseFromStorage',
                 data: result,
+                reqId: data.reqId,
             });
         }
     });

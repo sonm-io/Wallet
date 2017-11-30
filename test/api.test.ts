@@ -75,21 +75,20 @@ describe('Api',  async function() {
         const amount = '0.00000000000000002';
         const to = 'fd0c80ba15cbf19770319e5e76ae05012314608f';
         const tx = {
+            timestamp: new Date().valueOf(),
             fromAddress: address,
             toAddress: to,
             amount,
             currencyAddress: '0x',
             gasLimit: '50000',
             gasPrice: '0.00000005',
-            password: '1111111',
         };
 
         // error transaction
-        const response1 = await Api.send(tx);
+        const response1 = await Api.send(tx, '1111111');
         expect(response1).to.have.nested.property('validation.password');
 
-        tx.password = password;
-        const response2 = await Api.send(tx);
+        const response2 = await Api.send(tx, password);
         expect(response2.data).not.equal(null);
 
         const response3 = await Api.getSendTransactionList();
@@ -104,7 +103,7 @@ describe('Api',  async function() {
         if (currencies.data) {
             tx.currencyAddress = currencies.data[1].address;
 
-            const response4 = await Api.send(tx);
+            const response4 = await Api.send(tx, password);
             expect(response4.data).not.equal(null);
 
             const response5 = await Api.getSendTransactionList();

@@ -10,8 +10,5 @@ export const Store = new UserStore();
 export const historyStore = new HistoryStore();
 export const mainStore = new MainStore();
 
-mainStore.init();
-historyStore.init();
-
 (window as any).___main = mainStore;
 (window as any).___history = historyStore;

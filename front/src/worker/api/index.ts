@@ -29,19 +29,29 @@ interface IResponse {
     validation?: object;
 }
 
+let count = 0;
+function nextRequestId(): string {
+    return 'request' + count++;
+}
+
 function createPromise(
     action: string,
     payload?: any,
 ): Promise<any> {
     return new Promise((resolve, reject) => {
+        const reqId = nextRequestId();
+
         (ipc as any).send({
+            reqId,
             type: 'storage',
             action,
             payload,
         });
 
         (ipc as any).listen((response: any) => {
-            resolve(response.data);
+            if (reqId === response.reqId) {
+                resolve(response.data);
+            }
         });
     });
 }
@@ -327,7 +337,7 @@ class Api {
 
     public send = async (data: IPayload): Promise<IResponse> => {
 
-        const { fromAddress, toAddress, currencyAddress, password, gasLimit } = data;
+        const { fromAddress, toAddress, currencyAddress, password, gasLimit, timestamp } = data;
 
         const client = await this.initAccount(fromAddress);
 
@@ -354,13 +364,11 @@ class Api {
         const transactions = await this.getTransactions();
         const count = transactions.length;
 
-        //
-
         const gasPrice = client.web3.toWei(data.gasPrice, 'ether');
         const amount = currencyAddress === '0x' ? client.web3.toWei(data.amount, 'ether') : data.amount;
 
         transactions[count] = {
-            timestamp: new Date().valueOf(),
+            timestamp,
             fromAddress,
             toAddress,
             amount: data.amount,

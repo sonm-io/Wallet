@@ -51,6 +51,10 @@ async function init() {
 
     }
 
+    stores.mainStore.init();
+    stores.historyStore.init();
+
+
     renderByPath((history as any).location);
 }
 
