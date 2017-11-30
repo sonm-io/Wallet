@@ -12,8 +12,6 @@ import {
     IValidation,
 } from './types';
 
-import * as mock from './mock';
-
 export * from './types';
 
 const MAX_DELAY_DEFAULT = 10000;
@@ -112,11 +110,7 @@ export class Api {
         limit?: number,
         offset?: number,
     ): Promise<IResult<ISendTransactionResult[]>> {
-        // return createPromise('transaction.list', { filters, limit, offset });
-
-        mock.delay(10);
-
-        return mock.transactionListResult;
+        return createPromise('transaction.list', { filters, limit, offset });
     }
 
     public static async getGasPrice(): Promise<IResult<string>> {

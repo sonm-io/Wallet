@@ -13,7 +13,6 @@ export interface IResponse<T> {
     requestId?: string;
     success: boolean;
     data: T;
-    validation?: IValidation;
     error?: string;
     validation?: IValidation;
     sign: string;

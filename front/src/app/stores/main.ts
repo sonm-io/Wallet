@@ -32,7 +32,7 @@ export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore {
     public static SYMBOL_SONM = 'snmt';
-    public static SYMBOL_ETHER = 'wei';
+    public static SYMBOL_ETHER = 'eth';
     public static DEFAULT_GAS_LIMIT = '50000';
 
     @observable public averageGasPrice = '';
