@@ -14,9 +14,10 @@
     margin: 5px;
     grid-column: 1;
     grid-row: 2 span;
+    align-self: center;
   }
 
-  &__name,
+  &__name-wrapper,
   &__address,
   &__ether,
   &__sonm {
@@ -25,7 +26,7 @@
     padding: 5px;
   }
 
-  &__name,
+  &__name-wrapper,
   &__ether {
     display: flex;
     flex-direction: column;
@@ -44,9 +45,17 @@
     text-align: right;
   }
 
-  &__name {
+  &__name-wrapper {
     grid-column: 2;
     grid-row: 1;
+    overflow: scroll;
+
+    &-inner {
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: scroll;
+      margin: 5px;
+    }
   }
 
   &__address {
@@ -55,7 +64,20 @@
     grid-row: 2;
   }
 
+  &__name-wrapper {
+    white-space: nowrap;
+  }
+
+  &__name-text {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: ~"calc(100% - 40px)";
+    vertical-align: bottom;
+  }
+
   &__edit-icon {
+    vertical-align: bottom;
     cursor: pointer;
     border: 0;
     background-color: transparent;

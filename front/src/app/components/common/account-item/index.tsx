@@ -30,8 +30,8 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         return (
             <div className={cn('sonm-account-item', className)}>
                 <IdentIcon address={address} className="sonm-account-item__blockies"/>
-                <span className="sonm-account-item__name">
-                    <span>
+                <span className="sonm-account-item__name-wrapper">
+                    <span className="sonm-account-item__name-inner">
                         {this.renderName()}
                     </span>
                 </span>
@@ -88,32 +88,39 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             onRename,
         } = this.props;
 
-        if (onRename === undefined) {
-            return [name];
-        }
+        const result = [];
 
         if (this.state.isEdit) {
-            return [
+            result.push(
                 <input
                     required
                     spellCheck={false}
                     defaultValue={this.props.name}
                     ref={this.saveRef}
                     onBlur={this.cancelEdit}
-                    key="c"
+                    key="i"
                     type="text"
-                    className="sonm-account-item__edit-name "
+                    className="sonm-account-item__edit-name"
                     onKeyUp={this.handleKeyUp}
                 />,
-            ];
+            );
         } else {
-            return [
-                name,
-                <button key="i" className="sonm-account-item__edit-icon" onClick={this.startEdit}>
-                    <Icon type="edit" />
-                </button>,
-            ];
+            result.push(
+                <span className="sonm-account-item__name-text" key="s">
+                    {name}
+                </span>,
+            );
+
+            if (onRename) {
+                result.push(
+                    <button key="b" className="sonm-account-item__edit-icon" onClick={this.startEdit}>
+                        <Icon type="edit" />
+                    </button>,
+                );
+            }
         }
+
+        return result;
     }
 }
 

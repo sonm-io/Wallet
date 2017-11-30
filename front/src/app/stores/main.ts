@@ -13,6 +13,7 @@ import { IAccountItemProps } from 'app/components/common/account-item';
 const sortByName = sortBy(['name', 'address']);
 const SYMBOL_SONM = 'snmt';
 const SYMBOL_ETHER = 'wei';
+const UPDATE_INTERVAL = 5000;
 
 export interface IHasAddress {
     address: string;
@@ -51,6 +52,8 @@ export class MainStore {
     @observable public showConfirmDialog = false;
 
     @observable public isReady = false;
+
+    @observable public errors: any[] = [];
 
     public values: ISendFormValues = {
         toAddress: '',
@@ -276,26 +279,50 @@ export class MainStore {
 
     @asyncAction
     public *init() {
-        const result = yield Promise.all([
-            Api.getGasPrice(),
-            Api.getAccountList(),
-            Api.getCurrencyList(),
-        ]).catch(error => {
-            throw new Error(error);
-        });
+        this.isReady = false;
 
+        const [{ data: currencyList }] = yield Promise.all([
+            Api.getCurrencyList(),
+            this.startAutoUpdate(UPDATE_INTERVAL), // wait for first update
+        ]);
+
+        listToMap<ICurrencyInfo>(currencyList, this.currencyMap);
+
+        this.userGasPrice = this.averageGasPrice;
+
+        this.isReady = true;
+    }
+
+    @action
+    private update(result: any) {
         const [
             { data: averageGasPrice },
             { data: accountList },
-            { data: currencyList },
         ] = result;
 
         this.averageGasPrice = averageGasPrice;
-        this.userGasPrice = averageGasPrice;
         listToMap<IAccountInfo>(accountList, this.accountMap);
-        listToMap<ICurrencyInfo>(currencyList, this.currencyMap);
+    }
 
-        this.isReady = true;
+    public startAutoUpdate(interval: number) {
+        const iteration = async () => {
+            window.console.time('update')
+
+            const result = await Promise.all([
+                Api.getGasPrice(),
+                Api.getAccountList(),
+            ]).catch(error => {
+                this.errors.push(error);
+            });
+
+            this.update(result);
+
+            window.console.timeEnd('update')
+
+            setTimeout(iteration, interval);
+        };
+
+        return iteration();
     }
 
     @asyncAction
