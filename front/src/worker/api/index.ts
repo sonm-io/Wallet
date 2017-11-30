@@ -397,7 +397,7 @@ class Api {
         await txResult.getReceipt();
         const fee = await txResult.getTxPrice();
 
-        transactions[count].fee = client.web3.toWei(fee.toString(), 'ether');
+        transactions[count].fee = client.web3.fromWei(fee.toString(), 'ether');
 
         await this.saveData('transactions', transactions);
 
