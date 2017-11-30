@@ -15,6 +15,7 @@ export interface IResponse<T> {
     data: T;
     validation?: IValidation;
     error?: string;
+    validation?: IValidation;
     sign: string;
     done: boolean;
 }

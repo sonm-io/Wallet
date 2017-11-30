@@ -285,14 +285,14 @@ export class MainStore {
     public *confirmTransaction(password: string) {
         try {
             const result = yield Api.send({
-                password,
                 toAddress: this.values.toAddress,
                 amount: this.values.amount,
                 fromAddress: this.selectedAccountAddress,
                 currencyAddress: this.selectedCurrencyAddress,
                 gasPrice: this.values.gasPrice,
                 gasLimit: this.values.gasLimit,
-            });
+                timestamp: Date.now(),
+            }, password);
 
             window.alert(JSON.stringify(result));
         } catch (e) {

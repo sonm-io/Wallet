@@ -1,16 +1,17 @@
 import { useStrict } from 'mobx';
 
 import { UserStore } from './user';
-import { SendStore } from './send';
+import { HistoryStore } from './history';
 import { MainStore } from './main';
 
 useStrict(true);
 
 export const Store = new UserStore();
-export const userStore = new UserStore();
-export const sendStore = new SendStore();
+export const historyStore = new HistoryStore();
 export const mainStore = new MainStore();
 
 mainStore.init();
+historyStore.init();
 
 (window as any).___main = mainStore;
+(window as any).___history = historyStore;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {} from 'antd';
+// import { Table } from 'antd';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 
@@ -7,7 +7,7 @@ interface IProps {
     className?: string;
 }
 
-@inject('Store')
+@inject('historyStore')
 @observer
 export class History extends React.Component<IProps, any> {
 
@@ -17,8 +17,7 @@ export class History extends React.Component<IProps, any> {
         } = this.props;
 
         return (
-            <div className={cn('sonm-send', className)}>
-                history
+            <div className={cn('sonm-history', className)}>
             </div>
         );
     }

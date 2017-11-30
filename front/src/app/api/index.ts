@@ -6,14 +6,13 @@ import {
     ISendTransactionResult,
     IAccountInfo,
     ICurrencyInfo,
-    ISendTransactionParams,
+    ISendTransaction,
     IResult,
+    IResponse,
     IValidation,
 } from './types';
-import {IResponse} from "../../ipc/types";
 
-// FIXME remove
-// import * as mock from './mock';
+import * as mock from './mock';
 
 export * from './types';
 
@@ -38,7 +37,9 @@ function createPromise(
             }
 
             if (response.success) {
-                //console.log(type, response);
+                // TODO remove
+                console.log(type, response);
+                //
                 done(response);
             } else {
                 reject(response.error);
@@ -67,7 +68,7 @@ export class Api {
         return createPromise('account.setSecretKey', { password });
     }
 
-    public static async hasSavedData(): Promise<IResult<boolean>>  {
+    public static async hasSavedData(password: string): Promise<IResult<boolean>>  {
         return createPromise('account.hasSavedData');
     }
 
@@ -95,12 +96,11 @@ export class Api {
         return createPromise('account.getCurrencies');
     }
 
-    public static async send(tx: ISendTransactionParams)
+    public static async send(tx: ISendTransaction, password: string)
     : Promise<IResult<ISendTransactionResult>> {
-        return createPromise('account.send', tx);
+        return createPromise('account.send', {...tx, password });
     }
 
-    // TODO rename to getTransactionList
     public static async getSendTransactionList(
         filters?: {
             currencyAddress?: string,
@@ -112,20 +112,16 @@ export class Api {
         limit?: number,
         offset?: number,
     ): Promise<IResult<ISendTransactionResult[]>> {
-        return createPromise('transaction.list', { filters, limit, offset});
+        // return createPromise('transaction.list', { filters, limit, offset });
+
+        mock.delay(10);
+
+        return mock.transactionListResult;
     }
 
     public static async getGasPrice(): Promise<IResult<string>> {
         return createPromise('account.getGasPrice');
     }
 }
-
-Api.setSecretKey('my secret key');
-
-Api.addAccount(
-  `{"address":"fd0c80ba15cbf19770319e5e76ae05012314608f","crypto":{"cipher":"aes-128-ctr","ciphertext":"83b9ea7c8b7f45d4d83704483a666d33b793c18a722557a1af0ea3dd84fd0e64","cipherparams":{"iv":"132e609bb81d9fff9380f828d44df738"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"18fbd1950ec1cfcd5564624152b66c09ce03df7b7b3136f019f746f12de8e8f9"},"mac":"b76158d4109241a4fd5752b06356de52152952cda78382d0cbac41650d58d64c"},"id":"d5c89177-f7c6-4da0-ac20-20b6d5f3dae1","version":3}`,
-   'qazwsxedc',
-  'Petya',
-);
 
 export default Api;
