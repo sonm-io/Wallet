@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Form, InputNumber, Spin, Input } from 'antd';
+import { Form, Spin, Input } from 'antd';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { CurrencyBigSelect } from 'app/components/common/currency-big-select';
 import { FormComponentProps } from 'antd/lib/form/Form';
 import * as cn from 'classnames';
+import * as BigNumber from 'bignumber.js';
 import { inject, observer } from 'mobx-react';
 import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
@@ -26,7 +27,7 @@ export class SendSrc extends React.Component<IProps, any> {
         addressTarget: '0x',
     };
 
-    private handleSubmit = (event: React.FormEvent<Form>) => {
+    protected handleSubmit = (event: React.FormEvent<Form>) => {
         event.preventDefault();
 
         this.props.form.validateFields(async (err, values: ISendFormValues) => {
@@ -42,7 +43,7 @@ export class SendSrc extends React.Component<IProps, any> {
         });
     }
 
-    private handleChangeAccount = (address: string) => {
+    protected handleChangeAccount = (address: string) => {
         if (this.props.mainStore === undefined) {
             throw new Error('this.props.mainStore is undefined');
         }
@@ -50,7 +51,7 @@ export class SendSrc extends React.Component<IProps, any> {
         this.props.mainStore.selectAccount(address);
     }
 
-    private handleChangeCurrency = (address: string) => {
+    protected handleChangeCurrency = (address: string) => {
         if (this.props.mainStore === undefined) {
             throw new Error('this.props.mainStore is undefined');
         }
@@ -58,7 +59,7 @@ export class SendSrc extends React.Component<IProps, any> {
         this.props.mainStore.selectCurrency(address);
     }
 
-    private handleSetMaximum = () => {
+    protected handleSetMaximum = () => {
         if (this.props.mainStore) {
 
             const {gasPrice, gasValue} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
@@ -69,7 +70,7 @@ export class SendSrc extends React.Component<IProps, any> {
     }
 
     // TODO
-    private handleChangePriority = (value: string) => {
+    protected handleChangePriority = (value: string) => {
         if (this.props.mainStore) {
             const [min, max] = this.props.mainStore.gasPriceThresholds;
             let gasPrice = this.props.mainStore.averageGasPrice;
@@ -87,24 +88,59 @@ export class SendSrc extends React.Component<IProps, any> {
         }
     }
 
-    private handleChangeTargetAddress = (event: any) => {
-        const value = normalizeAddress(event.target.value);
+    protected handleChangeTargetAddress = (event: any) => {
+        const value = SendSrc.normalizeAddress(event.target.value);
 
         if (value !== this.state.addressTarget) {
             this.setState({ addressTarget: value });
         }
     }
 
-    private handleChangeGasPrice = (value: string | number | undefined) => {
-        if (value === undefined || this.props.mainStore === undefined) {
+    protected handleChangeGasPrice = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+
+        if (SendSrc.createBigNumber(value) === undefined || this.props.mainStore === undefined) {
             return;
         }
 
-        this.props.mainStore.setUserGasPrice(String(value));
+        this.props.mainStore.setUserGasPrice(value);
+    }
+
+    protected static createBigNumber(value: string) {
+        try {
+            return new BigNumber(value);
+        } catch (e) {
+            return undefined;
+        }
+    }
+
+    protected static validateAmount(rule: any, value: string, cb: (msg?: string) => void) {
+        if (value === '') {
+            return cb('Required value');
+        }
+
+        const amount = SendSrc.createBigNumber(value);
+
+        if (amount === undefined) {
+            return cb('Incorrect amount');
+        }
+
+        if (amount.lessThan(0)) {
+            return 'Value should be positive';
+        }
+
+        return cb();
     }
 
     public renderConfirm() {
         return null;
+    }
+
+    protected static normalizeAddress(str: string): string {
+        const s = '0000000000000000000000000000000000000000' + str;
+        const l = s.length;
+
+        return s.slice(l - 40, l);
     }
 
     public render() {
@@ -190,11 +226,10 @@ export class SendSrc extends React.Component<IProps, any> {
                                 {form.getFieldDecorator('amount', {
                                     initialValue: values && values.amount,
                                     rules: [
-                                        { required: true, message: 'Please input amount' },
+                                        { validator: SendSrc.validateAmount },
                                     ],
                                 })(
-                                    <InputNumber
-                                        min={0}
+                                    <Input
                                         className="sonm-send__input"
                                         placeholder="Ammount"
                                     />,
@@ -216,11 +251,10 @@ export class SendSrc extends React.Component<IProps, any> {
                                 {form.getFieldDecorator('gasLimit', {
                                     initialValue: gasLimit,
                                     rules: [
-                                        {required: true, message: 'Please define gas limit'},
+                                        { validator: SendSrc.validateAmount },
                                     ],
                                 })(
-                                    <InputNumber
-                                        min={0}
+                                    <Input
                                         className="sonm-send__input"
                                         placeholder="Gas limit"
                                     />,
@@ -235,18 +269,19 @@ export class SendSrc extends React.Component<IProps, any> {
                                         form.getFieldDecorator('gasPrice', {
                                             initialValue: gasPrice,
                                             rules: [
-                                                {required: true, message: 'Please define gas price'},
+                                                { validator: SendSrc.validateAmount },
                                             ],
                                         })(
-                                            <InputNumber
-                                                min={0}
+                                            <Input
                                                 className="sonm-send__input"
                                                 placeholder="Gas price"
                                                 onChange={this.handleChangeGasPrice}
                                             />,
                                         )
                                     }
-                                    <span className="sonm-send__input-suffix">WEI</span>
+                                    <span className="sonm-send__input-suffix">
+                                        {MainStore.SYMBOL_ETHER}
+                                    </span>
                                     <PriorityInput
                                         valueList={['low', 'normal', 'high']}
                                         value={priority}
@@ -268,14 +303,6 @@ export class SendSrc extends React.Component<IProps, any> {
             </div>
         );
     }
-}
-
-const zzzero = '0000000000000000000000000000000000000000';
-function normalizeAddress(str: string): string {
-    const s = zzzero + str;
-    const l = s.length;
-
-    return s.slice(l - 40, l);
 }
 
 export const Send = Form.create()(SendSrc);

@@ -11,8 +11,6 @@ import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import { IAccountItemProps } from 'app/components/common/account-item';
 
 const sortByName = sortBy(['name', 'address']);
-const SYMBOL_SONM = 'snmt';
-const SYMBOL_ETHER = 'wei';
 const UPDATE_INTERVAL = 5000;
 
 export interface IHasAddress {
@@ -33,6 +31,8 @@ export interface ISendFormValues {
 export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore {
+    public static SYMBOL_SONM = 'snmt';
+    public static SYMBOL_ETHER = 'wei';
     public static DEFAULT_GAS_LIMIT = '50000';
 
     @observable public averageGasPrice = '';
@@ -115,11 +115,11 @@ export class MainStore {
     }
 
     @computed public get firstTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, SYMBOL_SONM);
+        return MainStore.findCurrencyBySymbol(this.currencyMap, MainStore.SYMBOL_SONM);
     }
 
     @computed public get secondTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, SYMBOL_ETHER);
+        return MainStore.findCurrencyBySymbol(this.currencyMap, MainStore.SYMBOL_ETHER);
     }
 
     @computed public get firstTokenBalance(): string {
@@ -148,8 +148,8 @@ export class MainStore {
             const props: IAccountItemProps = {
                 address: account.address,
                 name: account.name,
-                firstBalance: `${account.currencyBalanceMap[firstTokenAddress]} ${SYMBOL_SONM}`,
-                secondBalance: `${account.currencyBalanceMap[secondTokenAddress]} ${SYMBOL_ETHER}`,
+                firstBalance: `${account.currencyBalanceMap[firstTokenAddress]} ${MainStore.SYMBOL_SONM}`,
+                secondBalance: `${account.currencyBalanceMap[secondTokenAddress]} ${MainStore.SYMBOL_ETHER}`,
             };
 
             return props;
