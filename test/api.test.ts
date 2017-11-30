@@ -2,6 +2,7 @@ const {expect} = require('chai');
 
 const vasyaCfg = require('./data/Vasya_11111111.json');
 const json = JSON.stringify(vasyaCfg);
+
 const address = `0x${vasyaCfg.address}`;
 const password = '11111111';
 
@@ -12,8 +13,6 @@ before(async function() {
 
     localStorage.removeItem('accounts');
     localStorage.removeItem('transactions');
-
-    await Api.setSecretKey('my secret key');
 });
 describe('Api',  async function() {
     this.timeout(+Infinity);
@@ -22,6 +21,13 @@ describe('Api',  async function() {
         const response = await Api.ping();
         expect(response.success).equal(true);
         expect(response).to.have.nested.property('data.pong');
+    });
+
+    it('should set secret key', async function() {
+        const response = await Api.setSecretKey('my secret key');
+
+        expect(response.success).equal(true);
+        expect(response.data).equal(true);
     });
 
     it('should not found saved data', async function() {
@@ -46,6 +52,7 @@ describe('Api',  async function() {
 
         const response1 = await Api.addAccount(json, password, name);
         expect(response1.success).equal(true);
+        expect(response1.data).not.equal(null);
 
         const response2 = await Api.getAccountList();
         expect(response2.success).equal(true);
@@ -153,5 +160,12 @@ describe('Api',  async function() {
         const response2 = await Api.getAccountList();
         expect(response2.success).equal(true);
         expect(response2.data).to.have.lengthOf(0);
+    });
+
+    it('should fail setSecretKey', async function() {
+        const response = await Api.setSecretKey('my secret key1');
+
+        expect(response.success).equal(true);
+        expect(response).to.have.nested.property('validation.password');
     });
 });

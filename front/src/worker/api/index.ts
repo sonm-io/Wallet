@@ -74,7 +74,9 @@ class Api {
             'account.getCurrencies': this.getCurrencies,
             'account.send': this.send,
             'account.list': this.getAccountList,
+
             'account.setSecretKey': this.setSecretKey,
+            'account.hasSavedData': this.hasSavedData,
 
             'transaction.list': this.getTransactionList,
         };
@@ -89,16 +91,38 @@ class Api {
     }
 
     public hasSavedData = async (): Promise<IResponse> => {
-        return createPromise('hasSavedData');
+        return {
+            data: (await createPromise('hasSavedData')),
+        };
     }
 
     public setSecretKey = async (data: IPayload): Promise<IResponse> => {
         if (data.password) {
             this.secretKey = data.password;
+            const check = await this.hasSavedData();
 
-            return {
-                data: true,
-            };
+            // check master password
+            if (check && check.data) {
+                try {
+                    await this.getAccounts();
+
+                    return {
+                        data: true,
+                    };
+                } catch (err) {
+                    this.secretKey = '';
+
+                    return {
+                        validation: {
+                            password: 'password_not_valid',
+                        },
+                    };
+                }
+            } else {
+                return {
+                    data: true,
+                };
+            }
         } else {
             return {
                 validation: {
