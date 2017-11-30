@@ -239,7 +239,7 @@ class Api {
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
-            data: factory.gethClient.web3.fromWei(gasPrice, 'gwei'),
+            data: factory.gethClient.web3.fromWei(gasPrice, 'ether'),
         };
     }
 
