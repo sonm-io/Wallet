@@ -22,7 +22,7 @@ const PriorityInput = ButtonGroup as PriorityInput;
 
 const ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/i;
 
-@inject('sendStore', 'mainStore')
+@inject('historyStore', 'mainStore')
 @observer
 export class SendSrc extends React.Component<IProps, any> {
     public state = {

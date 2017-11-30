@@ -4,24 +4,24 @@ export interface IRawAccount {
     address: string;
 }
 
-export interface ISendTransactionParams {
+export type TTransactionStatus = 'created' | 'processed' | 'fail' | 'success';
+
+export interface  ISendTransaction {
+    timestamp: number;
     fromAddress: string;
     toAddress: string;
     amount: string;
     currencyAddress: string;
     gasPrice: string;
     gasLimit: string;
-    password: string;
 }
 
-export interface ISendTransactionResult {
-    timestamp: number;
-    fromAddress: string;
-    toAddress: string;
-    amount: string;
-    fee: string;
-    currencyAddress: string;
+export interface ISendTransactionResult extends ISendTransaction {
+    fee?: string;
     confirmCount: number;
+    status: string;
+    timestamp: number;
+    hash: string;
 }
 
 export interface IAccountInfo {
@@ -35,10 +35,10 @@ export interface ICurrencyBalanceMap {
 }
 
 export interface ICurrencyInfo {
-    symbol: string,
-    decimals: number,
+    symbol: string;
+    decimals: number;
     name: string;
     address: string;
 }
 
-export { IResult, IValidation, TResultPromise } from 'ipc/types';
+export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';
