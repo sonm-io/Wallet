@@ -1,6 +1,6 @@
 module.exports = function (config) {
 	config.set({
-		browserNoActivityTimeout: 60000,
+		browserNoActivityTimeout: 120000,
 		frameworks: ['mocha'],
         plugins: ['karma-webpack', 'karma-mocha', 'karma-chrome-launcher'],
 

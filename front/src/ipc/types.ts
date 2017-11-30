@@ -13,6 +13,7 @@ export interface IResponse<T> {
     requestId?: string;
     success: boolean;
     data: T;
+    validation?: IValidation;
     error?: string;
     sign: string;
     done: boolean;
@@ -31,8 +32,6 @@ export type TListener<T> = (response: IResponse<T>) => void;
 export type TResultPromise<T> = Promise<IResult<T>>;
 
 export interface IResult<T> {
-    error?: string;
-    success: boolean;
     data?: T;
     validation?: IValidation;
     continuation?: TResultPromise<T>;

@@ -188,11 +188,12 @@ class Api {
 
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
-            const geth = createSonmFactory(URL_REMOTE_GETH_NODE);
+            const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
 
             this.accounts[address] = {
-                geth,
-                account: await geth.createAccount(address),
+                factory,
+                web3: factory.gethClient.web3,
+                account: await factory.createAccount(address),
                 password: null,
             };
         }
@@ -202,7 +203,11 @@ class Api {
 
     public getCurrencyBalances = async (address: string): Promise<any> => {
         const client = await this.initAccount(address);
-        return client.account.getCurrencyBalances();
+        const balancies = await client.account.getCurrencyBalances();
+
+        balancies['0x'] = client.web3.fromWei(balancies['0x'], 'ether');
+
+        return balancies;
     }
 
     public getCurrencies = async (data: IPayload): Promise<IResponse> => {
@@ -220,10 +225,11 @@ class Api {
     }
 
     public getGasPrice = async (): Promise<IResponse> => {
-        const geth = createSonmFactory(URL_REMOTE_GETH_NODE);
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
+        const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
-            data: (await geth.getGasPrice()).toString(),
+            data: factory.gethClient.web3.fromWei(gasPrice, 'gwei'),
         };
     }
 
@@ -238,9 +244,9 @@ class Api {
                 if (!accounts[address]) {
                     const privateKey = await utils.recoverPrivateKey(json, data.password);
 
-                    const account = await this.initAccount(json.address);
-                    account.password = data.password;
-                    account.geth.setPrivateKey(privateKey.toString('hex'));
+                    const client = await this.initAccount(json.address);
+                    client.password = data.password;
+                    client.factory.setPrivateKey(privateKey.toString('hex'));
                     accounts[address] = {
                         json,
                         address,
@@ -321,12 +327,12 @@ class Api {
 
     public send = async (data: IPayload): Promise<IResponse> => {
 
-        const { fromAddress, toAddress, amount, currencyAddress, password, gasPrice, gasLimit } = data;
+        const { fromAddress, toAddress, currencyAddress, password, gasLimit } = data;
 
-        const gethClient = await this.initAccount(fromAddress);
+        const client = await this.initAccount(fromAddress);
 
-        if (gethClient && gethClient.password) {
-            if (gethClient.password !== password) {
+        if (client && client.password) {
+            if (client.password !== password) {
                 throw new Error('password_not_matched');
             }
         } else {
@@ -334,8 +340,8 @@ class Api {
 
             try {
                 const privateKey = await utils.recoverPrivateKey(accounts[fromAddress].json, password);
-                gethClient.geth.setPrivateKey(privateKey.toString('hex'));
-                gethClient.password = password;
+                client.factory.setPrivateKey(privateKey.toString('hex'));
+                client.password = password;
             } catch (err) {
                 return {
                     validation: {
@@ -348,11 +354,28 @@ class Api {
         const transactions = await this.getTransactions();
         const count = transactions.length;
 
+        //
+
+        const gasPrice = client.web3.toWei(data.gasPrice, 'ether');
+        const amount = currencyAddress === '0x' ? client.web3.toWei(data.amount, 'ether') : data.amount;
+
+        transactions[count] = {
+            timestamp: new Date().valueOf(),
+            fromAddress,
+            toAddress,
+            amount: data.amount,
+            currencyAddress,
+        };
+
         await this.saveData('transactions', transactions);
 
         const txResult = (currencyAddress === '0x'
-            ? await gethClient.account.sendEther(toAddress, amount, gasLimit, gasPrice)
-            : await gethClient.account.sendTokens(
+            ? await client.account.sendEther(
+                toAddress,
+                amount,
+                gasLimit,
+                gasPrice)
+            : await client.account.sendTokens(
                 toAddress,
                 parseInt(amount, 10),
                 currencyAddress,
@@ -360,20 +383,13 @@ class Api {
                 gasPrice,
             ));
 
-        // presave
-        transactions[count] = {
-            hash: await txResult.getHash(),
-            timestamp: new Date().valueOf(),
-            fromAddress,
-            toAddress,
-            amount,
-            currencyAddress,
-        };
+        transactions[count].hash = await txResult.getHash();
+        await this.saveData('transactions', transactions);
 
         await txResult.getReceipt();
         const fee = await txResult.getTxPrice();
 
-        transactions[count].fee = fee.toString();
+        transactions[count].fee = client.web3.toWei(fee.toString(), 'ether');
 
         await this.saveData('transactions', transactions);
 

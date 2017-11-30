@@ -19,20 +19,16 @@ describe('Api',  async function() {
 
     it('should ping', async function() {
         const response = await Api.ping();
-        expect(response.success).equal(true);
         expect(response).to.have.nested.property('data.pong');
     });
 
     it('should set secret key', async function() {
         const response = await Api.setSecretKey('my secret key');
-
-        expect(response.success).equal(true);
         expect(response.data).equal(true);
     });
 
     it('should not found saved data', async function() {
         const response = await Api.hasSavedData();
-        expect(response.success).equal(true);
         expect(response.data).equal(false);
     });
 
@@ -43,7 +39,6 @@ describe('Api',  async function() {
 
     it('should recieve gasPrice without account list', async function() {
         const response = await Api.getGasPrice();
-        expect(response.success).equal(true);
         expect(response.data).to.be.a('string');
     });
 
@@ -51,11 +46,9 @@ describe('Api',  async function() {
         const name = 'Wallet 1';
 
         const response1 = await Api.addAccount(json, password, name);
-        expect(response1.success).equal(true);
         expect(response1.data).not.equal(null);
 
         const response2 = await Api.getAccountList();
-        expect(response2.success).equal(true);
         expect(response2.data).to.have.lengthOf(1);
 
         if (response2.data) {
@@ -66,50 +59,45 @@ describe('Api',  async function() {
 
     it('should found saved data', async function() {
         const response = await Api.hasSavedData();
-        expect(response.success).equal(true);
         expect(response.data).equal(true);
     });
 
     it('should recieve currenciesList', async function() {
         const response = await Api.getCurrencyList();
-        expect(response.success).equal(true);
         expect(response.data).to.have.lengthOf(2);
         if (response.data) {
-            expect(response.data[0].symbol).equal('wei');
+            expect(response.data[0].symbol).equal('eth');
             expect(response.data[1].symbol).equal('snmt');
         }
     });
 
     it('should send ether and snmt', async function() {
-        const amount = '2';
+        const amount = '0.00000000000000002';
         const to = 'fd0c80ba15cbf19770319e5e76ae05012314608f';
         const tx = {
             fromAddress: address,
             toAddress: to,
             amount,
             currencyAddress: '0x',
-            gasLimit: '',
-            gasPrice: '',
+            gasLimit: '50000',
+            gasPrice: '0.00000005',
             password: '1111111',
         };
 
         // error transaction
         const response1 = await Api.send(tx);
-        expect(response1.success).equal(true);
         expect(response1).to.have.nested.property('validation.password');
 
         tx.password = password;
         const response2 = await Api.send(tx);
-        expect(response2.success).equal(true);
+        expect(response2.data).not.equal(null);
 
         const response3 = await Api.getSendTransactionList();
-        expect(response3.success).equal(true);
         expect(response3.data).to.have.lengthOf(1);
         if (response3.data) {
             expect(response3.data[0].fromAddress).equal(address);
             expect(response3.data[0].toAddress).equal(to);
             expect(response3.data[0].amount).equal(amount);
-            expect(response3.data[0].currencyAddress).equal('0x');
         }
 
         const currencies = await Api.getCurrencyList();
@@ -117,10 +105,9 @@ describe('Api',  async function() {
             tx.currencyAddress = currencies.data[1].address;
 
             const response4 = await Api.send(tx);
-            expect(response4.success).equal(true);
+            expect(response4.data).not.equal(null);
 
             const response5 = await Api.getSendTransactionList();
-            expect(response5.success).equal(true);
             if (response5.data) {
                 expect(response5.data).to.have.lengthOf(2);
                 expect(response5.data[1].fromAddress).equal(address);
@@ -132,7 +119,6 @@ describe('Api',  async function() {
             const response6 = await Api.getSendTransactionList({
                 currencyAddress: currencies.data[1].address,
             });
-            expect(response6.success).equal(true);
             expect(response6.data).to.have.lengthOf(1);
         }
     });
@@ -141,10 +127,9 @@ describe('Api',  async function() {
         const name = 'Wallet 2';
 
         const response1 = await Api.renameAccount(address, name);
-        expect(response1.success).equal(true);
+        expect(response1.data).equal(true);
 
         const response2 = await Api.getAccountList();
-        expect(response2.success).equal(true);
         expect(response2.data).to.have.lengthOf(1);
 
         if (response2.data) {
@@ -153,19 +138,16 @@ describe('Api',  async function() {
         }
     });
 
-    it('should remove account', async function() {
+    it('should remove account', async function () {
         const response1 = await Api.removeAccount(address);
-        expect(response1.success).equal(true);
+        expect(response1.data).equal(true);
 
         const response2 = await Api.getAccountList();
-        expect(response2.success).equal(true);
         expect(response2.data).to.have.lengthOf(0);
     });
 
     it('should fail setSecretKey', async function() {
         const response = await Api.setSecretKey('my secret key1');
-
-        expect(response.success).equal(true);
         expect(response).to.have.nested.property('validation.password');
     });
 });

@@ -10,6 +10,7 @@ import {
     IResult,
     IValidation,
 } from './types';
+import {IResponse} from "../../ipc/types";
 
 // FIXME remove
 // import * as mock from './mock';
@@ -31,7 +32,7 @@ function createPromise(
     return new Promise((done, reject) => {
         const requestId = nextRequestId();
 
-        const callback = (event: any, response: IResult<any>) => {
+        const callback = (event: any, response: IResponse<any>) => {
             if (response.validation) {
                 response.validation = processValidation(response.validation);
             }
