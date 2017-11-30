@@ -183,7 +183,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                     onChange={this.handleChangeAccount}
                                     accounts={accountList}
                                     value={selectedAccountAddress}
-                                />,
+                                />
                             </Form.Item>
                             <div className="sonm-send__form-second-line">
                                 <Form.Item

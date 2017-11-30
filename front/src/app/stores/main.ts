@@ -390,6 +390,8 @@ export class MainStore {
     }
 
     private handleError(e: Error) {
+        console.error(e);
+
         this.errors.push(e.message);
     }
 }
