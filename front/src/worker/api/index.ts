@@ -446,7 +446,10 @@ class Api {
         filtered = filtered.slice(offset, offset + limit);
 
         return {
-            data: filtered,
+            data: [
+                filtered,
+                this.storage.transactions.length,
+            ],
         };
     }
 
