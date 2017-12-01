@@ -109,7 +109,7 @@ export class Api {
         },
         limit?: number,
         offset?: number,
-    ): Promise<IResult<ISendTransactionResult[]>> {
+    ): Promise<IResult<[ISendTransactionResult[], number]>> {
         return createPromise('transaction.list', { filters, limit, offset });
     }
 

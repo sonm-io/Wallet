@@ -25,8 +25,6 @@ module.exports = function init(worker: any) {
 
             if (data.action === 'get') {
                 result = storage.get(data.payload.key);
-            } else if (data.action === 'hasSavedData') {
-                result = (storage.get('accounts') || storage.get('transactions')) ? true : false;
             } else if (data.action === 'set') {
                 result = storage.set(data.payload.key, data.payload.value);
             }

@@ -50,7 +50,9 @@ export class HistoryStore {
     @asyncAction
     public *init() {
         try {
-            const { data: txList } = yield Api.getSendTransactionList();
+            const { data: [txList, total] } = yield Api.getSendTransactionList();
+
+            console.log(total);
 
             this.addTxToMap(txList);
             this.currentPageTxHashList = txList.map((x: api.ISendTransactionResult) => x.hash);
