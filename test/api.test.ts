@@ -11,8 +11,7 @@ import { Api } from 'app/api';
 before(async function() {
     this.timeout(+Infinity);
 
-    localStorage.removeItem('accounts');
-    localStorage.removeItem('transactions');
+    localStorage.clear();
 });
 describe('Api',  async function() {
     this.timeout(+Infinity);
@@ -57,10 +56,10 @@ describe('Api',  async function() {
         }
     });
 
-    it('should found saved data', async function() {
-        const response = await Api.hasSavedData();
-        expect(response.data).equal(true);
-    });
+    // it('should found saved data', async function() {
+    //     const response = await Api.hasSavedData();
+    //     expect(response.data).equal(true);
+    // });
 
     it('should recieve currenciesList', async function() {
         const response = await Api.getCurrencyList();
@@ -145,8 +144,10 @@ describe('Api',  async function() {
         expect(response2.data).to.have.lengthOf(0);
     });
 
-    it('should fail setSecretKey', async function() {
-        const response = await Api.setSecretKey('my secret key1');
-        expect(response).to.have.nested.property('validation.password');
+    it('should fail get data with wrong secret key', async function() {
+        await Api.setSecretKey('my secret key1');
+
+        const response = await Api.hasSavedData();
+        expect(response.data).equal(false);
     });
 });

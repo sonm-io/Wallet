@@ -1,7 +1,9 @@
 import { Request } from '../ipc/messages';
 import * as sonmApi from 'sonm-api';
 import * as AES from 'crypto-js/aes';
+import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
+import * as Hex from 'crypto-js/enc-hex';
 import * as ipc from '../ipc/ipc';
 import * as t from '../../app/api/types';
 
@@ -67,7 +69,12 @@ class Api {
         [index: string]: any,
     };
 
+    private storage: {
+        [index: string]: any,
+    };
+
     private secretKey: string;
+    private hash: string;
 
     private constructor() {
         this.accounts = {};
@@ -90,6 +97,11 @@ class Api {
 
             'transaction.list': this.getTransactionList,
         };
+
+        this.storage = {
+            accounts: {},
+            transactions: [],
+        };
     }
 
     public decrypt = (data: string): any => {
@@ -102,26 +114,25 @@ class Api {
 
     public hasSavedData = async (): Promise<IResponse> => {
         return {
-            data: (await createPromise('hasSavedData')),
+            data: (await createPromise('get', { key: this.hash })) ? true : false,
         };
     }
 
     public setSecretKey = async (data: IPayload): Promise<IResponse> => {
         if (data.password) {
             this.secretKey = data.password;
-            const check = await this.hasSavedData();
+            this.hash = SHA256(data.password).toString(Hex);
 
-            // check master password
-            if (check && check.data) {
+            const dataFromStorage = await createPromise('get', { key: this.hash });
+
+            if (dataFromStorage) {
                 try {
-                    await this.getAccounts();
+                    this.storage = this.decrypt(dataFromStorage);
 
                     return {
                         data: true,
                     };
                 } catch (err) {
-                    this.secretKey = '';
-
                     return {
                         validation: {
                             password: 'password_not_valid',
@@ -169,23 +180,15 @@ class Api {
         };
     }
 
-    private saveData = async (key: string, data: any): Promise<void> => {
-        const encryptedData = this.encrypt(data);
-
+    private saveData = async (): Promise<void> => {
         await createPromise('set', {
-            key,
-            value: encryptedData,
+            key: this.hash,
+            value: this.encrypt(this.storage),
         });
     }
 
     private getAccounts = async (): Promise<IAccounts | null> => {
-        const data = await createPromise('get', { key: 'accounts' });
-
-        if (data) {
-            return this.decrypt(data) as IAccounts;
-        } else {
-            return null;
-        }
+        return this.storage.accounts || null;
     }
 
     public async ping(): Promise<IResponse> {
@@ -249,7 +252,7 @@ class Api {
                 const json = JSON.parse(data.json);
 
                 const accounts = await this.getAccounts() || {};
-                const address = `0x${json.address}`;
+                const address = utils.add0x(json.address);
 
                 if (!accounts[address]) {
                     const privateKey = await utils.recoverPrivateKey(json, data.password);
@@ -263,7 +266,7 @@ class Api {
                         name: data.name,
                     };
 
-                    await this.saveData('accounts', accounts);
+                    await this.saveData();
 
                     return {
                         data: {
@@ -292,7 +295,7 @@ class Api {
             const accounts = await this.getAccounts() || {};
             if (accounts[data.address]) {
                 accounts[data.address].name = data.name;
-                await this.saveData('accounts', accounts);
+                await this.saveData();
 
                 return {
                     data: true,
@@ -312,7 +315,7 @@ class Api {
 
             if (accounts[address]) {
                 delete accounts[address];
-                await this.saveData('accounts', accounts);
+                await this.saveData();
 
                 return {
                     data: true,
@@ -361,21 +364,23 @@ class Api {
             }
         }
 
-        const transactions = await this.getTransactions();
-        const count = transactions.length;
-
+        const transactions = this.storage.transactions;
         const gasPrice = utils.toWei(data.gasPrice, 'ether');
         const amount = currencyAddress === '0x' ? utils.toWei(data.amount, 'ether') : data.amount;
 
-        transactions[count] = {
+        const transaction = {
             timestamp,
             fromAddress,
             toAddress,
             amount: data.amount,
             currencyAddress,
+            hash: null,
+            fee: null,
         };
 
-        await this.saveData('transactions', transactions);
+        transactions.unshift(transaction);
+
+        await this.saveData();
 
         const txResult = (currencyAddress === '0x'
             ? await client.account.sendEther(
@@ -391,18 +396,18 @@ class Api {
                 gasPrice,
             ));
 
-        transactions[count].hash = await txResult.getHash();
-        await this.saveData('transactions', transactions);
+        transaction.hash = await txResult.getHash();
+        await this.saveData();
 
         await txResult.getReceipt();
         const fee = await txResult.getTxPrice();
 
-        transactions[count].fee = utils.fromWei(fee.toString(), 'ether');
+        transactions.fee = utils.fromWei(fee.toString(), 'ether');
 
-        await this.saveData('transactions', transactions);
+        await this.saveData();
 
         return {
-            data: transactions[count],
+            data: transaction,
         };
     }
 
@@ -413,10 +418,8 @@ class Api {
         limit = limit || 10;
         offset = offset || 0;
 
-        const transactions = await this.getTransactions();
         let filtered = [];
-
-        for (const item of transactions) {
+        for (const item of this.storage.transactions) {
             let ok = true;
 
             if (Object.keys(filters).length) {
