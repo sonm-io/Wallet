@@ -1,4 +1,4 @@
-import { observable, IObservableArray } from 'mobx';
+import { observable, computed, IObservableArray, toJS } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 
@@ -16,11 +16,19 @@ export interface ISendForm {
 export class HistoryStore {
     @observable public errors: any[] = [];
 
-    @observable.ref public currentPageTxHashList: string[];
+    @observable.ref public currentPageTxHashList: string[] = [];
 
     @observable public txMap = new Map<string, api.ISendTransactionResult>();
 
-    public inProgress: IObservableArray<api.ISendTransactionResult> = observable.array();
+    @observable protected inProgress: IObservableArray<api.ISendTransactionResult> = observable.array();
+
+    @computed public get currentList(): api.ISendTransactionResult[] {
+        const result: api.ISendTransactionResult[] = this.currentPageTxHashList.map(
+            hash => toJS(this.txMap.get(hash)) as api.ISendTransactionResult,
+        );
+
+        return result;
+    }
 
     @asyncAction
     public *submitTransaction(params: api.ISendTransaction, password: string) {

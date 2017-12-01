@@ -28,7 +28,7 @@ export class App extends React.Component<IProps, any> {
             selectedNavMenuItem,
             children,
             mainStore: {
-                errors,
+                lastErrors,
                 firstTokenBalance,
                 secondTokenBalance,
             },
@@ -36,11 +36,6 @@ export class App extends React.Component<IProps, any> {
 
         return (
             <div className={cn('sonm-app', className)}>
-                {
-                    errors.length > 0
-                        ? errors.map((e, idx) => <Alert message={e} className="sonm_app__alert" key={idx}/>)
-                        : null
-                }
                 <div className="sonm_app__nav">
                     <div className="sonm_nav">
                         <div className="sonm_nav__logo"/>
@@ -77,8 +72,19 @@ export class App extends React.Component<IProps, any> {
                         </div>
                     </div>
                 </div>
-
                 <div className="sonm-app__content">
+                    <div className="sonm_app__alert-ct">
+                        {
+                            lastErrors.length > 0
+                                ? lastErrors.map((e, idx) => <Alert
+                                    message={e}
+                                    type="warning"
+                                    className="sonm_app__alert"
+                                    key={idx}
+                                />)
+                                : null
+                        }
+                    </div>
                     {children}
                 </div>
             </div>
