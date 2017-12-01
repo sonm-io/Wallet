@@ -12,6 +12,7 @@ import { IAccountItemProps } from 'app/components/common/account-item';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
+const MAX_VISIBLE_ERRORS = 5;
 
 export interface IHasAddress {
     address: string;
@@ -61,6 +62,17 @@ export class MainStore {
         gasPrice: '',
         gasLimit: '',
     };
+
+    @computed get lastErrors(): any[] {
+        const len = this.errors.length;
+        if (len === 0) {
+            return [];
+        }
+
+        debugger;
+
+        return this.errors.slice(len - MAX_VISIBLE_ERRORS);
+    }
 
     @computed public get priority(): TGasPricePriority {
         let result: TGasPricePriority = 'normal';
