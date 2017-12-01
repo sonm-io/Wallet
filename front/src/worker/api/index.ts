@@ -215,7 +215,7 @@ class Api {
         const client = await this.initAccount(address);
         const balancies = await client.account.getCurrencyBalances();
 
-        balancies['0x'] = client.web3.fromWei(balancies['0x'], 'ether');
+        balancies['0x'] = utils.fromWei(balancies['0x'], 'ether');
 
         return balancies;
     }
@@ -239,7 +239,7 @@ class Api {
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
-            data: factory.gethClient.web3.fromWei(gasPrice, 'ether'),
+            data: utils.fromWei(gasPrice, 'ether'),
         };
     }
 
@@ -364,8 +364,8 @@ class Api {
         const transactions = await this.getTransactions();
         const count = transactions.length;
 
-        const gasPrice = client.web3.toWei(data.gasPrice, 'ether');
-        const amount = currencyAddress === '0x' ? client.web3.toWei(data.amount, 'ether') : data.amount;
+        const gasPrice = utils.toWei(data.gasPrice, 'ether');
+        const amount = currencyAddress === '0x' ? utils.toWei(data.amount, 'ether') : data.amount;
 
         transactions[count] = {
             timestamp,
@@ -397,7 +397,7 @@ class Api {
         await txResult.getReceipt();
         const fee = await txResult.getTxPrice();
 
-        transactions[count].fee = client.web3.fromWei(fee.toString(), 'ether');
+        transactions[count].fee = utils.fromWei(fee.toString(), 'ether');
 
         await this.saveData('transactions', transactions);
 
