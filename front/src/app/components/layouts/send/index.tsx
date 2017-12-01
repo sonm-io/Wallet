@@ -55,7 +55,7 @@ export class SendSrc extends React.Component<IProps, any> {
 
         this.props.mainStore.selectAccount(address);
 
-        this.props.form.validateFields({ force: true }, Function.prototype as any);
+        this.props.form.validateFields(['toAddress'], { force: true }, Function.prototype as any);
     }
 
     protected handleChangeCurrency = (address: string) => {
@@ -115,19 +115,20 @@ export class SendSrc extends React.Component<IProps, any> {
 
     protected static createBigNumber(value: string) {
         try {
-            return new BigNumber(value);
+            const bn  = new BigNumber(value);
+            return new BigNumber(bn.toFixed(18));
         } catch (e) {
             return undefined;
         }
     }
 
-    protected static validatePositiveNumber(rule: any, value: string, cb: (msg?: string) => void): boolean {
+    protected static validatePositiveInteger(rule: any, value: string, cb: (msg?: string) => void): boolean {
         if (value.indexOf(',') !== -1 || value.indexOf('.') !== -1) {
             cb('Value should be positive integer');
             return false;
         }
 
-        SendSrc.validateAmount(rule, value, cb);
+        SendSrc.validatePositiveNumber(rule, value, cb);
 
         return true;
     }
@@ -148,7 +149,7 @@ export class SendSrc extends React.Component<IProps, any> {
         cb();
     }
 
-    protected static validateAmount(rule: any, value: string, cb: (msg?: string) => void): boolean {
+    protected static validatePositiveNumber(rule: any, value: string, cb: (msg?: string) => void): boolean {
         if (value === '') {
             cb('Required value');
             return false;
@@ -162,7 +163,7 @@ export class SendSrc extends React.Component<IProps, any> {
         }
 
         if (amount.lessThanOrEqualTo(0)) {
-            cb('Value should be positive')
+            cb('Value should be positive');
             return false;
         }
 
@@ -257,7 +258,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                 {form.getFieldDecorator('amount', {
                                     initialValue: values && values.amount,
                                     rules: [
-                                        { validator: SendSrc.validateAmount },
+                                        { validator: SendSrc.validatePositiveNumber },
                                     ],
                                 })(
                                     <Input
@@ -282,7 +283,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                 {form.getFieldDecorator('gasLimit', {
                                     initialValue: gasLimit,
                                     rules: [
-                                        { validator: SendSrc.validatePositiveNumber },
+                                        { validator: SendSrc.validatePositiveInteger },
                                     ],
                                 })(
                                     <Input
@@ -300,7 +301,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                         form.getFieldDecorator('gasPrice', {
                                             initialValue: gasPrice,
                                             rules: [
-                                                { validator: SendSrc.validateAmount },
+                                                { validator: SendSrc.validatePositiveNumber },
                                             ],
                                         })(
                                             <Input
