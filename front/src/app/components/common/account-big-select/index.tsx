@@ -10,6 +10,7 @@ export interface IAccountBigSelectProps {
     value?: string;
     onChange?: (value: any) => void;
     returnPrimitive?: boolean;
+    hasEmptyOption?: boolean;
 }
 
 export class AccountBigSelect extends React.PureComponent<IAccountBigSelectProps, any> {
@@ -18,6 +19,7 @@ export class AccountBigSelect extends React.PureComponent<IAccountBigSelectProps
             value,
             accounts,
             className,
+            hasEmptyOption,
         } = this.props;
 
         return (
@@ -27,9 +29,9 @@ export class AccountBigSelect extends React.PureComponent<IAccountBigSelectProps
                 dropdownClassName="sonm-account-big-select__dropdown"
                 onChange={this.handleChange}
             >
-                {
-                    accounts && accounts.map(account => {
-                        return (
+                {(() => {
+                    const options = accounts
+                        ? accounts.map(account => (
                             <Option
                                 title={account.name}
                                 value={account.address}
@@ -37,9 +39,21 @@ export class AccountBigSelect extends React.PureComponent<IAccountBigSelectProps
                             >
                                 <AccountItem {...account} className="sonm-account-big-select__option"/>
                             </Option>
+                        ))
+                        : [];
+
+                    if (hasEmptyOption) {
+                        options.push(
+                            <Option key="empty" value="">
+                                <div className="sonm-account-big-select__option-emty">
+                                    All accounts
+                                </div>
+                            </Option>,
                         );
-                    })
-                }
+                    }
+
+                    return options;
+                })()}
             </BigSelect>
         );
     }

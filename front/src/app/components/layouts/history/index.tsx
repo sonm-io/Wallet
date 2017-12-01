@@ -51,6 +51,12 @@ const columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
     title: 'hash',
 }];
 
+interface IFilter {
+    account: string;
+    currency: string;
+    query: string;
+}
+
 @inject('historyStore', 'mainStore')
 @observer
 export class History extends React.Component<IProps, any> {
@@ -60,11 +66,15 @@ export class History extends React.Component<IProps, any> {
         query: '',
     };
 
-    protected handleChangeAccount = (address: string) => {
-        this.setState({
-            account: address,
-        });
+    private updateFilter() {
+        this.props.historyStore && this.props.historyStore.filter(this.state);
     }
+
+    protected handleChange(update: Partial<IFilter>) {
+        this.setState(update, this.updateFilter);
+    }
+
+    protected handleChangeAccount = (account: string) => this.handleChange({ account });
 
     public render() {
         if (this.props.mainStore === undefined || this.props.historyStore === undefined) {
@@ -77,14 +87,16 @@ export class History extends React.Component<IProps, any> {
 
         return (
             <div className={cn('sonm-history', className)}>
-                <div>
+                <div className="sonm-history__select-filters">
                     <AccountBigSelect
                         className="sonm-history__select-account"
                         returnPrimitive
                         onChange={this.handleChangeAccount}
                         accounts={this.props.mainStore.accountList}
                         value={this.state.account}
+                        hasEmptyOption
                     />
+
                 </div>
                 <TxTable
                     dataSource={this.props.historyStore.currentList}
