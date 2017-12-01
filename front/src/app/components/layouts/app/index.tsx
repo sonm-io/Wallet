@@ -58,9 +58,6 @@ export class App extends React.Component<IProps, any> {
                             <Menu.Item key="/history" className="sonm-nav__menu-item">
                                 History
                             </Menu.Item>
-                            <Menu.Item key="/votes" className="sonm-nav__menu-item">
-                                Votes
-                            </Menu.Item>
                         </Menu>
                         <div className="sonm_nav__total">
                             <div className="sonm_nav__total-eth">

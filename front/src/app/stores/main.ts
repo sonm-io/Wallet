@@ -97,8 +97,8 @@ export class MainStore {
         if (this.averageGasPrice !== '') {
             const bn = new BigNumber(this.averageGasPrice);
 
-            min = bn.mul(0.5).toString();
-            max = bn.mul(1.5).toString();
+            min = bn.mul(0.5).toFixed(18);
+            max = bn.mul(1.5).toFixed(18);
         }
 
         return [min, max];

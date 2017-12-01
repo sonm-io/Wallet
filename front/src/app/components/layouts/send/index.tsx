@@ -32,17 +32,20 @@ export class SendSrc extends React.Component<IProps, any> {
     protected handleSubmit = (event: React.FormEvent<Form>) => {
         event.preventDefault();
 
-        this.props.form.validateFields(async (err, values: ISendFormValues) => {
-            if (err || this.props.mainStore === undefined) {
-                return;
-            }
+        this.props.form.validateFields(
+            { force: true },
+            async (err, values: ISendFormValues) => {
+                if (err || this.props.mainStore === undefined) {
+                    return;
+                }
 
-            this.props.mainStore.setSendParams(values);
+                this.props.mainStore.setSendParams(values);
 
-            // TODO
-            const password = prompt('Password please') || '';
-            this.props.mainStore.confirmTransaction(password);
-        });
+                // TODO
+                const password = prompt('Password please') || '';
+                this.props.mainStore.confirmTransaction(password);
+            },
+        );
     }
 
     protected handleChangeAccount = (address: string) => {
@@ -51,6 +54,8 @@ export class SendSrc extends React.Component<IProps, any> {
         }
 
         this.props.mainStore.selectAccount(address);
+
+        this.props.form.validateFields({ force: true }, Function.prototype as any);
     }
 
     protected handleChangeCurrency = (address: string) => {
@@ -116,6 +121,17 @@ export class SendSrc extends React.Component<IProps, any> {
         }
     }
 
+    protected static validatePositiveNumber(rule: any, value: string, cb: (msg?: string) => void): boolean {
+        if (value.indexOf(',') !== -1 || value.indexOf('.') !== -1) {
+            cb('Value should be positive integer');
+            return false;
+        }
+
+        SendSrc.validateAmount(rule, value, cb);
+
+        return true;
+    }
+
     protected validateTargetAddress = (rule: any, value: string, cb: (msg?: string) => void) => {
         if (value === '') {
             return cb('Please input address');
@@ -132,22 +148,26 @@ export class SendSrc extends React.Component<IProps, any> {
         cb();
     }
 
-    protected static validateAmount(rule: any, value: string, cb: (msg?: string) => void) {
+    protected static validateAmount(rule: any, value: string, cb: (msg?: string) => void): boolean {
         if (value === '') {
-            return cb('Required value');
+            cb('Required value');
+            return false;
         }
 
         const amount = SendSrc.createBigNumber(value);
 
         if (amount === undefined) {
-            return cb('Incorrect amount');
+            cb('Incorrect amount');
+            return false;
         }
 
-        if (amount.lessThan(0)) {
-            return 'Value should be positive';
+        if (amount.lessThanOrEqualTo(0)) {
+            cb('Value should be positive')
+            return false;
         }
 
-        return cb();
+        cb();
+        return true;
     }
 
     public renderConfirm() {
@@ -162,26 +182,23 @@ export class SendSrc extends React.Component<IProps, any> {
     }
 
     public render() {
+        if (this.props.mainStore === undefined) {
+            return null;
+        }
+
         const {
             className,
             form,
             mainStore,
         } = this.props;
 
-        const {
-
-        } = mainStore;
-
-        const balanceList = mainStore && mainStore.currentBalanceList;
-        const accountList = mainStore && mainStore.accountList;
-        const selectedAccountAddress =  mainStore && mainStore.selectedAccountAddress;
-        const selectedCurrencyAddress =  mainStore && mainStore.selectedCurrencyAddress;
-        const gasPrice =  mainStore && mainStore.userGasPrice;
-        const gasLimit =  mainStore && (mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT);
-        const priority = mainStore && mainStore.priority;
-        const showConfirmDialog = mainStore && mainStore.showConfirmDialog;
-        const isReady = mainStore && mainStore.isReady;
-        const values = mainStore && mainStore.values;
+        const balanceList = mainStore.currentBalanceList;
+        const selectedCurrencyAddress = mainStore.selectedCurrencyAddress;
+        const gasPrice = mainStore.userGasPrice;
+        const gasLimit = (mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT);
+        const showConfirmDialog = mainStore.showConfirmDialog;
+        const isReady = mainStore.isReady;
+        const values = mainStore.values;
 
         return (
             <div className={cn('sonm-send', className)}>
@@ -199,8 +216,8 @@ export class SendSrc extends React.Component<IProps, any> {
                                 <AccountBigSelect
                                     returnPrimitive
                                     onChange={this.handleChangeAccount}
-                                    accounts={accountList}
-                                    value={selectedAccountAddress}
+                                    accounts={this.props.mainStore.accountList}
+                                    value={this.props.mainStore.selectedAccountAddress}
                                 />
                             </Form.Item>
                             <div className="sonm-send__form-second-line">
@@ -265,7 +282,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                 {form.getFieldDecorator('gasLimit', {
                                     initialValue: gasLimit,
                                     rules: [
-                                        { validator: SendSrc.validateAmount },
+                                        { validator: SendSrc.validatePositiveNumber },
                                     ],
                                 })(
                                     <Input
@@ -298,7 +315,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                     </span>
                                     <PriorityInput
                                         valueList={['low', 'normal', 'high']}
-                                        value={priority}
+                                        value={mainStore.priority}
                                         onChange={this.handleChangePriority}
                                     />
                                 </Form.Item>
