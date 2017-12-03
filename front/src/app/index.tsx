@@ -39,7 +39,7 @@ async function init() {
     history.listen(renderByPath);
 
 
-    await Api.setSecretKey('my secret key');
+    await Api.setSecretKey('my secret key', 'wallet1');
 
     try {
         await Api.addAccount(

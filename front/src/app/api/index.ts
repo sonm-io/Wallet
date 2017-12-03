@@ -62,8 +62,12 @@ function processValidation(obj: any): IValidation {
 }
 
 export class Api {
-    public static async setSecretKey(password: string): Promise<IResult<boolean>>  {
-        return createPromise('account.setSecretKey', { password });
+    public static async setSecretKey(password: string, walletName: string): Promise<IResult<boolean>>  {
+        return createPromise('account.setSecretKey', { password, walletName });
+    }
+
+    public static async getWalletList(): Promise<IResult<string[]>>  {
+        return createPromise('getWalletList');
     }
 
     public static async hasSavedData(): Promise<IResult<boolean>>  {

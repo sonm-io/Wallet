@@ -21,14 +21,28 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('data.pong');
     });
 
+    it('should get empty wallets list', async function() {
+        const response = await Api.getWalletList();
+        expect(response.data).to.have.lengthOf(0);
+    });
+
+
     it('should set secret key', async function() {
-        const response = await Api.setSecretKey('my secret key');
+        const response = await Api.setSecretKey('my secret key', 'wallet 1');
         expect(response.data).equal(true);
     });
 
-    it('should not found saved data', async function() {
-        const response = await Api.hasSavedData();
-        expect(response.data).equal(false);
+    it('should get not empty wallets list', async function() {
+        const response = await Api.getWalletList();
+        expect(response.data).to.have.lengthOf(1);
+
+        const response2 = await Api.setSecretKey('my secret key1', 'wallet 1');
+        console.log(response2);
+    });
+
+    it('should get error on wrong secret key', async function() {
+        const response = await Api.setSecretKey('my secret key1', 'wallet 1');
+        expect(response).to.have.nested.property('validation.password');
     });
 
     it('should return error in add account', async function() {
@@ -91,33 +105,59 @@ describe('Api',  async function() {
         expect(response2.data).not.equal(null);
 
         const response3 = await Api.getSendTransactionList();
-        expect(response3.data).to.have.lengthOf(1);
+        expect(response3.data).not.equal(null);
+
         if (response3.data) {
-            expect(response3.data[0].fromAddress).equal(address);
-            expect(response3.data[0].toAddress).equal(to);
-            expect(response3.data[0].amount).equal(amount);
-        }
+            const transactions = response3.data[0];
+            const total = response3.data[1];
 
-        const currencies = await Api.getCurrencyList();
-        if (currencies.data) {
-            tx.currencyAddress = currencies.data[1].address;
+            expect(total).equal(1);
 
-            const response4 = await Api.send(tx, password);
-            expect(response4.data).not.equal(null);
-
-            const response5 = await Api.getSendTransactionList();
-            if (response5.data) {
-                expect(response5.data).to.have.lengthOf(2);
-                expect(response5.data[1].fromAddress).equal(address);
-                expect(response5.data[1].toAddress).equal(to);
-                expect(response5.data[1].amount).equal(amount);
-                expect(response5.data[1].currencyAddress).equal(currencies.data[1].address);
+            if (transactions) {
+                expect(transactions[0].fromAddress).equal(address);
+                expect(transactions[0].toAddress).equal(to);
+                expect(transactions[0].amount).equal(amount);
             }
 
-            const response6 = await Api.getSendTransactionList({
+            const currencies = await Api.getCurrencyList();
+            expect(currencies.data).not.equal(null);
+            if (currencies.data) {
+                tx.currencyAddress = currencies.data[1].address;
+
+                const response4 = await Api.send(tx, password);
+                expect(response4.data).not.equal(null);
+
+                const response5 = await Api.getSendTransactionList();
+                expect(response5.data).not.equal(null);
+                if (response5.data) {
+                    const transactions2 = response5.data[0];
+                    const total2 = response5.data[1];
+                    expect(total2).equal(2);
+
+                    if (transactions2) {
+                        expect(transactions2[0].fromAddress).equal(address);
+                        expect(transactions2[0].toAddress).equal(to);
+                        expect(transactions2[0].amount).equal(amount);
+                        expect(transactions2[0].currencyAddress).equal(currencies.data[1].address);
+                    }
+                }
+            }
+        }
+    });
+
+    it('should filter transactions', async function() {
+        const currencies = await Api.getCurrencyList();
+        expect(currencies.data).not.equal(null);
+
+        if (currencies.data) {
+            const response = await Api.getSendTransactionList({
                 currencyAddress: currencies.data[1].address,
             });
-            expect(response6.data).to.have.lengthOf(1);
+            expect(response.data).not.equal(null);
+
+            if (response.data) {
+                expect(response.data[0]).to.have.lengthOf(1);
+            }
         }
     });
 
@@ -142,12 +182,5 @@ describe('Api',  async function() {
 
         const response2 = await Api.getAccountList();
         expect(response2.data).to.have.lengthOf(0);
-    });
-
-    it('should fail get data with wrong secret key', async function() {
-        await Api.setSecretKey('my secret key1');
-
-        const response = await Api.hasSavedData();
-        expect(response.data).equal(false);
     });
 });
