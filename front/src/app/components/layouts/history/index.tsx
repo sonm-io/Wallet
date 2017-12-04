@@ -10,7 +10,6 @@ import * as moment from 'moment';
 import * as debounce from 'lodash/fp/debounce';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import IdentIcon from '../../common/ident-icon/index';
-import { locale } from 'app/components/common/date-picker';
 
 const RangePicker = DatePicker.RangePicker;
 const Option = Select.Option;
@@ -140,7 +139,6 @@ export class History extends React.Component<IProps, any> {
                         hasEmptyOption
                     />
                     <RangePicker
-                        locale={locale}
                         allowClear={false}
                         className="sonm-history__date-range"
                         value={[
