@@ -9,6 +9,8 @@ import * as t from '../../app/api/types';
 
 const { createSonmFactory, utils } = sonmApi;
 
+const KEY_WALLETS_LIST = 'sonm_wallets';
+
 interface IPayload {
     [index: string]: any;
 }
@@ -81,6 +83,7 @@ class Api {
 
         this.routes = {
             'ping': this.ping,
+            'getWalletList': this.getWalletList,
 
             'account.add': this.addAccount,
             'account.remove': this.removeAccount,
@@ -112,6 +115,13 @@ class Api {
         return AES.encrypt(data ? JSON.stringify(data) : null, this.secretKey).toString();
     }
 
+    public getWalletList = async (): Promise<IResponse> => {
+        const list = await createPromise('get', { key: KEY_WALLETS_LIST });
+        return {
+            data: (list ? JSON.parse(list) : []),
+        };
+    }
+
     public hasSavedData = async (): Promise<IResponse> => {
         return {
             data: (await createPromise('get', { key: this.hash })) ? true : false,
@@ -119,9 +129,10 @@ class Api {
     }
 
     public setSecretKey = async (data: IPayload): Promise<IResponse> => {
-        if (data.password) {
+        if (data.password && data.walletName) {
+
             this.secretKey = data.password;
-            this.hash = SHA256(data.password).toString(Hex);
+            this.hash = `sonm_${SHA256(data.walletName).toString(Hex)}`;
 
             const dataFromStorage = await createPromise('get', { key: this.hash });
 
@@ -140,6 +151,14 @@ class Api {
                     };
                 }
             } else {
+                await this.saveData();
+
+                // add wallet to list
+                const walletList = (await this.getWalletList()).data;
+                walletList.push(data.walletName);
+
+                await createPromise('set', { key: KEY_WALLETS_LIST, value: JSON.stringify(walletList)});
+
                 return {
                     data: true,
                 };
