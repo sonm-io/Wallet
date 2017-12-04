@@ -37,7 +37,7 @@ function createPromise(
 
             if (response.success) {
                 // TODO remove
-                console.log(type, response);
+                console.log(type, response, payload);
                 //
                 done(response);
             } else {

@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import * as debounce from 'lodash/fp/debounce';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import IdentIcon from '../../common/ident-icon/index';
+import { locale } from 'app/components/common/date-picker';
 
 const RangePicker = DatePicker.RangePicker;
 const Option = Select.Option;
@@ -44,7 +45,6 @@ export class History extends React.Component<IProps, any> {
                 ? account.name
                 : addr;
 
-
             return [
                 <IdentIcon address={addr} width={20} key="a"/>,
                 name,
@@ -72,7 +72,7 @@ export class History extends React.Component<IProps, any> {
         className: 'sonm-tx-list__currency-col',
         dataIndex: 'currencyAddress',
         title: 'currency',
-        render: (a, record, c) => {
+        render: (a, record, b) => {
             const addr = record.currencyAddress;
             const currency = this.props.mainStore && this.props.mainStore.currencyMap.get(addr);
             const symbol = currency
@@ -88,14 +88,8 @@ export class History extends React.Component<IProps, any> {
     }, {
         dataIndex: 'fee',
         title: 'fee',
-    }, {
-        dataIndex: 'confirmCount',
-        title: 'confirm',
-    }, {
-    }, {
-        dataIndex: 'hash',
-        title: 'hash',
-    }]
+        render: (a, record, b) => `${record.fee} ETH`,
+    }];
 
     public state = {
         query: '',
@@ -146,6 +140,7 @@ export class History extends React.Component<IProps, any> {
                         hasEmptyOption
                     />
                     <RangePicker
+                        locale={locale}
                         allowClear={false}
                         className="sonm-history__date-range"
                         value={[

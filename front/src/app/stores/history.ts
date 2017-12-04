@@ -3,6 +3,7 @@ import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 
 const Api = api.Api;
+const DAY = 1000 * 60 * 60 * 24;
 
 export interface ISendForm {
     from: string;
@@ -25,7 +26,7 @@ export class HistoryStore {
     @observable public toAddress = '';
     @observable public fromAddress = '';
     @observable public timeStart = 0;
-    @observable public timeEnd = Date.now();
+    @observable public timeEnd = Date.now() + DAY;
     @observable public page = 1;
     @observable public total = 0;
 
@@ -43,11 +44,24 @@ export class HistoryStore {
         return result;
     }
 
+    @computed public get totalPage() {
+        return this.total - (this.total % ITEMS_PER_PAGE) + ITEMS_PER_PAGE;
+    }
+
+    protected isInitiated = false;
+
     constructor() {
         autorunAsync(async () => {
-            console.log('>>> list update');
-            this.update(this.filterParams);
+            if (this.isInitiated) {
+                this.update(this.filterParams);
+            }
         });
+    }
+
+    public async init() {
+        this.isInitiated = true;
+        await this.update(this.filterParams);
+        return true;
     }
 
     @computed
@@ -93,7 +107,7 @@ export class HistoryStore {
             const { data: [txList, total] } = yield Api.getSendTransactionList(
                 filter,
                 ITEMS_PER_PAGE,
-                this.page * ITEMS_PER_PAGE,
+                (this.page - 1) * ITEMS_PER_PAGE,
             );
 
             this.total = total;

@@ -50,7 +50,10 @@ async function init() {
 
     }
 
-    await stores.mainStore.init();
+    await Promise.all([
+        stores.mainStore.init(),
+        stores.historyStore.init(),
+    ]);
 
     renderByPath((history as any).location);
 }
