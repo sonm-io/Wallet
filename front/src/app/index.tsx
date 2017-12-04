@@ -35,7 +35,8 @@ const waitForLoad = new Promise(done => {
 });
 
 async function init() {
-    await Promise.all([waitForLoad]);
+    await waitForLoad;
+
     history.listen(renderByPath);
 
     await Api.setSecretKey('my secret key', 'wallet1');
