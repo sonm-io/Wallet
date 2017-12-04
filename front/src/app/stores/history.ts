@@ -52,7 +52,7 @@ export class HistoryStore {
 
     constructor() {
         autorunAsync(async () => {
-            if (this.isInitiated) {
+            if (this.filterParams && this.isInitiated) { // HACK
                 this.update(this.filterParams);
             }
         });
