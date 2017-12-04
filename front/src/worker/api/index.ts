@@ -450,11 +450,11 @@ class Api {
                     }
                 }
 
-                if (filters.dateStart && item.timestamp < filters.dateStart) {
+                if (filters.timeStart && item.timestamp < filters.timeStart) {
                     ok = false;
                 }
 
-                if (filters.dateEnd && item.timestamp > filters.dateEnd) {
+                if (filters.timeEnd && item.timestamp > filters.timeEnd) {
                     ok = false;
                 }
             }

@@ -26,7 +26,7 @@ export class HistoryStore {
     @observable public query = '';
     @observable public toAddress = '';
     @observable public fromAddress = '';
-    @observable public timeStart = parseInt(moment('20171201', 'YYYYMMDD').format('x'));
+    @observable public timeStart = moment('20171201', 'YYYYMMDD').valueOf();
     @observable public timeEnd = Date.now() + DAY;
     @observable public page = 1;
     @observable public total = 0;
