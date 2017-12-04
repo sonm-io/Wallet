@@ -22,7 +22,7 @@ const columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
     title: 'ts',
     className: 'sonm-tx-list__time-col',
     render: (text, record, index) => {
-        return moment(text).format('H:mm:ss d MMM YY');
+        return moment(text).format('H:mm:ss D MMM YY');
     },
 }, {
     dataIndex: 'fromAddress',
