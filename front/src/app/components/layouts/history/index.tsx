@@ -103,6 +103,10 @@ export class History extends React.Component<IProps, any> {
         );
     }
 
+    protected handlePageChange = (page: number) => {
+        this.props.historyStore && this.props.historyStore.setPage(page);
+    }
+
     protected handleChangeQuery = (event: any) => {
         const query = event.target.value;
 
@@ -132,6 +136,8 @@ export class History extends React.Component<IProps, any> {
         const pagination = {
             total: this.props.historyStore.total,
             defaultPageSize: this.props.historyStore.perPage,
+            current: this.props.historyStore.page,
+            onChange: this.handlePageChange,
         };
 
         return (
@@ -177,6 +183,7 @@ export class History extends React.Component<IProps, any> {
                         className="sonm-history__query"
                         value={this.state.query}
                     />
+
                     <TxTable
                         className="sonm-history__table"
                         dataSource={this.props.historyStore.currentList}
