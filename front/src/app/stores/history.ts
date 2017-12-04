@@ -1,4 +1,4 @@
-import { observable, computed, IObservableArray, toJS } from 'mobx';
+import { observable, computed, IObservableArray, toJS, autorunAsync, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 
@@ -13,10 +13,23 @@ export interface ISendForm {
     currency: string;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 export class HistoryStore {
     @observable public errors: any[] = [];
 
     @observable.ref public currentPageTxHashList: string[] = [];
+
+    @observable public curencyAddress = '';
+    @observable public query = '';
+    @observable public toAddress = '';
+    @observable public fromAddress = '';
+    @observable public timeStart = 0;
+    @observable public timeEnd = Date.now();
+    @observable public page = 1;
+    @observable public total = 0;
+
+    @observable public pending = false;
 
     @observable public txMap = new Map<string, api.ISendTransactionResult>();
 
@@ -28,6 +41,27 @@ export class HistoryStore {
         );
 
         return result;
+    }
+
+    constructor() {
+        autorunAsync(async () => {
+            console.log('>>> list update');
+            this.update(this.filterParams);
+        });
+    }
+
+    @computed
+    public get filterParams(): api.ITxListFilter {
+        const filter = {
+            currencyAddress: this.curencyAddress,
+            toAddress: this.toAddress,
+            fromAddress: this.fromAddress,
+            timeStart: this.timeStart,
+            timeEnd: this.timeEnd,
+            query: this.query,
+        };
+
+        return filter;
     }
 
     @asyncAction
@@ -47,22 +81,54 @@ export class HistoryStore {
         }
     }
 
+    // public async init() {
+    //     await this.update(this.filterParams);
+    // }
+
     @asyncAction
-    public *init() {
+    public *update(filter: api.ITxListFilter) {
         try {
-            const { data: [txList, total] } = yield Api.getSendTransactionList();
+            this.pending = true;
 
-            console.log(total);
+            const { data: [txList, total] } = yield Api.getSendTransactionList(
+                filter,
+                ITEMS_PER_PAGE,
+                this.page * ITEMS_PER_PAGE,
+            );
 
+            this.total = total;
             this.addTxToMap(txList);
             this.currentPageTxHashList = txList.map((x: api.ISendTransactionResult) => x.hash);
         } catch (e) {
             this.errors.push(e);
+        } finally {
+            this.pending = false;
         }
     }
 
     protected addTxToMap(txList: api.ISendTransactionResult[]) {
         txList.map((tx: api.ISendTransactionResult) => this.txMap.set(tx.hash, tx));
+    }
+
+    @action
+    public setFilterFrom = (from: string) => {
+        this.fromAddress = from;
+    }
+
+    @action
+    public setFilterCurrency = (currency: string) => {
+        this.curencyAddress = currency;
+    }
+
+    @action
+    public setQuery = (query: string) => {
+        this.query = query;
+    }
+
+    @action
+    public setFilterTime = (start: number, end: number) => {
+        this.timeStart = start;
+        this.timeEnd = end;
     }
 }
 

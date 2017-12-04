@@ -38,7 +38,6 @@ async function init() {
     await Promise.all([waitForLoad]);
     history.listen(renderByPath);
 
-
     await Api.setSecretKey('my secret key', 'wallet1');
 
     try {
@@ -51,9 +50,7 @@ async function init() {
 
     }
 
-    stores.mainStore.init();
-    stores.historyStore.init();
-
+    await stores.mainStore.init();
 
     renderByPath((history as any).location);
 }

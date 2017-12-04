@@ -8,9 +8,35 @@
 }
 
 .sonm-history {
+  display: grid;
+  grid-template-columns: 200px 200px 1fr;
+  grid-template-rows: 1fr 0.1fr 10000fr;
+  grid-gap: 10px;
 
   &__select-account {
     width: 100%;
+    grid-column: ~"1 / 4";
+    grid-row: 1;
+  }
+
+  &__date-range {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  &__select-currency {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  &__query {
+    grid-column: 3;
+    grid-row: 2;
+  }
+
+  &__table {
+    grid-column: ~"1 / 4";
+    grid-row: 3;
   }
 }
 

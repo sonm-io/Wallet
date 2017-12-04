@@ -41,4 +41,13 @@ export interface ICurrencyInfo {
     address: string;
 }
 
+export interface ITxListFilter {
+    currencyAddress?: string;
+    toAddress?: string;
+    fromAddress?: string;
+    timeStart?: number;
+    timeEnd?: number;
+    query?: string;
+}
+
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

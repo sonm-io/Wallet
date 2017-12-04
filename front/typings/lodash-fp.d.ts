@@ -9,3 +9,9 @@ declare module 'lodash/fp/sortBy' {
     namespace sortBy {}
     export = sortBy;
 }
+
+declare module 'lodash/fp/debounce' {
+    function debounce(time: number): (fn: Function) => any;
+    namespace debounce {}
+    export = debounce;
+}
