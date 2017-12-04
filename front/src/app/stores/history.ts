@@ -1,6 +1,7 @@
 import { observable, computed, IObservableArray, toJS, autorunAsync, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
+import * as moment from 'moment';
 
 const Api = api.Api;
 const DAY = 1000 * 60 * 60 * 24;
@@ -25,10 +26,11 @@ export class HistoryStore {
     @observable public query = '';
     @observable public toAddress = '';
     @observable public fromAddress = '';
-    @observable public timeStart = 0;
+    @observable public timeStart = moment('20171201', 'YYYYMMDD').valueOf();
     @observable public timeEnd = Date.now() + DAY;
     @observable public page = 1;
     @observable public total = 0;
+    @observable public perPage = ITEMS_PER_PAGE;
 
     @observable public pending = false;
 
@@ -52,15 +54,15 @@ export class HistoryStore {
 
     constructor() {
         autorunAsync(async () => {
-            if (this.filterParams && this.isInitiated) { // HACK
-                this.update(this.filterParams);
+            if (this.filterParams && this.page && this.isInitiated) { // HACK
+                this.update(this.filterParams, this.page);
             }
         });
     }
 
     public async init() {
         this.isInitiated = true;
-        await this.update(this.filterParams);
+        await this.update(this.filterParams, this.page);
         return true;
     }
 
@@ -100,14 +102,14 @@ export class HistoryStore {
     // }
 
     @asyncAction
-    public *update(filter: api.ITxListFilter) {
+    public *update(filter: api.ITxListFilter, page: number) {
         try {
             this.pending = true;
 
             const { data: [txList, total] } = yield Api.getSendTransactionList(
                 filter,
                 ITEMS_PER_PAGE,
-                (this.page - 1) * ITEMS_PER_PAGE,
+                (page - 1) * ITEMS_PER_PAGE,
             );
 
             this.total = total;
@@ -137,6 +139,11 @@ export class HistoryStore {
     @action
     public setQuery = (query: string) => {
         this.query = query;
+    }
+
+    @action
+    public setPage = (page: number) => {
+        this.page = page;
     }
 
     @action
