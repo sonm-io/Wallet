@@ -104,7 +104,7 @@ export function send(params: t.ISendTransaction, password: string): t.IResult<t.
     } else {
         result.data = {
             hash: 'hach',
-            status: 'zaebis',
+            status: 'pending',
             timestamp: Date.now(),
             fromAddress: params.fromAddress,
             toAddress: params.toAddress,

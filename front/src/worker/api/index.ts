@@ -140,6 +140,8 @@ class Api {
                 try {
                     this.storage = this.decrypt(dataFromStorage);
 
+                    this.processPendingTransactions();
+
                     return {
                         data: true,
                     };
@@ -218,13 +220,23 @@ class Api {
         };
     }
 
+    private async processPendingTransactions() {
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
+
+        for (const transaction of this.storage.transactions) {
+            if (!transaction.fee) {
+                const txResult = factory.createTxResult(transaction.hash);
+                this.proceedTx(transaction, txResult);
+            }
+        }
+    }
+
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
             const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
 
             this.accounts[address] = {
                 factory,
-                web3: factory.gethClient.web3,
                 account: await factory.createAccount(address),
                 password: null,
             };
@@ -395,9 +407,8 @@ class Api {
             currencyAddress,
             hash: null,
             fee: null,
+            status: 'pending',
         };
-
-        transactions.unshift(transaction);
 
         //await this.saveData();
 
@@ -415,19 +426,26 @@ class Api {
                 gasPrice,
             ));
 
+        transactions.unshift(transaction);
         transaction.hash = await txResult.getHash();
         await this.saveData();
-
-        await txResult.getReceipt();
-        const fee = await txResult.getTxPrice();
-
-        transaction.fee = utils.fromWei(fee.toString(), 'ether');
-
-        await this.saveData();
+        await this.proceedTx(transaction, txResult);
 
         return {
             data: transaction,
         };
+    }
+
+    private async proceedTx(transaction: any, txResult: any) {
+        const receipt = await txResult.getReceipt();
+        console.log(receipt);
+
+        const fee = await txResult.getTxPrice();
+
+        transaction.status = 'success';
+        transaction.fee = utils.fromWei(fee.toString(), 'ether');
+
+        await this.saveData();
     }
 
     public getTransactionList = async (data: IPayload): Promise<IResponse> => {
