@@ -13,7 +13,7 @@ interface IProps {
 export class Login extends React.Component<IProps, any> {
     public state = {
         currentAction: 'start',
-        password: '',
+        password: 'my secret key',
         confirmation: '',
         wallets: [] as string[],
         name: '',

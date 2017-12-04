@@ -37,9 +37,9 @@ export class App extends React.Component<IProps, any> {
         return (
 
             <div className={cn('sonm-app', className)}>
-                <div className="sonm_app__nav">
-                    <div className="sonm_nav">
-                        <div className="sonm_nav__logo"/>
+                <div className="sonm-app__nav">
+                    <div className="sonm-nav">
+                        <div className="sonm-nav__logo" />
                         <Menu
                             onClick={this.handleMenuClick}
                             className="sonm-nav__menu"
@@ -60,24 +60,22 @@ export class App extends React.Component<IProps, any> {
                                 History
                             </Menu.Item>
                         </Menu>
-                        <div className="sonm_nav__total">
-                            <div className="sonm_nav__total-eth">
-                                {firstTokenBalance}
-                            </div>
-                            <div className="sonm_nav__total-sonm">
-                                {secondTokenBalance}
-                            </div>
+                        <div className="sonm-nav__total">
+                            {firstTokenBalance}
+                        </div>
+                        <div className="sonm-nav__total">
+                            {secondTokenBalance}
                         </div>
                     </div>
                 </div>
                 <div className="sonm-app__content">
-                    <div className="sonm_app__alert-ct">
+                    <div className="sonm-app__alert-ct">
                         {
                             lastErrors.length > 0
                                 ? lastErrors.map((e, idx) => <Alert
                                     message={e}
                                     type="warning"
-                                    className="sonm_app__alert"
+                                    className="sonm-app__alert"
                                     key={idx}
                                 />)
                                 : null

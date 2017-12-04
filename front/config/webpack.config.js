@@ -36,6 +36,11 @@ module.exports = {
         rules: (() => {
             const rules = [
                 {
+                    test: /\.svg/,
+                    issuer: /\.less/,
+                    loaders: 'svg-url-loader',
+                },
+                {
                     test: /\.(ttf|jpg)$/,
                     loader: 'file-loader',
                 },
