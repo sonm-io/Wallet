@@ -29,14 +29,14 @@ interface IProps {
 export class History extends React.Component<IProps, any> {
     protected columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
         dataIndex: 'timestamp',
-        title: 'ts',
+        title: 'Time',
         className: 'sonm-tx-list__time-col',
         render: (text, record, index) => {
-            return moment(text).format('H:mm:ss d MMM YY');
+            return moment(text).format('H:mm:ss D MMM YY');
         },
     }, {
         dataIndex: 'fromAddress',
-        title: 'from',
+        title: 'From',
         render: (a, record, c) => {
             const addr = record.fromAddress;
             const account = this.props.mainStore && this.props.mainStore.accountMap.get(addr);
@@ -52,7 +52,7 @@ export class History extends React.Component<IProps, any> {
     }, {
     }, {
         dataIndex: 'toAddress',
-        title: 'to',
+        title: 'To',
         render: (a, record, c) => {
             const addr = record.toAddress;
 
@@ -64,7 +64,7 @@ export class History extends React.Component<IProps, any> {
     }, {
     }, {
         dataIndex: 'amount',
-        title: 'amount',
+        title: 'Amount',
         className: 'sonm-tx-list__amount-col',
     }, {
     }, {
@@ -80,13 +80,13 @@ export class History extends React.Component<IProps, any> {
 
             return [
                 <IdentIcon address={addr} width={20} key="a"/>,
-                symbol,
+                symbol.toUpperCase(),
             ];
         },
     }, {
     }, {
         dataIndex: 'fee',
-        title: 'fee',
+        title: 'Fee',
         render: (a, record, b) => `${record.fee} ETH`,
     }];
 
@@ -99,6 +99,10 @@ export class History extends React.Component<IProps, any> {
             dates[0].valueOf(),
             dates[1].valueOf(),
         );
+    }
+
+    protected handlePageChange = (page: number) => {
+        this.props.historyStore && this.props.historyStore.setPage(page);
     }
 
     protected handleChangeQuery = (event: any) => {
@@ -126,6 +130,13 @@ export class History extends React.Component<IProps, any> {
         const {
             className,
         } = this.props;
+
+        const pagination = {
+            total: this.props.historyStore.total,
+            defaultPageSize: this.props.historyStore.perPage,
+            current: this.props.historyStore.page,
+            onChange: this.handlePageChange,
+        };
 
         return (
             <Spin spinning={this.props.historyStore.pending}>
@@ -170,11 +181,12 @@ export class History extends React.Component<IProps, any> {
                         className="sonm-history__query"
                         value={this.state.query}
                     />
+
                     <TxTable
                         className="sonm-history__table"
                         dataSource={this.props.historyStore.currentList}
                         columns={this.columns}
-                        pagination={false}
+                        pagination={pagination}
                         rowKey="hash"
                     />
                 </div>

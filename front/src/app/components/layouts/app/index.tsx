@@ -35,6 +35,7 @@ export class App extends React.Component<IProps, any> {
         } = this.props;
 
         return (
+
             <div className={cn('sonm-app', className)}>
                 <div className="sonm_app__nav">
                     <div className="sonm_nav">
