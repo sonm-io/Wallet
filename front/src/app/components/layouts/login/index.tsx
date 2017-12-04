@@ -32,6 +32,9 @@ export class Login extends React.Component<IProps, any> {
         this.setState({
             pending: false,
             wallets,
+            name: wallets && wallets.length > 0
+                ? wallets[0]
+                : '',
         });
     }
 
@@ -120,7 +123,7 @@ export class Login extends React.Component<IProps, any> {
         out.push([
             <label key="s">
                 Wallet name
-                <select className="sonm-login__select-name" name="password" onChange={this.handleChangeInput}>
+                <select className="sonm-login__select-name" name="password" onChange={this.handleChangeInput} value={this.state.name}>
                     {this.state.wallets.map(name => <option key={name}>{name}</option>)}
                 </select>
             </label>,
@@ -155,8 +158,8 @@ export class Login extends React.Component<IProps, any> {
             }
             out.push(
                 <label key="i-l">
-                    Login
-                    <input type="name" className="sonm-login__login-input" name="password" onChange={this.handleChangeInput} />
+                    Password
+                    <input type="password" className="sonm-login__login-input" name="password" onChange={this.handleChangeInput} />
                     <span>{this.state.validation.password}</span>
                 </label>,
                 <Button key="b-u" className="sonm-login__login-btn" onClick={this.handleLogin}>Login</Button>,
