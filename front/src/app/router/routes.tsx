@@ -5,6 +5,10 @@ import { History } from '../components/layouts/history';
 import { Votes } from '../components/layouts/votes';
 import * as React from 'react';
 
+import { LocaleProvider } from 'antd';
+import * as enUS from 'antd/lib/locale-provider/en_US';
+const enUSLocale: any = enUS;
+
 let defaultAction;
 
 const routes = [
@@ -15,12 +19,14 @@ const routes = [
 
             return {
                 content: (
+                    <LocaleProvider locale={enUSLocale}>
                     <App
                         selectedNavMenuItem={ctx.pathname}
                         {...inner.props}
                     >
                         {inner && inner.content}
                     </App>
+                    </LocaleProvider>
                 ),
                 title: inner.title,
             };

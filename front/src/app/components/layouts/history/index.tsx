@@ -10,7 +10,8 @@ import * as moment from 'moment';
 import * as debounce from 'lodash/fp/debounce';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import IdentIcon from '../../common/ident-icon/index';
-import { locale } from 'app/components/common/date-picker';
+
+// import { locale } from 'app/components/common/date-picker';
 
 const RangePicker = DatePicker.RangePicker;
 const Option = Select.Option;
@@ -30,14 +31,14 @@ interface IProps {
 export class History extends React.Component<IProps, any> {
     protected columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
         dataIndex: 'timestamp',
-        title: 'ts',
+        title: 'Time',
         className: 'sonm-tx-list__time-col',
         render: (text, record, index) => {
-            return moment(text).format('H:mm:ss d MMM YY');
+            return moment(text).format('H:mm:ss D MMM YY');
         },
     }, {
         dataIndex: 'fromAddress',
-        title: 'from',
+        title: 'From',
         render: (a, record, c) => {
             const addr = record.fromAddress;
             const account = this.props.mainStore && this.props.mainStore.accountMap.get(addr);
@@ -53,7 +54,7 @@ export class History extends React.Component<IProps, any> {
     }, {
     }, {
         dataIndex: 'toAddress',
-        title: 'to',
+        title: 'To',
         render: (a, record, c) => {
             const addr = record.toAddress;
 
@@ -65,7 +66,7 @@ export class History extends React.Component<IProps, any> {
     }, {
     }, {
         dataIndex: 'amount',
-        title: 'amount',
+        title: 'Amount',
         className: 'sonm-tx-list__amount-col',
     }, {
     }, {
@@ -81,13 +82,13 @@ export class History extends React.Component<IProps, any> {
 
             return [
                 <IdentIcon address={addr} width={20} key="a"/>,
-                symbol,
+                symbol.toUpperCase(),
             ];
         },
     }, {
     }, {
         dataIndex: 'fee',
-        title: 'fee',
+        title: 'Fee',
         render: (a, record, b) => `${record.fee} ETH`,
     }];
 
@@ -128,6 +129,11 @@ export class History extends React.Component<IProps, any> {
             className,
         } = this.props;
 
+        const pagination = {
+            total: this.props.historyStore.total,
+            defaultPageSize: this.props.historyStore.perPage,
+        };
+
         return (
             <Spin spinning={this.props.historyStore.pending}>
                 <div className={cn('sonm-history', className)}>
@@ -140,7 +146,6 @@ export class History extends React.Component<IProps, any> {
                         hasEmptyOption
                     />
                     <RangePicker
-                        locale={locale}
                         allowClear={false}
                         className="sonm-history__date-range"
                         value={[
@@ -176,7 +181,7 @@ export class History extends React.Component<IProps, any> {
                         className="sonm-history__table"
                         dataSource={this.props.historyStore.currentList}
                         columns={this.columns}
-                        pagination={false}
+                        pagination={pagination}
                         rowKey="hash"
                     />
                 </div>

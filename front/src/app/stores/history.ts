@@ -1,6 +1,7 @@
 import { observable, computed, IObservableArray, toJS, autorunAsync, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
+import * as moment from 'moment';
 
 const Api = api.Api;
 const DAY = 1000 * 60 * 60 * 24;
@@ -25,10 +26,11 @@ export class HistoryStore {
     @observable public query = '';
     @observable public toAddress = '';
     @observable public fromAddress = '';
-    @observable public timeStart = 0;
+    @observable public timeStart = parseInt(moment('20171201', 'YYYYMMDD').format('x'));
     @observable public timeEnd = Date.now() + DAY;
     @observable public page = 1;
     @observable public total = 0;
+    @observable public perPage = ITEMS_PER_PAGE;
 
     @observable public pending = false;
 

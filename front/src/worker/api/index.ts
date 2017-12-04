@@ -433,6 +433,8 @@ class Api {
     public getTransactionList = async (data: IPayload): Promise<IResponse> => {
         let { filters, limit, offset } = data;
 
+        console.log(filters);
+
         filters = filters || {};
         limit = limit || 10;
         offset = offset || 0;
