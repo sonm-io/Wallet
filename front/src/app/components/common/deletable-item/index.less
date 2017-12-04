@@ -1,0 +1,43 @@
+.sonm-deletable-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:last-child &__children {
+    border-bottom-width: 1px;
+  }
+
+  &__children {
+    border: solid 1px @color-border;
+    border-bottom-width: 0;
+    flex-grow: 1;
+    padding: 0 10px;
+  }
+
+  &__close {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: @color-dark-gray-bg;
+    padding: 0 0 0 2.5px;
+    margin: 15px;
+    border: none;
+    text-align: center;
+    line-height: 18px;
+    flex-shrink: 0;
+
+    &:hover {
+      cursor: pointer;
+      box-shadow: @shadow;
+    }
+
+    &:after {
+      display: inline-block;
+      content: " +";
+      color: @color-white;
+      transform: rotate(45deg);
+      font-size: 20px;
+      margin: 0;
+    }
+  }
+}

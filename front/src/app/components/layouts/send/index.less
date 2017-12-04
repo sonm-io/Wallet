@@ -1,0 +1,68 @@
+.sonm-send {
+
+  &__input,
+  &__set-max,
+  &__gas-price-buttons,
+  &__gas-price {
+    vertical-align: bottom;
+  }
+
+  & &__gas-price {
+    display: inline-block;
+  }
+
+  &__last-line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  &__submit {
+    display: inline-block;
+    vertical-align: bottom;
+    margin: 0 0 24px;
+  }
+
+
+  &__form-second-line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0 0 24px 0;
+  }
+
+  & &__target,
+  & &__currency-select {
+    margin: 0;
+  }
+
+  & &__target {
+    align-self: flex-start;
+  }
+
+  & &__target-icon {
+    margin: 0 30px;
+  }
+
+  & &__input {
+    width: 300px;
+    margin: 0 5px 0 0;
+  }
+
+  & &__input-suffix {
+    display: inline-block;
+    height: 100%;
+    margin: 0 20px 0 0;
+  }
+
+  & &__target {
+    flex-grow: 1;
+  }
+
+  & &__currency-select {
+    min-width: 350px;
+    width: auto;
+  }
+}
+

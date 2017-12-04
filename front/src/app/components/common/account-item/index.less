@@ -1,0 +1,105 @@
+@import "guide.less";
+
+@account-item-height: @big-select-height;
+
+.sonm-account-item {
+  padding: 0 10px 0 0;
+  display: grid;
+  grid-template-columns: 100px 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  font-weight: normal ;
+  height: @account-item-height;
+
+  &__blockies {
+    margin: 5px;
+    grid-column: 1;
+    grid-row: 2 span;
+    align-self: center;
+  }
+
+  &__name-wrapper,
+  &__address,
+  &__ether,
+  &__sonm {
+    font-size: 18px;
+    color: @color-font;
+    padding: 5px;
+  }
+
+  &__name-wrapper,
+  &__ether {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  &__sonm {
+    grid-column: 3;
+    grid-row: 2;
+    text-align: right;
+  }
+
+  &__ether {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: right;
+  }
+
+  &__name-wrapper {
+    grid-column: 2;
+    grid-row: 1;
+    overflow: hidden;
+
+    &-inner {
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      margin: 5px;
+    }
+  }
+
+  &__address {
+    font-size: 14px;
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  &__name-wrapper {
+    white-space: nowrap;
+  }
+
+  &__name-text {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: ~"calc(100% - 40px)";
+    vertical-align: bottom;
+  }
+
+  &__edit-icon {
+    vertical-align: bottom;
+    cursor: pointer;
+    border: 0;
+    background-color: transparent;
+    margin: 0 5px;
+
+    &:focus {
+      outline: @outline;
+      outline-offset: 3px;
+    }
+  }
+
+  &__edit-name {
+    border: 0px solid @color-blue;
+    border-bottom-width: 2px;
+    padding: 2px;
+    font-size: 18px;
+    line-height: 18px;
+    width: auto !important;
+
+    &:focus {
+      outline: @outline;
+      outline-offset: 3px;
+    }
+  }
+}

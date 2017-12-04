@@ -1,0 +1,38 @@
+@import "guide.less";
+
+@big-select-option-right-padding: 60px;
+@big-select-option-common-padding: 10px;
+
+.sonm-big-select {
+
+  &.ant-select {
+
+    & .ant-select-selection--single {
+      height: @big-select-height;
+    }
+
+    & .ant-select-selection__rendered {
+      height: @big-select-height - 2px;
+      margin-right: @big-select-option-common-padding;
+    }
+
+    & .ant-select-arrow {
+      right: @big-select-height / 3;
+    }
+
+    & .ant-select-selection-selected-value {
+      padding-right: @big-select-option-right-padding;
+      width: 100%;
+    }
+  }
+
+  &__dropdown {
+    & .ant-select-dropdown-menu {
+      max-height: @big-select-height * 6;
+    }
+
+    & .ant-select-dropdown-menu-item {
+      padding-right: @big-select-option-right-padding + @big-select-option-common-padding;
+    }
+  }
+}
