@@ -399,7 +399,7 @@ class Api {
 
         transactions.unshift(transaction);
 
-        await this.saveData();
+        //await this.saveData();
 
         const txResult = (currencyAddress === '0x'
             ? await client.account.sendEther(
@@ -421,7 +421,7 @@ class Api {
         await txResult.getReceipt();
         const fee = await txResult.getTxPrice();
 
-        transactions.fee = utils.fromWei(fee.toString(), 'ether');
+        transaction.fee = utils.fromWei(fee.toString(), 'ether');
 
         await this.saveData();
 

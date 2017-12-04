@@ -38,7 +38,6 @@ async function init() {
     await Promise.all([waitForLoad]);
     history.listen(renderByPath);
 
-
     await Api.setSecretKey('my secret key', 'wallet1');
 
     try {
