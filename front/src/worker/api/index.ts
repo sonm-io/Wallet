@@ -164,10 +164,13 @@ class Api {
                 };
             }
         } else {
+            const validation = {
+                password: !data.password ? 'password_empty' : null,
+                walletName: !data.walletName ? 'walletName_empty' : null,
+            };
+
             return {
-                validation: {
-                    password: 'password_empty',
-                },
+                validation,
             };
         }
     }
@@ -224,7 +227,6 @@ class Api {
 
             this.accounts[address] = {
                 factory,
-                web3: factory.gethClient.web3,
                 account: await factory.createAccount(address),
                 password: null,
             };
@@ -243,17 +245,11 @@ class Api {
     }
 
     public getCurrencies = async (data: IPayload): Promise<IResponse> => {
-        const accounts = await this.getAccounts() || {};
+        const client = await this.initAccount('0x');
 
-        if (accounts) {
-            const client = await this.initAccount(Object.keys(accounts)[0]);
-
-            return {
-                data: await client.account.getCurrencies(),
-            };
-        } else {
-            throw new Error('required_params_missed');
-        }
+        return {
+            data: await client.account.getCurrencies(),
+        };
     }
 
     public getGasPrice = async (): Promise<IResponse> => {
