@@ -123,7 +123,7 @@ export class Login extends React.Component<IProps, any> {
         out.push([
             <label key="s">
                 Wallet name
-                <select className="sonm-login__select-name" name="password" onChange={this.handleChangeInput} value={this.state.name}>
+                <select className="sonm-login__select-name" name="name" onChange={this.handleChangeInput} value={this.state.name}>
                     {this.state.wallets.map(name => <option key={name}>{name}</option>)}
                 </select>
             </label>,
