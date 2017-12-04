@@ -20,12 +20,12 @@ const routes = [
             return {
                 content: (
                     <LocaleProvider locale={enUSLocale}>
-                    <App
-                        selectedNavMenuItem={ctx.pathname}
-                        {...inner.props}
-                    >
-                        {inner && inner.content}
-                    </App>
+                        <App
+                            selectedNavMenuItem={ctx.pathname}
+                            {...inner.props}
+                        >
+                            {inner && inner.content}
+                        </App>
                     </LocaleProvider>
                 ),
                 title: inner.title,
