@@ -10,14 +10,22 @@ export async function delay(timeout: number) {
     return new Promise((resolve, reject) => setTimeout(resolve, timeout));
 }
 
-export const transactionListResult: t.IResult<t.ISendTransactionResult[]> = {
-    data: [
+export const newAccount: t.IAccountInfo = {
+    name: 'new',
+    address: '0x1234567890123456789012345678901234567890',
+    currencyBalanceMap: {
+        [SONM_ADDR]: '1',
+    },
+}
+
+export const transactionListResult: t.IResult<[t.ISendTransactionResult[], number]> = {
+    data: [[
         {
             timestamp: Date.now(),
-            fromAddress: 'fromAddress',
-            toAddress: 'toAddress',
+            fromAddress: VASYA_ADDR,
+            toAddress: PETYA_ADDR,
             amount: 'amount',
-            currencyAddress: 'currencyAddress',
+            currencyAddress: ETHER_ADDR,
             gasPrice: '294',
             gasLimit: '453',
             fee: '198',
@@ -27,10 +35,10 @@ export const transactionListResult: t.IResult<t.ISendTransactionResult[]> = {
         },
         {
             timestamp: Date.now(),
-            fromAddress: 'fromAddress',
-            toAddress: 'toAddress',
+            fromAddress: PETYA_ADDR,
+            toAddress: VASYA_ADDR,
             amount: 'amount',
-            currencyAddress: 'currencyAddress',
+            currencyAddress: SONM_ADDR,
             gasPrice: '294',
             gasLimit: '453',
             fee: '198',
@@ -38,7 +46,7 @@ export const transactionListResult: t.IResult<t.ISendTransactionResult[]> = {
             status: 'success',
             hash: 'hash2',
         },
-    ],
+    ], 100],
 }
 
 export const currencyListResult: t.IResult<t.ICurrencyInfo[]> = {
@@ -111,3 +119,7 @@ export function send(params: t.ISendTransaction, password: string): t.IResult<t.
 
     return result;
 }
+
+// export function send(tx: any) {
+//     console.log('send!!!');
+// }
