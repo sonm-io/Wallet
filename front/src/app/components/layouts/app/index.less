@@ -3,15 +3,50 @@
   width: 1280px;
   border: solid 1px @color-border;
 
-  &__nav-tabs {
-    user-select: none;
-  }
-
   &__content {
     margin: 50px;
   }
+}
+
+.sonm-nav {
+  user-select: none;
+  background-color: @color-brand-bg !important;
+  padding: 5px 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-color: @color-brand-bg;
+
+  &__menu {
+    background-color: @color-brand-bg !important;
+    flex-grow: 1;
+
+    & &-item {
+      background-color: @color-brand-bg !important;
+      border: solid 0 transparent !important;
+      border-bottom-width: 2px !important;
+      font-size: 18px;
+      line-height: 24px;
+      padding: 0 4px !important;
+      margin: 14px 10px !important;
+
+      &.ant-menu-item-selected {
+        border-bottom-color: @color-pink !important;;
+      }
+    }
+  }
+
+  &__logo {
+    background: url('./sonm-wallet-logo.svg') no-repeat;
+    width: 300px;
+    height: 50px;
+  }
 
   &__total {
-
+    text-transform: uppercase;
+    padding: 8px;
+    font-size: 18px;
+    color: @color-white;
   }
 }

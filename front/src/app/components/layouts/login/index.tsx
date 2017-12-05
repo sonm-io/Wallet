@@ -13,7 +13,7 @@ interface IProps {
 export class Login extends React.Component<IProps, any> {
     public state = {
         currentAction: 'start',
-        password: '',
+        password: 'my secret key',
         confirmation: '',
         wallets: [] as string[],
         name: '',
@@ -52,9 +52,7 @@ export class Login extends React.Component<IProps, any> {
         });
 
         try {
-            const { data: success, validation } = await Api.setSecretKey(this.state.password, this.state.name);
-
-            if (!success) { throw new Error('Login fail. Unexpected falsy success'); }
+            const { validation } = await Api.setSecretKey(this.state.password, this.state.name);
 
             if (validation) {
                 this.setState({
@@ -92,9 +90,7 @@ export class Login extends React.Component<IProps, any> {
         });
 
         try {
-            const { data: success, validation } = await Api.setSecretKey(this.state.password, this.state.name);
-
-            if (!success) { throw new Error('Wallet creating fail. Unexpected falsy success'); }
+            const { validation } = await Api.setSecretKey(this.state.password, this.state.name);
 
             if (validation) {
                 this.setState({
