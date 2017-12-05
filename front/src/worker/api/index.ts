@@ -224,7 +224,7 @@ class Api {
         const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
 
         for (const transaction of this.storage.transactions) {
-            if (!transaction.fee) {
+            if (transaction.status === 'pending') {
                 const txResult = factory.createTxResult(transaction.hash);
                 this.proceedTx(transaction, txResult);
             }
