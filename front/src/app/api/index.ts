@@ -57,7 +57,7 @@ function createPromise(
 
 function processValidation(obj: any): IValidation {
     return Object.keys(obj).reduce((acc: IValidation, key: string) => {
-        acc[key] = messages[obj[key]];
+        acc[key] = messages[obj[key]] || obj[key];
         return acc;
     }, {});
 }
@@ -69,10 +69,6 @@ export class Api {
 
     public static async getWalletList(): Promise<IResult<string[]>>  {
         return createPromise('getWalletList');
-    }
-
-    public static async hasSavedData(): Promise<IResult<boolean>>  {
-        return createPromise('account.hasSavedData');
     }
 
     public static async addAccount(jsonRaw: string, password: string, name: string): Promise<IResult<IAccountInfo>> {

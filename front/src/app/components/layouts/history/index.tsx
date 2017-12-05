@@ -11,8 +11,6 @@ import * as debounce from 'lodash/fp/debounce';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import IdentIcon from '../../common/ident-icon/index';
 
-// import { locale } from 'app/components/common/date-picker';
-
 const RangePicker = DatePicker.RangePicker;
 const Option = Select.Option;
 
