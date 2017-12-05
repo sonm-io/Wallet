@@ -249,7 +249,9 @@ class Api {
         const client = await this.initAccount(address);
         const balancies = await client.account.getCurrencyBalances();
 
-        balancies['0x'] = utils.fromWei(balancies['0x'], 'ether');
+        for (const address of Object.keys(balancies)) {
+            balancies[address] = utils.fromWei(balancies[address], 'ether');
+        }
 
         return balancies;
     }
@@ -397,7 +399,7 @@ class Api {
 
         const transactions = this.storage.transactions;
         const gasPrice = utils.toWei(data.gasPrice, 'ether');
-        const amount = currencyAddress === '0x' ? utils.toWei(data.amount, 'ether') : data.amount;
+        const amount = utils.toWei(data.amount, 'ether');
 
         const transaction = {
             timestamp,
