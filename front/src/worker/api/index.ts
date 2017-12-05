@@ -437,11 +437,9 @@ class Api {
 
     private async proceedTx(transaction: any, txResult: any) {
         const receipt = await txResult.getReceipt();
-        console.log(receipt);
-
         const fee = await txResult.getTxPrice();
 
-        transaction.status = 'success';
+        transaction.status = receipt.status === '0x0' ? 'failed' : 'success';
         transaction.fee = utils.fromWei(fee.toString(), 'ether');
 
         await this.saveData();
