@@ -1,6 +1,121 @@
 .sonm-login {
   background-color: @color-brand-bg;
+
   color: @color-white;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
 
+  &__popup-header {
+    color: @color-font;
+    font-weight: 500;
+    text-align: center;
+    font-size: 18px;
+    margin: 0 0 20px;
+  }
 
+  &__spin {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  &__center {
+    margin: auto;
+
+    &--inactive {
+      filter: blur(5px);
+    }
+  }
+
+  &__wallet-form {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  &__wallet-select {
+    width: 280px;
+    margin-right: 10px;
+  }
+
+  &__input {
+    font-size: 16px;
+    color: @color-white;
+    font-weight: 400;
+    line-height: 36px;
+    height: 36px;
+    box-sizing: padding-box;
+    background-color: transparent;
+    border: solid 0 @color-blue;
+    border-bottom-width: 1px;
+    width: 100%;
+    transition: border-bottom-width;
+    padding: 0;
+    margin: 5px 0;
+
+    &:focus {
+      outline: none;
+      border-bottom-width: 2px;
+    }
+  }
+
+  &__label-error:not(:empty) + &__input {
+    border-color: @color-pink;
+    border-bottom-width: 2px;
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    width: 330px;
+
+    &-text {
+      color: @color-light-font;
+      font-size: 13px;
+    }
+
+    &-error {
+      display: inline-block;
+      width: 100%;
+      color: @color-pink;
+      order: 3;
+      font-size: 12px;
+      line-height: 20px;
+      height: 20px;
+    }
+  }
+
+  &__create {
+    margin: 10px 0 0;
+    width: 200px;
+  }
+
+  &__popup {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+
+    &-inner {
+      margin: auto;
+      background-color: @color-brand-bg;
+      border: solid 2px #213039;
+      padding: 25px 40px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0.95;
+      z-index: 999999;
+      position: relative;
+      align-items: center;
+      box-shadow: 0px 0px 23px -2px rgba(33,48,57,1);
+    }
+  }
 }
+

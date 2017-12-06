@@ -8,7 +8,6 @@
   "devDependencies": {
     "@types/bignumber.js": "^4.0.3",
     "@types/chai": "^4.0.5",
-    "@types/classnames": "2.2.3",
     "@types/history": "4.6.1",
     "@types/lodash": "4.14.85",
     "@types/mocha": "^2.2.44",

@@ -4,21 +4,25 @@ import * as cn from 'classnames';
 import { Button } from 'app/components/common/button';
 import { Api } from 'app/api';
 import { IValidation } from 'ipc/types';
+import { BlackSelect } from 'app/components/common/black-select';
 
 interface IProps {
     className?: string;
     onLogin: () => void;
 }
 
+class BlackWalletSelect extends BlackSelect<string> {}
+
 export class Login extends React.Component<IProps, any> {
     public state = {
-        currentAction: 'start',
+        currentAction: 'select-wallet',
         password: 'my secret key',
+        newName: '',
+        newPassword: '',
         confirmation: '',
         wallets: [] as string[],
         name: '',
         pending: false,
-        creating: false,
         error: '',
 
         validation: {} as IValidation,
@@ -32,9 +36,9 @@ export class Login extends React.Component<IProps, any> {
         this.setState({
             pending: false,
             wallets,
-            name: wallets && wallets.length > 0
-                ? wallets[0]
-                : '',
+            name: window.localStorage.getItem('sonm-last-used-wallet')
+                || (wallets && wallets[0])
+                || '',
         });
     }
 
@@ -46,67 +50,65 @@ export class Login extends React.Component<IProps, any> {
         this.setState({ creating: true });
     }
 
-    protected handleLogin = async () => {
+    protected handleStartLogin = (event: any) => {
+        event.preventDefault();
+
         this.setState({
-            pending: true,
+            currentAction: 'select-wallet',
         });
-
-        try {
-            const { validation } = await Api.setSecretKey(this.state.password, this.state.name);
-
-            if (validation) {
-                this.setState({
-                    validation,
-                });
-            } else {
-                this.props.onLogin();
-            }
-        } catch (e) {
-
-            this.setState({
-                pending: false,
-                error: String(e),
-            });
-        }
     }
 
-    protected handleCreateNew = async () => {
+    protected handleCancel() {
+        this.setState({
+            currentAction: 'select-wallet',
+        });
+    }
+
+    protected handleLogin = async (event: any) => {
+        event.preventDefault();
+    }
+
+    protected handleCreateNew = async (event: any) => {
+        event.preventDefault();
+
+        let invalid = false;
+
         if (this.state.wallets.indexOf(this.state.name) !== -1) {
-            throw new Error(`This wallet name ${this.state.name} is already exists`);
+            this.setState({ validation: { newName: 'Already exist' } });
+            invalid = true;
         }
 
         if (this.state.password !== this.state.confirmation) {
-            this.setState({
-                validation: {
-                    confirmation: 'Passwords !==',
-                },
-            });
-
-            return;
+            this.setState({ validation: { confirmation: 'Passwords !==' } });
+            invalid = true;
         }
 
-        this.setState({
-            pending: true,
-        });
+        if (!invalid) {
+            this.setState({
+                pending: true,
+            });
 
-        try {
-            const { validation } = await Api.setSecretKey(this.state.password, this.state.name);
+            try {
+                const { validation } = await Api.setSecretKey(this.state.password, this.state.name);
 
-            if (validation) {
+                if (validation) {
+                    this.setState({ validation });
+                } else {
+                    this.props.onLogin();
+                }
+
+            } catch (e) {
+
                 this.setState({
-                    validation,
+                    pending: false,
+                    error: String(e),
                 });
-            } else {
-                this.props.onLogin();
             }
-
-        } catch (e) {
-
-            this.setState({
-                pending: false,
-                error: String(e),
-            });
         }
+    }
+
+    protected static setFocus(ref: any) {
+        ref && ref.focus();
     }
 
     protected handleChangeInput = (event: any) => {
@@ -115,55 +117,114 @@ export class Login extends React.Component<IProps, any> {
         });
     }
 
-    protected renderSelect(out: any[]) {
-        out.push([
-            <label key="s">
-                Wallet name
-                <select className="sonm-login__select-name" name="name" onChange={this.handleChangeInput} value={this.state.name}>
-                    {this.state.wallets.map(name => <option key={name}>{name}</option>)}
-                </select>
-            </label>,
-        ]);
+    protected handleChangeWallet = (params: any) => {
+        this.setState({ name: params.value });
 
-        return out;
+        window.localStorage.setItem('sonm-last-used-wallet', params.value);
     }
 
-    protected renderControls() {
-        const out: any[] = [];
+    protected renderSelect() {
+        return (
+            <form className="sonm-login__wallet-form" onSubmit={this.handleStartLogin}>
+                <BlackWalletSelect
+                    className="sonm-login__wallet-select"
+                    name="name"
+                    onChange={this.handleChangeWallet}
+                    value={this.state.name}
+                    options={this.state.wallets}
+                />
+                <Button
+                    height={50}
+                    square
+                    className="sonm-login__wallet-login"
+                    onClick={this.handleStartLogin}
+                    type="submit"
+                >
+                    Login
+                </Button>
+            </form>
+        );
+    }
 
-        if (this.state.creating || this.state.wallets.length === 0) {
-            out.push(
-                <label key="i-n-n">
-                    Wallet name
-                    <input type="name" className="sonm-login__new-name" name="name" onChange={this.handleChangeInput} />
-                </label>,
-                <label key="i-n-p">
-                    Password
-                    <input type="password" className="sonm-login__new-password" name="password"  onChange={this.handleChangeInput} />
-                </label>,
-                <label key="i-n-c">
-                    Password confirmation
-                    <input type="password" className="sonm-login__new-confirm" name="confirmation" onChange={this.handleChangeInput} />
-                    <span>{this.state.validation.confirmation}</span>
-                </label>,
-                <Button key="b-c" className="sonm-login__create" onClick={this.handleCreateNew}>Create</Button>,
-            );
-        } else if (this.state.wallets.length) {
-            if (this.state.wallets.length > 1) {
-                this.renderSelect(out);
-            }
-            out.push(
-                <label key="i-l">
-                    Password
-                    <input type="password" className="sonm-login__login-input" name="password" onChange={this.handleChangeInput} />
-                    <span>{this.state.validation.password}</span>
-                </label>,
-                <Button key="b-u" className="sonm-login__login-btn" onClick={this.handleLogin}>Login</Button>,
-                <Button key="b-n-w" className="sonm-login__new-btn" onClick={this.handleRequireNewWallet}>New Wallet</Button>,
-            );
+    protected renderLoginPopup() {
+        if (this.state.currentAction !== 'enter-password') {
+            return null;
         }
 
-        return out;
+        return (
+            <div className="sonm-login__popup">
+                <form className="sonm-login__popup-inner" onSubmit={this.handleLogin}>
+                    <h3 className="sonm-login__popup-header">Enter password</h3>
+                    <label className="sonm-login__label">
+                        <span className="sonm-login__label-text">Password</span>
+                        <span className="sonm-login__label-error">{this.state.validation.password}</span>
+                        <input
+                            type="password"
+                            className="sonm-login__input"
+                            name="confirmation"
+                            onChange={this.handleChangeInput}
+                        />
+                    </label>
+                    <Button
+                        className="sonm-login__create"
+                        type="submit"
+                    >
+                        Login
+                    </Button>
+                </form>
+            </div>
+        );
+    }
+
+    protected renderNewWalletPopup() {
+        if (this.state.currentAction !== 'create-new') {
+            return null;
+        }
+
+        return (
+            <div className="sonm-login__popup">
+                <form className="sonm-login__popup-inner" onSubmit={this.handleCreateNew}>
+                    <h3 className="sonm-login__popup-header">New wallet</h3>
+                    <label className="sonm-login__label">
+                        <span className="sonm-login__label-text">Wallet name</span>
+                        <span className="sonm-login__label-error">{this.state.validation.newName}</span>
+                        <input
+                            type="text"
+                            className="sonm-login__input"
+                            name="newName"
+                            onChange={this.handleChangeInput}
+                        />
+                    </label>
+                    <label className="sonm-login__label">
+                        <span className="sonm-login__label-text">Password</span>
+                        <span className="sonm-login__label-error">{this.state.validation.newPassword}</span>
+                        <input
+                            type="password"
+                            className="sonm-login__input"
+                            name="newPassword"
+                            onChange={this.handleChangeInput}
+                        />
+                    </label>
+                    <label className="sonm-login__label">
+                        <span className="sonm-login__label-text">Password confirmation</span>
+                        <span className="sonm-login__label-error">{this.state.validation.confirmation}</span>
+                        <input
+                            type="password"
+                            className="sonm-login__input"
+                            name="confirmation"
+                            onChange={this.handleChangeInput}
+                        />
+                    </label>
+                    <Button
+
+                        className="sonm-login__create"
+                        type="submit"
+                    >
+                        Create
+                    </Button>
+                </form>
+            </div>
+        );
     }
 
     public render() {
@@ -172,18 +233,23 @@ export class Login extends React.Component<IProps, any> {
         } = this.props;
 
         return (
-            <div className={cn('sonm-login', className)}>
-                <div className="sonm-login__errors">
-                    {this.state.error}
-                </div>
-                <div className="sonm-login__center">
-                    <div className="sonm-login__controls">
-                        <Spin spinning={this.state.pending}>
-                            {this.renderControls()}
-                        </Spin>
+            <Spin spinning={this.state.pending} className="sonm-login__spin">
+                <div className={cn('sonm-login', className)}>
+                    <div className="sonm-login__errors">
+                        {this.state.error}
                     </div>
+                    <div
+                        className={cn(
+                            'sonm-login__center', {
+                            'sonm-login__center--inactive': this.state.currentAction !== 'select-wallet',
+                        })}
+                    >
+                        {this.renderSelect()}
+                    </div>
+                    {this.renderNewWalletPopup()}
+                    {this.renderLoginPopup()}
                 </div>
-            </div>
+            </Spin>
         );
     }
 }
