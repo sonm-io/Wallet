@@ -4,7 +4,7 @@ export interface IRawAccount {
     address: string;
 }
 
-export type TTransactionStatus = 'created' | 'processed' | 'fail' | 'success';
+export type TTransactionStatus = 'created' | 'pending' | 'fail' | 'success';
 
 export interface  ISendTransaction {
     timestamp: number;

@@ -7,6 +7,7 @@ export interface ICurrencyItemProps {
     name: string;
     symbol: string;
     balance: string;
+    decimals: number;
 }
 
 export class CurrencyItem extends React.Component<ICurrencyItemProps, any> {

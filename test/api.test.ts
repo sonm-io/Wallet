@@ -85,7 +85,7 @@ describe('Api',  async function() {
     });
 
     it('should send ether and snmt', async function() {
-        const amount = '0.00000000000000002';
+        const amount = '0.000000000000000002';
         const to = 'fd0c80ba15cbf19770319e5e76ae05012314608f';
         const tx = {
             timestamp: new Date().valueOf(),

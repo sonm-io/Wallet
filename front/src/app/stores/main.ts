@@ -179,6 +179,7 @@ export class MainStore {
             return {
                 name: currency.name,
                 symbol: currency.symbol,
+                decimals: currency.decimals,
                 balance: accounts.reduce((sum: any, accountAddr: string) => {
                     const account = this.accountMap.get(accountAddr);
 
@@ -187,7 +188,7 @@ export class MainStore {
                     }
 
                     return sum;
-                }, new BigNumber(0)).toString(),
+                }, new BigNumber(0)).toFixed(currency.decimals),
                 address: currency.address,
             };
         });
