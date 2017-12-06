@@ -5,6 +5,7 @@ import { Button } from 'app/components/common/button';
 import { Api } from 'app/api';
 import { IValidation } from 'ipc/types';
 import { BlackSelect } from 'app/components/common/black-select';
+import { Dialog } from 'app/components/common/dialog';
 
 interface IProps {
     className?: string;
@@ -183,9 +184,7 @@ export class Login extends React.Component<IProps, any> {
         window.localStorage.setItem('sonm-last-used-wallet', params.value);
     }
 
-    protected handleReturn = (event: any) => {
-        event.preventDefault();
-
+    protected handleReturn = () => {
         this.setState({ currentAction: 'select-wallet', validation: {} });
     }
 
@@ -221,9 +220,8 @@ export class Login extends React.Component<IProps, any> {
         }
 
         return (
-            <div className="sonm-login__popup">
+            <Dialog onClickCross={this.handleReturn} color="dark">
                 <form className="sonm-login__popup-inner" onSubmit={this.handleLogin}>
-                    {this.renderCross()}
                     <h3 className="sonm-login__popup-header">Enter password</h3>
                     <label className="sonm-login__label">
                         <span className="sonm-login__label-text">Password</span>
@@ -242,7 +240,7 @@ export class Login extends React.Component<IProps, any> {
                         Login
                     </Button>
                 </form>
-            </div>
+            </Dialog>
         );
     }
 
@@ -252,9 +250,8 @@ export class Login extends React.Component<IProps, any> {
         }
 
         return (
-            <div className="sonm-login__popup">
-                <form className="sonm-login__popup-inner" onSubmit={this.handleCreateNew}>
-                    {this.state.wallets.length > 0 && this.renderCross()}
+            <Dialog onClickCross={this.handleReturn} color="dark">
+                <form className="sonm-login__popup-content" onSubmit={this.handleCreateNew}>
                     <h3 className="sonm-login__popup-header">New wallet</h3>
                     <label className="sonm-login__label">
                         <span className="sonm-login__label-text">Wallet name</span>
@@ -293,12 +290,8 @@ export class Login extends React.Component<IProps, any> {
                         Create
                     </Button>
                 </form>
-            </div>
+            </Dialog>
         );
-    }
-
-    protected renderCross() {
-        return <button type="button" className="sonm-login__popup-cross" onClick={this.handleReturn}>+</button>;
     }
 
     public render() {
