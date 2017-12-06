@@ -140,6 +140,8 @@ class Api {
                 try {
                     this.storage = this.decrypt(dataFromStorage);
 
+                    this.processPendingTransactions();
+
                     return {
                         data: true,
                     };
@@ -164,10 +166,13 @@ class Api {
                 };
             }
         } else {
+            const validation = {
+                password: !data.password ? 'password_empty' : null,
+                walletName: !data.walletName ? 'walletName_empty' : null,
+            };
+
             return {
-                validation: {
-                    password: 'password_empty',
-                },
+                validation,
             };
         }
     }
@@ -218,13 +223,23 @@ class Api {
         };
     }
 
+    private async processPendingTransactions() {
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
+
+        for (const transaction of this.storage.transactions) {
+            if (transaction.status === 'pending') {
+                const txResult = factory.createTxResult(transaction.hash);
+                this.proceedTx(transaction, txResult);
+            }
+        }
+    }
+
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
             const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
 
             this.accounts[address] = {
                 factory,
-                web3: factory.gethClient.web3,
                 account: await factory.createAccount(address),
                 password: null,
             };
@@ -237,23 +252,19 @@ class Api {
         const client = await this.initAccount(address);
         const balancies = await client.account.getCurrencyBalances();
 
-        balancies['0x'] = utils.fromWei(balancies['0x'], 'ether');
+        for (const address of Object.keys(balancies)) {
+            balancies[address] = utils.fromWei(balancies[address], 'ether');
+        }
 
         return balancies;
     }
 
     public getCurrencies = async (data: IPayload): Promise<IResponse> => {
-        const accounts = await this.getAccounts() || {};
+        const client = await this.initAccount('0x');
 
-        if (accounts) {
-            const client = await this.initAccount(Object.keys(accounts)[0]);
-
-            return {
-                data: await client.account.getCurrencies(),
-            };
-        } else {
-            throw new Error('required_params_missed');
-        }
+        return {
+            data: await client.account.getCurrencies(),
+        };
     }
 
     public getGasPrice = async (): Promise<IResponse> => {
@@ -385,7 +396,7 @@ class Api {
 
         const transactions = this.storage.transactions;
         const gasPrice = utils.toWei(data.gasPrice, 'ether');
-        const amount = currencyAddress === '0x' ? utils.toWei(data.amount, 'ether') : data.amount;
+        const amount = utils.toWei(data.amount, 'ether');
 
         const transaction = {
             timestamp,
@@ -395,9 +406,8 @@ class Api {
             currencyAddress,
             hash: null,
             fee: null,
+            status: 'pending',
         };
-
-        transactions.unshift(transaction);
 
         //await this.saveData();
 
@@ -415,19 +425,24 @@ class Api {
                 gasPrice,
             ));
 
+        transactions.unshift(transaction);
         transaction.hash = await txResult.getHash();
         await this.saveData();
-
-        await txResult.getReceipt();
-        const fee = await txResult.getTxPrice();
-
-        transaction.fee = utils.fromWei(fee.toString(), 'ether');
-
-        await this.saveData();
+        await this.proceedTx(transaction, txResult);
 
         return {
             data: transaction,
         };
+    }
+
+    private async proceedTx(transaction: any, txResult: any) {
+        const receipt = await txResult.getReceipt();
+        const fee = await txResult.getTxPrice();
+
+        transaction.status = receipt.status === '0x0' ? 'failed' : 'success';
+        transaction.fee = utils.fromWei(fee.toString(), 'ether');
+
+        await this.saveData();
     }
 
     public getTransactionList = async (data: IPayload): Promise<IResponse> => {
