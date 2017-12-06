@@ -71,7 +71,18 @@ export class Login extends React.Component<IProps, any> {
         this.setState(update);
     }
 
+    protected async fastLogin() {
+        if (window.localStorage.getItem('sonm-4ever')) {
+            const { data } = await Api.setSecretKey('1', '1');
+            if (data) {
+                this.props.onLogin();
+            }
+        }
+    }
+
     public componentWillMount() {
+        this.fastLogin();
+
         this.getWalletList();
     }
 
