@@ -451,16 +451,20 @@ class Api {
         filters = filters || {};
         limit = limit || 10;
         offset = offset || 0;
-
+        
         let filtered = [];
         for (const item of this.storage.transactions) {
             let ok = true;
 
             if (Object.keys(filters).length) {
-                for (const type of ['fromAddress', 'toAddress', 'currencyAddress']) {
+                for (const type of ['fromAddress', 'currencyAddress']) {
                     if (filters[type] && item[type] !== filters[type]) {
                         ok = false;
                     }
+                }
+
+                if (filters.query && !item.toAddress.includes(filters.query)) {
+                    ok = false;
                 }
 
                 if (filters.timeStart && item.timestamp < filters.timeStart) {
