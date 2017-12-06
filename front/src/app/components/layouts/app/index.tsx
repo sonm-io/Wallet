@@ -59,6 +59,9 @@ export class App extends React.Component<IProps, any> {
                             <Menu.Item key="/history" className="sonm-nav__menu-item">
                                 History
                             </Menu.Item>
+                            <Menu.Item key="/account/0xfd0c80ba15cbf19770319e5e76ae05012314608f" className="sonm-nav__menu-item">
+                                Account
+                            </Menu.Item>
                         </Menu>
                         <div className="sonm-nav__total">
                             {firstTokenBalance}

@@ -3,6 +3,7 @@ import { Wallets } from '../components/layouts/wallets';
 import { App } from '../components/layouts/app';
 import { History } from '../components/layouts/history';
 import { Votes } from '../components/layouts/votes';
+import { Account } from '../components/layouts/account';
 import * as React from 'react';
 
 import { LocaleProvider } from 'antd';
@@ -54,6 +55,13 @@ const routes = [
                 }),
             },
             {
+                path: '/account/:address',
+                action: (ctx: IContext) => ({
+                    title: 'Account',
+                    content: <Account address={ctx.params.address}/>,
+                }),
+            },
+            {
                 path: '/wallets',
                 action: defaultAction = async (ctx: IContext) => {
                     const inner = await ctx.next();
@@ -97,6 +105,7 @@ export interface IUrlParams {
 interface IContext {
     query: object;
     pathname: string;
+    params?: any;
     next: () => IRouterResult;
 }
 

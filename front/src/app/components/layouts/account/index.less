@@ -1,29 +1,47 @@
-@import "../../common/deletable-item/index";
+@import "guide.less";
 
-.sonm-wallets {
-  display: grid;
-  grid-template-rows: 50px 1fr repeat(auto-fill, 50px);
-  grid-template-columns: 1fr 350px;
-  grid-gap: 10px;
+@currency-balance-list-header-bg: @color-gray-bg;
+@currency-balance-list-item-bg: @color-light-gray-bg;
 
-  &__header {
-    grid-column: 1;
-    grid-row: 1;
-  }
+.sonm-account-token-list {
+  display: inline-block;
+  min-width: 235px;
+  font-weight: 500;
 
   &__list {
-    grid-column: 1;
-    grid-row: 2;
+    list-style-type: none;
   }
 
-  &__add-button {
-    grid-column: 1;
-    grid-row: 3;
-    width: 200px;
-  }
+  &__item {
+    border: 0 solid @currency-balance-list-header-bg;
+    border-width: 1px;
+    text-align: left;
+    padding: 10px 0 10px 36px;
+    font-size: 20px;
+    // text-transform: uppercase;
+    display: grid;
 
-  &__balances {
-    grid-column: 2;
-    grid-row: 2;
+    &__blockies {
+      grid-column: 1;
+      align-self: center;
+    }
+
+    &__name {
+      width: 200;
+      grid-column: 1;
+      align-self: center;
+    }
+
+    &__balance {
+      grid-column: 1;
+      align-self: center;
+      flex: 1;
+    }
+
+    &__button {
+      width: 200;
+      grid-column: 1;
+      align-self: right;
+    }
   }
 }
