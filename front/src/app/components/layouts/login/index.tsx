@@ -15,7 +15,15 @@ class BlackWalletSelect extends BlackSelect<string> {}
 
 type TAction = 'select-wallet' | 'create-new' | 'enter-password';
 
+interface IRefs {
+    loginBtn: Button | null;
+}
+
 export class Login extends React.Component<IProps, any> {
+    protected nodes: IRefs = {
+        loginBtn: null,
+    };
+
     public state = {
         currentAction: ('select-wallet' as TAction),
         password: '',
@@ -79,6 +87,14 @@ export class Login extends React.Component<IProps, any> {
         });
     }
 
+    protected handleStartCreateNew = (event: any) => {
+        event.preventDefault();
+
+        this.setState({
+            currentAction: 'create-new',
+        });
+    }
+
     protected handleLogin = async (event: any) => {
         event.preventDefault();
 
@@ -103,12 +119,12 @@ export class Login extends React.Component<IProps, any> {
 
         let invalid = false;
 
-        if (this.state.wallets.indexOf(this.state.name) !== -1) {
+        if (this.state.wallets.indexOf(this.state.newName) !== -1) {
             this.setState({ validation: { newName: 'Already exist' } });
             invalid = true;
         }
 
-        if (this.state.password !== this.state.confirmation) {
+        if (this.state.newPassword !== this.state.confirmation) {
             this.setState({ validation: { confirmation: 'Passwords !==' } });
             invalid = true;
         }
@@ -119,7 +135,7 @@ export class Login extends React.Component<IProps, any> {
             });
 
             try {
-                const { validation } = await Api.setSecretKey(this.state.password, this.state.name);
+                const { validation } = await Api.setSecretKey(this.state.newPassword, this.state.newName);
 
                 if (validation) {
                     this.setState({ validation });
@@ -148,7 +164,10 @@ export class Login extends React.Component<IProps, any> {
     }
 
     protected handleChangeWallet = (params: any) => {
-        this.setState({ name: params.value });
+        this.setState(
+            { name: params.value },
+            () => this.nodes.loginBtn && this.nodes.loginBtn.focus(),
+        );
 
         window.localStorage.setItem('sonm-last-used-wallet', params.value);
     }
@@ -158,6 +177,8 @@ export class Login extends React.Component<IProps, any> {
 
         this.setState({ currentAction: 'select-wallet', validation: {} });
     }
+
+    protected saveLoginBtnRef = (ref: Button | null) => this.nodes.loginBtn = ref;
 
     protected renderSelect() {
         return (
@@ -175,6 +196,7 @@ export class Login extends React.Component<IProps, any> {
                     className="sonm-login__wallet-login"
                     onClick={this.handleStartLogin}
                     type="submit"
+                    ref={this.saveLoginBtnRef}
                 >
                     Login
                 </Button>
@@ -221,7 +243,7 @@ export class Login extends React.Component<IProps, any> {
         return (
             <div className="sonm-login__popup">
                 <form className="sonm-login__popup-inner" onSubmit={this.handleCreateNew}>
-                    {this.renderCross()}
+                    {this.state.wallets.length > 0 && this.renderCross()}
                     <h3 className="sonm-login__popup-header">New wallet</h3>
                     <label className="sonm-login__label">
                         <span className="sonm-login__label-text">Wallet name</span>
@@ -285,7 +307,11 @@ export class Login extends React.Component<IProps, any> {
                             'sonm-login__center--inactive': this.state.currentAction !== 'select-wallet',
                         })}
                     >
+                        <div className="sonm-login__logo" />
                         {this.renderSelect()}
+                        <button type="button" className="sonm-login__add-wallet" onClick={this.handleStartCreateNew}>
+                            Add wallet
+                        </button>
                     </div>
                     {this.renderNewWalletPopup()}
                     {this.renderLoginPopup()}
