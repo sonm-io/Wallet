@@ -13,33 +13,54 @@ interface IProps {
 
 class BlackWalletSelect extends BlackSelect<string> {}
 
+type TAction = 'select-wallet' | 'create-new' | 'enter-password';
+
 export class Login extends React.Component<IProps, any> {
     public state = {
-        currentAction: 'select-wallet',
-        password: 'my secret key',
+        currentAction: ('select-wallet' as TAction),
+        password: '',
         newName: '',
         newPassword: '',
         confirmation: '',
-        wallets: [] as string[],
+        wallets: ([] as string[]),
         name: '',
         pending: false,
         error: '',
 
-        validation: {} as IValidation,
+        validation: ({} as IValidation),
     };
 
     protected getWalletList = async () =>  {
         this.setState({ pending: true });
 
-        const { data: wallets } = await Api.getWalletList();
+        const { data } = await Api.getWalletList();
+        const wallets = data as string[];
 
-        this.setState({
+        let name = '';
+        const savedName = window.localStorage.getItem('sonm-last-used-wallet');
+
+        if (savedName && wallets.indexOf(savedName) !== -1) {
+            name = savedName;
+        } else if (wallets.length > 0) {
+            name = wallets[0];
+        }
+
+        const update: any = {
             pending: false,
             wallets,
-            name: window.localStorage.getItem('sonm-last-used-wallet')
-                || (wallets && wallets[0])
-                || '',
-        });
+            name,
+        };
+
+        if (wallets.length === 1) {
+            update.name = wallets[0];
+            update.currentAction = 'enter-password';
+        }
+
+        if (wallets.length === 0) {
+            update.currentAction = 'create-new';
+        }
+
+        this.setState(update);
     }
 
     public componentWillMount() {
@@ -54,18 +75,27 @@ export class Login extends React.Component<IProps, any> {
         event.preventDefault();
 
         this.setState({
-            currentAction: 'select-wallet',
-        });
-    }
-
-    protected handleCancel() {
-        this.setState({
-            currentAction: 'select-wallet',
+            currentAction: 'enter-password',
         });
     }
 
     protected handleLogin = async (event: any) => {
         event.preventDefault();
+
+        try {
+            const { validation, data: success } = await Api.setSecretKey(this.state.password, this.state.name);
+
+            if (validation) {
+                this.setState({ validation });
+            }
+
+            if (success) {
+                this.props.onLogin();
+            }
+
+        } catch (e) {
+            this.setState({ error: String(e) });
+        }
     }
 
     protected handleCreateNew = async (event: any) => {
@@ -123,6 +153,12 @@ export class Login extends React.Component<IProps, any> {
         window.localStorage.setItem('sonm-last-used-wallet', params.value);
     }
 
+    protected handleReturn = (event: any) => {
+        event.preventDefault();
+
+        this.setState({ currentAction: 'select-wallet', validation: {} });
+    }
+
     protected renderSelect() {
         return (
             <form className="sonm-login__wallet-form" onSubmit={this.handleStartLogin}>
@@ -154,6 +190,7 @@ export class Login extends React.Component<IProps, any> {
         return (
             <div className="sonm-login__popup">
                 <form className="sonm-login__popup-inner" onSubmit={this.handleLogin}>
+                    {this.renderCross()}
                     <h3 className="sonm-login__popup-header">Enter password</h3>
                     <label className="sonm-login__label">
                         <span className="sonm-login__label-text">Password</span>
@@ -161,7 +198,7 @@ export class Login extends React.Component<IProps, any> {
                         <input
                             type="password"
                             className="sonm-login__input"
-                            name="confirmation"
+                            name="password"
                             onChange={this.handleChangeInput}
                         />
                     </label>
@@ -184,6 +221,7 @@ export class Login extends React.Component<IProps, any> {
         return (
             <div className="sonm-login__popup">
                 <form className="sonm-login__popup-inner" onSubmit={this.handleCreateNew}>
+                    {this.renderCross()}
                     <h3 className="sonm-login__popup-header">New wallet</h3>
                     <label className="sonm-login__label">
                         <span className="sonm-login__label-text">Wallet name</span>
@@ -216,7 +254,6 @@ export class Login extends React.Component<IProps, any> {
                         />
                     </label>
                     <Button
-
                         className="sonm-login__create"
                         type="submit"
                     >
@@ -225,6 +262,10 @@ export class Login extends React.Component<IProps, any> {
                 </form>
             </div>
         );
+    }
+
+    protected renderCross() {
+        return <button type="button" className="sonm-login__popup-cross" onClick={this.handleReturn}>+</button>;
     }
 
     public render() {
