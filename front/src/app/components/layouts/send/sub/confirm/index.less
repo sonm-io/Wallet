@@ -1,0 +1,84 @@
+.sonm-send-confirm {
+  &__top {
+    padding-top: 20px;
+    border: 1px solid #ECECEC;
+  }
+
+  &__account {
+    display: grid;
+    grid-template-columns: 100px 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    font-weight: normal;
+
+    &__blockies {
+      margin: 10px;
+      grid-column: 1;
+      grid-row: 2 span;
+      align-self: center;
+    }
+
+    &__name {
+      padding-top: 20px;
+      font-size: 14px;
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    &__addr {
+      font-size: 14px;
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    &__addr-to {
+      justify-content: center;
+      align-self: center;
+      font-size: 14px;
+      grid-column: 2;
+      grid-row: 2 span;
+    }
+  }
+
+  &__icon {
+    background: url('./icon-from-to.svg') no-repeat;
+
+    margin: 0px 0px 0px 42px;
+    width: 10px;
+    height: 50px;
+
+    background-size: cover;
+    background-position: top center;
+  }
+
+  &__bottom {
+    padding-top: 20px;
+    display: grid;
+    grid-template-areas: "a a";
+    grid-auto-columns: 50%;
+    grid-column-gap: 20px;
+
+    &__params {
+      padding: 20px;
+      border: 1px solid #ECECEC;
+      flex: 1;
+
+      dt {
+        font-weight: bold;
+      }
+    }
+
+    &__form {
+      padding: 20px;
+      background-color: #ECECEC;
+      flex: 1;
+
+      &__buttons {
+        padding-top: 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+    }
+  }
+}

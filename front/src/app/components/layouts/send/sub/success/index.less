@@ -1,0 +1,40 @@
+.sonm-send-success {
+  text-align: center;
+
+  &__icons {
+    padding-top: 30px;
+    display:grid;
+    grid-template-columns: 200px 200px;
+    grid-row: auto auto;
+    grid-column-gap: 50px;
+    grid-row-gap: 30px;
+    justify-content:center;
+
+    &__history {
+      background: url('./icon-history.svg') no-repeat;
+
+      width: 200px;
+      height: 200px;
+
+      background-size: cover;
+      background-position: top center;
+      border-radius: 50%;
+    }
+
+    &__transaction {
+      background: url('./icon-new-transaction.svg') no-repeat;
+
+      width: 200px;
+      height: 200px;
+
+      background-size: cover;
+      background-position: top center;
+      border-radius: 50%;
+    }
+
+    .box {
+      align-items:center;
+      justify-content:center;
+    }
+  }
+}
