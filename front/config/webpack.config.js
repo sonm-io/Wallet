@@ -29,6 +29,7 @@ module.exports = {
             './guide.less$': getFullPath('src/app/less/guide.less'),
             'app': getFullPath('src/app'),
             'worker': getFullPath('src/worker'),
+            './node_modules': getFullPath('../node_modules'),
         },
     },
 

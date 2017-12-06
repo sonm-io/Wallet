@@ -12,34 +12,52 @@ export interface IButtonProps extends React.ButtonHTMLAttributes<any> {
     type?: string;
 }
 
-export function Button({ color = 'blue', square, transparent, children, height, type, className, ...rest }: IButtonProps) {
-    const style =
-        height
-            ? { '--height': `${height}px` }
-            : undefined;
+export class Button extends React.PureComponent<IButtonProps> {
+    protected buttonNode?: HTMLButtonElement;
 
-    if (type === undefined) {
-        type = 'button';
+    protected saveRef = (ref: HTMLButtonElement | null) => ref && (this.buttonNode = ref);
+
+    public focus = () => {
+        this.buttonNode && this.buttonNode.focus();
     }
 
-    return (
-        <button
-            className={cn(
-                className,
-                'sonm-button',
-                {
-                    [`sonm-button--color-${color}`]: Boolean(color),
-                    'sonm-button--square-pants': square,
-                    'sonm-button--transparent': transparent,
-                },
-            )}
-            style={style}
-            type={type}
-            {...rest}
-        >
-            {children}
-        </button>
-    );
+    public render() {
+        const {
+            color = 'blue',
+            square,
+            transparent,
+            children,
+            height,
+            type,
+            className,
+            ...rest,
+        } = this.props;
+
+        const style =
+            height
+                ? {'--height': `${height}px`}
+                : undefined;
+
+        return (
+            <button
+                ref={this.saveRef}
+                className={cn(
+                    className,
+                    'sonm-button',
+                    {
+                        [`sonm-button--color-${color}`]: Boolean(color),
+                        'sonm-button--square-pants': square,
+                        'sonm-button--transparent': transparent,
+                    },
+                )}
+                style={style}
+                type={type === undefined ? 'button' : type}
+                {...rest}
+            >
+                {children}
+            </button>
+        );
+    }
 }
 
 export default Button;

@@ -140,6 +140,8 @@ class Api {
                 try {
                     this.storage = this.decrypt(dataFromStorage);
 
+                    this.processPendingTransactions();
+
                     return {
                         data: true,
                     };
@@ -221,6 +223,17 @@ class Api {
         };
     }
 
+    private async processPendingTransactions() {
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
+
+        for (const transaction of this.storage.transactions) {
+            if (transaction.status === 'pending') {
+                const txResult = factory.createTxResult(transaction.hash);
+                this.proceedTx(transaction, txResult);
+            }
+        }
+    }
+
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
             const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
@@ -239,7 +252,9 @@ class Api {
         const client = await this.initAccount(address);
         const balancies = await client.account.getCurrencyBalances();
 
-        balancies['0x'] = utils.fromWei(balancies['0x'], 'ether');
+        for (const address of Object.keys(balancies)) {
+            balancies[address] = utils.fromWei(balancies[address], 'ether');
+        }
 
         return balancies;
     }
@@ -381,7 +396,7 @@ class Api {
 
         const transactions = this.storage.transactions;
         const gasPrice = utils.toWei(data.gasPrice, 'ether');
-        const amount = currencyAddress === '0x' ? utils.toWei(data.amount, 'ether') : data.amount;
+        const amount = utils.toWei(data.amount, 'ether');
 
         const transaction = {
             timestamp,
@@ -391,9 +406,8 @@ class Api {
             currencyAddress,
             hash: null,
             fee: null,
+            status: 'pending',
         };
-
-        transactions.unshift(transaction);
 
         //await this.saveData();
 
@@ -405,25 +419,30 @@ class Api {
                 gasPrice)
             : await client.account.sendTokens(
                 toAddress,
-                parseInt(amount, 10),
+                amount,
                 currencyAddress,
                 gasLimit,
                 gasPrice,
             ));
 
+        transactions.unshift(transaction);
         transaction.hash = await txResult.getHash();
         await this.saveData();
-
-        await txResult.getReceipt();
-        const fee = await txResult.getTxPrice();
-
-        transaction.fee = utils.fromWei(fee.toString(), 'ether');
-
-        await this.saveData();
+        await this.proceedTx(transaction, txResult);
 
         return {
             data: transaction,
         };
+    }
+
+    private async proceedTx(transaction: any, txResult: any) {
+        const receipt = await txResult.getReceipt();
+        const fee = await txResult.getTxPrice();
+
+        transaction.status = receipt.status === '0x0' ? 'failed' : 'success';
+        transaction.fee = utils.fromWei(fee.toString(), 'ether');
+
+        await this.saveData();
     }
 
     public getTransactionList = async (data: IPayload): Promise<IResponse> => {
@@ -432,16 +451,20 @@ class Api {
         filters = filters || {};
         limit = limit || 10;
         offset = offset || 0;
-
+        
         let filtered = [];
         for (const item of this.storage.transactions) {
             let ok = true;
 
             if (Object.keys(filters).length) {
-                for (const type of ['fromAddress', 'toAddress', 'currencyAddress']) {
+                for (const type of ['fromAddress', 'currencyAddress']) {
                     if (filters[type] && item[type] !== filters[type]) {
                         ok = false;
                     }
+                }
+
+                if (filters.query && !item.toAddress.includes(filters.query)) {
+                    ok = false;
                 }
 
                 if (filters.timeStart && item.timestamp < filters.timeStart) {

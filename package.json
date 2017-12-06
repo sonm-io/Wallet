@@ -8,7 +8,6 @@
   "devDependencies": {
     "@types/bignumber.js": "^4.0.3",
     "@types/chai": "^4.0.5",
-    "@types/classnames": "2.2.3",
     "@types/history": "4.6.1",
     "@types/lodash": "4.14.85",
     "@types/mocha": "^2.2.44",
@@ -87,10 +86,11 @@
     "mobx-react": "4.3.4",
     "mobx-utils": "3.2.1",
     "query-string": "5.0.1",
+    "rc-select": "^7.4.0",
     "react": "^16.1.0",
     "react-dom": "^16.1.0",
-    "universal-router": "^4.3.0",
-    "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v0.1.6"
+    "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v0.1.9",
+    "universal-router": "^4.3.0"
   },
   "scripts": {
     "start": "electron .",
