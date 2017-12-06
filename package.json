@@ -89,7 +89,7 @@
     "rc-select": "^7.4.0",
     "react": "^16.1.0",
     "react-dom": "^16.1.0",
-    "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v0.1.8",
+    "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v0.1.9",
     "universal-router": "^4.3.0"
   },
   "scripts": {
