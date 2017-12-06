@@ -419,7 +419,7 @@ class Api {
                 gasPrice)
             : await client.account.sendTokens(
                 toAddress,
-                parseInt(amount, 10),
+                amount,
                 currencyAddress,
                 gasLimit,
                 gasPrice,
