@@ -96,6 +96,7 @@ class Api {
             'account.list': this.getAccountList,
 
             'account.setSecretKey': this.setSecretKey,
+            'account.checkPrivateKey': this.checkPrivateKey,
             'account.hasSavedData': this.hasSavedData,
 
             'transaction.list': this.getTransactionList,
@@ -126,6 +127,60 @@ class Api {
         return {
             data: (await createPromise('get', { key: this.hash })) ? true : false,
         };
+    }
+
+    public checkPrivateKey = async (data: IPayload): Promise<IResponse> => {
+        if (data.address) {
+            const { address, password } = data;
+
+            return this.checkAccountPassword(password, address);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
+    private async checkAccountPassword(password: string, address: string): Promise<IResponse> {
+        if (!password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        }
+
+        const client = await this.initAccount(address);
+
+        if (client && client.password) {
+            if (client.password !== password) {
+                return {
+                    validation: {
+                        password: 'password_not_valid',
+                    },
+                };
+            } else {
+                return {
+                    data: true,
+                };
+            }
+        } else {
+            const accounts = await this.getAccounts() || {};
+
+            try {
+                const privateKey = await utils.recoverPrivateKey(accounts[address].json, password);
+                client.factory.setPrivateKey(privateKey.toString('hex'));
+                client.password = password;
+
+                return {
+                    data: true,
+                };
+            } catch (err) {
+                return {
+                    validation: {
+                        password: 'password_not_valid',
+                    },
+                };
+            }
+        }
     }
 
     public setSecretKey = async (data: IPayload): Promise<IResponse> => {
@@ -378,28 +433,13 @@ class Api {
 
         const { fromAddress, toAddress, currencyAddress, password, gasLimit, timestamp } = data;
 
-        const client = await this.initAccount(fromAddress);
+        const validation = await this.checkAccountPassword(password, fromAddress);
 
-        if (client && client.password) {
-            if (client.password !== password) {
-                throw new Error('password_not_matched');
-            }
-        } else {
-            const accounts = await this.getAccounts() || {};
-
-            try {
-                const privateKey = await utils.recoverPrivateKey(accounts[fromAddress].json, password);
-                client.factory.setPrivateKey(privateKey.toString('hex'));
-                client.password = password;
-            } catch (err) {
-                return {
-                    validation: {
-                        password: 'password_not_valid',
-                    },
-                };
-            }
+        if (!validation.data) {
+            return validation;
         }
 
+        const client = await this.initAccount(fromAddress);
         const transactions = this.storage.transactions;
         const gasPrice = utils.toWei(data.gasPrice, 'ether');
         const amount = utils.toWei(data.amount, 'ether');

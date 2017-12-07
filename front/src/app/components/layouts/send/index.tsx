@@ -11,6 +11,8 @@ import { ButtonGroup } from 'app/components/common/button-group';
 import IdentIcon from '../../common/ident-icon/index';
 import { MainStore, ISendFormValues } from 'app/stores/main';
 import Header from '../../common/header';
+import { SendConfirm } from './sub/confirm';
+import { navigate } from 'app/router';
 
 interface IProps extends FormComponentProps {
     className?: string;
@@ -27,6 +29,7 @@ const ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/i;
 export class SendSrc extends React.Component<IProps, any> {
     public state = {
         addressTarget: '0x',
+        pending: false,
     };
 
     protected handleSubmit = (event: React.FormEvent<Form>) => {
@@ -41,9 +44,7 @@ export class SendSrc extends React.Component<IProps, any> {
 
                 this.props.mainStore.setSendParams(values);
 
-                // TODO
-                const password = prompt('Password please') || '';
-                this.props.mainStore.confirmTransaction(password);
+                this.props.mainStore.showConfirmDialog();
             },
         );
     }
@@ -69,9 +70,9 @@ export class SendSrc extends React.Component<IProps, any> {
     protected handleSetMaximum = () => {
         if (this.props.mainStore) {
 
-            const {gasPrice, gasValue} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
+            const {gasPrice, gasLimit} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
             this.props.form.setFieldsValue({
-                amount: this.props.mainStore.getMaxValue(gasPrice, gasValue),
+                amount: this.props.mainStore.getMaxValue(gasPrice, gasLimit),
             });
         }
     }
@@ -172,7 +173,57 @@ export class SendSrc extends React.Component<IProps, any> {
     }
 
     public renderConfirm() {
-        return null;
+        const mainStore = this.props.mainStore;
+
+        if (!mainStore) { return null; }
+
+        const accountAddress = mainStore.selectedAccountAddress;
+        const account = mainStore.accountMap.get(accountAddress);
+        const accountName = account ? account.name : '';
+        const currency = mainStore.currencyMap.get(mainStore.selectedCurrencyAddress);
+
+        if (!currency) { return null; }
+
+        return <SendConfirm
+            fromAddress={accountAddress}
+            toAddress={mainStore.values.toAddress}
+            amount={mainStore.values.amount}
+            gasLimit={mainStore.values.gasLimit}
+            gasPrice={mainStore.values.gasPrice}
+            fromName={accountName}
+            currency={currency}
+            onConfirm={this.handleConfirm}
+            onCancel={this.handleCancelConfirmation}
+            passwordValidationMsg={mainStore.validation.password}
+        />;
+    }
+
+    public handleConfirm = async (password: string) => {
+        const mainStore = this.props.mainStore;
+
+        if (!mainStore) { return; }
+
+        this.setState({ pending: true });
+
+        const isPasswordValid = await mainStore.checkSelectedAccountPassword(password);
+
+        if (isPasswordValid) {
+            mainStore.confirmTransaction(password);
+            mainStore.hideConfirmDialog();
+            this.props.form.resetFields();
+            navigate({ path: '/oh-yes' });
+        }
+
+        this.setState({ pending: false });
+    }
+
+    public handleCancelConfirmation = () => {
+        const mainStore = this.props.mainStore;
+
+        if (!mainStore) { return; }
+
+        mainStore.hideConfirmDialog();
+        mainStore.setValidation({});
     }
 
     protected static normalizeAddress(str: string): string {
@@ -197,15 +248,14 @@ export class SendSrc extends React.Component<IProps, any> {
         const selectedCurrencyAddress = mainStore.selectedCurrencyAddress;
         const gasPrice = mainStore.userGasPrice;
         const gasLimit = (mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT);
-        const showConfirmDialog = mainStore.showConfirmDialog;
         const isReady = mainStore.isReady;
         const values = mainStore.values;
 
         return (
             <div className={cn('sonm-send', className)}>
-                {showConfirmDialog
+                {mainStore.isConfirmDialogVisible
                     ? this.renderConfirm()
-                    : <Spin spinning={!isReady}>
+                    : <Spin spinning={!isReady || this.state.pending}>
                         <Header className="sonm-send__header">
                             Transfer
                         </Header>
@@ -263,7 +313,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                 })(
                                     <Input
                                         className="sonm-send__input"
-                                        placeholder="Ammount"
+                                        placeholder="Amount"
                                     />,
                                 )}
                                 <Button

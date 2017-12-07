@@ -4,9 +4,8 @@ import * as cn from 'classnames';
 import IdentIcon from '../../../../common/ident-icon/index';
 import { ICurrencyInfo } from 'app/api/types';
 import Button from '../../../../common/button/index';
-import { FormComponentProps } from 'antd/lib/form/Form';
 
-interface IProps extends FormComponentProps {
+interface IProps {
     className?: string;
     fromAddress: string;
     toAddress: string;
@@ -15,17 +14,22 @@ interface IProps extends FormComponentProps {
     gasLimit: string;
     gasPrice: string;
     currency: ICurrencyInfo;
-    onConfirm: (password: string) => Promise<string>;
-    onCancel: (password: string) => Promise<string>;
+    onConfirm: (password: string) => void;
+    onCancel: () => void;
+    passwordValidationMsg?: string;
 }
 
 export class SendConfirm extends React.PureComponent<IProps, any> {
     public handleConfrim = (event: any) => {
-        debugger;
+        event.preventDefault();
+
+        const password = event.target.password.value;
+
+        this.props.onConfirm && this.props.onConfirm(password);
     }
 
-    public handleCancel = (event: any) => {
-        debugger;
+    public handleCancel = () => {
+        this.props.onCancel && this.props.onCancel();
     }
 
     public render() {
@@ -38,61 +42,67 @@ export class SendConfirm extends React.PureComponent<IProps, any> {
             gasPrice,
             fromName,
             currency,
-            form,
+            passwordValidationMsg,
         } = this.props;
 
         return (
             <div className={cn('sonm-send-confirm', className)}>
-                <div>
-                    <h1 className="sonm-send-confirm__header">Transfer confirmation</h1>
-                    <section className="sonm-send-confirm__from-to">
-                        <div className="sonm-send-confirm__account">
-                            <IdentIcon address={fromAddress} />
-                            <span className="sonm-send-confirm__account-name">
-                                {fromName}
-                            </span>
-                            <span className="sonm-send-confirm__account-addr">
-                                {fromAddress}
-                            </span>
-                        </div>
-                        <div className="sonm-send-confirm__account">
-                            <IdentIcon address={toAddress} />
-                            <span className="sonm-send-confirm__account-name" />
-                            <span className="sonm-send-confirm__account-addr">
-                                {fromAddress}
-                            </span>
-                        </div>
-                    </section>
-                    <dl className="sonm-send-confirm__params">
-                        <dt>Amount</dt>
-                        <dd>{amount} {currency.symbol}</dd>
-                        <dt>Gas limit</dt>
-                        <dd>{gasLimit} WEI</dd>
-                        <dt>Gas price</dt>
-                        <dd>{gasPrice} WEI</dd>
-                    </dl>
-                    <Form onSubmit={this.handleConfrim}>
-                        <h2>Please enter account password</h2>
-                        {
-                            form.getFieldDecorator('password', {
-                                initialValue: gasPrice,
-                                rules: [
-                                    {required: true, message: 'Field is required'},
-                                ],
-                            })(
-                                <Input
-                                    className="sonm-send-confirm__password-input"
-                                    prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
-                                    type="password"
-                                    placeholder="Password"
-                                />,
-                            )
-                        }
-                        <Button color="blue" transparent type="button" onClick={this.handleCancel}>Back</Button>
-                        <Button color="blue" type="submit">Send</Button>
-                    </Form>
-                </div>
+                <h1 className="sonm-send-confirm__header">Transfer confirmation</h1>
+                <section className="sonm-send-confirm__from-to">
+                    <div className="sonm-send-confirm__account">
+                        <IdentIcon address={fromAddress} className="sonm-send-confirm__account-blockies"/>
+                        <span className="sonm-send-confirm__account-name">{fromName}</span>
+                        <span className="sonm-send-confirm__account-addr">{fromAddress}</span>
+                    </div>
+                    <div className="sonm-send-confirm__arrow"/>
+                    <div className="sonm-send-confirm__account">
+                        <IdentIcon address={toAddress} className="sonm-send-confirm__account-blockies"/>
+                        <span className="sonm-send-confirm__account-target">
+                            {fromAddress}
+                        </span>
+                    </div>
+                </section>
+                <dl className="sonm-send-confirm__values">
+                    <dt>Amount</dt>
+                    <dd>{amount} {currency.symbol}</dd>
+                    <dt>Gas limit</dt>
+                    <dd>{gasLimit}</dd>
+                    <dt>Gas price</dt>
+                    <dd>{gasPrice} ETH</dd>
+                </dl>
+                <Form onSubmit={this.handleConfrim} className="sonm-send-confirm__password-form">
+                    <h2>Please enter account password</h2>
+                    <Form.Item
+                        validateStatus={passwordValidationMsg ? 'error' : 'success'}
+                        help={passwordValidationMsg}
+                    >
+                        <Input
+                            name="password"
+                            className="sonm-send-confirm__password-input"
+                            prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                            type="password"
+                            placeholder="Password"
+                        />
+                    </Form.Item>
+                    <Button
+                        className="sonm-send-confirm__password-button"
+                        type="submit"
+                        color="violet"
+                    >
+                        Send
+                    </Button>
+                    <Button
+                        className="sonm-send-confirm__password-button"
+                        transparent
+                        type="button"
+                        onClick={this.handleCancel}
+                    >
+                        Back
+                    </Button>
+                </Form>
             </div>
         );
     }
 }
+
+export default SendConfirm;

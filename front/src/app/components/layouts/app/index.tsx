@@ -3,7 +3,7 @@ import { Menu, Alert } from 'antd';
 import { ClickParam } from 'antd/lib/menu/';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
-import { navigate } from '../../../../app/router';
+import { navigate } from 'app/router';
 import { MainStore } from '../../../stores/main';
 import { Balance } from '../../common/balance-view';
 

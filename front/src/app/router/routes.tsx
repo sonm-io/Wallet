@@ -3,13 +3,18 @@ import { Wallets } from '../components/layouts/wallets';
 import { App } from '../components/layouts/app';
 import { History } from '../components/layouts/history';
 import { Votes } from '../components/layouts/votes';
+import { SendSuccess } from '../components/layouts/send/sub/success';
 import * as React from 'react';
 
 import { LocaleProvider } from 'antd';
 import * as enUS from 'antd/lib/locale-provider/en_US';
+import { navigate } from './navigate';
 const enUSLocale: any = enUS;
 
 let defaultAction;
+
+const navigateToSend = () => navigate({ path: '/send' });
+const navigateToHistory = () => navigate({ path: '/history' });
 
 const routes = [
     {
@@ -32,6 +37,16 @@ const routes = [
             };
         },
         children: [
+            {
+                path: '/oh-yes',
+                action: (ctx: IContext, params: IUrlParams) => ({
+                    title: 'Sending complete',
+                    content: <SendSuccess
+                        onClickSend={navigateToSend}
+                        onClickHistory={navigateToHistory}
+                    />,
+                }),
+            },
             {
                 path: '/send',
                 action: (ctx: IContext, params: IUrlParams) => ({

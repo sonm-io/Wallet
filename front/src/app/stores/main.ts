@@ -29,6 +29,14 @@ export interface ISendFormValues {
     toAddress: string;
 }
 
+export interface ISendValidation {
+    password: string;
+}
+
+export interface IPasswordCache {
+    [address: string]: string;
+}
+
 export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore {
@@ -50,11 +58,15 @@ export class MainStore {
 
     @observable public userGasPrice = '';
 
-    @observable public showConfirmDialog = false;
+    @observable public isConfirmDialogVisible = false;
 
     @observable public isReady = false;
 
     @observable public errors: any[] = [];
+
+    @observable public validation: ISendValidation = {
+        password: '',
+    };
 
     public values: ISendFormValues = {
         toAddress: '',
@@ -68,8 +80,6 @@ export class MainStore {
         if (len === 0) {
             return [];
         }
-
-        debugger;
 
         return this.errors.slice(len - MAX_VISIBLE_ERRORS);
     }
@@ -294,6 +304,37 @@ export class MainStore {
         }
     }
 
+    protected passwordCache: IPasswordCache = {};
+
+    @asyncAction
+    public *checkSelectedAccountPassword(password: string) {
+        const accountAddress = this.selectedAccountAddress;
+
+        let validationMessage = '';
+
+        if (accountAddress in this.passwordCache
+                && this.passwordCache[accountAddress] === password) {
+            validationMessage = '';
+        } else {
+            const {data: success, validation} = yield Api.checkPrivateKey(password, accountAddress);
+
+            if (success) {
+                this.passwordCache[accountAddress] = password;
+                validationMessage = '';
+            } else if (validation && validation.password) {
+                validationMessage = validation.password;
+            }
+        }
+
+        const isValid = validationMessage === '';
+
+        if (!isValid) {
+            this.validation = { password: validationMessage };
+        }
+
+        return isValid;
+    }
+
     @asyncAction
     public *confirmTransaction(password: string) {
         try {
@@ -308,6 +349,8 @@ export class MainStore {
             }, password);
 
             window.alert(JSON.stringify(result));
+
+            return result;
         } catch (e) {
             this.handleError(e);
         }
@@ -407,6 +450,21 @@ export class MainStore {
         console.error(e);
 
         this.errors.push(e.message);
+    }
+
+    @action
+    public showConfirmDialog() {
+        this.isConfirmDialogVisible = true;
+    }
+
+    @action
+    public hideConfirmDialog() {
+        this.isConfirmDialogVisible = false;
+    }
+
+    @action
+    public setValidation(params: Partial<ISendValidation>) {
+        Object.assign(this.validation, params);
     }
 }
 
