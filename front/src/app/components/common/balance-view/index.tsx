@@ -2,9 +2,9 @@ import * as React from 'react';
 
 interface IBalanceViewProps {
     className: string;
-    balance: string;
-    symbol: string;
-    maxWidthPx?: number;
+    balance?: string;
+    symbol?: string;
+    fullString?: string;
     fontSizePx?: number;
 }
 
@@ -12,23 +12,30 @@ import * as cn from 'classnames';
 
 export class Balance extends React.Component<IBalanceViewProps, any> {
     public defaultProps: Partial<IBalanceViewProps> = {
-        maxWidthPx: 100,
         fontSizePx: 100,
     };
 
     public render() {
-        const { className, maxWidthPx, fontSizePx, balance, symbol } = this.props;
+        const { className, fontSizePx, fullString } = this.props;
+        let { balance, symbol } = this.props;
 
-        const dotIdx = balance.indexOf('.');
+        if (fullString) {
+            [balance, symbol] = fullString.split(' ');
+        }
 
-        const out = (dotIdx !== -1)
-            ? balance.slice(0, dotIdx + 5)
-            : balance;
+        let out = '0';
+        if (balance) {
+            const dotIdx = balance.indexOf('.');
+
+            out = (dotIdx !== -1)
+                ? balance.slice(0, dotIdx + 5)
+                : balance;
+        }
 
         return (
             <div
                 className={cn('sonm-balance', className)}
-                style={{ maxWidth: `${maxWidthPx}px`, fontSize: `${fontSizePx}px` }}
+                style={{ fontSize: `${fontSizePx}px` }}
             >
                 <div className="sonm-balance__grid">
                     <label className="sonm-balance__number">

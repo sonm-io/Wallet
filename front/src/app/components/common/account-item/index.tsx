@@ -2,6 +2,7 @@ import * as React from 'react';
 import { IdentIcon } from '../ident-icon';
 import * as cn from 'classnames';
 import { Icon } from 'antd';
+import { Balance } from '../balance-view';
 
 export interface IAccountItemProps {
     className?: string;
@@ -35,9 +36,17 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                         {this.renderName()}
                     </span>
                 </span>
-                <span className="sonm-account-item__ether">{firstBalance}</span>
+                <Balance
+                    className="sonm-account-item__sonm"
+                    fullString={firstBalance}
+                    fontSizePx={16}
+                />
                 <span className="sonm-account-item__address">{address}</span>
-                <span className="sonm-account-item__sonm">{secondBalance}</span>
+                <Balance
+                    className="sonm-account-item__ether"
+                    fullString={secondBalance}
+                    fontSizePx={16}
+                />
             </div>
         );
     }

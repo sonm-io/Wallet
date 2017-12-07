@@ -37,7 +37,6 @@ export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListPro
                                     balance={balance}
                                     symbol={symbol}
                                     fontSizePx={18}
-                                    maxWidthPx={240}
                                 />
                             </li>
                         );
