@@ -29,12 +29,6 @@ interface IProps {
 @inject('historyStore', 'mainStore')
 @observer
 export class History extends React.Component<IProps, any> {
-    public componentWillMount() {
-        if (!this.props.historyStore) { return; }
-
-        this.props.initialAddress && this.props.historyStore.setFilterFrom(this.props.initialAddress);
-        this.props.initialCurrency && this.props.historyStore.setFilterCurrency(this.props.initialCurrency);
-    }
 
     protected columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
         dataIndex: 'timestamp',
@@ -95,7 +89,14 @@ export class History extends React.Component<IProps, any> {
     };
 
     public componentWillMount() {
-        this.props.historyStore && this.props.historyStore.forceUpdate();
+        if (!this.props.historyStore) { return; }
+
+        if (this.props.initialAddress) { this.props.historyStore.setFilterFrom(this.props.initialAddress); }
+        if (this.props.initialCurrency) { this.props.historyStore.setFilterCurrency(this.props.initialCurrency); }
+
+        if (!this.props.initialAddress && !this.props.initialCurrency) { // TODO HACK
+            this.props.historyStore.forceUpdate();
+        }
     }
 
     protected handleChangeTime = (dates: moment.Moment[]) => {
