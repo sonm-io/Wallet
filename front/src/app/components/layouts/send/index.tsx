@@ -28,7 +28,7 @@ const ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/i;
 export class SendSrc extends React.Component<IProps, any> {
     public state = {
         addressTarget: '0x',
-        validation: ({} as any),
+        pending: false,
     };
 
     protected handleSubmit = (event: React.FormEvent<Form>) => {
@@ -43,7 +43,7 @@ export class SendSrc extends React.Component<IProps, any> {
 
                 this.props.mainStore.setSendParams(values);
 
-                this.props.mainStore.setShowConfirmDialog(true);
+                this.props.mainStore.showConfirmDialog();
             },
         );
     }
@@ -171,25 +171,56 @@ export class SendSrc extends React.Component<IProps, any> {
         return true;
     }
 
-    protected async handleConfirmTx(password: string) {
-        if (!this.props.mainStore) {
-            return;
-        }
+    public renderConfirm() {
+        const mainStore = this.props.mainStore;
 
-        const {
-            data: isPasswordCorrect,
-            validation,
-        } = Api.checkPrivateKey(password, this.props.mainStore.selectedAccountAddress);
+        if (!mainStore) { return null; }
 
-        if (isPasswordCorrect) {
-            this.props.mainStore.sendTransaction(password);
-        } else {
-            this.setState({ validation });
-        }
+        const accountAddress = mainStore.selectedAccountAddress;
+        const account = mainStore.accountMap.get(accountAddress);
+        const accountName = account ? account.name : '';
+        const currency = mainStore.currencyMap.get(mainStore.selectedCurrencyAddress);
+
+        if (!currency) { return null; }
+
+        return <SendConfirm
+            fromAddress={accountAddress}
+            toAddress={mainStore.values.toAddress}
+            amount={mainStore.values.amount}
+            gasLimit={mainStore.values.gasLimit}
+            gasPrice={mainStore.values.gasPrice}
+            fromName={accountName}
+            currency={currency}
+            onConfirm={this.handleConfirm}
+            onCancel={this.handleCancelConfirmation}
+            passwordValidationMsg={mainStore.validation.password}
+        />;
     }
 
-    public renderConfirm() {
-        return <SendConfirm />;
+    public handleConfirm = async (password: string) => {
+        const mainStore = this.props.mainStore;
+
+        if (!mainStore) { return; }
+
+        this.setState({ pending: true });
+
+        const isPasswordValid = await mainStore.checkSelectedAccountPassword(password);
+
+        if (isPasswordValid) {
+            mainStore.confirmTransaction(password);
+            mainStore.hideConfirmDialog();
+        }
+
+        this.setState({ pending: false });
+    }
+
+    public handleCancelConfirmation = () => {
+        const mainStore = this.props.mainStore;
+
+        if (!mainStore) { return; }
+
+        mainStore.hideConfirmDialog();
+        mainStore.setValidation({});
     }
 
     protected static normalizeAddress(str: string): string {
@@ -214,15 +245,14 @@ export class SendSrc extends React.Component<IProps, any> {
         const selectedCurrencyAddress = mainStore.selectedCurrencyAddress;
         const gasPrice = mainStore.userGasPrice;
         const gasLimit = (mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT);
-        const showConfirmDialog = mainStore.showConfirmDialog;
         const isReady = mainStore.isReady;
         const values = mainStore.values;
 
         return (
             <div className={cn('sonm-send', className)}>
-                {showConfirmDialog
+                {mainStore.isConfirmDialogVisible
                     ? this.renderConfirm()
-                    : <Spin spinning={!isReady}>
+                    : <Spin spinning={!isReady || this.state.pending}>
                         <Header className="sonm-send__header">
                             Transfer
                         </Header>

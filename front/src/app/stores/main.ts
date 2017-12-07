@@ -29,6 +29,10 @@ export interface ISendFormValues {
     toAddress: string;
 }
 
+export interface ISendValidation {
+    password: string;
+}
+
 export interface IPasswordCache {
     [address: string]: string;
 }
@@ -54,11 +58,15 @@ export class MainStore {
 
     @observable public userGasPrice = '';
 
-    @observable public showConfirmDialog = false;
+    @observable public isConfirmDialogVisible = false;
 
     @observable public isReady = false;
 
     @observable public errors: any[] = [];
+
+    @observable public validation: ISendValidation = {
+        password: '',
+    };
 
     public values: ISendFormValues = {
         toAddress: '',
@@ -296,16 +304,35 @@ export class MainStore {
         }
     }
 
-    protected passwordCache: IPasswordCache = {
+    protected passwordCache: IPasswordCache = {};
 
-    }
+    @asyncAction
+    public *checkSelectedAccountPassword(password: string) {
+        const accountAddress = this.selectedAccountAddress;
 
-    public async checkPassword(accountAddress: string, password: string) {
-        if (accountAddress in this.passwordCache) {
-            return this.passwordCache[accountAddress] === password;
+        let validationMessage = '';
+
+        if (accountAddress in this.passwordCache
+                && this.passwordCache[accountAddress] === password) {
+            validationMessage = '';
+        } else {
+            const {data: success, validation} = yield Api.checkPrivateKey(password, accountAddress);
+
+            if (success) {
+                this.passwordCache[accountAddress] = password;
+                validationMessage = '';
+            } else if (validation && validation.password) {
+                validationMessage = validation.password;
+            }
         }
 
-        this.passwordCache[accountAddress] = password;
+        const isValid = validationMessage === '';
+
+        if (!isValid) {
+            this.validation = { password: validationMessage };
+        }
+
+        return isValid;
     }
 
     @asyncAction
@@ -425,12 +452,19 @@ export class MainStore {
         this.errors.push(e.message);
     }
 
+    @action
     public showConfirmDialog() {
-        this.showConfirmDialog = true;
+        this.isConfirmDialogVisible = true;
     }
 
+    @action
     public hideConfirmDialog() {
-        this.showConfirmDialog = false;
+        this.isConfirmDialogVisible = false;
+    }
+
+    @action
+    public setValidation(params: Partial<ISendValidation>) {
+        Object.assign(this.validation, params);
     }
 }
 
