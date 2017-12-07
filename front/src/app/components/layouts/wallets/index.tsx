@@ -39,7 +39,7 @@ export class Wallets extends React.Component<IProps, any> {
         await this.props.mainStore.addAccount(
             data.json,
             data.password,
-            Math.random().toString(36).slice(3),
+            data.name,
         );
 
         this.setState({

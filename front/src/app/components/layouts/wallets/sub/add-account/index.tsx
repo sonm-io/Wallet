@@ -13,7 +13,7 @@ interface IProps {
 
 export class AddAccount extends React.PureComponent<IProps, any> {
     public state = {
-        visible: false,
+        name: '',
         password: '',
         json: '',
     }
@@ -24,6 +24,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
         this.props.onSubmit({
             json: this.state.json,
             password: this.state.password,
+            name: this.state.name,
         });
     }
 
@@ -60,6 +61,15 @@ export class AddAccount extends React.PureComponent<IProps, any> {
                             type="password"
                             className="sonm-wallets-add-account__input"
                             name="password"
+                            onChange={this.handleChangeInput}
+                        />
+                    </label>
+                    <label className="sonm-wallets-add-account__label">
+                        <span className="sonm-wallets-add-account__label-text">Enter account name</span>
+                        <input
+                            type="text"
+                            className="sonm-wallets-add-account__input"
+                            name="name"
                             onChange={this.handleChangeInput}
                         />
                     </label>
