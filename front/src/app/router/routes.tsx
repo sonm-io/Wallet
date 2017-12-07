@@ -49,18 +49,28 @@ const routes = [
                 }),
             },
             {
-                path: '/send/:address?/:currency?',
-                action: (ctx: IContext, params: IUrlParams) => ({
-                    title: 'Send',
-                    content: <Send address={ctx.params.address || ''} currency={ctx.params.currency || ''}/>,
-                }),
+                path: '/send',
+                action: (ctx: IContext, params: IUrlParams) => {
+                    const initialAddress = (ctx.query as any).address;
+                    const initialCurrency = (ctx.query as any).currency;
+
+                    return {
+                        title: 'Send',
+                        content: <Send {...{ initialAddress, initialCurrency }} />,
+                    };
+                },
             },
             {
-                path: '/history/:address?',
-                action: (ctx: IContext) => ({
-                    title: 'History',
-                    content: <History address={ctx.params.address || ''}/>,
-                }),
+                path: '/history',
+                action: (ctx: IContext, params: IUrlParams) => {
+                    const initialAddress = (ctx.query as any).address;
+                    const initialCurrency = (ctx.query as any).currency;
+
+                    return {
+                        title: 'History',
+                        content: <History {...{ initialAddress, initialCurrency }} />,
+                    };
+                },
             },
             {
                 path: '/votes',
@@ -70,19 +80,23 @@ const routes = [
                 }),
             },
             {
-                path: '/account/:address',
-                action: (ctx: IContext) => ({
-                    title: 'Account',
-                    content: <Account address={ctx.params.address}/>,
-                }),
+                path: '/account',
+                action: (ctx: IContext) => {
+                    const initialAddress = (ctx.query as any).address;
+
+                    return {
+                        title: 'Account',
+                        content: <Account {...{ initialAddress }} />,
+                    };
+                },
             },
             {
-                path: '/wallets',
+                path: '/accounts',
                 action: defaultAction = async (ctx: IContext) => {
                     const inner = await ctx.next();
 
                     return {
-                        title: 'Wallets',
+                        title: 'Accounts',
                         content: (
                             <Wallets>
                                 {inner && inner.content}

@@ -17,8 +17,8 @@ import { navigate } from 'app/router';
 interface IProps extends FormComponentProps {
     className?: string;
     mainStore?: MainStore;
-    address?: string;
-    currency?: string;
+    initialCurrency?: string;
+    initialAddress?: string;
 }
 
 type PriorityInput = new () => ButtonGroup<string>;
@@ -34,13 +34,11 @@ export class SendSrc extends React.Component<IProps, any> {
         pending: false,
     };
 
-    constructor(props: IProps) {
-        super(props);
+    public componentWillMount() {
+        if (!this.props.mainStore) { return; }
 
-        if (this.props.mainStore) {
-            this.props.mainStore.selectAccount(this.props.address || '');
-            this.props.mainStore.selectCurrency(this.props.currency || '');
-        }
+        this.props.initialAddress && this.props.mainStore.selectAccount(this.props.initialAddress);
+        this.props.initialCurrency && this.props.mainStore.selectCurrency(this.props.initialCurrency);
     }
 
     protected handleSubmit = (event: React.FormEvent<Form>) => {
@@ -61,9 +59,7 @@ export class SendSrc extends React.Component<IProps, any> {
     }
 
     protected handleChangeAccount = (address: string) => {
-        if (this.props.mainStore === undefined) {
-            throw new Error('this.props.mainStore is undefined');
-        }
+        if (!this.props.mainStore) { return; }
 
         this.props.mainStore.selectAccount(address);
 
@@ -71,9 +67,7 @@ export class SendSrc extends React.Component<IProps, any> {
     }
 
     protected handleChangeCurrency = (address: string) => {
-        if (this.props.mainStore === undefined) {
-            throw new Error('this.props.mainStore is undefined');
-        }
+        if (!this.props.mainStore) { return; }
 
         this.props.mainStore.selectCurrency(address);
     }

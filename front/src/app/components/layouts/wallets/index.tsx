@@ -8,7 +8,7 @@ import CurrencyBalanceList from '../../common/currency-balance-list/index';
 import DeletableItem from '../../common/deletable-item/index';
 import Header from '../../common/header';
 import Upload from '../../common/upload';
-import { history } from '../../../router/history';
+import { navigate } from '../../../router/navigate';
 
 interface IProps {
     className?: string;
@@ -23,7 +23,7 @@ export class Wallets extends React.Component<IProps, any> {
     }
 
     protected handleAccountClick(address: string) {
-        history.push(`/account/${address}`);
+        navigate({ path: '/account', query: { address } });
     }
 
     private handleDelete = (deleteAddress: string) => {
@@ -85,7 +85,11 @@ export class Wallets extends React.Component<IProps, any> {
                                 key={x.address}
                                 id={x.address}
                             >
-                                <AccountItem {...x} onRename={this.handleRename} onClick={this.handleAccountClick.bind(this, x.address)}/>
+                                <AccountItem
+                                    {...x}
+                                    onClickIcon={this.handleAccountClick}
+                                    onRename={this.handleRename}
+                                />
                             </DeletableItem>
                         );
                     })}

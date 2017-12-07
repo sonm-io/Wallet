@@ -1,4 +1,4 @@
-import queryStr from 'query-string';
+import * as queryStr from 'query-string';
 import { history } from './history';
 import * as get from 'lodash/fp/get';
 

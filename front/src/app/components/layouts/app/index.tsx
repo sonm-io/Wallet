@@ -51,17 +51,14 @@ export class App extends React.Component<IProps, any> {
                                 borderColor: 'transparent',
                             }}
                         >
-                            <Menu.Item key="/wallets" className="sonm-nav__menu-item">
-                                Wallet
+                            <Menu.Item key="/accounts" className="sonm-nav__menu-item">
+                                Accounts
                             </Menu.Item>
                             <Menu.Item key="/send" className="sonm-nav__menu-item">
                                 Send
                             </Menu.Item>
                             <Menu.Item key="/history" className="sonm-nav__menu-item">
                                 History
-                            </Menu.Item>
-                            <Menu.Item key="/account/0xfd0c80ba15cbf19770319e5e76ae05012314608f" className="sonm-nav__menu-item">
-                                Account
                             </Menu.Item>
                         </Menu>
                             <Balance

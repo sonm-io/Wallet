@@ -1,36 +1,41 @@
 @import "guide.less";
 
+@account-padding: 20px;
 @currency-balance-list-header-bg: @color-gray-bg;
 @currency-balance-list-item-bg: @color-light-gray-bg;
 
 .sonm-account {
-  &__top {
-    display: grid;
-    grid-template-columns: 1fr 250px;
-    grid-column-gap: 40px;
-    margin-bottom: 20px;
-    margin-right: 25px;
+  display: grid;
+  grid-template-columns: auto min-content;
+  grid-template-rows: min-content auto;
+  grid-gap: @account-padding;
 
-    &__account {
-      grid-column: 1;
-      align-self: center;
-    }
+  &__account {
+    grid-column: 1;
+    grid-row: 1;
+  }
 
-    &__history {
-      background: url('./icon-history.svg') no-repeat;
+  &__go-to-history {
+    grid-column: 2;
+    grid-row: 1;
 
-      width: 240px;
-      height: auto;
+    background: url('./icon-history.svg') no-repeat center top;
 
-      background-size: cover;
-      background-position: top center;
+    width: 240px;
+    padding: 40px 10px 10px 10px;
 
-      //line-height: @big-select-height;
-      //grid-column: 2;
-      //align-self: center;
-      //border: 1px solid @currency-balance-list-header-bg;
-      //text-align: center;
-    }
+    border: solid 1px @color-border;
+    border-radius: 0;
+    color: @color-dark-gray;
+    font-size: 18px;
+    text-align: center;
+    cursor: pointer;
+    line-height: 1%;
+  }
+
+  &__tokens {
+    grid-column: ~"1 / 2";
+    grid-row: 2;
   }
 }
 
@@ -43,36 +48,45 @@
     list-style-type: none;
   }
 
-  &__item {
+  &__currency {
     border: 1px solid @currency-balance-list-header-bg;
+    border-bottom-width: 0;
     text-align: left;
     font-size: 16px;
-    padding: 10px;
-    display: grid;
-    grid-template-columns: 50px 200px 1fr 100px;
+    padding: @account-padding;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-    &__blockies {
-      grid-column: 1;
-      align-self: center;
+    &:last-child {
+      border-bottom-width: 1px;
     }
 
-    &__name {
-      grid-column: 2;
-      align-self: center;
+    &-blockies {
+      margin: 0 50px 0 0;
     }
 
-    &__balance {
-      grid-column: 3;
-      align-self: center;
-      flex: 1;
+    &-name {
+      width: 200px;
+    }
+
+    &-balance {
+      flex-grow: 1;
       text-transform: uppercase;
     }
 
-    &__button {
+    &-button {
       text-transform: uppercase;
-      grid-column: 4;
-      text-align: center;
-      align-self: center;
+      border-radius: 0;
+      border: 0 solid transparent;
+      outline: 0;
+      background: none transparent;
+      cursor: pointer;
+
+      &:focus {
+        outline-offset: 3px;
+        outline: @outline;
+      }
     }
   }
 }

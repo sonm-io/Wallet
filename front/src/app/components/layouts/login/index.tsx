@@ -152,6 +152,7 @@ export class Login extends React.Component<IProps, any> {
                 if (validation) {
                     this.setState({ validation });
                 } else {
+                    window.localStorage.setItem('sonm-last-used-wallet', this.state.newName);
                     this.props.onLogin();
                 }
 

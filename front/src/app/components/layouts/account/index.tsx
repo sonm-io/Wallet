@@ -5,91 +5,104 @@ import { MainStore } from '../../../stores/main';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import Header from '../../common/header';
 import IdentIcon from '../../common/ident-icon/index';
-import { history } from '../../../router/history';
+import { navigate } from 'app/router';
 
 interface IProps {
     className?: string;
     mainStore?: MainStore;
-    address: string;
+    initialAddress: string;
 }
 
 @inject('mainStore')
 @observer
 export class Account extends React.Component<IProps, any> {
-    public state = {
-        address: '',
-    };
+    public componentWillMount() {
+        if (!this.props.mainStore) { return; }
 
-    constructor(props: IProps) {
-        super(props);
-        this.state = { address: this.props.address };
+        this.props.initialAddress && this.props.mainStore.selectAccount(this.props.initialAddress);
     }
 
-    protected handleChangeAccount = (value: any) => {
-        this.setState({address: value as string});
+    protected handleChangeAccount = (accountAddres: any) => {
+        this.props.mainStore && this.props.mainStore.selectAccount(accountAddres);
     }
 
-    protected handleHistoryClick() {
-        history.push(`/history/${this.state.address}`);
+    protected handleHistoryClick = () => {
+        if (!this.props.mainStore) { return; }
+
+        navigate({
+            path: '/history',
+            query: {
+                account: this.props.mainStore.selectedAccountAddress,
+            },
+        });
     }
 
-    protected handleSendClick(currencyAddress: string) {
-        history.push(`/send/${this.state.address}/${currencyAddress}`);
+    protected handleSendClick = (event: any) => {
+        const currencyAddress = event.target.name;
+
+        navigate({
+            path: '/send',
+            query: {
+                currency: currencyAddress,
+            },
+        });
     }
 
     public render() {
-        if (this.props.mainStore === undefined) {
-            return null;
-        }
+        if (!this.props.mainStore) { return null; }
 
         const {
             className,
         } = this.props;
 
-        const account = this.props.mainStore.accountList.find(item => item.address === this.state.address);
+        return [
+            <Header className="sonm-wallets__header" key="header">
+                Account
+            </Header>,
+            <div className={cn('sonm-account', className)} key="account">
+                <AccountBigSelect
+                    className="sonm-account__account-select"
+                    returnPrimitive
+                    accounts={this.props.mainStore.accountList}
+                    onChange={this.handleChangeAccount}
+                    value={this.props.mainStore.selectedAccountAddress}
+                />
 
-        return (
-                <div className={cn('sonm-account', className)}>
-                    <Header className="sonm-wallets__header">
-                        Account
-                    </Header>
+                <button
+                    className="sonm-account__go-to-history"
+                    onClick={this.handleHistoryClick}
+                >
+                    View operation history
+                </button>
 
-                    <div className="sonm-account__top">
-                        <AccountBigSelect
-                            className="sonm-account__top__account"
-                            returnPrimitive
-                            accounts={this.props.mainStore.accountList}
-                            onChange={this.handleChangeAccount}
-                            value={this.state.address}
-                        />
-
-                        <div className="sonm-account__top__history" onClick={this.handleHistoryClick.bind(this)}/>
-                    </div>
-
-
+                <ul className="sonm-account__tokens" >
                     <Header className="sonm-wallets__header">
                         Tokens
                     </Header>
-
-                    <ul className="sonm-account-token-list__list" >
-                        {this.props.mainStore.currentBalanceList.map(({ symbol, address, name }) => {
-                            let balance = '0';
-
-                            if (account) {
-                                balance = (address && address === '0x') ? account.secondBalance : account.firstBalance;
-                            }
-
-                            return (
-                                <li className="sonm-account-token-list__item" key={address}>
-                                    <IdentIcon address={address} width={40} className="sonm-account-token-list__item__blockies"/>
-                                    <span className="sonm-account-token-list__item__name">{name}</span>
-                                    <span className="sonm-account-token-list__item__balance">{balance}</span>
-                                    <span className="sonm-account-token-list__item__button" onClick={this.handleSendClick.bind(this, address)}>Send</span>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
-        );
+                    {this.props.mainStore.currentBalanceList.map(({ symbol, address, name, balance, decimals }) => {
+                        return (
+                            <li className="sonm-account-token-list__currency" key={address}>
+                                <IdentIcon
+                                    address={address}
+                                    width={40}
+                                    className="sonm-account-token-list__currency-blockies"
+                                />
+                                <div className="sonm-account-token-list__currency-name">{name}</div>
+                                <div className="sonm-account-token-list__currency-balance">
+                                    {balance} {symbol}
+                                </div>
+                                <button
+                                    name={address}
+                                    className="sonm-account-token-list__currency-button"
+                                    onClick={this.handleSendClick}
+                                >
+                                    Send
+                                </button>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </div>,
+        ];
     }
 }
