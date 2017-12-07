@@ -70,9 +70,9 @@ export class SendSrc extends React.Component<IProps, any> {
     protected handleSetMaximum = () => {
         if (this.props.mainStore) {
 
-            const {gasPrice, gasValue} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
+            const {gasPrice, gasLimit} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
             this.props.form.setFieldsValue({
-                amount: this.props.mainStore.getMaxValue(gasPrice, gasValue),
+                amount: this.props.mainStore.getMaxValue(gasPrice, gasLimit),
             });
         }
     }
