@@ -81,6 +81,11 @@ export class HistoryStore {
     }
 
     @asyncAction
+    public *forceUpdate() {
+        yield this.update(this.filterParams, this.page);
+    }
+
+    @asyncAction
     public *submitTransaction(params: api.ISendTransaction, password: string) {
         try {
             const created = { ...params, confirmCount: 0, status: 'created', hash: '' };

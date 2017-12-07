@@ -313,7 +313,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                 })(
                                     <Input
                                         className="sonm-send__input"
-                                        placeholder="Ammount"
+                                        placeholder="Amount"
                                     />,
                                 )}
                                 <Button

@@ -85,6 +85,10 @@ export class History extends React.Component<IProps, any> {
         query: '',
     };
 
+    public componentWillMount() {
+        this.props.historyStore && this.props.historyStore.forceUpdate();
+    }
+
     protected handleChangeTime = (dates: moment.Moment[]) => {
         this.props.historyStore && this.props.historyStore.setFilterTime(
             dates[0].valueOf(),
