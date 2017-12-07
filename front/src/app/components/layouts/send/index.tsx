@@ -11,6 +11,7 @@ import { ButtonGroup } from 'app/components/common/button-group';
 import IdentIcon from '../../common/ident-icon/index';
 import { MainStore, ISendFormValues } from 'app/stores/main';
 import Header from '../../common/header';
+import { SendConfirm } from './sub/confirm';
 
 interface IProps extends FormComponentProps {
     className?: string;
@@ -27,6 +28,7 @@ const ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/i;
 export class SendSrc extends React.Component<IProps, any> {
     public state = {
         addressTarget: '0x',
+        validation: ({} as any),
     };
 
     protected handleSubmit = (event: React.FormEvent<Form>) => {
@@ -41,9 +43,7 @@ export class SendSrc extends React.Component<IProps, any> {
 
                 this.props.mainStore.setSendParams(values);
 
-                // TODO
-                const password = prompt('Password please') || '';
-                this.props.mainStore.confirmTransaction(password);
+                this.props.mainStore.setShowConfirmDialog(true);
             },
         );
     }
@@ -171,8 +171,25 @@ export class SendSrc extends React.Component<IProps, any> {
         return true;
     }
 
+    protected async handleConfirmTx(password: string) {
+        if (!this.props.mainStore) {
+            return;
+        }
+
+        const {
+            data: isPasswordCorrect,
+            validation,
+        } = Api.checkPrivateKey(password, this.props.mainStore.selectedAccountAddress);
+
+        if (isPasswordCorrect) {
+            this.props.mainStore.sendTransaction(password);
+        } else {
+            this.setState({ validation });
+        }
+    }
+
     public renderConfirm() {
-        return null;
+        return <SendConfirm />;
     }
 
     protected static normalizeAddress(str: string): string {

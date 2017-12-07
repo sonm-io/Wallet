@@ -29,6 +29,10 @@ export interface ISendFormValues {
     toAddress: string;
 }
 
+export interface IPasswordCache {
+    [address: string]: string;
+}
+
 export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore {
@@ -68,8 +72,6 @@ export class MainStore {
         if (len === 0) {
             return [];
         }
-
-        debugger;
 
         return this.errors.slice(len - MAX_VISIBLE_ERRORS);
     }
@@ -294,6 +296,18 @@ export class MainStore {
         }
     }
 
+    protected passwordCache: IPasswordCache = {
+
+    }
+
+    public async checkPassword(accountAddress: string, password: string) {
+        if (accountAddress in this.passwordCache) {
+            return this.passwordCache[accountAddress] === password;
+        }
+
+        this.passwordCache[accountAddress] = password;
+    }
+
     @asyncAction
     public *confirmTransaction(password: string) {
         try {
@@ -308,6 +322,8 @@ export class MainStore {
             }, password);
 
             window.alert(JSON.stringify(result));
+
+            return result;
         } catch (e) {
             this.handleError(e);
         }
@@ -407,6 +423,14 @@ export class MainStore {
         console.error(e);
 
         this.errors.push(e.message);
+    }
+
+    public showConfirmDialog() {
+        this.showConfirmDialog = true;
+    }
+
+    public hideConfirmDialog() {
+        this.showConfirmDialog = false;
     }
 }
 

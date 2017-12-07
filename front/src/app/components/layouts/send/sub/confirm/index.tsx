@@ -15,17 +15,19 @@ interface IProps extends FormComponentProps {
     gasLimit: string;
     gasPrice: string;
     currency: ICurrencyInfo;
-    onConfirm: (password: string) => Promise<string>;
-    onCancel: (password: string) => Promise<string>;
+    onConfirm: (password: string) => void;
+    onCancel: () => void;
 }
 
 export class SendConfirm extends React.PureComponent<IProps, any> {
     public handleConfrim = (event: any) => {
-        debugger;
+        const password = event.target.password;
+
+        this.props.onConfirm && this.props.onConfirm(password);
     }
 
-    public handleCancel = (event: any) => {
-        debugger;
+    public handleCancel = () => {
+        this.props.onCancel && this.props.onCancel();
     }
 
     public render() {
