@@ -12,6 +12,7 @@ import IdentIcon from '../../common/ident-icon/index';
 import { MainStore, ISendFormValues } from 'app/stores/main';
 import Header from '../../common/header';
 import { SendConfirm } from './sub/confirm';
+import { navigate } from 'app/router';
 
 interface IProps extends FormComponentProps {
     className?: string;
@@ -209,6 +210,8 @@ export class SendSrc extends React.Component<IProps, any> {
         if (isPasswordValid) {
             mainStore.confirmTransaction(password);
             mainStore.hideConfirmDialog();
+            this.props.form.resetFields();
+            navigate({ path: '/oh-yes' });
         }
 
         this.setState({ pending: false });

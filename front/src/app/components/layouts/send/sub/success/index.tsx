@@ -1,40 +1,40 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import { Header } from 'app/components/common/header';
 
 interface IProps {
     className?: string;
     onClickHistory: () => void;
-    onClickTransaction: () => void;
+    onClickSend: () => void;
 }
 
+// TODO replace DIV and SPAN with A
+
 export class SendSuccess extends React.PureComponent<IProps, any> {
-
-    protected onClickHistory = (event: any) => {
-        console.log(event);
-    }
-
-    protected onClickTransaction = (event: any) => {
-        console.log(event);
-    }
-
     public render() {
-        const {
-            className,
-        } = this.props;
-
-        return (
-            <div className={cn('sonm-send-success', className)}>
-                <div className="sonm-send-success">
-                    <h1 className="sonm-send-success__header">Transfer success</h1>
-                    <div className="sonm-send-success__icons">
-                        <div className="box sonm-send-success__icons__history" onClick={this.onClickHistory}/>
-                        <div className="box sonm-send-success__icons__transaction" onClick={this.onClickTransaction}/>
-                        <span className="box" onClick={this.onClickHistory}>Transaction history</span>
-                        <span className="box" onClick={this.onClickTransaction}>New transaction</span>
+        return [
+            <Header className="sonm-send-success__header" key="header">Transfer success</Header>,
+            <div className={cn('sonm-send-success', this.props.className)} key="success">
+                <button onClick={this.props.onClickHistory} className="sonm-send-success__button">
+                    <div className="sonm-send-success__icon-history" />
+                    <div
+                        className="sonm-send-success__label"
+                        onClick={this.props.onClickHistory}
+                    >
+                        Transaction history
                     </div>
-                </div>
-            </div>
-        );
+                </button>
+                <button onClick={this.props.onClickSend} className="sonm-send-success__button" tabIndex={0}>
+                    <div className="sonm-send-success__icon-send" />
+                    <div
+                        className="sonm-send-success__label"
+                        onClick={this.props.onClickSend}
+                    >
+                        New transaction
+                    </div>
+                </button>
+            </div>,
+        ];
     }
 }
 

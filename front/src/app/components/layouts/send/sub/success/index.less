@@ -1,40 +1,49 @@
+@import "guide.less";
+
 .sonm-send-success {
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-grow: 1;
 
-  &__icons {
-    padding-top: 30px;
-    display:grid;
-    grid-template-columns: 200px 200px;
-    grid-row: auto auto;
-    grid-column-gap: 50px;
-    grid-row-gap: 30px;
-    justify-content:center;
+  &__icon-send,
+  &__icon-history {
+    background-size: cover;
+    border-radius: 50%;
+    height: 200px;
+    width: 200px;
+  }
 
-    &__history {
-      background: url('./icon-history.svg') no-repeat;
 
-      width: 200px;
-      height: 200px;
+  &__icon-send {
+    background: url('./icon-new-transaction.svg') no-repeat center;
+  }
 
-      background-size: cover;
-      background-position: top center;
-      border-radius: 50%;
+  &__icon-history {
+    background: url('./icon-history.svg') no-repeat center;
+  }
+
+  &__button {
+    outline: none;
+    outline-offset: 3px;
+    background: none transparent;
+    border: 0 solid transparent;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    margin: 30px;
+
+    &:focus,
+    &:active {
+      outline: @outline;
     }
+  }
 
-    &__transaction {
-      background: url('./icon-new-transaction.svg') no-repeat;
+  &__label {
+    margin: 30px 0 0 0;
+  }
 
-      width: 200px;
-      height: 200px;
-
-      background-size: cover;
-      background-position: top center;
-      border-radius: 50%;
-    }
-
-    .box {
-      align-items:center;
-      justify-content:center;
-    }
+  &__header {
+    text-align: center;
   }
 }
