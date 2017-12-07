@@ -32,7 +32,7 @@ export class Account extends React.Component<IProps, any> {
         navigate({
             path: '/history',
             query: {
-                account: this.props.mainStore.selectedAccountAddress,
+                address: this.props.mainStore.selectedAccountAddress,
             },
         });
     }
