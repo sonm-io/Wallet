@@ -70,10 +70,15 @@ describe('Api',  async function() {
         }
     });
 
-    // it('should found saved data', async function() {
-    //     const response = await Api.hasSavedData();
-    //     expect(response.data).equal(true);
-    // });
+    it('should check private key', async function() {
+        const response = await Api.checkPrivateKey(password, address);
+        expect(response.data).equal(true);
+    });
+
+    it('should fail check private key', async function() {
+        const response = await Api.checkPrivateKey('1234', address);
+        expect(response).to.have.nested.property('validation.password');
+    });
 
     it('should recieve currenciesList', async function() {
         const response = await Api.getCurrencyList();
