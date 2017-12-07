@@ -306,9 +306,15 @@ class Api {
                         },
                     };
                 } else {
-                    throw new Error('account_exists');
+                    return {
+                        validation: {
+                            password: 'account_already_exists',
+                        },
+                    };
                 }
             } catch (err) {
+                console.log(err);
+
                 return {
                     validation: {
                         password: 'password_not_valid',

@@ -7,7 +7,8 @@ import AccountItem from '../../common/account-item/index';
 import CurrencyBalanceList from '../../common/currency-balance-list/index';
 import DeletableItem from '../../common/deletable-item/index';
 import Header from '../../common/header';
-import Upload from '../../common/upload';
+import Button from '../../common/button';
+import AddAccount from './sub/add-account';
 
 interface IProps {
     className?: string;
@@ -19,6 +20,7 @@ interface IProps {
 export class Wallets extends React.Component<IProps, any> {
     public state = {
         deleteAddress: '',
+        showAddAccount: false,
     }
 
     private handleDelete = (deleteAddress: string) => {
@@ -29,23 +31,20 @@ export class Wallets extends React.Component<IProps, any> {
         this.props.mainStore.deleteAccount(deleteAddress);
     }
 
-    private handleOpenTextFile = (text?: string, error?: any) => {
+    protected handleAddAccount = async (data: any) => {
         if (this.props.mainStore === undefined) {
             return;
         }
 
-        if (error || !text) {
-            window.alert(JSON.stringify(error || 'Empty account json'));
-            return;
-        }
-
-        const password = window.prompt('password') || '';
-
-        this.props.mainStore.addAccount(
-            text,
-            password,
+        await this.props.mainStore.addAccount(
+            data.json,
+            data.password,
             Math.random().toString(36).slice(3),
         );
+
+        this.setState({
+            showAddAccount: false,
+        });
     }
 
     private handleRename = (address: string, name: string) => {
@@ -54,6 +53,19 @@ export class Wallets extends React.Component<IProps, any> {
         }
 
         this.props.mainStore.renameAccount(address, name);
+    }
+
+    private renderAddAccount() {
+        return this.state.showAddAccount ?
+            (<AddAccount onSubmit={this.handleAddAccount} className="sonm-wallets__add-button"/>) : null;
+    }
+
+    protected handleStartAddAccount = (event: any) => {
+        event.preventDefault();
+
+        this.setState({
+            showAddAccount: true,
+        });
     }
 
     public render() {
@@ -89,12 +101,10 @@ export class Wallets extends React.Component<IProps, any> {
                     className="sonm-wallets__balances"
                     currencyBalanceList={mainStore.fullBalanceList}
                 />
-                <Upload
-                    onOpenTextFile={this.handleOpenTextFile}
-                    className="sonm-wallets__add-button"
-                >
-                    + Add account
-                </Upload>
+                <Button type="button" onClick={this.handleStartAddAccount} className="sonm-wallets__add-button">
+                    Add account
+                </Button>
+                {this.renderAddAccount()}
             </div>
         );
     }
