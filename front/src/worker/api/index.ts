@@ -130,7 +130,7 @@ class Api {
     }
 
     public checkPrivateKey = async (data: IPayload): Promise<IResponse> => {
-        if (data.address && data.password) {
+        if (data.address) {
             const { address, password } = data;
 
             return this.checkAccountPassword(password, address);
@@ -140,6 +140,14 @@ class Api {
     }
 
     private async checkAccountPassword(password: string, address: string): Promise<IResponse> {
+        if (!password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        }
+
         const client = await this.initAccount(address);
 
         if (client && client.password) {
