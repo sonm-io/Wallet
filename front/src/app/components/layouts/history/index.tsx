@@ -22,11 +22,20 @@ interface IProps {
     className?: string;
     historyStore?: HistoryStore;
     mainStore?: MainStore;
+    initialAddress?: string;
+    initialCurrency?: string;
 }
 
 @inject('historyStore', 'mainStore')
 @observer
 export class History extends React.Component<IProps, any> {
+    public componentWillMount() {
+        if (!this.props.historyStore) { return; }
+
+        this.props.initialAddress && this.props.historyStore.setFilterFrom(this.props.initialAddress);
+        this.props.initialCurrency && this.props.historyStore.setFilterCurrency(this.props.initialCurrency);
+    }
+
     protected columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
         dataIndex: 'timestamp',
         title: 'Time',

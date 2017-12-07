@@ -13,8 +13,17 @@
   &__blockies {
     margin: 5px;
     grid-column: 1;
-    grid-row: 2 span;
+    grid-row:  ~"1 / 3";
     align-self: center;
+  }
+
+  &__icon-link {
+    z-index: 9;
+    display: block;
+    grid-column: 1;
+    grid-row: ~"1 / 3";
+    width: 100%;
+    height: 100%;
   }
 
   &__name-wrapper,

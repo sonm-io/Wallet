@@ -4,6 +4,7 @@ import { App } from '../components/layouts/app';
 import { History } from '../components/layouts/history';
 import { Votes } from '../components/layouts/votes';
 import { SendSuccess } from '../components/layouts/send/sub/success';
+import { Account } from '../components/layouts/account';
 import * as React from 'react';
 
 import { LocaleProvider } from 'antd';
@@ -49,17 +50,27 @@ const routes = [
             },
             {
                 path: '/send',
-                action: (ctx: IContext, params: IUrlParams) => ({
-                    title: 'Send',
-                    content: <Send/>,
-                }),
+                action: (ctx: IContext, params: IUrlParams) => {
+                    const initialAddress = (ctx.query as any).address;
+                    const initialCurrency = (ctx.query as any).currency;
+
+                    return {
+                        title: 'Send',
+                        content: <Send {...{ initialAddress, initialCurrency }} />,
+                    };
+                },
             },
             {
                 path: '/history',
-                action: (ctx: IContext) => ({
-                    title: 'History',
-                    content: <History/>,
-                }),
+                action: (ctx: IContext, params: IUrlParams) => {
+                    const initialAddress = (ctx.query as any).address;
+                    const initialCurrency = (ctx.query as any).currency;
+
+                    return {
+                        title: 'History',
+                        content: <History {...{ initialAddress, initialCurrency }} />,
+                    };
+                },
             },
             {
                 path: '/votes',
@@ -69,12 +80,23 @@ const routes = [
                 }),
             },
             {
-                path: '/wallets',
+                path: '/account',
+                action: (ctx: IContext) => {
+                    const initialAddress = (ctx.query as any).address;
+
+                    return {
+                        title: 'Account',
+                        content: <Account {...{ initialAddress }} />,
+                    };
+                },
+            },
+            {
+                path: '/accounts',
                 action: defaultAction = async (ctx: IContext) => {
                     const inner = await ctx.next();
 
                     return {
-                        title: 'Wallets',
+                        title: 'Accounts',
                         content: (
                             <Wallets>
                                 {inner && inner.content}
@@ -112,6 +134,7 @@ export interface IUrlParams {
 interface IContext {
     query: object;
     pathname: string;
+    params?: any;
     next: () => IRouterResult;
 }
 
