@@ -71,15 +71,9 @@ export class History extends React.Component<IProps, any> {
             ];
         },
     }, {
-    }, {
+        className: 'sonm-tx-list__amount-col',
         dataIndex: 'amount',
         title: 'Amount',
-        className: 'sonm-tx-list__amount-col',
-    }, {
-    }, {
-        className: 'sonm-tx-list__currency-col',
-        dataIndex: 'currencyAddress',
-        title: 'currency',
         render: (a, record, b) => {
             const addr = record.currencyAddress;
             const currency = this.props.mainStore && this.props.mainStore.currencyMap.get(addr);
@@ -87,10 +81,7 @@ export class History extends React.Component<IProps, any> {
                 ? currency.symbol
                 : addr;
 
-            return [
-                <IdentIcon address={addr} width={20} key="a"/>,
-                symbol.toUpperCase(),
-            ];
+            return `${record.amount} ${symbol.toUpperCase()}`;
         },
     }, {
     }, {

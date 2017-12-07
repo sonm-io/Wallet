@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { IdentIcon } from '../ident-icon';
+import { Balance } from '../balance-view';
 import * as cn from 'classnames';
 
 export interface ICurrencyDetails {
@@ -31,9 +32,12 @@ export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListPro
                         return (
                             <li className="sonm-currency-balance-list__item" key={address}>
                                 <IdentIcon address={address} width={26} className="sonm-currency-balance-list__icon"/>
-                                <span className="sonm-currency-balance-list__balance" style={{ lineHeight: '26px' }}>
-                                    {balance} {symbol}
-                                </span>
+                                <Balance
+                                    className="sonm-currency-balance-list__balance"
+                                    balance={balance}
+                                    symbol={symbol}
+                                    fontSizePx={18}
+                                />
                             </li>
                         );
                     })}

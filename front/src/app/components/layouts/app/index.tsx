@@ -3,8 +3,9 @@ import { Menu, Alert } from 'antd';
 import { ClickParam } from 'antd/lib/menu/';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
-import { navigate } from '../../../../app/router';
+import { navigate } from 'app/router';
 import { MainStore } from '../../../stores/main';
+import { Balance } from '../../common/balance-view';
 
 interface IProps {
     className?: string;
@@ -63,12 +64,17 @@ export class App extends React.Component<IProps, any> {
                                 Account
                             </Menu.Item>
                         </Menu>
-                        <div className="sonm-nav__total">
-                            {firstTokenBalance}
-                        </div>
-                        <div className="sonm-nav__total">
-                            {secondTokenBalance}
-                        </div>
+                            <Balance
+                                className="sonm-nav__total"
+                                fullString={firstTokenBalance}
+                                fontSizePx={18}
+                            />
+
+                            <Balance
+                                className="sonm-nav__total"
+                                fullString={secondTokenBalance}
+                                fontSizePx={18}
+                            />
                     </div>
                 </div>
                 <div className="sonm-app__content">

@@ -98,49 +98,11 @@
 
 
   &__popup {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
 
-    &-inner {
-      margin: auto;
-      background-color: @color-brand-bg;
-      border: solid 2px #213039;
-      padding: 25px 40px;
+    &-content {
       display: flex;
       flex-direction: column;
-      opacity: 0.95;
-      z-index: 999999;
-      position: relative;
       align-items: center;
-      box-shadow: 0 0 23px -2px rgba(33,48,57,1);
-    }
-
-    &-cross {
-      border: 1px dashed transparent;
-      border-radius: 50%;
-      background: none;
-      display: block;
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      height: 30px;
-      line-height: 28px;
-      width: 30px;
-      font-size: 30px;
-      font-weight: 100;
-      transform: rotate(45deg);
-      color: @color-light-font;
-      cursor: pointer;
-
-      &:focus,
-      &:active {
-        outline: none;
-        border-color: @color-border;
-      }
     }
   }
 
@@ -159,7 +121,6 @@
     background: transparent none;
     color: @color-blue;
     font-size: 18px;
-    outline: none;
     cursor: pointer;
     padding: 5px;
 

@@ -6,7 +6,7 @@ export interface IHeaderProps extends React.ButtonHTMLAttributes<any> {
     className?: string;
 }
 
-export function Button({ children, className }: IHeaderProps) {
+export function Header({ children, className }: IHeaderProps) {
     return (
         <h1 className={cn('sonm-header', className)}>
             {children}
@@ -14,4 +14,4 @@ export function Button({ children, className }: IHeaderProps) {
     );
 }
 
-export default Button;
+export default Header;
