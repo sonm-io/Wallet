@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1664 1715 179 98">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        stroke: #d8d8d8;
+      }
+
+      .cls-2 {
+        fill: #95989a;
+        font-size: 15px;
+        font-family: Roboto-Regular, Roboto;
+      }
+
+      .cls-3 {
+        stroke: none;
+      }
+
+      .cls-4 {
+        fill: none;
+      }
+    </style>
+  </defs>
+  <g id="operations_hystory" transform="translate(-2700)">
+    <g id="Rectangle_317" data-name="Rectangle 317" class="cls-1" transform="translate(1036 1715)">
+      <rect class="cls-3" width="179" height="98" rx="2"/>
+      <rect class="cls-4" x="0.5" y="0.5" width="178" height="97" rx="1.5"/>
+    </g>
+    <path id="Path_119" data-name="Path 119" d="M14.25,952.4A14.25,14.25,0,1,0,28.5,966.65,14.238,14.238,0,0,0,14.25,952.4Zm0,1.676A12.574,12.574,0,1,1,1.676,966.65,12.557,12.557,0,0,1,14.25,954.076Zm0,3.353a.841.841,0,0,0-.838.838v8.382a.841.841,0,0,0,.838.838h7.544a.838.838,0,0,0,0-1.677H15.088v-7.544A.841.841,0,0,0,14.25,957.43Z" transform="translate(1111 775.738)"/>
+    <text id="View_Operations_History" data-name="View Operations History" class="cls-2" transform="translate(1050 1765)"><tspan x="21.081" y="14">View Operations </tspan><tspan x="51.66" y="32">History</tspan></text>
+  </g>
+</svg>

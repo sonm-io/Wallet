@@ -34,17 +34,17 @@ const routes = [
         },
         children: [
             {
-                path: '/send',
+                path: '/send/:address?/:currency?',
                 action: (ctx: IContext, params: IUrlParams) => ({
                     title: 'Send',
-                    content: <Send/>,
+                    content: <Send address={ctx.params.address || ''} currency={ctx.params.currency || ''}/>,
                 }),
             },
             {
-                path: '/history',
+                path: '/history/:address?',
                 action: (ctx: IContext) => ({
                     title: 'History',
-                    content: <History/>,
+                    content: <History address={ctx.params.address || ''}/>,
                 }),
             },
             {

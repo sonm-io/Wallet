@@ -15,6 +15,8 @@ import Header from '../../common/header';
 interface IProps extends FormComponentProps {
     className?: string;
     mainStore?: MainStore;
+    address?: string;
+    currency?: string;
 }
 
 type PriorityInput = new () => ButtonGroup<string>;
@@ -28,6 +30,15 @@ export class SendSrc extends React.Component<IProps, any> {
     public state = {
         addressTarget: '0x',
     };
+
+    constructor(props: IProps) {
+        super(props);
+
+        if (this.props.mainStore) {
+            this.props.mainStore.selectAccount(this.props.address || '');
+            this.props.mainStore.selectCurrency(this.props.currency || '');
+        }
+    }
 
     protected handleSubmit = (event: React.FormEvent<Form>) => {
         event.preventDefault();

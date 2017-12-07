@@ -10,6 +10,7 @@ export interface IAccountItemProps {
     firstBalance: string;
     secondBalance: string;
     onRename?: (newName: string, address: string) => void;
+    onClick?: (address: string) => void;
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {

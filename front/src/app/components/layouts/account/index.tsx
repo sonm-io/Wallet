@@ -5,6 +5,7 @@ import { MainStore } from '../../../stores/main';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import Header from '../../common/header';
 import IdentIcon from '../../common/ident-icon/index';
+import { history } from '../../../router/history';
 
 interface IProps {
     className?: string;
@@ -26,7 +27,15 @@ export class Account extends React.Component<IProps, any> {
 
     protected handleChangeAccount = (value: any) => {
         this.setState({address: value as string});
-    };
+    }
+
+    protected handleHistoryClick() {
+        history.push(`/history/${this.state.address}`);
+    }
+
+    protected handleSendClick(currencyAddress: string) {
+        history.push(`/send/${this.state.address}/${currencyAddress}`);
+    }
 
     public render() {
         if (this.props.mainStore === undefined) {
@@ -45,13 +54,18 @@ export class Account extends React.Component<IProps, any> {
                         Account
                     </Header>
 
-                    <AccountBigSelect
-                        className="sonm-account__select-account"
-                        returnPrimitive
-                        accounts={this.props.mainStore.accountList}
-                        onChange={this.handleChangeAccount}
-                        value={this.state.address}
-                    />
+                    <div className="sonm-account__top">
+                        <AccountBigSelect
+                            className="sonm-account__top__account"
+                            returnPrimitive
+                            accounts={this.props.mainStore.accountList}
+                            onChange={this.handleChangeAccount}
+                            value={this.state.address}
+                        />
+
+                        <div className="sonm-account__top__history" onClick={this.handleHistoryClick.bind(this)}/>
+                    </div>
+
 
                     <Header className="sonm-wallets__header">
                         Tokens
@@ -67,10 +81,10 @@ export class Account extends React.Component<IProps, any> {
 
                             return (
                                 <li className="sonm-account-token-list__item" key={address}>
-                                    <IdentIcon address={address} width={40} className="sonm-currency-balance-list__icon"/>
-                                    <span className="sonm-currency-balance-list__name">{name}</span>
-                                    <span className="sonm-currency-balance-list__balance">{balance}</span>
-                                    <span className="sonm-currency-balance-list__button">SEND</span>
+                                    <IdentIcon address={address} width={40} className="sonm-account-token-list__item__blockies"/>
+                                    <span className="sonm-account-token-list__item__name">{name}</span>
+                                    <span className="sonm-account-token-list__item__balance">{balance}</span>
+                                    <span className="sonm-account-token-list__item__button" onClick={this.handleSendClick.bind(this, address)}>Send</span>
                                 </li>
                             );
                         })}
