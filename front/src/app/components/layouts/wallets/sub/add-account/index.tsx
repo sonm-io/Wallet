@@ -8,6 +8,7 @@ interface IProps {
     className?: string;
     validation?: IValidation;
     onSubmit: (state: any) => void;
+    onClickCross: () => void;
 }
 
 export class AddAccount extends React.PureComponent<IProps, any> {
@@ -26,6 +27,10 @@ export class AddAccount extends React.PureComponent<IProps, any> {
         });
     }
 
+    private handleClickCross = () => {
+        this.props.onClickCross();
+    }
+
     private handleOpenTextFile = (text?: string, error?: any) => {
         this.setState({ json: text });
     }
@@ -38,7 +43,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
 
     public render() {
         return (
-            <Dialog>
+            <Dialog onClickCross={this.handleClickCross}>
                 <form className="sonm-wallets-add-account__content" onSubmit={this.handleSubmit}>
                     <h3 className="sonm-wallets-add-account__header">Add account</h3>
                     <Upload

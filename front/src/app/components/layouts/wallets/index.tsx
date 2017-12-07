@@ -47,6 +47,12 @@ export class Wallets extends React.Component<IProps, any> {
         });
     }
 
+    protected handleHideAddAccount = async () => {
+        this.setState({
+            showAddAccount: false,
+        });
+    }
+
     private handleRename = (address: string, name: string) => {
         if (this.props.mainStore === undefined) {
             return;
@@ -57,7 +63,7 @@ export class Wallets extends React.Component<IProps, any> {
 
     private renderAddAccount() {
         return this.state.showAddAccount ?
-            (<AddAccount onSubmit={this.handleAddAccount} className="sonm-wallets__add-button"/>) : null;
+            (<AddAccount onSubmit={this.handleAddAccount} onClickCross={this.handleHideAddAccount} className="sonm-wallets__add-button"/>) : null;
     }
 
     protected handleStartAddAccount = (event: any) => {
