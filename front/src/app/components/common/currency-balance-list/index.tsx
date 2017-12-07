@@ -34,7 +34,7 @@ export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListPro
                                 <IdentIcon address={address} width={26} className="sonm-currency-balance-list__icon"/>
                                 <Balance
                                     className="sonm-currency-balance-list__balance"
-                                    balance={`${balance}`}
+                                    balance={balance}
                                     symbol={symbol}
                                     fontSizePx={18}
                                 />
