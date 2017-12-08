@@ -1,6 +1,14 @@
 @import "guide.less";
 
 .sonm-wallets-add-account {
+  &__upload {
+    width: 100%;
+  }
+
+  &__add-file {
+    cursor: pointer;
+  }
+
   &__content {
     display: flex;
     flex-direction: column;
@@ -47,19 +55,33 @@
     width: 330px;
     margin-top: 50px;
 
+    &:first-child {
+      margin-top: 20px;
+    }
+
     &-text {
       color: @color-light-font;
       font-size: 13px;
     }
 
+    &-success,
     &-error {
       display: inline-block;
       width: 100%;
-      color: @color-pink;
       order: 3;
       font-size: 12px;
       line-height: 20px;
       height: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &-error {
+      color: @color-pink;
+    }
+
+    &-success {
+      color: @color-blue;
     }
   }
 

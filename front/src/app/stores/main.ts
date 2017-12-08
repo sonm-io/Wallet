@@ -5,6 +5,7 @@ import {
     Api,
     IAccountInfo,
     ICurrencyInfo,
+    IValidation,
 } from 'app/api';
 import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
@@ -29,7 +30,7 @@ export interface ISendFormValues {
     toAddress: string;
 }
 
-export interface ISendValidation {
+export interface ISendValidation extends IValidation {
     password: string;
 }
 
@@ -64,9 +65,7 @@ export class MainStore {
 
     @observable public errors: any[] = [];
 
-    @observable public validation: ISendValidation = {
-        password: '',
-    };
+    @observable public validation?: IValidation;
 
     public values: ISendFormValues = {
         toAddress: '',
@@ -417,9 +416,12 @@ export class MainStore {
 
             const {data, validation} = yield Api.addAccount(json, password, name);
 
-            console.log(validation); // TODO
+            if (validation) {
+                this.validation = validation;
+            } else {
+                this.accountMap.set(data.address, data);
+            }
 
-            this.accountMap.set(data.address, data);
         } catch (e) {
             this.handleError(e);
         }
@@ -465,8 +467,8 @@ export class MainStore {
     }
 
     @action
-    public setValidation(params: Partial<ISendValidation>) {
-        Object.assign(this.validation, params);
+    public setValidation(params: IValidation) {
+        this.validation = params;
     }
 }
 

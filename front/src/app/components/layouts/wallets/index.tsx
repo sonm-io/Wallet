@@ -8,7 +8,7 @@ import CurrencyBalanceList from '../../common/currency-balance-list/index';
 import DeletableItem from '../../common/deletable-item/index';
 import Header from '../../common/header';
 import Button from '../../common/button';
-import AddAccount from './sub/add-account';
+import { AddAccount, IAddAccountValidation } from './sub/add-account';
 import { navigate } from '../../../router/navigate';
 
 interface IProps {
@@ -22,24 +22,20 @@ export class Wallets extends React.Component<IProps, any> {
     public state = {
         deleteAddress: '',
         showAddAccount: false,
-    }
+    };
 
     protected handleAccountClick(address: string) {
         navigate({ path: '/account', query: { address } });
     }
 
     private handleDelete = (deleteAddress: string) => {
-        if (this.props.mainStore === undefined) {
-            return;
-        }
+        if (!this.props.mainStore) { return; }
 
         this.props.mainStore.deleteAccount(deleteAddress);
     }
 
     protected handleAddAccount = async (data: any) => {
-        if (this.props.mainStore === undefined) {
-            return;
-        }
+        if (!this.props.mainStore) { return; }
 
         await this.props.mainStore.addAccount(
             data.json,
@@ -67,7 +63,18 @@ export class Wallets extends React.Component<IProps, any> {
     }
 
     private renderAddAccount() {
-        return this.state.showAddAccount ? (<AddAccount onSubmit={this.handleAddAccount} onClickCross={this.handleHideAddAccount} className="sonm-wallets__add-button"/>) : null;
+        if (!this.props.mainStore) { return null; }
+
+        return this.state.showAddAccount
+            ? (
+                <AddAccount
+                    validation={this.props.mainStore.validation as IAddAccountValidation}
+                    onSubmit={this.handleAddAccount}
+                    onClickCross={this.handleHideAddAccount}
+                    className="sonm-wallets__add-button"
+                />
+            )
+            : null;
     }
 
     protected handleStartAddAccount = (event: any) => {

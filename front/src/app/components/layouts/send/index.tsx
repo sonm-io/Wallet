@@ -199,7 +199,7 @@ export class SendSrc extends React.Component<IProps, any> {
             currency={currency}
             onConfirm={this.handleConfirm}
             onCancel={this.handleCancelConfirmation}
-            passwordValidationMsg={mainStore.validation.password}
+            passwordValidationMsg={mainStore.validation && mainStore.validation.password}
         />;
     }
 
