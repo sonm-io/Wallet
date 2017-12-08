@@ -52,6 +52,10 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fontSizePx={16}
                 />
                 <span className="sonm-account-item__address">{address}</span>
+                {onClickIcon
+                    ? <a href="" onClick={this.handleClickIcon} className="sonm-account-item__address-link"/>
+                    : null
+                }
                 <Balance
                     className="sonm-account-item__ether"
                     fullString={secondBalance}
