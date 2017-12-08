@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -6,6 +7,9 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const { getFullPath, readJson } = require('./utils');
 const extractLess = new ExtractTextPlugin('./style.css');
 const ShakePlugin = require('webpack-common-shake').Plugin;
+
+const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isAnalyze = process.env.WEBPACK_ANALYZE;
@@ -81,7 +85,6 @@ module.exports = {
     },
 
     watch: isDev,
-
     devtool: isDev ? 'source-map' : false,
 
     plugins: (() => {
@@ -91,12 +94,6 @@ module.exports = {
                 : false,
 
             // new ShakePlugin(),
-
-            new HtmlWebpackPlugin({
-                template: getFullPath('./assets/entry.html'),
-            }),
-
-            extractLess,
 
             new webpack.NoEmitOnErrorsPlugin(),
 
@@ -128,6 +125,20 @@ module.exports = {
             //   : null,
 
             new webpack.EnvironmentPlugin([ 'NODE_ENV' ]),
+
+	        new HtmlWebpackPlugin({
+		        inject: true,
+		        template: getFullPath('./assets/entry.html'),
+                //inline: fs.readFileSync('./front/dist/app.bundled.js', 'utf8'),
+	        }),
+
+	        extractLess,
+
+	        new StyleExtHtmlWebpackPlugin(),
+
+	        new ScriptExtHtmlWebpackPlugin({
+	           inline: ['app'],
+	        }),
         ];
 
         return plugins.filter(x => x);
