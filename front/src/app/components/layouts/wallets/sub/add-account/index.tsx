@@ -28,12 +28,6 @@ export class AddAccount extends React.PureComponent<IProps, any> {
         validation: {} as IValidation,
     };
 
-    public componentWillReceiveProps(next: IProps) {
-        this.setState({
-            validation: { ...next.validation, ...this.state.validation },
-        });
-    }
-
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
@@ -47,11 +41,15 @@ export class AddAccount extends React.PureComponent<IProps, any> {
             validation.name = 'Name is required';
         }
 
+        if (!this.state.json) {
+            validation.json = 'Please select file';
+        }
+
         if (this.props.existingAccounts.indexOf(this.state.address) !== -1) {
             validation.json = 'Account already exists';
         }
 
-        if (Object.keys(validation).length === 0) {
+        if (Object.keys(validation).every(x => !validation[x])) {
             this.setState({ validation: {} });
             this.props.onSubmit({
                 json: this.state.json,
@@ -61,6 +59,12 @@ export class AddAccount extends React.PureComponent<IProps, any> {
         } else {
             this.setState({ validation });
         }
+    }
+
+    public componentWillReceiveProps(next: IProps) {
+        const validation = { ...next.validation, ...this.state.validation };
+
+        this.setState({ validation });
     }
 
     protected handleClickCross = () => {
@@ -83,6 +87,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
             update.address = address;
             update.json = json;
             update.fileSuccess = `File ${params.fileName} has been selected`;
+            update.validation = { ...this.state.validation, json: '' };
 
         } catch (e) {
             update.fileSuccess = '';
@@ -95,17 +100,12 @@ export class AddAccount extends React.PureComponent<IProps, any> {
     }
 
     protected handleChangeInput = (event: any) => {
-        const validation = this.state.validation;
-
         this.setState({
             [event.target.name]: event.target.value,
-            // TODO use ommit
-            validation: Object.keys(this.state.validation).reduce((acc: IValidation, key: string) => {
-                if (key !== event.target.name) {
-                    acc[key] = validation[key];
-                }
-                return acc;
-            }, {}),
+            validation: {
+                ...this.state.validation,
+                [event.target.name]: '',
+            },
         });
     }
 
@@ -164,7 +164,6 @@ export class AddAccount extends React.PureComponent<IProps, any> {
                         />
                     </label>
                     <Button
-                        disabled={Object.keys(validation).length !== 0}
                         className="sonm-wallets-add-account__submit"
                         type="submit"
                         square
