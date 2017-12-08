@@ -44,9 +44,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     : null
                 }
                 <span className="sonm-account-item__name-wrapper">
-                    <span className="sonm-account-item__name-inner">
-                        {this.renderName()}
-                    </span>
+                    {this.renderName()}
                 </span>
                 <Balance
                     className="sonm-account-item__sonm"

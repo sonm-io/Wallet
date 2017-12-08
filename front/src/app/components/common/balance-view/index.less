@@ -1,23 +1,18 @@
 .sonm-balance {
   display: inline-block;
   overflow: hidden;
+  white-space: nowrap;
 
   &__number {
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: inherit;
+    display: block;
   }
 
   &__symbol {
     font-size: inherit;
     margin-left: 5px;
-  }
-
-  &__grid {
-    display: grid;
-    overflow: hidden;
-    grid-template-columns: auto min-content;
-    width: 100%;
-    height: 100%;
+    float: right;
   }
 }

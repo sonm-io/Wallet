@@ -39,14 +39,12 @@ export class Balance extends React.Component<IBalanceViewProps, any> {
                 className={cn('sonm-balance', className)}
                 style={{ fontSize: `${fontSizePx}px` }}
             >
-                <div className="sonm-balance__grid">
-                    <label className="sonm-balance__number">
-                        {out}
-                    </label>
-                    <label className="sonm-balance__symbol">
-                        {symbol}
-                    </label>
-                </div>
+                <span className="sonm-balance__symbol">
+                    {symbol}
+                </span>
+                <span className="sonm-balance__number">
+                    {out}
+                </span>
             </div>
         );
     }
