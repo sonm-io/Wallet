@@ -6,13 +6,15 @@ interface IBalanceViewProps {
     symbol?: string;
     fullString?: string;
     fontSizePx?: number;
+    decimals?: number;
 }
 
 import * as cn from 'classnames';
 
 export class Balance extends React.Component<IBalanceViewProps, any> {
-    public defaultProps: Partial<IBalanceViewProps> = {
+    public static defaultProps: Partial<IBalanceViewProps> = {
         fontSizePx: 100,
+        decimals: 4,
     };
 
     public render() {
@@ -28,7 +30,7 @@ export class Balance extends React.Component<IBalanceViewProps, any> {
             const dotIdx = balance.indexOf('.');
 
             out = (dotIdx !== -1)
-                ? balance.slice(0, dotIdx + 5)
+                ? balance.slice(0, dotIdx + 1 + (this.props.decimals as number))
                 : balance;
         }
 
@@ -37,14 +39,12 @@ export class Balance extends React.Component<IBalanceViewProps, any> {
                 className={cn('sonm-balance', className)}
                 style={{ fontSize: `${fontSizePx}px` }}
             >
-                <div className="sonm-balance__grid">
-                    <label className="sonm-balance__number">
-                        {out}
-                    </label>
-                    <label className="sonm-balance__symbol">
-                        {symbol}
-                    </label>
-                </div>
+                <span className="sonm-balance__symbol">
+                    {symbol}
+                </span>
+                <span className="sonm-balance__number">
+                    {out}
+                </span>
             </div>
         );
     }

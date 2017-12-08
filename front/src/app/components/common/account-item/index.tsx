@@ -11,6 +11,7 @@ export interface IAccountItemProps {
     firstBalance: string;
     secondBalance: string;
     onRename?: (newName: string, address: string) => void;
+    onClickIcon?: (address: string) => void;
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {
@@ -18,7 +19,13 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         isEdit: false,
     };
 
-    private inputRef?: any;
+    protected inputRef?: any;
+
+    protected handleClickIcon = (event: any) => {
+        event.preventDefault();
+
+        this.props.onClickIcon && this.props.onClickIcon(this.props.address);
+    }
 
     public render() {
         const {
@@ -26,15 +33,18 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             address,
             firstBalance,
             secondBalance,
+            onClickIcon,
         } = this.props;
 
         return (
             <div className={cn('sonm-account-item', className)}>
                 <IdentIcon address={address} className="sonm-account-item__blockies"/>
+                {onClickIcon
+                    ? <a href="" onClick={this.handleClickIcon} className="sonm-account-item__icon-link"/>
+                    : null
+                }
                 <span className="sonm-account-item__name-wrapper">
-                    <span className="sonm-account-item__name-inner">
-                        {this.renderName()}
-                    </span>
+                    {this.renderName()}
                 </span>
                 <Balance
                     className="sonm-account-item__sonm"
@@ -42,6 +52,10 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fontSizePx={16}
                 />
                 <span className="sonm-account-item__address">{address}</span>
+                {onClickIcon
+                    ? <a href="" onClick={this.handleClickIcon} className="sonm-account-item__address-link"/>
+                    : null
+                }
                 <Balance
                     className="sonm-account-item__ether"
                     fullString={secondBalance}

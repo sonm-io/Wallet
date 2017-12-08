@@ -256,7 +256,9 @@ export class MainStore {
 
     @action.bound
     public selectAccount(accountAddr: string) {
-        this.userSelectedAccountAddress = accountAddr;
+        if (accountAddr !== this.userSelectedAccountAddress) {
+            this.userSelectedAccountAddress = accountAddr;
+        }
     }
 
     @action.bound

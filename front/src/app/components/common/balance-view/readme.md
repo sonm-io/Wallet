@@ -1,7 +1,7 @@
 display balance:
 
     <Balance
-        balance="20000000000000000000000000000000000"
+        fullString="20000000000000000000000000000000000 ETH"
         symbol="ETH"
         widthPx={330}
         fontSizePx={40}
@@ -9,9 +9,12 @@ display balance:
     
 display balance:
 
-    <Balance
-        balance="20000"
-        symbol="ETH"
-        widthPx={330}
-        fontSizePx={40}
-    />    
+    <div style={{ border: '1px solid black', width: '100px', height: '50px' }}>
+        <Balance
+            decimals={4}
+            balance="222323438948.34234234"
+            symbol="ETH"
+            maxWidthPx={330}
+            fontSizePx={10}
+        />
+    </div> 

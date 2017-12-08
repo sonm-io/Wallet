@@ -9,6 +9,7 @@ import DeletableItem from '../../common/deletable-item/index';
 import Header from '../../common/header';
 import Button from '../../common/button';
 import AddAccount from './sub/add-account';
+import { navigate } from '../../../router/navigate';
 
 interface IProps {
     className?: string;
@@ -21,6 +22,10 @@ export class Wallets extends React.Component<IProps, any> {
     public state = {
         deleteAddress: '',
         showAddAccount: false,
+    }
+
+    protected handleAccountClick(address: string) {
+        navigate({ path: '/account', query: { address } });
     }
 
     private handleDelete = (deleteAddress: string) => {
@@ -62,8 +67,7 @@ export class Wallets extends React.Component<IProps, any> {
     }
 
     private renderAddAccount() {
-        return this.state.showAddAccount ?
-            (<AddAccount onSubmit={this.handleAddAccount} onClickCross={this.handleHideAddAccount} className="sonm-wallets__add-button"/>) : null;
+        return this.state.showAddAccount ? (<AddAccount onSubmit={this.handleAddAccount} onClickCross={this.handleHideAddAccount} className="sonm-wallets__add-button"/>) : null;
     }
 
     protected handleStartAddAccount = (event: any) => {
@@ -98,7 +102,11 @@ export class Wallets extends React.Component<IProps, any> {
                                 key={x.address}
                                 id={x.address}
                             >
-                                <AccountItem {...x} onRename={this.handleRename}/>
+                                <AccountItem
+                                    {...x}
+                                    onClickIcon={this.handleAccountClick}
+                                    onRename={this.handleRename}
+                                />
                             </DeletableItem>
                         );
                     })}

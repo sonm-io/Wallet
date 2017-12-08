@@ -51,8 +51,8 @@ export class App extends React.Component<IProps, any> {
                                 borderColor: 'transparent',
                             }}
                         >
-                            <Menu.Item key="/wallets" className="sonm-nav__menu-item">
-                                Wallet
+                            <Menu.Item key="/accounts" className="sonm-nav__menu-item">
+                                Accounts
                             </Menu.Item>
                             <Menu.Item key="/send" className="sonm-nav__menu-item">
                                 Send
