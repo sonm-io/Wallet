@@ -334,7 +334,7 @@ class Api {
     public addAccount = async (data: IPayload): Promise<IResponse> => {
         if (data.json && data.password) {
             try {
-                const json = JSON.parse(data.json);
+                const json = JSON.parse(data.json.toLowerCase());
 
                 const accounts = await this.getAccounts() || {};
                 const address = utils.add0x(json.address);
