@@ -412,11 +412,14 @@ export class MainStore {
 
     @asyncAction
     public *addAccount(json: string, password: string, name: string) {
+        let result: IValidation | undefined;
+
         try {
 
             const {data, validation} = yield Api.addAccount(json, password, name);
 
             if (validation) {
+                result = validation;
                 this.validation = validation;
             } else {
                 this.accountMap.set(data.address, data);
@@ -425,6 +428,8 @@ export class MainStore {
         } catch (e) {
             this.handleError(e);
         }
+
+        return result;
     }
 
     public getMaxValue(gasPrice: string, gasLimit: string) {

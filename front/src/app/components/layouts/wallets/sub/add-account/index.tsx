@@ -4,16 +4,18 @@ import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
 import { IValidation } from 'ipc/types';
 
-export interface IAddAccountValidation extends IValidation {
-    newPassword: string;
-    newName: string;
+export interface IAddAccountForm {
+    json: string;
+    password: string;
+    name: string;
 }
 
 export interface IProps {
     className?: string;
-    validation?: IAddAccountValidation;
-    onSubmit: (state: any) => void;
+    validation?: IValidation;
+    onSubmit: (data: IAddAccountForm) => void;
     onClickCross: () => void;
+    existingAccounts: string[];
 }
 
 export class AddAccount extends React.PureComponent<IProps, any> {
@@ -21,19 +23,44 @@ export class AddAccount extends React.PureComponent<IProps, any> {
         name: '',
         password: '',
         json: '',
-        fileError: '',
         fileSuccess: '',
         address: '',
+        validation: {} as IValidation,
     };
+
+    public componentWillReceiveProps(next: IProps) {
+        this.setState({
+            validation: { ...next.validation, ...this.state.validation },
+        });
+    }
 
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        this.props.onSubmit({
-            json: this.state.json,
-            password: this.state.password,
-            name: this.state.name,
-        });
+        const validation = {} as IValidation;
+
+        if (!this.state.password) {
+            validation.password = 'Password is required';
+        }
+
+        if (!this.state.name) {
+            validation.name = 'Name is required';
+        }
+
+        if (this.props.existingAccounts.indexOf(this.state.address) !== -1) {
+            validation.json = 'Account already exists';
+        }
+
+        if (Object.keys(validation).length === 0) {
+            this.setState({ validation: {} });
+            this.props.onSubmit({
+                json: this.state.json,
+                password: this.state.password,
+                name: this.state.name,
+            });
+        } else {
+            this.setState({ validation });
+        }
     }
 
     protected handleClickCross = () => {
@@ -55,25 +82,36 @@ export class AddAccount extends React.PureComponent<IProps, any> {
 
             update.address = address;
             update.json = json;
-            update.fileError = '';
             update.fileSuccess = `File ${params.fileName} has been selected`;
 
         } catch (e) {
             update.fileSuccess = '';
-            update.fileError = e.message || 'Incorrect file';
+            update.validation = {
+                json: e.message || 'Incorrect file',
+            };
         }
 
         this.setState(update);
     }
 
     protected handleChangeInput = (event: any) => {
+        const validation = this.state.validation;
+
         this.setState({
             [event.target.name]: event.target.value,
+            // TODO use ommit
+            validation: Object.keys(this.state.validation).reduce((acc: IValidation, key: string) => {
+                if (key !== event.target.name) {
+                    acc[key] = validation[key];
+                }
+                return acc;
+            }, {}),
         });
     }
 
     public render() {
-        const hasErrors = Boolean(this.state.fileError || (this.props.validation && this.props.validation.file));
+        const validation: IValidation = this.state.validation;
+        const hasFileError = validation.json;
 
         return (
             <Dialog onClickCross={this.handleClickCross}>
@@ -88,10 +126,10 @@ export class AddAccount extends React.PureComponent<IProps, any> {
                             Select wallet file
                         </Upload>
                         {
-                            hasErrors
+                            hasFileError
                                 ? (
                                     <span className="sonm-wallets-add-account__label-error">
-                                        {this.state.fileError} {this.props.validation && this.props.validation.file}
+                                        {validation.json}
                                     </span>
                                 )
                                 : (
@@ -104,7 +142,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
                     <label className="sonm-wallets-add-account__label">
                         <span className="sonm-wallets-add-account__label-text">Enter account password</span>
                         <span className="sonm-wallets-add-account__label-error">
-                            {this.props.validation && this.props.validation.newPassword}
+                            {validation.password}
                         </span>
                         <input
                             type="password"
@@ -116,7 +154,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
                     <label className="sonm-wallets-add-account__label">
                         <span className="sonm-wallets-add-account__label-text">Enter account name</span>
                         <span className="sonm-wallets-add-account__label-error">
-                            {this.props.validation && this.props.validation.newName}
+                            {validation.name}
                         </span>
                         <input
                             type="text"
@@ -126,7 +164,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
                         />
                     </label>
                     <Button
-                        disabled={this.state.fileError !== ''}
+                        disabled={Object.keys(validation).length !== 0}
                         className="sonm-wallets-add-account__submit"
                         type="submit"
                         square

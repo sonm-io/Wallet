@@ -3,13 +3,14 @@ import {} from 'antd';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { MainStore } from 'app/stores/main';
-import AccountItem from '../../common/account-item/index';
-import CurrencyBalanceList from '../../common/currency-balance-list/index';
-import DeletableItem from '../../common/deletable-item/index';
-import Header from '../../common/header';
-import Button from '../../common/button';
-import { AddAccount, IAddAccountValidation } from './sub/add-account';
-import { navigate } from '../../../router/navigate';
+import { AccountItem } from 'app/components/common/account-item';
+import { CurrencyBalanceList } from 'app/components/common/currency-balance-list';
+import { DeletableItem } from 'app/components/common/deletable-item';
+import { Header } from 'app/components/common/header';
+import { Button } from 'app/components/common/button';
+import { AddAccount, IAddAccountForm } from './sub/add-account';
+import { navigate } from 'app/router/navigate';
+import { IValidation } from 'ipc';
 
 interface IProps {
     className?: string;
@@ -22,6 +23,7 @@ export class Wallets extends React.Component<IProps, any> {
     public state = {
         deleteAddress: '',
         showAddAccount: false,
+        validation: {} as IValidation ,
     };
 
     protected handleAccountClick(address: string) {
@@ -34,18 +36,25 @@ export class Wallets extends React.Component<IProps, any> {
         this.props.mainStore.deleteAccount(deleteAddress);
     }
 
-    protected handleAddAccount = async (data: any) => {
+    protected handleAddAccount = async (data: IAddAccountForm) => {
         if (!this.props.mainStore) { return; }
 
-        await this.props.mainStore.addAccount(
+        const validation = await this.props.mainStore.addAccount(
             data.json,
             data.password,
             data.name,
-        );
+        ) as any || {};
 
-        this.setState({
-            showAddAccount: false,
-        });
+        if (Object.keys(validation).length === 0) {
+            this.setState({
+                showAddAccount: false,
+                validation,
+            });
+        } else {
+            this.setState({
+                validation,
+            });
+        }
     }
 
     protected handleHideAddAccount = async () => {
@@ -68,7 +77,8 @@ export class Wallets extends React.Component<IProps, any> {
         return this.state.showAddAccount
             ? (
                 <AddAccount
-                    validation={this.props.mainStore.validation as IAddAccountValidation}
+                    existingAccounts={Array.from(this.props.mainStore.accountMap.keys())}
+                    validation={this.state.validation}
                     onSubmit={this.handleAddAccount}
                     onClickCross={this.handleHideAddAccount}
                     className="sonm-wallets__add-button"
@@ -77,9 +87,7 @@ export class Wallets extends React.Component<IProps, any> {
             : null;
     }
 
-    protected handleStartAddAccount = (event: any) => {
-        event.preventDefault();
-
+    protected handleStartAddAccount = () => {
         this.setState({
             showAddAccount: true,
         });
