@@ -85,7 +85,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
             if (!address) { throw new Error('Incorrect file: no address'); }
 
             update.address = address;
-            update.json = json;
+            update.json = lowerCase;
             update.fileSuccess = `File ${params.fileName} has been selected`;
             update.validation = { ...this.state.validation, json: '' };
 
