@@ -9,7 +9,13 @@ export interface IUploadProps {
     buttonProps?: IButtonProps;
     className?: string;
     children: any;
-    onOpenTextFile?: (text?: string, error?: any) => void;
+    onOpenTextFile?: (params: IFileOpenResult) => void;
+}
+
+export interface IFileOpenResult {
+    text?: string;
+    error?: any;
+    fileName?: string;
 }
 
 export function Upload({ className, buttonProps, children, onOpenTextFile }: IUploadProps) {
@@ -23,8 +29,14 @@ export function Upload({ className, buttonProps, children, onOpenTextFile }: IUp
         if (onOpenTextFile) {
             const fileReader = new FileReader();
 
-            fileReader.onload = () => onOpenTextFile(fileReader.result);
-            fileReader.onerror = error => onOpenTextFile(undefined, error);
+            fileReader.onload = () => onOpenTextFile({
+                text: fileReader.result,
+                fileName: file.name,
+            });
+            fileReader.onerror = error => onOpenTextFile({
+                error,
+                fileName: file.name,
+            });
 
             fileReader.readAsText(file);
         }
@@ -35,6 +47,7 @@ export function Upload({ className, buttonProps, children, onOpenTextFile }: IUp
     return (
         <RcUpload beforeUpload={beforeUpload} className={cn('sonm-upload', className)}>
             <Button
+                style={{ width: '100%', boxSizing: 'border-box' }}
                 {...buttonProps}
             >
                 {children}
