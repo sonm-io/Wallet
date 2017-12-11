@@ -1,0 +1,75 @@
+@import "guide.less";
+
+.sonm-popup {
+  &__pale,
+  &__outer {
+    z-index: 9999;
+  }
+
+  &__pale {
+    opacity: 0.7;
+    background-color: @color-brand-bg;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  &__outer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+  }
+
+  &__inner {
+    background-color: @color-white;
+    margin: auto;
+    border: solid 1px @color-border;
+    padding: 25px 40px;
+    display: flex;
+    flex-direction: column;
+    z-index: 999999;
+    position: relative;
+    align-items: center;
+    opacity: 1;
+
+    .sonm-popup--dark & {
+      background-color: @color-brand-bg;
+      box-shadow: 0 0 23px -2px rgba(33,48,57,1);
+      border: solid 2px #213039;
+      opacity: 0.9;
+    }
+  }
+
+  &__cross {
+    color: @color-border;
+    border: 1px dashed transparent;
+    border-radius: 50%;
+    background: none;
+    display: block;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    height: 30px;
+    line-height: 28px;
+    width: 30px;
+    font-size: 30px;
+    font-weight: 100;
+    transform: rotate(45deg);
+    cursor: pointer;
+
+    &:focus,
+    &:active {
+      outline: none;
+      border-color: @color-border;
+    }
+
+    .sonm-popup--dark & {
+      color: @color-light-font;
+    }
+  }
+}

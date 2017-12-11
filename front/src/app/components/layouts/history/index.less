@@ -1,0 +1,91 @@
+.sonm-tx-list {
+
+  &__currency-col,
+  &__time-col,
+  &__amount-col {
+    white-space: nowrap;
+  }
+}
+
+.sonm-history {
+  display: grid;
+  grid-template-columns: 200px 200px 1fr;
+  grid-template-rows: @big-select-height 30px 1fr;
+  grid-gap: 10px;
+
+  &__select-account {
+    width: 100%;
+    grid-column: ~"1 / 4";
+    grid-row: 1;
+  }
+
+  &__date-range {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  &__select-currency {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  &__query {
+    grid-column: 3;
+    grid-row: 2;
+  }
+
+  &__table {
+    grid-column: ~"1 / 4";
+    grid-row: 3;
+  }
+}
+
+.sonm-tx-list {
+  &__col {
+
+    &-from {
+      &-ct {
+        display: grid;
+        grid-template-columns: min-content auto;
+        grid-template-row: 1fr 1fr;
+        grid-gap: 5px;
+      }
+
+      &-name {
+        grid-row: 1;
+        grid-column: 2;
+        font-weight: 400;
+      }
+
+      &-addr {
+        grid-row: 2;
+        grid-column: 2;
+      }
+
+      &-icon {
+        grid-row: 2;
+        grid-column: 1;
+      }
+    }
+
+    &-time {
+      min-width: 70px;
+    }
+
+    &-to {
+      &-ct {
+        display: grid;
+        grid-template-columns: min-content auto;
+        grid-gap: 5px;
+      }
+    }
+
+    &-status {
+      min-width: 70px;
+    }
+
+    &-amount {
+      min-width: 130px;
+    }
+  }
+}

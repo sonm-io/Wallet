@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "jsx": "react",
+    "lib": [
+      "es6",
+      "ES2015",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ],
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noEmitHelpers": true,
+    "importHelpers": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": "./front/src",
+    "strict": true,
+    "moduleResolution": "node"
+  },
+  "include": [
+    "front/typings/**/*.d.ts",
+    "front/src/**/*.ts",
+    "front/src/**/*.tsx",
+    "node_modules/@types/**/*.d.ts"
+  ],
+  "exclude": [
+    "front/dist",
+    "front/bundle",
+    "node_modules/"
+  ],
+  "typeAcquisition": {
+    "enable": true
+  }
+}
