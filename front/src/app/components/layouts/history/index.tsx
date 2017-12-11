@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import * as debounce from 'lodash/fp/debounce';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import IdentIcon from '../../common/ident-icon/index';
+import Balance from '../../common/balance-view/index';
 
 const RangePicker = DatePicker.RangePicker;
 const Option = Select.Option;
@@ -33,55 +34,104 @@ export class History extends React.Component<IProps, any> {
     protected columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
         dataIndex: 'timestamp',
         title: 'Time',
-        className: 'sonm-tx-list__time-col',
-        render: (text, record, index) => {
-            return moment(text).format('H:mm:ss D MMM YY');
+        render: (time, record) => {
+            const m = moment(time);
+
+            return (
+                <div className="sonm-tx-list__col-time">
+                    <div>{m.format('H:mm:ss')}</div>
+                    <div>{m.format('D MMM YY')}</div>
+                </div>
+            );
         },
     }, {
         dataIndex: 'fromAddress',
         title: 'From',
-        render: (a, record, c) => {
+        render: (_, record) => {
             const addr = record.fromAddress;
             const account = this.props.mainStore && this.props.mainStore.accountMap.get(addr);
             const name = account
                 ? account.name
                 : addr;
 
-            return [
-                <IdentIcon address={addr} width={20} key="a"/>,
-                name,
-            ];
+            return (
+                <div className="sonm-tx-list__col-from">
+                    <span className="sonm-tx-list__col-from-name">{name}</span>
+                    <IdentIcon address={addr} width={20} key="a" className="sonm-tx-list__col-from-icon" />
+                    <span className="sonm-tx-list__col-from-addr">{addr.slice(0, 20)}...</span>
+                </div>
+            );
         },
-    }, {
     }, {
         dataIndex: 'toAddress',
         title: 'To',
-        render: (a, record, c) => {
+        render: (_, record) => {
             const addr = record.toAddress;
 
-            return [
-                <IdentIcon address={addr} width={20} key="a"/>,
-                addr,
-            ];
+            return (
+                <div className="sonm-tx-list__col-to">
+                    <IdentIcon address={addr} width={20} key="a"/>
+                    <span>{addr.slice(0, 20)}...</span>
+                </div>
+            );
         },
     }, {
-        className: 'sonm-tx-list__amount-col',
         dataIndex: 'amount',
-        title: 'Amount',
-        render: (a, record, b) => {
+        className: 'sonm-tx-list__col-amount',
+        title: 'Amount / fee',
+        render: (_, record) => {
             const addr = record.currencyAddress;
             const currency = this.props.mainStore && this.props.mainStore.currencyMap.get(addr);
             const symbol = currency
                 ? currency.symbol
-                : addr;
+                : addr.substr(6);
 
-            return `${record.amount} ${symbol.toUpperCase()}`;
+            const result = [
+                <Balance
+                    key="a"
+                    className="sonm-tx-list__col-amount-value"
+                    symbol={symbol}
+                    balance={record.amount}
+                    fontSizePx={12}
+                />,
+            ];
+
+            if (record.fee) {
+                result.push(<br key="b"/>);
+                result.push(
+                    <Balance
+                        key="f"
+                        className="sonm-tx-list__col-amount-value"
+                        balance={record.fee}
+                        symbol="Ether"
+                        decimals={6}
+                        fontSizePx={12}
+                    />,
+                );
+            }
+
+            return result;
         },
     }, {
+        dataIndex: 'hash',
+        title: 'TxHash',
+        render: (_, record) => {
+            return (
+                <div className="sonm-tx-list__col-hash">
+                    {record.hash}
+                </div>
+            );
+        },
     }, {
-        dataIndex: 'fee',
-        title: 'Fee',
-        render: (a, record, b) => `${record.fee} ETH`,
+        dataIndex: 'status',
+        title: 'Status',
+        render: (_, record) => {
+            return (
+                <div className="sonm-tx-list__col-status">
+                    {record.status}
+                </div>
+            );
+        },
     }];
 
     public state = {

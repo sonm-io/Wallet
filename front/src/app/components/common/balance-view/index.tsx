@@ -1,12 +1,13 @@
 import * as React from 'react';
 
 interface IBalanceViewProps {
-    className: string;
+    className?: string;
     balance?: string;
     symbol?: string;
     fullString?: string;
     fontSizePx?: number;
     decimals?: number;
+    prefix?: string;
 }
 
 import * as cn from 'classnames';
@@ -18,7 +19,7 @@ export class Balance extends React.Component<IBalanceViewProps, any> {
     };
 
     public render() {
-        const { className, fontSizePx, fullString } = this.props;
+        const { className, fontSizePx, fullString, prefix } = this.props;
         let { balance, symbol } = this.props;
 
         if (fullString) {
@@ -43,7 +44,7 @@ export class Balance extends React.Component<IBalanceViewProps, any> {
                     {symbol}
                 </span>
                 <span className="sonm-balance__number">
-                    {out}
+                    {prefix} {out}
                 </span>
             </div>
         );
