@@ -9,8 +9,9 @@ import { TableColumnConfig } from 'antd/lib/table/Table';
 import * as moment from 'moment';
 import * as debounce from 'lodash/fp/debounce';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
-import IdentIcon from '../../common/ident-icon/index';
-import Balance from '../../common/balance-view/index';
+import { IdentIcon } from 'app/components/common/ident-icon';
+import { Balance } from 'app/components/common/balance-view';
+import { Hash } from 'app/components/common/hash-view';
 
 const RangePicker = DatePicker.RangePicker;
 const Option = Select.Option;
@@ -32,20 +33,20 @@ interface IProps {
 export class History extends React.Component<IProps, any> {
 
     protected columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
+        className: 'sonm-tx-list__col-time',
         dataIndex: 'timestamp',
         title: 'Time',
         render: (time, record) => {
             const m = moment(time);
 
-            return (
-                <div className="sonm-tx-list__col-time">
-                    <div>{m.format('H:mm:ss')}</div>
-                    <div>{m.format('D MMM YY')}</div>
-                </div>
-            );
+            return [
+                <div key="1">{m.format('H:mm:ss')}</div>,
+                <div key="2">{m.format('D MMM YY')}</div>,
+            ];
         },
     }, {
         dataIndex: 'fromAddress',
+        className: 'sonm-tx-list__col-time',
         title: 'From',
         render: (_, record) => {
             const addr = record.fromAddress;
@@ -55,23 +56,24 @@ export class History extends React.Component<IProps, any> {
                 : addr;
 
             return (
-                <div className="sonm-tx-list__col-from">
+                <div className="sonm-tx-list__col-from-ct">
                     <span className="sonm-tx-list__col-from-name">{name}</span>
                     <IdentIcon address={addr} width={20} key="a" className="sonm-tx-list__col-from-icon" />
-                    <span className="sonm-tx-list__col-from-addr">{addr.slice(0, 20)}...</span>
+                    <Hash className="sonm-tx-list__col-from-addr" hash={addr} />
                 </div>
             );
         },
     }, {
         dataIndex: 'toAddress',
+        className: 'sonm-tx-list__col-to',
         title: 'To',
         render: (_, record) => {
             const addr = record.toAddress;
 
             return (
-                <div className="sonm-tx-list__col-to">
+                <div className="sonm-tx-list__col-to-ct">
                     <IdentIcon address={addr} width={20} key="a"/>
-                    <span>{addr.slice(0, 20)}...</span>
+                    <Hash hash={addr} />
                 </div>
             );
         },
@@ -92,7 +94,6 @@ export class History extends React.Component<IProps, any> {
                     className="sonm-tx-list__col-amount-value"
                     symbol={symbol}
                     balance={record.amount}
-                    fontSizePx={12}
                 />,
             ];
 
@@ -105,7 +106,6 @@ export class History extends React.Component<IProps, any> {
                         balance={record.fee}
                         symbol="Ether"
                         decimals={6}
-                        fontSizePx={12}
                     />,
                 );
             }
@@ -115,19 +115,19 @@ export class History extends React.Component<IProps, any> {
     }, {
         dataIndex: 'hash',
         title: 'TxHash',
+        className: 'sonm-tx-list__col-hash',
         render: (_, record) => {
             return (
-                <div className="sonm-tx-list__col-hash">
-                    {record.hash}
-                </div>
+                <Hash hash={record.hash} />
             );
         },
     }, {
         dataIndex: 'status',
         title: 'Status',
+        className: 'sonm-tx-list__col-status',
         render: (_, record) => {
             return (
-                <div className="sonm-tx-list__col-status">
+                <div className="sonm-tx-list__col-status-ct">
                     {record.status}
                 </div>
             );

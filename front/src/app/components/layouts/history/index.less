@@ -40,18 +40,21 @@
   }
 }
 
-td .sonm-tx-list {
+.sonm-tx-list {
   &__col {
 
     &-from {
-      display: grid;
-      grid-template-columns: min-content auto;
-      grid-template-row: 1fr 1fr;
-      grid-gap: 5px;
+      &-ct {
+        display: grid;
+        grid-template-columns: min-content auto;
+        grid-template-row: 1fr 1fr;
+        grid-gap: 5px;
+      }
 
       &-name {
         grid-row: 1;
         grid-column: 2;
+        font-weight: 400;
       }
 
       &-addr {
@@ -66,13 +69,23 @@ td .sonm-tx-list {
     }
 
     &-time {
-
+      min-width: 70px;
     }
 
     &-to {
-      display: grid;
-      grid-template-columns: min-content auto;
-      grid-gap: 5px;
+      &-ct {
+        display: grid;
+        grid-template-columns: min-content auto;
+        grid-gap: 5px;
+      }
+    }
+
+    &-status {
+      min-width: 70px;
+    }
+
+    &-amount {
+      min-width: 130px;
     }
   }
 }

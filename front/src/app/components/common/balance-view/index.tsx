@@ -12,9 +12,8 @@ interface IBalanceViewProps {
 
 import * as cn from 'classnames';
 
-export class Balance extends React.Component<IBalanceViewProps, any> {
+export class Balance extends React.PureComponent<IBalanceViewProps, any> {
     public static defaultProps: Partial<IBalanceViewProps> = {
-        fontSizePx: 100,
         decimals: 4,
     };
 
@@ -35,10 +34,14 @@ export class Balance extends React.Component<IBalanceViewProps, any> {
                 : balance;
         }
 
+        const style = fontSizePx
+            ? { fontSize: `${fontSizePx}px` }
+            : undefined;
+
         return (
             <div
                 className={cn('sonm-balance', className)}
-                style={{ fontSize: `${fontSizePx}px` }}
+                style={style}
             >
                 <span className="sonm-balance__symbol">
                     {symbol}
