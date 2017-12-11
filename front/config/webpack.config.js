@@ -9,7 +9,7 @@ const extractLess = new ExtractTextPlugin('./style.css');
 const ShakePlugin = require('webpack-common-shake').Plugin;
 
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const isDev = process.env.NODE_ENV !== 'production';
 const isAnalyze = process.env.WEBPACK_ANALYZE;
@@ -23,7 +23,7 @@ module.exports = {
     output: {
         filename: '[name].bundled.js',
         path: getFullPath('dist'),
-        publicPath: isDev ? '' : '/',
+        //publicPath: isDev ? '' : '/',
     },
 
     resolve: {
@@ -85,9 +85,11 @@ module.exports = {
     },
 
     watch: isDev,
-    devtool: isDev ? 'source-map' : false,
+    devtool: false,
 
-    plugins: (() => {
+    // devtool: isDev ? 'source-map' : false,
+
+	plugins: (() => {
         const plugins = [
             process.env.WEBPACK_ANALYZE
                 ? new BundleAnalyzerPlugin()
@@ -124,21 +126,26 @@ module.exports = {
             //   ? new webpack.HotModuleReplacementPlugin()
             //   : null,
 
+	        isDev ? null : new UglifyJsPlugin({
+		        uglifyOptions: {
+			        output: {
+				        comments: false,
+				        beautify: false,
+				        ascii_only: true,
+			        },
+		        }
+            }),
+
             new webpack.EnvironmentPlugin([ 'NODE_ENV' ]),
 
 	        new HtmlWebpackPlugin({
 		        inject: true,
 		        template: getFullPath('./assets/entry.html'),
-                //inline: fs.readFileSync('./front/dist/app.bundled.js', 'utf8'),
 	        }),
 
 	        extractLess,
 
-	        new StyleExtHtmlWebpackPlugin(),
-
-	        new ScriptExtHtmlWebpackPlugin({
-	           inline: ['app'],
-	        }),
+	        isDev ? null : new StyleExtHtmlWebpackPlugin(),
         ];
 
         return plugins.filter(x => x);
