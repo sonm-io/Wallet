@@ -198,6 +198,8 @@ export class IdentIcon extends React.Component<IProps, any> {
         } = this.props;
         const canvasSize = this.getCanvasSize();
 
+        const correction = `-${(canvasSize - (width as number)) / 2}px`;
+
         return (
             <div
                 className={cn(className, 'sonm-ident-icon__wrapper')}
@@ -208,7 +210,7 @@ export class IdentIcon extends React.Component<IProps, any> {
                     ref={this.processCanvasRef}
                     width={canvasSize}
                     height={canvasSize}
-                    style={{ width: canvasSize, height: canvasSize }}
+                    style={{ width: canvasSize, height: canvasSize, marginTop: correction, marginLeft: correction }}
                 />
             </div>
         );
