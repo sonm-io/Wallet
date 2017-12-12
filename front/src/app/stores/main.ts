@@ -460,14 +460,14 @@ export class MainStore {
             gl = new BigNumber(MainStore.DEFAULT_GAS_LIMIT);
         }
 
-        const amount = (this.accountMap.get(this.selectedAccountAddress) as IAccountInfo)
-            .currencyBalanceMap[this.selectedCurrencyAddress];
+        let amount = new BigNumber((this.accountMap.get(this.selectedAccountAddress) as IAccountInfo)
+            .currencyBalanceMap[this.selectedCurrencyAddress]);
 
         if (this.secondTokenAddress === this.selectedCurrencyAddress) {
-            return (new BigNumber(amount).minus(new BigNumber(gp).mul(gl))).toString();
-        } else {
-            return amount;
+            amount = amount.minus(new BigNumber(gp).mul(gl)));
         }
+
+        return amount.lessThan(0) ? '0' : amount.toString();
     }
 
     @action
