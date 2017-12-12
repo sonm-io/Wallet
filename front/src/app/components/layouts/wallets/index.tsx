@@ -27,7 +27,7 @@ export class Wallets extends React.Component<IProps, any> {
     };
 
     protected handleAccountClick(address: string) {
-        navigate({ path: '/account', query: { address } });
+        navigate({ path: `/accounts/${address}` });
     }
 
     private handleDelete = (deleteAddress: string) => {

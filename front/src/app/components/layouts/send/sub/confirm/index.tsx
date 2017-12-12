@@ -1,64 +1,78 @@
 import * as React from 'react';
 import { Input, Icon, Form } from 'antd';
 import * as cn from 'classnames';
-import IdentIcon from '../../../../common/ident-icon/index';
-import { ICurrencyInfo } from 'app/api/types';
-import Button from '../../../../common/button/index';
+import { IdentIcon } from 'app/components/common/ident-icon/index';
+import { Button } from 'app/components/common/button/index';
+import { inject, observer } from 'mobx-react';
+import { MainStore } from 'app/stores/main';
 
 interface IProps {
     className?: string;
-    fromAddress: string;
-    toAddress: string;
-    fromName: string;
-    amount: string;
-    gasLimit: string;
-    gasPrice: string;
-    currency: ICurrencyInfo;
-    onConfirm: (password: string) => void;
-    onCancel: () => void;
-    passwordValidationMsg?: string;
+    mainStore?: MainStore;
+    onSuccess: () => void;
+    onBack: () => void;
 }
 
+@inject('mainStore')
+@observer
 export class SendConfirm extends React.PureComponent<IProps, any> {
-    public handleConfrim = (event: any) => {
+    public handleConfrim = async (event: any) => {
+        const mainStore = this.props.mainStore;
+        if (!mainStore) { return; }
+
         event.preventDefault();
 
         const password = event.target.password.value;
 
-        this.props.onConfirm && this.props.onConfirm(password);
+        const pendingId = mainStore.startPending('confirm');
+
+        const isPasswordValid = await mainStore.checkSelectedAccountPassword(password);
+
+        if (isPasswordValid) {
+            mainStore.confirmTransaction(password);
+            mainStore.hideConfirmDialog();
+
+            this.props.onSuccess();
+        }
+
+        mainStore.stopPending(pendingId);
     }
 
     public handleCancel = () => {
-        this.props.onCancel && this.props.onCancel();
+        this.props.onBack();
     }
 
     public render() {
-        const {
-            className,
-            fromAddress,
-            toAddress,
-            amount,
-            gasLimit,
-            gasPrice,
-            fromName,
-            currency,
-            passwordValidationMsg,
-        } = this.props;
+        const mainStore = this.props.mainStore;
+
+        if (!mainStore) { return null; }
+
+        const accountAddress = mainStore.selectedAccountAddress;
+        const account = mainStore.accountMap.get(accountAddress);
+        const accountName = account ? account.name : '';
+        const currency = mainStore.currencyMap.get(mainStore.selectedCurrencyAddress);
+        const amount = mainStore.values.amount;
+        const gasLimit = mainStore.values.gasLimit;
+        const gasPrice = mainStore.values.gasPrice;
+        const toAddress = mainStore.values.toAddress;
+        const passwordValidationMsg = mainStore.validation.password;
+
+        if (!currency) { return null; }
 
         return (
-            <div className={cn('sonm-send-confirm', className)}>
+            <div className={cn('sonm-send-confirm', this.props.className)}>
                 <h1 className="sonm-send-confirm__header">Transfer confirmation</h1>
                 <section className="sonm-send-confirm__from-to">
                     <div className="sonm-send-confirm__account">
-                        <IdentIcon address={fromAddress} className="sonm-send-confirm__account-blockies"/>
-                        <span className="sonm-send-confirm__account-name">{fromName}</span>
-                        <span className="sonm-send-confirm__account-addr">{fromAddress}</span>
+                        <IdentIcon address={accountAddress} className="sonm-send-confirm__account-blockies"/>
+                        <span className="sonm-send-confirm__account-name">{accountName}</span>
+                        <span className="sonm-send-confirm__account-addr">{accountAddress}</span>
                     </div>
                     <div className="sonm-send-confirm__arrow"/>
                     <div className="sonm-send-confirm__account">
                         <IdentIcon address={toAddress} className="sonm-send-confirm__account-blockies"/>
                         <span className="sonm-send-confirm__account-target">
-                            {fromAddress}
+                            {accountAddress}
                         </span>
                     </div>
                 </section>

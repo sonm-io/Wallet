@@ -2,8 +2,8 @@ import { Send } from '../components/layouts/send';
 import { Wallets } from '../components/layouts/wallets';
 import { App } from '../components/layouts/app';
 import { History } from '../components/layouts/history';
-import { Votes } from '../components/layouts/votes';
 import { SendSuccess } from '../components/layouts/send/sub/success';
+import { SendConfirm } from '../components/layouts/send/sub/confirm';
 import { Account } from '../components/layouts/account';
 import * as React from 'react';
 
@@ -16,6 +16,8 @@ let defaultAction;
 
 const navigateToSend = () => navigate({ path: '/send' });
 const navigateToHistory = () => navigate({ path: '/history' });
+const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
+const navigateToSuccess = () => navigate({ path: '/send/success' });
 
 const routes = [
     {
@@ -27,7 +29,7 @@ const routes = [
                 content: (
                     <LocaleProvider locale={enUSLocale}>
                         <App
-                            selectedNavMenuItem={ctx.pathname}
+                            selectedNavMenuItem={inner.pathKey}
                             {...inner.props}
                         >
                             {inner && inner.content}
@@ -39,26 +41,47 @@ const routes = [
         },
         children: [
             {
-                path: '/oh-yes',
-                action: (ctx: IContext, params: IUrlParams) => ({
-                    title: 'Sending complete',
-                    content: <SendSuccess
-                        onClickSend={navigateToSend}
-                        onClickHistory={navigateToHistory}
-                    />,
-                }),
-            },
-            {
                 path: '/send',
-                action: (ctx: IContext, params: IUrlParams) => {
+                action: async (ctx: IContext, params: IUrlParams) => {
                     const initialAddress = (ctx.query as any).address;
                     const initialCurrency = (ctx.query as any).currency;
 
+                    const next = await ctx.next();
+
+                    const content = next && next.content
+                        ? next.content
+                        : <Send
+                            initialAddress={initialAddress}
+                            initialCurrency={initialCurrency}
+                            onRequireConfirmation={navigateToConfirmation}
+                        />;
+
+                    if (next && next.popup) {
+                        content.push(next.popup);
+                    }
+
                     return {
+                        pathKey: '/send',
                         title: 'Send',
-                        content: <Send {...{ initialAddress, initialCurrency }} />,
+                        content,
                     };
                 },
+                children: [
+                    {
+                        path: '/confirm',
+                        action: (ctx: IContext) => ({
+                            title: 'Confirmation',
+                            content: <SendConfirm onBack={navigateToSend} onSuccess={navigateToSuccess} />,
+                        }),
+                    },
+                    {
+                        path: '/success',
+                        action: (ctx: IContext) => ({
+                            title: 'Success',
+                            content: <SendSuccess onClickHistory={navigateToHistory} onClickSend={navigateToSend} />,
+                        }),
+                    },
+                ],
             },
             {
                 path: '/history',
@@ -67,55 +90,41 @@ const routes = [
                     const initialCurrency = (ctx.query as any).currency;
 
                     return {
+                        pathKey: '/history',
                         title: 'History',
                         content: <History {...{ initialAddress, initialCurrency }} />,
                     };
                 },
             },
             {
-                path: '/votes',
-                action: (ctx: IContext) => ({
-                    title: 'Votes',
-                    content: <Votes/>,
-                }),
-            },
-            {
-                path: '/account',
-                action: (ctx: IContext) => {
-                    const initialAddress = (ctx.query as any).address;
-
-                    return {
-                        title: 'Account',
-                        content: <Account {...{ initialAddress }} />,
-                    };
-                },
-            },
-            {
                 path: '/accounts',
                 action: defaultAction = async (ctx: IContext) => {
-                    const inner = await ctx.next();
+                    const next = await ctx.next();
+
+                    const content = next && next.content
+                            ? next.content
+                            : <Wallets />;
+
+                    if (next && next.popup) {
+                        content.push(next.popup);
+                    }
 
                     return {
+                        pathKey: '/accounts',
                         title: 'Accounts',
-                        content: (
-                            <Wallets>
-                                {inner && inner.content}
-                            </Wallets>
-                        ),
+                        content,
                     };
                 },
                 children: [
                     {
-                        path: '/add',
-                        action: (ctx: IContext) => ({
-                            content: 'Add',
-                        }),
-                    },
-                    {
-                        path: '/delete/:address',
-                        action: (ctx: IContext, params: IUrlParams) => ({
-                            content: 'Delete ' + JSON.stringify(params),
-                        }),
+                        path: '/:address',
+                        action: (ctx: IContext, params: IUrlParams) => {
+                            const initialAddress = params.address;
+
+                            return {
+                                content: <Account {...{ initialAddress }} />,
+                            };
+                        },
                     },
                 ],
             },
@@ -139,9 +148,11 @@ interface IContext {
 }
 
 interface IRouterResult {
-    content: any;
+    popup?: any;
+    content?: any;
     title: string;
     props?: any;
+    pathKey: string;
 }
 
 export {routes};

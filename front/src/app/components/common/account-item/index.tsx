@@ -3,6 +3,7 @@ import { IdentIcon } from '../ident-icon';
 import * as cn from 'classnames';
 import { Icon } from 'antd';
 import { Balance } from '../balance-view';
+import { Hash } from '../hash-view';
 
 export interface IAccountItemProps {
     className?: string;
@@ -51,7 +52,11 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fullString={firstBalance}
                     fontSizePx={16}
                 />
-                <span className="sonm-account-item__address">{address}</span>
+                <Hash
+                    hasCopyButton
+                    className="sonm-account-item__address"
+                    hash={address}
+                />
                 {onClickIcon
                     ? <a href="" onClick={this.handleClickIcon} className="sonm-account-item__address-link"/>
                     : null

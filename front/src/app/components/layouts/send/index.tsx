@@ -8,17 +8,16 @@ import * as BigNumber from 'bignumber.js';
 import { inject, observer } from 'mobx-react';
 import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
-import IdentIcon from '../../common/ident-icon/index';
+import { IdentIcon } from 'app/components/common/ident-icon';
 import { MainStore, ISendFormValues } from 'app/stores/main';
-import Header from '../../common/header';
-import { SendConfirm } from './sub/confirm';
-import { navigate } from 'app/router';
+import { Header } from 'app/components/common/header';
 
 interface IProps extends FormComponentProps {
     className?: string;
     mainStore?: MainStore;
     initialCurrency?: string;
     initialAddress?: string;
+    onRequireConfirmation: () => void;
 }
 
 type PriorityInput = new () => ButtonGroup<string>;
@@ -35,10 +34,14 @@ export class SendSrc extends React.Component<IProps, any> {
     };
 
     public componentWillMount() {
-        if (!this.props.mainStore) { return; }
+        this.props.initialAddress && this.mainStore.selectAccount(this.props.initialAddress);
+        this.props.initialCurrency && this.mainStore.selectCurrency(this.props.initialCurrency);
+    }
 
-        this.props.initialAddress && this.props.mainStore.selectAccount(this.props.initialAddress);
-        this.props.initialCurrency && this.props.mainStore.selectCurrency(this.props.initialCurrency);
+    protected get mainStore(): MainStore {
+        if (!this.props.mainStore) { throw new Error('mainStore is undefined'); }
+
+        return this.props.mainStore;
     }
 
     protected handleSubmit = (event: React.FormEvent<Form>) => {
@@ -47,58 +50,53 @@ export class SendSrc extends React.Component<IProps, any> {
         this.props.form.validateFields(
             { force: true },
             async (err, values: ISendFormValues) => {
-                if (err || this.props.mainStore === undefined) {
-                    return;
-                }
+                if (err) { return; }
 
-                this.props.mainStore.setSendParams(values);
+                this.mainStore.setSendParams(values);
 
-                this.props.mainStore.showConfirmDialog();
+                this.props.onRequireConfirmation();
             },
         );
     }
 
     protected handleChangeAccount = (address: string) => {
-        if (!this.props.mainStore) { return; }
+        this.mainStore.selectAccount(address);
 
-        this.props.mainStore.selectAccount(address);
-
-        this.props.form.validateFields(['toAddress'], { force: true }, Function.prototype as any);
+        this.props.form.validateFields(
+            ['toAddress'],
+            { force: true },
+            Function.prototype as any,
+        );
     }
 
     protected handleChangeCurrency = (address: string) => {
-        if (!this.props.mainStore) { return; }
 
-        this.props.mainStore.selectCurrency(address);
+        this.mainStore.selectCurrency(address);
     }
 
     protected handleSetMaximum = () => {
-        if (this.props.mainStore) {
-
-            const {gasPrice, gasLimit} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
-            this.props.form.setFieldsValue({
-                amount: this.props.mainStore.getMaxValue(gasPrice, gasLimit),
-            });
-        }
+        const {gasPrice, gasLimit} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
+        this.props.form.setFieldsValue({
+            amount: this.mainStore.getMaxValue(gasPrice, gasLimit),
+        });
     }
 
     // TODO
     protected handleChangePriority = (value: string) => {
-        if (this.props.mainStore) {
-            const [min, max] = this.props.mainStore.gasPriceThresholds;
-            let gasPrice = this.props.mainStore.averageGasPrice;
+        const [min, max] = this.mainStore.gasPriceThresholds;
+        let gasPrice = this.mainStore.averageGasPrice;
 
-            if (value === 'low') {
-                gasPrice = min;
-            } else if (value === 'high') {
-                gasPrice = max;
-            }
-
-            this.props.form.setFieldsValue({
-                gasPrice,
-            });
-            this.props.mainStore.setUserGasPrice(gasPrice);
+        if (value === 'low') {
+            gasPrice = min;
+        } else if (value === 'high') {
+            gasPrice = max;
         }
+
+        this.props.form.setFieldsValue({
+            gasPrice,
+        });
+
+        this.mainStore.setUserGasPrice(gasPrice);
     }
 
     protected handleChangeTargetAddress = (event: any) => {
@@ -112,11 +110,9 @@ export class SendSrc extends React.Component<IProps, any> {
     protected handleChangeGasPrice = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
 
-        if (SendSrc.createBigNumber(value) === undefined || this.props.mainStore === undefined) {
-            return;
-        }
+        if (SendSrc.createBigNumber(value) === undefined) { return; }
 
-        this.props.mainStore.setUserGasPrice(value);
+        this.mainStore.setUserGasPrice(value);
     }
 
     protected static createBigNumber(value: string) {
@@ -148,7 +144,7 @@ export class SendSrc extends React.Component<IProps, any> {
             return cb('Please input correct address');
         }
 
-        if (this.props.mainStore && this.props.mainStore.selectedAccountAddress === value) {
+        if (this.mainStore.selectedAccountAddress === value) {
             return cb('No no no');
         }
 
@@ -177,60 +173,6 @@ export class SendSrc extends React.Component<IProps, any> {
         return true;
     }
 
-    public renderConfirm() {
-        const mainStore = this.props.mainStore;
-
-        if (!mainStore) { return null; }
-
-        const accountAddress = mainStore.selectedAccountAddress;
-        const account = mainStore.accountMap.get(accountAddress);
-        const accountName = account ? account.name : '';
-        const currency = mainStore.currencyMap.get(mainStore.selectedCurrencyAddress);
-
-        if (!currency) { return null; }
-
-        return <SendConfirm
-            fromAddress={accountAddress}
-            toAddress={mainStore.values.toAddress}
-            amount={mainStore.values.amount}
-            gasLimit={mainStore.values.gasLimit}
-            gasPrice={mainStore.values.gasPrice}
-            fromName={accountName}
-            currency={currency}
-            onConfirm={this.handleConfirm}
-            onCancel={this.handleCancelConfirmation}
-            passwordValidationMsg={mainStore.validation && mainStore.validation.password}
-        />;
-    }
-
-    public handleConfirm = async (password: string) => {
-        const mainStore = this.props.mainStore;
-
-        if (!mainStore) { return; }
-
-        this.setState({ pending: true });
-
-        const isPasswordValid = await mainStore.checkSelectedAccountPassword(password);
-
-        if (isPasswordValid) {
-            mainStore.confirmTransaction(password);
-            mainStore.hideConfirmDialog();
-            this.props.form.resetFields();
-            navigate({ path: '/oh-yes' });
-        }
-
-        this.setState({ pending: false });
-    }
-
-    public handleCancelConfirmation = () => {
-        const mainStore = this.props.mainStore;
-
-        if (!mainStore) { return; }
-
-        mainStore.hideConfirmDialog();
-        mainStore.setValidation({});
-    }
-
     protected static normalizeAddress(str: string): string {
         const s = '0000000000000000000000000000000000000000' + str;
         const l = s.length;
@@ -239,154 +181,146 @@ export class SendSrc extends React.Component<IProps, any> {
     }
 
     public render() {
-        if (this.props.mainStore === undefined) {
-            return null;
-        }
-
         const {
             className,
             form,
-            mainStore,
         } = this.props;
 
-        const balanceList = mainStore.currentBalanceList;
-        const selectedCurrencyAddress = mainStore.selectedCurrencyAddress;
-        const gasPrice = mainStore.userGasPrice;
-        const gasLimit = (mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT);
-        const isReady = mainStore.isReady;
-        const values = mainStore.values;
+        const balanceList = this.mainStore.currentBalanceList;
+        const selectedCurrencyAddress = this.mainStore.selectedCurrencyAddress;
+        const gasPrice = this.mainStore.userGasPrice;
+        const gasLimit = this.mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT;
+        const isReady = this.mainStore.isReady;
+        const values = this.mainStore.values;
 
         return (
             <div className={cn('sonm-send', className)}>
-                {mainStore.isConfirmDialogVisible
-                    ? this.renderConfirm()
-                    : <Spin spinning={!isReady || this.state.pending}>
-                        <Header className="sonm-send__header">
-                            Transfer
-                        </Header>
-                        <Form onSubmit={this.handleSubmit} className="sonm-send__form">
+                <Spin spinning={!isReady || this.state.pending}>
+                    <Header className="sonm-send__header">
+                        Transfer
+                    </Header>
+                    <Form onSubmit={this.handleSubmit} className="sonm-send__form">
+                        <Form.Item
+                            label="From"
+                            className="sonm-send__account-select"
+                        >
+                            <AccountBigSelect
+                                returnPrimitive
+                                onChange={this.handleChangeAccount}
+                                accounts={this.mainStore.accountList}
+                                value={this.mainStore.selectedAccountAddress}
+                            />
+                        </Form.Item>
+                        <div className="sonm-send__form-second-line">
                             <Form.Item
-                                label="From"
-                                className="sonm-send__account-select"
+                                label="To"
+                                className="sonm-send__target"
                             >
-                                <AccountBigSelect
-                                    returnPrimitive
-                                    onChange={this.handleChangeAccount}
-                                    accounts={this.props.mainStore.accountList}
-                                    value={this.props.mainStore.selectedAccountAddress}
+                                {
+                                    form.getFieldDecorator('toAddress', {
+                                        initialValue: values && values.toAddress,
+                                        rules: [
+                                            { validator: this.validateTargetAddress },
+                                        ],
+                                    })(
+                                        <Input
+                                            onChange={this.handleChangeTargetAddress}
+                                            placeholder="Address"
+                                        />,
+                                    )
+                                }
+                            </Form.Item>
+                            <div className="sonm-send__target-icon">
+                                <IdentIcon address={this.state.addressTarget}/>
+                            </div>
+                            <CurrencyBigSelect
+                                className="sonm-send__currency-select"
+                                returnPrimitive
+                                currencies={balanceList}
+                                onChange={this.handleChangeCurrency}
+                                value={selectedCurrencyAddress}
+                            />
+                        </div>
+                        <Form.Item
+                            label="Amount"
+                            className="sonm-send__currency-amount"
+                        >
+                            {form.getFieldDecorator('amount', {
+                                initialValue: values && values.amount,
+                                rules: [
+                                    { validator: SendSrc.validatePositiveNumber },
+                                ],
+                            })(
+                                <Input
+                                    className="sonm-send__input"
+                                    placeholder="Amount"
+                                />,
+                            )}
+                            <Button
+                                className="sonm-send__set-max"
+                                color="blue"
+                                transparent
+                                square
+                                onClick={this.handleSetMaximum}
+                            >
+                                Add maximum
+                            </Button>
+                        </Form.Item>
+                        <Form.Item
+                            label="Gas limit"
+                            className="sonm-send__gas-limit"
+                        >
+                            {form.getFieldDecorator('gasLimit', {
+                                initialValue: gasLimit,
+                                rules: [
+                                    { validator: SendSrc.validatePositiveInteger },
+                                ],
+                            })(
+                                <Input
+                                    className="sonm-send__input"
+                                    placeholder="Gas limit"
+                                />,
+                            )}
+                        </Form.Item>
+                        <div className="sonm-send__last-line">
+                            <Form.Item
+                                label="Gas price"
+                                className="sonm-send__gas-price"
+                            >
+                                {
+                                    form.getFieldDecorator('gasPrice', {
+                                        initialValue: gasPrice,
+                                        rules: [
+                                            { validator: SendSrc.validatePositiveNumber },
+                                        ],
+                                    })(
+                                        <Input
+                                            className="sonm-send__input"
+                                            placeholder="Gas price"
+                                            onChange={this.handleChangeGasPrice}
+                                        />,
+                                    )
+                                }
+                                <span className="sonm-send__input-suffix">
+                                    {this.mainStore.firstToken.symbol}
+                                </span>
+                                <PriorityInput
+                                    valueList={['low', 'normal', 'high']}
+                                    value={this.mainStore.priority}
+                                    onChange={this.handleChangePriority}
                                 />
                             </Form.Item>
-                            <div className="sonm-send__form-second-line">
-                                <Form.Item
-                                    label="To"
-                                    className="sonm-send__target"
-                                >
-                                    {
-                                        form.getFieldDecorator('toAddress', {
-                                            initialValue: values && values.toAddress,
-                                            rules: [
-                                                { validator: this.validateTargetAddress },
-                                            ],
-                                        })(
-                                            <Input
-                                                onChange={this.handleChangeTargetAddress}
-                                                placeholder="Address"
-                                            />,
-                                        )
-                                    }
-                                </Form.Item>
-                                <div className="sonm-send__target-icon">
-                                    <IdentIcon address={this.state.addressTarget}/>
-                                </div>
-                                <CurrencyBigSelect
-                                    className="sonm-send__currency-select"
-                                    returnPrimitive
-                                    currencies={balanceList}
-                                    onChange={this.handleChangeCurrency}
-                                    value={selectedCurrencyAddress}
-                                />
-                            </div>
-                            <Form.Item
-                                label="Amount"
-                                className="sonm-send__currency-amount"
+                            <Button
+                                onClick={this.handleSubmit}
+                                type="submit"
+                                color="violet"
+                                className="sonm-send__submit"
                             >
-                                {form.getFieldDecorator('amount', {
-                                    initialValue: values && values.amount,
-                                    rules: [
-                                        { validator: SendSrc.validatePositiveNumber },
-                                    ],
-                                })(
-                                    <Input
-                                        className="sonm-send__input"
-                                        placeholder="Amount"
-                                    />,
-                                )}
-                                <Button
-                                    className="sonm-send__set-max"
-                                    color="blue"
-                                    transparent
-                                    square
-                                    onClick={this.handleSetMaximum}
-                                >
-                                    Add maximum
-                                </Button>
-                            </Form.Item>
-                            <Form.Item
-                                label="Gas limit"
-                                className="sonm-send__gas-limit"
-                            >
-                                {form.getFieldDecorator('gasLimit', {
-                                    initialValue: gasLimit,
-                                    rules: [
-                                        { validator: SendSrc.validatePositiveInteger },
-                                    ],
-                                })(
-                                    <Input
-                                        className="sonm-send__input"
-                                        placeholder="Gas limit"
-                                    />,
-                                )}
-                            </Form.Item>
-                            <div className="sonm-send__last-line">
-                                <Form.Item
-                                    label="Gas price"
-                                    className="sonm-send__gas-price"
-                                >
-                                    {
-                                        form.getFieldDecorator('gasPrice', {
-                                            initialValue: gasPrice,
-                                            rules: [
-                                                { validator: SendSrc.validatePositiveNumber },
-                                            ],
-                                        })(
-                                            <Input
-                                                className="sonm-send__input"
-                                                placeholder="Gas price"
-                                                onChange={this.handleChangeGasPrice}
-                                            />,
-                                        )
-                                    }
-                                    <span className="sonm-send__input-suffix">
-                                        {MainStore.SYMBOL_ETHER}
-                                    </span>
-                                    <PriorityInput
-                                        valueList={['low', 'normal', 'high']}
-                                        value={mainStore.priority}
-                                        onChange={this.handleChangePriority}
-                                    />
-                                </Form.Item>
-                                <Button
-                                    onClick={this.handleSubmit}
-                                    type="submit"
-                                    color="violet"
-                                    className="sonm-send__submit"
-                                >
-                                    NEXT
-                                </Button>
-                            </div>
-                        </Form>
-                    </Spin>
-                }
+                                NEXT
+                            </Button>
+                        </div>
+                    </Form>
+                </Spin>
             </div>
         );
     }

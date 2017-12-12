@@ -41,8 +41,8 @@ export interface IPasswordCache {
 export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore {
-    public static SYMBOL_SONM = 'snmt';
-    public static SYMBOL_ETHER = 'eth';
+    public static ADDRESS_SONM = '0x225b929916daadd5044d5934936313001f55d8f0';
+    public static ADDRESS_ETHER = '0x';
     public static DEFAULT_GAS_LIMIT = '50000';
 
     @observable public averageGasPrice = '';
@@ -65,7 +65,7 @@ export class MainStore {
 
     @observable public errors: any[] = [];
 
-    @observable public validation?: IValidation;
+    @observable public validation: IValidation = {};
 
     public values: ISendFormValues = {
         toAddress: '',
@@ -113,7 +113,7 @@ export class MainStore {
         return [min, max];
     }
 
-    private static findCurrencyBySymbol(map: Map<string, ICurrencyInfo>, symbol: string) {
+    public static findCurrencyBySymbol(map: Map<string, ICurrencyInfo>, symbol: string) {
         let result;
 
         if (map.size === 0) {
@@ -135,12 +135,28 @@ export class MainStore {
         return result;
     }
 
-    @computed public get firstTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, MainStore.SYMBOL_SONM);
+    public get firstTokenAddress(): string {
+        return MainStore.ADDRESS_ETHER;
     }
 
-    @computed public get secondTokenAddress(): string {
-        return MainStore.findCurrencyBySymbol(this.currencyMap, MainStore.SYMBOL_ETHER);
+    public get secondTokenAddress(): string {
+        return MainStore.ADDRESS_SONM;
+    }
+
+    @computed public get firstToken(): ICurrencyInfo {
+        const result = this.currencyMap.get(this.firstTokenAddress);
+
+        if (!result) { throw new Error(`First token ${this.firstTokenAddress} not found`); }
+
+        return result;
+    }
+
+    @computed public get secondToken(): ICurrencyInfo {
+        const result = this.currencyMap.get(this.secondTokenAddress);
+
+        if (!result) { throw new Error(`Second token ${this.secondTokenAddress} not found`); }
+
+        return result;
     }
 
     @computed public get firstTokenBalance(): string {
@@ -169,8 +185,8 @@ export class MainStore {
             const props: IAccountItemProps = {
                 address: account.address,
                 name: account.name,
-                firstBalance: `${account.currencyBalanceMap[firstTokenAddress]} ${MainStore.SYMBOL_SONM}`,
-                secondBalance: `${account.currencyBalanceMap[secondTokenAddress]} ${MainStore.SYMBOL_ETHER}`,
+                firstBalance: `${account.currencyBalanceMap[firstTokenAddress]} ${this.secondToken.symbol}`,
+                secondBalance: `${account.currencyBalanceMap[secondTokenAddress]} ${this.secondToken.symbol}`,
             };
 
             return props;
@@ -474,6 +490,27 @@ export class MainStore {
     @action
     public setValidation(params: IValidation) {
         this.validation = params;
+    }
+
+    protected pendingIdx = 0;
+    @observable protected pendingSet = new Set();
+
+    @action
+    public startPending(name: string): string {
+        const pendingId = `${name}_${this.pendingIdx}`;
+
+        this.pendingSet.add(pendingId);
+
+        return pendingId;
+    }
+
+    @action
+    public stopPending(pendingId: string): void {
+        this.pendingSet.delete(pendingId);
+    }
+
+    @computed public get isPending() {
+        return this.pendingSet.size > 0;
     }
 }
 

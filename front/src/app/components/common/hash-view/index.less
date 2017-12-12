@@ -1,5 +1,5 @@
 .sonm-hash {
-  display: inline-block;
+  display: inline-flex;
   overflow: hidden;
   white-space: nowrap;
 
@@ -17,5 +17,26 @@
     float: right;
   }
 
+  &__copy {
+    outline: none;
+    outline-offset: 3px;
+    display: inline-block;
+    border: 0 solid transparent;
+    margin: 0 0 0 5px;
+    padding: 0;
+    background: transparent url(./copy-icon.svg) center no-repeat;
+    background-size: contain;
+    width: 20px;
+    cursor: pointer;
+    opacity: 0.5;
 
+    &:focus,
+    &:active {
+      outline: @outline;
+    }
+
+    &:before {
+      content: ' ';
+    }
+  }
 }

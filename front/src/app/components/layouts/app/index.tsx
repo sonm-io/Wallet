@@ -20,7 +20,7 @@ interface IProps {
 export class App extends React.Component<IProps, any> {
 
     public handleMenuClick(param: ClickParam) {
-        navigate({path: param.key});
+        navigate({ path: param.key });
     }
 
     public render() {
