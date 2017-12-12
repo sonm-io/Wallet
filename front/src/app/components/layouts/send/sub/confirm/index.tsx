@@ -15,7 +15,7 @@ interface IProps {
 
 @inject('mainStore')
 @observer
-export class SendConfirm extends React.PureComponent<IProps, any> {
+export class SendConfirm extends React.Component<IProps, any> {
     public handleConfrim = async (event: any) => {
         const mainStore = this.props.mainStore;
         if (!mainStore) { return; }
