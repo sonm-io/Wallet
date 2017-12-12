@@ -22,7 +22,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
 
     protected inputRef?: any;
 
-    protected handleClickIcon = (event: any) => {
+    protected handleClickIcon = (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
 
         this.props.onClickIcon && this.props.onClickIcon(this.props.address);
@@ -56,11 +56,8 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     hasCopyButton
                     className="sonm-account-item__address"
                     hash={address}
+                    onClick={this.handleClickIcon}
                 />
-                {onClickIcon
-                    ? <a href="" onClick={this.handleClickIcon} className="sonm-account-item__address-link"/>
-                    : null
-                }
                 <Balance
                     className="sonm-account-item__ether"
                     fullString={secondBalance}

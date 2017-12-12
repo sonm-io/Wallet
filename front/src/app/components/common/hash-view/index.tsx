@@ -8,6 +8,7 @@ interface IBalanceViewProps {
     hash: string;
     prefix?: string;
     hasCopyButton?: boolean;
+    onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 import * as cn from 'classnames';
@@ -26,7 +27,7 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
     }
 
     public render() {
-        const { className, fontSizePx, hash, prefix, hasCopyButton } = this.props;
+        const { className, fontSizePx, hash, prefix, hasCopyButton, onClick } = this.props;
 
         const hash0x =  hash.startsWith('0x') ? hash : '0x' + hash;
 
@@ -45,8 +46,12 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
 
         const showCopyButton = hasCopyButton && 1;
 
+        const Tag = onClick ? 'a' : 'div';
+
         return (
-            <div
+            <Tag
+                href={onClick ? `#${hash0x}` : undefined}
+                onClick={onClick}
                 className={cn('sonm-hash', className)}
                 style={style}
             >
@@ -60,7 +65,7 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
                         : null
                     }
                 </span>
-            </div>
+            </Tag>
         );
     }
 }
