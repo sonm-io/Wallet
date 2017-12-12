@@ -102,6 +102,8 @@ class Api {
             'account.hasSavedData': this.hasSavedData,
 
             'transaction.list': this.getTransactionList,
+
+            'getSonmTokenAddress': this.getSonmTokenAddress,
         };
 
         this.storage = {
@@ -340,6 +342,14 @@ class Api {
 
         return {
             data: utils.fromWei(gasPrice, 'ether'),
+        };
+    }
+
+    public getSonmTokenAddress = async (): Promise<IResponse> => {
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+
+        return {
+            data: await factory.getSonmTokenAddress(),
         };
     }
 

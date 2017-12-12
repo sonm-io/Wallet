@@ -119,6 +119,10 @@ export class Api {
     public static async getGasPrice(): Promise<IResult<string>> {
         return createPromise('account.getGasPrice');
     }
+
+    public static async getSonmTokenAddress(): Promise<IResult<string>> {
+        return createPromise('getSonmTokenAddress');
+    }
 }
 
 export default Api;

@@ -21,6 +21,11 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('data.pong');
     });
 
+    it('should get sonm token address', async function() {
+        const response = await Api.getSonmTokenAddress();
+        expect(response.data).to.be.a('string');
+    });
+
     it('should get empty wallets list', async function() {
         const response = await Api.getWalletList();
         expect(response.data).to.have.lengthOf(0);
