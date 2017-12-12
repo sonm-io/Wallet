@@ -71,6 +71,10 @@ export class Api {
         return createPromise('account.checkPrivateKey', { address, password });
     }
 
+    public static async createAccount(passphase: string): Promise<IResult<boolean>>  {
+        return createPromise('account.create', { passphase });
+    }
+
     public static async getWalletList(): Promise<IResult<string[]>>  {
         return createPromise('getWalletList');
     }

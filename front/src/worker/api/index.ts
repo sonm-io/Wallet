@@ -61,6 +61,7 @@ function createPromise(
 }
 
 const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
+const CHAIN_ID = 'rinkeby';
 
 class Api {
     private routes: {
@@ -86,6 +87,7 @@ class Api {
             'getWalletList': this.getWalletList,
 
             'account.add': this.addAccount,
+            'account.create': this.createAccount,
             'account.remove': this.removeAccount,
             'account.rename': this.renameAccount,
 
@@ -180,6 +182,16 @@ class Api {
                     },
                 };
             }
+        }
+    }
+
+    private createAccount = async (data: IPayload): Promise<IResponse> => {
+        if (data.passphase) {
+            return {
+                data: utils.newAccount(data.passphase),
+            };
+        } else {
+            throw new Error('required_params_missed');
         }
     }
 
@@ -279,7 +291,7 @@ class Api {
     }
 
     private async processPendingTransactions() {
-        const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
 
         for (const transaction of this.storage.transactions) {
             if (transaction.status === 'pending') {
@@ -291,7 +303,7 @@ class Api {
 
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
-            const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
+            const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
 
             this.accounts[address] = {
                 factory,
@@ -323,7 +335,7 @@ class Api {
     }
 
     public getGasPrice = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(URL_REMOTE_GETH_NODE);
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
@@ -368,7 +380,7 @@ class Api {
                     };
                 }
             } catch (err) {
-                console.log(err);
+                //console.log(err);
 
                 return {
                     validation: {
