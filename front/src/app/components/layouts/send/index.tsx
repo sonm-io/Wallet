@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Spin, Input } from 'antd';
+import { Form, Input } from 'antd';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { CurrencyBigSelect } from 'app/components/common/currency-big-select';
 import { FormComponentProps } from 'antd/lib/form/Form';
@@ -30,7 +30,6 @@ const ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/i;
 export class SendSrc extends React.Component<IProps, any> {
     public state = {
         addressTarget: '0x',
-        pending: false,
     };
 
     public componentWillMount() {
@@ -190,137 +189,134 @@ export class SendSrc extends React.Component<IProps, any> {
         const selectedCurrencyAddress = this.mainStore.selectedCurrencyAddress;
         const gasPrice = this.mainStore.userGasPrice;
         const gasLimit = this.mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT;
-        const isReady = this.mainStore.isReady;
         const values = this.mainStore.values;
 
         return (
             <div className={cn('sonm-send', className)}>
-                <Spin spinning={!isReady || this.state.pending}>
-                    <Header className="sonm-send__header">
-                        Transfer
-                    </Header>
-                    <Form onSubmit={this.handleSubmit} className="sonm-send__form">
+                <Header className="sonm-send__header">
+                    Transfer
+                </Header>
+                <Form onSubmit={this.handleSubmit} className="sonm-send__form">
+                    <Form.Item
+                        label="From"
+                        className="sonm-send__account-select"
+                    >
+                        <AccountBigSelect
+                            returnPrimitive
+                            onChange={this.handleChangeAccount}
+                            accounts={this.mainStore.accountList}
+                            value={this.mainStore.selectedAccountAddress}
+                        />
+                    </Form.Item>
+                    <div className="sonm-send__form-second-line">
                         <Form.Item
-                            label="From"
-                            className="sonm-send__account-select"
+                            label="To"
+                            className="sonm-send__target"
                         >
-                            <AccountBigSelect
-                                returnPrimitive
-                                onChange={this.handleChangeAccount}
-                                accounts={this.mainStore.accountList}
-                                value={this.mainStore.selectedAccountAddress}
+                            {
+                                form.getFieldDecorator('toAddress', {
+                                    initialValue: values && values.toAddress,
+                                    rules: [
+                                        { validator: this.validateTargetAddress },
+                                    ],
+                                })(
+                                    <Input
+                                        onChange={this.handleChangeTargetAddress}
+                                        placeholder="Address"
+                                    />,
+                                )
+                            }
+                        </Form.Item>
+                        <div className="sonm-send__target-icon">
+                            <IdentIcon address={this.state.addressTarget}/>
+                        </div>
+                        <CurrencyBigSelect
+                            className="sonm-send__currency-select"
+                            returnPrimitive
+                            currencies={balanceList}
+                            onChange={this.handleChangeCurrency}
+                            value={selectedCurrencyAddress}
+                        />
+                    </div>
+                    <Form.Item
+                        label="Amount"
+                        className="sonm-send__currency-amount"
+                    >
+                        {form.getFieldDecorator('amount', {
+                            initialValue: values && values.amount,
+                            rules: [
+                                { validator: SendSrc.validatePositiveNumber },
+                            ],
+                        })(
+                            <Input
+                                className="sonm-send__input"
+                                placeholder="Amount"
+                            />,
+                        )}
+                        <Button
+                            className="sonm-send__set-max"
+                            color="blue"
+                            transparent
+                            square
+                            onClick={this.handleSetMaximum}
+                        >
+                            Add maximum
+                        </Button>
+                    </Form.Item>
+                    <Form.Item
+                        label="Gas limit"
+                        className="sonm-send__gas-limit"
+                    >
+                        {form.getFieldDecorator('gasLimit', {
+                            initialValue: gasLimit,
+                            rules: [
+                                { validator: SendSrc.validatePositiveInteger },
+                            ],
+                        })(
+                            <Input
+                                className="sonm-send__input"
+                                placeholder="Gas limit"
+                            />,
+                        )}
+                    </Form.Item>
+                    <div className="sonm-send__last-line">
+                        <Form.Item
+                            label="Gas price"
+                            className="sonm-send__gas-price"
+                        >
+                            {
+                                form.getFieldDecorator('gasPrice', {
+                                    initialValue: gasPrice,
+                                    rules: [
+                                        { validator: SendSrc.validatePositiveNumber },
+                                    ],
+                                })(
+                                    <Input
+                                        className="sonm-send__input"
+                                        placeholder="Gas price"
+                                        onChange={this.handleChangeGasPrice}
+                                    />,
+                                )
+                            }
+                            <span className="sonm-send__input-suffix">
+                                {this.mainStore.firstToken.symbol}
+                            </span>
+                            <PriorityInput
+                                valueList={['low', 'normal', 'high']}
+                                value={this.mainStore.priority}
+                                onChange={this.handleChangePriority}
                             />
                         </Form.Item>
-                        <div className="sonm-send__form-second-line">
-                            <Form.Item
-                                label="To"
-                                className="sonm-send__target"
-                            >
-                                {
-                                    form.getFieldDecorator('toAddress', {
-                                        initialValue: values && values.toAddress,
-                                        rules: [
-                                            { validator: this.validateTargetAddress },
-                                        ],
-                                    })(
-                                        <Input
-                                            onChange={this.handleChangeTargetAddress}
-                                            placeholder="Address"
-                                        />,
-                                    )
-                                }
-                            </Form.Item>
-                            <div className="sonm-send__target-icon">
-                                <IdentIcon address={this.state.addressTarget}/>
-                            </div>
-                            <CurrencyBigSelect
-                                className="sonm-send__currency-select"
-                                returnPrimitive
-                                currencies={balanceList}
-                                onChange={this.handleChangeCurrency}
-                                value={selectedCurrencyAddress}
-                            />
-                        </div>
-                        <Form.Item
-                            label="Amount"
-                            className="sonm-send__currency-amount"
+                        <Button
+                            onClick={this.handleSubmit}
+                            type="submit"
+                            color="violet"
+                            className="sonm-send__submit"
                         >
-                            {form.getFieldDecorator('amount', {
-                                initialValue: values && values.amount,
-                                rules: [
-                                    { validator: SendSrc.validatePositiveNumber },
-                                ],
-                            })(
-                                <Input
-                                    className="sonm-send__input"
-                                    placeholder="Amount"
-                                />,
-                            )}
-                            <Button
-                                className="sonm-send__set-max"
-                                color="blue"
-                                transparent
-                                square
-                                onClick={this.handleSetMaximum}
-                            >
-                                Add maximum
-                            </Button>
-                        </Form.Item>
-                        <Form.Item
-                            label="Gas limit"
-                            className="sonm-send__gas-limit"
-                        >
-                            {form.getFieldDecorator('gasLimit', {
-                                initialValue: gasLimit,
-                                rules: [
-                                    { validator: SendSrc.validatePositiveInteger },
-                                ],
-                            })(
-                                <Input
-                                    className="sonm-send__input"
-                                    placeholder="Gas limit"
-                                />,
-                            )}
-                        </Form.Item>
-                        <div className="sonm-send__last-line">
-                            <Form.Item
-                                label="Gas price"
-                                className="sonm-send__gas-price"
-                            >
-                                {
-                                    form.getFieldDecorator('gasPrice', {
-                                        initialValue: gasPrice,
-                                        rules: [
-                                            { validator: SendSrc.validatePositiveNumber },
-                                        ],
-                                    })(
-                                        <Input
-                                            className="sonm-send__input"
-                                            placeholder="Gas price"
-                                            onChange={this.handleChangeGasPrice}
-                                        />,
-                                    )
-                                }
-                                <span className="sonm-send__input-suffix">
-                                    {this.mainStore.firstToken.symbol}
-                                </span>
-                                <PriorityInput
-                                    valueList={['low', 'normal', 'high']}
-                                    value={this.mainStore.priority}
-                                    onChange={this.handleChangePriority}
-                                />
-                            </Form.Item>
-                            <Button
-                                onClick={this.handleSubmit}
-                                type="submit"
-                                color="violet"
-                                className="sonm-send__submit"
-                            >
-                                NEXT
-                            </Button>
-                        </div>
-                    </Form>
-                </Spin>
+                            NEXT
+                        </Button>
+                    </div>
+                </Form>
             </div>
         );
     }

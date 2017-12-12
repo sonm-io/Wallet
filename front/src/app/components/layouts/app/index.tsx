@@ -18,7 +18,6 @@ interface IProps {
 @inject('mainStore')
 @observer
 export class App extends React.Component<IProps, any> {
-
     public handleMenuClick(param: ClickParam) {
         navigate({ path: param.key });
     }
@@ -32,12 +31,14 @@ export class App extends React.Component<IProps, any> {
                 lastErrors,
                 firstTokenBalance,
                 secondTokenBalance,
+                isPending,
             },
         } = this.props;
 
         return (
 
             <div className={cn('sonm-app', className)}>
+                {isPending ? <div className="sonm-app__pale" /> : null}
                 <div className="sonm-app__nav">
                     <div className="sonm-nav">
                         <div className="sonm-nav__logo" />
@@ -73,8 +74,6 @@ export class App extends React.Component<IProps, any> {
                                 fontSizePx={18}
                             />
                     </div>
-                </div>
-                <div className="sonm-app__content">
                     <div className="sonm-app__alert-ct">
                         {
                             lastErrors.length > 0
@@ -87,6 +86,8 @@ export class App extends React.Component<IProps, any> {
                                 : null
                         }
                     </div>
+                </div>
+                <div className="sonm-app__content">
                     {children}
                 </div>
             </div>

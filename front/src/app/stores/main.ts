@@ -62,8 +62,6 @@ export class MainStore {
 
     @observable public isConfirmDialogVisible = false;
 
-    @observable public isReady = false;
-
     @observable public errors: any[] = [];
 
     @observable public validation: IValidation = {};
