@@ -41,9 +41,10 @@ export interface IPasswordCache {
 export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore {
-    public static ADDRESS_SONM = '0x225b929916daadd5044d5934936313001f55d8f0';
     public static ADDRESS_ETHER = '0x';
     public static DEFAULT_GAS_LIMIT = '50000';
+
+    protected sonmTokenAddress: string = '';
 
     @observable public averageGasPrice = '';
 
@@ -139,8 +140,10 @@ export class MainStore {
         return MainStore.ADDRESS_ETHER;
     }
 
+    private secondTokenAddressProp = '';
+
     public get secondTokenAddress(): string {
-        return MainStore.ADDRESS_SONM;
+        return this.secondTokenAddressProp;
     }
 
     @computed public get firstToken(): ICurrencyInfo {
@@ -185,7 +188,7 @@ export class MainStore {
             const props: IAccountItemProps = {
                 address: account.address,
                 name: account.name,
-                firstBalance: `${account.currencyBalanceMap[firstTokenAddress]} ${this.secondToken.symbol}`,
+                firstBalance: `${account.currencyBalanceMap[firstTokenAddress]} ${this.firstToken.symbol}`,
                 secondBalance: `${account.currencyBalanceMap[secondTokenAddress]} ${this.secondToken.symbol}`,
             };
 
@@ -375,8 +378,10 @@ export class MainStore {
 
     @asyncAction
     public *init() {
+        const pendingId = this.startPending('init');
+
         try {
-            this.isReady = false;
+            this.secondTokenAddressProp = (yield Api.getSonmTokenAddress()).data;
 
             const [{data: currencyList}] = yield Promise.all([
                 Api.getCurrencyList(),
@@ -389,7 +394,8 @@ export class MainStore {
         } catch (e) {
             this.handleError(e);
         } finally {
-            this.isReady = true;
+
+            this.stopPending(pendingId);
         }
     }
 
