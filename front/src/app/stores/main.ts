@@ -464,7 +464,7 @@ export class MainStore {
             .currencyBalanceMap[this.selectedCurrencyAddress]);
 
         if (this.secondTokenAddress === this.selectedCurrencyAddress) {
-            amount = amount.minus(new BigNumber(gp).mul(gl)));
+            amount = amount.minus(new BigNumber(gp).mul(gl));
         }
 
         return amount.lessThan(0) ? '0' : amount.toString();
