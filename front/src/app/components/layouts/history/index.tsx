@@ -232,6 +232,7 @@ export class History extends React.Component<IProps, any> {
                         </Option>
                     </Select>
                     <Input
+                        placeholder="Search by address / TxHash"
                         onChange={this.handleChangeQuery}
                         className="sonm-history__query"
                         value={this.state.query}
