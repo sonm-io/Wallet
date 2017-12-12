@@ -21,11 +21,15 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('data.pong');
     });
 
+    it('should get sonm token address', async function() {
+        const response = await Api.getSonmTokenAddress();
+        expect(response.data).to.be.a('string');
+    });
+
     it('should get empty wallets list', async function() {
         const response = await Api.getWalletList();
         expect(response.data).to.have.lengthOf(0);
     });
-
 
     it('should set secret key', async function() {
         const response = await Api.setSecretKey('my secret key', 'wallet 1');
@@ -53,6 +57,11 @@ describe('Api',  async function() {
     it('should recieve gasPrice without account list', async function() {
         const response = await Api.getGasPrice();
         expect(response.data).to.be.a('string');
+    });
+
+    it('should create account and recover private key from it', async function() {
+        const response = await Api.createAccount('testTestTest');
+        expect(response.data).to.be.a('object');
     });
 
     it('should add account', async function() {
@@ -84,8 +93,8 @@ describe('Api',  async function() {
         const response = await Api.getCurrencyList();
         expect(response.data).to.have.lengthOf(2);
         if (response.data) {
-            expect(response.data[0].symbol).equal('eth');
-            expect(response.data[1].symbol).equal('snmt');
+            expect(response.data[0].symbol).equal('Ether');
+            expect(response.data[1].symbol).equal('SNMT');
         }
     });
 
