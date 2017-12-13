@@ -123,7 +123,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
                             className="sonm-wallets-add-account__upload"
                             buttonProps={{square: true, height: 40, transparent: true}}
                         >
-                            Select wallet file
+                            Select keystore / JSON file
                         </Upload>
                         {
                             hasFileError
