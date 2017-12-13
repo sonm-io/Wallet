@@ -531,7 +531,7 @@ class Api {
                     }
                 }
 
-                if (filters.query && !item.toAddress.includes(filters.query)) {
+                if (filters.query && !item.toAddress.includes(filters.query) && !item.hash.includes(filters.query)) {
                     ok = false;
                 }
 
@@ -549,12 +549,13 @@ class Api {
             }
         }
 
+        const total = filtered.length;
         filtered = filtered.slice(offset, offset + limit);
 
         return {
             data: [
                 filtered,
-                this.storage.transactions.length,
+                total,
             ],
         };
     }
