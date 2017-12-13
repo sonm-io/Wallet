@@ -30,7 +30,6 @@ export class SendConfirm extends React.Component<IProps, any> {
 
         if (isPasswordValid) {
             mainStore.confirmTransaction(password);
-            mainStore.hideConfirmDialog();
 
             this.props.onSuccess();
         }
