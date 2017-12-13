@@ -194,7 +194,7 @@ export class SendSrc extends React.Component<IProps, any> {
         return (
             <div className={cn('sonm-send', className)}>
                 <Header className="sonm-send__header">
-                    Transfer
+                    Send
                 </Header>
                 <Form onSubmit={this.handleSubmit} className="sonm-send__form">
                     <Form.Item
