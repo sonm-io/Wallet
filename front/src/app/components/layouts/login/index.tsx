@@ -166,10 +166,6 @@ export class Login extends React.Component<IProps, any> {
         }
     }
 
-    protected static setFocus(ref: any) {
-        ref && ref.focus();
-    }
-
     protected handleChangeInput = (event: any) => {
         this.setState({
             [event.target.name]: event.target.value,
@@ -189,7 +185,15 @@ export class Login extends React.Component<IProps, any> {
         this.setState({ currentAction: 'select-wallet', validation: {} });
     }
 
-    protected saveLoginBtnRef = (ref: Button | null) => this.nodes.loginBtn = ref;
+    protected saveLoginBtnRef = (ref: Button | null) => {
+        if (!ref) { return; }
+
+        if (!this.nodes.loginBtn) {
+            ref.focus();
+        }
+
+        this.nodes.loginBtn = ref;
+    }
 
     protected renderSelect() {
         return (
@@ -222,12 +226,13 @@ export class Login extends React.Component<IProps, any> {
 
         return (
             <Dialog onClickCross={this.handleReturn} color="dark">
-                <form className="sonm-login__popup-inner" onSubmit={this.handleLogin}>
+                <form className="sonm-login__popup-content" onSubmit={this.handleLogin}>
                     <h3 className="sonm-login__popup-header">Enter password</h3>
                     <label className="sonm-login__label">
                         <span className="sonm-login__label-text">Password</span>
                         <span className="sonm-login__label-error">{this.state.validation.password}</span>
                         <input
+                            ref={setFocus}
                             type="password"
                             className="sonm-login__input"
                             name="password"
@@ -258,6 +263,7 @@ export class Login extends React.Component<IProps, any> {
                         <span className="sonm-login__label-text">Wallet name</span>
                         <span className="sonm-login__label-error">{this.state.validation.newName}</span>
                         <input
+                            ref={setFocus}
                             type="text"
                             className="sonm-login__input"
                             name="newName"
@@ -288,7 +294,7 @@ export class Login extends React.Component<IProps, any> {
                         className="sonm-login__create"
                         type="submit"
                     >
-                        Create
+                        Add wallet
                     </Button>
                 </form>
             </Dialog>
@@ -324,4 +330,14 @@ export class Login extends React.Component<IProps, any> {
             </Spin>
         );
     }
+}
+
+interface IHasFocus {
+    focus: () => void;
+}
+
+function setFocus(node: IHasFocus | null) {
+    if (!node) { return; }
+
+    node.focus();
 }
