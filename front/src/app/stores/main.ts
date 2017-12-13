@@ -60,8 +60,6 @@ export class MainStore {
 
     @observable public userGasPrice = '';
 
-    @observable public isConfirmDialogVisible = false;
-
     @observable public errors: any[] = [];
 
     @observable public validation: IValidation = {};
@@ -484,16 +482,6 @@ export class MainStore {
         console.error(e);
 
         this.errors.push(e.message);
-    }
-
-    @action
-    public showConfirmDialog() {
-        this.isConfirmDialogVisible = true;
-    }
-
-    @action
-    public hideConfirmDialog() {
-        this.isConfirmDialogVisible = false;
     }
 
     @action
