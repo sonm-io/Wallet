@@ -31,6 +31,13 @@
     text-align: center;
     cursor: pointer;
     line-height: 1%;
+    outline: none;
+    outline-offset: 3px;
+
+    &:focus,
+    &:active {
+      outline: @outline;
+    }
   }
 
   &__tokens {
