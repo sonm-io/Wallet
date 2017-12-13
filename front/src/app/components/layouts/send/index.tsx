@@ -35,6 +35,8 @@ export class SendSrc extends React.Component<IProps, any> {
     public componentWillMount() {
         this.props.initialAddress && this.mainStore.selectAccount(this.props.initialAddress);
         this.props.initialCurrency && this.mainStore.selectCurrency(this.props.initialCurrency);
+
+        this.setState({ addressTarget: this.mainStore.values.toAddress });
     }
 
     protected get mainStore(): MainStore {
