@@ -7,6 +7,8 @@
   }
 
   &__pale {
+    animation: pale-fade-in 0.25s ease;
+
     opacity: 0.7;
     background-color: @color-brand-bg;
     position: fixed;
@@ -28,9 +30,11 @@
   }
 
   &__inner {
-    margin-top: -200px;
+    margin-top: 0;
+    opacity: 1;
+    animation: inner-fade-in 0.25s ease;
+
     background-color: @color-white;
-    opacity: 0;
     border: solid 1px @color-border;
     padding: 25px 40px 40px;
     display: flex;
@@ -44,15 +48,7 @@
       background-color: @color-brand-bg;
       box-shadow: 0 0 23px -2px rgba(33,48,57,1);
       border: solid 2px #213039;
-
-      &--visible {
-        opacity: 0.8;
-      }
-    }
-
-    &--visible {
-      opacity: 1;
-      margin-top: 0;
+      opacity: 0.8;
     }
   }
 
@@ -83,4 +79,12 @@
       color: @color-light-font;
     }
   }
+}
+
+@keyframes inner-fade-in {
+  0% { opacity: 0; margin-top: -200px }
+}
+
+@keyframes pale-fade-in {
+  0% { opacity: 0; }
 }
