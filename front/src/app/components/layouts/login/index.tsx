@@ -6,6 +6,7 @@ import { Api } from 'app/api';
 import { IValidation } from 'ipc/types';
 import { BlackSelect } from 'app/components/common/black-select';
 import { Dialog } from 'app/components/common/dialog';
+import { setFocus } from 'app/components/common/utils/setFocus';
 
 interface IProps {
     className?: string;
@@ -330,14 +331,4 @@ export class Login extends React.Component<IProps, any> {
             </Spin>
         );
     }
-}
-
-interface IHasFocus {
-    focus: () => void;
-}
-
-function setFocus(node: IHasFocus | null) {
-    if (!node) { return; }
-
-    node.focus();
 }

@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Upload, IFileOpenResult } from 'app/components/common/upload';
 import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
+import { Hash } from 'app/components/common/hash-view';
 import { IValidation } from 'ipc/types';
+import { IdentIcon } from 'app/components/common/ident-icon/index';
+// import { setFocus } from 'app/components/common/utils/setFocus';
 
 export interface IAddAccountForm {
     json: string;
@@ -18,7 +21,7 @@ export interface IProps {
     existingAccounts: string[];
 }
 
-export class AddAccount extends React.PureComponent<IProps, any> {
+export class AddAccount extends React.Component<IProps, any> {
     public state = {
         name: '',
         password: '',
@@ -31,7 +34,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        const validation = {} as IValidation;
+        const validation = { ...this.state.validation };
 
         if (!this.state.password) {
             validation.password = 'Password is required';
@@ -50,15 +53,24 @@ export class AddAccount extends React.PureComponent<IProps, any> {
         }
 
         if (Object.keys(validation).every(x => !validation[x])) {
+
             this.setState({ validation: {} });
+
             this.props.onSubmit({
                 json: this.state.json,
                 password: this.state.password,
                 name: this.state.name,
             });
+
         } else {
+
             this.setState({ validation });
+
         }
+    }
+
+    public componentDidMount() {
+        // this.nodes.upload.focus(); // TODO
     }
 
     public componentWillReceiveProps(next: IProps) {
@@ -69,6 +81,18 @@ export class AddAccount extends React.PureComponent<IProps, any> {
 
     protected handleClickCross = () => {
         this.props.onClickCross();
+    }
+
+    protected nodes: any = {};
+
+    protected saveNameInputNode = this.saveInputNode.bind(this, 'name');
+
+    protected saveUploadInputNode = this.saveInputNode.bind(this, 'upload');
+
+    protected saveInputNode(name: string, ref: HTMLInputElement | HTMLButtonElement | null) {
+        if (ref && this.nodes[name] !== ref) {
+            this.nodes[name] = ref;
+        }
     }
 
     protected handleOpenTextFile = (params: IFileOpenResult) => {
@@ -84,14 +108,18 @@ export class AddAccount extends React.PureComponent<IProps, any> {
 
             if (!address) { throw new Error('Incorrect file: no address'); }
 
-            update.address = address;
+            update.address = address.startsWith('0x') ? address : `0x${address}`;
             update.json = lowerCase;
             update.fileSuccess = `File ${params.fileName} has been selected`;
             update.validation = { ...this.state.validation, json: '' };
 
+            this.nodes.name.focus();
+
         } catch (e) {
             update.fileSuccess = '';
+            update.address = '';
             update.validation = {
+                ...this.state.validation,
                 json: e.message || 'Incorrect file',
             };
         }
@@ -114,14 +142,18 @@ export class AddAccount extends React.PureComponent<IProps, any> {
         const hasFileError = validation.json;
 
         return (
-            <Dialog onClickCross={this.handleClickCross}>
+            <Dialog onClickCross={this.handleClickCross} height={this.state.address === '' ? 485 : 600}>
                 <form className="sonm-wallets-add-account__content" onSubmit={this.handleSubmit}>
                     <label className="sonm-wallets-add-account__label sonm-wallets-add-account__add-file">
                         <h3 className="sonm-wallets-add-account__header">Add account</h3>
                         <Upload
                             onOpenTextFile={this.handleOpenTextFile}
                             className="sonm-wallets-add-account__upload"
-                            buttonProps={{square: true, height: 40, transparent: true}}
+                            buttonProps={{
+                                square: true,
+                                height: 40,
+                                transparent: true,
+                            }}
                         >
                             Select keystore / JSON file
                         </Upload>
@@ -145,6 +177,7 @@ export class AddAccount extends React.PureComponent<IProps, any> {
                             {validation.password}
                         </span>
                         <input
+                            ref={this.saveNameInputNode}
                             type="password"
                             className="sonm-wallets-add-account__input"
                             name="password"
@@ -166,12 +199,24 @@ export class AddAccount extends React.PureComponent<IProps, any> {
                     <Button
                         className="sonm-wallets-add-account__submit"
                         type="submit"
-                        square
-                        transparent
                         height={40}
                     >
                         Create
                     </Button>
+                    {this.state.address === '' ? null :
+                        <div
+                            className="sonm-wallets-add-account__preview"
+                        >
+                            <span className="sonm-wallets-add-account__preview-title">Preview</span>
+                            <div className="sonm-wallets-add-account__preview-ct">
+                                <IdentIcon
+                                    className="sonm-wallets-add-account__preview-icon"
+                                    address={this.state.address}
+                                />
+                                <Hash className="sonm-wallets-add-account__preview-address" hash={this.state.address} />
+                            </div>
+                        </div>
+                    }
                 </form>
             </Dialog>
         );

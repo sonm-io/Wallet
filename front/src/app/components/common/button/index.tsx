@@ -35,11 +35,12 @@ export class Button extends React.PureComponent<IButtonProps> {
 
         const style =
             height
-                ? {'--height': `${height}px`}
-                : undefined;
+                ? {'--height': `${height}px`, ...rest.style}
+                : rest.style;
 
         return (
             <button
+                {...rest}
                 ref={this.saveRef}
                 className={cn(
                     className,
@@ -52,7 +53,6 @@ export class Button extends React.PureComponent<IButtonProps> {
                 )}
                 style={style}
                 type={type === undefined ? 'button' : type}
-                {...rest}
             >
                 {children}
             </button>

@@ -7,6 +7,7 @@ export interface IDialogProps extends React.ButtonHTMLAttributes<any> {
     color?: TColor;
     className?: string;
     children?: any;
+    height?: number;
     onClickCross?: () => void;
 }
 
@@ -19,7 +20,12 @@ export class Dialog extends React.PureComponent<IDialogProps> {
         const {
             color = 'light',
             children,
+            height,
         } = this.props;
+
+        const style = height
+            ? { height: `${height}px` }
+            : undefined;
 
         return (
             <div className={cn('sonm-popup', { 'sonm-popup--dark': color === 'dark'})}>
@@ -28,7 +34,7 @@ export class Dialog extends React.PureComponent<IDialogProps> {
                     key="popup-pale"
                 />
                 <div className="sonm-popup__outer" key="popup-content">
-                    <div className="sonm-popup__inner">
+                    <div className="sonm-popup__inner" style={style}>
                         {this.props.onClickCross
                             ? <button type="button" className="sonm-popup__cross" onClick={this.handleClickCross}>+</button>
                             : null}
