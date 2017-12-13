@@ -13,7 +13,7 @@ interface IProps {
 export class SendSuccess extends React.PureComponent<IProps, any> {
     public render() {
         return [
-            <Header className="sonm-send-success__header" key="header">Transfer success</Header>,
+            <Header className="sonm-send-success__header" key="header">Transaction has been sent</Header>,
             <div className={cn('sonm-send-success', this.props.className)} key="success">
                 <button onClick={this.props.onClickHistory} className="sonm-send-success__button">
                     <div className="sonm-send-success__icon-history" />
