@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import * as invariant from 'fbjs/lib/invariant';
 const ICON_PIXEL_SIZE = 8;
 
 export interface IProps {
@@ -27,33 +26,41 @@ export class IdentIcon extends React.Component<IProps, any> {
     private updateDataUrl(props: IProps | null, nextProps: IProps) {
         const address = nextProps.address;
 
-        invariant(
-            ETHER_ADDRESS.indexOf(address) !== -1
-            || address.length === 40
-            || (
-                address.length === 42
-                && address.startsWith('0x')
-            ),
-            `Incorrect address "${address}"`,
-        );
-
         if (props === null || props.address !== address || props.width !== nextProps.width) {
             this.draw(address);
         }
     }
 
+    protected checkAddress(address: string): boolean {
+        return (address.length === 40)
+            || (address.length === 42 && address.startsWith('0x'))
+            || (ETHER_ADDRESS.indexOf(address) !== -1);
+    }
+
     private canvas: HTMLCanvasElement | null = null;
 
     private draw(address: string): void {
-        if (this.canvas === null) {
-            return;
-        }
+        if (this.canvas === null) { return; }
 
         const canvasSize = this.getCanvasSize();
+
+        if (!this.checkAddress(address)) {
+            drawGray(this.canvas);
+            return;
+        }
 
         if (ETHER_ADDRESS.indexOf(address) !== -1) {
             drawEthereumIcon(this.canvas);
             return;
+        }
+
+        function drawGray(canvas: HTMLCanvasElement) {
+            const context = canvas.getContext('2d');
+
+            if (context !== null) {
+                context.fillStyle = '#d3d3d3';
+                context.fillRect(0, 0, canvasSize, canvasSize);
+            }
         }
 
         function drawEthereumIcon(canvas: HTMLCanvasElement) {

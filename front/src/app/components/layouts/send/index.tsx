@@ -99,7 +99,7 @@ export class SendSrc extends React.Component<IProps, any> {
     }
 
     protected handleChangeTargetAddress = (event: any) => {
-        const value = SendSrc.normalizeAddress(event.target.value);
+        const value = event.target.value;
 
         if (value !== this.state.addressTarget) {
             this.setState({ addressTarget: value });
