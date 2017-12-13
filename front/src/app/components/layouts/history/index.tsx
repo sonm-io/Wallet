@@ -126,8 +126,10 @@ export class History extends React.Component<IProps, any> {
         title: 'Status',
         className: 'sonm-tx-list__col-status',
         render: (_, record) => {
+            const cls = `sonm-tx-list__col-status--${record.status}`;
+
             return (
-                <div className="sonm-tx-list__col-status-ct">
+                <div className={cn('sonm-tx-list__col-status-ct', cls)}>
                     {record.status}
                 </div>
             );

@@ -30,7 +30,7 @@ export const transactionListResult: t.IResult<[t.ISendTransactionResult[], numbe
             gasLimit: '453',
             fee: '198',
             confirmCount: 0,
-            status: 'success',
+            status: t.TransactionStatus.fail,
             hash: 'hash1',
         },
         {
@@ -43,7 +43,7 @@ export const transactionListResult: t.IResult<[t.ISendTransactionResult[], numbe
             gasLimit: '453',
             fee: '198',
             confirmCount: 0,
-            status: 'success',
+            status: t.TransactionStatus.success,
             hash: 'hash2',
         },
     ], 100],
@@ -104,7 +104,7 @@ export function send(params: t.ISendTransaction, password: string): t.IResult<t.
     } else {
         result.data = {
             hash: 'hach',
-            status: 'pending',
+            status: t.TransactionStatus.pending,
             timestamp: Date.now(),
             fromAddress: params.fromAddress,
             toAddress: params.toAddress,

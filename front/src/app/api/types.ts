@@ -4,7 +4,12 @@ export interface IRawAccount {
     address: string;
 }
 
-export type TTransactionStatus = 'created' | 'pending' | 'fail' | 'success';
+export enum TransactionStatus {
+    created = 'created',
+    pending = 'pending',
+    fail = 'fail',
+    success = 'success',
+}
 
 export interface  ISendTransaction {
     timestamp: number;
@@ -19,7 +24,7 @@ export interface  ISendTransaction {
 export interface ISendTransactionResult extends ISendTransaction {
     fee?: string;
     confirmCount: number;
-    status: string;
+    status: TransactionStatus;
     timestamp: number;
     hash: string;
 }

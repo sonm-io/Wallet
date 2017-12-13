@@ -88,7 +88,13 @@ export class HistoryStore {
     @asyncAction
     public *submitTransaction(params: api.ISendTransaction, password: string) {
         try {
-            const created = { ...params, confirmCount: 0, status: 'created', hash: '' };
+            const created = {
+                ...params,
+                confirmCount: 0,
+                status: api.TransactionStatus.created ,
+                hash: '',
+            };
+
             this.inProgress.push(created);
 
             const result = yield Api.send(params, password);

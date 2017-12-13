@@ -18,26 +18,24 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: @color-dark-gray-bg;
+    border: none;
     padding: 0 0 0 2.5px;
     margin: 15px;
-    border: none;
     text-align: center;
     line-height: 18px;
     flex-shrink: 0;
+    background: url("./close-circle.svg") no-repeat center;
+    outline: none;
+    outline-offset: 3px;
+
+    &:focus,
+    &:active {
+      outline: @outline;
+    }
 
     &:hover {
       cursor: pointer;
       box-shadow: @shadow;
-    }
-
-    &:after {
-      display: inline-block;
-      content: " +";
-      color: @color-white;
-      transform: rotate(45deg);
-      font-size: 20px;
-      margin: 0;
     }
   }
 }
