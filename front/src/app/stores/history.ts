@@ -110,6 +110,7 @@ export class HistoryStore {
     public *update(filter: api.ITxListFilter, page: number) {
         try {
             this.pending = true;
+            this.page = 1;
 
             const { data: [txList, total] } = yield Api.getSendTransactionList(
                 filter,
