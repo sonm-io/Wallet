@@ -16,6 +16,12 @@ export class Dialog extends React.PureComponent<IDialogProps> {
         this.props.onClickCross && this.props.onClickCross();
     }
 
+    protected magic(ref: HTMLDivElement | null) {
+        if (!ref) { return; }
+
+        setTimeout(ref.classList.add('sonm-popup__inner--visible'), 100);
+    }
+
     public render() {
         const {
             color = 'light',
@@ -34,9 +40,12 @@ export class Dialog extends React.PureComponent<IDialogProps> {
                     key="popup-pale"
                 />
                 <div className="sonm-popup__outer" key="popup-content">
-                    <div className="sonm-popup__inner" style={style}>
+                    <div className="sonm-popup__inner" style={style} ref={this.magic}>
                         {this.props.onClickCross
-                            ? <button type="button" className="sonm-popup__cross" onClick={this.handleClickCross}>+</button>
+                            ? <button
+                                type="button"
+                                className="sonm-popup__cross"
+                                onClick={this.handleClickCross}> + </button>
                             : null}
                         {children}
                     </div>
