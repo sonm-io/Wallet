@@ -60,8 +60,11 @@ function createPromise(
     });
 }
 
-const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
-const CHAIN_ID = 'rinkeby';
+const DEFAULT_SETTINGS = {
+    node_url: 'https://rinkeby.infura.io',
+    chain_id: 'rinkeby',
+    language: 'eng',
+};
 
 class Api {
     private routes: {
@@ -84,7 +87,12 @@ class Api {
 
         this.routes = {
             'ping': this.ping,
+
             'getWalletList': this.getWalletList,
+            'getSonmTokenAddress': this.getSonmTokenAddress,
+
+            'getSettings': this.getSettings,
+            'setSettings': this.setSettings,
 
             'account.add': this.addAccount,
             'account.create': this.createAccount,
@@ -102,13 +110,12 @@ class Api {
             'account.hasSavedData': this.hasSavedData,
 
             'transaction.list': this.getTransactionList,
-
-            'getSonmTokenAddress': this.getSonmTokenAddress,
         };
 
         this.storage = {
             accounts: {},
             transactions: [],
+            settings: DEFAULT_SETTINGS,
         };
     }
 
@@ -209,6 +216,10 @@ class Api {
                 try {
                     this.storage = this.decrypt(dataFromStorage);
 
+                    if (!this.storage.settings) {
+                        this.storage.settings = DEFAULT_SETTINGS;
+                    }
+
                     this.processPendingTransactions();
 
                     return {
@@ -284,6 +295,25 @@ class Api {
         return this.storage.accounts || null;
     }
 
+    public getSettings = async (): Promise<IResponse> => {
+        return {
+            data: this.storage.settings,
+        };
+    }
+
+    public setSettings = async (data: IPayload): Promise<IResponse> => {
+        if (data.settings) {
+            this.storage.settings = data.settings;
+            await this.saveData();
+
+            return {
+                data: true,
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
     public async ping(): Promise<IResponse> {
         return {
             data: {
@@ -293,7 +323,7 @@ class Api {
     }
 
     private async processPendingTransactions() {
-        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
 
         for (const transaction of this.storage.transactions) {
             if (transaction.status === 'pending') {
@@ -305,7 +335,7 @@ class Api {
 
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
-            const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+            const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
 
             this.accounts[address] = {
                 factory,
@@ -337,7 +367,7 @@ class Api {
     }
 
     public getGasPrice = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
@@ -346,7 +376,7 @@ class Api {
     }
 
     public getSonmTokenAddress = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
 
         return {
             data: await factory.getSonmTokenAddress(),
@@ -438,16 +468,6 @@ class Api {
             }
         } else {
             throw new Error('required_params_missed');
-        }
-    }
-
-    public getTransactions = async () => {
-        const data = await createPromise('get', { key: 'transactions' });
-
-        if (data) {
-            return this.decrypt(data) || [];
-        } else {
-            return [];
         }
     }
 

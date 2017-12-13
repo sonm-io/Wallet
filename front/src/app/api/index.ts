@@ -11,6 +11,7 @@ import {
     IResponse,
     IValidation,
     ITxListFilter,
+    ISettings,
 } from './types';
 
 export * from './types';
@@ -77,6 +78,14 @@ export class Api {
 
     public static async getWalletList(): Promise<IResult<string[]>>  {
         return createPromise('getWalletList');
+    }
+
+    public static async getSettings(): Promise<IResult<string[]>>  {
+        return createPromise('getSettings');
+    }
+
+    public static async setSettings(settings: ISettings): Promise<IResult<string[]>>  {
+        return createPromise('setSettings', { settings });
     }
 
     public static async addAccount(jsonRaw: string, password: string, name: string): Promise<IResult<IAccountInfo>> {

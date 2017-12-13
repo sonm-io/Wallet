@@ -55,4 +55,10 @@ export interface ITxListFilter {
     query?: string;
 }
 
+export interface ISettings {
+    chain_id: string;
+    node_url: string;
+    language: string;
+}
+
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';
