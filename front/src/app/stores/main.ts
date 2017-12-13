@@ -356,7 +356,7 @@ export class MainStore {
     @asyncAction
     public *confirmTransaction(password: string) {
         try {
-            const result = yield Api.send({
+            const tx = {
                 toAddress: this.values.toAddress,
                 amount: this.values.amount,
                 fromAddress: this.selectedAccountAddress,
@@ -364,7 +364,12 @@ export class MainStore {
                 gasPrice: this.values.gasPrice,
                 gasLimit: this.values.gasLimit,
                 timestamp: Date.now(),
-            }, password);
+            };
+
+            this.values.toAddress = '';
+            this.values.amount = '';
+
+            const result = yield Api.send(tx, password);
 
             window.alert(JSON.stringify(result));
 
