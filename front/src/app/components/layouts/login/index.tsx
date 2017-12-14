@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Spin } from 'antd';
 import * as cn from 'classnames';
 import { Button } from 'app/components/common/button';
 import { Api } from 'app/api';
 import { IValidation } from 'ipc/types';
 import { BlackSelect } from 'app/components/common/black-select';
 import { Dialog } from 'app/components/common/dialog';
+import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
 
 interface IProps {
@@ -111,6 +111,8 @@ export class Login extends React.Component<IProps, any> {
     protected handleLogin = async (event: any) => {
         event.preventDefault();
 
+        this.setState({ pending: true });
+
         try {
             const { validation, data: success } = await Api.setSecretKey(this.state.password, this.state.name);
 
@@ -125,6 +127,8 @@ export class Login extends React.Component<IProps, any> {
         } catch (e) {
             this.setState({ error: String(e) });
         }
+
+        this.setState({ pending: false });
     }
 
     protected handleCreateNew = async (event: any) => {
@@ -318,7 +322,7 @@ export class Login extends React.Component<IProps, any> {
         } = this.props;
 
         return (
-            <Spin spinning={this.state.pending} className="sonm-login__spin">
+            <LoadMask visible={this.state.pending} className="sonm-login__spin">
                 <div className={cn('sonm-login', className)}>
                     <div className="sonm-login__errors">
                         {this.state.error}
@@ -338,7 +342,7 @@ export class Login extends React.Component<IProps, any> {
                     {this.renderNewWalletPopup()}
                     {this.renderLoginPopup()}
                 </div>
-            </Spin>
+            </LoadMask>
         );
     }
 }

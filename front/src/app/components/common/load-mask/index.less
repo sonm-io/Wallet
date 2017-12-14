@@ -1,0 +1,65 @@
+@import 'guide.less';
+
+@spiner-size: 150px;
+@spiner-size-half: @spiner-size / 2;
+
+.sonm-load-mask {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: @color-brand-bg;
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+  display: none;
+  z-index: @z-everest;
+
+  &__spin-svg {
+    content: '';
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-@spiner-size-half, -@spiner-size-half);
+    background-size: contain;
+    height: @spiner-size;
+    width: @spiner-size;
+  }
+
+  &--visible {
+    display: block;
+    opacity: 0.8;
+  }
+
+  &__spin {
+
+    &-path {
+      fill: @color-blue;
+
+      &--first {
+        opacity: 0.1;
+        transform-origin: 50% 50%;
+        animation: spinner-rotate 2s infinite;
+      }
+
+      &--second {
+        opacity: 0.3;
+        transform-origin: 50% 50%;
+        animation: spinner-rotate 0.5s infinite;
+      }
+
+      &--third {
+        opacity: 0.5;
+        transform-origin: 85% 50%;
+        animation: spinner-rotate 1s infinite;
+      }
+    }
+  }
+}
+
+@keyframes spinner-rotate {
+  0% { transform: rotate(0deg) }
+  50% { transform: rotate(180deg) }
+  99% { transform: rotate(360deg) }
+}
