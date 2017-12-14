@@ -316,7 +316,7 @@ export class Login extends React.Component<IProps, any> {
                     <div
                         className={cn(
                             'sonm-login__center', {
-                            'sonm-login__center--inactive': this.state.currentAction !== 'select-wallet',
+                            'sonm-login__center--blurred': this.state.currentAction !== 'select-wallet',
                         })}
                     >
                         <div className="sonm-login__logo" />

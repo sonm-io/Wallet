@@ -85,27 +85,8 @@ export class HistoryStore {
         yield this.update(this.filterParams, this.page);
     }
 
-    @asyncAction
-    public *submitTransaction(params: api.ISendTransaction, password: string) {
-        try {
-            const created = {
-                ...params,
-                confirmCount: 0,
-                status: api.TransactionStatus.created ,
-                hash: '',
-            };
-
-            this.inProgress.push(created);
-
-            const result = yield Api.send(params, password);
-
-            this.inProgress.remove(created);
-
-            this.addTxToMap([result]);
-
-        } catch (e) {
-            this.errors.push(e);
-        }
+    public submitTransaction(params: api.ISendTransaction, password: string) {
+        Api.send(params, password);
     }
 
     // public async init() {

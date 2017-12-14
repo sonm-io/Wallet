@@ -59,7 +59,7 @@ export class History extends React.Component<IProps, any> {
                 <div className="sonm-tx-list__col-from-ct">
                     <span className="sonm-tx-list__col-from-name">{name}</span>
                     <IdentIcon address={addr} width={20} key="a" className="sonm-tx-list__col-from-icon" />
-                    <Hash className="sonm-tx-list__col-from-addr" hash={addr} />
+                    <Hash className="sonm-tx-list__col-from-addr" hash={addr} hasCopyButton />
                 </div>
             );
         },
@@ -73,7 +73,7 @@ export class History extends React.Component<IProps, any> {
             return (
                 <div className="sonm-tx-list__col-to-ct">
                     <IdentIcon address={addr} width={20} key="a"/>
-                    <Hash hash={addr} />
+                    <Hash hash={addr} hasCopyButton />
                 </div>
             );
         },
@@ -118,7 +118,7 @@ export class History extends React.Component<IProps, any> {
         className: 'sonm-tx-list__col-hash',
         render: (_, record) => {
             return (
-                <Hash hash={record.hash} />
+                <Hash hash={record.hash} hasCopyButton />
             );
         },
     }, {

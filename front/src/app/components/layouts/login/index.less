@@ -8,6 +8,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: all 0.25s;
 
   &__spin {
     position: absolute;
@@ -20,8 +21,8 @@
   &__center {
     margin: 50px auto;
 
-    &--inactive {
-      filter: blur(5px);
+    &--blurred {
+      filter: blur(10px);
     }
   }
 
