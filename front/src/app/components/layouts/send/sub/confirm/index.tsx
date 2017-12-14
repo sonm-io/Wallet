@@ -71,7 +71,7 @@ export class SendConfirm extends React.Component<IProps, any> {
                     <div className="sonm-send-confirm__account">
                         <IdentIcon address={toAddress} className="sonm-send-confirm__account-blockies"/>
                         <span className="sonm-send-confirm__account-target">
-                            {accountAddress}
+                            {toAddress}
                         </span>
                     </div>
                 </section>
