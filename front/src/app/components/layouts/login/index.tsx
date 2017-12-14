@@ -122,6 +122,7 @@ export class Login extends React.Component<IProps, any> {
 
             if (success) {
                 this.props.onLogin();
+                return;
             }
 
         } catch (e) {
@@ -169,6 +170,7 @@ export class Login extends React.Component<IProps, any> {
                 } else {
                     window.localStorage.setItem('sonm-last-used-wallet', this.state.newName);
                     this.props.onLogin();
+                    return;
                 }
 
             } catch (e) {
