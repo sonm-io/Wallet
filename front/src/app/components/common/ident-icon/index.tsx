@@ -32,7 +32,7 @@ export class IdentIcon extends React.Component<IProps, any> {
     }
 
     protected checkAddress(address: string): boolean {
-        return (address.length === 40)
+        return (address.length === 40 && !address.startsWith('0x'))
             || (address.length === 42 && address.startsWith('0x'))
             || (ETHER_ADDRESS.indexOf(address) !== -1);
     }
