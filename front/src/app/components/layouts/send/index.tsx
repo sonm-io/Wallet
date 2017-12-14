@@ -63,11 +63,13 @@ export class SendSrc extends React.Component<IProps, any> {
     protected handleChangeAccount = (address: string) => {
         this.mainStore.selectAccount(address);
 
-        this.props.form.validateFields(
-            ['toAddress'],
-            { force: true },
-            Function.prototype as any,
-        );
+        if (this.props.form.isFieldsTouched(['toAddress'])) {
+            this.props.form.validateFields(
+                ['toAddress'],
+                { force: true },
+                Function.prototype as any,
+            );
+        }
     }
 
     protected handleChangeCurrency = (address: string) => {
@@ -76,7 +78,7 @@ export class SendSrc extends React.Component<IProps, any> {
     }
 
     protected handleSetMaximum = () => {
-        const {gasPrice, gasLimit} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
+        const { gasPrice, gasLimit } = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
         this.props.form.setFieldsValue({
             amount: this.mainStore.getMaxValue(gasPrice, gasLimit),
         });
