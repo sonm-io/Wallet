@@ -148,7 +148,7 @@ export class SendSrc extends React.Component<IProps, any> {
         }
 
         if (this.mainStore.selectedAccountAddress === value) {
-            return cb('No no no');
+            return cb('The destination address must differ the sender address');
         }
 
         cb();
@@ -253,6 +253,7 @@ export class SendSrc extends React.Component<IProps, any> {
                             ],
                         })(
                             <Input
+                                autoComplete="off"
                                 className="sonm-send__input"
                                 placeholder="Amount"
                             />,
@@ -278,6 +279,7 @@ export class SendSrc extends React.Component<IProps, any> {
                             ],
                         })(
                             <Input
+                                autoComplete="off"
                                 className="sonm-send__input"
                                 placeholder="Gas limit"
                             />,
@@ -296,6 +298,7 @@ export class SendSrc extends React.Component<IProps, any> {
                                     ],
                                 })(
                                     <Input
+                                        autoComplete="off"
                                         className="sonm-send__input"
                                         placeholder="Gas price"
                                         onChange={this.handleChangeGasPrice}
