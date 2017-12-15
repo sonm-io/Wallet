@@ -3,9 +3,9 @@ import {} from 'antd';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { MainStore } from 'app/stores/main';
-import { AccountItem } from 'app/components/common/account-item';
+import { AccountItem, IAccountItemProps } from 'app/components/common/account-item';
 import { CurrencyBalanceList } from 'app/components/common/currency-balance-list';
-import { DeletableItem } from 'app/components/common/deletable-item';
+import { DeletableItemWithConfirmation } from 'app/components/common/deletable-item/with-confirmation';
 import { Header } from 'app/components/common/header';
 import { Button } from 'app/components/common/button';
 import { AddAccount, IAddAccountForm } from './sub/add-account';
@@ -18,6 +18,8 @@ interface IProps {
     className?: string;
     mainStore?: MainStore;
 }
+
+class DeletableItem extends DeletableItemWithConfirmation<IAccountItemProps> {}
 
 @inject('mainStore')
 @observer
@@ -160,6 +162,8 @@ export class Wallets extends React.Component<IProps, any> {
             list = mainStore.accountList.map(x => {
                 return (
                     <DeletableItem
+                        item={x}
+                        Confirmation={DeleteAccountConfirmation}
                         className="sonm-wallets__list-item"
                         onDelete={this.handleDelete}
                         key={x.address}
@@ -200,4 +204,18 @@ export class Wallets extends React.Component<IProps, any> {
             </div>
         );
     }
+}
+
+// TODO
+function DeleteAccountConfirmation(props: IAccountItemProps) {
+    return <div className="sonm-account-delete-confirmation">
+        <h4 className="sonm-account-delete-confirmation__header">Are you sure want to delete?</h4>
+        <AccountItem
+            key="del-preview"
+            address={props.address}
+            name={props.name}
+            firstBalance={props.firstBalance}
+            secondBalance={props.secondBalance}
+        />
+    </div>;
 }
