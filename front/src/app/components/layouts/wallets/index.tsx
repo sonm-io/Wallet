@@ -9,6 +9,7 @@ import { DeletableItem } from 'app/components/common/deletable-item';
 import { Header } from 'app/components/common/header';
 import { Button } from 'app/components/common/button';
 import { AddAccount, IAddAccountForm } from './sub/add-account';
+import { EmptyAccountList } from './sub/empty-account-list';
 import { navigate } from 'app/router/navigate';
 import { IValidation } from 'ipc';
 
@@ -103,28 +104,35 @@ export class Wallets extends React.Component<IProps, any> {
             return;
         }
 
+        let list = null;
+        if (mainStore.accountList.length === 0) {
+            list = <EmptyAccountList/>;
+        } else {
+            list = mainStore.accountList.map(x => {
+                return (
+                    <DeletableItem
+                        className="sonm-wallets__list-item"
+                        onDelete={this.handleDelete}
+                        key={x.address}
+                        id={x.address}
+                    >
+                        <AccountItem
+                            {...x}
+                            onClickIcon={this.handleAccountClick}
+                            onRename={this.handleRename}
+                        />
+                    </DeletableItem>
+                );
+            });
+        }
+
         return (
             <div className={cn('sonm-wallets', className)}>
                 <Header className="sonm-wallets__header">
                     Accounts
                 </Header>
                 <div className="sonm-wallets__list">
-                    {mainStore.accountList.map(x => {
-                        return (
-                            <DeletableItem
-                                className="sonm-wallets__list-item"
-                                onDelete={this.handleDelete}
-                                key={x.address}
-                                id={x.address}
-                            >
-                                <AccountItem
-                                    {...x}
-                                    onClickIcon={this.handleAccountClick}
-                                    onRename={this.handleRename}
-                                />
-                            </DeletableItem>
-                        );
-                    })}
+                    {list}
                 </div>
                 <CurrencyBalanceList
                     className="sonm-wallets__balances"
