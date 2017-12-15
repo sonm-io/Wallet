@@ -49,6 +49,7 @@ export class DeletableItemWithConfirmation<T> extends React.PureComponent<IDelet
                     this.state.isConfirmationVisible
                         ? (
                             <Dialog
+                                onClickCross={this.handleCancel}
                                 className="sonm-deletable-item__confirmation-dialog"
                             >
                                 <Confirmation {...item} />
