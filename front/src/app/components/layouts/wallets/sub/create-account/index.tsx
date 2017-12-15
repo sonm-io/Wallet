@@ -112,7 +112,7 @@ export class CreateAccount extends React.Component<IProps, any> {
                         className="sonm-wallets-add-account__submit"
                         type="submit"
                     >
-                        Create account
+                        Create
                     </Button>
                 </form>
             </Dialog>
