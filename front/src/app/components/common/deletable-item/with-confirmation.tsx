@@ -24,7 +24,7 @@ export class DeletableItemWithConfirmation<T> extends React.PureComponent<IDelet
         this.setState({ isConfirmationVisible: true });
     }
 
-    protected handlConfirm = () => {
+    protected handleConfirm = () => {
         this.props.onDelete(this.props.id);
         this.setState({ isConfirmationVisible: false });
     }
@@ -55,7 +55,7 @@ export class DeletableItemWithConfirmation<T> extends React.PureComponent<IDelet
                                 <Confirmation {...item} />
                                 <div className="sonm-deletable-item__confirmation-button-group">
                                     <Button className="sonm-deletable-item__confirmation-button" transparent onClick={this.handleCancel}>Cancel</Button>
-                                    <Button className="sonm-deletable-item__confirmation-button" onClick={this.handlConfirm}>Delete</Button>
+                                    <Button className="sonm-deletable-item__confirmation-button" onClick={this.handleConfirm}>Delete</Button>
                                 </div>
                             </Dialog>
                         )
