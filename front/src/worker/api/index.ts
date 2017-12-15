@@ -190,7 +190,7 @@ class Api {
     private createAccount = async (data: IPayload): Promise<IResponse> => {
         if (data.passphase) {
             return {
-                data: utils.newAccount(data.passphase),
+                data: JSON.stringify(utils.newAccount(data.passphase)),
             };
         } else {
             throw new Error('required_params_missed');
@@ -390,8 +390,6 @@ class Api {
                     };
                 }
             } catch (err) {
-                //console.log(err);
-
                 return {
                     validation: {
                         password: 'password_not_valid',

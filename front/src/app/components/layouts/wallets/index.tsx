@@ -9,6 +9,7 @@ import { DeletableItem } from 'app/components/common/deletable-item';
 import { Header } from 'app/components/common/header';
 import { Button } from 'app/components/common/button';
 import { AddAccount, IAddAccountForm } from './sub/add-account';
+import { CreateAccount, ICreateAccountForm } from './sub/create-account';
 import { EmptyAccountList } from './sub/empty-account-list';
 import { navigate } from 'app/router/navigate';
 import { IValidation } from 'ipc';
@@ -24,6 +25,7 @@ export class Wallets extends React.Component<IProps, any> {
     public state = {
         deleteAddress: '',
         showAddAccount: false,
+        showCreateAccount: false,
         validation: {} as IValidation ,
     };
 
@@ -58,9 +60,35 @@ export class Wallets extends React.Component<IProps, any> {
         }
     }
 
+    protected handleCreateAccount = async (data: ICreateAccountForm) => {
+        if (!this.props.mainStore) { return; }
+
+        const validation = await this.props.mainStore.createAccount(
+            data.password,
+            data.name,
+        ) as any || {};
+
+        if (Object.keys(validation).length === 0) {
+            this.setState({
+                showCreateAccount: false,
+                validation,
+            });
+        } else {
+            this.setState({
+                validation,
+            });
+        }
+    }
+
     protected handleHideAddAccount = async () => {
         this.setState({
             showAddAccount: false,
+        });
+    }
+
+    protected handleHideCreateAccount = async () => {
+        this.setState({
+            showCreateAccount: false,
         });
     }
 
@@ -88,9 +116,30 @@ export class Wallets extends React.Component<IProps, any> {
             : null;
     }
 
+    private renderCreateAccount() {
+        if (!this.props.mainStore) { return null; }
+
+        return this.state.showCreateAccount
+            ? (
+                <CreateAccount
+                    validation={this.state.validation}
+                    onSubmit={this.handleCreateAccount}
+                    onClickCross={this.handleHideCreateAccount}
+                    className="sonm-wallets__create-button"
+                />
+            )
+            : null;
+    }
+
     protected handleStartAddAccount = () => {
         this.setState({
             showAddAccount: true,
+        });
+    }
+
+    protected handleStartCreateAccount = () => {
+        this.setState({
+            showCreateAccount: true,
         });
     }
 
@@ -138,10 +187,16 @@ export class Wallets extends React.Component<IProps, any> {
                     className="sonm-wallets__balances"
                     currencyBalanceList={mainStore.fullBalanceList}
                 />
-                <Button type="button" onClick={this.handleStartAddAccount} className="sonm-wallets__add-button">
-                    Add account
-                </Button>
-                {this.renderAddAccount()}
+                <div className="sonm-wallets__buttons">
+                    <Button type="button" onClick={this.handleStartAddAccount}>
+                        Add account
+                    </Button>
+                    <Button type="button" onClick={this.handleStartCreateAccount} className="sonm-wallets__buttons__create-account">
+                        New account
+                    </Button>
+                    {this.renderAddAccount()}
+                    {this.renderCreateAccount()}
+                </div>
             </div>
         );
     }
