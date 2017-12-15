@@ -455,6 +455,10 @@ export class MainStore {
         return result;
     }
 
+    @computed get currentBalanceMaximum() {
+        return this.getMaxValue(this.averageGasPrice, MainStore.DEFAULT_GAS_LIMIT);
+    }
+
     public getMaxValue(gasPrice: string, gasLimit: string) {
         let gp;
         let gl;

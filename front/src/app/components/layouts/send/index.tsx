@@ -176,6 +176,25 @@ export class SendSrc extends React.Component<IProps, any> {
         return true;
     }
 
+    protected validateAmount = (rule: any, value: string, cb: (msg?: string) => void): void => {
+        let error;
+        const setError = (e?: string) => error = e;
+
+        SendSrc.validatePositiveNumber(rule, value, setError);
+
+        if (!error) {
+            const currentMax = SendSrc.createBigNumber(this.mainStore.currentBalanceMaximum);
+
+            if (currentMax === undefined) {
+                error = 'Maximum values is undetermined';
+            } else if (currentMax.greaterThan(value)) {
+                error = 'Value is greater than maximum';
+            }
+        }
+
+        error ? cb(error) : cb();
+    }
+
     protected static normalizeAddress(str: string): string {
         const s = '0000000000000000000000000000000000000000' + str;
         const l = s.length;
@@ -249,7 +268,7 @@ export class SendSrc extends React.Component<IProps, any> {
                         {form.getFieldDecorator('amount', {
                             initialValue: values && values.amount,
                             rules: [
-                                { validator: SendSrc.validatePositiveNumber },
+                                { validator: this.validateAmount },
                             ],
                         })(
                             <Input
