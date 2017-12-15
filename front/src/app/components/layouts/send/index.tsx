@@ -187,7 +187,7 @@ export class SendSrc extends React.Component<IProps, any> {
 
             if (currentMax === undefined) {
                 error = 'Maximum values is undetermined';
-            } else if (currentMax.greaterThan(value)) {
+            } else if (currentMax.lessThanOrEqualTo(value)) {
                 error = 'Value is greater than maximum';
             }
         }
