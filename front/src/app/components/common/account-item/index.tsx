@@ -4,10 +4,12 @@ import * as cn from 'classnames';
 import { Icon } from 'antd';
 import { Balance } from '../balance-view';
 import { Hash } from '../hash-view';
+import { DownloadFile } from '../download-file';
 
 export interface IAccountItemProps {
     className?: string;
     address: string;
+    json: string;
     name: string;
     firstBalance: string;
     secondBalance: string;
@@ -35,6 +37,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             firstBalance,
             secondBalance,
             onClickIcon,
+            json,
         } = this.props;
 
         return (
@@ -63,6 +66,8 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fullString={secondBalance}
                     fontSizePx={16}
                 />
+
+                <DownloadFile data={json} address={address} className="sonm-account-item__download"/>
             </div>
         );
     }

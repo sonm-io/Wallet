@@ -1,0 +1,29 @@
+.sonm-download {
+  display: inline-flex;
+  overflow: hidden;
+  white-space: nowrap;
+  text-decoration: none !important;
+  color: inherit;
+
+  &__icon {
+    outline: none;
+    outline-offset: 3px;
+    display: inline-block;
+    border: 0 solid transparent;
+    margin: 0 0 0 5px;
+    padding: 0;
+    background: transparent url(./download-icon.svg) center no-repeat;
+    background-size: contain;
+    width: 20px;
+    cursor: pointer;
+
+    &:focus,
+    &:active {
+      outline: @outline;
+    }
+
+    &:before {
+      content: ' ';
+    }
+  }
+}
