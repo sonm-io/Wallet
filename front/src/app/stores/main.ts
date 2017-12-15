@@ -455,6 +455,16 @@ export class MainStore {
         return result;
     }
 
+    @asyncAction
+    public *createAccount(password: string, name: string) {
+        try {
+            const { data } = yield Api.createAccount(password);
+            yield this.addAccount(data, password, name);
+        } catch (e) {
+            this.handleError(e);
+        }
+    }
+
     @computed get currentBalanceMaximum() {
         return this.getMaxValue(this.averageGasPrice, MainStore.DEFAULT_GAS_LIMIT);
     }
