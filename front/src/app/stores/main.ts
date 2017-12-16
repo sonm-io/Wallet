@@ -10,7 +10,11 @@ import {
 import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import { IAccountItemProps } from 'app/components/common/account-item';
-import { IHasAddress } from './types';
+import {
+    ISendFormValues,
+    TGasPricePriority,
+    IPasswordCache,
+} from './types';
 import { listToAddressMap } from './utils/listToAddressMap';
 import { AbstractPendingStore } from './abstract-pending-store';
 const { needsPending, needsErrorHandling } = AbstractPendingStore;
@@ -18,27 +22,6 @@ const { needsPending, needsErrorHandling } = AbstractPendingStore;
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
 const MAX_VISIBLE_ERRORS = 5;
-
-export interface IAddressMap<T extends IHasAddress> {
-    [address: string]: T;
-}
-
-export interface ISendFormValues {
-    amount: string;
-    gasPrice: string;
-    gasLimit: string;
-    toAddress: string;
-}
-
-export interface ISendValidation extends IValidation {
-    password: string;
-}
-
-export interface IPasswordCache {
-    [address: string]: string;
-}
-
-export type TGasPricePriority = 'low' | 'normal' | 'high';
 
 export class MainStore extends AbstractPendingStore {
     public static ADDRESS_ETHER = '0x';
@@ -490,3 +473,7 @@ export class MainStore extends AbstractPendingStore {
         this.validation = params;
     }
 }
+
+export default MainStore;
+
+export * from './types';
