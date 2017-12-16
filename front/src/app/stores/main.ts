@@ -10,14 +10,14 @@ import {
 import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import { IAccountItemProps } from 'app/components/common/account-item';
+import { IHasAddress } from './types';
+import { listToAddressMap } from './utils/listToAddressMap';
+import { AbstractPendingStore } from './abstract-pending-store';
+const { needsPending, needsErrorHandling } = AbstractPendingStore;
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
 const MAX_VISIBLE_ERRORS = 5;
-
-export interface IHasAddress {
-    address: string;
-}
 
 export interface IAddressMap<T extends IHasAddress> {
     [address: string]: T;
@@ -40,7 +40,7 @@ export interface IPasswordCache {
 
 export type TGasPricePriority = 'low' | 'normal' | 'high';
 
-export class MainStore {
+export class MainStore extends AbstractPendingStore {
     public static ADDRESS_ETHER = '0x';
     public static DEFAULT_GAS_LIMIT = '50000';
 
@@ -52,15 +52,13 @@ export class MainStore {
 
     @observable public accountMap = new Map<string, IAccountInfo>();
 
-    @observable public currencyMap =  new Map<string, ICurrencyInfo>();
+    @observable public currencyMap = new Map<string, ICurrencyInfo>();
 
     @observable private userSelectedAccountAddress = '';
 
     @observable public userSelectedCurrencyAddress = '';
 
     @observable public userGasPrice = '';
-
-    @observable public errors: any[] = [];
 
     @observable public validation: IValidation = {};
 
@@ -71,7 +69,8 @@ export class MainStore {
         gasLimit: '',
     };
 
-    @computed get lastErrors(): any[] {
+    @computed
+    get lastErrors(): any[] {
         const len = this.errors.length;
         if (len === 0) {
             return [];
@@ -80,11 +79,12 @@ export class MainStore {
         return this.errors.slice(len - MAX_VISIBLE_ERRORS);
     }
 
-    @computed public get priority(): TGasPricePriority {
+    @computed
+    public get priority(): TGasPricePriority {
         let result: TGasPricePriority = 'normal';
 
         if (this.userGasPrice !== '') {
-            const [ min, max ] = this.gasPriceThresholds;
+            const [min, max] = this.gasPriceThresholds;
             const userInput = new BigNumber(this.userGasPrice);
             if (userInput.lessThanOrEqualTo(min)) {
                 result = 'low';
@@ -96,7 +96,8 @@ export class MainStore {
         return result;
     }
 
-    @computed public get gasPriceThresholds(): [string, string] {
+    @computed
+    public get gasPriceThresholds(): [string, string] {
         let min = '5000';
         let max = '15000';
 
@@ -127,7 +128,9 @@ export class MainStore {
             },
         );
 
-        if (result === undefined) { throw new Error(`token ${symbol} address  not found`); }
+        if (result === undefined) {
+            throw new Error(`token ${symbol} address  not found`);
+        }
 
         return result;
     }
@@ -142,27 +145,35 @@ export class MainStore {
         return this.secondTokenAddressProp;
     }
 
-    @computed public get firstToken(): ICurrencyInfo {
+    @computed
+    public get firstToken(): ICurrencyInfo {
         const result = this.currencyMap.get(this.firstTokenAddress);
 
-        if (!result) { throw new Error(`First token ${this.firstTokenAddress} not found`); }
+        if (!result) {
+            throw new Error(`First token ${this.firstTokenAddress} not found`);
+        }
 
         return result;
     }
 
-    @computed public get secondToken(): ICurrencyInfo {
+    @computed
+    public get secondToken(): ICurrencyInfo {
         const result = this.currencyMap.get(this.secondTokenAddress);
 
-        if (!result) { throw new Error(`Second token ${this.secondTokenAddress} not found`); }
+        if (!result) {
+            throw new Error(`Second token ${this.secondTokenAddress} not found`);
+        }
 
         return result;
     }
 
-    @computed public get firstTokenBalance(): string {
+    @computed
+    public get firstTokenBalance(): string {
         return MainStore.getTokenBalance(this.fullBalanceList, this.firstTokenAddress);
     }
 
-    @computed public get secondTokenBalance(): string {
+    @computed
+    public get secondTokenBalance(): string {
         return MainStore.getTokenBalance(this.fullBalanceList, this.secondTokenAddress);
     }
 
@@ -172,7 +183,8 @@ export class MainStore {
         return f ? `${f.balance} ${f.symbol}` : `Token ${address} not found`;
     }
 
-    @computed public get accountList(): IAccountItemProps[] {
+    @computed
+    public get accountList(): IAccountItemProps[] {
         if (this.accountMap === undefined || this.currencyMap === undefined) {
             return [];
         }
@@ -220,13 +232,15 @@ export class MainStore {
         return result;
     }
 
-    @computed public get fullBalanceList(): ICurrencyItemProps[]  {
+    @computed
+    public get fullBalanceList(): ICurrencyItemProps[] {
         const allAccounts = Array.from(this.accountMap.keys());
 
         return this.getBalanceListFor(...allAccounts);
     }
 
-    @computed public get currentBalanceList(): ICurrencyItemProps[] {
+    @computed
+    public get currentBalanceList(): ICurrencyItemProps[] {
         if (this.selectedAccountAddress === '') {
             return [];
         }
@@ -234,36 +248,34 @@ export class MainStore {
         return this.getBalanceListFor(this.selectedAccountAddress);
     }
 
-    @action.bound
-    public setUserGasPrice(value: string): void  {
-        try {
-            const bn = new BigNumber(value);
-            this.userGasPrice = bn.toString();
-        } catch (e) {
-            this.handleError(e);
-        }
+    @needsErrorHandling
+    @action
+    public setUserGasPrice(value: string): void {
+        const bn = new BigNumber(value);
+        this.userGasPrice = bn.toString();
     }
 
+    @needsErrorHandling
     @asyncAction
-    public *deleteAccount(deleteAddress: string) {
-        try {
-            const { data: success } = yield Api.removeAccount(deleteAddress);
+    public * deleteAccount(deleteAddress: string) {
+        const {data: success} = yield Api.removeAccount(deleteAddress);
 
-            if (success) {
-                this.accountMap.delete(deleteAddress);
-            }
-        } catch (e) {
-            this.handleError(e);
+        if (success) {
+            this.accountMap.delete(deleteAddress);
         }
     }
 
     @action.bound
     public decreaseBalance(accountAddress: string, currencyAddress: string, amount: string) {
         const account = this.accountMap.get(accountAddress) as IAccountInfo;
-        if (account === undefined) { throw new Error(`Unknown accountAddress ${accountAddress}`); }
+        if (account === undefined) {
+            throw new Error(`Unknown accountAddress ${accountAddress}`);
+        }
 
         const balance = account.currencyBalanceMap[currencyAddress];
-        if (balance === undefined) { throw new Error(`Unknown accountAddress ${accountAddress}`); }
+        if (balance === undefined) {
+            throw new Error(`Unknown accountAddress ${accountAddress}`);
+        }
 
         account.currencyBalanceMap[currencyAddress] = new BigNumber(balance).minus(amount).toString();
     }
@@ -280,7 +292,8 @@ export class MainStore {
         this.userSelectedCurrencyAddress = currencyAddr;
     }
 
-    @computed public get selectedAccountAddress(): string {
+    @computed
+    public get selectedAccountAddress(): string {
         const addr = this.userSelectedAccountAddress;
 
         return this.accountMap.has(addr)
@@ -291,7 +304,8 @@ export class MainStore {
 
     }
 
-    @computed public get selectedCurrencyAddress(): string {
+    @computed
+    public get selectedCurrencyAddress(): string {
         const addr = this.userSelectedCurrencyAddress;
 
         return this.currencyMap.has(addr)
@@ -307,29 +321,26 @@ export class MainStore {
         this.values = values;
     }
 
+    @needsErrorHandling
     @asyncAction
-    public *renameAccount(address: string, name: string) {
-        try {
-            const success = yield Api.renameAccount(address, name);
+    public * renameAccount(address: string, name: string) {
+        const success = yield Api.renameAccount(address, name);
 
-            if (success) {
-                (this.accountMap.get(address) as IAccountInfo).name = name;
-            }
-        } catch (e) {
-            this.handleError(e);
+        if (success) {
+            (this.accountMap.get(address) as IAccountInfo).name = name;
         }
     }
 
     protected passwordCache: IPasswordCache = {};
 
     @asyncAction
-    public *checkSelectedAccountPassword(password: string) {
+    public * checkSelectedAccountPassword(password: string) {
         const accountAddress = this.selectedAccountAddress;
 
         let validationMessage = '';
 
         if (accountAddress in this.passwordCache
-                && this.passwordCache[accountAddress] === password) {
+            && this.passwordCache[accountAddress] === password) {
             validationMessage = '';
         } else {
             const {data: success, validation} = yield Api.checkPrivateKey(password, accountAddress);
@@ -345,74 +356,63 @@ export class MainStore {
         const isValid = validationMessage === '';
 
         if (!isValid) {
-            this.validation = { password: validationMessage };
+            this.validation = {password: validationMessage};
         }
 
         return isValid;
     }
 
+    @needsErrorHandling
     @asyncAction
-    public *confirmTransaction(password: string) {
-        try {
-            const tx = {
-                toAddress: this.values.toAddress,
-                amount: this.values.amount,
-                fromAddress: this.selectedAccountAddress,
-                currencyAddress: this.selectedCurrencyAddress,
-                gasPrice: this.values.gasPrice,
-                gasLimit: this.values.gasLimit,
-                timestamp: Date.now(),
-            };
+    public * confirmTransaction(password: string) {
+        const tx = {
+            toAddress: this.values.toAddress,
+            amount: this.values.amount,
+            fromAddress: this.selectedAccountAddress,
+            currencyAddress: this.selectedCurrencyAddress,
+            gasPrice: this.values.gasPrice,
+            gasLimit: this.values.gasLimit,
+            timestamp: Date.now(),
+        };
 
-            this.values.toAddress = '';
-            this.values.amount = '';
+        this.values.toAddress = '';
+        this.values.amount = '';
 
-            const result = yield Api.send(tx, password);
+        const result = yield Api.send(tx, password);
 
-            window.alert(JSON.stringify(result));
+        window.alert(JSON.stringify(result));
 
-            return result;
-        } catch (e) {
-            this.handleError(e);
-        }
+        return result;
     }
 
+    @needsPending
     @asyncAction
-    public *init() {
-        const pendingId = this.startPending('init');
+    public * init() {
+        this.secondTokenAddressProp = (yield Api.getSonmTokenAddress()).data;
 
-        try {
-            this.secondTokenAddressProp = (yield Api.getSonmTokenAddress()).data;
+        const [{data: currencyList}] = yield Promise.all([
+            Api.getCurrencyList(),
+            this.startAutoUpdate(UPDATE_INTERVAL), // wait for first update
+        ]);
 
-            const [{data: currencyList}] = yield Promise.all([
-                Api.getCurrencyList(),
-                this.startAutoUpdate(UPDATE_INTERVAL), // wait for first update
-            ]);
+        listToAddressMap<ICurrencyInfo>(currencyList, this.currencyMap);
 
-            listToMap<ICurrencyInfo>(currencyList, this.currencyMap);
-
-            this.userGasPrice = this.averageGasPrice;
-        } catch (e) {
-            this.handleError(e);
-        } finally {
-
-            this.stopPending(pendingId);
-        }
+        this.userGasPrice = this.averageGasPrice;
     }
 
     @action
     private update(result: any) {
         const [
-            { data: averageGasPrice },
-            { data: accountList },
+            {data: averageGasPrice},
+            {data: accountList},
         ] = result;
 
         this.averageGasPrice = averageGasPrice;
-        listToMap<IAccountInfo>(accountList, this.accountMap);
+        listToAddressMap<IAccountInfo>(accountList, this.accountMap);
     }
 
     public startAutoUpdate(interval: number) {
-        const iteration = async () => {
+        const loop = async () => {
             try {
                 window.console.time('update')
 
@@ -426,46 +426,40 @@ export class MainStore {
                 this.handleError(e);
             } finally {
                 window.console.timeEnd('update');
-                setTimeout(iteration, interval);
+                setTimeout(loop, interval);
             }
         };
 
-        return iteration();
+        return loop();
     }
 
+    @needsPending
     @asyncAction
-    public *addAccount(json: string, password: string, name: string) {
-        let result: IValidation | undefined;
+    public * addAccount(json: string, password: string, name: string) {
+        const result: IValidation = {};
+        const { data, validation } = yield Api.addAccount(json, password, name);
 
-        try {
+        if (validation) {
 
-            const {data, validation} = yield Api.addAccount(json, password, name);
+            Object.assign(result, validation);
 
-            if (validation) {
-                result = validation;
-                this.validation = validation;
-            } else {
-                this.accountMap.set(data.address, data);
-            }
-
-        } catch (e) {
-            this.handleError(e);
+            this.validation = validation;
+        } else {
+            this.accountMap.set(data.address, data);
         }
 
         return result;
     }
 
+    @needsPending
     @asyncAction
-    public *createAccount(password: string, name: string) {
-        try {
-            const { data } = yield Api.createAccount(password);
-            yield this.addAccount(data, password, name);
-        } catch (e) {
-            this.handleError(e);
-        }
+    public * createAccount(password: string, name: string) {
+        const {data} = yield Api.createAccount(password);
+        yield this.addAccount(data, password, name);
     }
 
-    @computed get currentBalanceMaximum() {
+    @computed
+    get currentBalanceMaximum() {
         return this.getMaxValue(this.averageGasPrice, MainStore.DEFAULT_GAS_LIMIT);
     }
 
@@ -492,39 +486,7 @@ export class MainStore {
     }
 
     @action
-    private handleError(e: Error) {
-        console.error(e);
-
-        this.errors.push(e.message);
-    }
-
-    @action
     public setValidation(params: IValidation) {
         this.validation = params;
     }
-
-    protected pendingIdx = 0;
-    @observable protected pendingSet = new Set();
-
-    @action
-    public startPending(name: string): string {
-        const pendingId = `${name}_${this.pendingIdx}`;
-
-        this.pendingSet.add(pendingId);
-
-        return pendingId;
-    }
-
-    @action
-    public stopPending(pendingId: string): void {
-        this.pendingSet.delete(pendingId);
-    }
-
-    @computed public get isPending() {
-        return this.pendingSet.size > 0;
-    }
-}
-
-function listToMap<T extends IHasAddress>(list: T[], map: Map<string, T>): void {
-    list.forEach(item  => map.set(item.address, item));
 }
