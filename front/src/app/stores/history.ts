@@ -91,8 +91,6 @@ export class HistoryStore extends AbstractPendingStore {
     @needsPending
     @asyncAction
     public *update(filter: api.ITxListFilter, page: number) {
-        this.page = 1;
-
         const { data: [txList, total] } = yield Api.getSendTransactionList(
             filter,
             ITEMS_PER_PAGE,
@@ -112,16 +110,19 @@ export class HistoryStore extends AbstractPendingStore {
     @action
     public setFilterFrom = (from: string) => {
         this.fromAddress = from;
+        this.page = 1;
     }
 
     @action
     public setFilterCurrency = (currency: string) => {
         this.curencyAddress = currency;
+        this.page = 1;
     }
 
     @action
     public setQuery = (query: string) => {
         this.query = query;
+        this.page = 1;
     }
 
     @action
