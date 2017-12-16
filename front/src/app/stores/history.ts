@@ -2,6 +2,8 @@ import { observable, computed, IObservableArray, toJS, autorunAsync, action } fr
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
+import { AbstractPendingStore } from './abstract-pending-store';
+const { needsPending } = AbstractPendingStore;
 
 const Api = api.Api;
 const DAY = 1000 * 60 * 60 * 24;
@@ -17,7 +19,7 @@ export interface ISendForm {
 
 const ITEMS_PER_PAGE = 10;
 
-export class HistoryStore {
+export class HistoryStore extends AbstractPendingStore {
     @observable public errors: any[] = [];
 
     @observable.ref public currentPageTxHashList: string[] = [];
@@ -31,8 +33,6 @@ export class HistoryStore {
     @observable public page = 1;
     @observable public total = 0;
     @observable public perPage = ITEMS_PER_PAGE;
-
-    @observable public pending = false;
 
     @observable public txMap = new Map<string, api.ISendTransactionResult>();
 
@@ -53,6 +53,8 @@ export class HistoryStore {
     protected isInitiated = false;
 
     constructor() {
+        super();
+
         autorunAsync(async () => {
             if (this.filterParams && this.page && this.isInitiated) { // HACK
                 this.update(this.filterParams, this.page);
@@ -60,6 +62,7 @@ export class HistoryStore {
         });
     }
 
+    @needsPending
     public async init() {
         this.isInitiated = true;
         await this.update(this.filterParams, this.page);
@@ -85,34 +88,21 @@ export class HistoryStore {
         yield this.update(this.filterParams, this.page);
     }
 
-    public submitTransaction(params: api.ISendTransaction, password: string) {
-        Api.send(params, password);
-    }
-
-    // public async init() {
-    //     await this.update(this.filterParams);
-    // }
-
+    @needsPending
     @asyncAction
     public *update(filter: api.ITxListFilter, page: number) {
-        try {
-            this.pending = true;
-            this.page = 1;
+        this.page = 1;
 
-            const { data: [txList, total] } = yield Api.getSendTransactionList(
-                filter,
-                ITEMS_PER_PAGE,
-                (page - 1) * ITEMS_PER_PAGE,
-            );
+        const { data: [txList, total] } = yield Api.getSendTransactionList(
+            filter,
+            ITEMS_PER_PAGE,
+            (page - 1) * ITEMS_PER_PAGE,
+        );
 
-            this.total = total;
-            this.addTxToMap(txList);
-            this.currentPageTxHashList = txList.map((x: api.ISendTransactionResult) => x.hash);
-        } catch (e) {
-            this.errors.push(e);
-        } finally {
-            this.pending = false;
-        }
+        this.total = total;
+        this.addTxToMap(txList);
+        this.currentPageTxHashList = txList.map((x: api.ISendTransactionResult) => x.hash);
+
     }
 
     protected addTxToMap(txList: api.ISendTransactionResult[]) {

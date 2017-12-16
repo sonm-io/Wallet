@@ -6,7 +6,7 @@ export class AbstractPendingStore {
 
     @action.bound
     public startPending(name: string): string {
-        const pendingId = `${name}_${this.pendingIdx}`;
+        const pendingId = `${name}_${this.pendingIdx++}`;
 
         this.pendingSet.set(pendingId, true);
 
