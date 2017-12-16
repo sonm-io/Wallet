@@ -70,6 +70,14 @@ export class SendSrc extends React.Component<IProps, any> {
                 Function.prototype as any,
             );
         }
+
+        if (this.props.form.isFieldsTouched(['amount'])) {
+            this.props.form.validateFields(
+                ['amount'],
+                { force: true },
+                Function.prototype as any,
+            );
+        }
     }
 
     protected handleChangeCurrency = (address: string) => {
@@ -333,15 +341,15 @@ export class SendSrc extends React.Component<IProps, any> {
                                 onChange={this.handleChangePriority}
                             />
                         </Form.Item>
-                        <Button
-                            onClick={this.handleSubmit}
-                            type="submit"
-                            color="violet"
-                            className="sonm-send__submit"
-                        >
-                            NEXT
-                        </Button>
                     </div>
+                    <Button
+                        onClick={this.handleSubmit}
+                        type="submit"
+                        color="violet"
+                        className="sonm-send__submit"
+                    >
+                        NEXT
+                    </Button>
                 </Form>
             </div>
         );

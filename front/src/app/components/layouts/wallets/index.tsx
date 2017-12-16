@@ -12,7 +12,8 @@ import { AddAccount, IAddAccountForm } from './sub/add-account';
 import { CreateAccount, ICreateAccountForm } from './sub/create-account';
 import { EmptyAccountList } from './sub/empty-account-list';
 import { navigate } from 'app/router/navigate';
-import { IValidation } from 'ipc';
+import { IValidation } from 'app/api/types';
+import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
 
 enum WalletDialogs {
     new = 'new',
@@ -178,15 +179,3 @@ export class Wallets extends React.Component<IProps, IState> {
 }
 
 // TODO
-function DeleteAccountConfirmation(props: IAccountItemProps) {
-    return <div className="sonm-account-delete-confirmation">
-        <h4 className="sonm-account-delete-confirmation__header">Are you sure want to delete?</h4>
-        <AccountItem
-            key="del-preview"
-            address={props.address}
-            name={props.name}
-            firstBalance={props.firstBalance}
-            secondBalance={props.secondBalance}
-        />
-    </div>;
-}
