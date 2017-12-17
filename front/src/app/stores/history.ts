@@ -3,7 +3,7 @@ import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
 import { AbstractPendingStore } from './abstract-pending-store';
-const { needsPending } = AbstractPendingStore;
+const { pending } = AbstractPendingStore;
 
 const Api = api.Api;
 const DAY = 1000 * 60 * 60 * 24;
@@ -52,21 +52,26 @@ export class HistoryStore extends AbstractPendingStore {
 
     protected isInitiated = false;
 
-    constructor() {
-        super();
-
-        autorunAsync(async () => {
-            if (this.filterParams && this.page && this.isInitiated) { // HACK
-                this.update(this.filterParams, this.page);
-            }
-        });
+    @pending
+    public async init() {
+        if (!this.isInitiated) {
+            this.isInitiated = true;
+            await this.update();
+            this.createUpdateReaction();
+        }
+        return true;
     }
 
-    @needsPending
-    public async init() {
-        this.isInitiated = true;
-        await this.update(this.filterParams, this.page);
-        return true;
+    protected createUpdateReaction() {
+        autorunAsync(async () => {
+            if (
+                this.filterParams
+                && this.page // update if any change
+                && this.isInitiated
+            ) {
+                this.update();
+            }
+        });
     }
 
     @computed
@@ -83,14 +88,12 @@ export class HistoryStore extends AbstractPendingStore {
         return filter;
     }
 
+    @pending
     @asyncAction
-    public *forceUpdate() {
-        yield this.update(this.filterParams, this.page);
-    }
+    public *update() {
+        const filter = this.filterParams;
+        const page = this.page;
 
-    @needsPending
-    @asyncAction
-    public *update(filter: api.ITxListFilter, page: number) {
         const { data: [txList, total] } = yield Api.getSendTransactionList(
             filter,
             ITEMS_PER_PAGE,

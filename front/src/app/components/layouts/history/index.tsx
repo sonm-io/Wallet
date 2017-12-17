@@ -145,10 +145,6 @@ export class History extends React.Component<IProps, any> {
 
         if (this.props.initialAddress) { this.props.historyStore.setFilterFrom(this.props.initialAddress); }
         if (this.props.initialCurrency) { this.props.historyStore.setFilterCurrency(this.props.initialCurrency); }
-
-        if (!this.props.initialAddress && !this.props.initialCurrency) { // TODO HACK
-            this.props.historyStore.forceUpdate();
-        }
     }
 
     protected handleChangeTime = (dates: moment.Moment[]) => {

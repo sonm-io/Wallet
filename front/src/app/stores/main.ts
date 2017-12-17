@@ -17,7 +17,7 @@ import {
 } from './types';
 import { listToAddressMap } from './utils/listToAddressMap';
 import { AbstractPendingStore } from './abstract-pending-store';
-const { needsPending, needsErrorHandling } = AbstractPendingStore;
+const { pending, catchErrors } = AbstractPendingStore;
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -231,14 +231,14 @@ export class MainStore extends AbstractPendingStore {
         return this.getBalanceListFor(this.selectedAccountAddress);
     }
 
-    @needsErrorHandling
+    @catchErrors
     @action
     public setUserGasPrice(value: string): void {
         const bn = new BigNumber(value);
         this.userGasPrice = bn.toString();
     }
 
-    @needsErrorHandling
+    @catchErrors
     @asyncAction
     public * deleteAccount(deleteAddress: string) {
         const {data: success} = yield Api.removeAccount(deleteAddress);
@@ -304,7 +304,7 @@ export class MainStore extends AbstractPendingStore {
         this.values = values;
     }
 
-    @needsErrorHandling
+    @catchErrors
     @asyncAction
     public * renameAccount(address: string, name: string) {
         const success = yield Api.renameAccount(address, name);
@@ -345,7 +345,7 @@ export class MainStore extends AbstractPendingStore {
         return isValid;
     }
 
-    @needsErrorHandling
+    @catchErrors
     @asyncAction
     public * confirmTransaction(password: string) {
         const tx = {
@@ -368,7 +368,7 @@ export class MainStore extends AbstractPendingStore {
         return result;
     }
 
-    @needsPending
+    @pending
     @asyncAction
     public * init() {
         this.secondTokenAddressProp = (yield Api.getSonmTokenAddress()).data;
@@ -416,7 +416,7 @@ export class MainStore extends AbstractPendingStore {
         return loop();
     }
 
-    @needsPending
+    @pending
     @asyncAction
     public * addAccount(json: string, password: string, name: string) {
         const result: IValidation = {};
@@ -434,7 +434,7 @@ export class MainStore extends AbstractPendingStore {
         return result;
     }
 
-    @needsPending
+    @pending
     @asyncAction
     public * createAccount(password: string, name: string) {
         const {data} = yield Api.createAccount(password);

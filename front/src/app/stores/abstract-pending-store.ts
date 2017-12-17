@@ -31,7 +31,7 @@ export class AbstractPendingStore {
         this.errors.push(e.message || e);
     }
 
-    public static needsPending(target: AbstractPendingStore, propertyKey: string, descriptor: PropertyDescriptor) {
+    public static pending(target: AbstractPendingStore, propertyKey: string, descriptor: PropertyDescriptor) {
         const method = descriptor.value;
 
         descriptor.value = async function() {
@@ -49,7 +49,7 @@ export class AbstractPendingStore {
         };
     }
 
-    public static needsErrorHandling(
+    public static catchErrors(
         target: AbstractPendingStore,
         propertyKey: string,
         descriptor: PropertyDescriptor,

@@ -5,6 +5,7 @@ import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { navigate } from 'app/router';
 import { MainStore } from 'app/stores/main';
+import { AbstractPendingStore } from 'app/stores/abstract-pending-store';
 import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
 
@@ -16,11 +17,23 @@ interface IProps {
     mainStore: MainStore;
 }
 
-@inject('mainStore')
+@inject('mainStore', 'historyStore')
 @observer
 export class App extends React.Component<IProps, any> {
     public handleMenuClick(param: ClickParam) {
         navigate({ path: param.key });
+    }
+
+    protected get isPending() {
+        const props: any = this.props;
+        return Object.keys(props).reduce((b: boolean, key: string) => {
+            const prop = props[key];
+            if (prop instanceof AbstractPendingStore) { // needs iteration over all stores
+                b = b || prop.isPending;
+            }
+
+            return b;
+        }, false);
     }
 
     public render() {
@@ -38,7 +51,7 @@ export class App extends React.Component<IProps, any> {
         return (
 
             <div className={cn('sonm-app', className)}>
-                <LoadMask visible={this.props.mainStore.isPending}>
+                <LoadMask white visible={this.isPending}>
                     <div className="sonm-app__nav">
                         <div className="sonm-nav">
                             <div className="sonm-nav__logo" />
