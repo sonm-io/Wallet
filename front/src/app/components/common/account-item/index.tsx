@@ -9,7 +9,7 @@ import { DownloadFile } from '../download-file';
 export interface IAccountItemProps {
     className?: string;
     address: string;
-    json: string;
+    json?: string;
     name: string;
     firstBalance: string;
     secondBalance: string;
@@ -40,6 +40,8 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             json,
         } = this.props;
 
+        const downloadIcon = json ? <DownloadFile data={json} address={address} className="sonm-account-item__download"/> : null;
+
         return (
             <div className={cn('sonm-account-item', className)}>
                 <IdentIcon address={address} className="sonm-account-item__blockies"/>
@@ -66,8 +68,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fullString={secondBalance}
                     fontSizePx={16}
                 />
-
-                <DownloadFile data={json} address={address} className="sonm-account-item__download"/>
+                {downloadIcon}
             </div>
         );
     }

@@ -212,7 +212,6 @@ function DeleteAccountConfirmation(props: IAccountItemProps) {
         <h4 className="sonm-account-delete-confirmation__header">Are you sure want to delete?</h4>
         <AccountItem
             key="del-preview"
-            json={props.json}
             address={props.address}
             name={props.name}
             firstBalance={props.firstBalance}
