@@ -95,7 +95,7 @@
     "rollup": "cross-env NODE_ENV=production rollup --config ./config/rollup.config.js",
     "analyze": "cross-env NODE_ENV=production WEBPACK_ANALYZE=1 webpack --config ./front/config/webpack.config.js",
     "webpack": "cross-env NODE_ENV=development webpack --config ./front/config/webpack.config.js",
-    "webpack:prod": "cross-env NODE_ENV=production webpack --config ./front/config/webpack.config.js",
+    "webpack:prod": "cross-env NODE_ENV=production webpack --config ./front/config/webpack.config.js && node ./post-process-bundled-files.js",
     "prety": "prettier --write front/src/**/*.tsx && prettier --write front/src/**/*.ts",
     "sg": "styleguidist server",
     "karma": "./node_modules/karma/bin/karma start --browsers Chrome"
