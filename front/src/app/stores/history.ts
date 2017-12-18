@@ -107,7 +107,7 @@ export class HistoryStore extends AbstractStore {
     }
 
     protected addTxToMap(txList: api.ISendTransactionResult[]) {
-        txList.map((tx: api.ISendTransactionResult) => this.txMap.set(tx.hash, tx));
+        txList.map((tx: api.ISendTransactionResult) => tx.hash && this.txMap.set(tx.hash, tx)); // TODO tx whith empty hash does not add
     }
 
     @action
