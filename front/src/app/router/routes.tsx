@@ -10,7 +10,6 @@ import * as React from 'react';
 import { LocaleProvider } from 'antd';
 import * as enUS from 'antd/lib/locale-provider/en_US';
 import { navigate } from './navigate';
-const enUSLocale: any = enUS;
 
 let defaultAction;
 
@@ -27,7 +26,7 @@ const routes = [
 
             return {
                 content: (
-                    <LocaleProvider locale={enUSLocale}>
+                    <LocaleProvider locale={enUS as any}>
                         <App
                             selectedNavMenuItem={inner.pathKey}
                             {...inner.props}

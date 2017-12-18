@@ -1,6 +1,6 @@
 import { observable, action, computed } from 'mobx';
 
-export class AbstractPendingStore {
+export class AbstractStore {
     protected pendingIdx = 0;
     @observable public pendingSet = new Map(); // mobx doesn't support observable set
 
@@ -25,17 +25,23 @@ export class AbstractPendingStore {
     @observable public errors: any[] = [];
 
     @action
-    protected handleError(e: Error) {
+    protected handleError(e: Error | string) {
         console.error(e);
 
-        this.errors.push(e.message || e);
+        if (e === 'network_error') {
+            this.isOffline = false;
+        }
+
+        this.errors.push(e);
     }
 
-    public static pending(target: AbstractPendingStore, propertyKey: string, descriptor: PropertyDescriptor) {
+    @observable public isOffline = false;
+
+    public static pending(target: AbstractStore, propertyKey: string, descriptor: PropertyDescriptor) {
         const method = descriptor.value;
 
         descriptor.value = async function() {
-            const me = this as AbstractPendingStore;
+            const me = this as AbstractStore;
 
             const pendingId = me.startPending(propertyKey);
 
@@ -50,14 +56,14 @@ export class AbstractPendingStore {
     }
 
     public static catchErrors(
-        target: AbstractPendingStore,
+        target: AbstractStore,
         propertyKey: string,
         descriptor: PropertyDescriptor,
     ) {
         const method = descriptor.value;
 
         descriptor.value = async function() {
-            const me = this as AbstractPendingStore;
+            const me = this as AbstractStore;
 
             try {
                 return await method.apply(me, arguments);
@@ -66,6 +72,13 @@ export class AbstractPendingStore {
             }
         };
     }
+
+    public static getAccumulatedFlag(p: keyof AbstractStore, ...stores: AbstractStore[]): boolean {
+        return stores.reduce(
+            (b: boolean, store: AbstractStore) => b || Boolean(store[p]),
+            false,
+        );
+    }
 }
 
-export default AbstractPendingStore;
+export default AbstractStore;

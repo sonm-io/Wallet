@@ -15,12 +15,14 @@
     opacity: 0;
     z-index: @z-everest;
     transition: @load-mask-transition;
+    cursor: progress;
   }
 
   &__spinner {
     opacity: 0;
     z-index: @z-everest + 1;
     transition: @load-mask-transition;
+    cursor: progress;
   }
 
   &--visible {
@@ -31,7 +33,7 @@
     background-color: @color-white;
   }
 
-  &__visible&--white &__pale {
+  &--visible&--white &__pale {
     opacity: 0.4;
   }
 

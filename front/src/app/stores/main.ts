@@ -16,14 +16,14 @@ import {
     IPasswordCache,
 } from './types';
 import { listToAddressMap } from './utils/listToAddressMap';
-import { AbstractPendingStore } from './abstract-pending-store';
-const { pending, catchErrors } = AbstractPendingStore;
+import { AbstractStore } from './abstract-store';
+const { pending, catchErrors } = AbstractStore;
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
 const MAX_VISIBLE_ERRORS = 5;
 
-export class MainStore extends AbstractPendingStore {
+export class MainStore extends AbstractStore {
     public static ADDRESS_ETHER = '0x';
     public static DEFAULT_GAS_LIMIT = '50000';
 
@@ -163,7 +163,7 @@ export class MainStore extends AbstractPendingStore {
     private static getTokenBalance(fullList: ICurrencyItemProps[], address: string) {
         const f = fullList.find(x => x.address === address);
 
-        return f ? `${f.balance} ${f.symbol}` : `Token ${address} not found`;
+        return f ? `${f.balance} ${f.symbol}` : '';
     }
 
     @computed

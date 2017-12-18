@@ -5,7 +5,7 @@ import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { navigate } from 'app/router';
 import { MainStore } from 'app/stores/main';
-import { AbstractPendingStore } from 'app/stores/abstract-pending-store';
+import { AbstractStore } from 'app/stores/abstract-store';
 import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
 
@@ -20,20 +20,24 @@ interface IProps {
 @inject('mainStore', 'historyStore')
 @observer
 export class App extends React.Component<IProps, any> {
+
     public handleMenuClick(param: ClickParam) {
-        navigate({ path: param.key });
+        navigate({ path: param.key }); // TODO move into routing
     }
 
-    protected get isPending() {
+    protected get stores(): AbstractStore[] {
         const props: any = this.props;
-        return Object.keys(props).reduce((b: boolean, key: string) => {
-            const prop = props[key];
-            if (prop instanceof AbstractPendingStore) { // needs iteration over all stores
-                b = b || prop.isPending;
-            }
 
-            return b;
-        }, false);
+        return Object.keys(props).map(key => props[key]).filter(prop => prop instanceof AbstractStore);
+    }
+
+    protected get isPending() { return AbstractStore.getAccumulatedFlag('isPending', ...this.stores); }
+    protected get isOffline() { return AbstractStore.getAccumulatedFlag('isOffline', ...this.stores); }
+
+    public componentWillUpdate(next: IProps) {
+        if (this.isOffline && next.selectedNavMenuItem === '/send') { // TODO move into routing
+            navigate({ path: '/accounts' });
+        }
     }
 
     public render() {
@@ -49,7 +53,6 @@ export class App extends React.Component<IProps, any> {
         } = this.props;
 
         return (
-
             <div className={cn('sonm-app', className)}>
                 <LoadMask white visible={this.isPending}>
                     <div className="sonm-app__nav">
@@ -68,7 +71,7 @@ export class App extends React.Component<IProps, any> {
                                 <Menu.Item key="/accounts" className="sonm-nav__menu-item">
                                     Accounts
                                 </Menu.Item>
-                                <Menu.Item key="/send" className="sonm-nav__menu-item">
+                                <Menu.Item key="/send" className="sonm-nav__menu-item" disabled={this.isOffline}>
                                     Send
                                 </Menu.Item>
                                 <Menu.Item key="/history" className="sonm-nav__menu-item">
@@ -92,7 +95,7 @@ export class App extends React.Component<IProps, any> {
                                 lastErrors.length > 0
                                     ? lastErrors.map((e, idx) => <Alert
                                         message={e}
-                                        type="warning"
+                                        type="error"
                                         className="sonm-app__alert"
                                         key={idx}
                                     />)

@@ -203,13 +203,6 @@ export class SendSrc extends React.Component<IProps, any> {
         error ? cb(error) : cb();
     }
 
-    protected static normalizeAddress(str: string): string {
-        const s = '0000000000000000000000000000000000000000' + str;
-        const l = s.length;
-
-        return s.slice(l - 40, l);
-    }
-
     public render() {
         const {
             className,

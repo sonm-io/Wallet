@@ -2,8 +2,8 @@ import { observable, computed, IObservableArray, toJS, autorunAsync, action } fr
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
-import { AbstractPendingStore } from './abstract-pending-store';
-const { pending } = AbstractPendingStore;
+import { AbstractStore } from './abstract-store';
+const { pending } = AbstractStore;
 
 const Api = api.Api;
 const DAY = 1000 * 60 * 60 * 24;
@@ -19,7 +19,7 @@ export interface ISendForm {
 
 const ITEMS_PER_PAGE = 10;
 
-export class HistoryStore extends AbstractPendingStore {
+export class HistoryStore extends AbstractStore {
     @observable public errors: any[] = [];
 
     @observable.ref public currentPageTxHashList: string[] = [];
