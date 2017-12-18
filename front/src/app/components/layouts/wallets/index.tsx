@@ -126,6 +126,7 @@ export class Wallets extends React.Component<IProps, IState> {
                                         {...x}
                                         onClickIcon={this.closeDialog}
                                         onRename={this.handleRename}
+                                        hasButtons
                                     />
                                 </DeletableItem>
                             );

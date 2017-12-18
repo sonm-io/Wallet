@@ -1,0 +1,32 @@
+.sonm-download-file {
+  display: inline-block;
+
+  outline: none;
+  outline-offset: 3px;
+
+  border: 0;
+  padding: 0;
+  background: transparent url(./download-icon.svg) center no-repeat;
+  background-size: contain;
+  min-width: 20px;
+  cursor: pointer;
+  text-decoration: none;
+
+  vertical-align: top;
+  line-height: 1.3;
+
+  &:visited,
+  &:active,
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:focus,
+  &:active {
+    outline: @outline;
+  }
+
+  &:before {
+    content: ' ';
+  }
+}

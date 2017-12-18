@@ -85,6 +85,7 @@ class Api {
         this.routes = {
             'ping': this.ping,
             'getWalletList': this.getWalletList,
+            'checkConnection': this.checkConnection,
 
             'account.add': this.addAccount,
             'account.create': this.createAccount,
@@ -131,6 +132,20 @@ class Api {
         return {
             data: (await createPromise('get', { key: this.hash })) ? true : false,
         };
+    }
+
+    public checkConnection = async (): Promise<IResponse> => {
+        try {
+            await this.getGasPrice();
+
+            return {
+                data: true,
+            };
+        } catch (err) {
+            return {
+                data: false,
+            };
+        }
     }
 
     public checkPrivateKey = async (data: IPayload): Promise<IResponse> => {
@@ -255,7 +270,10 @@ class Api {
             requests.push(this.getCurrencyBalances(address));
         }
 
-        const balancies = await Promise.all(requests);
+        let balancies;
+        try {
+            balancies = await Promise.all(requests);
+        } catch (err) {}
 
         const list = [] as t.IAccountInfo[];
         for (let i = 0; i < addresses.length; i++) {
@@ -264,7 +282,8 @@ class Api {
             list.push({
                 address,
                 name: accounts[address].name,
-                currencyBalanceMap: balancies[i],
+                json: JSON.stringify(accounts[address].json),
+                currencyBalanceMap: balancies && balancies[i] ? balancies[i] : {},
             });
         }
 

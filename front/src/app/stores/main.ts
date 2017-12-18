@@ -180,6 +180,7 @@ export class MainStore extends AbstractStore {
         const result = Array.from(this.accountMap.values()).map(account => {
             const props: IAccountItemProps = {
                 address: account.address,
+                json: account.json,
                 name: account.name,
                 firstBalance: `${account.currencyBalanceMap[firstTokenAddress]} ${this.firstToken.symbol}`,
                 secondBalance: `${account.currencyBalanceMap[secondTokenAddress]} ${this.secondToken.symbol}`,
