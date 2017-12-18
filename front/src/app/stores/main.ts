@@ -406,7 +406,7 @@ export class MainStore extends AbstractStore {
     @catchErrors({ restart: true })
     protected async autoUpdateIteration(interval: number) {
         try {
-            window.console.time('update')
+            window.console.time('auto-update');
 
             await this.update();
 
@@ -415,7 +415,7 @@ export class MainStore extends AbstractStore {
             this.autoUpdateIteration(interval);
 
         } finally {
-            window.console.timeEnd('update');
+            window.console.timeEnd('auto-update');
         }
     }
 

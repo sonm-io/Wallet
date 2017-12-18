@@ -36,7 +36,11 @@ export class AbstractStore {
             if (restart) {
                 when(() => !this.isOffline,
 
-                    () => e.method.apply(e.scope, e.args),
+                    () => {
+                        console.log(`Connection recovered. Restart ${e.method.name}`);
+
+                        e.method.apply(e.scope, e.args);
+                    },
                 );
             }
         }
