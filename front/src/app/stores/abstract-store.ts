@@ -31,7 +31,7 @@ export class AbstractStore {
         console.error(e);
 
         if (e instanceof WalletApiError && e.code === 'network_error') { // TODO err code enum
-            this.isOffline = false;
+            this.isOffline = true;
 
             if (restart) {
                 when(() => !this.isOffline,
