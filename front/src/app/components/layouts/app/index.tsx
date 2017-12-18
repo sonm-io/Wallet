@@ -34,12 +34,6 @@ export class App extends React.Component<IProps, any> {
     protected get isPending() { return AbstractStore.getAccumulatedFlag('isPending', ...this.stores); }
     protected get isOffline() { return AbstractStore.getAccumulatedFlag('isOffline', ...this.stores); }
 
-    public componentWillUpdate(next: IProps) {
-        if (this.isOffline && next.selectedNavMenuItem === '/send') { // TODO move into routing
-            navigate({ path: '/accounts' });
-        }
-    }
-
     public render() {
         const {
             className,

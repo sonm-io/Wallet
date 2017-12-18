@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, when } from 'mobx';
 
 export class AbstractStore {
     protected pendingIdx = 0;
@@ -24,18 +24,25 @@ export class AbstractStore {
 
     @observable public errors: any[] = [];
 
+    @observable public isOffline = false;
+
     @action
-    protected handleError(e: Error | string) {
+    protected handleError(e: Error | string, restart: boolean) {
         console.error(e);
 
-        if (e === 'network_error') {
+        if (e instanceof WalletApiError && e.code === 'network_error') { // TODO err code enum
             this.isOffline = false;
+
+            if (restart) {
+                when(() => !this.isOffline,
+
+                    () => e.method.apply(e.scope, e.args),
+                );
+            }
         }
 
         this.errors.push(e);
     }
-
-    @observable public isOffline = false;
 
     public static pending(target: AbstractStore, propertyKey: string, descriptor: PropertyDescriptor) {
         const method = descriptor.value;
@@ -47,28 +54,40 @@ export class AbstractStore {
 
             try {
                 return await method.apply(me, arguments);
-            } catch (e) {
-                me.handleError(e);
             } finally {
                 me.stopPending(pendingId);
             }
         };
     }
 
-    public static catchErrors(
+    public static catchErrors = ({ restart = false }) => (
         target: AbstractStore,
         propertyKey: string,
         descriptor: PropertyDescriptor,
-    ) {
+    ) => {
         const method = descriptor.value;
 
-        descriptor.value = async function() {
-            const me = this as AbstractStore;
+        descriptor.value = async function(...args: any[]) {
+            const store = this as AbstractStore;
 
             try {
-                return await method.apply(me, arguments);
-            } catch (e) {
-                me.handleError(e);
+                return await method.apply(store, args);
+            } catch (errorStringCode) {
+
+                if (typeof errorStringCode !== 'string') {
+                    alert(`Unexpected exception from wallet API; Exception ${errorStringCode}`);
+                }
+
+                store.handleError(
+                    new WalletApiError(
+                        errorStringCode,
+                        `method ${propertyKey} failed`,
+                        store,
+                        descriptor.value,
+                        args,
+                    ),
+                    restart,
+                );
             }
         };
     }
@@ -78,6 +97,28 @@ export class AbstractStore {
             (b: boolean, store: AbstractStore) => b || Boolean(store[p]),
             false,
         );
+    }
+}
+
+class WalletApiError extends Error {
+    public method: Function;
+    public code: string;
+    public scope: AbstractStore;
+    public args: any[];
+
+    constructor(
+        code: string,
+        msg: string,
+        scope: AbstractStore,
+        method: Function,
+        args: any[],
+    ) {
+        super(msg);
+
+        this.code = code;
+        this.scope = scope;
+        this.args = args;
+        this.method = method;
     }
 }
 

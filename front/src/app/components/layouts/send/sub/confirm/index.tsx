@@ -100,6 +100,7 @@ export class SendConfirm extends React.Component<IProps, any> {
                         />
                     </Form.Item>
                     <Button
+                        disabled={mainStore.isOffline}
                         className="sonm-send-confirm__password-button"
                         type="submit"
                         color="violet"

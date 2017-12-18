@@ -18,6 +18,7 @@ import {
 import { listToAddressMap } from './utils/listToAddressMap';
 import { AbstractStore } from './abstract-store';
 const { pending, catchErrors } = AbstractStore;
+import { delay } from 'app/utils/async-delay';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -55,11 +56,12 @@ export class MainStore extends AbstractStore {
     @computed
     get lastErrors(): any[] {
         const len = this.errors.length;
-        if (len === 0) {
-            return [];
-        }
 
-        return this.errors.slice(len - MAX_VISIBLE_ERRORS);
+        if (len === 0) { return []; }
+
+        return len > MAX_VISIBLE_ERRORS
+            ? this.errors
+            : this.errors.slice(len - MAX_VISIBLE_ERRORS);
     }
 
     @computed
@@ -231,14 +233,14 @@ export class MainStore extends AbstractStore {
         return this.getBalanceListFor(this.selectedAccountAddress);
     }
 
-    @catchErrors
+    @catchErrors({ restart: true })
     @action
     public setUserGasPrice(value: string): void {
         const bn = new BigNumber(value);
         this.userGasPrice = bn.toString();
     }
 
-    @catchErrors
+    @catchErrors({ restart: false })
     @asyncAction
     public * deleteAccount(deleteAddress: string) {
         const {data: success} = yield Api.removeAccount(deleteAddress);
@@ -304,7 +306,7 @@ export class MainStore extends AbstractStore {
         this.values = values;
     }
 
-    @catchErrors
+    @catchErrors({ restart: false })
     @asyncAction
     public * renameAccount(address: string, name: string) {
         const success = yield Api.renameAccount(address, name);
@@ -345,7 +347,7 @@ export class MainStore extends AbstractStore {
         return isValid;
     }
 
-    @catchErrors
+    @catchErrors({ restart: false })
     @asyncAction
     public * confirmTransaction(password: string) {
         const tx = {
@@ -369,13 +371,15 @@ export class MainStore extends AbstractStore {
     }
 
     @pending
+    @catchErrors({ restart: true })
     @asyncAction
     public * init() {
         this.secondTokenAddressProp = (yield Api.getSonmTokenAddress()).data;
 
         const [{data: currencyList}] = yield Promise.all([
             Api.getCurrencyList(),
-            this.startAutoUpdate(UPDATE_INTERVAL), // wait for first update
+
+            this.autoUpdateIteration(UPDATE_INTERVAL), // wait for first update
         ]);
 
         listToAddressMap<ICurrencyInfo>(currencyList, this.currencyMap);
@@ -383,40 +387,40 @@ export class MainStore extends AbstractStore {
         this.userGasPrice = this.averageGasPrice;
     }
 
-    @action
-    private update(result: any) {
+    @asyncAction
+    protected * update() {
         const [
             {data: averageGasPrice},
             {data: accountList},
-        ] = result;
 
-        this.averageGasPrice = averageGasPrice;
-        listToAddressMap<IAccountInfo>(accountList, this.accountMap);
+        ] = yield Promise.all([
+
+            Api.getGasPrice(),
+            Api.getAccountList(),
+        ]);
+
+        if (averageGasPrice) { this.averageGasPrice = averageGasPrice; }
+        if (accountList) { listToAddressMap<IAccountInfo>(accountList, this.accountMap); }
     }
 
-    public startAutoUpdate(interval: number) {
-        const loop = async () => {
-            try {
-                window.console.time('update')
+    @catchErrors({ restart: true })
+    protected async autoUpdateIteration(interval: number) {
+        try {
+            window.console.time('update')
 
-                const result = await Promise.all([
-                    Api.getGasPrice(),
-                    Api.getAccountList(),
-                ]);
+            await this.update();
 
-                this.update(result);
-            } catch (e) {
-                this.handleError(e);
-            } finally {
-                window.console.timeEnd('update');
-                setTimeout(loop, interval);
-            }
-        };
+            await delay(interval);
 
-        return loop();
+            this.autoUpdateIteration(interval);
+
+        } finally {
+            window.console.timeEnd('update');
+        }
     }
 
     @pending
+    @catchErrors({ restart: false })
     @asyncAction
     public * addAccount(json: string, password: string, name: string) {
         const result: IValidation = {};
@@ -435,6 +439,7 @@ export class MainStore extends AbstractStore {
     }
 
     @pending
+    @catchErrors({ restart: false })
     @asyncAction
     public * createAccount(password: string, name: string) {
         const {data} = yield Api.createAccount(password);
