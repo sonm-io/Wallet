@@ -15,7 +15,7 @@ export interface IAccountItemProps {
     secondBalance: string;
     onRename?: (newName: string, address: string) => void;
     onClickIcon?: (address: string) => void;
-    hasCopyButton?: boolean;
+    hasButtons?: boolean;
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {
@@ -39,7 +39,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             secondBalance,
             onClickIcon,
             json,
-            hasCopyButton,
+            hasButtons,
         } = this.props;
 
         return (
@@ -58,7 +58,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fontSizePx={16}
                 />
                 <Hash
-                    hasCopyButton={hasCopyButton}
+                    hasCopyButton={hasButtons}
                     className="sonm-account-item__address"
                     hash={address}
                     onClick={this.handleClickIcon}
@@ -68,7 +68,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fullString={secondBalance}
                     fontSizePx={16}
                 />
-                {json
+                {hasButtons && json
                     ?
                     <div className="sonm-account-item__download">
                         <DownloadFile data={json} fileName={`account-${address}.json`}/>
