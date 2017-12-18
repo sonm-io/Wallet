@@ -117,9 +117,7 @@ export class History extends React.Component<IProps, any> {
         title: 'TxHash',
         className: 'sonm-tx-list__col-hash',
         render: (_, record) => {
-            return (
-                <Hash hash={record.hash} hasCopyButton />
-            );
+            return record.hash ? <Hash hash={record.hash} hasCopyButton /> : '';
         },
     }, {
         dataIndex: 'status',
