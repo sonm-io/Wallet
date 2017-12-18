@@ -67,6 +67,10 @@ export class Api {
         return createPromise('account.setSecretKey', { password, walletName });
     }
 
+    public static async checkConnection(): Promise<IResult<boolean>>  {
+        return createPromise('checkConnection');
+    }
+
     public static async checkPrivateKey(password: string, address: string): Promise<IResult<boolean>>  {
         return createPromise('account.checkPrivateKey', { address, password });
     }

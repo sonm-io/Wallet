@@ -33,6 +33,7 @@ export interface IAccountInfo {
     name: string;
     address: string;
     currencyBalanceMap: ICurrencyBalanceMap;
+    json: string;
 }
 
 export interface ICurrencyBalanceMap {
