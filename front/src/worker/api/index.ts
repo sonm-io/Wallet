@@ -279,12 +279,14 @@ class Api {
         for (let i = 0; i < addresses.length; i++) {
             const address = addresses[i];
 
-            list.push({
-                address,
-                name: accounts[address].name,
-                json: JSON.stringify(accounts[address].json),
-                currencyBalanceMap: balancies && balancies[i] ? balancies[i] : {},
-            });
+            if (accounts[address]) {
+                list.push({
+                    address,
+                    name: accounts[address].name,
+                    json: JSON.stringify(accounts[address].json),
+                    currencyBalanceMap: balancies && balancies[i] ? balancies[i] : {},
+                });
+            }
         }
 
         return {
