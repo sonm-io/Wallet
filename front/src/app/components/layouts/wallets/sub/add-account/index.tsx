@@ -201,7 +201,7 @@ export class AddAccount extends React.Component<IProps, any> {
                         type="submit"
                         height={40}
                     >
-                        Create
+                        Add
                     </Button>
                     {this.state.address === '' ? null :
                         <div
