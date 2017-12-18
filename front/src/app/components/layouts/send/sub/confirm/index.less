@@ -6,7 +6,7 @@
 .sonm-send-confirm {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 30px 1fr auto;
+  grid-template-rows: 30px 1fr 1fr;
   grid-gap: @confirm-padding;
 
   &__header {
@@ -70,26 +70,44 @@
     grid-row: 3;
 
     border: @confirm-border;
-    padding: @confirm-padding;
+    padding: @confirm-padding 30px;
+    font-size: 16px;
 
     dt {
       font-weight: bold;
-      display: inline-block;
-      width: 100%;
+      display: block;
+      margin: 0;
+    }
+
+    dd {
+      display: block;
+      margin: 0 0 20px 0;
     }
   }
 
-  &__password-form {
-    grid-column: 2;
-    grid-row: 3;
+  &__password {
+    &-field,
+    &-header {
+      width: 100%;
+    }
 
-    padding: @confirm-padding;
-    background-color: @color-light-gray;
-    border: @confirm-border;
+    &-form {
+      grid-column: 2;
+      grid-row: 3;
+
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+
+      padding: @confirm-padding;
+      background-color: @color-light-gray;
+      border: @confirm-border;
+    }
   }
 
   &__password-button {
-    float: right;
     margin: @confirm-padding 0 0 @confirm-padding;
   }
 }

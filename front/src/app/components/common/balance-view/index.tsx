@@ -25,7 +25,7 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
             [balance, symbol] = fullString.split(' ');
         }
 
-        let out = '0';
+        let out = '';
         if (balance) {
             const dotIdx = balance.indexOf('.');
 

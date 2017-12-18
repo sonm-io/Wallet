@@ -1,6 +1,6 @@
-@import '../../common/deletable-item/index';
 @import 'sub/add-account/index';
 @import 'sub/empty-account-list/index';
+@import 'sub/delete-account-confirmation/index';
 
 .sonm-wallets {
   display: grid;
@@ -21,21 +21,14 @@
   &__buttons {
     grid-column: 1;
     grid-row: 3;
+  }
 
-    &__create-account {
-      margin-left: 20px;
-    }
+  &__button {
+    margin-right: 20px;
   }
 
   &__balances {
     grid-column: 2;
     grid-row: 2;
-  }
-}
-
-.sonm-account-delete-confirmation {
-  &__header {
-    font-size: 16px;
-    text-align: center;
   }
 }

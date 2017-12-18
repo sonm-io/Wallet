@@ -2,6 +2,8 @@ import { observable, computed, IObservableArray, toJS, autorunAsync, action } fr
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
+import { AbstractStore } from './abstract-store';
+const { pending } = AbstractStore;
 
 const Api = api.Api;
 const DAY = 1000 * 60 * 60 * 24;
@@ -17,7 +19,7 @@ export interface ISendForm {
 
 const ITEMS_PER_PAGE = 10;
 
-export class HistoryStore {
+export class HistoryStore extends AbstractStore {
     @observable public errors: any[] = [];
 
     @observable.ref public currentPageTxHashList: string[] = [];
@@ -31,8 +33,6 @@ export class HistoryStore {
     @observable public page = 1;
     @observable public total = 0;
     @observable public perPage = ITEMS_PER_PAGE;
-
-    @observable public pending = false;
 
     @observable public txMap = new Map<string, api.ISendTransactionResult>();
 
@@ -52,18 +52,26 @@ export class HistoryStore {
 
     protected isInitiated = false;
 
-    constructor() {
-        autorunAsync(async () => {
-            if (this.filterParams && this.page && this.isInitiated) { // HACK
-                this.update(this.filterParams, this.page);
-            }
-        });
+    @pending
+    public async init() {
+        if (!this.isInitiated) {
+            this.isInitiated = true;
+            await this.update();
+            this.createUpdateReaction();
+        }
+        return true;
     }
 
-    public async init() {
-        this.isInitiated = true;
-        await this.update(this.filterParams, this.page);
-        return true;
+    protected createUpdateReaction() {
+        autorunAsync(async () => {
+            if (
+                this.filterParams
+                && this.page // update if any change
+                && this.isInitiated
+            ) {
+                this.update();
+            }
+        });
     }
 
     @computed
@@ -80,39 +88,22 @@ export class HistoryStore {
         return filter;
     }
 
+    @pending
     @asyncAction
-    public *forceUpdate() {
-        yield this.update(this.filterParams, this.page);
-    }
+    public *update() {
+        const filter = this.filterParams;
+        const page = this.page;
 
-    public submitTransaction(params: api.ISendTransaction, password: string) {
-        Api.send(params, password);
-    }
+        const { data: [txList, total] } = yield Api.getSendTransactionList(
+            filter,
+            ITEMS_PER_PAGE,
+            (page - 1) * ITEMS_PER_PAGE,
+        );
 
-    // public async init() {
-    //     await this.update(this.filterParams);
-    // }
+        this.total = total;
+        this.addTxToMap(txList);
+        this.currentPageTxHashList = txList.map((x: api.ISendTransactionResult) => x.hash);
 
-    @asyncAction
-    public *update(filter: api.ITxListFilter, page: number) {
-        try {
-            this.pending = true;
-            this.page = 1;
-
-            const { data: [txList, total] } = yield Api.getSendTransactionList(
-                filter,
-                ITEMS_PER_PAGE,
-                (page - 1) * ITEMS_PER_PAGE,
-            );
-
-            this.total = total;
-            this.addTxToMap(txList);
-            this.currentPageTxHashList = txList.map((x: api.ISendTransactionResult) => x.hash);
-        } catch (e) {
-            this.errors.push(e);
-        } finally {
-            this.pending = false;
-        }
     }
 
     protected addTxToMap(txList: api.ISendTransactionResult[]) {
@@ -122,16 +113,19 @@ export class HistoryStore {
     @action
     public setFilterFrom = (from: string) => {
         this.fromAddress = from;
+        this.page = 1;
     }
 
     @action
     public setFilterCurrency = (currency: string) => {
         this.curencyAddress = currency;
+        this.page = 1;
     }
 
     @action
     public setQuery = (query: string) => {
         this.query = query;
+        this.page = 1;
     }
 
     @action

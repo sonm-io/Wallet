@@ -1,60 +1,48 @@
 @import 'guide.less';
 
-@spiner-size: 150px;
-@spiner-size-half: @spiner-size / 2;
+@load-mask-transition: opacity 0.15s ease-in 0.2s;
 
 .sonm-load-mask {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: @color-brand-bg;
-  opacity: 0;
-  transition: opacity 0.5s ease-out;
-  display: none;
-  z-index: @z-everest;
+  visibility: hidden;
 
-  &__spin-svg {
-    content: '';
-    display: block;
+  &__pale {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-@spiner-size-half, -@spiner-size-half);
-    background-size: contain;
-    height: @spiner-size;
-    width: @spiner-size;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: @color-brand-bg;
+    opacity: 0;
+    z-index: @z-everest;
+    transition: @load-mask-transition;
+    cursor: progress;
+  }
+
+  &__spinner {
+    opacity: 0;
+    z-index: @z-everest + 1;
+    transition: @load-mask-transition;
+    cursor: progress;
   }
 
   &--visible {
-    display: block;
+    visibility: visible;
+  }
+
+  &--white &__pale {
+    background-color: @color-white;
+  }
+
+  &--visible&--white &__pale {
+    opacity: 0.4;
+  }
+
+  &--visible &__pale {
     opacity: 0.8;
   }
 
-  &__spin {
-
-    &-path {
-      fill: @color-blue;
-
-      &--first {
-        opacity: 0.1;
-        transform-origin: 50% 50%;
-        animation: spinner-rotate 2s infinite;
-      }
-
-      &--second {
-        opacity: 0.3;
-        transform-origin: 50% 50%;
-        animation: spinner-rotate 0.5s infinite;
-      }
-
-      &--third {
-        opacity: 0.5;
-        transform-origin: 85% 50%;
-        animation: spinner-rotate 1s infinite;
-      }
-    }
+  &--visible &__spinner {
+    opacity: 1;
   }
 }
 

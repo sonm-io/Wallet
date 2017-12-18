@@ -70,6 +70,14 @@ export class SendSrc extends React.Component<IProps, any> {
                 Function.prototype as any,
             );
         }
+
+        if (this.props.form.isFieldsTouched(['amount'])) {
+            this.props.form.validateFields(
+                ['amount'],
+                { force: true },
+                Function.prototype as any,
+            );
+        }
     }
 
     protected handleChangeCurrency = (address: string) => {
@@ -193,13 +201,6 @@ export class SendSrc extends React.Component<IProps, any> {
         }
 
         error ? cb(error) : cb();
-    }
-
-    protected static normalizeAddress(str: string): string {
-        const s = '0000000000000000000000000000000000000000' + str;
-        const l = s.length;
-
-        return s.slice(l - 40, l);
     }
 
     public render() {
@@ -333,15 +334,15 @@ export class SendSrc extends React.Component<IProps, any> {
                                 onChange={this.handleChangePriority}
                             />
                         </Form.Item>
-                        <Button
-                            onClick={this.handleSubmit}
-                            type="submit"
-                            color="violet"
-                            className="sonm-send__submit"
-                        >
-                            NEXT
-                        </Button>
                     </div>
+                    <Button
+                        onClick={this.handleSubmit}
+                        type="submit"
+                        color="violet"
+                        className="sonm-send__submit"
+                    >
+                        NEXT
+                    </Button>
                 </Form>
             </div>
         );

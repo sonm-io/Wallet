@@ -5,6 +5,7 @@ import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';
 import { inject, observer } from 'mobx-react';
 import { MainStore } from 'app/stores/main';
+import { Header } from 'app/components/common/header';
 
 interface IProps {
     className?: string;
@@ -60,7 +61,7 @@ export class SendConfirm extends React.Component<IProps, any> {
 
         return (
             <div className={cn('sonm-send-confirm', this.props.className)}>
-                <h1 className="sonm-send-confirm__header">Transfer confirmation</h1>
+                <Header className="sonm-send-confirm__header">Transfer confirmation</Header>
                 <section className="sonm-send-confirm__from-to">
                     <div className="sonm-send-confirm__account">
                         <IdentIcon address={accountAddress} className="sonm-send-confirm__account-blockies"/>
@@ -84,8 +85,9 @@ export class SendConfirm extends React.Component<IProps, any> {
                     <dd>{gasPrice} ETH</dd>
                 </dl>
                 <Form onSubmit={this.handleConfrim} className="sonm-send-confirm__password-form">
-                    <h2>Please enter account password</h2>
+                    <h2 className="sonm-send-confirm__password-header">Please enter account password</h2>
                     <Form.Item
+                        className="sonm-send-confirm__password-field"
                         validateStatus={passwordValidationMsg ? 'error' : 'success'}
                         help={passwordValidationMsg}
                     >
