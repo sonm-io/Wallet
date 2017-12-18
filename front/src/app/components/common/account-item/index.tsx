@@ -40,8 +40,6 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             json,
         } = this.props;
 
-        const downloadIcon = json ? <DownloadFile data={json} address={address} className="sonm-account-item__download"/> : null;
-
         return (
             <div className={cn('sonm-account-item', className)}>
                 <IdentIcon address={address} className="sonm-account-item__blockies"/>
@@ -68,7 +66,12 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fullString={secondBalance}
                     fontSizePx={16}
                 />
-                {downloadIcon}
+                {json
+                    ?
+                    <div className="sonm-account-item__download">
+                        <DownloadFile data={json} fileName={`account-${address}.json`}/>
+                    </div>
+                    : null}
             </div>
         );
     }
