@@ -16,12 +16,12 @@ import {
     ISendFormValues,
     TGasPricePriority,
     IPasswordCache,
-    AlertType,
 } from './types';
 import { listToAddressMap } from './utils/listToAddressMap';
 import { AbstractStore } from './abstract-store';
 const { pending, catchErrors } = AbstractStore;
 import { delay } from 'app/utils/async-delay';
+import { AlertType } from 'app/components/common/alert/index';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -366,14 +366,12 @@ export class MainStore extends AbstractStore {
 
             alert = {
                 type: AlertType.success,
-                message: 'Success',
-                description: `Transaction successfully completed. ${result.amount} ${currencyName} has been sent to the address ${result.hash} `,
+                message: `Transaction successfully completed. ${result.amount} ${currencyName} has been sent to the address ${result.hash} `,
             };
         } else if (result.status === TransactionStatus.fail) {
             alert = {
                 type: AlertType.error,
-                message: 'Transaction fail',
-                description: `Transaction to the address ${result.hash} was failed.`,
+                message: `Transaction to the address ${result.hash} was failed.`,
             };
         } else {
             alert = { type: AlertType.error, message: JSON.stringify(result) };

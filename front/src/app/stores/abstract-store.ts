@@ -2,7 +2,8 @@ import { observable, action, computed, when } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api';
-import { IAlert, WalletApiError, AlertType } from './types';
+import { WalletApiError } from './types';
+import { IAlert, AlertType } from 'app/components/common/alert';
 
 export class AbstractStore {
     @asyncAction

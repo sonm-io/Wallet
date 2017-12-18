@@ -52,16 +52,3 @@ export class WalletApiError extends Error {
         this.method = method;
     }
 }
-
-export enum AlertType {
-    success = 'success',
-    error = 'error',
-    warning = 'warning',
-    info = 'info',
-}
-
-export interface IAlert {
-    type: AlertType;
-    message: string;
-    description?: string;
-}
