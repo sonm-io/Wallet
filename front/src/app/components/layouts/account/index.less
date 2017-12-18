@@ -87,6 +87,18 @@
       outline: 0;
       background: none transparent;
       cursor: pointer;
+      color: @color-blue;
+      font-weight: bold;
+
+      &:after {
+        content: '';
+        background: url(./send.svg) center no-repeat;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        vertical-align: sub;
+        margin: 0 0 0 10px;
+      }
 
       &:focus {
         outline-offset: 3px;
