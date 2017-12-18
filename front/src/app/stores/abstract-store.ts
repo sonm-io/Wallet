@@ -1,6 +1,62 @@
 import { observable, action, computed, when } from 'mobx';
+import { asyncAction } from 'mobx-utils';
+import { delay } from 'app/utils/async-delay';
+import { Api } from 'app/api';
+
+class WalletApiError extends Error {
+    public method: Function;
+    public code: string;
+    public scope: AbstractStore;
+    public args: any[];
+
+    constructor(
+        code: string,
+        msg: string,
+        scope: AbstractStore,
+        method: Function,
+        args: any[],
+    ) {
+        super(msg);
+
+        this.code = code;
+        this.scope = scope;
+        this.args = args;
+        this.method = method;
+    }
+}
+
+enum AlertType {
+    success = 'success',
+    error = 'error',
+    warning = 'warning',
+    info = 'info',
+}
+
+interface IAlert {
+    type: AlertType;
+    message: string;
+    description?: string;
+}
 
 export class AbstractStore {
+    @asyncAction
+    protected * goOffline() {
+        if (this.isOffline) { return; }
+
+        this.isOffline = true;
+
+        while (true) {
+            const { data: online } = yield Api.checkConnection();
+
+            if (online) {
+                this.isOffline = false;
+                break;
+            } else {
+                yield delay(1000);
+            }
+        }
+    }
+
     protected pendingIdx = 0;
     @observable public pendingSet = new Map(); // mobx doesn't support observable set
 
@@ -22,30 +78,35 @@ export class AbstractStore {
         return this.pendingSet.size > 0;
     }
 
-    @observable public errors: any[] = [];
+    protected static alertIdx = 0;
+    @observable public alerts: Map<string, IAlert> = new Map();
 
     @observable public isOffline = false;
 
     @action
-    protected handleError(e: Error | string, restart: boolean) {
+    public addAlert(alert: IAlert) {
+        this.alerts.set(`${new Date()}-${AbstractStore.alertIdx++}`, alert);
+    }
+
+    @action
+    protected handleError(e: WalletApiError, restart: boolean) {
         console.error(e);
 
-        if (e instanceof WalletApiError && e.code === 'network_error') { // TODO err code enum
-            this.isOffline = true;
-
-            if (restart) {
-                when(() => !this.isOffline,
-
-                    () => {
-                        console.log(`Connection recovered. Restart ${e.method.name}`);
-
-                        e.method.apply(e.scope, e.args);
-                    },
-                );
-            }
+        if (e.code === 'network_error') { // TODO err code enum
+            this.goOffline();
         }
 
-        this.errors.push(e);
+        if (e.code === 'network_error' && restart) {
+            when(() => !this.isOffline,
+                () => {
+                    console.log(`Restart ${e.method.name}`);
+
+                    e.method.apply(e.scope, e.args);
+                },
+            );
+        } else {
+            this.addAlert({ message: String(e), type: AlertType.error });
+        }
     }
 
     public static pending(target: AbstractStore, propertyKey: string, descriptor: PropertyDescriptor) {
@@ -101,28 +162,6 @@ export class AbstractStore {
             (b: boolean, store: AbstractStore) => b || Boolean(store[p]),
             false,
         );
-    }
-}
-
-class WalletApiError extends Error {
-    public method: Function;
-    public code: string;
-    public scope: AbstractStore;
-    public args: any[];
-
-    constructor(
-        code: string,
-        msg: string,
-        scope: AbstractStore,
-        method: Function,
-        args: any[],
-    ) {
-        super(msg);
-
-        this.code = code;
-        this.scope = scope;
-        this.args = args;
-        this.method = method;
     }
 }
 

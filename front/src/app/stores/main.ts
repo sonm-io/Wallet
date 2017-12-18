@@ -22,7 +22,6 @@ import { delay } from 'app/utils/async-delay';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
-const MAX_VISIBLE_ERRORS = 5;
 
 export class MainStore extends AbstractStore {
     public static ADDRESS_ETHER = '0x';
@@ -52,17 +51,6 @@ export class MainStore extends AbstractStore {
         gasPrice: '',
         gasLimit: '',
     };
-
-    @computed
-    get lastErrors(): any[] {
-        const len = this.errors.length;
-
-        if (len === 0) { return []; }
-
-        return len > MAX_VISIBLE_ERRORS
-            ? this.errors
-            : this.errors.slice(len - MAX_VISIBLE_ERRORS);
-    }
 
     @computed
     public get priority(): TGasPricePriority {

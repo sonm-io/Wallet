@@ -40,7 +40,6 @@ export class App extends React.Component<IProps, any> {
             selectedNavMenuItem,
             children,
             mainStore: {
-                lastErrors,
                 firstTokenBalance,
                 secondTokenBalance,
             },
@@ -84,17 +83,30 @@ export class App extends React.Component<IProps, any> {
                                     fontSizePx={18}
                                 />
                         </div>
-                        <div className="sonm-app__alert-ct">
-                            {
-                                lastErrors.length > 0
-                                    ? lastErrors.map((e, idx) => <Alert
-                                        message={e}
+                        <div className="sonm-app__offline-alert">
+                            {this.isOffline
+                                ? <Alert
+                                    key="offline"
+                                    showIcon
+                                    message="Offline"
+                                    description="No blockchain node connection"
+                                    type="warning"
+                                /> : null
+                            }
+                        </div>
+                        <div className="sonm-app__error-list-ct">
+                            <div className="sonm-app__error-list">
+                                {this.props.mainStore.alerts.size > 0
+                                    ? Array.from(this.props.mainStore.alerts.values()).map((e, idx) => <Alert
+                                        closable
+                                        message={String(e)}
                                         type="error"
-                                        className="sonm-app__alert"
+                                        className="sonm-app__error"
                                         key={idx}
                                     />)
                                     : null
-                            }
+                                }
+                            </div>
                         </div>
                     </div>
                     <div className="sonm-app__content">

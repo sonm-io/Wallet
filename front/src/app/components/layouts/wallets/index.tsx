@@ -124,7 +124,7 @@ export class Wallets extends React.Component<IProps, IState> {
                                 >
                                     <AccountItem
                                         {...x}
-                                        onClickIcon={this.closeDialog}
+                                        onClickIcon={this.handleClickAccount}
                                         onRename={this.handleRename}
                                         hasButtons
                                     />
