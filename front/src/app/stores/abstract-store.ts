@@ -2,41 +2,7 @@ import { observable, action, computed, when } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api';
-
-class WalletApiError extends Error {
-    public method: Function;
-    public code: string;
-    public scope: AbstractStore;
-    public args: any[];
-
-    constructor(
-        code: string,
-        msg: string,
-        scope: AbstractStore,
-        method: Function,
-        args: any[],
-    ) {
-        super(msg);
-
-        this.code = code;
-        this.scope = scope;
-        this.args = args;
-        this.method = method;
-    }
-}
-
-enum AlertType {
-    success = 'success',
-    error = 'error',
-    warning = 'warning',
-    info = 'info',
-}
-
-interface IAlert {
-    type: AlertType;
-    message: string;
-    description?: string;
-}
+import { IAlert, WalletApiError, AlertType } from './types';
 
 export class AbstractStore {
     @asyncAction
@@ -85,7 +51,15 @@ export class AbstractStore {
 
     @action
     public addAlert(alert: IAlert) {
+        if (this.alerts.has(alert.message)) {
+            this.alerts.delete(alert.message);
+        }
         this.alerts.set(`${new Date()}-${AbstractStore.alertIdx++}`, alert);
+    }
+
+    @action
+    public closeAlert(id: string) {
+        this.alerts.delete(id);
     }
 
     @action

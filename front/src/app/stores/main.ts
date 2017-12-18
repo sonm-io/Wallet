@@ -6,6 +6,8 @@ import {
     IAccountInfo,
     ICurrencyInfo,
     IValidation,
+    ISendTransactionResult,
+    TransactionStatus,
 } from 'app/api';
 import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
@@ -14,6 +16,7 @@ import {
     ISendFormValues,
     TGasPricePriority,
     IPasswordCache,
+    AlertType,
 } from './types';
 import { listToAddressMap } from './utils/listToAddressMap';
 import { AbstractStore } from './abstract-store';
@@ -122,9 +125,7 @@ export class MainStore extends AbstractStore {
     public get firstToken(): ICurrencyInfo {
         const result = this.currencyMap.get(this.firstTokenAddress);
 
-        if (!result) {
-            throw new Error(`First token ${this.firstTokenAddress} not found`);
-        }
+        if (!result) { throw new Error(`First token ${this.firstTokenAddress} not found`); }
 
         return result;
     }
@@ -133,9 +134,7 @@ export class MainStore extends AbstractStore {
     public get secondToken(): ICurrencyInfo {
         const result = this.currencyMap.get(this.secondTokenAddress);
 
-        if (!result) {
-            throw new Error(`Second token ${this.secondTokenAddress} not found`);
-        }
+        if (!result) { throw new Error(`Second token ${this.secondTokenAddress} not found`); }
 
         return result;
     }
@@ -158,7 +157,11 @@ export class MainStore extends AbstractStore {
 
     @computed
     public get accountList(): IAccountItemProps[] {
-        if (this.accountMap === undefined || this.currencyMap === undefined) {
+        if (
+            this.accountMap === undefined
+            || this.currencyMap === undefined
+            || this.currencyMap.size === 0
+        ) {
             return [];
         }
 
@@ -352,9 +355,30 @@ export class MainStore extends AbstractStore {
         this.values.toAddress = '';
         this.values.amount = '';
 
-        const result = yield Api.send(tx, password);
+        const { data } = yield Api.send(tx, password);
 
-        window.alert(JSON.stringify(result));
+        const result = data as ISendTransactionResult;
+
+        let alert;
+        if (result.status === TransactionStatus.success) {
+            const currency = this.currencyMap.get(result.currencyAddress);
+            const currencyName = currency ? currency.symbol : '';
+
+            alert = {
+                type: AlertType.success,
+                message: 'Success',
+                description: `Transaction successfully completed. ${result.amount} ${currencyName} has been sent to the address ${result.hash} `,
+            };
+        } else if (result.status === TransactionStatus.fail) {
+            alert = {
+                type: AlertType.error,
+                message: 'Transaction fail',
+                description: `Transaction to the address ${result.hash} was failed.`,
+            };
+        } else {
+            alert = { type: AlertType.error, message: JSON.stringify(result) };
+        }
+        this.addAlert(alert);
 
         return result;
     }

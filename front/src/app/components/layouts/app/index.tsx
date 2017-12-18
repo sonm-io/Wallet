@@ -8,6 +8,7 @@ import { MainStore } from 'app/stores/main';
 import { AbstractStore } from 'app/stores/abstract-store';
 import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
+import { AlertList } from './sub/alerts';
 
 interface IProps {
     className?: string;
@@ -94,20 +95,7 @@ export class App extends React.Component<IProps, any> {
                                 /> : null
                             }
                         </div>
-                        <div className="sonm-app__error-list-ct">
-                            <div className="sonm-app__error-list">
-                                {this.props.mainStore.alerts.size > 0
-                                    ? Array.from(this.props.mainStore.alerts.values()).map((e, idx) => <Alert
-                                        closable
-                                        message={String(e)}
-                                        type="error"
-                                        className="sonm-app__error"
-                                        key={idx}
-                                    />)
-                                    : null
-                                }
-                            </div>
-                        </div>
+                        <AlertList />
                     </div>
                     <div className="sonm-app__content">
                         {children}

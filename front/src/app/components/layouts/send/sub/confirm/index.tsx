@@ -5,21 +5,24 @@ import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';
 import { inject, observer } from 'mobx-react';
 import { MainStore } from 'app/stores/main';
+import { HistoryStore } from 'app/stores/history';
 import { Header } from 'app/components/common/header';
 
 interface IProps {
     className?: string;
     mainStore?: MainStore;
+    historyStore?: HistoryStore;
     onSuccess: () => void;
     onBack: () => void;
 }
 
-@inject('mainStore')
+@inject('mainStore', 'historyStore')
 @observer
 export class SendConfirm extends React.Component<IProps, any> {
     public handleConfrim = async (event: any) => {
         const mainStore = this.props.mainStore;
-        if (!mainStore) { return; }
+        const historyStore = this.props.historyStore;
+        if (!mainStore || !historyStore) { return; }
 
         event.preventDefault();
 
@@ -30,7 +33,7 @@ export class SendConfirm extends React.Component<IProps, any> {
         const isPasswordValid = await mainStore.checkSelectedAccountPassword(password);
 
         if (isPasswordValid) {
-            mainStore.confirmTransaction(password);
+            (mainStore.confirmTransaction(password) as any).then(() => historyStore.update());
 
             this.props.onSuccess();
         }
