@@ -24,6 +24,7 @@ const { pending, catchErrors } = AbstractStore;
 import { delay } from 'app/utils/async-delay';
 import etherToGwei from '../utils/ether-to-gwei';
 import gweiToEther from '../utils/gwei-to-ether';
+import trimZeros from '../utils/trim-zeros';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -82,8 +83,8 @@ export class MainStore extends AbstractStore {
         if (this.averageGasPrice !== '') {
             const bn = new BigNumber(this.averageGasPrice);
 
-            min = bn.mul(0.5).toFixed(9);
-            max = bn.mul(1.5).toFixed(9);
+            min = trimZeros(bn.mul(0.5).toFixed(9));
+            max = trimZeros(bn.mul(1.5).toFixed(9));
         }
 
         return [min, max];
