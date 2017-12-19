@@ -5,4 +5,8 @@ export const messages: IValidation = {
     password_not_valid: 'Password is not valid',
 };
 
+export function getMessageText(code: string) {
+    return messages[code] || `Error ${code}`;
+}
+
 export default messages;

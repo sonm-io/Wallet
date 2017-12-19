@@ -3,7 +3,7 @@ import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api';
 import { WalletApiError, IAlert, AlertType } from './types';
-import { messages } from 'app/api/error-messages';
+import { getMessageText } from 'app/api/error-messages';
 
 export class AbstractStore {
     @asyncAction
@@ -117,7 +117,7 @@ export class AbstractStore {
                 store.handleError(
                     new WalletApiError(
                         errorStringCode,
-                        messages[errorStringCode] || errorStringCode,
+                        getMessageText(errorStringCode),
                         store,
                         descriptor.value,
                         args,
