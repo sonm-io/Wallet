@@ -398,20 +398,22 @@ export class MainStore extends AbstractStore {
         this.userGasPrice = this.averageGasPrice;
     }
 
-    @asyncAction
-    protected * update() {
-        const [
-            {data: averageGasPrice},
-            {data: accountList},
+    @action
+    protected updateList(accountList: IAccountInfo[] = []) {
+        listToAddressMap<IAccountInfo>(accountList, this.accountMap);
+    }
 
-        ] = yield Promise.all([
+    @action
+    protected updateGasPrice(averageGasPrice: string = '') {
+        this.averageGasPrice = averageGasPrice;
+    }
 
-            Api.getGasPrice(),
-            Api.getAccountList(),
-        ]);
+    protected async update() {
+        const { data: accountList } = await Api.getAccountList();
+        this.updateList(accountList);
 
-        if (averageGasPrice) { this.averageGasPrice = averageGasPrice; }
-        if (accountList) { listToAddressMap<IAccountInfo>(accountList, this.accountMap); }
+        const { data: averageGasPrice } = await Api.getGasPrice();
+        this.updateGasPrice(averageGasPrice);
     }
 
     @catchErrors({ restart: true })
