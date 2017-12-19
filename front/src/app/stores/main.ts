@@ -22,6 +22,8 @@ import { listToAddressMap } from './utils/listToAddressMap';
 import { AbstractStore } from './abstract-store';
 const { pending, catchErrors } = AbstractStore;
 import { delay } from 'app/utils/async-delay';
+import etherToGwei from '../utils/ether-to-gwei';
+import gweiToEther from '../utils/gwei-to-ether';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -74,14 +76,14 @@ export class MainStore extends AbstractStore {
 
     @computed
     public get gasPriceThresholds(): [string, string] {
-        let min = '5000';
-        let max = '15000';
+        let min = '5';
+        let max = '15';
 
         if (this.averageGasPrice !== '') {
             const bn = new BigNumber(this.averageGasPrice);
 
-            min = bn.mul(0.5).toFixed(18);
-            max = bn.mul(1.5).toFixed(18);
+            min = bn.mul(0.5).toFixed(9);
+            max = bn.mul(1.5).toFixed(9);
         }
 
         return [min, max];
@@ -347,7 +349,7 @@ export class MainStore extends AbstractStore {
             amount: this.values.amount,
             fromAddress: this.selectedAccountAddress,
             currencyAddress: this.selectedCurrencyAddress,
-            gasPrice: this.values.gasPrice,
+            gasPrice: gweiToEther(this.values.gasPrice),
             gasLimit: this.values.gasLimit,
             timestamp: Date.now(),
         };
@@ -405,7 +407,7 @@ export class MainStore extends AbstractStore {
 
     @action
     protected updateGasPrice(averageGasPrice: string = '') {
-        this.averageGasPrice = averageGasPrice;
+        this.averageGasPrice = etherToGwei(averageGasPrice);
     }
 
     protected async update() {
@@ -469,18 +471,22 @@ export class MainStore extends AbstractStore {
         let gl;
 
         try {
-            gp = new BigNumber(gasPrice);
+            gp = new BigNumber(gweiToEther(gasPrice));
             gl = new BigNumber(gasLimit);
         } catch (e) {
-            gp = new BigNumber(this.averageGasPrice);
+            gp = new BigNumber(gweiToEther(this.averageGasPrice));
             gl = new BigNumber(MainStore.DEFAULT_GAS_LIMIT);
         }
 
-        let amount = new BigNumber((this.accountMap.get(this.selectedAccountAddress) as IAccountInfo)
-            .currencyBalanceMap[this.selectedCurrencyAddress]);
+        const account = this.accountMap.get(this.selectedAccountAddress) as IAccountInfo;
 
-        if (this.secondTokenAddress === this.selectedCurrencyAddress) {
-            amount = amount.minus(new BigNumber(gp).mul(gl));
+        let amount = new BigNumber(
+            account.currencyBalanceMap[this.selectedCurrencyAddress],
+        );
+
+        if (this.firstTokenAddress === this.selectedCurrencyAddress) {
+            const fee = gp.mul(gl);
+            amount = amount.minus(fee);
         }
 
         return amount.lessThan(0) ? '0' : amount.toString();
