@@ -22,9 +22,9 @@ import { listToAddressMap } from './utils/listToAddressMap';
 import { AbstractStore } from './abstract-store';
 const { pending, catchErrors } = AbstractStore;
 import { delay } from 'app/utils/async-delay';
-import etherToGwei from '../utils/ether-to-gwei';
-import gweiToEther from '../utils/gwei-to-ether';
-import trimZeros from '../utils/trim-zeros';
+import { etherToGwei } from '../utils/ether-to-gwei';
+import { gweiToEther } from '../utils/gwei-to-ether';
+import { trimZeros } from '../utils/trim-zeros';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -192,19 +192,24 @@ export class MainStore extends AbstractStore {
         }
 
         const result = Array.from(this.currencyMap.values()).map((currency): ICurrencyItemProps => {
+            let touched = false;
+            const balance = accounts.reduce((sum: any, accountAddr: string) => {
+                    const account = this.accountMap.get(accountAddr) as IAccountInfo;
+                    const userBalance = account.currencyBalanceMap[currency.address];
+
+                    if (userBalance) {
+                        touched = true;
+                        sum = sum.plus(userBalance);
+                    }
+
+                    return sum;
+                }, new BigNumber(0));
+
             return {
                 name: currency.name,
                 symbol: currency.symbol,
                 decimals: currency.decimals,
-                balance: accounts.reduce((sum: any, accountAddr: string) => {
-                    const account = this.accountMap.get(accountAddr);
-
-                    if (account) {
-                        sum = sum.plus(account.currencyBalanceMap[currency.address]);
-                    }
-
-                    return sum;
-                }, new BigNumber(0)).toFixed(currency.decimals),
+                balance: touched ? trimZeros(balance.toFixed(18)) : '',
                 address: currency.address,
             };
         });
