@@ -85,7 +85,7 @@ export class SendConfirm extends React.Component<IProps, any> {
                     <dt>Gas limit</dt>
                     <dd>{gasLimit}</dd>
                     <dt>Gas price</dt>
-                    <dd>{gasPrice} ETH</dd>
+                    <dd>{gasPrice} Gwei</dd>
                 </dl>
                 <Form onSubmit={this.handleConfrim} className="sonm-send-confirm__password-form">
                     <h2 className="sonm-send-confirm__password-header">Please enter account password</h2>
