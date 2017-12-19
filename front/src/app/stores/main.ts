@@ -6,6 +6,8 @@ import {
     IAccountInfo,
     ICurrencyInfo,
     IValidation,
+    ISendTransactionResult,
+    TransactionStatus,
 } from 'app/api';
 import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
@@ -14,14 +16,15 @@ import {
     ISendFormValues,
     TGasPricePriority,
     IPasswordCache,
+    AlertType,
 } from './types';
 import { listToAddressMap } from './utils/listToAddressMap';
 import { AbstractStore } from './abstract-store';
 const { pending, catchErrors } = AbstractStore;
+import { delay } from 'app/utils/async-delay';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
-const MAX_VISIBLE_ERRORS = 5;
 
 export class MainStore extends AbstractStore {
     public static ADDRESS_ETHER = '0x';
@@ -51,16 +54,6 @@ export class MainStore extends AbstractStore {
         gasPrice: '',
         gasLimit: '',
     };
-
-    @computed
-    get lastErrors(): any[] {
-        const len = this.errors.length;
-        if (len === 0) {
-            return [];
-        }
-
-        return this.errors.slice(len - MAX_VISIBLE_ERRORS);
-    }
 
     @computed
     public get priority(): TGasPricePriority {
@@ -132,9 +125,7 @@ export class MainStore extends AbstractStore {
     public get firstToken(): ICurrencyInfo {
         const result = this.currencyMap.get(this.firstTokenAddress);
 
-        if (!result) {
-            throw new Error(`First token ${this.firstTokenAddress} not found`);
-        }
+        if (!result) { throw new Error(`First token ${this.firstTokenAddress} not found`); }
 
         return result;
     }
@@ -143,9 +134,7 @@ export class MainStore extends AbstractStore {
     public get secondToken(): ICurrencyInfo {
         const result = this.currencyMap.get(this.secondTokenAddress);
 
-        if (!result) {
-            throw new Error(`Second token ${this.secondTokenAddress} not found`);
-        }
+        if (!result) { throw new Error(`Second token ${this.secondTokenAddress} not found`); }
 
         return result;
     }
@@ -168,7 +157,11 @@ export class MainStore extends AbstractStore {
 
     @computed
     public get accountList(): IAccountItemProps[] {
-        if (this.accountMap === undefined || this.currencyMap === undefined) {
+        if (
+            this.accountMap === undefined
+            || this.currencyMap === undefined
+            || this.currencyMap.size === 0
+        ) {
             return [];
         }
 
@@ -232,14 +225,14 @@ export class MainStore extends AbstractStore {
         return this.getBalanceListFor(this.selectedAccountAddress);
     }
 
-    @catchErrors
+    @catchErrors({ restart: true })
     @action
     public setUserGasPrice(value: string): void {
         const bn = new BigNumber(value);
         this.userGasPrice = bn.toString();
     }
 
-    @catchErrors
+    @catchErrors({ restart: false })
     @asyncAction
     public * deleteAccount(deleteAddress: string) {
         const {data: success} = yield Api.removeAccount(deleteAddress);
@@ -305,7 +298,7 @@ export class MainStore extends AbstractStore {
         this.values = values;
     }
 
-    @catchErrors
+    @catchErrors({ restart: false })
     @asyncAction
     public * renameAccount(address: string, name: string) {
         const success = yield Api.renameAccount(address, name);
@@ -346,7 +339,7 @@ export class MainStore extends AbstractStore {
         return isValid;
     }
 
-    @catchErrors
+    @catchErrors({ restart: false })
     @asyncAction
     public * confirmTransaction(password: string) {
         const tx = {
@@ -362,21 +355,42 @@ export class MainStore extends AbstractStore {
         this.values.toAddress = '';
         this.values.amount = '';
 
-        const result = yield Api.send(tx, password);
+        const { data } = yield Api.send(tx, password);
 
-        window.alert(JSON.stringify(result));
+        const result = data as ISendTransactionResult;
+
+        let alert;
+        if (result.status === TransactionStatus.success) {
+            const currency = this.currencyMap.get(result.currencyAddress);
+            const currencyName = currency ? currency.symbol : '';
+
+            alert = {
+                type: AlertType.success,
+                message: `Transaction successfully completed. ${result.amount} ${currencyName} has been sent to the address ${result.toAddress} `,
+            };
+        } else if (result.status === TransactionStatus.fail) {
+            alert = {
+                type: AlertType.error,
+                message: `Transaction to the address ${result.toAddress} was failed.`,
+            };
+        } else {
+            alert = { type: AlertType.error, message: JSON.stringify(result) };
+        }
+        this.addAlert(alert);
 
         return result;
     }
 
     @pending
+    @catchErrors({ restart: true })
     @asyncAction
     public * init() {
         this.secondTokenAddressProp = (yield Api.getSonmTokenAddress()).data;
 
         const [{data: currencyList}] = yield Promise.all([
             Api.getCurrencyList(),
-            this.startAutoUpdate(UPDATE_INTERVAL), // wait for first update
+
+            this.autoUpdateIteration(UPDATE_INTERVAL), // wait for first update
         ]);
 
         listToAddressMap<ICurrencyInfo>(currencyList, this.currencyMap);
@@ -384,40 +398,40 @@ export class MainStore extends AbstractStore {
         this.userGasPrice = this.averageGasPrice;
     }
 
-    @action
-    private update(result: any) {
+    @asyncAction
+    protected * update() {
         const [
             {data: averageGasPrice},
             {data: accountList},
-        ] = result;
 
-        this.averageGasPrice = averageGasPrice;
-        listToAddressMap<IAccountInfo>(accountList, this.accountMap);
+        ] = yield Promise.all([
+
+            Api.getGasPrice(),
+            Api.getAccountList(),
+        ]);
+
+        if (averageGasPrice) { this.averageGasPrice = averageGasPrice; }
+        if (accountList) { listToAddressMap<IAccountInfo>(accountList, this.accountMap); }
     }
 
-    public startAutoUpdate(interval: number) {
-        const loop = async () => {
-            try {
-                window.console.time('update')
+    @catchErrors({ restart: true })
+    protected async autoUpdateIteration(interval: number) {
+        try {
+            window.console.time('auto-update');
 
-                const result = await Promise.all([
-                    Api.getGasPrice(),
-                    Api.getAccountList(),
-                ]);
+            await this.update();
 
-                this.update(result);
-            } catch (e) {
-                this.handleError(e);
-            } finally {
-                window.console.timeEnd('update');
-                setTimeout(loop, interval);
-            }
-        };
+            await delay(interval);
 
-        return loop();
+            this.autoUpdateIteration(interval);
+
+        } finally {
+            window.console.timeEnd('auto-update');
+        }
     }
 
     @pending
+    @catchErrors({ restart: false })
     @asyncAction
     public * addAccount(json: string, password: string, name: string) {
         const result: IValidation = {};
@@ -436,6 +450,7 @@ export class MainStore extends AbstractStore {
     }
 
     @pending
+    @catchErrors({ restart: false })
     @asyncAction
     public * createAccount(password: string, name: string) {
         const {data} = yield Api.createAccount(password);

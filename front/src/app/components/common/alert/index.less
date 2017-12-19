@@ -1,0 +1,57 @@
+@import 'guide.less';
+
+@alert-padding-hor: 30px;
+@alert-padding-vert: 10px;
+
+.sonm-alert {
+  position: relative;
+  z-index: @z-everest;
+  border: 0 solid;
+  padding: @alert-padding-vert @alert-padding-hor;
+  transition: opacity 0.15s ease;
+
+  &--success {
+    background-color: #cceae5;
+    color: @color-green;
+    font-size: 20px;
+  }
+
+  &--error {
+    background-color: #f9e9f1;
+    color: @color-red;
+    font-size: 20px;
+  }
+
+  &--closed {
+    opacity: 0;
+  }
+
+  &__message {
+
+  }
+
+  &__cross {
+    z-index: @z-everest + 1;
+    border: 1px dashed transparent;
+    border-radius: 50%;
+    background: none;
+    display: block;
+    position: absolute;
+    top: @alert-padding-vert;
+    right: @alert-padding-hor;
+    height: 30px;
+    line-height: 28px;
+    width: 30px;
+    font-size: 30px;
+    transform: rotate(45deg);
+    cursor: pointer;
+    font-weight: 400;
+
+    &:focus,
+    &:active {
+      outline: none;
+      border-color: @color-border;
+    }
+  }
+
+}

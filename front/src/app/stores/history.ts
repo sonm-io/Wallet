@@ -1,4 +1,4 @@
-import { observable, computed, IObservableArray, toJS, autorunAsync, action } from 'mobx';
+import { observable, computed, IObservableArray, autorunAsync, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
@@ -38,13 +38,7 @@ export class HistoryStore extends AbstractStore {
 
     @observable protected inProgress: IObservableArray<api.ISendTransactionResult> = observable.array();
 
-    @computed public get currentList(): api.ISendTransactionResult[] {
-        const result: api.ISendTransactionResult[] = this.currentPageTxHashList.map(
-            hash => toJS(this.txMap.get(hash)) as api.ISendTransactionResult,
-        );
-
-        return result;
-    }
+    @observable.ref public currentList: api.ISendTransactionResult[] = [];
 
     @computed public get totalPage() {
         return this.total - (this.total % ITEMS_PER_PAGE) + ITEMS_PER_PAGE;
@@ -101,13 +95,7 @@ export class HistoryStore extends AbstractStore {
         );
 
         this.total = total;
-        this.addTxToMap(txList);
-        this.currentPageTxHashList = txList.map((x: api.ISendTransactionResult) => x.hash);
-
-    }
-
-    protected addTxToMap(txList: api.ISendTransactionResult[]) {
-        txList.map((tx: api.ISendTransactionResult) => this.txMap.set(tx.hash, tx));
+        this.currentList = txList;
     }
 
     @action

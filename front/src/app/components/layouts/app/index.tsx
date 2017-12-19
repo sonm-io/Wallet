@@ -8,6 +8,7 @@ import { MainStore } from 'app/stores/main';
 import { AbstractStore } from 'app/stores/abstract-store';
 import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
+import { AlertList } from './sub/alerts';
 
 interface IProps {
     className?: string;
@@ -34,19 +35,12 @@ export class App extends React.Component<IProps, any> {
     protected get isPending() { return AbstractStore.getAccumulatedFlag('isPending', ...this.stores); }
     protected get isOffline() { return AbstractStore.getAccumulatedFlag('isOffline', ...this.stores); }
 
-    public componentWillUpdate(next: IProps) {
-        if (this.isOffline && next.selectedNavMenuItem === '/send') { // TODO move into routing
-            navigate({ path: '/accounts' });
-        }
-    }
-
     public render() {
         const {
             className,
             selectedNavMenuItem,
             children,
             mainStore: {
-                lastErrors,
                 firstTokenBalance,
                 secondTokenBalance,
             },
@@ -90,18 +84,18 @@ export class App extends React.Component<IProps, any> {
                                     fontSizePx={18}
                                 />
                         </div>
-                        <div className="sonm-app__alert-ct">
-                            {
-                                lastErrors.length > 0
-                                    ? lastErrors.map((e, idx) => <Alert
-                                        message={e}
-                                        type="error"
-                                        className="sonm-app__alert"
-                                        key={idx}
-                                    />)
-                                    : null
+                        <div className="sonm-app__offline-alert">
+                            {this.isOffline
+                                ? <Alert
+                                    key="offline"
+                                    showIcon
+                                    message="Offline"
+                                    description="No blockchain node connection"
+                                    type="warning"
+                                /> : null
                             }
                         </div>
+                        <AlertList />
                     </div>
                     <div className="sonm-app__content">
                         {children}

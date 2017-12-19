@@ -104,7 +104,9 @@ export class Api {
     }
 
     public static async getCurrencyList(): Promise<IResult<ICurrencyInfo[]>> {
-        return createPromise('account.getCurrencies');
+        const r = await createPromise('account.getCurrencies');
+
+        return r;
     }
 
     public static async send(tx: ISendTransaction, password: string)

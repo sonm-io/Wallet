@@ -117,9 +117,7 @@ export class History extends React.Component<IProps, any> {
         title: 'TxHash',
         className: 'sonm-tx-list__col-hash',
         render: (_, record) => {
-            return (
-                <Hash hash={record.hash} hasCopyButton />
-            );
+            return record.hash ? <Hash hash={record.hash} hasCopyButton /> : '';
         },
     }, {
         dataIndex: 'status',
@@ -143,8 +141,12 @@ export class History extends React.Component<IProps, any> {
     public componentWillMount() {
         if (!this.props.historyStore) { return; }
 
-        if (this.props.initialAddress) { this.props.historyStore.setFilterFrom(this.props.initialAddress); }
-        if (this.props.initialCurrency) { this.props.historyStore.setFilterCurrency(this.props.initialCurrency); }
+        let updated = false;
+
+        if (this.props.initialAddress) { this.props.historyStore.setFilterFrom(this.props.initialAddress); updated = true; }
+        if (this.props.initialCurrency) { this.props.historyStore.setFilterCurrency(this.props.initialCurrency); updated = true; }
+
+        if (!updated) { this.props.historyStore.update(); }
     }
 
     protected handleChangeTime = (dates: moment.Moment[]) => {

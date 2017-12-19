@@ -46,7 +46,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             <div className={cn('sonm-account-item', className)}>
                 <IdentIcon address={address} className="sonm-account-item__blockies"/>
                 {onClickIcon
-                    ? <a href="" onClick={this.handleClickIcon} className="sonm-account-item__icon-link"/>
+                    ? <a href="#" onClick={this.handleClickIcon} className="sonm-account-item__icon-link"/>
                     : null
                 }
                 <span className="sonm-account-item__name-wrapper">

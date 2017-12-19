@@ -87,8 +87,6 @@ module.exports = {
     watch: isDev,
     devtool: false,
 
-    // devtool: isDev ? 'source-map' : false,
-
     plugins: (() => {
         const plugins = [
             process.env.WEBPACK_ANALYZE

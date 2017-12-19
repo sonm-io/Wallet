@@ -60,29 +60,27 @@ export class SendSrc extends React.Component<IProps, any> {
         );
     }
 
+    protected updateField(name: string) {
+      if (this.props.form.isFieldsTouched([name])) {
+        this.props.form.validateFields(
+          [name],
+          { force: true },
+          Function.prototype as any,
+        );
+      }
+    }
+
     protected handleChangeAccount = (address: string) => {
         this.mainStore.selectAccount(address);
 
-        if (this.props.form.isFieldsTouched(['toAddress'])) {
-            this.props.form.validateFields(
-                ['toAddress'],
-                { force: true },
-                Function.prototype as any,
-            );
-        }
-
-        if (this.props.form.isFieldsTouched(['amount'])) {
-            this.props.form.validateFields(
-                ['amount'],
-                { force: true },
-                Function.prototype as any,
-            );
-        }
+        this.updateField('toAddress');
+        this.updateField('amount');
     }
 
     protected handleChangeCurrency = (address: string) => {
-
         this.mainStore.selectCurrency(address);
+
+        this.updateField('amount');
     }
 
     protected handleSetMaximum = () => {
