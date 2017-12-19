@@ -3,6 +3,7 @@ import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api';
 import { WalletApiError, IAlert, AlertType } from './types';
+import { messages } from 'app/api/error-messages';
 
 export class AbstractStore {
     @asyncAction
@@ -64,8 +65,6 @@ export class AbstractStore {
 
     @action
     protected handleError(e: WalletApiError, restart: boolean) {
-        console.error(e);
-
         if (e.code === 'network_error') { // TODO err code enum
             this.goOffline();
         }
@@ -73,13 +72,11 @@ export class AbstractStore {
         if (e.code === 'network_error' && restart) {
             when(() => !this.isOffline,
                 () => {
-                    console.log(`Restart ${e.method.name}`);
-
                     e.method.apply(e.scope, e.args);
                 },
             );
         } else {
-            this.addAlert({ message: String(e), type: AlertType.error });
+            this.addAlert({ message: e.message, type: AlertType.error });
         }
     }
 
@@ -120,7 +117,7 @@ export class AbstractStore {
                 store.handleError(
                     new WalletApiError(
                         errorStringCode,
-                        `method ${propertyKey} failed`,
+                        messages[errorStringCode] || errorStringCode,
                         store,
                         descriptor.value,
                         args,
