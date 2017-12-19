@@ -332,13 +332,9 @@ export class MainStore extends AbstractStore {
             }
         }
 
-        const isValid = validationMessage === '';
+        this.validation.password = validationMessage;
 
-        if (!isValid) {
-            this.validation = {password: validationMessage};
-        }
-
-        return isValid;
+        return validationMessage === '';
     }
 
     @catchErrors({ restart: false })
@@ -438,19 +434,16 @@ export class MainStore extends AbstractStore {
     @catchErrors({ restart: false })
     @asyncAction
     public * addAccount(json: string, password: string, name: string) {
-        const result: IValidation = {};
         const { data, validation } = yield Api.addAccount(json, password, name);
 
         if (validation) {
-
-            Object.assign(result, validation);
-
             this.validation = validation;
         } else {
+            this.validation = {};
             this.accountMap.set(data.address, data);
         }
 
-        return result;
+        return this.validation;
     }
 
     @pending
