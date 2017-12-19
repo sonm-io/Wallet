@@ -31,7 +31,7 @@ export class AlertList extends React.Component<IProps, any> {
 
             return '';
         });
-        result.push(msg.slice(idx, msg.length - 1));
+        result.push(msg.slice(idx, msg.length));
 
         return result;
     }
