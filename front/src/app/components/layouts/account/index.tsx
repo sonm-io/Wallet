@@ -75,33 +75,34 @@ export class Account extends React.Component<IProps, any> {
                     View operation history
                 </button>
 
-                <ul className="sonm-account__tokens" >
-                    <Header className="sonm-wallets__header">
-                        Tokens
-                    </Header>
-                    {this.props.mainStore.currentBalanceList.map(({ symbol, address, name, balance, decimals }) => {
-                        return (
-                            <li className="sonm-account-token-list__currency" key={address}>
-                                <IdentIcon
-                                    address={address}
-                                    width={40}
-                                    className="sonm-account-token-list__currency-blockies"
-                                />
-                                <div className="sonm-account-token-list__currency-name">{name}</div>
-                                <div className="sonm-account-token-list__currency-balance">
-                                    {balance} {symbol}
-                                </div>
-                                <button
-                                    name={address}
-                                    className="sonm-account-token-list__currency-button"
-                                    onClick={this.handleSendClick}
-                                >
-                                    Send
-                                </button>
-                            </li>
-                        );
-                    })}
-                </ul>
+                {this.props.mainStore.currentBalanceList.length === 0 ? null :
+                    <ul className="sonm-account__tokens" >
+                        <Header className="sonm-wallets__header">
+                            Tokens
+                        </Header>
+                        {this.props.mainStore.currentBalanceList.map(({ symbol, address, name, balance, decimals }) => {
+                            return (
+                                <li className="sonm-account-token-list__currency" key={address}>
+                                    <IdentIcon
+                                        address={address}
+                                        width={40}
+                                        className="sonm-account-token-list__currency-blockies"
+                                    />
+                                    <div className="sonm-account-token-list__currency-name">{name}</div>
+                                    <div className="sonm-account-token-list__currency-balance">
+                                        {balance} {symbol}
+                                    </div>
+                                    <button
+                                        name={address}
+                                        className="sonm-account-token-list__currency-button"
+                                        onClick={this.handleSendClick}
+                                    >
+                                        Send
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>}
             </div>,
         ];
     }
