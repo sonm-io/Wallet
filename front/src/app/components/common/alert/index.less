@@ -9,17 +9,18 @@
   border: 0 solid;
   padding: @alert-padding-vert @alert-padding-hor;
   transition: opacity 0.15s ease;
+  text-align: center;
 
   &--success {
     background-color: #cceae5;
     color: @color-green;
-    font-size: 20px;
+    font-size: 16px;
   }
 
   &--error {
     background-color: #f9e9f1;
     color: @color-red;
-    font-size: 20px;
+    font-size: 16px;
   }
 
   &--closed {
@@ -37,7 +38,7 @@
     background: none;
     display: block;
     position: absolute;
-    top: @alert-padding-vert;
+    top: 5px;
     right: @alert-padding-hor;
     height: 30px;
     line-height: 28px;
