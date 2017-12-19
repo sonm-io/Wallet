@@ -7,7 +7,7 @@ export interface IRawAccount {
 export enum TransactionStatus {
     created = 'created',
     pending = 'pending',
-    fail = 'fail',
+    failed = 'failed',
     success = 'success',
 }
 

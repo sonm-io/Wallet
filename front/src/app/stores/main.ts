@@ -368,7 +368,7 @@ export class MainStore extends AbstractStore {
                 type: AlertType.success,
                 message: `Transaction successfully completed. ${result.amount} ${currencyName} has been sent to the address ${result.toAddress} `,
             };
-        } else if (result.status === TransactionStatus.fail) {
+        } else if (result.status === TransactionStatus.failed) {
             alert = {
                 type: AlertType.error,
                 message: `Transaction to the address ${result.toAddress} was failed.`,
