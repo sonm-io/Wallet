@@ -31,7 +31,7 @@ export const transactionListResult: t.IResult<[t.ISendTransactionResult[], numbe
             gasLimit: '453',
             fee: '198',
             confirmCount: 0,
-            status: t.TransactionStatus.fail,
+            status: t.TransactionStatus.failed,
             hash: 'hash1',
         },
         {
