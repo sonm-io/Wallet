@@ -1,23 +1,13 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 
-export enum AlertType {
-    success = 'success',
-    error = 'error',
-    warning = 'warning',
-    info = 'info',
-}
-
-export interface IAlert {
-    type: AlertType;
-    message: string;
-}
-
-export interface IAlertProps extends IAlert {
+export interface IAlertProps {
     id: string;
     className?: string;
     onClosed: (id: string) => void;
     hideDelay?: number;
+    children: any;
+    type: string;
 }
 
 export class Alert extends React.PureComponent<IAlertProps, any> {
@@ -35,7 +25,7 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
         const {
             className,
             type,
-            message,
+            children,
             hideDelay = 0,
         } = this.props;
 
@@ -47,7 +37,7 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
                     `sonm-alert--${type}`)}
                 style={{ '--hide-delay': hideDelay }}
             >
-                <span className="sonm-alert__message">{message}</span>
+                <span className="sonm-alert__message">{children}</span>
                 <button type="button" className="sonm-alert__cross" onClick={this.handleClickCross}> + </button>
             </div>
         );
