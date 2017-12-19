@@ -2,10 +2,15 @@
 
 ## Developers part
 
-#### Run:
+#### Before start:
 
 ```bash
 npm i
+```
+
+#### Run:
+
+```bash
 npm run webpack # run app in dev mode
 ```
 

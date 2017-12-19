@@ -512,8 +512,9 @@ class Api {
                 gasPrice,
             ));
 
-        transactions.unshift(transaction);
         transaction.hash = await txResult.getHash();
+        transactions.unshift(transaction);
+
         await this.saveData();
         await this.proceedTx(transaction, txResult);
 

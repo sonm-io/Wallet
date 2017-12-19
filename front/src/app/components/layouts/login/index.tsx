@@ -153,7 +153,7 @@ export class Login extends React.Component<IProps, any> {
         }
 
         if (this.state.newPassword !== this.state.confirmation) {
-            this.setState({ validation: { confirmation: 'Passwords !==' } });
+            this.setState({ validation: { confirmation: 'Password not matched' } });
             invalid = true;
         }
 

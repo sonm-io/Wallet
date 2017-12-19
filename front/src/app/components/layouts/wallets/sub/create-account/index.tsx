@@ -32,12 +32,16 @@ export class CreateAccount extends React.Component<IProps, any> {
             validation.name = 'Name is required';
         }
 
+        if (this.state.password.length < 8) {
+            validation.password = 'Password must be at least 8 character';
+        }
+
         if (this.state.password.length < 1) {
             validation.password = 'Password is required';
         }
 
         if (this.state.password !== this.state.confirmation) {
-            validation.confirmation = 'Passwords !==';
+            validation.confirmation = 'Password not matched';
         }
 
         if (Object.keys(validation).every(x => !validation[x])) {
