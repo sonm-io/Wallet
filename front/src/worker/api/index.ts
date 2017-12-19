@@ -491,7 +491,7 @@ class Api {
             toAddress,
             amount: data.amount,
             currencyAddress,
-            hash: null,
+            hash: 'waiting for hash...',
             fee: null,
             status: 'pending',
         };
@@ -512,8 +512,8 @@ class Api {
                 gasPrice,
             ));
 
-        transaction.hash = await txResult.getHash();
         transactions.unshift(transaction);
+        transaction.hash = await txResult.getHash();
 
         await this.saveData();
         await this.proceedTx(transaction, txResult);
