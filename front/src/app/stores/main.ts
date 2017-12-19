@@ -160,11 +160,11 @@ export class MainStore extends AbstractStore {
         if (
             this.accountMap === undefined
             || this.currencyMap === undefined
-            || this.currencyMap.size === 0
         ) {
             return [];
         }
 
+        const isCurrencyListEmpty = this.currencyMap.size === 0;
         const firstTokenAddress = this.firstTokenAddress;
         const secondTokenAddress = this.secondTokenAddress;
 
@@ -173,8 +173,8 @@ export class MainStore extends AbstractStore {
                 address: account.address,
                 json: account.json,
                 name: account.name,
-                firstBalance: `${account.currencyBalanceMap[firstTokenAddress]} ${this.firstToken.symbol}`,
-                secondBalance: `${account.currencyBalanceMap[secondTokenAddress]} ${this.secondToken.symbol}`,
+                firstBalance: isCurrencyListEmpty ? '' : `${account.currencyBalanceMap[firstTokenAddress]} ${this.firstToken.symbol}`,
+                secondBalance: isCurrencyListEmpty ? '' : `${account.currencyBalanceMap[secondTokenAddress]} ${this.secondToken.symbol}`,
             };
 
             return props;
