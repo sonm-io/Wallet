@@ -4,7 +4,6 @@ import { Button } from 'app/components/common/button';
 import { IValidation } from 'ipc/types';
 import { getMessageText } from 'app/api/error-messages';
 
-
 export interface ICreateAccountForm {
     password: string;
     name: string;
@@ -31,15 +30,15 @@ export class CreateAccount extends React.Component<IProps, any> {
         const validation = { ...this.state.validation };
 
         if (!this.state.name) {
-            validation.name = 'Name is required';
+            validation.name = getMessageText('name_required');
         }
 
         if (this.state.password.length < 8) {
-            validation.password = 'Password must be at least 8 character';
+            validation.password = getMessageText('password_length');
         }
 
         if (this.state.password.length < 1) {
-            validation.password = 'Password is required';
+            validation.password = getMessageText('password_required');
         }
 
         if (this.state.password !== this.state.confirmation) {

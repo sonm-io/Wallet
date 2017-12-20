@@ -139,17 +139,17 @@ export class Login extends React.Component<IProps, any> {
         let invalid = false;
 
         if (this.state.newName.length < 1 || this.state.newName.length > 20) {
-            this.setState({ validation: { newName: 'Name length must be in range 1..20' } });
+            this.setState({ validation: { newName: getMessageText('wallet_name_length') } });
             invalid = true;
         }
 
         if (this.state.newPassword.length < 1) {
-            this.setState({ validation: { newPassword: 'Password is required' } });
+            this.setState({ validation: { newPassword: getMessageText('password_required') } });
             invalid = true;
         }
 
         if (this.state.wallets.indexOf(this.state.newName) !== -1) {
-            this.setState({ validation: { newName: 'Already exist' } });
+            this.setState({ validation: { newName: getMessageText('wallet_allready_exists') } });
             invalid = true;
         }
 
