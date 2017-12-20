@@ -11,6 +11,11 @@ export interface IProps {
 const ETHER_ADDRESS = ['0x', '0x0', '0', '0x0000000000000000000000000000000000000000'];
 
 export class IdentIcon extends React.Component<IProps, any> {
+    private icons: any = {
+        '0x': 'icon-ether.svg',
+        '0x45ccf7cfb6de9b86c86e2d6fb079b01b5c90ee2c': 'icon-sonm.svg',
+    };
+
     public static defaultProps: Partial<IProps> = {
         width: 75,
     };
@@ -49,9 +54,31 @@ export class IdentIcon extends React.Component<IProps, any> {
             return;
         }
 
+        if (this.icons[address]) {
+            drawCustomIcon(this.canvas, this.icons[address]);
+            return;
+        }
+
         if (ETHER_ADDRESS.indexOf(address) !== -1) {
             drawEthereumIcon(this.canvas);
             return;
+        }
+
+        function drawCustomIcon(canvas: HTMLCanvasElement, icon: string) {
+            const context = canvas.getContext('2d');
+
+            if (context !== null) {
+                context.fillStyle = '#d3d3d3';
+                context.fillRect(0, 0, canvasSize, canvasSize);
+
+                const svg = require(`svg-url-loader?encoding=base64!./${icon}`);
+
+                const img = new Image();
+                img.onload = function() {
+                    context.drawImage(img, 0, 0);
+                };
+                img.src = svg;
+            }
         }
 
         function drawGray(canvas: HTMLCanvasElement) {
