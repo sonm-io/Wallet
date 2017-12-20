@@ -492,8 +492,12 @@ export class MainStore extends AbstractStore {
     }
 
     @action
-    public setValidation(params: IValidation) {
+    protected setValidation(params: IValidation) {
         this.validation = params;
+    }
+
+    public resetValidation() {
+        this.setValidation({});
     }
 }
 

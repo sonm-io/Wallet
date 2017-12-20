@@ -100,7 +100,9 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
     private stopEdit = () => {
         if (this.props.onRename) {
             const text = this.inputRef.value;
-            this.props.onRename(this.props.address, text);
+            if (text) {
+                this.props.onRename(this.props.address, text);
+            }
         }
 
         this.setState({
