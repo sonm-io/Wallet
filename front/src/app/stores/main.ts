@@ -370,12 +370,12 @@ export class MainStore extends AbstractStore {
 
             alert = {
                 type: AlertType.success,
-                message: `Transaction successfully completed. ${result.amount} ${currencyName} has been sent to the address ${result.toAddress} `,
+                message: `Transaction completed successfully. ${result.amount} ${currencyName} has been sent to the address ${result.toAddress}. TxHash ${result.hash}`,
             };
         } else if (result.status === TransactionStatus.failed) {
             alert = {
                 type: AlertType.error,
-                message: `Transaction to the address ${result.toAddress} was failed.`,
+                message: `Transaction to the address ${result.toAddress} was failed. TxHash ${result.hash}`,
             };
         } else {
             alert = { type: AlertType.error, message: JSON.stringify(result) };

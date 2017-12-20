@@ -78,7 +78,7 @@ export class Account extends React.Component<IProps, any> {
                 {this.props.mainStore.currentBalanceList.length === 0 ? null :
                     <ul className="sonm-account__tokens" >
                         <Header className="sonm-wallets__header">
-                            Tokens
+                            Coins
                         </Header>
                         {this.props.mainStore.currentBalanceList.map(({ symbol, address, name, balance, decimals }) => {
                             return (
