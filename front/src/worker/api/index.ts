@@ -197,7 +197,7 @@ class Api {
             } catch (err) {
                 return {
                     validation: {
-                        password: 'password_not_valid3',
+                        password: 'password_not_valid',
                     },
                 };
             }
