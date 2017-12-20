@@ -97,6 +97,7 @@ class Api {
             'account.getCurrencies': this.getCurrencies,
             'account.send': this.send,
             'account.list': this.getAccountList,
+            'account.requestTestTokens': this.requestTestTokens,
 
             'account.setSecretKey': this.setSecretKey,
             'account.checkPrivateKey': this.checkPrivateKey,
@@ -460,6 +461,18 @@ class Api {
         }
     }
 
+    public requestTestTokens = async (data: IPayload): Promise<IResponse> => {
+        if (data.address) {
+            const client = await this.initAccount(data.address);
+
+            return {
+                data: await client.account.requestTestTokens(),
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
     public getTransactions = async () => {
         const data = await createPromise('get', { key: 'transactions' });
 
@@ -491,7 +504,7 @@ class Api {
             toAddress,
             amount: data.amount,
             currencyAddress,
-            hash: null,
+            hash: 'waiting for hash...',
             fee: null,
             status: 'pending',
         };
@@ -512,8 +525,8 @@ class Api {
                 gasPrice,
             ));
 
-        transaction.hash = await txResult.getHash();
         transactions.unshift(transaction);
+        transaction.hash = await txResult.getHash();
 
         await this.saveData();
         await this.proceedTx(transaction, txResult);
