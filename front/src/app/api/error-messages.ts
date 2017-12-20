@@ -14,6 +14,7 @@ export const messages: IValidation = {
     select_file: 'Please select file',
     wait_your_tokens: 'Give us one moment. We sent SNM from Mars!',
     give_me_more: 'Give me more!',
+    insufficient_funds: 'Insufficient funds for gas * price + value',
 };
 
 export function getMessageText(code: string) {
