@@ -28,8 +28,6 @@ export class SendConfirm extends React.Component<IProps, any> {
 
         const password = event.target.password.value;
 
-        const pendingId = mainStore.startPending('confirm');
-
         const isPasswordValid = await mainStore.checkSelectedAccountPassword(password);
 
         if (isPasswordValid) {
@@ -37,8 +35,6 @@ export class SendConfirm extends React.Component<IProps, any> {
 
             this.props.onSuccess();
         }
-
-        mainStore.stopPending(pendingId);
     }
 
     public handleCancel = () => {

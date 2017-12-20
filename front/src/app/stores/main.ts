@@ -319,6 +319,7 @@ export class MainStore extends AbstractStore {
 
     protected passwordCache: IPasswordCache = {};
 
+    @pending
     @asyncAction
     public * checkSelectedAccountPassword(password: string) {
         const accountAddress = this.selectedAccountAddress;
