@@ -10,6 +10,7 @@ import * as t from '../../app/api/types';
 const { createSonmFactory, utils } = sonmApi;
 
 const KEY_WALLETS_LIST = 'sonm_wallets';
+const PENDING_HASH = 'waiting for hash...';
 
 interface IPayload {
     [index: string]: any;
@@ -196,7 +197,7 @@ class Api {
             } catch (err) {
                 return {
                     validation: {
-                        password: 'password_not_valid',
+                        password: 'password_not_valid3',
                     },
                 };
             }
@@ -225,7 +226,7 @@ class Api {
                 try {
                     this.storage = this.decrypt(dataFromStorage);
 
-                    this.processPendingTransactions();
+                    this.processTransactions();
 
                     return {
                         data: true,
@@ -314,14 +315,29 @@ class Api {
         };
     }
 
-    private async processPendingTransactions() {
+    private async processTransactions() {
         const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+        const transactions = [];
 
+        let needSave = false;
         for (const transaction of this.storage.transactions) {
-            if (transaction.status === 'pending') {
-                const txResult = factory.createTxResult(transaction.hash);
-                this.proceedTx(transaction, txResult);
+            // remove pending
+            if (transaction.hash !== PENDING_HASH) {
+                transactions.push(transaction);
+
+                if (transaction.status === 'pending') {
+                    const txResult = factory.createTxResult(transaction.hash);
+                    this.proceedTx(transaction, txResult);
+                }
+
+                needSave = true;
             }
+        }
+
+        this.storage.transactions = transactions;
+
+        if (needSave) {
+            this.saveData();
         }
     }
 
@@ -462,7 +478,13 @@ class Api {
     }
 
     public requestTestTokens = async (data: IPayload): Promise<IResponse> => {
-        if (data.address) {
+        if (data.address && data.password) {
+            const validation = await this.checkAccountPassword(data.password, data.address);
+
+            if (!validation.data) {
+                return validation;
+            }
+
             const client = await this.initAccount(data.address);
 
             return {
@@ -504,12 +526,12 @@ class Api {
             toAddress,
             amount: data.amount,
             currencyAddress,
-            hash: 'waiting for hash...',
+            hash: PENDING_HASH,
             fee: null,
             status: 'pending',
         };
 
-        //await this.saveData();
+        transactions.unshift(transaction);
 
         const txResult = (currencyAddress === '0x'
             ? await client.account.sendEther(
@@ -525,7 +547,6 @@ class Api {
                 gasPrice,
             ));
 
-        transactions.unshift(transaction);
         transaction.hash = await txResult.getHash();
 
         await this.saveData();

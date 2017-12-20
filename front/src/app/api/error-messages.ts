@@ -13,7 +13,7 @@ export const messages: IValidation = {
     account_already_exists: 'Account already exists',
     select_file: 'Please select file',
     wait_your_tokens: 'Give us one moment. We sent SNM from Mars!',
-    give_me_more: 'Give me more!',
+    give_me_more: 'Give me SONM tokens!',
     insufficient_funds: 'Insufficient funds for gas * price + value',
 };
 

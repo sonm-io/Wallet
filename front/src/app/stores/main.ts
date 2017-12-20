@@ -502,7 +502,7 @@ export class MainStore extends AbstractStore {
     }
 
     public giveMeMore() {
-        Api.requestTestTokens(this.selectedAccountAddress);
+        Api.requestTestTokens('11111111', this.selectedAccountAddress);
         this.addAlert({ type: AlertType.success, message: getMessageText('wait_your_tokens') });
     }
 }
