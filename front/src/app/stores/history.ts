@@ -100,13 +100,13 @@ export class HistoryStore extends AbstractStore {
 
     @action
     public setFilterFrom = (from: string) => {
-        this.fromAddress = from;
+        this.fromAddress = from === 'all' ? '' : from;
         this.page = 1;
     }
 
     @action
     public setFilterCurrency = (currency: string) => {
-        this.curencyAddress = currency;
+        this.curencyAddress = currency === 'all' ? '' : currency;
         this.page = 1;
     }
 

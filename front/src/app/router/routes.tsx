@@ -14,7 +14,15 @@ import { navigate } from './navigate';
 let defaultAction;
 
 const navigateToSend = () => navigate({ path: '/send' });
-const navigateToHistory = () => navigate({ path: '/history' });
+const navigateToHistory = (accountAddress: string = '', currencyAddress: string = '') => {
+    navigate({
+        path: '/history',
+        query: accountAddress || currencyAddress ? {
+            address: accountAddress,
+            currency: currencyAddress,
+        } : undefined,
+    });
+};
 const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
 
