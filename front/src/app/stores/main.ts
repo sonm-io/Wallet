@@ -25,6 +25,7 @@ import { delay } from 'app/utils/async-delay';
 import { etherToGwei } from '../utils/ether-to-gwei';
 import { gweiToEther } from '../utils/gwei-to-ether';
 import { trimZeros } from '../utils/trim-zeros';
+import { getMessageText } from 'app/api/error-messages';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -498,6 +499,11 @@ export class MainStore extends AbstractStore {
 
     public resetValidation() {
         this.setValidation({});
+    }
+
+    public giveMeMore() {
+        Api.requestTestTokens(this.selectedAccountAddress);
+        this.addAlert({ type: AlertType.success, message: getMessageText('wait_your_tokens') });
     }
 }
 

@@ -7,7 +7,7 @@
 .sonm-account {
   display: grid;
   grid-template-columns: auto min-content;
-  grid-template-rows: min-content auto;
+  grid-template-rows: min-content auto auto;
   grid-gap: @account-padding;
 
   &__account {
@@ -43,6 +43,12 @@
   &__tokens {
     grid-column: ~"1 / 2";
     grid-row: 2;
+  }
+
+  &__give-me-more {
+    grid-row: 3;
+    grid-column: 1;
+    width: 200px;
   }
 }
 
