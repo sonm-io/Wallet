@@ -58,6 +58,7 @@ const routes = [
                     const content = next && next.content
                         ? next.content
                         : <Send
+                            className="sonm-app__content--inner"
                             initialAddress={initialAddress}
                             initialCurrency={initialCurrency}
                             onRequireConfirmation={navigateToConfirmation}
@@ -78,14 +79,22 @@ const routes = [
                         path: '/confirm',
                         action: (ctx: IContext) => ({
                             title: 'Confirmation',
-                            content: <SendConfirm onBack={navigateToSend} onSuccess={navigateToSuccess} />,
+                            content: <SendConfirm
+                                className="sonm-app__content--inner"
+                                onBack={navigateToSend}
+                                onSuccess={navigateToSuccess}
+                            />,
                         }),
                     },
                     {
                         path: '/success',
                         action: (ctx: IContext) => ({
                             title: 'Success',
-                            content: <SendSuccess onClickHistory={navigateToHistory} onClickSend={navigateToSend} />,
+                            content: <SendSuccess
+                                className="sonm-app__content--inner"
+                                onClickHistory={navigateToHistory}
+                                onClickSend={navigateToSend}
+                            />,
                         }),
                     },
                 ],
