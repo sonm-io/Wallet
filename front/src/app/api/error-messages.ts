@@ -15,6 +15,7 @@ export const messages: IValidation = {
     wait_your_tokens: 'Give us one moment. We sent SNM from Mars!',
     give_me_more: 'Give me SONM tokens!',
     insufficient_funds: 'Insufficient funds for gas * price + value',
+    required_params_missed: 'Required parameter missed',
 };
 
 export function getMessageText(code: string) {

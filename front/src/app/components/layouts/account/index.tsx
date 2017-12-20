@@ -8,6 +8,7 @@ import IdentIcon from '../../common/ident-icon/index';
 import { navigate } from 'app/router';
 import Button from '../../common/button/index';
 import { getMessageText } from 'app/api/error-messages';
+import { Input, Icon } from 'antd';
 
 interface IProps {
     className?: string;
@@ -15,9 +16,18 @@ interface IProps {
     initialAddress: string;
 }
 
+enum Dialogs {
+    giveMe = 'giveMe',
+    none = '',
+}
+
 @inject('mainStore')
 @observer
 export class Account extends React.Component<IProps, any> {
+    public state = {
+        visibleDialog: Dialogs.none,
+    };
+
     public componentWillMount() {
         if (!this.props.mainStore) { return; }
 
@@ -50,8 +60,10 @@ export class Account extends React.Component<IProps, any> {
         });
     }
 
-    protected handleGiveMeMore = () => {
-        this.props.mainStore && this.props.mainStore.giveMeMore();
+    protected handleGiveMeMore = (event: any) => {
+        event.preventDefault();
+
+        this.props.mainStore && this.props.mainStore.giveMeMore(event.target.password.value);
     }
 
     public render() {
@@ -110,9 +122,18 @@ export class Account extends React.Component<IProps, any> {
                         })}
                     </ul>}
 
-                <Button className="sonm-account__give-me-more" onClick={this.handleGiveMeMore}>
-                    {getMessageText('give_me_more')}
-                </Button>
+                <form onSubmit={this.handleGiveMeMore} className="sonm-account__give-me">
+                    <Input
+                        name="password"
+                        className="sonm-account__give-me-password"
+                        prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                        type="password"
+                        placeholder="Account password"
+                    />
+                    <Button type="submit" className="sonm-account__give-me-button" square transparent>
+                        {getMessageText('give_me_more')}
+                    </Button>
+                </form>
             </div>,
         ];
     }

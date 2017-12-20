@@ -502,9 +502,17 @@ export class MainStore extends AbstractStore {
         this.setValidation({});
     }
 
-    public giveMeMore() {
-        Api.requestTestTokens('11111111', this.selectedAccountAddress);
-        this.addAlert({ type: AlertType.success, message: getMessageText('wait_your_tokens') });
+    @pending
+    @catchErrors({ restart: false })
+    @asyncAction
+    public * giveMeMore(password: string) {
+        const { validation } = yield Api.requestTestTokens(password, this.selectedAccountAddress);
+
+        if (validation) {
+            this.addAlert({ type: AlertType.error, message: `SNM delivery delayed cause: ${getMessageText(validation.password)}` });
+        } else {
+            this.addAlert({ type: AlertType.success, message: getMessageText('wait_your_tokens') });
+        }
     }
 }
 

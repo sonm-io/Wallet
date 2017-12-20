@@ -45,10 +45,21 @@
     grid-row: 2;
   }
 
-  &__give-me-more {
+  &__give-me {
     grid-row: 3;
     grid-column: 1;
-    width: 200px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    & &-password {
+      width: 300px;
+      margin: 0;
+    }
+
+    &-button {
+      margin: 0 0 0 5px;
+    }
   }
 }
 
