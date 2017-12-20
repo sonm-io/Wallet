@@ -32,7 +32,7 @@ const UPDATE_INTERVAL = 5000;
 
 export class MainStore extends AbstractStore {
     public static ADDRESS_ETHER = '0x';
-    public static DEFAULT_GAS_LIMIT = '50000';
+    public static DEFAULT_GAS_LIMIT = '250000';
 
     protected sonmTokenAddress: string = '';
 
