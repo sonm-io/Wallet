@@ -7,6 +7,7 @@ import { BlackSelect } from 'app/components/common/black-select';
 import { Dialog } from 'app/components/common/dialog';
 import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
+import { getMessageText } from 'app/api/error-messages';
 
 interface IProps {
     className?: string;
@@ -153,7 +154,7 @@ export class Login extends React.Component<IProps, any> {
         }
 
         if (this.state.newPassword !== this.state.confirmation) {
-            this.setState({ validation: { confirmation: 'Password not matched' } });
+            this.setState({ validation: { confirmation: getMessageText('password_not_match') } });
             invalid = true;
         }
 

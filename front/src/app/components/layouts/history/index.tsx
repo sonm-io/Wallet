@@ -227,7 +227,7 @@ export class History extends React.Component<IProps, any> {
                         </Option>,
                     )}
                     <Option value="" title="">
-                        All currencies
+                        All coins
                     </Option>
                 </Select>
                 <Input

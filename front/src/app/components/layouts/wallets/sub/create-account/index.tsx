@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
 import { IValidation } from 'ipc/types';
+import { getMessageText } from 'app/api/error-messages';
+
 
 export interface ICreateAccountForm {
     password: string;
@@ -41,7 +43,7 @@ export class CreateAccount extends React.Component<IProps, any> {
         }
 
         if (this.state.password !== this.state.confirmation) {
-            validation.confirmation = 'Password not matched';
+            validation.confirmation = getMessageText('password_not_match');
         }
 
         if (Object.keys(validation).every(x => !validation[x])) {

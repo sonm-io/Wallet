@@ -10,7 +10,7 @@ export class EmptyAccountList extends React.Component<IProps, any> {
         return (
             <div className="sonm-wallets-empty-list">
                 <h3>Welcome to SONM Wallet!</h3>
-                Please add accounts to display. Click button below and follow instructions
+                Please add accounts to display. Click the button below and follow the instructions.
             </div>
         );
     }
