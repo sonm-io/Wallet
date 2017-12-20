@@ -12,6 +12,7 @@ export const messages: IValidation = {
     password_length: 'Password must be at least 8 character',
     account_already_exists: 'Account already exists',
     select_file: 'Please select file',
+    insufficient_funds: 'Insufficient funds for gas * price + value',
 };
 
 export function getMessageText(code: string) {
