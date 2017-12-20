@@ -84,19 +84,19 @@ export class App extends React.Component<IProps, any> {
                                     fontSizePx={18}
                                 />
                         </div>
-                        <div className="sonm-app__offline-alert">
-                            {this.isOffline
-                                ? <Alert
-                                    key="offline"
-                                    showIcon
-                                    message="Offline"
-                                    description="No blockchain node connection"
-                                    type="warning"
-                                /> : null
-                            }
-                        </div>
-                        <AlertList />
                     </div>
+                    <div className="sonm-app__offline-alert">
+                        {this.isOffline
+                            ? <Alert
+                                key="offline"
+                                showIcon
+                                message="Offline"
+                                description="No blockchain node connection"
+                                type="warning"
+                            /> : null
+                        }
+                    </div>
+                    <AlertList className="sonm-app__alerts"/>
                     <div className="sonm-app__content">
                         {children}
                     </div>
