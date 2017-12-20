@@ -143,8 +143,15 @@ export class History extends React.Component<IProps, any> {
 
         let updated = false;
 
-        if (this.props.initialAddress) { this.props.historyStore.setFilterFrom(this.props.initialAddress); updated = true; }
-        if (this.props.initialCurrency) { this.props.historyStore.setFilterCurrency(this.props.initialCurrency); updated = true; }
+        if (this.props.initialAddress) {
+            this.props.historyStore.setFilterFrom(this.props.initialAddress);
+            updated = true;
+        }
+
+        if (this.props.initialCurrency) {
+            this.props.historyStore.setFilterCurrency(this.props.initialCurrency);
+            updated = true;
+        }
 
         if (!updated) { this.props.historyStore.update(); }
     }

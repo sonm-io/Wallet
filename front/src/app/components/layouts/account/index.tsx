@@ -6,6 +6,8 @@ import { AccountBigSelect } from 'app/components/common/account-big-select';
 import Header from '../../common/header';
 import IdentIcon from '../../common/ident-icon/index';
 import { navigate } from 'app/router';
+import Button from '../../common/button/index';
+import { getMessageText } from 'app/api/error-messages';
 
 interface IProps {
     className?: string;
@@ -46,6 +48,10 @@ export class Account extends React.Component<IProps, any> {
                 currency: currencyAddress,
             },
         });
+    }
+
+    protected handleGiveMeMore = () => {
+        this.props.mainStore && this.props.mainStore.giveMeMore();
     }
 
     public render() {
@@ -103,6 +109,10 @@ export class Account extends React.Component<IProps, any> {
                             );
                         })}
                     </ul>}
+
+                <Button className="sonm-account__give-me-more" onClick={this.handleGiveMeMore}>
+                    {getMessageText('give_me_more')}
+                </Button>
             </div>,
         ];
     }
