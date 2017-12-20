@@ -12,7 +12,7 @@ export const messages: IValidation = {
     password_length: 'Password must be at least 8 character',
     account_already_exists: 'Account already exists',
     select_file: 'Please select file',
-    wait_your_tokens: 'Give us one moment. We send SNM from Mars!',
+    wait_your_tokens: 'Give us one moment. We sent SNM from Mars!',
     give_me_more: 'Give me more!',
 };
 
