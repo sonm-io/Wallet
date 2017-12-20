@@ -97,6 +97,7 @@ class Api {
             'account.getCurrencies': this.getCurrencies,
             'account.send': this.send,
             'account.list': this.getAccountList,
+            'account.requestTestTokens': this.requestTestTokens,
 
             'account.setSecretKey': this.setSecretKey,
             'account.checkPrivateKey': this.checkPrivateKey,
@@ -455,6 +456,18 @@ class Api {
             } else {
                 throw new Error('account_not_found');
             }
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
+    public requestTestTokens = async (data: IPayload): Promise<IResponse> => {
+        if (data.address) {
+            const client = await this.initAccount(data.address);
+
+            return {
+                data: await client.account.requestTestTokens(),
+            };
         } else {
             throw new Error('required_params_missed');
         }

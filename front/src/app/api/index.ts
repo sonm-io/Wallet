@@ -91,6 +91,10 @@ export class Api {
         return createPromise('account.remove', { address });
     }
 
+    public static async requestTestTokens(address: string): Promise<IResult<boolean>> {
+        return createPromise('account.requestTestTokens', { address });
+    }
+
     public static async renameAccount(address: string, name: string): Promise<IResult<boolean>> {
         return createPromise('account.rename', { address, name });
     }
