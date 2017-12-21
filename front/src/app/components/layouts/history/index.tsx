@@ -46,7 +46,7 @@ export class History extends React.Component<IProps, any> {
         },
     }, {
         dataIndex: 'fromAddress',
-        className: 'sonm-tx-list__col-time',
+        className: 'sonm-tx-list__col-from',
         title: 'From',
         render: (_, record) => {
             const addr = record.fromAddress;
@@ -72,8 +72,8 @@ export class History extends React.Component<IProps, any> {
 
             return (
                 <div className="sonm-tx-list__col-to-ct">
-                    <IdentIcon address={addr} width={20} key="a"/>
-                    <Hash hash={addr} hasCopyButton />
+                    <IdentIcon address={addr} width={20} className="sonm-tx-list__col-to-icon"/>
+                    <Hash hash={addr} hasCopyButton className="sonm-tx-list__col-to-hash"/>
                 </div>
             );
         },
