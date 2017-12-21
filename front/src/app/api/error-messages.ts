@@ -7,6 +7,7 @@ export const messages: IValidation = {
     password_not_match: 'Password does not match',
     wallet_allready_exists: 'Already exist',
     password_required: 'Password is required',
+    walletName_required: 'Wallet name is required',
     wallet_name_length: 'Name length must be in range 1..20',
     name_required: 'Name is required',
     password_length: 'Password must be at least 8 character',
