@@ -43,7 +43,7 @@ const routes = [
                         </App>
                     </LocaleProvider>
                 ),
-                title: inner.title,
+                title: `SONM Wallet: ${inner.title}`,
             };
         },
         children: [
