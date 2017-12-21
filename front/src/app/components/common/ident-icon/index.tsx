@@ -8,12 +8,13 @@ export interface IProps {
     width?: number;
 }
 
-const ETHER_ADDRESS = ['0x', '0x0', '0', '0x0000000000000000000000000000000000000000'];
-
 export class IdentIcon extends React.Component<IProps, any> {
-    private icons: any = {
-        '0x': 'icon-ether.svg',
-        '0x45ccf7cfb6de9b86c86e2d6fb079b01b5c90ee2c': 'icon-sonm.svg',
+    protected static icons: any = {
+        '0x': 'ether',
+        '0x0': 'ether',
+        '0': 'ether',
+        '0x0000000000000000000000000000000000000000': 'ether',
+        '0x45ccf7cfb6de9b86c86e2d6fb079b01b5c90ee2c': 'sonm',
     };
 
     public static defaultProps: Partial<IProps> = {
@@ -39,7 +40,7 @@ export class IdentIcon extends React.Component<IProps, any> {
     protected checkAddress(address: string): boolean {
         return (address.length === 40 && !address.startsWith('0x'))
             || (address.length === 42 && address.startsWith('0x'))
-            || (ETHER_ADDRESS.indexOf(address) !== -1);
+            || (IdentIcon.icons[address]);
     }
 
     private canvas: HTMLCanvasElement | null = null;
@@ -54,43 +55,7 @@ export class IdentIcon extends React.Component<IProps, any> {
             return;
         }
 
-        if (this.icons[address]) {
-            drawCustomIcon(this.canvas, this.icons[address]);
-            return;
-        }
-
-        if (ETHER_ADDRESS.indexOf(address) !== -1) {
-            drawEthereumIcon(this.canvas);
-            return;
-        }
-
-        function drawCustomIcon(canvas: HTMLCanvasElement, icon: string) {
-            const context = canvas.getContext('2d');
-
-            if (context !== null) {
-                context.fillStyle = '#d3d3d3';
-                context.fillRect(0, 0, canvasSize, canvasSize);
-
-                const svg = require(`svg-url-loader?encoding=base64!./${icon}`);
-
-                const img = new Image();
-                img.onload = function() {
-                    context.drawImage(img, 0, 0);
-                };
-                img.src = svg;
-            }
-        }
-
         function drawGray(canvas: HTMLCanvasElement) {
-            const context = canvas.getContext('2d');
-
-            if (context !== null) {
-                context.fillStyle = '#d3d3d3';
-                context.fillRect(0, 0, canvasSize, canvasSize);
-            }
-        }
-
-        function drawEthereumIcon(canvas: HTMLCanvasElement) {
             const context = canvas.getContext('2d');
 
             if (context !== null) {
@@ -229,6 +194,7 @@ export class IdentIcon extends React.Component<IProps, any> {
         const {
             className,
             width,
+            address,
         } = this.props;
         const canvasSize = this.getCanvasSize();
 
@@ -236,16 +202,21 @@ export class IdentIcon extends React.Component<IProps, any> {
 
         return (
             <div
-                className={cn(className, 'sonm-ident-icon__wrapper')}
+                className={cn(
+                    className,
+                    'sonm-ident-icon__wrapper',
+                    IdentIcon.icons[address] && `sonm-ident-icon__icon-${IdentIcon.icons[address]}`,
+                )}
                 style={{ width: width as number, height: width as number }}
             >
+                {IdentIcon.icons[address] ? null :
                 <canvas
                     className="sonm-ident-icon__canvas"
                     ref={this.processCanvasRef}
                     width={canvasSize}
                     height={canvasSize}
                     style={{ width: canvasSize, height: canvasSize, marginTop: correction, marginLeft: correction }}
-                />
+                />}
             </div>
         );
     }
