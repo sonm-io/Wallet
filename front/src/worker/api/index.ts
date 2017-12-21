@@ -253,8 +253,8 @@ class Api {
             }
         } else {
             const validation = {
-                password: !data.password ? 'password_empty' : null,
-                walletName: !data.walletName ? 'walletName_empty' : null,
+                password: !data.password ? 'password_required' : null,
+                walletName: !data.walletName ? 'walletName_required' : null,
             };
 
             return {
