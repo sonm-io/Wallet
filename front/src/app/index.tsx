@@ -46,10 +46,20 @@ async function handleLogin() {
 async function start() {
     await domLoading;
 
+    checkBrowser();
+
     render(
         <Login onLogin={handleLogin} key="login" />,
         window.document.querySelector('#root'),
     );
+}
+
+async function checkBrowser() {
+    const ls = localStorage;
+
+    if (!ls || !CSS.supports('--fake-var', '0')) {
+        throw new Error('Css var does not support');
+    }
 }
 
 start();
