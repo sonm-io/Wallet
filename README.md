@@ -1,5 +1,8 @@
 # SONM Wallet
 
+## User guide
+https://docs.sonm.io/guides/sonm-wallet-guide
+
 ## What is SONM Wallet?
 
 SONM Wallet is SONM GUI, a software program that stores private and public keys and provide SONM functions or users (Consumers and Suppliers).
