@@ -1,5 +1,9 @@
 # SONM Wallet
 
+
+### https://sonm-io.github.io/Wallet/
+### [Download the Latest Release](https://github.com/sonm-io/Wallet/releases/latest)
+
 ## User guide
 https://docs.sonm.io/guides/sonm-wallet-guide
 
