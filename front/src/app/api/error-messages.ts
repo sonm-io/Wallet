@@ -13,7 +13,7 @@ export const messages: IValidation = {
     password_length: 'Password must be at least 8 character',
     account_already_exists: 'Account already exists',
     select_file: 'Please select file',
-    wait_your_tokens: 'SNM has been successfully delivered from Mars',
+    wait_your_tokens: 'SNMT has been successfully delivered from Mars',
     give_me_more: 'Give me SONM tokens!',
     insufficient_funds: 'Insufficient funds for gas * price + value',
     required_params_missed: 'Required parameter missed',

@@ -1,10 +1,13 @@
 # SONM Wallet
 
+## User guide
+https://docs.sonm.io/guides/sonm-wallet-guide
+
 ## What is SONM Wallet?
 
 SONM Wallet is SONM GUI, a software program that stores private and public keys and provide SONM functions or users (Consumers and Suppliers).
 
-#### SONM Wallet privides the following functions:
+### SONM Wallet privides the following functions:
 * Manage user Ethereum accounts, support multiaccounts, create new account, export/import keystore files (UTC/JSON)
 * Send and receive Ether, SNM tokens, ERC-20 tokens
 * View local transaction history
@@ -20,16 +23,16 @@ SONM Wallet is a desktop that should be downloaded and installed on a PC or lapt
 
 SONM Wallet is implemented in TypeScript. Wallet is one html file for all operation systems.
 
-#### What currencies?
+### What currencies?
 SONM Wallet support Ethereum, SNM token and all other Ethereum ERC-20 tokens.
 
 Default view includes Ether and SNM. 
 
-#### Transaction fees
+### Transaction fees
 Additional fees is absent in SONM Wallet.
 You pay only Ethereum fees for transactions.
 
-#### Security assurance
+### Security assurance
 SONM Wallet supports the use of multiple profiles (several wallets) within the application. For each wallet the user set up a wallet name and wallet password.
 
 Switching between wallets are avaliable when the application starts or refreshes.
