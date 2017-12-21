@@ -128,7 +128,7 @@ export class Account extends React.Component<IProps, any> {
 
                 <form onSubmit={this.handleGiveMeMore} className="sonm-account__give-me">
                     <Header className="sonm-account__header">
-                        Request sonm test tokens
+                        SONM test tokens request
                     </Header>
                     <div className="sonm-account__give-me-ct">
                         <Input
