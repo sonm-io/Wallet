@@ -19,7 +19,7 @@ module.exports = {
 
     output: {
         filename: '[name].bundled.js',
-        path: getFullPath('docs'),
+        path: getFullPath('../docs'),
     },
 
     resolve: {
