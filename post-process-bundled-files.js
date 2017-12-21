@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-let indexFile = fs.readFileSync('./front/dist/index.html').toString().replace(`<script type="text/javascript" src="style.bundled.js"></script>`, ``);
+let indexFile = fs.readFileSync('./front/docs/index.html').toString().replace(`<script type="text/javascript" src="style.bundled.js"></script>`, ``);
 
 // for (const type of ['app']) {
 //     //const inline = fs.readFileSync(`./front/dist/${type}.bundled.js`).toString('base64');
@@ -12,4 +12,4 @@ let indexFile = fs.readFileSync('./front/dist/index.html').toString().replace(`<
 //     console.log(type, inline.length);
 // }
 
-fs.writeFileSync('./front/dist/index.html', indexFile);
+fs.writeFileSync('./front/docs/index.html', indexFile);

@@ -1,18 +1,15 @@
-const path = require('path');
-const fs = require('fs');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const {getFullPath, readJson} = require('./utils');
 const extractLess = new ExtractTextPlugin('./style.css');
-const ShakePlugin = require('webpack-common-shake').Plugin;
 
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const isDev = process.env.NODE_ENV !== 'production';
-const isAnalyze = process.env.WEBPACK_ANALYZE;
+const isDev = !process.env.NODE_ENV.includes('production');
+const buildType = process.env.BUILD_TYPE || '';
 
 module.exports = {
     entry: {
@@ -22,8 +19,7 @@ module.exports = {
 
     output: {
         filename: '[name].bundled.js',
-        path: getFullPath('dist'),
-        //publicPath: isDev ? '' : '/',
+        path: getFullPath('docs'),
     },
 
     resolve: {
@@ -93,8 +89,6 @@ module.exports = {
                 ? new BundleAnalyzerPlugin()
                 : false,
 
-            // new ShakePlugin(),
-
             new webpack.NoEmitOnErrorsPlugin(),
 
             new webpack.ContextReplacementPlugin(
@@ -102,27 +96,7 @@ module.exports = {
                 /en-gb\.js/,
             ),
 
-            // new webpack.optimize.CommonsChunkPlugin({
-            //   name: 'vendor',
-            //   minChunks(params) {
-            //     const { context } = params;
-            //     return context && context.indexOf('node_modules') !== -1;
-            //   },
-            // }),
-
             new webpack.optimize.ModuleConcatenationPlugin(),
-
-            // isDev
-            //   ? null
-            //   : new webpack.optimize.UglifyJsPlugin(),
-
-            // isDev
-            //   ? new webpack.NamedModulesPlugin()
-            //   : false,
-
-            // isDev
-            //   ? new webpack.HotModuleReplacementPlugin()
-            //   : null,
 
             isDev ? null : new UglifyJsPlugin({
                 uglifyOptions: {
@@ -142,9 +116,11 @@ module.exports = {
             }),
 
             extractLess,
-
-            isDev ? null : new StyleExtHtmlWebpackPlugin(),
         ];
+
+        if (buildType === 'singleFile') {
+            plugins.push(new StyleExtHtmlWebpackPlugin());
+        }
 
         return plugins.filter(x => x);
     })(),

@@ -5,3 +5,4 @@
 /yarn.lock
 /front/dist
 **/.DS_Store
+/front/docs/
