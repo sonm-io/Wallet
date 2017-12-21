@@ -37,6 +37,10 @@
   &__table {
     grid-column: ~"1 / 4";
     grid-row: 3;
+
+    & table {
+      table-layout: fixed;
+    }
   }
 }
 
@@ -44,6 +48,8 @@
   &__col {
 
     &-from {
+      width: 200px;
+
       &-ct {
         display: grid;
         grid-template-columns: min-content auto;
@@ -73,19 +79,29 @@
     }
 
     &-time {
-      min-width: 80px;
+      width: 85px;
     }
 
     &-to {
+      width: 200px;
+
       &-ct {
-        display: grid;
-        grid-template-columns: min-content auto;
-        grid-gap: 5px;
+        display: flex;
+        justify-content: center;
+        vertical-align: middle;
+      }
+
+      &-hash {
+        margin: 0 0 0 5px;
+      }
+
+      &-icon {
+        flex-shrink: 0;
       }
     }
 
     &-status {
-      min-width: 70px;
+      width: 70px;
 
       &--success {
         color: @color-green;
@@ -101,7 +117,7 @@
     }
 
     &-amount {
-      min-width: 130px;
+      width: 150px;
     }
   }
 }

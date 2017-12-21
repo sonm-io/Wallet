@@ -60,10 +60,14 @@ export class Account extends React.Component<IProps, any> {
         });
     }
 
-    protected handleGiveMeMore = (event: any) => {
+    protected handleGiveMeMore = async (event: any) => {
         event.preventDefault();
 
-        this.props.mainStore && this.props.mainStore.giveMeMore(event.target.password.value);
+        if (!this.props.mainStore) { return; }
+
+        await this.props.mainStore.giveMeMore(event.target.password.value);
+
+        await this.props.mainStore.update();
     }
 
     public render() {
@@ -74,7 +78,7 @@ export class Account extends React.Component<IProps, any> {
         } = this.props;
 
         return [
-            <Header className="sonm-wallets__header" key="header">
+            <Header className="sonm-account__header" key="header">
                 Account
             </Header>,
             <div className={cn('sonm-account', className)} key="account">
@@ -95,8 +99,8 @@ export class Account extends React.Component<IProps, any> {
 
                 {this.props.mainStore.currentBalanceList.length === 0 ? null :
                     <ul className="sonm-account__tokens" >
-                        <Header className="sonm-wallets__header">
-                            Coins
+                        <Header className="sonm-account__header">
+                            Coins and tokens
                         </Header>
                         {this.props.mainStore.currentBalanceList.map(({ symbol, address, name, balance, decimals }) => {
                             return (
@@ -123,16 +127,21 @@ export class Account extends React.Component<IProps, any> {
                     </ul>}
 
                 <form onSubmit={this.handleGiveMeMore} className="sonm-account__give-me">
-                    <Input
-                        name="password"
-                        className="sonm-account__give-me-password"
-                        prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
-                        type="password"
-                        placeholder="Account password"
-                    />
-                    <Button type="submit" className="sonm-account__give-me-button" square transparent>
-                        {getMessageText('give_me_more')}
-                    </Button>
+                    <Header className="sonm-account__header">
+                        Request sonm test tokens
+                    </Header>
+                    <div className="sonm-account__give-me-ct">
+                        <Input
+                            name="password"
+                            className="sonm-account__give-me-password"
+                            prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                            type="password"
+                            placeholder="Account password"
+                        />
+                        <Button type="submit" className="sonm-account__give-me-button" square transparent>
+                            {getMessageText('give_me_more')}
+                        </Button>
+                    </div>
                 </form>
             </div>,
         ];

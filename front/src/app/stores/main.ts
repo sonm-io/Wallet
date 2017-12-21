@@ -414,7 +414,7 @@ export class MainStore extends AbstractStore {
         this.averageGasPrice = etherToGwei(averageGasPrice);
     }
 
-    protected async update() {
+    public async update() {
         const { data: accountList } = await Api.getAccountList();
         this.updateList(accountList);
 
