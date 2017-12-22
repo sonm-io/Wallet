@@ -57,13 +57,8 @@ async function start() {
 }
 
 async function checkBrowser() {
-    const el = document.createElement('div');
-    el.style.setProperty('--test-color', '$f00');
-    el.style.setProperty('width', '--test-color');
-
     return localStorage
-        && (window.navigator.userAgent.indexOf('Safari') !== 1)
-        && (getComputedStyle(el).backgroundColor === 'rgb(255, 0, 0)');
+        && (CSS.supports('--fake-var', '0')); // safari return false
 }
 
 start();
