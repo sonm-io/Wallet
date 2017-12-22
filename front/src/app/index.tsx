@@ -46,7 +46,9 @@ async function handleLogin() {
 async function start() {
     await domLoading;
 
-    checkBrowser();
+    if (!await checkBrowser()) {
+        throw new Error('Browser is not supported!');
+    }
 
     render(
         <Login onLogin={handleLogin} key="login" />,
@@ -55,11 +57,8 @@ async function start() {
 }
 
 async function checkBrowser() {
-    const ls = localStorage;
-
-    if (!ls || !CSS.supports('--fake-var', '0')) {
-        throw new Error('Css var does not support');
-    }
+    return localStorage
+        && (CSS.supports('--fake-var', '0')); // safari return false
 }
 
 start();
