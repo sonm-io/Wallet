@@ -93,6 +93,7 @@ export class SendConfirm extends React.Component<IProps, any> {
                         help={passwordValidationMsg}
                     >
                         <Input
+                            autoComplete="off"
                             name="password"
                             className="sonm-send-confirm__password-input"
                             prefix={<Icon type="lock" style={{ fontSize: 13 }} />}

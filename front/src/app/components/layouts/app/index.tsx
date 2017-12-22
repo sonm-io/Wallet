@@ -43,8 +43,11 @@ export class App extends React.Component<IProps, any> {
             mainStore: {
                 firstTokenBalance,
                 secondTokenBalance,
+                accountMap,
             },
         } = this.props;
+
+        const disableSend = this.isOffline || (accountMap.size === 0);
 
         return (
             <div className={cn('sonm-app', className)}>
@@ -65,7 +68,7 @@ export class App extends React.Component<IProps, any> {
                                 <Menu.Item key="/accounts" className="sonm-nav__menu-item">
                                     Accounts
                                 </Menu.Item>
-                                <Menu.Item key="/send" className="sonm-nav__menu-item" disabled={this.isOffline}>
+                                <Menu.Item key="/send" className="sonm-nav__menu-item" disabled={disableSend}>
                                     Send
                                 </Menu.Item>
                                 <Menu.Item key="/history" className="sonm-nav__menu-item">

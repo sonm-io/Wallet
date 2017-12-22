@@ -46,7 +46,9 @@ async function handleLogin() {
 async function start() {
     await domLoading;
 
-    checkBrowser();
+    if (!await checkBrowser()) {
+        throw new Error('Browser is not supported!');
+    }
 
     render(
         <Login onLogin={handleLogin} key="login" />,
@@ -55,11 +57,13 @@ async function start() {
 }
 
 async function checkBrowser() {
-    const ls = localStorage;
+    const el = document.createElement('div');
+    el.style.setProperty('--test-color', '$f00');
+    el.style.setProperty('width', '--test-color');
 
-    if (!ls || !CSS.supports('--fake-var', '0')) {
-        throw new Error('Css var does not support');
-    }
+    return localStorage
+        && (window.navigator.userAgent.indexOf('Safari') !== 1)
+        && (getComputedStyle(el).backgroundColor === 'rgb(255, 0, 0)');
 }
 
 start();

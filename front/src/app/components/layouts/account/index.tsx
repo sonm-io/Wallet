@@ -132,6 +132,7 @@ export class Account extends React.Component<IProps, any> {
                     </Header>
                     <div className="sonm-account__give-me-ct">
                         <Input
+                            autoComplete="off"
                             name="password"
                             className="sonm-account__give-me-password"
                             prefix={<Icon type="lock" style={{ fontSize: 13 }} />}

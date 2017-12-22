@@ -250,6 +250,7 @@ export class Login extends React.Component<IProps, any> {
                         <span className="sonm-login__label-text">Password</span>
                         <span className="sonm-login__label-error">{this.state.validation.password}</span>
                         <input
+                            autoComplete="off"
                             ref={setFocus}
                             type="password"
                             className="sonm-login__input"
@@ -281,6 +282,7 @@ export class Login extends React.Component<IProps, any> {
                         <span className="sonm-login__label-text">Wallet name</span>
                         <span className="sonm-login__label-error">{this.state.validation.newName}</span>
                         <input
+                            autoComplete="off"
                             ref={setFocus}
                             type="text"
                             className="sonm-login__input"
@@ -292,6 +294,7 @@ export class Login extends React.Component<IProps, any> {
                         <span className="sonm-login__label-text">Password</span>
                         <span className="sonm-login__label-error">{this.state.validation.newPassword}</span>
                         <input
+                            autoComplete="off"
                             type="password"
                             className="sonm-login__input"
                             name="newPassword"
@@ -302,6 +305,7 @@ export class Login extends React.Component<IProps, any> {
                         <span className="sonm-login__label-text">Password confirmation</span>
                         <span className="sonm-login__label-error">{this.state.validation.confirmation}</span>
                         <input
+                            autoComplete="off"
                             type="password"
                             className="sonm-login__input"
                             name="confirmation"
