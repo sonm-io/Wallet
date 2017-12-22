@@ -61,8 +61,8 @@ npm run webpack # run app in dev mode
 
 #### Build:
 ```bash
-npm run webpack:one # build app with index.html and app.bundled.js
-npm run webpack:web # build app optimized for web
+npm run webpack:one # build app with index.html and app.bundled.js into ./dist 
+npm run webpack:web # build app for web into ./docs
 ```
 
 Generates app in `docs` folder.
