@@ -8,8 +8,8 @@ const extractLess = new ExtractTextPlugin('./style.css');
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-const isDev = !process.env.NODE_ENV.includes('production');
 const buildType = process.env.BUILD_TYPE || '';
+const isDev = buildType !== 'web' && !process.env.NODE_ENV.includes('production');
 
 module.exports = {
     entry: {
@@ -19,7 +19,7 @@ module.exports = {
 
     output: {
         filename: '[name].bundled.js',
-        path: getFullPath('../docs'),
+        path: buildType === 'web' ? getFullPath('../docs') :  getFullPath('../dist'),
     },
 
     resolve: {
@@ -105,7 +105,7 @@ module.exports = {
                         beautify: false,
                         ascii_only: true,
                     },
-                }
+                },
             }),
 
             new webpack.EnvironmentPlugin(['NODE_ENV']),
