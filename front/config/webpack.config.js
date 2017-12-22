@@ -7,6 +7,7 @@ const extractLess = new ExtractTextPlugin('./style.css');
 
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
 const MinifyPlugin = require("babel-minify-webpack-plugin");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const buildType = process.env.BUILD_TYPE || '';
 const isDev = buildType !== 'web' && !process.env.NODE_ENV.includes('production');
@@ -89,7 +90,17 @@ module.exports = {
                 ? new BundleAnalyzerPlugin()
                 : false,
 
-            isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
+            //isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
+
+            isDev ? null : new UglifyJsPlugin({
+                uglifyOptions: {
+                    output: {
+                        comments: false,
+                        beautify: false,
+                        ascii_only: true,
+                    },
+                }
+            }),
 
             new webpack.NoEmitOnErrorsPlugin(),
 
