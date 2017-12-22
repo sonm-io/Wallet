@@ -46,7 +46,7 @@ async function handleLogin() {
 async function start() {
     await domLoading;
 
-    checkBrowser();
+    await checkBrowser();
 
     render(
         <Login onLogin={handleLogin} key="login" />,
@@ -57,9 +57,12 @@ async function start() {
 async function checkBrowser() {
     const ls = localStorage;
 
-    if (!ls || !CSS.supports('--fake-var', '0')) {
-        throw new Error('Css var does not support');
-    }
+    const el = document.createElement('div');
+    el.style.setProperty('--test-color', '$f00');
+    el.style.setProperty('width', '--test-color');
+
+    return ls
+        && (getComputedStyle(el).backgroundColor === 'rgb(255, 0, 0)');
 }
 
 start();
