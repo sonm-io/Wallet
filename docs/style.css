@@ -459,7 +459,8 @@
   table-layout: fixed;
 }
 .sonm-tx-list__col-from {
-  width: 200px;
+  width: 300px;
+  vertical-align: bottom;
 }
 .sonm-tx-list__col-from-ct {
   display: grid;
@@ -486,14 +487,16 @@
 }
 .sonm-tx-list__col-time {
   width: 85px;
+  vertical-align: bottom;
 }
 .sonm-tx-list__col-to {
-  width: 200px;
+  width: 300px;
+  vertical-align: bottom;
 }
 .sonm-tx-list__col-to-ct {
   display: flex;
   justify-content: center;
-  vertical-align: middle;
+  vertical-align: center;
 }
 .sonm-tx-list__col-to-hash {
   margin: 0 0 0 5px;
@@ -503,6 +506,7 @@
 }
 .sonm-tx-list__col-status {
   width: 70px;
+  vertical-align: bottom;
 }
 .sonm-tx-list__col-status--success {
   color: #7BAF84;
@@ -515,6 +519,16 @@
 }
 .sonm-tx-list__col-amount {
   width: 150px;
+  vertical-align: bottom;
+}
+.sonm-tx-list__col-amount-value {
+  margin-top: 5px;
+}
+.sonm-tx-list__col-amount .sonm-balance {
+  display: table;
+}
+.sonm-tx-list__col-hash {
+  vertical-align: bottom;
 }
 .sonm-login {
   background-color: #0b1c26;

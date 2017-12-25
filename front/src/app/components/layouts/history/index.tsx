@@ -86,7 +86,7 @@ export class History extends React.Component<IProps, any> {
             const currency = this.props.mainStore && this.props.mainStore.currencyMap.get(addr);
             const symbol = currency
                 ? currency.symbol
-                : '';
+                : 'None';
 
             const result = [
                 <Balance
@@ -98,7 +98,6 @@ export class History extends React.Component<IProps, any> {
             ];
 
             if (record.fee) {
-                result.push(<br key="b"/>);
                 result.push(
                     <Balance
                         key="f"

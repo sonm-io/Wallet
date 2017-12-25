@@ -48,7 +48,8 @@
   &__col {
 
     &-from {
-      width: 200px;
+      width: 300px;
+      vertical-align: bottom;
 
       &-ct {
         display: grid;
@@ -80,15 +81,17 @@
 
     &-time {
       width: 85px;
+      vertical-align: bottom;
     }
 
     &-to {
-      width: 200px;
+      width: 300px;
+      vertical-align: bottom;
 
       &-ct {
         display: flex;
         justify-content: center;
-        vertical-align: middle;
+        vertical-align: center;
       }
 
       &-hash {
@@ -102,6 +105,7 @@
 
     &-status {
       width: 70px;
+      vertical-align: bottom;
 
       &--success {
         color: @color-green;
@@ -118,6 +122,19 @@
 
     &-amount {
       width: 150px;
+      vertical-align: bottom;
+
+      &-value {
+        margin-top: 5px;
+      }
+
+      .sonm-balance {
+        display: table;
+      }
+    }
+
+    &-hash {
+      vertical-align: bottom;
     }
   }
 }
