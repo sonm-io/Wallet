@@ -459,12 +459,12 @@
   table-layout: fixed;
 }
 .sonm-tx-list__col-from {
-  width: 200px;
+  width: 300px;
 }
 .sonm-tx-list__col-from-ct {
   display: grid;
   grid-template-columns: min-content auto;
-  grid-template-row: 1fr 1fr;
+  grid-template-row: 1fr;
   grid-gap: 5px;
 }
 .sonm-tx-list__col-from-name {
@@ -477,18 +477,18 @@
   text-overflow: ellipsis;
 }
 .sonm-tx-list__col-from-addr {
-  grid-row: 2;
-  grid-column: 2;
+  grid-row: 1;
+  grid-column: 3;
 }
 .sonm-tx-list__col-from-icon {
-  grid-row: 2;
+  grid-row: 1;
   grid-column: 1;
 }
 .sonm-tx-list__col-time {
   width: 85px;
 }
 .sonm-tx-list__col-to {
-  width: 200px;
+  width: 300px;
 }
 .sonm-tx-list__col-to-ct {
   display: flex;
