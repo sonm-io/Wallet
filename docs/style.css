@@ -38,7 +38,7 @@
   border-top-width: 0;
   border-bottom-width: 0;
   flex-grow: 1;
-  padding: 50px;
+  padding: 20px 50px 50px 50px;
   min-height: 635px;
   box-sizing: border-box;
   display: flex;
@@ -676,6 +676,11 @@
 .sonm-account__tokens {
   grid-column: 1 / 2;
   grid-row: 2;
+}
+.sonm-account__warning {
+  margin-bottom: 5px;
+  font-size: 15px;
+  font-weight: bold;
 }
 .sonm-account__give-me {
   grid-row: 4;
@@ -1764,6 +1769,11 @@ li.sonm-select-dropdown-menu-item-divider {
 .sonm-alert--error {
   background-color: #f9e9f1;
   color: #ED5B5B;
+  font-size: 15px;
+}
+.sonm-alert--info {
+  z-index: 1;
+  background-color: #fcf4d1;
   font-size: 15px;
 }
 .sonm-alert--closed {

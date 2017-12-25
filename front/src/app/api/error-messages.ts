@@ -15,7 +15,7 @@ export const messages: IValidation = {
     select_file: 'Please select file',
     wait_your_tokens: 'SNMT has been successfully delivered from Mars',
     give_me_more: 'Give me SONM tokens!',
-    insufficient_funds: 'Insufficient funds for gas * price + value',
+    insufficient_funds: 'There is not enough Ether for the transaction',
     required_params_missed: 'Required parameter missed',
 };
 

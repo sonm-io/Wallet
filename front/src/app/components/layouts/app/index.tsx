@@ -100,6 +100,7 @@ export class App extends React.Component<IProps, any> {
                         }
                     </div>
                     <AlertList className="sonm-app__alerts"/>
+                    <div className="sonm-alert sonm-alert--info">Wallet work in testnet! Do not use real keys, Ether or tokens.</div>
                     <div className="sonm-app__content">
                         {children}
                     </div>
