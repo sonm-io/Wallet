@@ -1772,6 +1772,8 @@ li.sonm-select-dropdown-menu-item-divider {
   font-size: 15px;
 }
 .sonm-alert--info {
+  border-left: solid 1px #d8d8d8;
+  border-right: solid 1px #d8d8d8;
   z-index: 1;
   background-color: #fcf4d1;
   font-size: 15px;
