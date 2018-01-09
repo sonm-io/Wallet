@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import RcUpload from 'rc-upload';
 import { IButtonProps, Button } from '../button';
 
 const MAX_FILE_SIZE = 100 * 1024;
@@ -18,9 +17,10 @@ export interface IFileOpenResult {
     fileName?: string;
 }
 
-export function Upload({ className, buttonProps, children, onOpenTextFile }: IUploadProps) {
-    function beforeUpload(file: File) {
-        const cancelUpload = true;
+export class Upload extends React.PureComponent<IUploadProps, any> {
+    protected handleChange = (event: any) => {
+        const file = event.target.files[0];
+        const { onOpenTextFile } = this.props;
 
         if (file.size > MAX_FILE_SIZE) {
             throw new Error('Too big file');
@@ -40,20 +40,44 @@ export function Upload({ className, buttonProps, children, onOpenTextFile }: IUp
 
             fileReader.readAsText(file);
         }
-
-        return cancelUpload;
     }
 
-    return (
-        <RcUpload beforeUpload={beforeUpload} className={cn('sonm-upload', className)}>
-            <Button
-                style={{ width: '100%', boxSizing: 'border-box' }}
-                {...buttonProps}
-            >
-                {children}
-            </Button>
-        </RcUpload>
-    );
+    protected inputNode?: HTMLInputElement;
+
+    protected onClick = (event: any) => {
+        if (this.inputNode) {
+            event.stopPropagation();
+
+            this.inputNode.click();
+        }
+    }
+
+    protected saveInputRef = (ref: HTMLInputElement | null) => {
+        if (ref !== null && this.inputNode !== ref) {
+            this.inputNode = ref;
+        }
+    }
+
+    public render() {
+        const { className, buttonProps, children } = this.props;
+
+        return (
+            <div className={cn('sonm-upload', className)} onClickCapture={this.onClick}>
+                <input
+                    type="file"
+                    onChange={this.handleChange}
+                    style={{display: 'none'}}
+                    ref={this.saveInputRef}
+                />
+                <Button
+                    style={{width: '100%', boxSizing: 'border-box'}}
+                    {...buttonProps}
+                >
+                    {children}
+                </Button>
+            </div>
+        );
+    }
 }
 
 export default Upload;
