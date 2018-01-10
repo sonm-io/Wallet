@@ -1,3 +1,26 @@
 .sonm-upload {
   display: inline-block;
+  padding: 0;
+
+  &__label {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: relative;
+  }
+
+  &__input {
+    border: none;
+    outline: none;
+    opacity: 0;
+    position: absolute;
+
+    &:active,
+    &:hover,
+    &:visited,
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
 }

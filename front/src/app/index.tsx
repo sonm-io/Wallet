@@ -30,8 +30,6 @@ async function renderByPath({ pathname, search }: ILocationParams) {
     );
 }
 
-const domLoading = new Promise(done => { window.addEventListener('DOMContentLoaded', done); });
-
 async function handleLogin() {
     history.listen(renderByPath);
 
@@ -43,22 +41,11 @@ async function handleLogin() {
     renderByPath((history as any).location);
 }
 
-async function start() {
-    await domLoading;
-
-    if (!await checkBrowser()) {
-        throw new Error('Browser is not supported!');
-    }
-
+export async function run() {
     render(
         <Login onLogin={handleLogin} key="login" />,
         window.document.querySelector('#root'),
     );
 }
 
-async function checkBrowser() {
-    return localStorage
-        && (CSS.supports('--fake-var', '0')); // safari return false
-}
-
-start();
+export default run;
