@@ -85,12 +85,12 @@ describe('Api',  async function() {
     });
 
     it('should check private key', async function() {
-        const response = await Api.checkPrivateKey(password, address);
-        expect(response.data).equal(true);
+        const response = await Api.getPrivateKey(password, address);
+        expect(response.data).equal('69deaef1da6fd4d01489d7b46e8e3aab587d9fcd49de2080d367c3ef120689ef');
     });
 
     it('should fail check private key', async function() {
-        const response = await Api.checkPrivateKey('1234', address);
+        const response = await Api.getPrivateKey('1234', address);
         expect(response).to.have.nested.property('validation.password');
     });
 
