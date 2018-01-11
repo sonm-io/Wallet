@@ -6,6 +6,7 @@ const {getFullPath, readJson} = require('./utils');
 const extractLess = new ExtractTextPlugin('./style.css');
 
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
@@ -90,8 +91,8 @@ module.exports = {
                 ? new BundleAnalyzerPlugin()
                 : false,
 
-            //isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
-
+            // isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
+            
             isDev ? null : new UglifyJsPlugin({
                 uglifyOptions: {
                     output: {
@@ -116,6 +117,10 @@ module.exports = {
             new HtmlWebpackPlugin({
                 inject: true,
                 template: getFullPath('./assets/entry.html'),
+            }),
+
+            new ScriptExtHtmlWebpackPlugin({
+                inline: ['app']
             }),
 
             extractLess,
