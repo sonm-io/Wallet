@@ -13,6 +13,7 @@ export async function delay(timeout: number) {
 export const newAccount: t.IAccountInfo = {
     name: 'new',
     address: '0x1234567890123456789012345678901234567890',
+    json: '',
     currencyBalanceMap: {
         [SONM_ADDR]: '1',
     },
@@ -30,7 +31,7 @@ export const transactionListResult: t.IResult<[t.ISendTransactionResult[], numbe
             gasLimit: '453',
             fee: '198',
             confirmCount: 0,
-            status: t.TransactionStatus.fail,
+            status: t.TransactionStatus.failed,
             hash: 'hash1',
         },
         {
@@ -71,6 +72,7 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
         {
             name: 'Vasya',
             address: VASYA_ADDR,
+            json: '',
             currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(0, 15);
@@ -81,6 +83,7 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
         {
             name: 'Petya',
             address: PETYA_ADDR,
+            json: '',
             currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(0, 15);

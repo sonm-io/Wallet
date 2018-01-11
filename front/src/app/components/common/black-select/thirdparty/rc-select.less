@@ -1,3 +1,5 @@
+@import "guide.less";
+
 @selectPrefixCls: sonm-select;
 
 @selecterec-background-color: @color-brand-bg;
@@ -351,7 +353,7 @@
     box-shadow: 0 0px 4px @selecterec-color-disabled;
     border-radius: @selecterec-border-radius;
     box-sizing: border-box;
-    z-index: 100;
+    z-index: @z-lhotse;
     left: -9999px;
     top: -9999px;
     position: absolute;
@@ -367,7 +369,7 @@
       margin: 0;
       padding: 0;
       list-style: none;
-      z-index: 9999;
+      z-index: @z-kangchenjunga;
 
       > li {
         margin: 0;

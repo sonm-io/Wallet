@@ -22,10 +22,12 @@ export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListPro
             currencyBalanceList,
         } = this.props;
 
+        if (currencyBalanceList.length === 0) { return null; }
+
         return (
             <div className={cn('sonm-currency-balance-list', className)}>
                 <h2 className="sonm-currency-balance-list__header">
-                    MY TOKENS
+                    MY FUNDS
                 </h2>
                 <ul className="sonm-currency-balance-list__list" >
                     {currencyBalanceList.map(({ symbol, balance, address }) => {

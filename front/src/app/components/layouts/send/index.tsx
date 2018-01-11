@@ -11,6 +11,9 @@ import { ButtonGroup } from 'app/components/common/button-group';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { MainStore, ISendFormValues } from 'app/stores/main';
 import { Header } from 'app/components/common/header';
+// import { gweiToEther } from 'app/utils/gwei-to-ether';
+// import { etherToGwei } from 'app/utils/ether-to-gwei';
+import { trimZeros } from 'app/utils/trim-zeros';
 
 interface IProps extends FormComponentProps {
     className?: string;
@@ -29,7 +32,7 @@ const ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/i;
 @observer
 export class SendSrc extends React.Component<IProps, any> {
     public state = {
-        addressTarget: '0x',
+        addressTarget: '',
     };
 
     public componentWillMount() {
@@ -60,23 +63,31 @@ export class SendSrc extends React.Component<IProps, any> {
         );
     }
 
+    protected updateField(name: string) {
+      if (this.props.form.isFieldsTouched([name])) {
+        this.props.form.validateFields(
+          [name],
+          { force: true },
+          Function.prototype as any,
+        );
+      }
+    }
+
     protected handleChangeAccount = (address: string) => {
         this.mainStore.selectAccount(address);
 
-        this.props.form.validateFields(
-            ['toAddress'],
-            { force: true },
-            Function.prototype as any,
-        );
+        this.updateField('toAddress');
+        this.updateField('amount');
     }
 
     protected handleChangeCurrency = (address: string) => {
-
         this.mainStore.selectCurrency(address);
+
+        this.updateField('amount');
     }
 
     protected handleSetMaximum = () => {
-        const {gasPrice, gasLimit} = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
+        const { gasPrice, gasLimit } = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
         this.props.form.setFieldsValue({
             amount: this.mainStore.getMaxValue(gasPrice, gasLimit),
         });
@@ -146,7 +157,7 @@ export class SendSrc extends React.Component<IProps, any> {
         }
 
         if (this.mainStore.selectedAccountAddress === value) {
-            return cb('No no no');
+            return cb('The destination address must differ the sender address');
         }
 
         cb();
@@ -174,24 +185,60 @@ export class SendSrc extends React.Component<IProps, any> {
         return true;
     }
 
-    protected static normalizeAddress(str: string): string {
-        const s = '0000000000000000000000000000000000000000' + str;
-        const l = s.length;
+    protected validateAmount = (rule: any, value: string, cb: (msg?: string) => void): void => {
+        let error;
+        const setError = (e?: string) => error = e;
 
-        return s.slice(l - 40, l);
+        SendSrc.validatePositiveNumber(rule, value, setError);
+
+        if (!error) {
+            const currentMax = SendSrc.createBigNumber(this.mainStore.currentBalanceMaximum);
+
+            if (currentMax === undefined) {
+                error = 'Maximum values is undetermined';
+            } else if (currentMax.lessThan(value)) {
+                error = 'Value is greater than maximum';
+            }
+        }
+
+        error ? cb(error) : cb();
     }
+
+    protected decorateToAddress = this.props.form.getFieldDecorator('toAddress', {
+        initialValue: trimZeros(this.mainStore.values.toAddress),
+        rules: [
+            { validator: this.validateTargetAddress },
+        ],
+    });
+
+    protected decorateAmount = this.props.form.getFieldDecorator('amount', {
+        initialValue: trimZeros(this.mainStore.values.amount),
+        rules: [
+            { validator: this.validateAmount },
+        ],
+    });
+
+    protected decorateGasLimit = this.props.form.getFieldDecorator('gasLimit', {
+        initialValue: trimZeros(this.mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT),
+        rules: [
+            { validator: SendSrc.validatePositiveInteger },
+        ],
+    });
+
+    protected decorateGasPrice = this.props.form.getFieldDecorator('gasPrice', {
+        initialValue: trimZeros(this.mainStore.userGasPrice),
+        rules: [
+            { validator: SendSrc.validatePositiveNumber },
+        ],
+    });
 
     public render() {
         const {
             className,
-            form,
         } = this.props;
 
         const balanceList = this.mainStore.currentBalanceList;
         const selectedCurrencyAddress = this.mainStore.selectedCurrencyAddress;
-        const gasPrice = this.mainStore.userGasPrice;
-        const gasLimit = this.mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT;
-        const values = this.mainStore.values;
 
         return (
             <div className={cn('sonm-send', className)}>
@@ -215,19 +262,12 @@ export class SendSrc extends React.Component<IProps, any> {
                             label="To"
                             className="sonm-send__target"
                         >
-                            {
-                                form.getFieldDecorator('toAddress', {
-                                    initialValue: values && values.toAddress,
-                                    rules: [
-                                        { validator: this.validateTargetAddress },
-                                    ],
-                                })(
-                                    <Input
-                                        onChange={this.handleChangeTargetAddress}
-                                        placeholder="Address"
-                                    />,
-                                )
-                            }
+                            {this.decorateToAddress(
+                                <Input
+                                    onChange={this.handleChangeTargetAddress}
+                                    placeholder="Address"
+                                />,
+                            )}
                         </Form.Item>
                         <div className="sonm-send__target-icon">
                             <IdentIcon address={this.state.addressTarget}/>
@@ -244,13 +284,9 @@ export class SendSrc extends React.Component<IProps, any> {
                         label="Amount"
                         className="sonm-send__currency-amount"
                     >
-                        {form.getFieldDecorator('amount', {
-                            initialValue: values && values.amount,
-                            rules: [
-                                { validator: SendSrc.validatePositiveNumber },
-                            ],
-                        })(
+                        {this.decorateAmount(
                             <Input
+                                autoComplete="off"
                                 className="sonm-send__input"
                                 placeholder="Amount"
                             />,
@@ -269,13 +305,9 @@ export class SendSrc extends React.Component<IProps, any> {
                         label="Gas limit"
                         className="sonm-send__gas-limit"
                     >
-                        {form.getFieldDecorator('gasLimit', {
-                            initialValue: gasLimit,
-                            rules: [
-                                { validator: SendSrc.validatePositiveInteger },
-                            ],
-                        })(
+                        {this.decorateGasLimit(
                             <Input
+                                autoComplete="off"
                                 className="sonm-send__input"
                                 placeholder="Gas limit"
                             />,
@@ -286,22 +318,16 @@ export class SendSrc extends React.Component<IProps, any> {
                             label="Gas price"
                             className="sonm-send__gas-price"
                         >
-                            {
-                                form.getFieldDecorator('gasPrice', {
-                                    initialValue: gasPrice,
-                                    rules: [
-                                        { validator: SendSrc.validatePositiveNumber },
-                                    ],
-                                })(
-                                    <Input
-                                        className="sonm-send__input"
-                                        placeholder="Gas price"
-                                        onChange={this.handleChangeGasPrice}
-                                    />,
-                                )
-                            }
+                            {this.decorateGasPrice(
+                                <Input
+                                    autoComplete="off"
+                                    className="sonm-send__input"
+                                    placeholder="Gas price"
+                                    onChange={this.handleChangeGasPrice}
+                                />,
+                            )}
                             <span className="sonm-send__input-suffix">
-                                {this.mainStore.firstToken.symbol}
+                                Gwei
                             </span>
                             <PriorityInput
                                 valueList={['low', 'normal', 'high']}
@@ -309,15 +335,15 @@ export class SendSrc extends React.Component<IProps, any> {
                                 onChange={this.handleChangePriority}
                             />
                         </Form.Item>
-                        <Button
-                            onClick={this.handleSubmit}
-                            type="submit"
-                            color="violet"
-                            className="sonm-send__submit"
-                        >
-                            NEXT
-                        </Button>
                     </div>
+                    <Button
+                        onClick={this.handleSubmit}
+                        type="submit"
+                        color="violet"
+                        className="sonm-send__submit"
+                    >
+                        NEXT
+                    </Button>
                 </Form>
             </div>
         );

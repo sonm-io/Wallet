@@ -1,14 +1,54 @@
+@import 'guide.less';
+
+@import "./sub/alerts/index";
+
+.sonm-app__row {
+  border: 1px solid @color-border;
+  border-top-width: 0;
+  border-bottom-width: 0;
+
+  &:last-child {
+    border-bottom-width: 1px;
+  }
+}
+
 .sonm-app {
-  margin: 20px auto;
+  margin: 0 auto;
   width: 1280px;
-  border: solid 1px @color-border;
+  min-height: 100vh;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
 
   &__content {
-    margin: 50px;
-    min-height: 600px;
+    .sonm-app__row;
+
+    flex-grow: 1;
+    padding: 20px 50px 50px 50px;
+    min-height: 635px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    position: relative;
+
+    & &-inner {
+      min-height: 635px;
+    }
+  }
+
+  &__offline-alert {
+    .sonm-app__row
+  }
+
+  &__alerts {
+    .sonm-app__row
+  }
+
+  &__load-mask-ct {
+    position: relative;
+    padding: 0;
+    margin: 0;
   }
 }
 
@@ -32,7 +72,7 @@
       border-bottom-width: 2px !important;
       font-size: 15px;
       line-height: 24px;
-      padding: 0 4px !important;
+      padding: 0 !important;
       margin: 14px 10px !important;
 
       &.ant-menu-item-selected {

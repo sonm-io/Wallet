@@ -30,8 +30,6 @@ async function renderByPath({ pathname, search }: ILocationParams) {
     );
 }
 
-const domLoading = new Promise(done => { window.addEventListener('DOMContentLoaded', done); });
-
 async function handleLogin() {
     history.listen(renderByPath);
 
@@ -43,13 +41,11 @@ async function handleLogin() {
     renderByPath((history as any).location);
 }
 
-async function start() {
-    await domLoading;
-
+export async function run() {
     render(
         <Login onLogin={handleLogin} key="login" />,
         window.document.querySelector('#root'),
     );
 }
 
-start();
+export default run;

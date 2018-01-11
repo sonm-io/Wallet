@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { Spin } from 'antd';
 import * as cn from 'classnames';
 import { Button } from 'app/components/common/button';
 import { Api } from 'app/api';
 import { IValidation } from 'ipc/types';
 import { BlackSelect } from 'app/components/common/black-select';
 import { Dialog } from 'app/components/common/dialog';
+import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
+import { getMessageText } from 'app/api/error-messages';
 
 interface IProps {
     className?: string;
@@ -111,6 +112,8 @@ export class Login extends React.Component<IProps, any> {
     protected handleLogin = async (event: any) => {
         event.preventDefault();
 
+        this.setState({ pending: true });
+
         try {
             const { validation, data: success } = await Api.setSecretKey(this.state.password, this.state.name);
 
@@ -120,11 +123,14 @@ export class Login extends React.Component<IProps, any> {
 
             if (success) {
                 this.props.onLogin();
+                return;
             }
 
         } catch (e) {
             this.setState({ error: String(e) });
         }
+
+        this.setState({ pending: false });
     }
 
     protected handleCreateNew = async (event: any) => {
@@ -132,13 +138,23 @@ export class Login extends React.Component<IProps, any> {
 
         let invalid = false;
 
+        if (this.state.newName.length < 1 || this.state.newName.length > 20) {
+            this.setState({ validation: { newName: getMessageText('wallet_name_length') } });
+            invalid = true;
+        }
+
+        if (this.state.newPassword.length < 1) {
+            this.setState({ validation: { newPassword: getMessageText('password_required') } });
+            invalid = true;
+        }
+
         if (this.state.wallets.indexOf(this.state.newName) !== -1) {
-            this.setState({ validation: { newName: 'Already exist' } });
+            this.setState({ validation: { newName: getMessageText('wallet_allready_exists') } });
             invalid = true;
         }
 
         if (this.state.newPassword !== this.state.confirmation) {
-            this.setState({ validation: { confirmation: 'Passwords !==' } });
+            this.setState({ validation: { confirmation: getMessageText('password_not_match') } });
             invalid = true;
         }
 
@@ -155,6 +171,7 @@ export class Login extends React.Component<IProps, any> {
                 } else {
                     window.localStorage.setItem('sonm-last-used-wallet', this.state.newName);
                     this.props.onLogin();
+                    return;
                 }
 
             } catch (e) {
@@ -233,6 +250,7 @@ export class Login extends React.Component<IProps, any> {
                         <span className="sonm-login__label-text">Password</span>
                         <span className="sonm-login__label-error">{this.state.validation.password}</span>
                         <input
+                            autoComplete="off"
                             ref={setFocus}
                             type="password"
                             className="sonm-login__input"
@@ -264,6 +282,7 @@ export class Login extends React.Component<IProps, any> {
                         <span className="sonm-login__label-text">Wallet name</span>
                         <span className="sonm-login__label-error">{this.state.validation.newName}</span>
                         <input
+                            autoComplete="off"
                             ref={setFocus}
                             type="text"
                             className="sonm-login__input"
@@ -275,6 +294,7 @@ export class Login extends React.Component<IProps, any> {
                         <span className="sonm-login__label-text">Password</span>
                         <span className="sonm-login__label-error">{this.state.validation.newPassword}</span>
                         <input
+                            autoComplete="off"
                             type="password"
                             className="sonm-login__input"
                             name="newPassword"
@@ -285,6 +305,7 @@ export class Login extends React.Component<IProps, any> {
                         <span className="sonm-login__label-text">Password confirmation</span>
                         <span className="sonm-login__label-error">{this.state.validation.confirmation}</span>
                         <input
+                            autoComplete="off"
                             type="password"
                             className="sonm-login__input"
                             name="confirmation"
@@ -308,7 +329,7 @@ export class Login extends React.Component<IProps, any> {
         } = this.props;
 
         return (
-            <Spin spinning={this.state.pending} className="sonm-login__spin">
+            <LoadMask visible={this.state.pending} className="sonm-login__spin">
                 <div className={cn('sonm-login', className)}>
                     <div className="sonm-login__errors">
                         {this.state.error}
@@ -316,7 +337,7 @@ export class Login extends React.Component<IProps, any> {
                     <div
                         className={cn(
                             'sonm-login__center', {
-                            'sonm-login__center--inactive': this.state.currentAction !== 'select-wallet',
+                            'sonm-login__center--blurred': this.state.currentAction !== 'select-wallet',
                         })}
                     >
                         <div className="sonm-login__logo" />
@@ -328,7 +349,7 @@ export class Login extends React.Component<IProps, any> {
                     {this.renderNewWalletPopup()}
                     {this.renderLoginPopup()}
                 </div>
-            </Spin>
+            </LoadMask>
         );
     }
 }

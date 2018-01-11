@@ -4,15 +4,18 @@ import * as cn from 'classnames';
 import { Icon } from 'antd';
 import { Balance } from '../balance-view';
 import { Hash } from '../hash-view';
+import { DownloadFile } from '../download-file';
 
 export interface IAccountItemProps {
     className?: string;
     address: string;
+    json?: string;
     name: string;
     firstBalance: string;
     secondBalance: string;
     onRename?: (newName: string, address: string) => void;
     onClickIcon?: (address: string) => void;
+    hasButtons?: boolean;
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {
@@ -35,13 +38,15 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             firstBalance,
             secondBalance,
             onClickIcon,
+            json,
+            hasButtons,
         } = this.props;
 
         return (
             <div className={cn('sonm-account-item', className)}>
                 <IdentIcon address={address} className="sonm-account-item__blockies"/>
                 {onClickIcon
-                    ? <a href="" onClick={this.handleClickIcon} className="sonm-account-item__icon-link"/>
+                    ? <a href="#" onClick={this.handleClickIcon} className="sonm-account-item__icon-link"/>
                     : null
                 }
                 <span className="sonm-account-item__name-wrapper">
@@ -53,7 +58,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fontSizePx={16}
                 />
                 <Hash
-                    hasCopyButton
+                    hasCopyButton={hasButtons}
                     className="sonm-account-item__address"
                     hash={address}
                     onClick={this.handleClickIcon}
@@ -63,6 +68,12 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fullString={secondBalance}
                     fontSizePx={16}
                 />
+                {hasButtons && json
+                    ?
+                    <div className="sonm-account-item__download">
+                        <DownloadFile data={json} fileName={`account-${address}.json`}/>
+                    </div>
+                    : null}
             </div>
         );
     }
@@ -89,7 +100,9 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
     private stopEdit = () => {
         if (this.props.onRename) {
             const text = this.inputRef.value;
-            this.props.onRename(this.props.address, text);
+            if (text) {
+                this.props.onRename(this.props.address, text);
+            }
         }
 
         this.setState({

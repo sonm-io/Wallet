@@ -1,9 +1,10 @@
-@import '../../common/deletable-item/index';
 @import 'sub/add-account/index';
+@import 'sub/empty-account-list/index';
+@import 'sub/delete-account-confirmation/index';
 
 .sonm-wallets {
   display: grid;
-  grid-template-rows: 50px 1fr repeat(auto-fill, 50px);
+  grid-template-rows: 50px 1fr auto;
   grid-template-columns: 1fr 270px;
   grid-gap: 20px;
 
@@ -17,10 +18,13 @@
     grid-row: 2;
   }
 
-  &__add-button {
+  &__buttons {
     grid-column: 1;
     grid-row: 3;
-    width: 200px;
+  }
+
+  &__button {
+    margin-right: 20px;
   }
 
   &__balances {

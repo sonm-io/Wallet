@@ -5,6 +5,8 @@ import { Button } from 'app/components/common/button';
 import { Hash } from 'app/components/common/hash-view';
 import { IValidation } from 'ipc/types';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
+import { getMessageText } from 'app/api/error-messages';
+
 // import { setFocus } from 'app/components/common/utils/setFocus';
 
 export interface IAddAccountForm {
@@ -37,19 +39,19 @@ export class AddAccount extends React.Component<IProps, any> {
         const validation = { ...this.state.validation };
 
         if (!this.state.password) {
-            validation.password = 'Password is required';
+            validation.password = getMessageText('password_required');
         }
 
         if (!this.state.name) {
-            validation.name = 'Name is required';
+            validation.name = getMessageText('name_required');
         }
 
         if (!this.state.json) {
-            validation.json = 'Please select file';
+            validation.json = getMessageText('select_file');
         }
 
         if (this.props.existingAccounts.indexOf(this.state.address) !== -1) {
-            validation.json = 'Account already exists';
+            validation.json = getMessageText('account_already_exists');
         }
 
         if (Object.keys(validation).every(x => !validation[x])) {
@@ -201,7 +203,7 @@ export class AddAccount extends React.Component<IProps, any> {
                         type="submit"
                         height={40}
                     >
-                        Create
+                        Add
                     </Button>
                     {this.state.address === '' ? null :
                         <div

@@ -1,7 +1,9 @@
-import { observable, computed, IObservableArray, toJS, autorunAsync, action } from 'mobx';
+import { observable, computed, IObservableArray, autorunAsync, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
+import { AbstractStore } from './abstract-store';
+const { pending } = AbstractStore;
 
 const Api = api.Api;
 const DAY = 1000 * 60 * 60 * 24;
@@ -17,7 +19,7 @@ export interface ISendForm {
 
 const ITEMS_PER_PAGE = 10;
 
-export class HistoryStore {
+export class HistoryStore extends AbstractStore {
     @observable public errors: any[] = [];
 
     @observable.ref public currentPageTxHashList: string[] = [];
@@ -32,19 +34,11 @@ export class HistoryStore {
     @observable public total = 0;
     @observable public perPage = ITEMS_PER_PAGE;
 
-    @observable public pending = false;
-
     @observable public txMap = new Map<string, api.ISendTransactionResult>();
 
     @observable protected inProgress: IObservableArray<api.ISendTransactionResult> = observable.array();
 
-    @computed public get currentList(): api.ISendTransactionResult[] {
-        const result: api.ISendTransactionResult[] = this.currentPageTxHashList.map(
-            hash => toJS(this.txMap.get(hash)) as api.ISendTransactionResult,
-        );
-
-        return result;
-    }
+    @observable.ref public currentList: api.ISendTransactionResult[] = [];
 
     @computed public get totalPage() {
         return this.total - (this.total % ITEMS_PER_PAGE) + ITEMS_PER_PAGE;
@@ -52,18 +46,26 @@ export class HistoryStore {
 
     protected isInitiated = false;
 
-    constructor() {
-        autorunAsync(async () => {
-            if (this.filterParams && this.page && this.isInitiated) { // HACK
-                this.update(this.filterParams, this.page);
-            }
-        });
+    @pending
+    public async init() {
+        if (!this.isInitiated) {
+            this.isInitiated = true;
+            await this.update();
+            this.createUpdateReaction();
+        }
+        return true;
     }
 
-    public async init() {
-        this.isInitiated = true;
-        await this.update(this.filterParams, this.page);
-        return true;
+    protected createUpdateReaction() {
+        autorunAsync(async () => {
+            if (
+                this.filterParams
+                && this.page // update if any change
+                && this.isInitiated
+            ) {
+                this.update();
+            }
+        });
     }
 
     @computed
@@ -80,77 +82,54 @@ export class HistoryStore {
         return filter;
     }
 
+    @pending
     @asyncAction
-    public *forceUpdate() {
-        yield this.update(this.filterParams, this.page);
-    }
+    public *update() {
+        const filter = this.filterParams;
+        const page = this.page;
 
-    @asyncAction
-    public *submitTransaction(params: api.ISendTransaction, password: string) {
-        try {
-            const created = {
-                ...params,
-                confirmCount: 0,
-                status: api.TransactionStatus.created ,
-                hash: '',
-            };
+        const { data: [txList, total] } = yield Api.getSendTransactionList(
+            filter,
+            ITEMS_PER_PAGE,
+            (page - 1) * ITEMS_PER_PAGE,
+        );
 
-            this.inProgress.push(created);
-
-            const result = yield Api.send(params, password);
-
-            this.inProgress.remove(created);
-
-            this.addTxToMap([result]);
-
-        } catch (e) {
-            this.errors.push(e);
-        }
-    }
-
-    // public async init() {
-    //     await this.update(this.filterParams);
-    // }
-
-    @asyncAction
-    public *update(filter: api.ITxListFilter, page: number) {
-        try {
-            this.pending = true;
-            this.page = 1;
-
-            const { data: [txList, total] } = yield Api.getSendTransactionList(
-                filter,
-                ITEMS_PER_PAGE,
-                (page - 1) * ITEMS_PER_PAGE,
-            );
-
-            this.total = total;
-            this.addTxToMap(txList);
-            this.currentPageTxHashList = txList.map((x: api.ISendTransactionResult) => x.hash);
-        } catch (e) {
-            this.errors.push(e);
-        } finally {
-            this.pending = false;
-        }
-    }
-
-    protected addTxToMap(txList: api.ISendTransactionResult[]) {
-        txList.map((tx: api.ISendTransactionResult) => this.txMap.set(tx.hash, tx));
+        this.total = total;
+        this.currentList = txList;
     }
 
     @action
     public setFilterFrom = (from: string) => {
-        this.fromAddress = from;
+        from = (from === 'all' ? '' : from);
+
+        if (from !== this.fromAddress || this.page !== 1) {
+            this.fromAddress = from;
+            this.page = 1;
+
+            return true;
+        }
+
+        return false;
     }
 
     @action
     public setFilterCurrency = (currency: string) => {
-        this.curencyAddress = currency;
+        currency = (currency === 'all' ? '' : currency);
+
+        if (currency !== this.curencyAddress || this.page !== 1) {
+            this.curencyAddress = currency;
+            this.page = 1;
+
+            return true;
+        }
+
+        return false;
     }
 
     @action
     public setQuery = (query: string) => {
         this.query = query;
+        this.page = 1;
     }
 
     @action

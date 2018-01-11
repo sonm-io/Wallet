@@ -10,12 +10,19 @@ import * as React from 'react';
 import { LocaleProvider } from 'antd';
 import * as enUS from 'antd/lib/locale-provider/en_US';
 import { navigate } from './navigate';
-const enUSLocale: any = enUS;
 
 let defaultAction;
 
 const navigateToSend = () => navigate({ path: '/send' });
-const navigateToHistory = () => navigate({ path: '/history' });
+const navigateToHistory = (accountAddress: string = '', currencyAddress: string = '') => {
+    navigate({
+        path: '/history',
+        query: accountAddress || currencyAddress ? {
+            address: accountAddress,
+            currency: currencyAddress,
+        } : undefined,
+    });
+};
 const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
 
@@ -27,7 +34,7 @@ const routes = [
 
             return {
                 content: (
-                    <LocaleProvider locale={enUSLocale}>
+                    <LocaleProvider locale={enUS as any}>
                         <App
                             selectedNavMenuItem={inner.pathKey}
                             {...inner.props}
@@ -36,7 +43,7 @@ const routes = [
                         </App>
                     </LocaleProvider>
                 ),
-                title: inner.title,
+                title: `SONM Wallet: ${inner.title}`,
             };
         },
         children: [
@@ -51,6 +58,7 @@ const routes = [
                     const content = next && next.content
                         ? next.content
                         : <Send
+                            className="sonm-app__content--inner"
                             initialAddress={initialAddress}
                             initialCurrency={initialCurrency}
                             onRequireConfirmation={navigateToConfirmation}
@@ -71,14 +79,22 @@ const routes = [
                         path: '/confirm',
                         action: (ctx: IContext) => ({
                             title: 'Confirmation',
-                            content: <SendConfirm onBack={navigateToSend} onSuccess={navigateToSuccess} />,
+                            content: <SendConfirm
+                                className="sonm-app__content--inner"
+                                onBack={navigateToSend}
+                                onSuccess={navigateToSuccess}
+                            />,
                         }),
                     },
                     {
                         path: '/success',
                         action: (ctx: IContext) => ({
                             title: 'Success',
-                            content: <SendSuccess onClickHistory={navigateToHistory} onClickSend={navigateToSend} />,
+                            content: <SendSuccess
+                                className="sonm-app__content--inner"
+                                onClickHistory={navigateToHistory}
+                                onClickSend={navigateToSend}
+                            />,
                         }),
                     },
                 ],

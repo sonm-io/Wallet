@@ -68,6 +68,10 @@ export class Api {
         return createPromise('account.setSecretKey', { password, walletName });
     }
 
+    public static async checkConnection(): Promise<IResult<boolean>>  {
+        return createPromise('checkConnection');
+    }
+
     public static async checkPrivateKey(password: string, address: string): Promise<IResult<boolean>>  {
         return createPromise('account.checkPrivateKey', { address, password });
     }
@@ -96,6 +100,10 @@ export class Api {
         return createPromise('account.remove', { address });
     }
 
+    public static async requestTestTokens(password: string, address: string): Promise<IResult<boolean>> {
+        return createPromise('account.requestTestTokens', { address, password });
+    }
+
     public static async renameAccount(address: string, name: string): Promise<IResult<boolean>> {
         return createPromise('account.rename', { address, name });
     }
@@ -109,7 +117,9 @@ export class Api {
     }
 
     public static async getCurrencyList(): Promise<IResult<ICurrencyInfo[]>> {
-        return createPromise('account.getCurrencies');
+        const r = await createPromise('account.getCurrencies');
+
+        return r;
     }
 
     public static async send(tx: ISendTransaction, password: string)

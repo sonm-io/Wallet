@@ -6,6 +6,9 @@ import { AccountBigSelect } from 'app/components/common/account-big-select';
 import Header from '../../common/header';
 import IdentIcon from '../../common/ident-icon/index';
 import { navigate } from 'app/router';
+import Button from '../../common/button/index';
+import { getMessageText } from 'app/api/error-messages';
+import { Input, Icon } from 'antd';
 
 interface IProps {
     className?: string;
@@ -13,9 +16,18 @@ interface IProps {
     initialAddress: string;
 }
 
+enum Dialogs {
+    giveMe = 'giveMe',
+    none = '',
+}
+
 @inject('mainStore')
 @observer
 export class Account extends React.Component<IProps, any> {
+    public state = {
+        visibleDialog: Dialogs.none,
+    };
+
     public componentWillMount() {
         if (!this.props.mainStore) { return; }
 
@@ -48,6 +60,16 @@ export class Account extends React.Component<IProps, any> {
         });
     }
 
+    protected handleGiveMeMore = async (event: any) => {
+        event.preventDefault();
+
+        if (!this.props.mainStore) { return; }
+
+        await this.props.mainStore.giveMeMore(event.target.password.value);
+
+        await this.props.mainStore.update();
+    }
+
     public render() {
         if (!this.props.mainStore) { return null; }
 
@@ -56,7 +78,7 @@ export class Account extends React.Component<IProps, any> {
         } = this.props;
 
         return [
-            <Header className="sonm-wallets__header" key="header">
+            <Header className="sonm-account__header" key="header">
                 Account
             </Header>,
             <div className={cn('sonm-account', className)} key="account">
@@ -75,33 +97,54 @@ export class Account extends React.Component<IProps, any> {
                     View operation history
                 </button>
 
-                <ul className="sonm-account__tokens" >
-                    <Header className="sonm-wallets__header">
-                        Tokens
+                {this.props.mainStore.currentBalanceList.length === 0 ? null :
+                    <ul className="sonm-account__tokens" >
+                        <Header className="sonm-account__header">
+                            Coins and tokens
+                        </Header>
+                        {this.props.mainStore.currentBalanceList.map(({ symbol, address, name, balance, decimals }) => {
+                            return (
+                                <li className="sonm-account-token-list__currency" key={address}>
+                                    <IdentIcon
+                                        address={address}
+                                        width={40}
+                                        className="sonm-account-token-list__currency-blockies"
+                                    />
+                                    <div className="sonm-account-token-list__currency-name">{name}</div>
+                                    <div className="sonm-account-token-list__currency-balance">
+                                        {balance} {symbol}
+                                    </div>
+                                    <button
+                                        name={address}
+                                        className="sonm-account-token-list__currency-button"
+                                        onClick={this.handleSendClick}
+                                    >
+                                        Send
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>}
+
+                <form onSubmit={this.handleGiveMeMore} className="sonm-account__give-me">
+                    <Header className="sonm-account__header">
+                        SONM test tokens request
                     </Header>
-                    {this.props.mainStore.currentBalanceList.map(({ symbol, address, name, balance, decimals }) => {
-                        return (
-                            <li className="sonm-account-token-list__currency" key={address}>
-                                <IdentIcon
-                                    address={address}
-                                    width={40}
-                                    className="sonm-account-token-list__currency-blockies"
-                                />
-                                <div className="sonm-account-token-list__currency-name">{name}</div>
-                                <div className="sonm-account-token-list__currency-balance">
-                                    {balance} {symbol}
-                                </div>
-                                <button
-                                    name={address}
-                                    className="sonm-account-token-list__currency-button"
-                                    onClick={this.handleSendClick}
-                                >
-                                    Send
-                                </button>
-                            </li>
-                        );
-                    })}
-                </ul>
+                    <div className="sonm-account__warning">You need test Ether for token request. Get some here - <a href="https://faucet.rinkeby.io/" target="_blank">https://faucet.rinkeby.io/</a></div>
+                    <div className="sonm-account__give-me-ct">
+                        <Input
+                            autoComplete="off"
+                            name="password"
+                            className="sonm-account__give-me-password"
+                            prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                            type="password"
+                            placeholder="Account password"
+                        />
+                        <Button type="submit" className="sonm-account__give-me-button" square transparent>
+                            {getMessageText('give_me_more')}
+                        </Button>
+                    </div>
+                </form>
             </div>,
         ];
     }

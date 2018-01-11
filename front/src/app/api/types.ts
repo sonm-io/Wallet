@@ -7,7 +7,7 @@ export interface IRawAccount {
 export enum TransactionStatus {
     created = 'created',
     pending = 'pending',
-    fail = 'fail',
+    failed = 'failed',
     success = 'success',
 }
 
@@ -33,6 +33,7 @@ export interface IAccountInfo {
     name: string;
     address: string;
     currencyBalanceMap: ICurrencyBalanceMap;
+    json: string;
 }
 
 export interface ICurrencyBalanceMap {

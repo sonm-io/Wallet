@@ -3,5 +3,5 @@
 /node_modules/
 /package-lock.json
 /yarn.lock
-/front/dist
+/dist
 **/.DS_Store

@@ -5,39 +5,41 @@ import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';
 import { inject, observer } from 'mobx-react';
 import { MainStore } from 'app/stores/main';
+import { HistoryStore } from 'app/stores/history';
+import { Header } from 'app/components/common/header';
 
 interface IProps {
     className?: string;
     mainStore?: MainStore;
+    historyStore?: HistoryStore;
     onSuccess: () => void;
     onBack: () => void;
 }
 
-@inject('mainStore')
+@inject('mainStore', 'historyStore')
 @observer
 export class SendConfirm extends React.Component<IProps, any> {
     public handleConfrim = async (event: any) => {
         const mainStore = this.props.mainStore;
-        if (!mainStore) { return; }
+        const historyStore = this.props.historyStore;
+        if (!mainStore || !historyStore) { return; }
 
         event.preventDefault();
 
         const password = event.target.password.value;
 
-        const pendingId = mainStore.startPending('confirm');
-
         const isPasswordValid = await mainStore.checkSelectedAccountPassword(password);
 
         if (isPasswordValid) {
-            mainStore.confirmTransaction(password);
+            (mainStore.confirmTransaction(password) as any).then(() => historyStore.update());
 
             this.props.onSuccess();
         }
-
-        mainStore.stopPending(pendingId);
     }
 
     public handleCancel = () => {
+        this.props.mainStore && this.props.mainStore.resetValidation();
+
         this.props.onBack();
     }
 
@@ -60,7 +62,7 @@ export class SendConfirm extends React.Component<IProps, any> {
 
         return (
             <div className={cn('sonm-send-confirm', this.props.className)}>
-                <h1 className="sonm-send-confirm__header">Transfer confirmation</h1>
+                <Header className="sonm-send-confirm__header">Transfer confirmation</Header>
                 <section className="sonm-send-confirm__from-to">
                     <div className="sonm-send-confirm__account">
                         <IdentIcon address={accountAddress} className="sonm-send-confirm__account-blockies"/>
@@ -71,7 +73,7 @@ export class SendConfirm extends React.Component<IProps, any> {
                     <div className="sonm-send-confirm__account">
                         <IdentIcon address={toAddress} className="sonm-send-confirm__account-blockies"/>
                         <span className="sonm-send-confirm__account-target">
-                            {accountAddress}
+                            {toAddress}
                         </span>
                     </div>
                 </section>
@@ -81,15 +83,17 @@ export class SendConfirm extends React.Component<IProps, any> {
                     <dt>Gas limit</dt>
                     <dd>{gasLimit}</dd>
                     <dt>Gas price</dt>
-                    <dd>{gasPrice} ETH</dd>
+                    <dd>{gasPrice} Gwei</dd>
                 </dl>
                 <Form onSubmit={this.handleConfrim} className="sonm-send-confirm__password-form">
-                    <h2>Please enter account password</h2>
+                    <h2 className="sonm-send-confirm__password-header">Please enter account password</h2>
                     <Form.Item
+                        className="sonm-send-confirm__password-field"
                         validateStatus={passwordValidationMsg ? 'error' : 'success'}
                         help={passwordValidationMsg}
                     >
                         <Input
+                            autoComplete="off"
                             name="password"
                             className="sonm-send-confirm__password-input"
                             prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
@@ -99,18 +103,19 @@ export class SendConfirm extends React.Component<IProps, any> {
                     </Form.Item>
                     <Button
                         className="sonm-send-confirm__password-button"
-                        type="submit"
-                        color="violet"
-                    >
-                        Send
-                    </Button>
-                    <Button
-                        className="sonm-send-confirm__password-button"
                         transparent
                         type="button"
                         onClick={this.handleCancel}
                     >
                         Back
+                    </Button>
+                    <Button
+                        disabled={mainStore.isOffline}
+                        className="sonm-send-confirm__password-button"
+                        type="submit"
+                        color="violet"
+                    >
+                        Send
                     </Button>
                 </Form>
             </div>

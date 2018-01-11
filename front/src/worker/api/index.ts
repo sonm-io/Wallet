@@ -10,6 +10,7 @@ import * as t from '../../app/api/types';
 const { createSonmFactory, utils } = sonmApi;
 
 const KEY_WALLETS_LIST = 'sonm_wallets';
+const PENDING_HASH = 'waiting for hash...';
 
 interface IPayload {
     [index: string]: any;
@@ -60,11 +61,8 @@ function createPromise(
     });
 }
 
-const DEFAULT_SETTINGS = {
-    node_url: 'https://rinkeby.infura.io',
-    chain_id: 'rinkeby',
-    language: 'eng',
-};
+const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
+const CHAIN_ID = 'rinkeby';
 
 class Api {
     private routes: {
@@ -87,12 +85,8 @@ class Api {
 
         this.routes = {
             'ping': this.ping,
-
             'getWalletList': this.getWalletList,
-            'getSonmTokenAddress': this.getSonmTokenAddress,
-
-            'getSettings': this.getSettings,
-            'setSettings': this.setSettings,
+            'checkConnection': this.checkConnection,
 
             'account.add': this.addAccount,
             'account.create': this.createAccount,
@@ -104,18 +98,20 @@ class Api {
             'account.getCurrencies': this.getCurrencies,
             'account.send': this.send,
             'account.list': this.getAccountList,
+            'account.requestTestTokens': this.requestTestTokens,
 
             'account.setSecretKey': this.setSecretKey,
             'account.checkPrivateKey': this.checkPrivateKey,
             'account.hasSavedData': this.hasSavedData,
 
             'transaction.list': this.getTransactionList,
+
+            'getSonmTokenAddress': this.getSonmTokenAddress,
         };
 
         this.storage = {
             accounts: {},
             transactions: [],
-            settings: DEFAULT_SETTINGS,
         };
     }
 
@@ -138,6 +134,20 @@ class Api {
         return {
             data: (await createPromise('get', { key: this.hash })) ? true : false,
         };
+    }
+
+    public checkConnection = async (): Promise<IResponse> => {
+        try {
+            await this.getGasPrice();
+
+            return {
+                data: true,
+            };
+        } catch (err) {
+            return {
+                data: false,
+            };
+        }
     }
 
     public checkPrivateKey = async (data: IPayload): Promise<IResponse> => {
@@ -197,7 +207,7 @@ class Api {
     private createAccount = async (data: IPayload): Promise<IResponse> => {
         if (data.passphase) {
             return {
-                data: utils.newAccount(data.passphase),
+                data: JSON.stringify(utils.newAccount(data.passphase)),
             };
         } else {
             throw new Error('required_params_missed');
@@ -216,11 +226,7 @@ class Api {
                 try {
                     this.storage = this.decrypt(dataFromStorage);
 
-                    if (!this.storage.settings) {
-                        this.storage.settings = DEFAULT_SETTINGS;
-                    }
-
-                    this.processPendingTransactions();
+                    this.processTransactions();
 
                     return {
                         data: true,
@@ -247,8 +253,8 @@ class Api {
             }
         } else {
             const validation = {
-                password: !data.password ? 'password_empty' : null,
-                walletName: !data.walletName ? 'walletName_empty' : null,
+                password: !data.password ? 'password_required' : null,
+                walletName: !data.walletName ? 'walletName_required' : null,
             };
 
             return {
@@ -266,17 +272,23 @@ class Api {
             requests.push(this.getCurrencyBalances(address));
         }
 
-        const balancies = await Promise.all(requests);
+        let balancies;
+        try {
+            balancies = await Promise.all(requests);
+        } catch (err) {}
 
         const list = [] as t.IAccountInfo[];
         for (let i = 0; i < addresses.length; i++) {
             const address = addresses[i];
 
-            list.push({
-                address,
-                name: accounts[address].name,
-                currencyBalanceMap: balancies[i],
-            });
+            if (accounts[address]) {
+                list.push({
+                    address,
+                    name: accounts[address].name,
+                    json: JSON.stringify(accounts[address].json),
+                    currencyBalanceMap: balancies && balancies[i] ? balancies[i] : {},
+                });
+            }
         }
 
         return {
@@ -295,25 +307,6 @@ class Api {
         return this.storage.accounts || null;
     }
 
-    public getSettings = async (): Promise<IResponse> => {
-        return {
-            data: this.storage.settings,
-        };
-    }
-
-    public setSettings = async (data: IPayload): Promise<IResponse> => {
-        if (data.settings) {
-            this.storage.settings = data.settings;
-            await this.saveData();
-
-            return {
-                data: true,
-            };
-        } else {
-            throw new Error('required_params_missed');
-        }
-    }
-
     public async ping(): Promise<IResponse> {
         return {
             data: {
@@ -322,20 +315,35 @@ class Api {
         };
     }
 
-    private async processPendingTransactions() {
-        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+    private async processTransactions() {
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+        const transactions = [];
 
+        let needSave = false;
         for (const transaction of this.storage.transactions) {
-            if (transaction.status === 'pending') {
-                const txResult = factory.createTxResult(transaction.hash);
-                this.proceedTx(transaction, txResult);
+            // remove pending
+            if (transaction.hash !== PENDING_HASH) {
+                transactions.push(transaction);
+
+                if (transaction.status === 'pending') {
+                    const txResult = factory.createTxResult(transaction.hash);
+                    this.proceedTx(transaction, txResult);
+                }
+
+                needSave = true;
             }
+        }
+
+        this.storage.transactions = transactions;
+
+        if (needSave) {
+            this.saveData();
         }
     }
 
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
-            const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+            const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
 
             this.accounts[address] = {
                 factory,
@@ -367,7 +375,7 @@ class Api {
     }
 
     public getGasPrice = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
@@ -376,7 +384,7 @@ class Api {
     }
 
     public getSonmTokenAddress = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
 
         return {
             data: await factory.getSonmTokenAddress(),
@@ -420,8 +428,6 @@ class Api {
                     };
                 }
             } catch (err) {
-                //console.log(err);
-
                 return {
                     validation: {
                         password: 'password_not_valid',
@@ -471,6 +477,34 @@ class Api {
         }
     }
 
+    public requestTestTokens = async (data: IPayload): Promise<IResponse> => {
+        if (data.address && data.password) {
+            const validation = await this.checkAccountPassword(data.password, data.address);
+
+            if (!validation.data) {
+                return validation;
+            }
+
+            const client = await this.initAccount(data.address);
+
+            return {
+                data: await client.account.requestTestTokens(),
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
+    public getTransactions = async () => {
+        const data = await createPromise('get', { key: 'transactions' });
+
+        if (data) {
+            return this.decrypt(data) || [];
+        } else {
+            return [];
+        }
+    }
+
     public send = async (data: IPayload): Promise<IResponse> => {
 
         const { fromAddress, toAddress, currencyAddress, password, gasLimit, timestamp } = data;
@@ -492,12 +526,12 @@ class Api {
             toAddress,
             amount: data.amount,
             currencyAddress,
-            hash: null,
+            hash: PENDING_HASH,
             fee: null,
             status: 'pending',
         };
 
-        //await this.saveData();
+        transactions.unshift(transaction);
 
         const txResult = (currencyAddress === '0x'
             ? await client.account.sendEther(
@@ -513,8 +547,8 @@ class Api {
                 gasPrice,
             ));
 
-        transactions.unshift(transaction);
         transaction.hash = await txResult.getHash();
+
         await this.saveData();
         await this.proceedTx(transaction, txResult);
 

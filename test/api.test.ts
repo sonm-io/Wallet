@@ -21,6 +21,11 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('data.pong');
     });
 
+    it('should check connection', async function() {
+        const response = await Api.checkConnection();
+        expect(response.data).equal(true);
+    });
+
     it('should get sonm token address', async function() {
         const response = await Api.getSonmTokenAddress();
         expect(response.data).to.be.a('string');
@@ -61,7 +66,7 @@ describe('Api',  async function() {
 
     it('should create account and recover private key from it', async function() {
         const response = await Api.createAccount('testTestTest');
-        expect(response.data).to.be.a('object');
+        expect(response.data).to.be.a('string');
     });
 
     it('should add account', async function() {

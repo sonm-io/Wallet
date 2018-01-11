@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Table, DatePicker, Spin, Select, Input } from 'antd';
+import { Table, DatePicker, Select, Input } from 'antd';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { HistoryStore } from '../../../stores/history';
 import { MainStore } from '../../../stores/main';
 import { ISendTransactionResult } from 'app/api';
-import { TableColumnConfig } from 'antd/lib/table/Table';
+import { ColumnProps } from 'antd/lib/table';
 import * as moment from 'moment';
 import * as debounce from 'lodash/fp/debounce';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
@@ -32,7 +32,7 @@ interface IProps {
 @observer
 export class History extends React.Component<IProps, any> {
 
-    protected columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
+    protected columns: Array<ColumnProps<ISendTransactionResult>> = [{
         className: 'sonm-tx-list__col-time',
         dataIndex: 'timestamp',
         title: 'Time',
@@ -46,7 +46,7 @@ export class History extends React.Component<IProps, any> {
         },
     }, {
         dataIndex: 'fromAddress',
-        className: 'sonm-tx-list__col-time',
+        className: 'sonm-tx-list__col-from',
         title: 'From',
         render: (_, record) => {
             const addr = record.fromAddress;
@@ -59,7 +59,7 @@ export class History extends React.Component<IProps, any> {
                 <div className="sonm-tx-list__col-from-ct">
                     <span className="sonm-tx-list__col-from-name">{name}</span>
                     <IdentIcon address={addr} width={20} key="a" className="sonm-tx-list__col-from-icon" />
-                    <Hash className="sonm-tx-list__col-from-addr" hash={addr} />
+                    <Hash className="sonm-tx-list__col-from-addr" hash={addr} hasCopyButton />
                 </div>
             );
         },
@@ -72,8 +72,8 @@ export class History extends React.Component<IProps, any> {
 
             return (
                 <div className="sonm-tx-list__col-to-ct">
-                    <IdentIcon address={addr} width={20} key="a"/>
-                    <Hash hash={addr} />
+                    <IdentIcon address={addr} width={20} className="sonm-tx-list__col-to-icon"/>
+                    <Hash hash={addr} hasCopyButton className="sonm-tx-list__col-to-hash"/>
                 </div>
             );
         },
@@ -86,7 +86,7 @@ export class History extends React.Component<IProps, any> {
             const currency = this.props.mainStore && this.props.mainStore.currencyMap.get(addr);
             const symbol = currency
                 ? currency.symbol
-                : addr.substr(6);
+                : 'None';
 
             const result = [
                 <Balance
@@ -98,7 +98,6 @@ export class History extends React.Component<IProps, any> {
             ];
 
             if (record.fee) {
-                result.push(<br key="b"/>);
                 result.push(
                     <Balance
                         key="f"
@@ -117,9 +116,7 @@ export class History extends React.Component<IProps, any> {
         title: 'TxHash',
         className: 'sonm-tx-list__col-hash',
         render: (_, record) => {
-            return (
-                <Hash hash={record.hash} />
-            );
+            return record.hash.startsWith('0x') ? <Hash hash={record.hash} hasCopyButton /> : record.hash;
         },
     }, {
         dataIndex: 'status',
@@ -143,12 +140,17 @@ export class History extends React.Component<IProps, any> {
     public componentWillMount() {
         if (!this.props.historyStore) { return; }
 
-        if (this.props.initialAddress) { this.props.historyStore.setFilterFrom(this.props.initialAddress); }
-        if (this.props.initialCurrency) { this.props.historyStore.setFilterCurrency(this.props.initialCurrency); }
+        let updated = false;
 
-        if (!this.props.initialAddress && !this.props.initialCurrency) { // TODO HACK
-            this.props.historyStore.forceUpdate();
+        if (this.props.initialAddress) {
+            updated = this.props.historyStore.setFilterFrom(this.props.initialAddress);
         }
+
+        if (this.props.initialCurrency) {
+            updated = updated || this.props.historyStore.setFilterCurrency(this.props.initialCurrency);
+        }
+
+        if (!updated) { this.props.historyStore.update(); }
     }
 
     protected handleChangeTime = (dates: moment.Moment[]) => {
@@ -196,59 +198,57 @@ export class History extends React.Component<IProps, any> {
         };
 
         return (
-            <Spin spinning={this.props.historyStore.pending}>
-                <div className={cn('sonm-history', className)}>
-                    <AccountBigSelect
-                        className="sonm-history__select-account"
-                        returnPrimitive
-                        onChange={this.props.historyStore.setFilterFrom}
-                        accounts={this.props.mainStore.accountList}
-                        value={this.props.historyStore.fromAddress}
-                        hasEmptyOption
-                    />
-                    <RangePicker
-                        allowClear={false}
-                        className="sonm-history__date-range"
-                        value={[
-                            moment(this.props.historyStore.timeStart),
-                            moment(this.props.historyStore.timeEnd),
-                        ]}
-                        onChange={this.handleChangeTime}
-                    />
-                    <Select
-                        onChange={this.handleSelectCurrency}
-                        value={this.props.historyStore.curencyAddress}
-                        className="sonm-history__select-currency"
-                    >
-                        {this.props.mainStore.currentBalanceList.map(
-                            x => <Option
-                                key={x.address}
-                                value={x.address}
-                                title={x.symbol}
-                            >
-                                    {x.symbol}
-                            </Option>,
-                        )}
-                        <Option value="" title="">
-                            All currencies
-                        </Option>
-                    </Select>
-                    <Input
-                        placeholder="Search by recipient address / TxHash"
-                        onChange={this.handleChangeQuery}
-                        className="sonm-history__query"
-                        value={this.state.query}
-                    />
+            <div className={cn('sonm-history', className)}>
+                <AccountBigSelect
+                    className="sonm-history__select-account"
+                    returnPrimitive
+                    onChange={this.props.historyStore.setFilterFrom}
+                    accounts={this.props.mainStore.accountList}
+                    value={this.props.historyStore.fromAddress}
+                    hasEmptyOption
+                />
+                <RangePicker
+                    allowClear={false}
+                    className="sonm-history__date-range"
+                    value={[
+                        moment(this.props.historyStore.timeStart),
+                        moment(this.props.historyStore.timeEnd),
+                    ]}
+                    onChange={this.handleChangeTime}
+                />
+                <Select
+                    onChange={this.handleSelectCurrency}
+                    value={this.props.historyStore.curencyAddress}
+                    className="sonm-history__select-currency"
+                >
+                    {this.props.mainStore.currentBalanceList.map(
+                        x => <Option
+                            key={x.address}
+                            value={x.address}
+                            title={x.symbol}
+                        >
+                            {x.symbol}
+                        </Option>,
+                    )}
+                    <Option value="" title="">
+                        All coins
+                    </Option>
+                </Select>
+                <Input
+                    placeholder="Search by recipient address / TxHash"
+                    onChange={this.handleChangeQuery}
+                    className="sonm-history__query"
+                    value={this.state.query}
+                />
 
-                    <TxTable
-                        className="sonm-history__table"
-                        dataSource={this.props.historyStore.currentList}
-                        columns={this.columns}
-                        pagination={pagination}
-                        rowKey="hash"
-                    />
-                </div>
-            </Spin>
+                <TxTable
+                    className="sonm-history__table"
+                    dataSource={this.props.historyStore.currentList}
+                    columns={this.columns}
+                    pagination={pagination}
+                    rowKey="hash"
+                />
+            </div>
         );
     }
 }

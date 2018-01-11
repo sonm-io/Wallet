@@ -37,6 +37,10 @@
   &__table {
     grid-column: ~"1 / 4";
     grid-row: 3;
+
+    & table {
+      table-layout: fixed;
+    }
   }
 }
 
@@ -44,6 +48,9 @@
   &__col {
 
     &-from {
+      width: 300px;
+      vertical-align: bottom;
+
       &-ct {
         display: grid;
         grid-template-columns: min-content auto;
@@ -54,7 +61,11 @@
       &-name {
         grid-row: 1;
         grid-column: 2;
-        font-weight: 400;
+        font-weight: bold;
+        max-width: 190px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       &-addr {
@@ -69,25 +80,38 @@
     }
 
     &-time {
-      min-width: 70px;
+      width: 85px;
+      vertical-align: bottom;
     }
 
     &-to {
+      width: 300px;
+      vertical-align: bottom;
+
       &-ct {
-        display: grid;
-        grid-template-columns: min-content auto;
-        grid-gap: 5px;
+        display: flex;
+        justify-content: center;
+        vertical-align: center;
+      }
+
+      &-hash {
+        margin: 0 0 0 5px;
+      }
+
+      &-icon {
+        flex-shrink: 0;
       }
     }
 
     &-status {
-      min-width: 70px;
+      width: 70px;
+      vertical-align: bottom;
 
       &--success {
         color: @color-green;
       }
 
-      &--fail {
+      &--failed {
         color: @color-red;
       }
 
@@ -97,7 +121,20 @@
     }
 
     &-amount {
-      min-width: 130px;
+      width: 150px;
+      vertical-align: bottom;
+
+      &-value {
+        margin-top: 5px;
+      }
+
+      .sonm-balance {
+        display: table;
+      }
+    }
+
+    &-hash {
+      vertical-align: bottom;
     }
   }
 }
