@@ -99,6 +99,7 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
                 <label className="sonm-upload__label">
                     <input
                         key="file"
+                        type="file"
                         className="sonm-upload__input"
                         onChange={this.handleChange}
                         ref={this.saveInputRef}
