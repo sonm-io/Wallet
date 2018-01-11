@@ -1,13 +1,12 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { getFullPath, readJson } = require('./utils');
 const extractLess = new ExtractTextPlugin('./style.css');
 
-const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
 const MinifyPlugin = require("babel-minify-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const buildType = process.env.BUILD_TYPE || '';
 const isDev = buildType !== 'web' && !process.env.NODE_ENV.includes('production');
@@ -59,6 +58,7 @@ module.exports = {
                 {
                     test: /\.less$/,
                     use: extractLess.extract({
+                        disable:  buildType === 'singleFile',
                         fallback: 'style-loader',
                         use: ['css-loader', 'less-loader'],
                     }),
@@ -82,7 +82,6 @@ module.exports = {
     },
 
     watch: isDev,
-    devtool: false,
 
     plugins: (() => {
         const plugins = [
@@ -90,17 +89,17 @@ module.exports = {
                 ? new BundleAnalyzerPlugin()
                 : false,
 
-            isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
+            new HtmlWebpackPlugin({
+                inject: true,
+                template: getFullPath('./assets/entry.html'),
+                inlineSource: '.(js|css)$',
+            }),
 
-            // isDev ? null : new UglifyJsPlugin({
-            //     uglifyOptions: {
-            //         output: {
-            //             comments: false,
-            //             beautify: false,
-            //             ascii_only: true,
-            //         },
-            //     },
-            // }),
+            buildType === 'singleFile'
+                ? new HtmlWebpackInlineSourcePlugin()
+                : null,
+
+            isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
 
             new webpack.NoEmitOnErrorsPlugin(),
 
@@ -113,17 +112,8 @@ module.exports = {
 
             new webpack.EnvironmentPlugin(['NODE_ENV']),
 
-            new HtmlWebpackPlugin({
-                inject: true,
-                template: getFullPath('./assets/entry.html'),
-            }),
-
             extractLess,
         ];
-
-        if (buildType === 'singleFile') {
-            plugins.push(new StyleExtHtmlWebpackPlugin());
-        }
 
         return plugins.filter(x => x);
     })(),
