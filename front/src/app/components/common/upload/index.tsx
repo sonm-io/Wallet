@@ -84,8 +84,6 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
     }
 
     public render() {
-        console.log('render');
-
         const { className, buttonProps, children } = this.props;
 
         return (

@@ -5,7 +5,7 @@ import { inject, observer } from 'mobx-react';
 import { HistoryStore } from '../../../stores/history';
 import { MainStore } from '../../../stores/main';
 import { ISendTransactionResult } from 'app/api';
-import { TableColumnConfig } from 'antd/lib/table/Table';
+import { ColumnProps } from 'antd/lib/table';
 import * as moment from 'moment';
 import * as debounce from 'lodash/fp/debounce';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
@@ -32,7 +32,7 @@ interface IProps {
 @observer
 export class History extends React.Component<IProps, any> {
 
-    protected columns: Array<TableColumnConfig<ISendTransactionResult>> = [{
+    protected columns: Array<ColumnProps<ISendTransactionResult>> = [{
         className: 'sonm-tx-list__col-time',
         dataIndex: 'timestamp',
         title: 'Time',
