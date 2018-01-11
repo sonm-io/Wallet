@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Menu, Alert } from 'antd';
+import Alert from 'antd/es/alert';
+import Menu from 'antd/es/menu';
 import { ClickParam } from 'antd/lib/menu/';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
@@ -100,7 +101,9 @@ export class App extends React.Component<IProps, any> {
                         }
                     </div>
                     <AlertList className="sonm-app__alerts"/>
-                    <div className="sonm-alert sonm-alert--info">Wallet works in testnet! Do not use real keys, Ether or tokens.</div>
+                    <div className="sonm-alert sonm-alert--info">
+                        Wallet works in testnet! Do not use real keys, Ether or tokens.
+                    </div>
                     <div className="sonm-app__content">
                         {children}
                     </div>

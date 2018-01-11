@@ -6,7 +6,6 @@ import { AbstractStore } from './abstract-store';
 const { pending } = AbstractStore;
 
 const Api = api.Api;
-const DAY = 1000 * 60 * 60 * 24;
 
 export interface ISendForm {
     from: string;
@@ -29,7 +28,7 @@ export class HistoryStore extends AbstractStore {
     @observable public toAddress = '';
     @observable public fromAddress = '';
     @observable public timeStart = moment('20171201', 'YYYYMMDD').valueOf();
-    @observable public timeEnd = Date.now() + DAY;
+    @observable public timeEnd = moment().endOf('day').valueOf();
     @observable public page = 1;
     @observable public total = 0;
     @observable public perPage = ITEMS_PER_PAGE;

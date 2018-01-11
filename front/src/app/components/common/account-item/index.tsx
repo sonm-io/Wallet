@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IdentIcon } from '../ident-icon';
 import * as cn from 'classnames';
-import { Icon } from 'antd';
+import Icon from 'antd/es/icon';
 import { Balance } from '../balance-view';
 import { Hash } from '../hash-view';
 import { DownloadFile } from '../download-file';

@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { Table, DatePicker, Select, Input } from 'antd';
+import Table from 'antd/es/table';
+import DatePicker from 'antd/es/date-picker';
+import Select from 'antd/es/select';
+import Input from 'antd/es/input';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { HistoryStore } from '../../../stores/history';

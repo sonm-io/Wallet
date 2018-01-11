@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { Input, Icon, Form } from 'antd';
+import Input from 'antd/es/input';
+import Icon from 'antd/es/icon';
+import Form from 'antd/es/form';
+
 import * as cn from 'classnames';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';

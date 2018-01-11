@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {} from 'antd';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { MainStore } from 'app/stores/main';

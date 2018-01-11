@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Form, Input } from 'antd';
+import Form from 'antd/es/form';
+import Input from 'antd/es/input';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { CurrencyBigSelect } from 'app/components/common/currency-big-select';
 import { FormComponentProps } from 'antd/lib/form/Form';
@@ -11,8 +12,6 @@ import { ButtonGroup } from 'app/components/common/button-group';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { MainStore, ISendFormValues } from 'app/stores/main';
 import { Header } from 'app/components/common/header';
-// import { gweiToEther } from 'app/utils/gwei-to-ether';
-// import { etherToGwei } from 'app/utils/ether-to-gwei';
 import { trimZeros } from 'app/utils/trim-zeros';
 
 interface IProps extends FormComponentProps {

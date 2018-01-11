@@ -8,7 +8,8 @@ import IdentIcon from '../../common/ident-icon/index';
 import { navigate } from 'app/router';
 import Button from '../../common/button/index';
 import { getMessageText } from 'app/api/error-messages';
-import { Input, Icon } from 'antd';
+import Input from 'antd/es/input';
+import Icon from 'antd/es/icon';
 
 interface IProps {
     className?: string;
@@ -130,7 +131,10 @@ export class Account extends React.Component<IProps, any> {
                     <Header className="sonm-account__header">
                         SONM test tokens request
                     </Header>
-                    <div className="sonm-account__warning">You need test Ether for token request. Get some here - <a href="https://faucet.rinkeby.io/" target="_blank">https://faucet.rinkeby.io/</a></div>
+                    <div className="sonm-account__warning">
+                        You need test Ether for token request. Get some here -
+                        <a href="https://faucet.rinkeby.io/" target="_blank">https://faucet.rinkeby.io/</a>
+                    </div>
                     <div className="sonm-account__give-me-ct">
                         <Input
                             autoComplete="off"

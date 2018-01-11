@@ -7,7 +7,7 @@ import { SendConfirm } from '../components/layouts/send/sub/confirm';
 import { Account } from '../components/layouts/account';
 import * as React from 'react';
 
-import { LocaleProvider } from 'antd';
+import LocaleProvider from 'antd/es/locale-provider';
 import * as enUS from 'antd/lib/locale-provider/en_US';
 import { navigate } from './navigate';
 
