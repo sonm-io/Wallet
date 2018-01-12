@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
+const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { getFullPath, readJson } = require('./utils');
 const extractLess = new ExtractTextPlugin('./style.css');
@@ -113,6 +114,8 @@ module.exports = {
             new webpack.EnvironmentPlugin(['NODE_ENV']),
 
             extractLess,
+
+            new CssoWebpackPlugin(),
         ];
 
         return plugins.filter(x => x);

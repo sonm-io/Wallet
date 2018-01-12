@@ -65,6 +65,10 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
                 fileName: file.name,
             });
         }
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        event.target.value = null;
     }
 
     protected inputNode?: HTMLInputElement;
