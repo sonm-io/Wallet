@@ -36,7 +36,7 @@ interface IProps {
 export class History extends React.Component<IProps, any> {
 
     protected columns: Array<ColumnProps<ISendTransactionResult>> = [{
-        className: 'sonm-tx-list__col-time',
+        className: 'sonm-tx-list__cell-time sonm-tx-list__cell',
         dataIndex: 'timestamp',
         title: 'Time',
         render: (time, record) => {
@@ -49,7 +49,7 @@ export class History extends React.Component<IProps, any> {
         },
     }, {
         dataIndex: 'fromAddress',
-        className: 'sonm-tx-list__col-from',
+        className: 'sonm-tx-list__cell-from sonm-tx-list__cell',
         title: 'From',
         render: (_, record) => {
             const addr = record.fromAddress;
@@ -58,31 +58,27 @@ export class History extends React.Component<IProps, any> {
                 ? account.name
                 : addr;
 
-            return (
-                <div className="sonm-tx-list__col-from-ct">
-                    <span className="sonm-tx-list__col-from-name">{name}</span>
-                    <IdentIcon address={addr} width={20} key="a" className="sonm-tx-list__col-from-icon" />
-                    <Hash className="sonm-tx-list__col-from-addr" hash={addr} hasCopyButton />
-                </div>
-            );
+            return [
+                <div key="0" className="sonm-tx-list__cell-from-name">{name}</div>,
+                <IdentIcon key="1" address={addr} width={20} className="sonm-tx-list__cell-from-icon" />,
+                <Hash key="2" className="sonm-tx-list__cell-from-addr" hash={addr} hasCopyButton />,
+            ];
         },
     }, {
         dataIndex: 'toAddress',
-        className: 'sonm-tx-list__col-to',
+        className: 'sonm-tx-list__cell-to sonm-tx-list__cell',
         title: 'To',
         render: (_, record) => {
             const addr = record.toAddress;
 
-            return (
-                <div className="sonm-tx-list__col-to-ct">
-                    <IdentIcon address={addr} width={20} className="sonm-tx-list__col-to-icon"/>
-                    <Hash hash={addr} hasCopyButton className="sonm-tx-list__col-to-hash"/>
-                </div>
-            );
+            return [
+                <IdentIcon key="0" address={addr} width={20} className="sonm-tx-list__cell-to-icon" />,
+                <Hash key="1" hash={addr} hasCopyButton className="sonm-tx-list__cell-to-hash" />,
+            ];
         },
     }, {
         dataIndex: 'amount',
-        className: 'sonm-tx-list__col-amount',
+        className: 'sonm-tx-list__cell-amount sonm-tx-list__cell',
         title: 'Amount / fee',
         render: (_, record) => {
             const addr = record.currencyAddress;
@@ -93,8 +89,8 @@ export class History extends React.Component<IProps, any> {
 
             const result = [
                 <Balance
-                    key="a"
-                    className="sonm-tx-list__col-amount-value"
+                    className="sonm-tx-list__cell-amount-value"
+                    key="0"
                     symbol={symbol}
                     balance={record.amount}
                 />,
@@ -103,8 +99,8 @@ export class History extends React.Component<IProps, any> {
             if (record.fee) {
                 result.push(
                     <Balance
-                        key="f"
-                        className="sonm-tx-list__col-amount-value"
+                        key="1"
+                        className="sonm-tx-list__cell-amount-fee"
                         balance={record.fee}
                         symbol="Ether"
                         decimals={6}
@@ -112,24 +108,24 @@ export class History extends React.Component<IProps, any> {
                 );
             }
 
-            return result;
+            return <div className="sonm-tx-list__cell-amount-ct">{result}</div>;
         },
     }, {
         dataIndex: 'hash',
         title: 'TxHash',
-        className: 'sonm-tx-list__col-hash',
+        className: 'sonm-tx-list__cell-hash sonm-tx-list__cell',
         render: (_, record) => {
-            return record.hash.startsWith('0x') ? <Hash hash={record.hash} hasCopyButton /> : record.hash;
+            return <Hash hash={record.hash} hasCopyButton />;
         },
     }, {
         dataIndex: 'status',
         title: 'Status',
-        className: 'sonm-tx-list__col-status',
+        className: 'sonm-tx-list__cell-status sonm-tx-list__cell',
         render: (_, record) => {
-            const cls = `sonm-tx-list__col-status--${record.status}`;
+            const cls = `sonm-tx-list__cell-status--${record.status}`;
 
             return (
-                <div className={cn('sonm-tx-list__col-status-ct', cls)}>
+                <div className={cn('sonm-tx-list__cell-status', cls)}>
                     {record.status}
                 </div>
             );
@@ -245,7 +241,7 @@ export class History extends React.Component<IProps, any> {
                 />
 
                 <TxTable
-                    className="sonm-history__table"
+                    className="sonm-history__table sonm-tx-list"
                     dataSource={this.props.historyStore.currentList}
                     columns={this.columns}
                     pagination={pagination}
