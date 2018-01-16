@@ -105,7 +105,11 @@
     "webpack:web": "cross-env NODE_ENV=production BUILD_TYPE=web webpack --config ./front/config/webpack.config.js",
     "prety": "prettier --write front/src/**/*.tsx && prettier --write front/src/**/*.ts",
     "sg": "styleguidist server",
-    "karma": "./node_modules/karma/bin/karma start --browsers Chrome"
+    "karma": "./node_modules/karma/bin/karma start --browsers Chrome",
+
+    "electron:macos": "cross-env PLATFORM=darwin node build.js",
+    "electron:windows": "cross-env PLATFORM=win32 node build.js",
+    "electron:linux": "cross-env PLATFORM=linux node build.js"
   },
   "repository": {
     "type": "git",

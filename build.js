@@ -2,13 +2,12 @@
 
 const packager = require('electron-packager');
 const rimraf = require('rimraf');
-
-//const pjson = require('./package.json');
+const platform = process.env.PLATFORM || 'darwin';
 
 const params = {
     dir: '.',
     name: 'sonm-wallet',
-    platform: 'darwin',
+    platform: platform,
     arch: 'x64',
     electronVersion: '1.8.1',
     out: '../releases',
