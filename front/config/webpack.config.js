@@ -2,11 +2,10 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const {getFullPath, readJson} = require('./utils');
+const { getFullPath, readJson } = require('./utils');
 const extractLess = new ExtractTextPlugin('./style.css');
 
 const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
@@ -15,7 +14,7 @@ const isDev = buildType !== 'web' && !process.env.NODE_ENV.includes('production'
 
 module.exports = {
     entry: {
-        app: getFullPath('./src/app/index.tsx'),
+        app: getFullPath('./src/entry.ts'),
         style: getFullPath('./src/app/less/entry.less'),
     },
 
@@ -91,17 +90,17 @@ module.exports = {
                 ? new BundleAnalyzerPlugin()
                 : false,
 
-            // isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
-            
-            isDev ? null : new UglifyJsPlugin({
-                uglifyOptions: {
-                    output: {
-                        comments: false,
-                        beautify: false,
-                        ascii_only: true,
-                    },
-                }
-            }),
+            isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
+
+            // isDev ? null : new UglifyJsPlugin({
+            //     uglifyOptions: {
+            //         output: {
+            //             comments: false,
+            //             beautify: false,
+            //             ascii_only: true,
+            //         },
+            //     },
+            // }),
 
             new webpack.NoEmitOnErrorsPlugin(),
 
@@ -117,10 +116,6 @@ module.exports = {
             new HtmlWebpackPlugin({
                 inject: true,
                 template: getFullPath('./assets/entry.html'),
-            }),
-
-            new ScriptExtHtmlWebpackPlugin({
-                inline: ['app']
             }),
 
             extractLess,
