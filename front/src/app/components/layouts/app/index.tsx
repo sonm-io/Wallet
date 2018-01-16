@@ -1,15 +1,13 @@
 import * as React from 'react';
 import Alert from 'antd/es/alert';
-import Menu from 'antd/es/menu';
-import { ClickParam } from 'antd/lib/menu/';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
-import { navigate } from 'app/router';
 import { MainStore } from 'app/stores/main';
 import { AbstractStore } from 'app/stores/abstract-store';
 import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
 import { AlertList } from './sub/alerts';
+import { NavMenu } from './sub/nav-menu/index';
 
 interface IProps {
     className?: string;
@@ -17,15 +15,17 @@ interface IProps {
     error: string;
     selectedNavMenuItem: string;
     mainStore: MainStore;
+    onNavigate: (url: string) => void;
 }
 
 @inject('mainStore', 'historyStore')
 @observer
 export class App extends React.Component<IProps, any> {
-
-    public handleMenuClick(param: ClickParam) {
-        navigate({ path: param.key }); // TODO move into routing
-    }
+    protected static menuConfig = [
+        { title: 'Accounts', url: '/accounts' },
+        { title: 'Send', url: '/send' },
+        { title: 'History', url: '/history' },
+    ];
 
     protected get stores(): AbstractStore[] {
         const props: any = this.props;
@@ -48,7 +48,9 @@ export class App extends React.Component<IProps, any> {
             },
         } = this.props;
 
-        const disableSend = this.isOffline || (accountMap.size === 0);
+        const disabledMenu = this.isOffline || (accountMap.size === 0)
+            ? '/send'
+            : '';
 
         return (
             <div className={cn('sonm-app', className)}>
@@ -56,26 +58,12 @@ export class App extends React.Component<IProps, any> {
                     <div className="sonm-app__nav">
                         <div className="sonm-nav">
                             <div className="sonm-nav__logo" />
-                            <Menu
-                                onClick={this.handleMenuClick}
-                                className="sonm-nav__menu"
-                                selectedKeys={[selectedNavMenuItem]}
-                                theme="dark"
-                                mode="horizontal"
-                                style={{
-                                    borderColor: 'transparent',
-                                }}
-                            >
-                                <Menu.Item key="/accounts" className="sonm-nav__menu-item">
-                                    Accounts
-                                </Menu.Item>
-                                <Menu.Item key="/send" className="sonm-nav__menu-item" disabled={disableSend}>
-                                    Send
-                                </Menu.Item>
-                                <Menu.Item key="/history" className="sonm-nav__menu-item">
-                                    History
-                                </Menu.Item>
-                            </Menu>
+                                <NavMenu
+                                    url={selectedNavMenuItem}
+                                    items={App.menuConfig}
+                                    disabled={disabledMenu}
+                                    onChange={this.props.onNavigate}
+                                />
                                 <Balance
                                     className="sonm-nav__total"
                                     fullString={firstTokenBalance}

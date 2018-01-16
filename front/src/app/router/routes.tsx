@@ -25,6 +25,7 @@ const navigateToHistory = (accountAddress: string = '', currencyAddress: string 
 };
 const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
+const navigateTo = (path: string) => navigate({ path });
 
 const routes = [
     {
@@ -36,6 +37,7 @@ const routes = [
                 content: (
                     <LocaleProvider locale={enUS as any}>
                         <App
+                            onNavigate={navigateTo}
                             selectedNavMenuItem={inner.pathKey}
                             {...inner.props}
                         >
