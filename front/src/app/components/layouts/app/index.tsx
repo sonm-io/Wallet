@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Alert from 'antd/es/alert';
+import { default as AntdAlertd } from 'antd/es/alert';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
 import { MainStore } from 'app/stores/main';
@@ -8,6 +8,7 @@ import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
 import { AlertList } from './sub/alerts';
 import { NavMenu } from './sub/nav-menu/index';
+import { Alert } from 'app/components/common/alert';
 
 interface IProps {
     className?: string;
@@ -64,22 +65,23 @@ export class App extends React.Component<IProps, any> {
                                     disabled={disabledMenu}
                                     onChange={this.props.onNavigate}
                                 />
-                                <Balance
-                                    className="sonm-nav__total"
-                                    fullString={firstTokenBalance}
-                                    fontSizePx={18}
-                                />
-
-                                <Balance
-                                    className="sonm-nav__total"
-                                    fullString={secondTokenBalance}
-                                    fontSizePx={18}
-                                />
+                                <div className="sonm-nav__total-group">
+                                    <Balance
+                                        className="sonm-nav__total"
+                                        fullString={firstTokenBalance}
+                                        fontSizePx={18}
+                                    />
+                                    <Balance
+                                        className="sonm-nav__total"
+                                        fullString={secondTokenBalance}
+                                        fontSizePx={18}
+                                    />
+                                </div>
                         </div>
                     </div>
-                    <div className="sonm-app__offline-alert">
+                    <div className="sonm-app__alert-group">
                         {this.isOffline
-                            ? <Alert
+                            ? <AntdAlertd
                                 key="offline"
                                 showIcon
                                 message="Offline"
@@ -87,10 +89,13 @@ export class App extends React.Component<IProps, any> {
                                 type="warning"
                             /> : null
                         }
-                    </div>
-                    <AlertList className="sonm-app__alerts"/>
-                    <div className="sonm-alert sonm-alert--info">
-                        Wallet works in testnet! Do not use real keys, Ether or tokens.
+                        <AlertList className="sonm-app__alert-list"/>
+                        <Alert
+                            type="warning"
+                            id="offline"
+                        >
+                            Wallet works in testnet! Do not use real keys, Ether or tokens.
+                        </Alert>
                     </div>
                     <div className="sonm-app__content">
                         {children}

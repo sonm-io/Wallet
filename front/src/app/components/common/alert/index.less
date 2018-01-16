@@ -10,25 +10,20 @@
   padding: @alert-padding-vert @alert-padding-hor;
   transition: opacity 0.15s ease;
   text-align: center;
+  font-size: 15px;
 
   &--success {
     background-color: #cceae5;
     color: @color-green;
-    font-size: 15px;
   }
 
   &--error {
     background-color: #f9e9f1;
     color: @color-red;
-    font-size: 15px;
   }
 
-  &--info {
-    border-left: solid 1px @color-border;
-    border-right: solid 1px @color-border;
-    z-index: 1;
+  &--warning {
     background-color: #fcf4d1;
-    font-size: 15px;
   }
 
   &--closed {
@@ -46,7 +41,7 @@
     background: none;
     display: block;
     position: absolute;
-    top: 5px;
+    top: @alert-padding-vert;
     right: @alert-padding-hor;
     height: 30px;
     line-height: 28px;
