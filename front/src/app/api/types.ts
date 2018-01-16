@@ -62,4 +62,9 @@ export interface ISettings {
     language: string;
 }
 
+export interface IWalletExport {
+    walletName: string;
+    fileContent: string;
+}
+
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

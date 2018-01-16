@@ -12,6 +12,10 @@ const { createSonmFactory, utils } = sonmApi;
 const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
 
+interface INodes {
+    [index: string]: string;
+}
+
 interface IPayload {
     [index: string]: any;
 }
@@ -61,8 +65,10 @@ function createPromise(
     });
 }
 
-const URL_REMOTE_GETH_NODE = 'https://rinkeby.infura.io';
-const CHAIN_ID = 'rinkeby';
+const DEFAULT_NODES = {
+    live: 'https://infura.io',
+    rinkeby: 'https://rinkeby.infura.io',
+} as INodes;
 
 class Api {
     private routes: {
@@ -79,6 +85,7 @@ class Api {
 
     private secretKey: string;
     private hash: string;
+    private walletName: string;
 
     private constructor() {
         this.accounts = {};
@@ -87,6 +94,14 @@ class Api {
             'ping': this.ping,
             'getWalletList': this.getWalletList,
             'checkConnection': this.checkConnection,
+
+            'getSettings': this.getSettings,
+            'setSettings': this.setSettings,
+
+            'createWallet': this.createWallet,
+            'unlockWallet': this.unlockWallet,
+            'importWallet': this.importWallet,
+            'exportWallet': this.exportWallet,
 
             'account.add': this.addAccount,
             'account.create': this.createAccount,
@@ -100,7 +115,6 @@ class Api {
             'account.list': this.getAccountList,
             'account.requestTestTokens': this.requestTestTokens,
 
-            'account.setSecretKey': this.setSecretKey,
             'account.checkPrivateKey': this.checkPrivateKey,
             'account.hasSavedData': this.hasSavedData,
 
@@ -112,6 +126,11 @@ class Api {
         this.storage = {
             accounts: {},
             transactions: [],
+            tokens: [],
+            settings: {
+                chain_id: null,
+                node_url: null,
+            },
         };
     }
 
@@ -128,6 +147,25 @@ class Api {
         return {
             data: (list ? JSON.parse(list) : []),
         };
+    }
+
+    public getSettings = async (): Promise<IResponse> => {
+        return {
+            data: this.storage.settings,
+        };
+    }
+
+    public setSettings = async (data: IPayload): Promise<IResponse> => {
+        if (data.settings) {
+            this.storage.settings = data.settings;
+            await this.saveData();
+
+            return {
+                data: true,
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
     }
 
     public hasSavedData = async (): Promise<IResponse> => {
@@ -214,17 +252,135 @@ class Api {
         }
     }
 
-    public setSecretKey = async (data: IPayload): Promise<IResponse> => {
-        if (data.password && data.walletName) {
+    private setWalletHash(name: string) {
+        this.walletName = name;
+        this.hash = `sonm_${SHA256(name).toString(Hex)}`;
+    }
 
+    public createWallet = async (data: IPayload): Promise<IResponse> => {
+        if (data.password && data.walletName && data.chainId) {
+            this.setWalletHash(data.walletName);
             this.secretKey = data.password;
-            this.hash = `sonm_${SHA256(data.walletName).toString(Hex)}`;
+
+            this.storage.settings = {
+                chain_id: data.chainId,
+                node_url: DEFAULT_NODES[data.chainId],
+            };
+
+            await this.saveData();
+
+            // add wallet to list
+            const walletList = (await this.getWalletList()).data;
+            walletList.push(data.walletName);
+
+            //const client = await this.initAccount('0x');
+            //const currencies = await client.account.getCurrencies();
+            //!!!!
+
+            await createPromise('set', { key: KEY_WALLETS_LIST, value: JSON.stringify(walletList)});
+
+            return {
+                data: true,
+            };
+        } else {
+            const validation = {
+                password: !data.password ? 'password_required' : null,
+                walletName: !data.walletName ? 'walletName_required' : null,
+                chainId: !data.chainId ? 'chain_id_required' : null,
+            };
+
+            return {
+                validation,
+            };
+        }
+    }
+
+    public importWallet = async (data: IPayload): Promise<IResponse> => {
+        if (data.password && data.json && data.walletName) {
+            try {
+                const json = JSON.parse(data.json);
+
+                if (json.encryptedData) {
+                    this.setWalletHash(data.walletName);
+                    this.secretKey = data.password;
+
+                    const storage = this.decrypt(json.encryptedData);
+
+                    if (storage) {
+                        this.storage = storage;
+                        await this.saveData();
+
+                        // add wallet to list
+                        const walletList = (await this.getWalletList()).data;
+                        walletList.push(data.walletName);
+
+                        await createPromise('set', { key: KEY_WALLETS_LIST, value: JSON.stringify(walletList)});
+
+                        return {
+                            data: true,
+                        };
+                    } else {
+                        return {
+                            data: false,
+                        };
+                    }
+                } else {
+                    return {
+                        validation: {
+                            file: 'json_error1',
+                        },
+                    };
+                }
+            } catch (err) {
+                console.log(err.stack);
+                return {
+                    validation: {
+                        file: 'json_error2',
+                    },
+                };
+            }
+        } else {
+            const validation = {
+                password: !data.password ? 'password_required' : null,
+                payload: !data.encryptedData ? 'encryptedData_required' : null,
+                walletName: !data.walletName ? 'walletName_required' : null,
+            };
+
+            return {
+                validation,
+            };
+        }
+    }
+
+    public exportWallet = async (): Promise<IResponse> => {
+        return {
+            data: {
+                walletName: this.walletName,
+                fileContent: JSON.stringify({
+                   encryptedData: this.encrypt(this.storage),
+                }),
+            },
+        };
+    }
+
+    public unlockWallet = async (data: IPayload): Promise<IResponse> => {
+        if (data.password && data.walletName) {
+            this.setWalletHash(data.walletName);
+            this.secretKey = data.password;
 
             const dataFromStorage = await createPromise('get', { key: this.hash });
 
             if (dataFromStorage) {
                 try {
                     this.storage = this.decrypt(dataFromStorage);
+
+                    if (!this.storage.settings.chain_id) {
+                        this.storage.settings.chain_id = 'rinkeby';
+                    }
+
+                    if (!this.storage.settings.node_url) {
+                        this.storage.settings.node_url = DEFAULT_NODES[this.storage.settings.chain_id];
+                    }
 
                     this.processTransactions();
 
@@ -239,14 +395,6 @@ class Api {
                     };
                 }
             } else {
-                await this.saveData();
-
-                // add wallet to list
-                const walletList = (await this.getWalletList()).data;
-                walletList.push(data.walletName);
-
-                await createPromise('set', { key: KEY_WALLETS_LIST, value: JSON.stringify(walletList)});
-
                 return {
                     data: true,
                 };
@@ -316,7 +464,7 @@ class Api {
     }
 
     private async processTransactions() {
-        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
         const transactions = [];
 
         let needSave = false;
@@ -343,7 +491,7 @@ class Api {
 
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
-            const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+            const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_idD);
 
             this.accounts[address] = {
                 factory,
@@ -366,16 +514,16 @@ class Api {
         return balancies;
     }
 
-    public getCurrencies = async (data: IPayload): Promise<IResponse> => {
-        const client = await this.initAccount('0x');
+    public addToken = async (data: IPayload): Promise<IResponse> => {
+        return this.storage.tokens;
+    }
 
-        return {
-            data: await client.account.getCurrencies(),
-        };
+    public getCurrencies = async (data: IPayload): Promise<IResponse> => {
+        return this.storage.tokens;
     }
 
     public getGasPrice = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
@@ -384,7 +532,7 @@ class Api {
     }
 
     public getSonmTokenAddress = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(URL_REMOTE_GETH_NODE, CHAIN_ID);
+        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
 
         return {
             data: await factory.getSonmTokenAddress(),

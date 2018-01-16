@@ -10,7 +10,7 @@ const MinifyPlugin = require("babel-minify-webpack-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const buildType = process.env.BUILD_TYPE || '';
-const isDev = buildType !== 'web' && !process.env.NODE_ENV.includes('production');
+const isDev = buildType !== 'web' && (!process.env.NODE_ENV || !process.env.NODE_ENV.includes('production'));
 
 module.exports = {
     entry: {

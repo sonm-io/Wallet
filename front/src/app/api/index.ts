@@ -12,6 +12,7 @@ import {
     IValidation,
     ITxListFilter,
     ISettings,
+    IWalletExport,
 } from './types';
 
 export * from './types';
@@ -64,8 +65,20 @@ function processValidation(obj: any): IValidation {
 }
 
 export class Api {
-    public static async setSecretKey(password: string, walletName: string): Promise<IResult<boolean>>  {
-        return createPromise('account.setSecretKey', { password, walletName });
+    public static async createWallet(password: string, walletName: string, chainId: string): Promise<IResult<boolean>>  {
+        return createPromise('createWallet', { password, walletName, chainId });
+    }
+
+    public static async unlockWallet(password: string, walletName: string): Promise<IResult<boolean>>  {
+        return createPromise('unlockWallet', { password, walletName });
+    }
+
+    public static async importWallet(password: string, walletName: string, json: string): Promise<IResult<boolean>>  {
+        return createPromise('importWallet', { password, walletName, json });
+    }
+
+    public static async exportWallet(): Promise<IResult<IWalletExport>>  {
+        return createPromise('exportWallet');
     }
 
     public static async checkConnection(): Promise<IResult<boolean>>  {
