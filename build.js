@@ -10,7 +10,7 @@ const params = {
     platform: platform,
     arch: 'x64',
     electronVersion: '1.8.1',
-    out: '../releases',
+    out: './releases',
     appBundleId: '',
     appVersion: '0.0.1',
     overwrite: true,
