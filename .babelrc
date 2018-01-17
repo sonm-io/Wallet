@@ -14,8 +14,7 @@
         "exclude": [
           "transform-regenerator"
         ]
-      },
-      "minify"
+      }
     ]
   ]
 }
