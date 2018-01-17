@@ -4,16 +4,6 @@
 @import "./sub/alerts/index";
 @import "./sub/nav-menu/index";
 
-.sonm-app__row {
-  border: 1px solid @color-border;
-  border-top-width: 0;
-  border-bottom-width: 0;
-
-  &:last-child {
-    border-bottom-width: 1px;
-  }
-}
-
 .sonm-app {
   margin: 0 auto;
   width: 1280px;
@@ -24,24 +14,29 @@
   background-color: #fff;
 
   &__content {
-    flex-grow: 1;
-    padding: 20px 50px 50px 50px;
-    min-height: 635px;
+    flex: 1 1 0;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+    padding: 0;
+    margin: 0;
 
-    & &-inner {
+    border: 1px solid @color-border;
+    border-top-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &-scroll-ct {
+      margin: 0;
+      position: relative;
+      padding: 20px 50px 50px 50px;
       min-height: 635px;
     }
   }
 
-
-  &__load-mask-ct {
-    position: relative;
-    padding: 0;
-    margin: 0;
+  &__alert-group {
+    border: 1px solid @color-border;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    position: sticky;
   }
 }
 
@@ -55,15 +50,16 @@
   align-items: center;
   justify-content: space-between;
   border-color: @color-brand-bg;
+  position: sticky;
 
   &__logo {
-    background: url('./sonm-wallet-logo.svg') no-repeat;
+    background: url('./sonm-wallet-logo.svg') no-repeat center;
     width: 160px;
-    height: 30px;
+    height: 40px;
   }
 
   &__total {
-    margin: 8px;
+    margin: 0 0 0 16px;
     font-size: 20px;
     font-weight: 100;
     color: @color-light-font;

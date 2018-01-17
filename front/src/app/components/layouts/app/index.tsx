@@ -98,7 +98,9 @@ export class App extends React.Component<IProps, any> {
                         </Alert>
                     </div>
                     <div className="sonm-app__content">
-                        {children}
+                        <div className="sonm-app__content-scroll-ct">
+                            {children}
+                        </div>
                     </div>
                 </LoadMask>
             </div>

@@ -60,7 +60,6 @@ const routes = [
                     const content = next && next.content
                         ? next.content
                         : <Send
-                            className="sonm-app__content--inner"
                             initialAddress={initialAddress}
                             initialCurrency={initialCurrency}
                             onRequireConfirmation={navigateToConfirmation}
@@ -82,7 +81,6 @@ const routes = [
                         action: (ctx: IContext) => ({
                             title: 'Confirmation',
                             content: <SendConfirm
-                                className="sonm-app__content--inner"
                                 onBack={navigateToSend}
                                 onSuccess={navigateToSuccess}
                             />,
@@ -93,7 +91,6 @@ const routes = [
                         action: (ctx: IContext) => ({
                             title: 'Success',
                             content: <SendSuccess
-                                className="sonm-app__content--inner"
                                 onClickHistory={navigateToHistory}
                                 onClickSend={navigateToSend}
                             />,
