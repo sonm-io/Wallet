@@ -130,9 +130,7 @@ export class Api {
     }
 
     public static async getCurrencyList(): Promise<IResult<ICurrencyInfo[]>> {
-        const r = await createPromise('account.getCurrencies');
-
-        return r;
+        return createPromise('account.getCurrencies');
     }
 
     public static async send(tx: ISendTransaction, password: string)
@@ -154,6 +152,10 @@ export class Api {
 
     public static async getSonmTokenAddress(): Promise<IResult<string>> {
         return createPromise('getSonmTokenAddress');
+    }
+
+    public static async addToken(address: string): Promise<IResult<ICurrencyInfo>>  {
+        return createPromise('addToken', { address });
     }
 }
 

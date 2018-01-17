@@ -86,6 +86,7 @@ class Api {
     private secretKey: string;
     private hash: string;
     private walletName: string;
+    private tokenList: any;
 
     private constructor() {
         this.accounts = {};
@@ -114,13 +115,13 @@ class Api {
             'account.send': this.send,
             'account.list': this.getAccountList,
             'account.requestTestTokens': this.requestTestTokens,
-
             'account.checkPrivateKey': this.checkPrivateKey,
             'account.hasSavedData': this.hasSavedData,
 
             'transaction.list': this.getTransactionList,
 
             'getSonmTokenAddress': this.getSonmTokenAddress,
+            'addToken': this.addToken,
         };
 
         this.storage = {
@@ -273,9 +274,8 @@ class Api {
             const walletList = (await this.getWalletList()).data;
             walletList.push(data.walletName);
 
-            //const client = await this.initAccount('0x');
-            //const currencies = await client.account.getCurrencies();
-            //!!!!
+            const tokenList = await this.getTokenList();
+            this.storage.tokens = tokenList.getList();
 
             await createPromise('set', { key: KEY_WALLETS_LIST, value: JSON.stringify(walletList)});
 
@@ -515,11 +515,31 @@ class Api {
     }
 
     public addToken = async (data: IPayload): Promise<IResponse> => {
-        return this.storage.tokens;
+        if (data.address) {
+            const tokenList = await this.getTokenList();
+            const token = await tokenList.add(data.address);
+
+            return {
+                data: token,
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
+    private async getTokenList() {
+        if (!this.tokenList) {
+            const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+            this.tokenList = await factory.createTokenList();
+        }
+
+        return this.tokenList;
     }
 
     public getCurrencies = async (data: IPayload): Promise<IResponse> => {
-        return this.storage.tokens;
+        return {
+            data: this.storage.tokens,
+        };
     }
 
     public getGasPrice = async (): Promise<IResponse> => {
@@ -561,11 +581,13 @@ class Api {
 
                     await this.saveData();
 
+                    const tokenList = await this.getTokenList();
+
                     return {
                         data: {
                             address,
                             name: data.name,
-                            currencyBalanceMap: await this.getCurrencyBalances(address),
+                            currencyBalanceMap: await tokenList.getBalances(address),
                         },
                     };
                 } else {

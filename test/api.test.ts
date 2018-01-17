@@ -1,8 +1,11 @@
 const {expect} = require('chai');
 
+const walletName = 'wallet 1';
+const walletPassword = 'my secret key';
+
 const vasyaCfg = require('./data/Vasya_11111111.json');
 const json = JSON.stringify(vasyaCfg);
-
+const accountName = 'Account 1';
 const address = `0x${vasyaCfg.address}`;
 const password = '11111111';
 
@@ -15,10 +18,6 @@ before(async function() {
 });
 describe('Api',  async function() {
     this.timeout(+Infinity);
-
-    const walletName = 'wallet 1';
-    const walletPassword = 'my secret key';
-    const accountName = 'Account 1';
 
     it('should ping', async function() {
         const response = await Api.ping();
@@ -33,6 +32,24 @@ describe('Api',  async function() {
     it('should set secret key', async function() {
         const response = await Api.createWallet(walletPassword, walletName, 'rinkeby');
         expect(response.data).equal(true);
+    });
+
+    it('should recieve currenciesList', async function() {
+        const response = await Api.getCurrencyList();
+        expect(response.data).to.have.lengthOf(2);
+
+        if (response.data) {
+            expect(response.data[0].symbol).equal('Ether');
+            expect(response.data[1].symbol).equal('SNMT');
+        }
+    });
+
+    it('should add token', async function() {
+        const response = await Api.addToken('0x225b929916daadd5044d5934936313001f55d8f0');
+        expect(response.data).to.be.a('object');
+
+        const response2 = await Api.getCurrencyList();
+        expect(response2.data).to.have.lengthOf(3);
     });
 
     it('should check connection', async function() {
@@ -114,15 +131,6 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('validation.password');
     });
 
-    // it('should recieve currenciesList', async function() {
-    //     const response = await Api.getCurrencyList();
-    //     expect(response.data).to.have.lengthOf(2);
-    //     if (response.data) {
-    //         expect(response.data[0].symbol).equal('Ether');
-    //         expect(response.data[1].symbol).equal('SNMT');
-    //     }
-    // });
-
     // it('should send ether and snmt', async function() {
     //     const amount = '0.000000000000000002';
     //     const to = 'fd0c80ba15cbf19770319e5e76ae05012314608f';
@@ -199,27 +207,27 @@ describe('Api',  async function() {
     //         }
     //     }
     // });
-    //
-    // it('should rename account', async function() {
-    //     const name = 'Wallet 2';
-    //
-    //     const response1 = await Api.renameAccount(address, name);
-    //     expect(response1.data).equal(true);
-    //
-    //     const response2 = await Api.getAccountList();
-    //     expect(response2.data).to.have.lengthOf(1);
-    //
-    //     if (response2.data) {
-    //         expect(response2.data[0].name).equal(name);
-    //         expect(response2.data[0].address).equal(address);
-    //     }
-    // });
-    //
-    // it('should remove account', async function () {
-    //     const response1 = await Api.removeAccount(address);
-    //     expect(response1.data).equal(true);
-    //
-    //     const response2 = await Api.getAccountList();
-    //     expect(response2.data).to.have.lengthOf(0);
-    // });
+    
+    it('should rename account', async function() {
+        const name = 'Wallet 2';
+
+        const response1 = await Api.renameAccount(address, name);
+        expect(response1.data).equal(true);
+
+        const response2 = await Api.getAccountList();
+        expect(response2.data).to.have.lengthOf(1);
+
+        if (response2.data) {
+            expect(response2.data[0].name).equal(name);
+            expect(response2.data[0].address).equal(address);
+        }
+    });
+
+    it('should remove account', async function () {
+        const response1 = await Api.removeAccount(address);
+        expect(response1.data).equal(true);
+
+        const response2 = await Api.getAccountList();
+        expect(response2.data).to.have.lengthOf(0);
+    });
 });
