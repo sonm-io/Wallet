@@ -19,7 +19,6 @@ const params = {
     bundle_id: '',
     appname: 'sonm-wallet',
     ignore: ['node_modules', 'dist', 'front'],
-    packageManager: 'yarn',
     prune: true,
     afterPrune: [(buildPath, electronVersion, platform, arch, callback) => {
         rimraf.sync(`${buildPath}/node_modules`);
