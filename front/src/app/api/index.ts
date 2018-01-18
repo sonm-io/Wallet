@@ -71,8 +71,8 @@ export class Api {
         return createPromise('checkConnection');
     }
 
-    public static async checkPrivateKey(password: string, address: string): Promise<IResult<boolean>>  {
-        return createPromise('account.checkPrivateKey', { address, password });
+    public static async getPrivateKey(password: string, address: string): Promise<IResult<boolean>>  {
+        return createPromise('account.getPrivateKey', { address, password });
     }
 
     public static async createAccount(passphase: string): Promise<IResult<boolean>>  {
