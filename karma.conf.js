@@ -9,7 +9,7 @@ module.exports = function (config) {
 		},
 
 		reporters: ['progress'],
-		browsers: ['Chrome'],
+		browsers: ['Chrome', 'ChromeHeadless'],
 		singleRun: false,
 
 		files: [
