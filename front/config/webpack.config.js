@@ -90,17 +90,17 @@ module.exports = {
                 ? new BundleAnalyzerPlugin()
                 : false,
 
-            isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
+            //isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
 
-            // isDev ? null : new UglifyJsPlugin({
-            //     uglifyOptions: {
-            //         output: {
-            //             comments: false,
-            //             beautify: false,
-            //             ascii_only: true,
-            //         },
-            //     },
-            // }),
+            isDev ? null : new UglifyJsPlugin({
+                uglifyOptions: {
+                    output: {
+                        comments: false,
+                        beautify: false,
+                        ascii_only: true,
+                    },
+                },
+            }),
 
             new webpack.NoEmitOnErrorsPlugin(),
 

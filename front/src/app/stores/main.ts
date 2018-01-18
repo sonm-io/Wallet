@@ -330,7 +330,7 @@ export class MainStore extends AbstractStore {
             && this.passwordCache[accountAddress] === password) {
             validationMessage = '';
         } else {
-            const {data: success, validation} = yield Api.checkPrivateKey(password, accountAddress);
+            const {data: success, validation} = yield Api.getPrivateKey(password, accountAddress);
 
             if (success) {
                 this.passwordCache[accountAddress] = password;

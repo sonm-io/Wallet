@@ -115,6 +115,8 @@ class Api {
             'account.send': this.send,
             'account.list': this.getAccountList,
             'account.requestTestTokens': this.requestTestTokens,
+
+            'account.setSecretKey': this.setSecretKey,
             'account.checkPrivateKey': this.checkPrivateKey,
             'account.hasSavedData': this.hasSavedData,
 
@@ -189,7 +191,7 @@ class Api {
         }
     }
 
-    public checkPrivateKey = async (data: IPayload): Promise<IResponse> => {
+    public getPrivateKey = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
             const { address, password } = data;
 
@@ -231,7 +233,7 @@ class Api {
                 client.password = password;
 
                 return {
-                    data: true,
+                    data: privateKey,
                 };
             } catch (err) {
                 return {
