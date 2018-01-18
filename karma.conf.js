@@ -2,7 +2,7 @@ module.exports = function (config) {
 	config.set({
 		browserNoActivityTimeout: 120000,
 		frameworks: ['mocha'],
-        plugins: ['karma-webpack', 'karma-mocha', 'karma-chrome-launcher'],
+        plugins: ['karma-webpack', 'karma-mocha', 'karma-chrome-launcher', 'karma-teamcity-reporter'],
 
 		preprocessors: {
 			'./test/**/*.ts': ['webpack'],
