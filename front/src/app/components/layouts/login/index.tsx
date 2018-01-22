@@ -44,7 +44,10 @@ export class Login extends React.Component<IProps, any> {
     protected getWalletList = async () =>  {
         this.setState({ pending: true });
 
-        const { data } = await Api.getWalletList();
+        let { data } = await Api.getWalletList();
+        if (data) {
+            data = data.map((item: any) => item ? item.name : '');
+        }
         const wallets = data as string[];
 
         let name = '';
