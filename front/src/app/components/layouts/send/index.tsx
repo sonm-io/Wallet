@@ -12,6 +12,7 @@ import { SendStore } from 'app/stores/send';
 import { RootStore } from 'app/stores';
 import { Header } from 'app/components/common/header';
 import { ISendFormValues } from '../../../stores/types';
+import etherToGwei from '../../../utils/ether-to-gwei';
 
 interface IProps {
     className?: string;
@@ -81,13 +82,15 @@ export class Send extends React.Component<IProps, any> {
     // TODO
     protected handleChangePriority = (value: string) => {
         const [min, max] = this.props.rootStore.mainStore.gasPriceThresholds;
-        let gasPrice = this.props.rootStore.sendStore.gasPrice;
+        let gasPrice = this.props.rootStore.mainStore.averageGasPriceEther;
 
         if (value === 'low') {
             gasPrice = min;
         } else if (value === 'high') {
             gasPrice = max;
         }
+
+        gasPrice = etherToGwei(gasPrice);
 
         this.props.rootStore.sendStore.setUserInput({ gasPrice });
     }
@@ -99,7 +102,6 @@ export class Send extends React.Component<IProps, any> {
 
         const sendStore = this.props.rootStore.sendStore;
         const balanceList = sendStore.currentBalanceList;
-        const selectedCurrencyAddress = sendStore.currencyAddress;
 
         return (
             <div className={cn('sonm-send', className)}>
@@ -131,6 +133,7 @@ export class Send extends React.Component<IProps, any> {
                             <Input
                                 onChange={this.handleChangeTargetAddress}
                                 placeholder="Address"
+                                value={sendStore.userInput.toAddress}
                             />
                         </FormField>
 
@@ -144,7 +147,7 @@ export class Send extends React.Component<IProps, any> {
                             returnPrimitive
                             currencies={balanceList}
                             onChange={this.handleChangeCurrency}
-                            value={selectedCurrencyAddress}
+                            value={sendStore.currencyAddress}
                         />
                     </FormRow>
 
@@ -154,9 +157,11 @@ export class Send extends React.Component<IProps, any> {
                             label="Amount"
                         >
                             <Input
+                                className="sonm-send__input"
                                 onChange={this.handleChangeAmount}
                                 autoComplete="off"
                                 placeholder="Amount"
+                                value={sendStore.userInput.amount}
                             />
                         </FormField>
 
@@ -177,9 +182,11 @@ export class Send extends React.Component<IProps, any> {
                             error={sendStore.validationGasLimit}
                         >
                             <Input
+                                className="sonm-send__input"
+                                value={sendStore.userInput.gasLimit}
                                 onChange={this.handleChangeGasLimit}
                                 autoComplete="off"
-                                placeholder="Gas limit"
+                                placeholder={sendStore.gasLimit}
                             />
                         </FormField>
                     </FormRow>
@@ -190,9 +197,11 @@ export class Send extends React.Component<IProps, any> {
                             error={sendStore.validationGasPrice}
                         >
                             <Input
+                                className="sonm-send__input"
+                                value={sendStore.userInput.gasPrice}
                                 onChange={this.handleChangeGasPrice}
                                 autoComplete="off"
-                                placeholder="Gas price"
+                                placeholder={sendStore.gasPriceGwei}
                             />
                         </FormField>
 
@@ -213,6 +222,7 @@ export class Send extends React.Component<IProps, any> {
                             onClick={this.handleSubmit}
                             type="submit"
                             color="violet"
+                            disabled={!sendStore.isFormValid || !sendStore.hasNecessaryValues}
                             className="sonm-send__submit"
                         >
                             NEXT

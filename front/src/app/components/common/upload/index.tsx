@@ -67,7 +67,6 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
         }
 
         event.preventDefault();
-        event.stopImmediatePropagation();
         event.target.value = null;
     }
 

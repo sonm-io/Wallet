@@ -56,7 +56,7 @@ export class SendConfirm extends React.Component<IProps, any> {
         const currency = mainStore.currencyMap.get(sendStore.currencyAddress);
         const amount = sendStore.amount;
         const gasLimit = sendStore.gasLimit;
-        const gasPrice = sendStore.gasPrice;
+        const gasPrice = sendStore.gasPriceGwei;
         const toAddress = sendStore.toAddress;
         const passwordValidationMsg = mainStore.validation.password;
 

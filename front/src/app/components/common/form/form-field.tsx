@@ -36,7 +36,13 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
             label += ':';
         }
 
-        return <label className={cn('sonm-form-field', this.props.className)}>
+        return <label
+            className={cn(
+                'sonm-form-field',
+                this.props.className,
+                { [`sonm-form-field--${helpTextType}`]: Boolean(helpTextType) },
+            )}
+        >
             <div className="sonm-form-field__label">
                 {label}
             </div>
@@ -44,10 +50,7 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
                 {this.props.children}
             </div>
             <div
-                className={cn(
-                    'sonm-form-field__help',
-                    { [`sonm-form-field__input-${helpTextType}`]: Boolean(helpTextType) },
-                )}
+                className="sonm-form-field__help"
             >
                 {helpText}
             </div>

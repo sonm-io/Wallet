@@ -25,4 +25,6 @@ export class RootStore {
 
 export const rootStore = new RootStore();
 
+(window as any).__rootStore = rootStore;
+
 export default rootStore;

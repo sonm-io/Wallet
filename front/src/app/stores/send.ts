@@ -49,11 +49,9 @@ export class SendStore extends AbstractStore {
         super({ errorProcessor: rootStore.uiStore });
 
         this.rootStore = rootStore;
-
-        this.userInput.gasLimit = SendStore.DEFAULT_GAS_LIMIT;
     }
 
-    @observable protected userInput: ISendFormValues = { ...emptyForm };
+    @observable public userInput: ISendFormValues = { ...emptyForm };
 
     @observable protected userInputTouched: Array<keyof ISendFormValues> = [];
 
@@ -72,7 +70,7 @@ export class SendStore extends AbstractStore {
     }
 
     protected isFieldTouched(fieldName: keyof ISendFormValues) {
-        return this.userInputTouched.indexOf('toAddress') !== -1;
+        return this.userInputTouched.indexOf(fieldName) !== -1;
     }
 
     @computed public get validationToAddress() {
@@ -83,26 +81,26 @@ export class SendStore extends AbstractStore {
 
             if (toAddress === '') {
                 result.push('Required field');
+            } else if (toAddress === this.fromAddress) {
+                result.push('The destination address must differ the sender address');
             } else {
-                result.concat(validateEtherAddress(toAddress));
+                result.push(...validateEtherAddress(toAddress));
             }
         }
 
         return result;
     }
 
-    @computed public get gasPrice() {
-        return this.userInput.gasPrice || this.rootStore.mainStore.averageGasPriceEther;
-    }
-
     @computed public get validationGasPrice() {
         const result: string[] = [];
-        const gasPrice = this.gasPrice;
+        const gasPrice = this.gasPriceGwei;
 
-        if (gasPrice === '') {
-            result.push('Required field');
-        } else {
-            result.concat(validatePositiveInteger(gasPrice));
+        if (this.isFieldTouched('gasPrice')) {
+            if (gasPrice === '') {
+                result.push('Required field');
+            } else {
+                result.push(...validatePositiveInteger(gasPrice));
+            }
         }
 
         return result;
@@ -117,11 +115,10 @@ export class SendStore extends AbstractStore {
         const amount = this.userInput.amount;
 
         if (this.isFieldTouched('amount')) {
-
             if (amount === '') {
                 result.push('Required field');
             } else {
-                result.concat(validatePositiveNumber(amount));
+                result.push(...validatePositiveNumber(amount));
 
                 if (result.length === 0) {
                     const currentMax = createBigNumber(this.currentBalanceMaximum);
@@ -139,13 +136,13 @@ export class SendStore extends AbstractStore {
     }
 
     @computed public get gasLimit() {
-        return this.isFieldTouched('gasLimit')
-            ? this.userInput.gasLimit
-            : SendStore.DEFAULT_GAS_LIMIT;
+        return this.userInput.gasLimit || SendStore.DEFAULT_GAS_LIMIT;
     }
 
     @computed public get validationGasLimit() {
-        return '';
+        return this.userInput.gasLimit === ''
+            ? []
+            : validatePositiveInteger(this.userInput.gasLimit);
     }
 
     @computed public get isFormValid() {
@@ -153,6 +150,10 @@ export class SendStore extends AbstractStore {
             && this.validationGasPrice.length === 0
             && this.validationAmount.length === 0
             && this.validationGasLimit.length === 0;
+    }
+
+    @computed public get hasNecessaryValues() {
+        return this.userInput.amount && this.userInput.toAddress;
     }
 
     @computed
@@ -210,7 +211,11 @@ export class SendStore extends AbstractStore {
     public resetUserInput() {
         this.resetValidation();
         this.userInputTouched = [];
-        this.userInput = { ...emptyForm };
+        this.userInput = {
+            ...emptyForm,
+            gasPrice: this.userInput.gasPrice,
+            gasLimit: this.userInput.gasLimit,
+        };
     }
 
     protected passwordCache: IPasswordCache = {};
@@ -249,7 +254,11 @@ export class SendStore extends AbstractStore {
     @computed get gasPriceGwei() {
         return this.userInput.gasPrice
             ? this.userInput.gasPrice
-            : etherToGwei(this.rootStore.mainStore.averageGasPriceEther);
+            : this.averageGasPriceGwei;
+    }
+
+    @computed get averageGasPriceGwei() {
+        return etherToGwei(this.rootStore.mainStore.averageGasPriceEther);
     }
 
     @catchErrors({ restart: false })
@@ -310,7 +319,7 @@ ${result.amount} ${currencyName} has been sent to the address ${result.toAddress
         );
 
         if (this.rootStore.mainStore.etherAddress === this.currencyAddress) {
-            const fee = new BigNumber(this.gasPriceEther).mul(this.userInput.gasLimit);
+            const fee = new BigNumber(this.gasPriceEther).mul(this.gasLimit);
             amount = amount.minus(fee);
         }
 

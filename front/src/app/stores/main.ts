@@ -218,7 +218,7 @@ export class MainStore extends AbstractStore {
         const [{data: currencyList}] = yield Promise.all([
             Api.getCurrencyList(),
 
-            this.autoUpdateIteration(UPDATE_INTERVAL), // wait for first update
+            this.autoUpdateIteration(), // wait for first update
         ]);
 
         updateAddressMap<ICurrencyInfo>(currencyList, this.currencyMap);
@@ -229,16 +229,21 @@ export class MainStore extends AbstractStore {
         updateAddressMap<IAccountInfo>(accountList, this.accountMap);
     }
 
+    @action
+    protected setAverageGasPrice(gasPrice: string = '') {
+        this.averageGasPriceEther = gasPrice;
+    }
+
     public async update() {
         const { data: accountList } = await Api.getAccountList();
         this.updateList(accountList);
 
         const { data: gasPrice } = await Api.getGasPrice();
-        this.averageGasPriceEther = gasPrice || '';
+        this.setAverageGasPrice(gasPrice);
     }
 
     @catchErrors({ restart: true })
-    protected async autoUpdateIteration(interval: number) {
+    protected async autoUpdateIteration(interval: number = UPDATE_INTERVAL) {
         try {
             if (process.env.NODE_ENV !== 'production') {
                 window.console.time('auto-update');
@@ -248,7 +253,7 @@ export class MainStore extends AbstractStore {
 
             await delay(interval);
 
-            this.autoUpdateIteration(interval);
+            setTimeout(() => this.autoUpdateIteration(), 0);
 
         } finally {
             if (process.env.NODE_ENV !== 'production') {
