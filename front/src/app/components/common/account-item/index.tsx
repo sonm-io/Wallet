@@ -11,8 +11,8 @@ export interface IAccountItemProps {
     address: string;
     json?: string;
     name: string;
-    firstBalance: string;
-    secondBalance: string;
+    etherBalance: string;
+    primaryTokenBalance: string;
     onRename?: (newName: string, address: string) => void;
     onClickIcon?: (address: string) => void;
     hasButtons?: boolean;
@@ -28,15 +28,17 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
     protected handleClickIcon = (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
 
-        this.props.onClickIcon && this.props.onClickIcon(this.props.address);
+        if (this.props.onClickIcon) {
+            this.props.onClickIcon(this.props.address);
+        }
     }
 
     public render() {
         const {
             className,
             address,
-            firstBalance,
-            secondBalance,
+            etherBalance,
+            primaryTokenBalance,
             onClickIcon,
             json,
             hasButtons,
@@ -54,7 +56,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                 </span>
                 <Balance
                     className="sonm-account-item__sonm"
-                    fullString={firstBalance}
+                    fullString={etherBalance}
                     fontSizePx={16}
                 />
                 <Hash
@@ -65,7 +67,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                 />
                 <Balance
                     className="sonm-account-item__ether"
-                    fullString={secondBalance}
+                    fullString={primaryTokenBalance}
                     fontSizePx={16}
                 />
                 {hasButtons && json

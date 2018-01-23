@@ -1,14 +1,13 @@
-import { Send } from '../components/layouts/send';
-import { Wallets } from '../components/layouts/wallets';
-import { App } from '../components/layouts/app';
-import { History } from '../components/layouts/history';
-import { SendSuccess } from '../components/layouts/send/sub/success';
-import { SendConfirm } from '../components/layouts/send/sub/confirm';
-import { Account } from '../components/layouts/account';
+import { Send } from 'app/components/layouts/send';
+import { Wallets } from 'app/components/layouts/wallets';
+import { App } from 'app/components/layouts/app';
+import { History } from 'app/components/layouts/history';
+import { SendSuccess } from 'app/components/layouts/send/sub/success';
+import { SendConfirm } from 'app/components/layouts/send/sub/confirm';
+import { Account } from 'app/components/layouts/account';
 import * as React from 'react';
+import { rootStore } from 'app/stores';
 
-import LocaleProvider from 'antd/es/locale-provider';
-import * as enUS from 'antd/lib/locale-provider/en_US';
 import { navigate } from './navigate';
 
 let defaultAction;
@@ -35,15 +34,14 @@ const routes = [
 
             return {
                 content: (
-                    <LocaleProvider locale={enUS as any}>
-                        <App
-                            onNavigate={navigateTo}
-                            selectedNavMenuItem={inner.pathKey}
-                            {...inner.props}
-                        >
-                            {inner && inner.content}
-                        </App>
-                    </LocaleProvider>
+                    <App
+                        rootStore={rootStore}
+                        onNavigate={navigateTo}
+                        selectedNavMenuItem={inner.pathKey}
+                        {...inner.props}
+                    >
+                        {inner && inner.content}
+                    </App>
                 ),
                 title: `SONM Wallet: ${inner.title}`,
             };
@@ -60,6 +58,7 @@ const routes = [
                     const content = next && next.content
                         ? next.content
                         : <Send
+                            rootStore={rootStore}
                             initialAddress={initialAddress}
                             initialCurrency={initialCurrency}
                             onRequireConfirmation={navigateToConfirmation}
@@ -81,6 +80,7 @@ const routes = [
                         action: (ctx: IContext) => ({
                             title: 'Confirmation',
                             content: <SendConfirm
+                                rootStore={rootStore}
                                 onBack={navigateToSend}
                                 onSuccess={navigateToSuccess}
                             />,
@@ -107,7 +107,11 @@ const routes = [
                     return {
                         pathKey: '/history',
                         title: 'History',
-                        content: <History {...{ initialAddress, initialCurrency }} />,
+                        content: <History
+                            rootStore={rootStore}
+                            initialAddress={initialAddress}
+                            initialCurrency={initialCurrency}
+                        />,
                     };
                 },
             },
@@ -118,7 +122,7 @@ const routes = [
 
                     const content = next && next.content
                             ? next.content
-                            : <Wallets />;
+                            : <Wallets rootStore={rootStore}/>;
 
                     if (next && next.popup) {
                         content.push(next.popup);
@@ -137,7 +141,10 @@ const routes = [
                             const initialAddress = params.address;
 
                             return {
-                                content: <Account {...{ initialAddress }} />,
+                                content: <Account
+                                    initialAddress={initialAddress}
+                                    rootStore={rootStore}
+                                />,
                             };
                         },
                     },

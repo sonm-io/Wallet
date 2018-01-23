@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 import * as queryStr from 'query-string';
-import { Provider } from 'mobx-react';
 import { resolve } from './router';
 import { history } from './router/history';
-import * as stores from './stores';
+import { rootStore } from './stores';
 import { Login } from './components/layouts/login';
+import { LocaleProvider } from 'antd';
+import * as enUS from 'antd/lib/locale-provider/en_US';
 
 interface ILocationParams {
     pathname: string;
@@ -23,9 +24,9 @@ async function renderByPath({ pathname, search }: ILocationParams) {
     window.document.title = title;
 
     render(
-        <Provider {...stores} key="app-root">
+        <LocaleProvider locale={enUS as any}>
             {content}
-        </Provider>,
+        </LocaleProvider>,
         window.document.querySelector('#root'),
     );
 }
@@ -34,8 +35,8 @@ async function handleLogin() {
     history.listen(renderByPath);
 
     await Promise.all([
-        stores.mainStore.init(),
-        stores.historyStore.init(),
+        rootStore.mainStore.init(),
+        rootStore.historyStore.init(),
     ]);
 
     renderByPath((history as any).location);

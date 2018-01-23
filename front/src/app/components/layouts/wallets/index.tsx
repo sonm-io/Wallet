@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { inject, observer } from 'mobx-react';
-import { MainStore } from 'app/stores/main';
+import { observer } from 'mobx-react';
+import { RootStore } from 'app/stores/';
 import { AccountItem, IAccountItemProps } from 'app/components/common/account-item';
 import { CurrencyBalanceList } from 'app/components/common/currency-balance-list';
 import { DeletableItemWithConfirmation } from 'app/components/common/deletable-item/with-confirmation';
@@ -22,7 +22,7 @@ enum WalletDialogs {
 
 interface IProps {
     className?: string;
-    mainStore?: MainStore;
+    rootStore: RootStore;
 }
 
 interface IState {
@@ -33,7 +33,6 @@ interface IState {
 
 class DeletableItem extends DeletableItemWithConfirmation<IAccountItemProps> {}
 
-@inject('mainStore')
 @observer
 export class Wallets extends React.Component<IProps, IState> {
     public state = {
@@ -42,18 +41,12 @@ export class Wallets extends React.Component<IProps, IState> {
         validation: {} as IValidation ,
     };
 
-    protected get mainStore(): MainStore {
-        if (!this.props.mainStore) { throw new Error('mainStore is undefined'); }
-
-        return this.props.mainStore;
-    }
-
     protected handleClickAccount(address: string) {
         navigate({ path: `/accounts/${address}` }); // TODO move to router
     }
 
     private handleDelete = (deleteAddress: string) => {
-        this.mainStore.deleteAccount(deleteAddress);
+        this.props.rootStore.mainStore.deleteAccount(deleteAddress);
     }
 
     protected isValidationEmpty(obj: object) {
@@ -62,7 +55,7 @@ export class Wallets extends React.Component<IProps, IState> {
 
     protected handleAddAccount = async (data: IAddAccountForm) => {
 
-        const validation: IValidation = await this.mainStore.addAccount(
+        const validation: IValidation = await  this.props.rootStore.mainStore.addAccount(
             data.json,
             data.password,
             data.name,
@@ -76,7 +69,7 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     protected handleCreateAccount = async (data: ICreateAccountForm) => {
-        await this.mainStore.createAccount(
+        await  this.props.rootStore.mainStore.createAccount(
             data.password,
             data.name,
         );
@@ -95,7 +88,7 @@ export class Wallets extends React.Component<IProps, IState> {
     protected openAddWalletDialog = this.switchDialog.bind(this, WalletDialogs.add);
 
     protected handleRename = (address: string, name: string) => {
-        this.mainStore.renameAccount(address, name);
+        this.props.rootStore.mainStore.renameAccount(address, name);
     }
 
     public render() {
@@ -109,9 +102,9 @@ export class Wallets extends React.Component<IProps, IState> {
                     Accounts
                 </Header>
                 <div className="sonm-wallets__list">
-                    {this.mainStore.accountList.length === 0
+                    { this.props.rootStore.mainStore.accountList.length === 0
                         ? <EmptyAccountList/>
-                        : this.mainStore.accountList.map((x: IAccountItemProps) => {
+                        :  this.props.rootStore.mainStore.accountList.map((x: IAccountItemProps) => {
                             return (
                                 <DeletableItem
                                     item={x}
@@ -134,7 +127,7 @@ export class Wallets extends React.Component<IProps, IState> {
                 </div>
                 <CurrencyBalanceList
                     className="sonm-wallets__balances"
-                    currencyBalanceList={this.mainStore.fullBalanceList}
+                    currencyBalanceList={this.props.rootStore.mainStore.fullBalanceList}
                 />
                 <div className="sonm-wallets__buttons">
                     <Button
@@ -164,7 +157,7 @@ export class Wallets extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.add
                         ? (
                             <AddAccount
-                                existingAccounts={Array.from(this.mainStore.accountMap.keys())}
+                                existingAccounts={this.props.rootStore.mainStore.accountAddressList}
                                 validation={this.state.validation}
                                 onSubmit={this.handleAddAccount}
                                 onClickCross={this.closeDialog}

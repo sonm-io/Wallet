@@ -6,59 +6,58 @@ import Form from 'antd/es/form';
 import * as cn from 'classnames';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';
-import { inject, observer } from 'mobx-react';
-import { MainStore } from 'app/stores/main';
+import { observer } from 'mobx-react';
+import { RootStore } from 'app/stores/';
 import { HistoryStore } from 'app/stores/history';
 import { Header } from 'app/components/common/header';
 
 interface IProps {
     className?: string;
-    mainStore?: MainStore;
+    rootStore: RootStore;
     historyStore?: HistoryStore;
     onSuccess: () => void;
     onBack: () => void;
 }
 
-@inject('mainStore', 'historyStore')
 @observer
 export class SendConfirm extends React.Component<IProps, any> {
     public handleConfrim = async (event: any) => {
-        const mainStore = this.props.mainStore;
-        const historyStore = this.props.historyStore;
-        if (!mainStore || !historyStore) { return; }
+        const sendStore = this.props.rootStore.sendStore;
+        const historyStore = this.props.rootStore.historyStore;
 
         event.preventDefault();
 
         const password = event.target.password.value;
 
-        const isPasswordValid = await mainStore.checkSelectedAccountPassword(password);
+        const isPasswordValid = await sendStore.checkSelectedAccountPassword(password);
 
         if (isPasswordValid) {
-            (mainStore.confirmTransaction(password) as any).then(() => historyStore.update());
+            (sendStore.confirmTransaction(password) as any).then(() => historyStore.update());
 
             this.props.onSuccess();
         }
     }
 
     public handleCancel = () => {
-        this.props.mainStore && this.props.mainStore.resetValidation();
+        this.props.rootStore.sendStore.resetValidation();
 
         this.props.onBack();
     }
 
     public render() {
-        const mainStore = this.props.mainStore;
+        const mainStore = this.props.rootStore.mainStore;
+        const sendStore = this.props.rootStore.sendStore;
 
         if (!mainStore) { return null; }
 
-        const accountAddress = mainStore.selectedAccountAddress;
+        const accountAddress = sendStore.fromAddress;
         const account = mainStore.accountMap.get(accountAddress);
         const accountName = account ? account.name : '';
-        const currency = mainStore.currencyMap.get(mainStore.selectedCurrencyAddress);
-        const amount = mainStore.values.amount;
-        const gasLimit = mainStore.values.gasLimit;
-        const gasPrice = mainStore.values.gasPrice;
-        const toAddress = mainStore.values.toAddress;
+        const currency = mainStore.currencyMap.get(sendStore.currencyAddress);
+        const amount = sendStore.amount;
+        const gasLimit = sendStore.gasLimit;
+        const gasPrice = sendStore.gasPrice;
+        const toAddress = sendStore.toAddress;
         const passwordValidationMsg = mainStore.validation.password;
 
         if (!currency) { return null; }

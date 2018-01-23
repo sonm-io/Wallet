@@ -4,9 +4,8 @@ import DatePicker from 'antd/es/date-picker';
 import Select from 'antd/es/select';
 import Input from 'antd/es/input';
 import * as cn from 'classnames';
-import { inject, observer } from 'mobx-react';
-import { HistoryStore } from '../../../stores/history';
-import { MainStore } from '../../../stores/main';
+import { observer } from 'mobx-react';
+import { RootStore } from 'app/stores';
 import { ISendTransactionResult } from 'app/api';
 import { ColumnProps } from 'antd/lib/table';
 import * as moment from 'moment';
@@ -25,13 +24,11 @@ class TxTable extends Table<ISendTransactionResult> {}
 
 interface IProps {
     className?: string;
-    historyStore?: HistoryStore;
-    mainStore?: MainStore;
+    rootStore: RootStore;
     initialAddress?: string;
     initialCurrency?: string;
 }
 
-@inject('historyStore', 'mainStore')
 @observer
 export class History extends React.Component<IProps, any> {
 
@@ -53,7 +50,7 @@ export class History extends React.Component<IProps, any> {
         title: 'From',
         render: (_, record) => {
             const addr = record.fromAddress;
-            const account = this.props.mainStore && this.props.mainStore.accountMap.get(addr);
+            const account = this.props.rootStore.mainStore.accountMap.get(addr);
             const name = account
                 ? account.name
                 : addr;
@@ -82,7 +79,7 @@ export class History extends React.Component<IProps, any> {
         title: 'Amount / fee',
         render: (_, record) => {
             const addr = record.currencyAddress;
-            const currency = this.props.mainStore && this.props.mainStore.currencyMap.get(addr);
+            const currency = this.props.rootStore.mainStore.currencyMap.get(addr);
             const symbol = currency
                 ? currency.symbol
                 : 'None';
@@ -137,62 +134,58 @@ export class History extends React.Component<IProps, any> {
     };
 
     public componentWillMount() {
-        if (!this.props.historyStore) { return; }
+        if (!this.props.rootStore.historyStore) { return; }
 
         let updated = false;
 
         if (this.props.initialAddress) {
-            updated = this.props.historyStore.setFilterFrom(this.props.initialAddress);
+            updated = this.props.rootStore.historyStore.setFilterFrom(this.props.initialAddress);
         }
 
         if (this.props.initialCurrency) {
-            updated = updated || this.props.historyStore.setFilterCurrency(this.props.initialCurrency);
+            updated = updated || this.props.rootStore.historyStore.setFilterCurrency(this.props.initialCurrency);
         }
 
-        if (!updated) { this.props.historyStore.update(); }
+        if (!updated) { this.props.rootStore.historyStore.update(); }
     }
 
     protected handleChangeTime = (dates: moment.Moment[]) => {
-        this.props.historyStore && this.props.historyStore.setFilterTime(
+        this.props.rootStore.historyStore.setFilterTime(
             dates[0].valueOf(),
             dates[1].valueOf(),
         );
     }
 
     protected handlePageChange = (page: number) => {
-        this.props.historyStore && this.props.historyStore.setPage(page);
+        this.props.rootStore.historyStore.setPage(page);
     }
 
     protected handleChangeQuery = (event: any) => {
         const query = event.target.value;
 
-        this.setState({query});
+        this.setState({ query });
         this.setQueryDebonced(query);
     }
 
     protected setQueryDebonced = debounce500((query: string) => {
-        this.props.historyStore && this.props.historyStore.setQuery(query);
+        this.props.rootStore.historyStore.setQuery(query);
     })
 
     protected handleSelectCurrency = (value: any) => {
         const address = value as string;
 
-        this.props.historyStore && this.props.historyStore.setFilterCurrency(address);
+        this.props.rootStore.historyStore.setFilterCurrency(address);
     }
 
     public render() {
-        if (this.props.mainStore === undefined || this.props.historyStore === undefined) {
-            return null;
-        }
-
         const {
             className,
         } = this.props;
 
         const pagination = {
-            total: this.props.historyStore.total,
-            defaultPageSize: this.props.historyStore.perPage,
-            current: this.props.historyStore.page,
+            total: this.props.rootStore.historyStore.total,
+            defaultPageSize: this.props.rootStore.historyStore.perPage,
+            current: this.props.rootStore.historyStore.page,
             onChange: this.handlePageChange,
         };
 
@@ -201,26 +194,26 @@ export class History extends React.Component<IProps, any> {
                 <AccountBigSelect
                     className="sonm-history__select-account"
                     returnPrimitive
-                    onChange={this.props.historyStore.setFilterFrom}
-                    accounts={this.props.mainStore.accountList}
-                    value={this.props.historyStore.fromAddress}
+                    onChange={this.props.rootStore.historyStore.setFilterFrom}
+                    accounts={this.props.rootStore.mainStore.accountList}
+                    value={this.props.rootStore.historyStore.fromAddress}
                     hasEmptyOption
                 />
                 <RangePicker
                     allowClear={false}
                     className="sonm-history__date-range"
                     value={[
-                        moment(this.props.historyStore.timeStart),
-                        moment(this.props.historyStore.timeEnd),
+                        moment(this.props.rootStore.historyStore.timeStart),
+                        moment(this.props.rootStore.historyStore.timeEnd),
                     ]}
                     onChange={this.handleChangeTime}
                 />
                 <Select
                     onChange={this.handleSelectCurrency}
-                    value={this.props.historyStore.curencyAddress}
+                    value={this.props.rootStore.historyStore.curencyAddress}
                     className="sonm-history__select-currency"
                 >
-                    {this.props.mainStore.currentBalanceList.map(
+                    {this.props.rootStore.mainStore.fullBalanceList.map(
                         x => <Option
                             key={x.address}
                             value={x.address}
@@ -242,7 +235,7 @@ export class History extends React.Component<IProps, any> {
 
                 <TxTable
                     className="sonm-history__table sonm-tx-list"
-                    dataSource={this.props.historyStore.currentList}
+                    dataSource={this.props.rootStore.historyStore.currentList}
                     columns={this.columns}
                     pagination={pagination}
                     rowKey="hash"

@@ -1,19 +1,19 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { inject, observer } from 'mobx-react';
-import { MainStore } from '../../../stores/main';
+import { RootStore } from 'app/stores/';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
-import Header from '../../common/header';
-import IdentIcon from '../../common/ident-icon/index';
+import { Header } from 'app/components/common/header';
+import { IdentIcon } from 'app/components/common/ident-icon';
 import { navigate } from 'app/router';
-import Button from '../../common/button/index';
+import { Button } from 'app/components/common/button';
 import { getMessageText } from 'app/api/error-messages';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
 
 interface IProps {
     className?: string;
-    mainStore?: MainStore;
+    rootStore: RootStore;
     initialAddress: string;
 }
 
@@ -22,7 +22,7 @@ enum Dialogs {
     none = '',
 }
 
-@inject('mainStore')
+@inject('rootStore')
 @observer
 export class Account extends React.Component<IProps, any> {
     public state = {
@@ -30,22 +30,20 @@ export class Account extends React.Component<IProps, any> {
     };
 
     public componentWillMount() {
-        if (!this.props.mainStore) { return; }
-
-        this.props.initialAddress && this.props.mainStore.selectAccount(this.props.initialAddress);
+        if (this.props.initialAddress) {
+            this.props.rootStore.sendStore.setUserInput({ fromAddress: this.props.initialAddress });
+        }
     }
 
     protected handleChangeAccount = (accountAddres: any) => {
-        this.props.mainStore && this.props.mainStore.selectAccount(accountAddres);
+        this.props.rootStore.sendStore.setUserInput({ fromAddress: accountAddres });
     }
 
     protected handleHistoryClick = () => {
-        if (!this.props.mainStore) { return; }
-
         navigate({
             path: '/history',
             query: {
-                address: this.props.mainStore.selectedAccountAddress,
+                address: this.props.rootStore.sendStore.fromAddress,
             },
         });
     }
@@ -64,16 +62,15 @@ export class Account extends React.Component<IProps, any> {
     protected handleGiveMeMore = async (event: any) => {
         event.preventDefault();
 
-        if (!this.props.mainStore) { return; }
+        await this.props.rootStore.mainStore.giveMeMore(
+            event.target.password.value,
+            this.props.rootStore.sendStore.fromAddress,
+        );
 
-        await this.props.mainStore.giveMeMore(event.target.password.value);
-
-        await this.props.mainStore.update();
+        await this.props.rootStore.mainStore.update();
     }
 
     public render() {
-        if (!this.props.mainStore) { return null; }
-
         const {
             className,
         } = this.props;
@@ -86,9 +83,9 @@ export class Account extends React.Component<IProps, any> {
                 <AccountBigSelect
                     className="sonm-account__account-select"
                     returnPrimitive
-                    accounts={this.props.mainStore.accountList}
+                    accounts={this.props.rootStore.mainStore.accountList}
                     onChange={this.handleChangeAccount}
-                    value={this.props.mainStore.selectedAccountAddress}
+                    value={this.props.rootStore.sendStore.fromAddress}
                 />
 
                 <button
@@ -98,12 +95,13 @@ export class Account extends React.Component<IProps, any> {
                     View operation history
                 </button>
 
-                {this.props.mainStore.currentBalanceList.length === 0 ? null :
+                {this.props.rootStore.sendStore.currentBalanceList.length === 0 ? null :
                     <ul className="sonm-account__tokens" >
                         <Header className="sonm-account__header">
                             Coins and tokens
                         </Header>
-                        {this.props.mainStore.currentBalanceList.map(({ symbol, address, name, balance, decimals }) => {
+                        {this.props.rootStore.sendStore.currentBalanceList.map(
+                            ({ symbol, address, name, balance, decimals }) => {
                             return (
                                 <li className="sonm-account-token-list__currency" key={address}>
                                     <IdentIcon

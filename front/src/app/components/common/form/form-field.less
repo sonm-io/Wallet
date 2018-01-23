@@ -1,0 +1,40 @@
+@sonm-form-field-gap-width: 7px;
+@sonm-form-field-font-size: 14px;
+
+.sonm-form-field {
+
+  &__help,
+  &__label {
+    font-size: @sonm-form-field-font-size;
+    line-height: 100%;
+    height: @sonm-form-field-font-size;
+  }
+
+  &__label {
+    margin: 0 0 @sonm-form-field-gap-width 0;
+  }
+
+  &__help {
+    margin: @sonm-form-field-gap-width 0 0 0;
+
+    &--error {
+      color: @color-red;
+    }
+
+    &--success {
+      color: @color-green;
+    }
+
+    &--warning {
+      color: @color-orange;
+    }
+
+    &--info {
+      color: @color-blue;
+    }
+  }
+
+  &__input {
+
+  }
+}

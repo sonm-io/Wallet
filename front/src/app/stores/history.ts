@@ -3,6 +3,7 @@ import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
 import { AbstractStore } from './abstract-store';
+import { RootStore } from './';
 const { pending } = AbstractStore;
 
 const Api = api.Api;
@@ -44,6 +45,14 @@ export class HistoryStore extends AbstractStore {
     }
 
     protected isInitiated = false;
+
+    protected rootStore: RootStore;
+
+    public constructor(rootStore: RootStore) {
+        super({ errorProcessor: rootStore.uiStore });
+
+        this.rootStore = rootStore;
+    }
 
     @pending
     public async init() {

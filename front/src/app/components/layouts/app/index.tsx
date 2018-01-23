@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { default as AntdAlertd } from 'antd/es/alert';
 import * as cn from 'classnames';
-import { inject, observer } from 'mobx-react';
-import { MainStore } from 'app/stores/main';
+import { observer } from 'mobx-react';
+import { RootStore } from 'app/stores';
 import { AbstractStore } from 'app/stores/abstract-store';
 import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
@@ -15,11 +15,10 @@ interface IProps {
     children: any;
     error: string;
     selectedNavMenuItem: string;
-    mainStore: MainStore;
+    rootStore: RootStore;
     onNavigate: (url: string) => void;
 }
 
-@inject('mainStore', 'historyStore')
 @observer
 export class App extends React.Component<IProps, any> {
     protected static menuConfig = [
@@ -42,12 +41,13 @@ export class App extends React.Component<IProps, any> {
             className,
             selectedNavMenuItem,
             children,
-            mainStore: {
-                firstTokenBalance,
-                secondTokenBalance,
-                accountMap,
-            },
         } = this.props;
+
+        const {
+            etherBalance,
+            primaryTokenBalance,
+            accountMap,
+        } = this.props.rootStore.mainStore;
 
         const disabledMenu = this.isOffline || (accountMap.size === 0)
             ? '/send'
@@ -68,12 +68,12 @@ export class App extends React.Component<IProps, any> {
                                 <div className="sonm-nav__total-group">
                                     <Balance
                                         className="sonm-nav__total"
-                                        fullString={firstTokenBalance}
+                                        fullString={etherBalance}
                                         fontSizePx={18}
                                     />
                                     <Balance
                                         className="sonm-nav__total"
-                                        fullString={secondTokenBalance}
+                                        fullString={primaryTokenBalance}
                                         fontSizePx={18}
                                     />
                                 </div>
@@ -89,7 +89,7 @@ export class App extends React.Component<IProps, any> {
                                 type="warning"
                             /> : null
                         }
-                        <AlertList className="sonm-app__alert-list"/>
+                        <AlertList className="sonm-app__alert-list" rootStore={this.props.rootStore}/>
                         <Alert
                             type="warning"
                             id="offline"
