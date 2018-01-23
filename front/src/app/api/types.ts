@@ -67,4 +67,15 @@ export interface IWalletExport {
     fileContent: string;
 }
 
+export interface IWalletListItem {
+    name: string;
+    chainId: string;
+    nodeUrl: string;
+}
+
+export interface IWalletList {
+    version: number;
+    data: IWalletListItem[];
+}
+
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

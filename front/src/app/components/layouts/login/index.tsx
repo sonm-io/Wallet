@@ -8,6 +8,7 @@ import { Dialog } from 'app/components/common/dialog';
 import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
 import { getMessageText } from 'app/api/error-messages';
+import { IWalletListItem } from 'app/api/types';
 
 interface IProps {
     className?: string;
@@ -44,11 +45,8 @@ export class Login extends React.Component<IProps, any> {
     protected getWalletList = async () =>  {
         this.setState({ pending: true });
 
-        let { data } = await Api.getWalletList();
-        if (data) {
-            data = data.map((item: any) => item ? item.name : '');
-        }
-        const wallets = data as string[];
+        const { data } = await Api.getWalletList();
+        const wallets = (data ? data.map((item: IWalletListItem) => item.name) : ['']) as string[];
 
         let name = '';
         const savedName = window.localStorage.getItem('sonm-last-used-wallet');

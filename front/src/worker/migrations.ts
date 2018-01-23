@@ -1,13 +1,6 @@
-interface IWalletListItem {
-    name: string;
-    chainId: string;
-    nodeUrl: string;
-}
-
-interface IWalletList {
-    version: number;
-    data: IWalletListItem[];
-}
+import {
+    IWalletList,
+} from '../app/api/types';
 
 const migrations = {
     wallet_list: {

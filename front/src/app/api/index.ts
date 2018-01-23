@@ -13,6 +13,7 @@ import {
     ITxListFilter,
     ISettings,
     IWalletExport,
+    IWalletListItem,
 } from './types';
 
 export * from './types';
@@ -93,7 +94,7 @@ export class Api {
         return createPromise('account.create', { passphase });
     }
 
-    public static async getWalletList(): Promise<IResult<string[]>>  {
+    public static async getWalletList(): Promise<IResult<IWalletListItem[]>>  {
         return createPromise('getWalletList');
     }
 
