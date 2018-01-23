@@ -131,8 +131,8 @@ class Api {
             transactions: [],
             tokens: [],
             settings: {
-                chain_id: null,
-                node_url: null,
+                chainId: null,
+                nodeUrl: null,
             },
         };
     }
@@ -273,8 +273,8 @@ class Api {
 
             this.storage.version = STORAGE_VERSION;
             this.storage.settings = {
-                chain_id: data.chainId,
-                node_url: DEFAULT_NODES[data.chainId],
+                chainId: data.chainId,
+                nodeUrl: DEFAULT_NODES[data.chainId],
             };
             await this.saveData();
 
@@ -282,8 +282,8 @@ class Api {
             const walletList = await this.getWallets();
             walletList.data.push({
                 name: data.walletName,
-                chainId: this.storage.settings.chain_id,
-                nodeUrl: this.storage.settings.node_url,
+                chainId: this.storage.settings.chainId,
+                nodeUrl: this.storage.settings.nodeUrl,
             });
 
             const tokenList = await this.getTokenList();
@@ -378,12 +378,12 @@ class Api {
             if (dataFromStorage) {
                 this.storage = dataFromStorage;
 
-                if (!this.storage.settings.chain_id) {
-                    this.storage.settings.chain_id = 'rinkeby';
+                if (!this.storage.settings.chainId) {
+                    this.storage.settings.chainId = 'rinkeby';
                 }
 
-                if (!this.storage.settings.node_url) {
-                    this.storage.settings.node_url = DEFAULT_NODES[this.storage.settings.chain_id];
+                if (!this.storage.settings.nodeUrl) {
+                    this.storage.settings.nodeUrl = DEFAULT_NODES[this.storage.settings.chainId];
                 }
 
                 const tokenList = await this.getTokenList();
@@ -509,7 +509,7 @@ class Api {
     }
 
     private async processTransactions() {
-        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+        const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
         const transactions = [];
 
         let needSave = false;
@@ -536,7 +536,7 @@ class Api {
 
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
-            const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+            const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
 
             this.accounts[address] = {
                 factory,
@@ -580,7 +580,7 @@ class Api {
 
     private async getTokenList() {
         if (!this.tokenList) {
-            const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+            const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
             this.tokenList = await factory.createTokenList();
         }
 
@@ -594,7 +594,7 @@ class Api {
     }
 
     public getGasPrice = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+        const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
@@ -603,7 +603,7 @@ class Api {
     }
 
     public getSonmTokenAddress = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(this.storage.settings.node_url, this.storage.settings.chain_id);
+        const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
 
         return {
             data: await factory.getSonmTokenAddress(),

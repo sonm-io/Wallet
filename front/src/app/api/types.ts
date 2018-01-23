@@ -57,8 +57,8 @@ export interface ITxListFilter {
 }
 
 export interface ISettings {
-    chain_id: string;
-    node_url: string;
+    chainId: string;
+    nodeUrl: string;
     language: string;
 }
 
