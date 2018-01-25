@@ -379,6 +379,12 @@ class Api {
                 this.storage = dataFromStorage;
 
                 const tokenList = await this.getTokenList();
+
+                if (!this.storage.tokens.length) {
+                    this.storage.tokens = tokenList.getList();
+                    await this.saveData();
+                }
+
                 for (const token of this.storage.tokens) {
                     tokenList.add(token.address);
                 }
