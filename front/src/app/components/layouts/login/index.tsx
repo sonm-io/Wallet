@@ -8,6 +8,7 @@ import { Dialog } from 'app/components/common/dialog';
 import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
 import { getMessageText } from 'app/api/error-messages';
+import { IWalletListItem } from 'app/api/types';
 
 interface IProps {
     className?: string;
@@ -45,7 +46,7 @@ export class Login extends React.Component<IProps, any> {
         this.setState({ pending: true });
 
         const { data } = await Api.getWalletList();
-        const wallets = data as string[];
+        const wallets = (data ? data.map((item: IWalletListItem) => item.name) : ['']) as string[];
 
         let name = '';
         const savedName = window.localStorage.getItem('sonm-last-used-wallet');
@@ -76,7 +77,7 @@ export class Login extends React.Component<IProps, any> {
 
     protected async fastLogin() {
         if (window.localStorage.getItem('sonm-4ever')) {
-            const { data } = await Api.setSecretKey('1', '1');
+            const { data } = await Api.unlockWallet('1', '1');
             if (data) {
                 this.props.onLogin();
             }
@@ -115,7 +116,7 @@ export class Login extends React.Component<IProps, any> {
         this.setState({ pending: true });
 
         try {
-            const { validation, data: success } = await Api.setSecretKey(this.state.password, this.state.name);
+            const { validation, data: success } = await Api.unlockWallet(this.state.password, this.state.name);
 
             if (validation) {
                 this.setState({ validation });
@@ -164,7 +165,7 @@ export class Login extends React.Component<IProps, any> {
             });
 
             try {
-                const { validation } = await Api.setSecretKey(this.state.newPassword, this.state.newName);
+                const { validation } = await Api.createWallet(this.state.newPassword, this.state.newName, 'rinkeby');
 
                 if (validation) {
                     this.setState({ validation });

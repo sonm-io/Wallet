@@ -1,8 +1,11 @@
 const {expect} = require('chai');
 
+const walletName = 'wallet 1';
+const walletPassword = 'my secret key';
+
 const vasyaCfg = require('./data/Vasya_11111111.json');
 const json = JSON.stringify(vasyaCfg);
-
+const accountName = 'Account 1';
 const address = `0x${vasyaCfg.address}`;
 const password = '11111111';
 
@@ -21,41 +24,61 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('data.pong');
     });
 
-    it('should check connection', async function() {
-        const response = await Api.checkConnection();
-        expect(response.data).equal(true);
-    });
-
-    it('should get sonm token address', async function() {
-        const response = await Api.getSonmTokenAddress();
-        expect(response.data).to.be.a('string');
-    });
-
     it('should get empty wallets list', async function() {
         const response = await Api.getWalletList();
         expect(response.data).to.have.lengthOf(0);
     });
 
     it('should set secret key', async function() {
-        const response = await Api.setSecretKey('my secret key', 'wallet 1');
+        const response = await Api.createWallet(walletPassword, walletName, 'rinkeby');
+        expect(response.data).equal(true);
+    });
+
+    it('should recieve currenciesList', async function() {
+        const response = await Api.getCurrencyList();
+        expect(response.data).to.have.lengthOf(2);
+
+        if (response.data) {
+            expect(response.data[0].symbol).equal('Ether');
+            expect(response.data[1].symbol).equal('SNMT');
+        }
+    });
+
+    it('should add token', async function() {
+        const response = await Api.addToken('0x225b929916daadd5044d5934936313001f55d8f0');
+        expect(response.data).to.be.a('object');
+
+        const response2 = await Api.getCurrencyList();
+
+        if (response2.data) {
+            console.log(response2.data.map(item => item.address));
+        }
+
+        expect(response2.data).to.have.lengthOf(3);
+    });
+
+    it('should check connection', async function() {
+        const response = await Api.checkConnection();
         expect(response.data).equal(true);
     });
 
     it('should get not empty wallets list', async function() {
         const response = await Api.getWalletList();
         expect(response.data).to.have.lengthOf(1);
-
-        const response2 = await Api.setSecretKey('my secret key1', 'wallet 1');
-        console.log(response2);
     });
 
     it('should get error on wrong secret key', async function() {
-        const response = await Api.setSecretKey('my secret key1', 'wallet 1');
+        const response = await Api.unlockWallet('my secret key1', walletName);
         expect(response).to.have.nested.property('validation.password');
     });
 
+    it('should unlock wallet', async function() {
+        const response2 = await Api.unlockWallet(walletPassword, walletName);
+        expect(response2.data).equal(true);
+    });
+
     it('should return error in add account', async function() {
-        const response = await Api.addAccount(json, '1111111', 'Wallet 1');
+        const response = await Api.addAccount(json, '1111111', accountName);
         expect(response).to.have.nested.property('validation.password');
     });
 
@@ -84,23 +107,30 @@ describe('Api',  async function() {
         }
     });
 
+    it('should export wallet && import wallet', async function() {
+        const response = await Api.exportWallet();
+        expect(response).to.have.nested.property('data.walletName');
+        expect(response).to.have.nested.property('data.fileContent');
+
+        if (response.data) {
+            expect(response.data.walletName).equal(walletName);
+
+            const response2 = await Api.importWallet(walletPassword, 'wallet 2', response.data.fileContent);
+            expect(response2.data).equal(true);
+
+            const response3 = await Api.getWalletList();
+            expect(response3.data).to.have.lengthOf(2);
+        }
+    });
+
     it('should check private key', async function() {
-        const response = await Api.checkPrivateKey(password, address);
-        expect(response.data).equal(true);
+        const response = await Api.getPrivateKey(password, address);
+        expect(response.data).equal('69deaef1da6fd4d01489d7b46e8e3aab587d9fcd49de2080d367c3ef120689ef');
     });
 
     it('should fail check private key', async function() {
-        const response = await Api.checkPrivateKey('1234', address);
+        const response = await Api.getPrivateKey('1234', address);
         expect(response).to.have.nested.property('validation.password');
-    });
-
-    it('should recieve currenciesList', async function() {
-        const response = await Api.getCurrencyList();
-        expect(response.data).to.have.lengthOf(2);
-        if (response.data) {
-            expect(response.data[0].symbol).equal('Ether');
-            expect(response.data[1].symbol).equal('SNMT');
-        }
     });
 
     it('should send ether and snmt', async function() {

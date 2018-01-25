@@ -56,4 +56,26 @@ export interface ITxListFilter {
     query?: string;
 }
 
+export interface ISettings {
+    chainId: string;
+    nodeUrl: string;
+    language: string;
+}
+
+export interface IWalletExport {
+    walletName: string;
+    fileContent: string;
+}
+
+export interface IWalletListItem {
+    name: string;
+    chainId: string;
+    nodeUrl: string;
+}
+
+export interface IWalletList {
+    version: number;
+    data: IWalletListItem[];
+}
+
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';
