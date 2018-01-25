@@ -31,6 +31,8 @@ const migrations = {
                nodeUrl: 'https://rinkeby.infura.io',
             };
 
+            data.tokens = [];
+
             return data;
         },
     },
