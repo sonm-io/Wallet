@@ -66,7 +66,7 @@ function processValidation(obj: any): IValidation {
 }
 
 export class Api {
-    public static async createWallet(password: string, walletName: string, chainId: string): Promise<IResult<boolean>>  {
+    public static async createWallet(password: string, walletName: string, chainId: string): Promise<IResult<IWalletListItem>>  {
         return createPromise('createWallet', { password, walletName, chainId });
     }
 

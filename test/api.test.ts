@@ -31,7 +31,11 @@ describe('Api',  async function() {
 
     it('should set secret key', async function() {
         const response = await Api.createWallet(walletPassword, walletName, 'rinkeby');
-        expect(response.data).equal(true);
+        expect(response.data).to.be.a('object');
+
+        if (response.data && response.data.name) {
+            expect(response.data.name).equal(walletName);
+        }
     });
 
     it('should recieve currenciesList', async function() {
