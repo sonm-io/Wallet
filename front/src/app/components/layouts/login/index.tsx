@@ -8,7 +8,6 @@ import { Dialog } from 'app/components/common/dialog';
 import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
 import { getMessageText } from 'app/api/error-messages';
-import { IWalletListItem } from 'app/api/types';
 
 interface IProps {
     className?: string;
@@ -34,7 +33,7 @@ export class Login extends React.Component<IProps, any> {
         newName: '',
         newPassword: '',
         confirmation: '',
-        wallets: ([] as string[]),
+        namesOfWallets: ([] as string[]),
         name: '',
         pending: false,
         error: '',
@@ -45,30 +44,35 @@ export class Login extends React.Component<IProps, any> {
     protected getWalletList = async () =>  {
         this.setState({ pending: true });
 
-        const { data } = await Api.getWalletList();
-        const wallets = (data ? data.map((item: IWalletListItem) => item.name) : ['']) as string[];
+        const { data: walletlList } = await Api.getWalletList();
+
+        if (walletlList === undefined) {
+            return;
+        }
+
+        const namesOfWallets = walletlList.map(x => x.name);
 
         let name = '';
         const savedName = window.localStorage.getItem('sonm-last-used-wallet');
 
-        if (savedName && wallets.indexOf(savedName) !== -1) {
+        if (savedName && namesOfWallets.indexOf(savedName) !== -1) {
             name = savedName;
-        } else if (wallets.length > 0) {
-            name = wallets[0];
+        } else if (namesOfWallets.length > 0) {
+            name = namesOfWallets[0];
         }
 
         const update: any = {
             pending: false,
-            wallets,
+            namesOfWallets,
             name,
         };
 
-        if (wallets.length === 1) {
-            update.name = wallets[0];
+        if (namesOfWallets.length === 1) {
+            update.name = namesOfWallets[0];
             update.currentAction = 'enter-password';
         }
 
-        if (wallets.length === 0) {
+        if (namesOfWallets.length === 0) {
             update.currentAction = 'create-new';
         }
 
@@ -149,7 +153,7 @@ export class Login extends React.Component<IProps, any> {
             invalid = true;
         }
 
-        if (this.state.wallets.indexOf(this.state.newName) !== -1) {
+        if (this.state.namesOfWallets.indexOf(this.state.newName) !== -1) {
             this.setState({ validation: { newName: getMessageText('wallet_allready_exists') } });
             invalid = true;
         }
@@ -222,7 +226,7 @@ export class Login extends React.Component<IProps, any> {
                     name="name"
                     onChange={this.handleChangeWallet}
                     value={this.state.name}
-                    options={this.state.wallets}
+                    options={this.state.namesOfWallets}
                 />
                 <Button
                     height={50}
