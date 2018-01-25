@@ -378,14 +378,6 @@ class Api {
             if (dataFromStorage) {
                 this.storage = dataFromStorage;
 
-                if (!this.storage.settings.chainId) {
-                    this.storage.settings.chainId = 'rinkeby';
-                }
-
-                if (!this.storage.settings.nodeUrl) {
-                    this.storage.settings.nodeUrl = DEFAULT_NODES[this.storage.settings.chainId];
-                }
-
                 const tokenList = await this.getTokenList();
                 for (const token of this.storage.tokens) {
                     tokenList.add(token.address);

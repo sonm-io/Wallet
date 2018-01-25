@@ -25,6 +25,12 @@ const migrations = {
     wallet: {
         0: (data: any) => {
             data.version = 1;
+
+            data.settings = {
+               chainId: 'rinkeby',
+               nodeUrl: 'https://rinkeby.infura.io',
+            };
+
             return data;
         },
     },
