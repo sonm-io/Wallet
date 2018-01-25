@@ -552,7 +552,7 @@ class Api {
             const balancies = await tokenList.getBalances(address);
 
             for (const key of Object.keys(balancies)) {
-                balancies[address] = utils.fromWei(balancies[key], 'ether');
+                balancies[key] = utils.fromWei(balancies[key], 'ether');
             }
 
             return balancies;
