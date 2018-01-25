@@ -27,20 +27,20 @@
     border: 0 solid @currency-balance-list-header-bg;
     border-bottom-width: 1px;
     text-align: left;
-    padding: 10px 0 10px 36px;
+    padding: 10px;
     font-size: 20px;
     margin: 0;
+    white-space: nowrap;
+    display: flex;
   }
 
   &__balance {
-    display: inline-block;
-    vertical-align: top;
-    margin: 0 10px;
+    flex-grow: 1;
+    margin: 0 0 0 10px;
     font-weight: 400;
   }
 
   &__icon {
-    display: inline-block;
-    vertical-align: top;
+    flex-shrink: 0;
   }
 }
