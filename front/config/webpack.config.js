@@ -70,7 +70,7 @@ module.exports = {
                         loader: 'worker-loader',
                         options: {
                             name: '[name].js',
-                            inline: true,
+                            inline: buildType === 'singleFile',
                         },
                     }, {
                         loader: 'ts-loader',

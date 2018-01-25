@@ -230,9 +230,9 @@ export class SendStore extends AbstractStore {
             && this.passwordCache[accountAddress] === password) {
             validationMessage = '';
         } else {
-            const {data: success, validation} = yield Api.checkPrivateKey(password, accountAddress);
+            const {data: privateKey, validation} = yield Api.getPrivateKey(password, accountAddress);
 
-            if (success) {
+            if (privateKey) {
                 this.passwordCache[accountAddress] = password;
                 validationMessage = '';
             } else if (validation && validation.password) {
