@@ -4,6 +4,7 @@ import { HistoryStore } from './history';
 import { MainStore } from './main';
 import { SendStore } from './send';
 import { UiStore } from './ui';
+import { AbstractStore } from './abstract-store';
 
 useStrict(true);
 
@@ -21,6 +22,15 @@ export class RootStore {
         this.mainStore = new MainStore(this);
         this.sendStore = new SendStore(this);
     }
+
+    public get isPending() {
+        return AbstractStore.getAccumulatedFlag('isPending', this.historyStore, this.mainStore, this.sendStore);
+    }
+
+    public get isOffline() {
+        return AbstractStore.getAccumulatedFlag('isOffline', this.historyStore, this.mainStore, this.sendStore);
+    }
+
 }
 
 export const rootStore = new RootStore();

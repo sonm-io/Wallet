@@ -8,7 +8,7 @@ interface IFormFieldProps {
     info?: string | string[];
     success?: string | string[];
     children: any;
-    label: string;
+    label?: string;
 }
 
 const helpTextTypes: Array<keyof IFormFieldProps> = ['error', 'info', 'success'];
@@ -31,9 +31,13 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
             return Boolean(helpTextType);
         });
 
-        let label = this.props.label.trim();
-        if (!label.endsWith(':')) {
-            label += ':';
+        let label;
+
+        if (this.props.label) {
+            label = this.props.label.trim();
+            if (!label.endsWith(':')) {
+                label += ':';
+            }
         }
 
         return <label
@@ -44,7 +48,7 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
             )}
         >
             <div className="sonm-form-field__label">
-                {label}
+                {label ? label : ''}
             </div>
             <div className="sonm-form-field__input">
                 {this.props.children}

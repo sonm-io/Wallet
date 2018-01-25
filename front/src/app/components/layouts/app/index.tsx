@@ -3,7 +3,6 @@ import { default as AntdAlertd } from 'antd/es/alert';
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
 import { RootStore } from 'app/stores';
-import { AbstractStore } from 'app/stores/abstract-store';
 import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
 import { AlertList } from './sub/alerts';
@@ -27,15 +26,6 @@ export class App extends React.Component<IProps, any> {
         { title: 'History', url: '/history' },
     ];
 
-    protected get stores(): AbstractStore[] {
-        const props: any = this.props;
-
-        return Object.keys(props).map(key => props[key]).filter(prop => prop instanceof AbstractStore);
-    }
-
-    protected get isPending() { return AbstractStore.getAccumulatedFlag('isPending', ...this.stores); }
-    protected get isOffline() { return AbstractStore.getAccumulatedFlag('isOffline', ...this.stores); }
-
     public render() {
         const {
             className,
@@ -49,13 +39,13 @@ export class App extends React.Component<IProps, any> {
             accountMap,
         } = this.props.rootStore.mainStore;
 
-        const disabledMenu = this.isOffline || (accountMap.size === 0)
+        const disabledMenu = this.props.rootStore.isOffline || (accountMap.size === 0)
             ? '/send'
             : '';
 
         return (
             <div className={cn('sonm-app', className)}>
-                <LoadMask white visible={this.isPending}>
+                <LoadMask white visible={this.props.rootStore.isPending}>
                     <div className="sonm-app__nav">
                         <div className="sonm-nav">
                             <div className="sonm-nav__logo" />
@@ -80,7 +70,7 @@ export class App extends React.Component<IProps, any> {
                         </div>
                     </div>
                     <div className="sonm-app__alert-group">
-                        {this.isOffline
+                        {this.props.rootStore.isOffline
                             ? <AntdAlertd
                                 key="offline"
                                 showIcon

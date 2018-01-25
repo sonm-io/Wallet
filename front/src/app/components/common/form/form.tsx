@@ -10,9 +10,9 @@ export class Form extends React.PureComponent<IFormRowProps, any> {
     public render() {
         const { className, ...rest } = this.props;
 
-        return <div className={cn('sonm-form', className)} {...rest}>
+        return <form className={cn('sonm-form', className)} {...rest}>
             {this.props.children}
-        </div>;
+        </form>;
     }
 }
 

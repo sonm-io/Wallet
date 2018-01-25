@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
-import Form from 'antd/es/form';
+import { Form, FormField } from 'app/components/common/form';
 
 import * as cn from 'classnames';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
@@ -21,6 +21,11 @@ interface IProps {
 
 @observer
 export class SendConfirm extends React.Component<IProps, any> {
+    public state = {
+        password: '',
+        validationPassword: '',
+    };
+
     public handleConfrim = async (event: any) => {
         const sendStore = this.props.rootStore.sendStore;
         const historyStore = this.props.rootStore.historyStore;
@@ -34,7 +39,13 @@ export class SendConfirm extends React.Component<IProps, any> {
         if (isPasswordValid) {
             (sendStore.confirmTransaction(password) as any).then(() => historyStore.update());
 
+            sendStore.resetUserInput();
+
+            this.setState({ validationPassword: '' });
+
             this.props.onSuccess();
+        } else {
+            this.setState({ validationPassword: 'Invalid password' });
         }
     }
 
@@ -44,11 +55,13 @@ export class SendConfirm extends React.Component<IProps, any> {
         this.props.onBack();
     }
 
+    public handleChange = (e: any) => {
+        this.setState({ password: e.target.value });
+    }
+
     public render() {
         const mainStore = this.props.rootStore.mainStore;
         const sendStore = this.props.rootStore.sendStore;
-
-        if (!mainStore) { return null; }
 
         const accountAddress = sendStore.fromAddress;
         const account = mainStore.accountMap.get(accountAddress);
@@ -58,7 +71,6 @@ export class SendConfirm extends React.Component<IProps, any> {
         const gasLimit = sendStore.gasLimit;
         const gasPrice = sendStore.gasPriceGwei;
         const toAddress = sendStore.toAddress;
-        const passwordValidationMsg = mainStore.validation.password;
 
         if (!currency) { return null; }
 
@@ -87,39 +99,45 @@ export class SendConfirm extends React.Component<IProps, any> {
                     <dt>Gas price</dt>
                     <dd>{gasPrice} Gwei</dd>
                 </dl>
-                <Form onSubmit={this.handleConfrim} className="sonm-send-confirm__password-form">
+                <div className="sonm-send-confirm__password">
                     <h2 className="sonm-send-confirm__password-header">Please enter account password</h2>
-                    <Form.Item
-                        className="sonm-send-confirm__password-field"
-                        validateStatus={passwordValidationMsg ? 'error' : 'success'}
-                        help={passwordValidationMsg}
-                    >
-                        <Input
-                            autoComplete="off"
-                            name="password"
-                            className="sonm-send-confirm__password-input"
-                            prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
-                            type="password"
-                            placeholder="Password"
-                        />
-                    </Form.Item>
-                    <Button
-                        className="sonm-send-confirm__password-button"
-                        transparent
-                        type="button"
-                        onClick={this.handleCancel}
-                    >
-                        Back
-                    </Button>
-                    <Button
-                        disabled={mainStore.isOffline}
-                        className="sonm-send-confirm__password-button"
-                        type="submit"
-                        color="violet"
-                    >
-                        Send
-                    </Button>
-                </Form>
+                    <Form onSubmit={this.handleConfrim} className="sonm-send-confirm__password-form">
+                        <FormField
+                            label=""
+                            className="sonm-send-confirm__password-field"
+                            error={this.state.validationPassword}
+                        >
+                            <Input
+                                autoComplete="off"
+                                name="password"
+                                className="sonm-send-confirm__password-input"
+                                prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                                type="password"
+                                placeholder="Password"
+                                value={this.state.password}
+                                onChange={this.handleChange}
+                            />
+                        </FormField>
+                        <div className="sonm-send-confirm__password-button-ct">
+                            <Button
+                                className="sonm-send-confirm__password-button"
+                                transparent
+                                type="button"
+                                onClick={this.handleCancel}
+                            >
+                                Back
+                            </Button>
+                            <Button
+                                disabled={mainStore.isOffline}
+                                className="sonm-send-confirm__password-button"
+                                type="submit"
+                                color="violet"
+                            >
+                                Send
+                            </Button>
+                        </div>
+                    </Form>
+                </div>
             </div>
         );
     }
