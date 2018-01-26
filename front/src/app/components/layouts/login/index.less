@@ -86,7 +86,7 @@
   }
 
   &__create {
-    margin: 10px 0 0;
+    margin: 30px 0 0;
     width: 200px;
   }
 
@@ -129,6 +129,19 @@
     &:active {
       outline: @outline;
       outline-offset: 3px;
+    }
+  }
+
+  &__network-type {
+    z-index: @z-everest + 1;
+  }
+
+  &__wallet-option {
+    &--rinkeby {
+      &:after {
+        content: ' (test)';
+        color: @color-pink;
+      }
     }
   }
 }
