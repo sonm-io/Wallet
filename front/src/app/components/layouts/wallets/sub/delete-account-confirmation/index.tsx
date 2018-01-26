@@ -8,8 +8,8 @@ export function DeleteAccountConfirmation(props: IAccountItemProps) {
             key="del-preview"
             address={props.address}
             name={props.name}
-            firstBalance={props.firstBalance}
-            secondBalance={props.secondBalance}
+            etherBalance={props.etherBalance}
+            primaryTokenBalance={props.primaryTokenBalance}
         />
     </div>;
 }

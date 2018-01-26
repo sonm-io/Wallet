@@ -12,10 +12,10 @@ import { IWalletListItem } from 'app/api/types';
 
 interface IProps {
     className?: string;
-    onLogin: () => void;
+    onLogin: (wallet: IWalletListItem) => void;
 }
 
-class BlackWalletSelect extends BlackSelect<string> {}
+class BlackWalletSelect extends BlackSelect<IWalletListItem> {}
 
 type TAction = 'select-wallet' | 'create-new' | 'enter-password';
 
@@ -28,16 +28,19 @@ export class Login extends React.Component<IProps, any> {
         loginBtn: null,
     };
 
+    protected static networkTypeOptions = ['live', 'rinkeby']
+
     public state = {
         currentAction: ('select-wallet' as TAction),
         password: '',
         newName: '',
         newPassword: '',
         confirmation: '',
-        wallets: ([] as string[]),
+        listOfWallets: ([] as IWalletListItem[]),
         name: '',
         pending: false,
         error: '',
+        network: Login.networkTypeOptions[0],
 
         validation: ({} as IValidation),
     };
@@ -45,30 +48,35 @@ export class Login extends React.Component<IProps, any> {
     protected getWalletList = async () =>  {
         this.setState({ pending: true });
 
-        const { data } = await Api.getWalletList();
-        const wallets = (data ? data.map((item: IWalletListItem) => item.name) : ['']) as string[];
+        const { data: walletlList } = await Api.getWalletList();
+
+        if (walletlList === undefined) {
+            return;
+        }
+
+        const listOfWallets = walletlList;
 
         let name = '';
         const savedName = window.localStorage.getItem('sonm-last-used-wallet');
 
-        if (savedName && wallets.indexOf(savedName) !== -1) {
+        if (savedName && listOfWallets.some(x => x.name === savedName)) {
             name = savedName;
-        } else if (wallets.length > 0) {
-            name = wallets[0];
+        } else if (listOfWallets.length > 0) {
+            name = listOfWallets[0].name;
         }
 
         const update: any = {
             pending: false,
-            wallets,
+            listOfWallets,
             name,
         };
 
-        if (wallets.length === 1) {
-            update.name = wallets[0];
+        if (listOfWallets.length === 1) {
+            update.name = listOfWallets[0];
             update.currentAction = 'enter-password';
         }
 
-        if (wallets.length === 0) {
+        if (listOfWallets.length === 0) {
             update.currentAction = 'create-new';
         }
 
@@ -79,7 +87,9 @@ export class Login extends React.Component<IProps, any> {
         if (window.localStorage.getItem('sonm-4ever')) {
             const { data } = await Api.unlockWallet('1', '1');
             if (data) {
-                this.props.onLogin();
+                const wallet = this.findWalletByName('1');
+
+                this.props.onLogin(wallet);
             }
         }
     }
@@ -110,6 +120,16 @@ export class Login extends React.Component<IProps, any> {
         });
     }
 
+    protected findWalletByName(name: string) {
+        const wallet = this.state.listOfWallets.find(x => x.name === this.state.name);
+
+        if (wallet === undefined) {
+            throw new Error('Wallet not found');
+        }
+
+        return wallet;
+    }
+
     protected handleLogin = async (event: any) => {
         event.preventDefault();
 
@@ -122,8 +142,10 @@ export class Login extends React.Component<IProps, any> {
                 this.setState({ validation });
             }
 
+            const wallet = this.findWalletByName(this.state.name);
+
             if (success) {
-                this.props.onLogin();
+                this.props.onLogin(wallet);
                 return;
             }
 
@@ -149,7 +171,8 @@ export class Login extends React.Component<IProps, any> {
             invalid = true;
         }
 
-        if (this.state.wallets.indexOf(this.state.newName) !== -1) {
+        const foundByName = this.state.listOfWallets.find(x => x.name === this.state.newName)
+        if (foundByName) {
             this.setState({ validation: { newName: getMessageText('wallet_allready_exists') } });
             invalid = true;
         }
@@ -165,13 +188,18 @@ export class Login extends React.Component<IProps, any> {
             });
 
             try {
-                const { validation } = await Api.createWallet(this.state.newPassword, this.state.newName, 'rinkeby');
+                const { validation, data: walletListItem } = await Api.createWallet(
+                    this.state.newPassword,
+                    this.state.newName,
+                    this.state.network,
+                );
 
                 if (validation) {
                     this.setState({ validation });
-                } else {
+                } else if (walletListItem) {
                     window.localStorage.setItem('sonm-last-used-wallet', this.state.newName);
-                    this.props.onLogin();
+
+                    this.props.onLogin(walletListItem);
                     return;
                 }
 
@@ -188,6 +216,12 @@ export class Login extends React.Component<IProps, any> {
     protected handleChangeInput = (event: any) => {
         this.setState({
             [event.target.name]: event.target.value,
+        });
+    }
+
+    protected handleChangeSelect = (params: any) => {
+        this.setState({
+            [params.name]: params.value,
         });
     }
 
@@ -214,15 +248,23 @@ export class Login extends React.Component<IProps, any> {
         this.nodes.loginBtn = ref;
     }
 
+    protected renderWalletOption(record: IWalletListItem) {
+        return <span className={`sonm-login__wallet-option--${record.chainId}`}>
+            {record.name}
+        </span>;
+    }
+
     protected renderSelect() {
         return (
             <form className="sonm-login__wallet-form" onSubmit={this.handleStartLogin}>
                 <BlackWalletSelect
+                    render={this.renderWalletOption}
                     className="sonm-login__wallet-select"
                     name="name"
                     onChange={this.handleChangeWallet}
                     value={this.state.name}
-                    options={this.state.wallets}
+                    keyIndex="name"
+                    options={this.state.listOfWallets}
                 />
                 <Button
                     height={50}
@@ -311,6 +353,16 @@ export class Login extends React.Component<IProps, any> {
                             className="sonm-login__input"
                             name="confirmation"
                             onChange={this.handleChangeInput}
+                        />
+                    </label>
+                    <label className="sonm-login__label">
+                        <span className="sonm-login__label-text">Network</span>
+                        <BlackSelect
+                            value={this.state.network}
+                            name="network"
+                            className="sonm-login__network-type"
+                            onChange={this.handleChangeSelect}
+                            options={Login.networkTypeOptions}
                         />
                     </label>
                     <Button

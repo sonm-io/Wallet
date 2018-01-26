@@ -1,0 +1,53 @@
+@sonm-form-field-gap-width: 6px;
+@sonm-form-field-gap-width-half: 6px / 2;
+@sonm-form-field-font-size: 14px;
+
+.sonm-form-field {
+
+  &--error {
+    color: @color-red;
+
+    & input[type="text"],
+    & input[type="number"],
+    & input[type="password"] {
+      border-color: @color-red;
+    }
+  }
+
+  &--success {
+    color: @color-green;
+    & .sonm-form-field__input > input[type="text"] {
+      border-color: @color-green;
+    }
+  }
+
+  &--warning {
+    color: @color-orange;
+    & .sonm-form-field__input > input[type="text"] {
+      border-color: @color-orange;
+    }
+  }
+
+  &--info {
+    color: @color-blue;
+    & .sonm-form-field__input > input[type="text"] {
+      border-color: @color-blue;
+    }
+  }
+
+  &__help,
+  &__label {
+    line-height: 100%;
+    height: @sonm-form-field-font-size;
+  }
+
+  &__label {
+    margin: 0 0 @sonm-form-field-gap-width 0;
+    font-size: @sonm-form-field-font-size;
+  }
+
+  &__help {
+    margin: @sonm-form-field-gap-width-half 0 @sonm-form-field-gap-width-half 0;
+    font-size: @sonm-form-field-font-size - 2px;
+  }
+}

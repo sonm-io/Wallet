@@ -1,6 +1,8 @@
 @import "guide.less";
+@import "./antd.less";
 
 @account-item-height: @big-select-height;
+@account-item-line-height: 30px;
 
 .sonm-account-item {
   padding: 0 10px 0 0;
@@ -9,6 +11,7 @@
   grid-template-rows: 1fr 1fr;
   font-weight: normal ;
   height: @account-item-height;
+  line-height: @account-item-line-height !important;
 
   &__blockies {
     margin: 5px;
@@ -36,7 +39,8 @@
   &__sonm {
     font-size: 18px;
     color: @color-font;
-    padding: 5px;
+    padding: 0;
+    margin: 1px 5px;
   }
 
   &__name-wrapper,
@@ -73,6 +77,7 @@
     font-size: 14px;
     grid-column: 2;
     grid-row: 2;
+    align-self: start;
   }
 
   &__name-text {
@@ -88,16 +93,19 @@
     cursor: pointer;
     border: 0;
     background-color: transparent;
-    margin: 0 5px;
+    margin: 1px 5px;
+    padding: 0;
+    line-height: 0;
+    height: @account-item-line-height;
 
     &:focus {
       outline: @outline;
-      outline-offset: 3px;
+      outline-offset: 0;
     }
   }
 
   &__edit-name {
-    border: 0px solid @color-blue;
+    border: 0 solid @color-blue;
     border-bottom-width: 2px;
     padding: 2px;
     font-size: 18px;
@@ -105,8 +113,7 @@
     width: auto !important;
 
     &:focus {
-      outline: @outline;
-      outline-offset: 3px;
+      outline: none;
     }
   }
 }

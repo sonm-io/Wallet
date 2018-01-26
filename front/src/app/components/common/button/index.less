@@ -1,6 +1,8 @@
 @sonm-button-height: 40px;
 
 .sonm-button {
+  -webkit-appearance: none !important;;
+
   --height: @sonm-button-height;
   --half-height: ~"calc(var(--height) / 2)";
 
@@ -65,6 +67,19 @@
 
     &:hover {
       box-shadow: @shadow;
+    }
+  }
+
+  &[disabled] {
+    background-color: @color-dark-gray-bg;
+    color: @color-light-gray;
+    -webkit-text-fill-color: @color-light-gray;
+    border-color: @color-dark-gray-bg;
+    box-shadow: none;
+
+    &:hover,
+    &:active {
+      box-shadow: none;
     }
   }
 }

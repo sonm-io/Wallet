@@ -65,6 +65,9 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
                 fileName: file.name,
             });
         }
+
+        event.preventDefault();
+        event.target.value = null;
     }
 
     protected inputNode?: HTMLInputElement;
@@ -88,22 +91,21 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
 
         return (
             <Button
+                tag="label"
                 disabled={this.state.pending}
                 style={{width: '100%', boxSizing: 'border-box'}}
                 {...buttonProps}
                 className={cn('sonm-upload', className)}
                 type="button"
             >
-                <label className="sonm-upload__label">
-                    <input
-                        key="file"
-                        type="file"
-                        className="sonm-upload__input"
-                        onChange={this.handleChange}
-                        ref={this.saveInputRef}
-                    />
-                    {children}
-                </label>
+                <input
+                    key="file"
+                    type="file"
+                    className="sonm-upload__input"
+                    onChange={this.handleChange}
+                    ref={this.saveInputRef}
+                />
+                {children}
             </Button>
         );
     }

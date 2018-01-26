@@ -1,0 +1,19 @@
+@sonm-form-padding: 10px;
+
+.sonm-form {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 0;
+
+  &__row {
+    flex: 0 1;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    margin: @sonm-form-padding 0 0 0;
+
+    &:first-child {
+      margin: 0;
+    }
+  }
+}
