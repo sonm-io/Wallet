@@ -69,7 +69,7 @@ function createPromise(
 }
 
 const DEFAULT_NODES = {
-    live: 'https://infura.io',
+    live: 'https://mainnet.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
 } as INodes;
 
@@ -280,11 +280,13 @@ class Api {
 
             // add wallet to list
             const walletList = await this.getWallets();
-            walletList.data.push({
+            const wallet = {
                 name: data.walletName,
                 chainId: this.storage.settings.chainId,
                 nodeUrl: this.storage.settings.nodeUrl,
-            });
+            };
+
+            walletList.data.push(wallet);
 
             const tokenList = await this.getTokenList();
             this.storage.tokens = tokenList.getList();
@@ -292,7 +294,7 @@ class Api {
             await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
 
             return {
-                data: true,
+                data: wallet,
             };
         } else {
             const validation = {
