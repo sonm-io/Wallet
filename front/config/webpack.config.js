@@ -5,7 +5,8 @@ const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin
 const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { getFullPath, readJson } = require('./utils');
-const extractLess = new ExtractTextPlugin('./style.css');
+const extractLess = new ExtractTextPlugin({ filename: '[name].[contenthash].css', allChunks: true });
+const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 
@@ -19,7 +20,7 @@ module.exports = {
     },
 
     output: {
-        filename: '[name].bundled.js',
+        filename: '[name].[hash].js',
         path: buildType === 'web' ? getFullPath('../docs') :  getFullPath('../dist'),
     },
 
@@ -69,7 +70,7 @@ module.exports = {
                     use: [{
                         loader: 'worker-loader',
                         options: {
-                            name: '[name].js',
+                            name: '[name].[hash].js',
                             inline: buildType === 'singleFile',
                         },
                     }, {
@@ -116,6 +117,8 @@ module.exports = {
             extractLess,
 
             new CssoWebpackPlugin(),
+
+            new WebpackCleanupPlugin(),
         ];
 
         return plugins.filter(x => x);

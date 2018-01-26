@@ -5,7 +5,7 @@ import { resolve } from './router';
 import { history } from './router/history';
 import { rootStore } from './stores';
 import { Login } from './components/layouts/login';
-import { LocaleProvider } from 'antd';
+import LocaleProvider from 'antd/es/locale-provider';
 import * as enUS from 'antd/lib/locale-provider/en_US';
 
 interface ILocationParams {
