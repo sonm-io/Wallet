@@ -482,6 +482,12 @@ class Api {
                 if (!data.version || data.version !== STORAGE_VERSION) {
                     try {
                         data = migrate(key === KEY_WALLETS_LIST ? 'wallet_list' : 'wallet', data);
+
+                        if (key === KEY_WALLETS_LIST) {
+                            await this.saveDataToStorage(KEY_WALLETS_LIST, data, false);
+                        } else {
+                            await this.saveData();
+                        }
                     } catch (err) {
                         console.log(err.stack);
                     }
