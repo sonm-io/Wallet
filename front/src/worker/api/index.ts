@@ -123,7 +123,9 @@ class Api {
             'transaction.list': this.getTransactionList,
 
             'getSonmTokenAddress': this.getSonmTokenAddress,
+
             'addToken': this.addToken,
+            'getTokenInfo': this.getTokenInfo,
         };
 
         this.storage = {
@@ -578,6 +580,18 @@ class Api {
 
             return {
                 data: token,
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
+    public getTokenInfo = async (data: IPayload): Promise<IResponse> => {
+        if (data.address) {
+            const tokenList = await this.getTokenList();
+
+            return {
+                data: await tokenList.getTokenInfo(data.address),
             };
         } else {
             throw new Error('required_params_missed');
