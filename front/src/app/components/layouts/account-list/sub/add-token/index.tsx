@@ -3,62 +3,50 @@ import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
 import { FormField, FormRow, Form } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
-import { validateEtherAddress } from 'app/utils/validation/validate-ether-address';
+import { ICurrencyInfo } from 'app/api/types';
+import { IdentIcon } from 'app/components/common/ident-icon/index';
 
 export interface IProps {
-    validationString?: string;
-    existingTokens: string[];
+    tokenAddress: string;
+    validationTokenAddress: string;
     onSubmit: (address: string) => void;
     onClickCross: () => void;
+    onChangeTokenAddress: (tokenAddress: string) => void;
+    tokenInfo?: ICurrencyInfo;
 }
 
-export class AddToken extends React.Component<IProps, any> {
-    public state = {
-        address: '',
-        validationString: '',
-    };
-
+export class AddToken extends React.Component<IProps, {}> {
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        const validation = validateEtherAddress(this.state.address);
-
-        if (validation.length) {
-            this.setState({ validationString: validation.join(' ;') });
-        } else {
-            this.props.onSubmit(this.state.address);
-        }
-    }
-
-    public componentWillReceiveProps(next: IProps) {
-        if (next.validationString !== this.props.validationString) {
-            this.setState({ validationString: next.validationString });
-        }
+        this.props.onSubmit(this.props.tokenAddress);
     }
 
     protected handleClickCross = () => {
         this.props.onClickCross();
     }
 
-    protected handleChangeInput = (event: any) => {
-        this.setState({
-            [event.target.name]: event.target.value,
-            validationString: '',
-        });
+    protected handleChangeInput = async (event: any) => {
+        const address = event.target.value.trim();
+
+        this.props.onChangeTokenAddress(address);
     }
 
     public render() {
+        const tokenInfo = this.props.tokenInfo;
+
         return (
-            <Dialog onClickCross={this.handleClickCross}>
-                <Form className="sonm-wallets-create-account__form" onSubmit={this.handleSubmit}>
-                    <h3>Add tokent</h3>
+            <Dialog onClickCross={this.handleClickCross} height={tokenInfo ? 350 : 230}>
+                <Form className="sonm-add-token__form" onSubmit={this.handleSubmit}>
+                    <h3>Add token</h3>
                     <FormRow>
                         <FormField
                             fullWidth
                             label="Token contract address"
-                            error={this.state.validationString}
+                            error={this.props.tokenAddress.length === 0 ? '' : this.props.validationTokenAddress}
                         >
                             <Input
+                                value={this.props.tokenAddress}
                                 type="text"
                                 name="address"
                                 onChange={this.handleChangeInput}
@@ -66,10 +54,18 @@ export class AddToken extends React.Component<IProps, any> {
                         </FormField>
                     </FormRow>
                     <Button
+                        disabled={this.props.validationTokenAddress !== '' || this.props.tokenAddress.length === 0}
                         type="submit"
                     >
                         Add token
                     </Button>
+                    {tokenInfo ?
+                        <div className="sonm-add-token__preview">
+                            <IdentIcon className="sonm-add-token__preview-icon" address={tokenInfo.address}/>
+                            <span  className="sonm-add-token__preview-name">{tokenInfo.name}</span>
+                            <span  className="sonm-add-token__preview-ticker">{tokenInfo.symbol}</span>
+                        </div>
+                    : null}
                 </Form>
             </Dialog>
         );

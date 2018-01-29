@@ -19,6 +19,7 @@ import { delay } from 'app/utils/async-delay';
 import { trimZeros } from '../utils/trim-zeros';
 import { getMessageText } from 'app/api/error-messages';
 import { RootStore } from './';
+import { validateEtherAddress } from '../utils/validation/validate-ether-address';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -303,6 +304,77 @@ export class MainStore extends AbstractStore {
                 message: getMessageText('wait_your_tokens'),
             });
         }
+    }
+
+    @observable
+    public candidateTokenAddress: string = '';
+
+    @observable
+    public candidateTokenInfo: ICurrencyInfo | undefined;
+
+    @computed get validationCandidateToken(): string {
+        const tokenAddress = this.candidateTokenAddress;
+        const etherAddressValidation = validateEtherAddress(tokenAddress);
+        let result: string;
+
+        if (etherAddressValidation.length) {
+            result = etherAddressValidation.join(' ;');
+        } else if (this.currencyMap.has(tokenAddress)) {
+            result = getMessageText('token_already_exists');
+        } else {
+            result = this.validation.tokenAddress;
+        }
+
+        return result;
+    }
+
+    @action
+    protected setCandidateTokenInfo(info: ICurrencyInfo) {
+        this.candidateTokenInfo = info;
+    }
+
+    @action.bound
+    @catchErrors({ restart: true })
+    public setCandidateTokenAddress(address: string) {
+        if (this.candidateTokenAddress === address) {
+            return;
+        }
+
+        this.candidateTokenAddress = address;
+        this.candidateTokenInfo = undefined;
+        this.validation.tokenAddress = '';
+
+        if (this.validationCandidateToken === '') {
+            this.updateCandidateTokenInfo(address);
+        }
+    }
+
+    protected async updateCandidateTokenInfo(address: string) {
+        const { validation, data } = await Api.getTokenInfo(address);
+
+        if (validation) {
+           this.validation.tokenAddress = validation.address;
+        } else {
+           if (data === undefined) {
+               throw new Error('Undefined token info');
+           }
+
+           // TODO remove
+           if (!data) {
+               return;
+           }
+
+           if (address === this.candidateTokenAddress) {
+               this.setCandidateTokenInfo(data);
+           }
+        }
+    }
+
+    @action.bound
+    public approveCandidateToken() {
+        this.candidateTokenAddress = '';
+        this.candidateTokenInfo = undefined;
+        this.validation.tokenAddress = '';
     }
 }
 
