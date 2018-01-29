@@ -6,7 +6,7 @@ import { Hash } from 'app/components/common/hash-view';
 import { IValidation } from 'ipc/types';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Input } from 'app/components/common/input/index';
-import { getMessageText } from 'app/api/error-messages';
+import { getMessageText } from 'app/api/error-messages'; // TODO move to context
 import { FormField, FormRow, Form } from 'app/components/common/form';
 
 // import { setFocus } from 'app/components/common/utils/setFocus';

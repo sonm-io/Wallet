@@ -12,7 +12,6 @@ export interface ICreateAccountForm {
 }
 
 export interface IProps {
-    className?: string;
     validation?: IValidation;
     onSubmit: (data: ICreateAccountForm) => void;
     onClickCross: () => void;
