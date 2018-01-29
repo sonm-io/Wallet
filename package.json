@@ -73,7 +73,6 @@
     "uglifyjs-webpack-plugin": "^1.1.2",
     "webpack": "3.8.1",
     "webpack-bundle-analyzer": "^2.9.1",
-    "webpack-cleanup-plugin": "^0.5.1",
     "webpack-common-shake": "^1.5.3",
     "worker-loader": "^1.1.0"
   },
@@ -107,8 +106,8 @@
     "webpack:web": "cross-env NODE_ENV=production BUILD_TYPE=web webpack --config ./front/config/webpack.config.js",
     "prety": "prettier --write front/src/**/*.tsx && prettier --write front/src/**/*.ts",
     "sg": "styleguidist server",
-    "karma": "./node_modules/karma/bin/karma start --browsers Chrome",
-    "tests": "./node_modules/karma/bin/karma start --browsers ChromeHeadless --single-run --reporters teamcity --colors false",
+    "karma": "cross-env NODE_ENV=production BUILD_TYPE=singleFile ./node_modules/karma/bin/karma start --browsers Chrome",
+    "karma:headless": "cross-env NODE_ENV=production BUILD_TYPE=singleFile ./node_modules/karma/bin/karma start --browsers ChromeHeadless --single-run --reporters teamcity --colors false",
     "electron:macos": "cross-env PLATFORM=darwin node build.js",
     "electron:windows": "cross-env PLATFORM=win32 node build.js",
     "electron:linux": "cross-env PLATFORM=linux node build.js"

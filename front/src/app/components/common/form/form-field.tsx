@@ -9,6 +9,7 @@ interface IFormFieldProps {
     success?: string | string[];
     children: any;
     label?: string;
+    fullWidth?: boolean;
 }
 
 const helpTextTypes: Array<keyof IFormFieldProps> = ['error', 'info', 'success'];
@@ -45,6 +46,7 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
                 'sonm-form-field',
                 this.props.className,
                 { [`sonm-form-field--${helpTextType}`]: Boolean(helpTextType) },
+                { [`sonm-form-field--full-width`]: Boolean(this.props.fullWidth) },
             )}
         >
             <div className="sonm-form-field__label">

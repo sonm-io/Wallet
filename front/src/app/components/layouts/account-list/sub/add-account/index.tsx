@@ -5,7 +5,9 @@ import { Button } from 'app/components/common/button';
 import { Hash } from 'app/components/common/hash-view';
 import { IValidation } from 'ipc/types';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
+import { Input } from 'app/components/common/input/index';
 import { getMessageText } from 'app/api/error-messages';
+import { FormField, FormRow, Form } from 'app/components/common/form';
 
 // import { setFocus } from 'app/components/common/utils/setFocus';
 
@@ -21,6 +23,14 @@ export interface IProps {
     onSubmit: (data: IAddAccountForm) => void;
     onClickCross: () => void;
     existingAccounts: string[];
+}
+
+interface IFocusable {
+    focus: () => void;
+}
+
+interface IMapNameToFocusable {
+    [name: string]: IFocusable | null;
 }
 
 export class AddAccount extends React.Component<IProps, any> {
@@ -48,9 +58,7 @@ export class AddAccount extends React.Component<IProps, any> {
 
         if (!this.state.json) {
             validation.json = getMessageText('select_file');
-        }
-
-        if (this.props.existingAccounts.indexOf(this.state.address) !== -1) {
+        } else if (this.props.existingAccounts.indexOf(this.state.address) !== -1) {
             validation.json = getMessageText('account_already_exists');
         }
 
@@ -85,7 +93,7 @@ export class AddAccount extends React.Component<IProps, any> {
         this.props.onClickCross();
     }
 
-    protected nodes: any = {};
+    protected nodes: IMapNameToFocusable = {};
 
     protected saveNameInputNode = this.saveInputNode.bind(this, 'name');
 
@@ -115,7 +123,10 @@ export class AddAccount extends React.Component<IProps, any> {
             update.fileSuccess = `File ${params.fileName} has been selected`;
             update.validation = { ...this.state.validation, json: '' };
 
-            this.nodes.name.focus();
+            const nameInput = this.nodes.name;
+            if (nameInput !== null) {
+                nameInput.focus();
+            }
 
         } catch (e) {
             update.fileSuccess = '';
@@ -141,85 +152,81 @@ export class AddAccount extends React.Component<IProps, any> {
 
     public render() {
         const validation: IValidation = this.state.validation;
-        const hasFileError = validation.json;
 
         return (
-            <Dialog onClickCross={this.handleClickCross} height={this.state.address === '' ? 485 : 600}>
-                <form className="sonm-wallets-add-account__content" onSubmit={this.handleSubmit}>
-                    <label className="sonm-wallets-add-account__label sonm-wallets-add-account__add-file">
-                        <h3 className="sonm-wallets-add-account__header">Add account</h3>
-                        <Upload
-                            onOpenTextFile={this.handleOpenTextFile}
-                            className="sonm-wallets-add-account__upload"
-                            buttonProps={{
-                                square: true,
-                                height: 40,
-                                transparent: true,
-                            }}
+            <Dialog onClickCross={this.handleClickCross} height={this.state.address === '' ? 420 : 530}>
+                <Form className="sonm-wallets-add-account__form" onSubmit={this.handleSubmit}>
+                    <h3>Add account</h3>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label=""
+                            error={validation.json}
+                            success={this.state.fileSuccess}
                         >
-                            Select keystore / JSON file
-                        </Upload>
-                        {
-                            hasFileError
-                                ? (
-                                    <span className="sonm-wallets-add-account__label-error">
-                                        {validation.json}
-                                    </span>
-                                )
-                                : (
-                                    <span className="sonm-wallets-add-account__label-success">
-                                        {this.state.fileSuccess}
-                                    </span>
-                                )
-                        }
-                    </label>
-                    <label className="sonm-wallets-add-account__label">
-                        <span className="sonm-wallets-add-account__label-text">Enter account password</span>
-                        <span className="sonm-wallets-add-account__label-error">
-                            {validation.password}
-                        </span>
-                        <input
-                            ref={this.saveNameInputNode}
-                            type="password"
-                            className="sonm-wallets-add-account__input"
-                            name="password"
-                            onChange={this.handleChangeInput}
-                        />
-                    </label>
-                    <label className="sonm-wallets-add-account__label">
-                        <span className="sonm-wallets-add-account__label-text">Enter account name</span>
-                        <span className="sonm-wallets-add-account__label-error">
-                            {validation.name}
-                        </span>
-                        <input
-                            type="text"
-                            className="sonm-wallets-add-account__input"
-                            name="name"
-                            onChange={this.handleChangeInput}
-                        />
-                    </label>
+                            <Upload
+                                onOpenTextFile={this.handleOpenTextFile}
+                                className="sonm-wallets-add-account__upload"
+                                buttonProps={{
+                                    square: true,
+                                    height: 40,
+                                    transparent: true,
+                                }}
+                            >
+                                Select keystore / JSON file
+                            </Upload>
+                        </FormField>
+                    </FormRow>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label="Account name"
+                            error={validation.name}
+                        >
+                            <Input
+                                ref={this.saveNameInputNode}
+                                type="text"
+                                name="name"
+                                onChange={this.handleChangeInput}
+                            />
+                        </FormField>
+                    </FormRow>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label="Account password"
+                            error={validation.password}
+                        >
+                            <Input
+                                type="password"
+                                name="password"
+                                onChange={this.handleChangeInput}
+                            />
+                        </FormField>
+                    </FormRow>
                     <Button
-                        className="sonm-wallets-add-account__submit"
                         type="submit"
                         height={40}
                     >
                         Add
                     </Button>
                     {this.state.address === '' ? null :
-                        <div
-                            className="sonm-wallets-add-account__preview"
-                        >
-                            <span className="sonm-wallets-add-account__preview-title">Preview</span>
-                            <div className="sonm-wallets-add-account__preview-ct">
-                                <IdentIcon
-                                    className="sonm-wallets-add-account__preview-icon"
-                                    address={this.state.address}
-                                />
-                                <Hash className="sonm-wallets-add-account__preview-address" hash={this.state.address} />
-                            </div>
-                        </div>
+                        <FormRow>
+                            <FormField fullWidth>
+                                <div className="sonm-wallets-add-account__preview-ct">
+                                    <IdentIcon
+                                        className="sonm-wallets-add-account__preview-icon"
+                                        address={this.state.address}
+                                    />
+                                    <Hash
+                                        className="sonm-wallets-add-account__preview-address"
+                                        hash={this.state.address}
+                                    />
+                                </div>
+                            </FormField>
+                        </FormRow>
                     }
-                </form>
+                </Form>
             </Dialog>
         );
     }

@@ -6,12 +6,11 @@ const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { getFullPath, readJson } = require('./utils');
 const extractLess = new ExtractTextPlugin({ filename: '[name].[contenthash].css', allChunks: true });
-const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 const buildType = process.env.BUILD_TYPE || '';
-const isDev = buildType !== 'web' && !process.env.NODE_ENV.includes('production');
+const isDev = process.env.NODE_ENV !== 'production';
 
 module.exports = {
     entry: {
@@ -117,8 +116,6 @@ module.exports = {
             extractLess,
 
             new CssoWebpackPlugin(),
-
-            new WebpackCleanupPlugin(),
         ];
 
         return plugins.filter(x => x);
