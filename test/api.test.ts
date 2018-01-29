@@ -48,16 +48,19 @@ describe('Api',  async function() {
         }
     });
 
+    it('should get token info', async function() {
+        const response = await Api.getTokenInfo('0x225b929916daadd5044d5934936313001f55d8f0');
+        expect(response.data).to.be.a('object');
+
+        const response2 = await Api.getCurrencyList();
+        expect(response2.data).to.have.lengthOf(2);
+    });
+
     it('should add token', async function() {
         const response = await Api.addToken('0x225b929916daadd5044d5934936313001f55d8f0');
         expect(response.data).to.be.a('object');
 
         const response2 = await Api.getCurrencyList();
-
-        if (response2.data) {
-            console.log(response2.data.map(item => item.address));
-        }
-
         expect(response2.data).to.have.lengthOf(3);
     });
 

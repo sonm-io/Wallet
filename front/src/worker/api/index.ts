@@ -123,7 +123,9 @@ class Api {
             'transaction.list': this.getTransactionList,
 
             'getSonmTokenAddress': this.getSonmTokenAddress,
+
             'addToken': this.addToken,
+            'getTokenInfo': this.getTokenInfo,
         };
 
         this.storage = {
@@ -482,6 +484,12 @@ class Api {
                 if (!data.version || data.version !== STORAGE_VERSION) {
                     try {
                         data = migrate(key === KEY_WALLETS_LIST ? 'wallet_list' : 'wallet', data);
+
+                        if (key === KEY_WALLETS_LIST) {
+                            await this.saveDataToStorage(KEY_WALLETS_LIST, data, false);
+                        } else {
+                            await this.saveData();
+                        }
                     } catch (err) {
                         console.log(err.stack);
                     }
@@ -572,6 +580,18 @@ class Api {
 
             return {
                 data: token,
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
+    public getTokenInfo = async (data: IPayload): Promise<IResponse> => {
+        if (data.address) {
+            const tokenList = await this.getTokenList();
+
+            return {
+                data: await tokenList.getTokenInfo(data.address),
             };
         } else {
             throw new Error('required_params_missed');

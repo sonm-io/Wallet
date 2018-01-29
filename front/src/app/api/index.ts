@@ -162,6 +162,10 @@ export class Api {
     public static async addToken(address: string): Promise<IResult<ICurrencyInfo>>  {
         return createPromise('addToken', { address });
     }
+
+    public static async getTokenInfo(address: string): Promise<IResult<ICurrencyInfo>>  {
+        return createPromise('getTokenInfo', { address });
+    }
 }
 
 export default Api;
