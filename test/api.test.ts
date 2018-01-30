@@ -2,6 +2,7 @@ const {expect} = require('chai');
 
 const walletName = 'wallet 1';
 const walletPassword = 'my secret key';
+const tokenAddress = '0x225b929916daadd5044d5934936313001f55d8f0';
 
 const vasyaCfg = require('./data/Vasya_11111111.json');
 const json = JSON.stringify(vasyaCfg);
@@ -13,7 +14,6 @@ import { Api } from 'app/api';
 
 before(async function() {
     this.timeout(+Infinity);
-
     localStorage.clear();
 });
 describe('Api',  async function() {
@@ -49,15 +49,18 @@ describe('Api',  async function() {
     });
 
     it('should get token info', async function() {
-        const response = await Api.getTokenInfo('0x225b929916daadd5044d5934936313001f55d8f0');
+        const response = await Api.getTokenInfo(tokenAddress);
         expect(response.data).to.be.a('object');
 
-        const response2 = await Api.getCurrencyList();
-        expect(response2.data).to.have.lengthOf(2);
+        const response2 = await Api.getTokenInfo('0x225b929916daadd5044d5934936313001f55d8f1');
+        expect(response2).to.have.nested.property('validation.address');
+
+        const response3 = await Api.getCurrencyList();
+        expect(response3.data).to.have.lengthOf(2);
     });
 
     it('should add token', async function() {
-        const response = await Api.addToken('0x225b929916daadd5044d5934936313001f55d8f0');
+        const response = await Api.addToken(tokenAddress);
         expect(response.data).to.be.a('object');
 
         const response2 = await Api.getCurrencyList();

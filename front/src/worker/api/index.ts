@@ -573,14 +573,23 @@ class Api {
 
     public addToken = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
-            const tokenList = await this.getTokenList();
-            const token = await tokenList.add(data.address);
+            try {
+                const tokenList = await this.getTokenList();
+                const token = await tokenList.add(data.address);
 
-            await this.saveData();
+                this.storage.tokens = tokenList.getList();
+                await this.saveData();
 
-            return {
-                data: token,
-            };
+                return {
+                    data: token,
+                };
+            } catch (err) {
+                return {
+                    validation: {
+                        address: err.message,
+                    },
+                };
+            }
         } else {
             throw new Error('required_params_missed');
         }
@@ -588,11 +597,19 @@ class Api {
 
     public getTokenInfo = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
-            const tokenList = await this.getTokenList();
+            try {
+                const tokenList = await this.getTokenList();
 
-            return {
-                data: await tokenList.getTokenInfo(data.address),
-            };
+                return {
+                    data: await tokenList.getTokenInfo(data.address),
+                };
+            } catch (err) {
+                return {
+                    validation: {
+                        address: err.message,
+                    },
+                };
+            }
         } else {
             throw new Error('required_params_missed');
         }
@@ -814,7 +831,7 @@ class Api {
         filters = filters || {};
         limit = limit || 10;
         offset = offset || 0;
-        
+
         let filtered = [];
         for (const item of this.storage.transactions) {
             let ok = true;
