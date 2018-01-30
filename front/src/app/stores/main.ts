@@ -372,6 +372,9 @@ export class MainStore extends AbstractStore {
 
     @action.bound
     public approveCandidateToken() {
+        Api.addToken(this.candidateTokenAddress).then(() => {
+            Api.getCurrencyList();
+        });
         this.candidateTokenAddress = '';
         this.candidateTokenInfo = undefined;
         this.validation.tokenAddress = '';
