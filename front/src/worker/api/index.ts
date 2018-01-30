@@ -577,6 +577,7 @@ class Api {
                 const tokenList = await this.getTokenList();
                 const token = await tokenList.add(data.address);
 
+                this.storage.tokens = tokenList.getList();
                 await this.saveData();
 
                 return {

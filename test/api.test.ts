@@ -14,7 +14,6 @@ import { Api } from 'app/api';
 
 before(async function() {
     this.timeout(+Infinity);
-
     localStorage.clear();
 });
 describe('Api',  async function() {
