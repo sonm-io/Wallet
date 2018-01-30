@@ -7,7 +7,7 @@ import { IValidation } from 'ipc/types';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Input } from 'app/components/common/input/index';
 import { getMessageText } from 'app/api/error-messages'; // TODO move to context
-import { FormField, FormRow, Form } from 'app/components/common/form';
+import { FormField, FormRow, Form, FormButtons } from 'app/components/common/form';
 
 // import { setFocus } from 'app/components/common/utils/setFocus';
 
@@ -204,12 +204,14 @@ export class AddAccount extends React.Component<IProps, any> {
                             />
                         </FormField>
                     </FormRow>
-                    <Button
-                        type="submit"
-                        height={40}
-                    >
-                        Add
-                    </Button>
+                    <FormButtons>
+                        <Button
+                            type="submit"
+                            height={40}
+                        >
+                            Add
+                        </Button>
+                    </FormButtons>
                     {this.state.address === '' ? null :
                         <FormRow>
                             <FormField fullWidth>

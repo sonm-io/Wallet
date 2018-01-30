@@ -97,6 +97,11 @@ export class Wallets extends React.Component<IProps, IState> {
         this.switchDialog(WalletDialogs.addToken);
     }
 
+    protected handleSubmitAddToken() {
+        this.props.rootStore.mainStore.approveCandidateToken();
+        this.closeDialog();
+    }
+
     public render() {
         const {
             className,
@@ -176,7 +181,7 @@ export class Wallets extends React.Component<IProps, IState> {
                                 onChangeTokenAddress={this.props.rootStore.mainStore.setCandidateTokenAddress}
                                 tokenInfo={this.props.rootStore.mainStore.candidateTokenInfo}
                                 validationTokenAddress={this.props.rootStore.mainStore.validationCandidateToken}
-                                onSubmit={this.props.rootStore.mainStore.approveCandidateToken}
+                                onSubmit={this.handleSubmitAddToken}
                                 onClickCross={this.closeDialog}
                                 tokenAddress={this.props.rootStore.mainStore.candidateTokenAddress}
                             />

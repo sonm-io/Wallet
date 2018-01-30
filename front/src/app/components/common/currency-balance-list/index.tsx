@@ -62,7 +62,7 @@ export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListPro
                             onClick={this.handleRequireAddToken}
                             className="sonm-currency-balance-list__add-token"
                         >
-                            + Add token
+                            + ADD TOKEN
                         </a>
                     </li>}
                 </ul>

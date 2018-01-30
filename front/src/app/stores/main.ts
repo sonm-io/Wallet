@@ -334,7 +334,6 @@ export class MainStore extends AbstractStore {
     }
 
     @action.bound
-    @catchErrors({ restart: true })
     public setCandidateTokenAddress(address: string) {
         if (this.candidateTokenAddress === address) {
             return;
@@ -349,6 +348,7 @@ export class MainStore extends AbstractStore {
         }
     }
 
+    @catchErrors({ restart: true })
     protected async updateCandidateTokenInfo(address: string) {
         const { validation, data } = await Api.getTokenInfo(address);
 
@@ -370,14 +370,16 @@ export class MainStore extends AbstractStore {
         }
     }
 
-    @action.bound
-    public approveCandidateToken() {
-        Api.addToken(this.candidateTokenAddress).then(() => {
-            Api.getCurrencyList();
-        });
+    @pending
+    @catchErrors({ restart: true })
+    @asyncAction
+    public * approveCandidateToken() {
+        const candidateTokenAddress = this.candidateTokenAddress;
         this.candidateTokenAddress = '';
         this.candidateTokenInfo = undefined;
         this.validation.tokenAddress = '';
+        const info = yield Api.addToken(candidateTokenAddress);
+        this.currencyMap.set(info.address, info);
     }
 }
 

@@ -6,7 +6,7 @@
 .sonm-currency-balance-list {
   display: inline-block;
   min-width: 235px;
-  color: @color-font;
+  color: @color-font-gray;
   font-weight: 500;
 
   &__list {
@@ -42,5 +42,30 @@
 
   &__icon {
     flex-shrink: 0;
+  }
+
+  &__add-token {
+    display: block;
+    width: 100%;
+
+    color: @color-blue;
+    text-decoration: none;
+    font-weight: normal;
+    text-align: center;
+    font-size: 15px;
+
+    &:active,
+    &:hover {
+      text-decoration: none;
+      font-weight: normal;
+      color: @color-blue;
+    }
+
+    &:focus {
+      text-decoration: none;
+      outline: @color-blue 1px dashed;
+      color: @color-blue;
+      font-weight: normal;
+    }
   }
 }

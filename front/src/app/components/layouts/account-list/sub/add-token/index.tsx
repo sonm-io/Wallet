@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
-import { FormField, FormRow, Form } from 'app/components/common/form';
+import { FormField, FormRow, Form, FormButtons } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
 import { ICurrencyInfo } from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
@@ -53,12 +53,14 @@ export class AddToken extends React.Component<IProps, {}> {
                             />
                         </FormField>
                     </FormRow>
-                    <Button
-                        disabled={this.props.validationTokenAddress !== '' || this.props.tokenAddress.length === 0}
-                        type="submit"
-                    >
-                        Add token
-                    </Button>
+                    <FormButtons>
+                        <Button
+                            disabled={this.props.validationTokenAddress !== '' || this.props.tokenAddress.length === 0}
+                            type="submit"
+                        >
+                            Add token
+                        </Button>
+                    </FormButtons>
                     {tokenInfo ?
                         <div className="sonm-add-token__preview">
                             <IdentIcon className="sonm-add-token__preview-icon" address={tokenInfo.address}/>
