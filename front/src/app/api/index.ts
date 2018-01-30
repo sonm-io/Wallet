@@ -164,6 +164,10 @@ export class Api {
         return createPromise('addToken', { address });
     }
 
+    public static async removeToken(address: string): Promise<IResult<boolean>>  {
+        return createPromise('removeToken', { address });
+    }
+
     public static async getTokenInfo(address: string): Promise<IResult<ICurrencyInfo>>  {
         return createPromise('getTokenInfo', { address });
     }
