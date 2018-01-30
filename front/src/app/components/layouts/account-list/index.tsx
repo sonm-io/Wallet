@@ -10,6 +10,7 @@ import { Button } from 'app/components/common/button';
 import { AddAccount, IAddAccountForm } from './sub/add-account';
 import { CreateAccount, ICreateAccountForm } from './sub/create-account';
 import { EmptyAccountList } from './sub/empty-account-list';
+import { AddToken } from './sub/add-token';
 import { navigate } from 'app/router/navigate';
 import { IValidation } from 'app/api/types';
 import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
@@ -17,6 +18,7 @@ import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
 enum WalletDialogs {
     new = 'new',
     add = 'add',
+    addToken = 'add-token',
     none = '',
 }
 
@@ -91,6 +93,10 @@ export class Wallets extends React.Component<IProps, IState> {
         this.props.rootStore.mainStore.renameAccount(address, name);
     }
 
+    protected handleRequireAddToken = () => {
+        this.switchDialog(WalletDialogs.addToken);
+    }
+
     public render() {
         const {
             className,
@@ -128,6 +134,7 @@ export class Wallets extends React.Component<IProps, IState> {
                 <CurrencyBalanceList
                     className="sonm-wallets__balances"
                     currencyBalanceList={this.props.rootStore.mainStore.fullBalanceList}
+                    onRequireAddToken={this.handleRequireAddToken}
                 />
                 <div className="sonm-wallets__buttons">
                     <Button
@@ -150,7 +157,6 @@ export class Wallets extends React.Component<IProps, IState> {
                                 validation={this.state.validation}
                                 onSubmit={this.handleCreateAccount}
                                 onClickCross={this.closeDialog}
-                                className="sonm-wallets__create-button"
                             />
                         )
                         : null}
@@ -161,7 +167,18 @@ export class Wallets extends React.Component<IProps, IState> {
                                 validation={this.state.validation}
                                 onSubmit={this.handleAddAccount}
                                 onClickCross={this.closeDialog}
-                                className="sonm-wallets__add-button"
+                            />
+                        )
+                        : null}
+                    {this.state.visibleDialog === WalletDialogs.addToken
+                        ? (
+                            <AddToken
+                                onChangeTokenAddress={this.props.rootStore.mainStore.setCandidateTokenAddress}
+                                tokenInfo={this.props.rootStore.mainStore.candidateTokenInfo}
+                                validationTokenAddress={this.props.rootStore.mainStore.validationCandidateToken}
+                                onSubmit={this.props.rootStore.mainStore.approveCandidateToken}
+                                onClickCross={this.closeDialog}
+                                tokenAddress={this.props.rootStore.mainStore.candidateTokenAddress}
                             />
                         )
                         : null}

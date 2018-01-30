@@ -13,9 +13,18 @@ export interface ICurrencyDetails {
 export interface ICurrencyBalanceListProps {
     className?: string;
     currencyBalanceList: ICurrencyDetails[];
+    onRequireAddToken?: () => void;
 }
 
 export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListProps, any> {
+    protected handleRequireAddToken = (event: any) => {
+        event.preventDefault();
+
+        if (this.props.onRequireAddToken) {
+            this.props.onRequireAddToken();
+        }
+    }
+
     public render() {
         const {
             className,
@@ -43,6 +52,19 @@ export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListPro
                             </li>
                         );
                     })}
+                    {this.props.onRequireAddToken &&
+                    <li
+                        key="add"
+                        className="sonm-currency-balance-list__item"
+                    >
+                        <a
+                            href="#add-token"
+                            onClick={this.handleRequireAddToken}
+                            className="sonm-currency-balance-list__add-token"
+                        >
+                            + Add token
+                        </a>
+                    </li>}
                 </ul>
             </div>
         );

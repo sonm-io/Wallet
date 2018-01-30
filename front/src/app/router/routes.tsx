@@ -1,5 +1,5 @@
 import { Send } from 'app/components/layouts/send';
-import { Wallets } from 'app/components/layouts/wallets';
+import { Wallets } from 'app/components/layouts/account-list';
 import { App } from 'app/components/layouts/app';
 import { History } from 'app/components/layouts/history';
 import { SendSuccess } from 'app/components/layouts/send/sub/success';

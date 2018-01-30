@@ -5,13 +5,16 @@ const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin
 const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { getFullPath, readJson } = require('./utils');
-const extractLess = new ExtractTextPlugin({ filename: '[name].[contenthash].css', allChunks: true });
-const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 const buildType = process.env.BUILD_TYPE || '';
 const isDev = process.env.NODE_ENV !== 'production';
+
+const extractLess = new ExtractTextPlugin({
+    filename: isDev ? '[name].css' : '[name].[contenthash].css',
+    allChunks: true,
+});
 
 module.exports = {
     entry: {
@@ -20,7 +23,7 @@ module.exports = {
     },
 
     output: {
-        filename: '[name].[hash].js',
+        filename: isDev ? '[name].js' : '[name].[hash].js',
         path: buildType === 'web' ? getFullPath('../docs') :  getFullPath('../dist'),
     },
 
@@ -70,7 +73,7 @@ module.exports = {
                     use: [{
                         loader: 'worker-loader',
                         options: {
-                            name: '[name].[hash].js',
+                            name: isDev ? '[name].js' : '[name].[hash].js',
                             inline: buildType === 'singleFile',
                         },
                     }, {
@@ -117,8 +120,6 @@ module.exports = {
             extractLess,
 
             new CssoWebpackPlugin(),
-
-            new WebpackCleanupPlugin(),
         ];
 
         return plugins.filter(x => x);

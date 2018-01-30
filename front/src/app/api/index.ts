@@ -39,8 +39,9 @@ function createPromise(
             }
 
             if (response.success) {
-                // TODO remove
-                console.log(type, response, payload);
+                if (process.env.NODE_ENV !== 'production') {
+                    console.log(type, response, payload);
+                }
                 //
                 done(response);
             } else {
