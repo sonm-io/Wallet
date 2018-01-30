@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { IdentIcon } from '../ident-icon';
-import { Balance } from '../balance-view';
+import { DeletableItemWithConfirmation } from '../deletable-item/with-confirmation';
 import * as cn from 'classnames';
+import { ITokenItemProps, TokenItem } from './sub/item/index';
+import { TokenDeleteConfirmation } from './sub/delete-confirmation';
 
 export interface ICurrencyDetails {
     symbol: string;
@@ -14,7 +15,10 @@ export interface ICurrencyBalanceListProps {
     className?: string;
     currencyBalanceList: ICurrencyDetails[];
     onRequireAddToken?: () => void;
+    onDeleteToken: (address: string) => void;
 }
+
+class DeletableToken extends DeletableItemWithConfirmation<ITokenItemProps> {}
 
 export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListProps, any> {
     protected handleRequireAddToken = (event: any) => {
@@ -39,16 +43,24 @@ export class CurrencyBalanceList extends React.Component<ICurrencyBalanceListPro
                     MY FUNDS
                 </h2>
                 <ul className="sonm-currency-balance-list__list" >
-                    {currencyBalanceList.map(({ symbol, balance, address }) => {
+                    {currencyBalanceList.map((tokenProps, idx) => {
                         return (
-                            <li className="sonm-currency-balance-list__item" key={address}>
-                                <IdentIcon address={address} width={26} className="sonm-currency-balance-list__icon"/>
-                                <Balance
-                                    className="sonm-currency-balance-list__balance"
-                                    balance={balance}
-                                    symbol={symbol}
-                                    fontSizePx={18}
-                                />
+                            <li className="sonm-currency-balance-list__item" key={tokenProps.address}>
+                                {
+                                    idx > 1
+                                        ? (
+                                            <DeletableToken
+                                                item={tokenProps}
+                                                Confirmation={TokenDeleteConfirmation}
+                                                onDelete={this.props.onDeleteToken}
+                                                id={tokenProps.address}
+                                            >
+                                                <TokenItem {...tokenProps} />
+                                            </DeletableToken>
+                                        ) : (
+                                            <TokenItem {...tokenProps} />
+                                        )
+                                }
                             </li>
                         );
                     })}

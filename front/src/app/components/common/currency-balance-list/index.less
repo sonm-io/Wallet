@@ -1,5 +1,8 @@
 @import "guide.less";
 
+@import "sub/item/index";
+@import "sub/delete-confirmation/index";
+
 @currency-balance-list-header-bg: @color-gray-bg;
 @currency-balance-list-item-bg: @color-light-gray-bg;
 
@@ -32,16 +35,6 @@
     margin: 0;
     white-space: nowrap;
     display: flex;
-  }
-
-  &__balance {
-    flex-grow: 1;
-    margin: 0 0 0 10px;
-    font-weight: 400;
-  }
-
-  &__icon {
-    flex-shrink: 0;
   }
 
   &__add-token {

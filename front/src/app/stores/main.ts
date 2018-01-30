@@ -328,11 +328,6 @@ export class MainStore extends AbstractStore {
         return result;
     }
 
-    @action
-    protected setCandidateTokenInfo(info: ICurrencyInfo) {
-        this.candidateTokenInfo = info;
-    }
-
     @action.bound
     public setCandidateTokenAddress(address: string) {
         if (this.candidateTokenAddress === address) {
@@ -349,8 +344,9 @@ export class MainStore extends AbstractStore {
     }
 
     @catchErrors({ restart: true })
-    protected async updateCandidateTokenInfo(address: string) {
-        const { validation, data } = await Api.getTokenInfo(address);
+    @asyncAction
+    protected * updateCandidateTokenInfo(address: string) {
+        const { validation, data } = yield Api.getTokenInfo(address);
 
         if (validation) {
            this.validation.tokenAddress = validation.address;
@@ -365,7 +361,7 @@ export class MainStore extends AbstractStore {
            }
 
            if (address === this.candidateTokenAddress) {
-               this.setCandidateTokenInfo(data);
+               this.candidateTokenInfo = data;
            }
         }
     }
@@ -378,8 +374,21 @@ export class MainStore extends AbstractStore {
         this.candidateTokenAddress = '';
         this.candidateTokenInfo = undefined;
         this.validation.tokenAddress = '';
-        const info = yield Api.addToken(candidateTokenAddress);
-        this.currencyMap.set(info.address, info);
+        const { data: currencyInfo } = yield Api.addToken(candidateTokenAddress);
+        if (currencyInfo) {
+            this.currencyMap.set(currencyInfo.address, currencyInfo);
+        }
+    }
+
+    @pending
+    @catchErrors({ restart: true })
+    @asyncAction
+    public * removeToken(address: string) {
+        const success = yield Api.removeToken(address);
+
+        if (success) {
+            this.currencyMap.delete(address);
+        }
     }
 }
 
