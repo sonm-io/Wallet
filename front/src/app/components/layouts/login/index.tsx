@@ -72,7 +72,7 @@ export class Login extends React.Component<IProps, any> {
         };
 
         if (listOfWallets.length === 1) {
-            update.name = listOfWallets[0];
+            update.name = listOfWallets[0].name;
             update.currentAction = 'enter-password';
         }
 
