@@ -127,6 +127,7 @@ class Api {
             'addToken': this.addToken,
             'removeToken': this.removeToken,
             'getTokenInfo': this.getTokenInfo,
+            'getScamTokenList': this.getScamTokenList,
         };
 
         this.storage = {
@@ -778,6 +779,14 @@ class Api {
         } else {
             return [];
         }
+    }
+
+    public getScamTokenList = async (data: IPayload): Promise<IResponse> => {
+        return {
+            data: [
+                '0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac',
+            ],
+        };
     }
 
     public send = async (data: IPayload): Promise<IResponse> => {
