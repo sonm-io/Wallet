@@ -3,6 +3,7 @@ import { Dialog } from '../dialog';
 import * as React from 'react';
 
 import { DeletableItem, IDeletableItemProps } from './index';
+import { FormButtons } from '../form/form';
 
 export interface IDeletableItemWithConfirmationProps<TItemProps> extends IDeletableItemProps {
     Confirmation: React.ComponentClass<TItemProps> | React.SFC<TItemProps>;
@@ -53,7 +54,7 @@ export class DeletableItemWithConfirmation<T> extends React.PureComponent<IDelet
                                 className="sonm-deletable-item__confirmation-dialog"
                             >
                                 <Confirmation {...item} />
-                                <div className="sonm-deletable-item__confirmation-button-group">
+                                <FormButtons>
                                     <Button
                                         className="sonm-deletable-item__confirmation-button"
                                         transparent
@@ -67,7 +68,7 @@ export class DeletableItemWithConfirmation<T> extends React.PureComponent<IDelet
                                     >
                                         Delete
                                     </Button>
-                                </div>
+                                </FormButtons>
                             </Dialog>
                         )
                         : null
