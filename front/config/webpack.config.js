@@ -1,25 +1,29 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
+const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const {getFullPath, readJson} = require('./utils');
-const extractLess = new ExtractTextPlugin('./style.css');
+const { getFullPath, readJson } = require('./utils');
 
-const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
 const MinifyPlugin = require("babel-minify-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const buildType = process.env.BUILD_TYPE || '';
-const isDev = buildType !== 'web' && !process.env.NODE_ENV.includes('production');
+const isDev = process.env.NODE_ENV !== 'production';
+
+const extractLess = new ExtractTextPlugin({
+    filename: isDev ? '[name].css' : '[name].[contenthash].css',
+    allChunks: true,
+});
 
 module.exports = {
     entry: {
-        app: getFullPath('./src/app/index.tsx'),
+        app: getFullPath('./src/entry.ts'),
         style: getFullPath('./src/app/less/entry.less'),
     },
 
     output: {
-        filename: '[name].bundled.js',
+        filename: isDev ? '[name].js' : '[name].[hash].js',
         path: buildType === 'web' ? getFullPath('../docs') :  getFullPath('../dist'),
     },
 
@@ -59,6 +63,7 @@ module.exports = {
                 {
                     test: /\.less$/,
                     use: extractLess.extract({
+                        disable:  buildType === 'singleFile',
                         fallback: 'style-loader',
                         use: ['css-loader', 'less-loader'],
                     }),
@@ -68,8 +73,8 @@ module.exports = {
                     use: [{
                         loader: 'worker-loader',
                         options: {
-                            name: '[name].js',
-                            inline: true,
+                            name: isDev ? '[name].js' : '[name].[hash].js',
+                            inline: buildType === 'singleFile',
                         },
                     }, {
                         loader: 'ts-loader',
@@ -82,7 +87,6 @@ module.exports = {
     },
 
     watch: isDev,
-    devtool: false,
 
     plugins: (() => {
         const plugins = [
@@ -90,17 +94,17 @@ module.exports = {
                 ? new BundleAnalyzerPlugin()
                 : false,
 
-            //isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
-
-            isDev ? null : new UglifyJsPlugin({
-                uglifyOptions: {
-                    output: {
-                        comments: false,
-                        beautify: false,
-                        ascii_only: true,
-                    },
-                }
+            new HtmlWebpackPlugin({
+                inject: true,
+                template: getFullPath('./assets/entry.html'),
+                inlineSource: '.(js|css)$',
             }),
+
+            buildType === 'singleFile'
+                ? new HtmlWebpackInlineSourcePlugin()
+                : null,
+
+            isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
 
             new webpack.NoEmitOnErrorsPlugin(),
 
@@ -113,17 +117,10 @@ module.exports = {
 
             new webpack.EnvironmentPlugin(['NODE_ENV']),
 
-            new HtmlWebpackPlugin({
-                inject: true,
-                template: getFullPath('./assets/entry.html'),
-            }),
-
             extractLess,
-        ];
 
-        if (buildType === 'singleFile') {
-            plugins.push(new StyleExtHtmlWebpackPlugin());
-        }
+            new CssoWebpackPlugin(),
+        ];
 
         return plugins.filter(x => x);
     })(),

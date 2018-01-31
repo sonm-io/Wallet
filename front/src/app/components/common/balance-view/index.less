@@ -1,18 +1,21 @@
 .sonm-balance {
-  display: inline-block;
+  display: inline-flex;
   overflow: hidden;
   white-space: nowrap;
+  padding: 0;
 
   &__number {
-    overflow: hidden;
+    flex: 0 1 0;
     text-overflow: ellipsis;
     font-size: inherit;
-    display: block;
+    margin: 0;
+    padding: 0;
   }
 
   &__symbol {
+    flex: 0 1 0;
     font-size: inherit;
-    margin-left: 5px;
-    float: right;
+    margin: 0 0 0 5px;
+    padding: 0;
   }
 }
