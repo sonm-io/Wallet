@@ -14,12 +14,14 @@ import { AddToken } from './sub/add-token';
 import { navigate } from 'app/router/navigate';
 import { IValidation } from 'app/api/types';
 import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
+import ShowPassword from './sub/show-private-key/index';
 
 enum WalletDialogs {
-    new = 'new',
-    add = 'add',
-    addToken = 'add-token',
-    none = '',
+    new,
+    add,
+    addToken,
+    none,
+    showPrivateKey,
 }
 
 interface IProps {
@@ -30,6 +32,7 @@ interface IProps {
 interface IState {
     deleteAddress: string;
     visibleDialog: WalletDialogs;
+    visibleDialogProps: any[];
     validation?: IValidation;
 }
 
@@ -40,6 +43,7 @@ export class Wallets extends React.Component<IProps, IState> {
     public state = {
         deleteAddress: '',
         visibleDialog: WalletDialogs.none,
+        visibleDialogProps: [] as any[],
         validation: {} as IValidation,
     };
 
@@ -79,9 +83,10 @@ export class Wallets extends React.Component<IProps, IState> {
         this.closeDialog();
     }
 
-    protected switchDialog(name: WalletDialogs) {
+    protected switchDialog(name: WalletDialogs, ...args: any[]) {
         this.setState({
             visibleDialog: name,
+            visibleDialogProps: args,
         });
     }
 
@@ -98,13 +103,16 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     protected handleDeleteToken = (address: string) => {
-        debugger;
         this.props.rootStore.mainStore.removeToken(address);
     }
 
     protected handleSubmitAddToken = () => {
         this.props.rootStore.mainStore.approveCandidateToken();
         this.closeDialog();
+    }
+
+    protected handleShowPrivateKey = (address: string) => {
+        this.switchDialog(WalletDialogs.showPrivateKey, address);
     }
 
     public render() {
@@ -133,6 +141,7 @@ export class Wallets extends React.Component<IProps, IState> {
                                     <AccountItem
                                         {...x}
                                         onClickIcon={this.handleClickAccount}
+                                        onClickShowPrivateKey={this.handleShowPrivateKey}
                                         onRename={this.handleRename}
                                         className="sonm-wallets__list-item-inner"
                                         hasButtons
@@ -187,6 +196,15 @@ export class Wallets extends React.Component<IProps, IState> {
                             <AddToken
                                 mainStore={this.props.rootStore.mainStore}
                                 onClickCross={this.closeDialog}
+                            />
+                        )
+                        : null}
+                    {this.state.visibleDialog === WalletDialogs.showPrivateKey
+                        ? (
+                            <ShowPassword
+                                mainStore={this.props.rootStore.mainStore}
+                                address={this.state.visibleDialogProps[0]}
+                                onClose={this.closeDialog}
                             />
                         )
                         : null}

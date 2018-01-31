@@ -9,33 +9,22 @@
 
   &--error {
     color: @color-pink;
-
-    & input[type="text"],
-    & input[type="number"],
-    & input[type="password"] {
-      border-color: @color-red;
-    }
+    --input-color-mod: @color-pink;
   }
 
   &--success {
     color: @color-green;
-    & .sonm-form-field__input > input[type="text"] {
-      border-color: @color-green;
-    }
+    --input-color-mod: @color-green;
   }
 
   &--warning {
     color: @color-orange;
-    & .sonm-form-field__input > input[type="text"] {
-      border-color: @color-orange;
-    }
+    --input-color-mod: @color-orange;
   }
 
   &--info {
     color: @color-blue;
-    & .sonm-form-field__input > input[type="text"] {
-      border-color: @color-blue;
-    }
+    --input-color-mod:  @color-blue;
   }
 
   &--full-width {
