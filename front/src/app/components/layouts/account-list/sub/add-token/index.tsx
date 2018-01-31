@@ -1,64 +1,68 @@
 import * as React from 'react';
 import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
-import { FormField, FormRow, Form } from 'app/components/common/form';
+import { FormField, FormRow, Form, FormButtons } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
-import { ICurrencyInfo } from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
+import { MainStore } from 'app/stores/main';
+import { observer } from 'mobx-react';
 
 export interface IProps {
-    tokenAddress: string;
+    /*tokenAddress: string;
     validationTokenAddress: string;
     onSubmit: (address: string) => void;
     onClickCross: () => void;
     onChangeTokenAddress: (tokenAddress: string) => void;
-    tokenInfo?: ICurrencyInfo;
+    tokenInfo?: ICurrencyInfo;*/
+    mainStore: MainStore;
+    onClickCross: () => void;
 }
 
+@observer
 export class AddToken extends React.Component<IProps, {}> {
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        this.props.onSubmit(this.props.tokenAddress);
-    }
-
-    protected handleClickCross = () => {
-        this.props.onClickCross();
+        this.props.mainStore.approveCandidateToken();
     }
 
     protected handleChangeInput = async (event: any) => {
         const address = event.target.value.trim();
 
-        this.props.onChangeTokenAddress(address);
+        this.props.mainStore.setCandidateTokenAddress(address);
     }
 
     public render() {
-        const tokenInfo = this.props.tokenInfo;
+        const tokenInfo = this.props.mainStore.candidateTokenInfo;
+        const tokenAddress = this.props.mainStore.candidateTokenAddress;
+        const validation = this.props.mainStore.validationCandidateToken;
 
         return (
-            <Dialog onClickCross={this.handleClickCross} height={tokenInfo ? 350 : 230}>
+            <Dialog onClickCross={this.props.onClickCross} height={tokenInfo ? 350 : 230}>
                 <Form className="sonm-add-token__form" onSubmit={this.handleSubmit}>
                     <h3>Add token</h3>
                     <FormRow>
                         <FormField
                             fullWidth
                             label="Token contract address"
-                            error={this.props.tokenAddress.length === 0 ? '' : this.props.validationTokenAddress}
+                            error={tokenAddress.length === 0 ? '' : validation}
                         >
                             <Input
-                                value={this.props.tokenAddress}
+                                value={tokenAddress}
                                 type="text"
                                 name="address"
                                 onChange={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>
-                    <Button
-                        disabled={this.props.validationTokenAddress !== '' || this.props.tokenAddress.length === 0}
-                        type="submit"
-                    >
-                        Add token
-                    </Button>
+                    <FormButtons>
+                        <Button
+                            disabled={!!validation.length || !tokenAddress.length}
+                            type="submit"
+                        >
+                            Add token
+                        </Button>
+                    </FormButtons>
                     {tokenInfo ?
                         <div className="sonm-add-token__preview">
                             <IdentIcon className="sonm-add-token__preview-icon" address={tokenInfo.address}/>

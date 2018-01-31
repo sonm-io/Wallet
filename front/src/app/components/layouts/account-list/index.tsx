@@ -40,11 +40,11 @@ export class Wallets extends React.Component<IProps, IState> {
     public state = {
         deleteAddress: '',
         visibleDialog: WalletDialogs.none,
-        validation: {} as IValidation ,
+        validation: {} as IValidation,
     };
 
     protected handleClickAccount(address: string) {
-        navigate({ path: `/accounts/${address}` }); // TODO move to router
+        navigate({path: `/accounts/${address}`}); // TODO move to router
     }
 
     private handleDelete = (deleteAddress: string) => {
@@ -63,7 +63,7 @@ export class Wallets extends React.Component<IProps, IState> {
             data.name,
         ) as any; // ;(
 
-        this.setState({ validation });
+        this.setState({validation});
 
         if (this.isValidationEmpty(validation)) {
             this.closeDialog();
@@ -97,6 +97,16 @@ export class Wallets extends React.Component<IProps, IState> {
         this.switchDialog(WalletDialogs.addToken);
     }
 
+    protected handleDeleteToken = (address: string) => {
+        debugger;
+        this.props.rootStore.mainStore.removeToken(address);
+    }
+
+    protected handleSubmitAddToken = () => {
+        this.props.rootStore.mainStore.approveCandidateToken();
+        this.closeDialog();
+    }
+
     public render() {
         const {
             className,
@@ -124,6 +134,7 @@ export class Wallets extends React.Component<IProps, IState> {
                                         {...x}
                                         onClickIcon={this.handleClickAccount}
                                         onRename={this.handleRename}
+                                        className="sonm-wallets__list-item-inner"
                                         hasButtons
                                     />
                                 </DeletableItem>
@@ -135,6 +146,7 @@ export class Wallets extends React.Component<IProps, IState> {
                     className="sonm-wallets__balances"
                     currencyBalanceList={this.props.rootStore.mainStore.fullBalanceList}
                     onRequireAddToken={this.handleRequireAddToken}
+                    onDeleteToken={this.handleDeleteToken}
                 />
                 <div className="sonm-wallets__buttons">
                     <Button
@@ -173,12 +185,8 @@ export class Wallets extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.addToken
                         ? (
                             <AddToken
-                                onChangeTokenAddress={this.props.rootStore.mainStore.setCandidateTokenAddress}
-                                tokenInfo={this.props.rootStore.mainStore.candidateTokenInfo}
-                                validationTokenAddress={this.props.rootStore.mainStore.validationCandidateToken}
-                                onSubmit={this.props.rootStore.mainStore.approveCandidateToken}
+                                mainStore={this.props.rootStore.mainStore}
                                 onClickCross={this.closeDialog}
-                                tokenAddress={this.props.rootStore.mainStore.candidateTokenAddress}
                             />
                         )
                         : null}

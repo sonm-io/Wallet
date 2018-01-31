@@ -43,11 +43,11 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
                 className={cn('sonm-balance', className)}
                 style={style}
             >
-                <span className="sonm-balance__symbol">
-                    {symbol}
-                </span>
                 <span className="sonm-balance__number">
                     {prefix} {out}
+                </span>
+                <span className="sonm-balance__symbol">
+                    {symbol}
                 </span>
             </div>
         );

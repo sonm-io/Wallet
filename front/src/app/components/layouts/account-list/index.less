@@ -1,3 +1,5 @@
+@import "guide.less";
+
 @import 'sub/add-account/index';
 @import 'sub/create-account/index';
 @import 'sub/empty-account-list/index';
@@ -18,6 +20,11 @@
   &__list {
     grid-column: 1;
     grid-row: 2;
+
+    &-item-inner {
+      border: 1px solid @color-border;
+      width: ~'calc(100% - 20px)';
+    }
   }
 
   &__buttons {

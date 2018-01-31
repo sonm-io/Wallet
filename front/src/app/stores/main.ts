@@ -328,13 +328,7 @@ export class MainStore extends AbstractStore {
         return result;
     }
 
-    @action
-    protected setCandidateTokenInfo(info: ICurrencyInfo) {
-        this.candidateTokenInfo = info;
-    }
-
     @action.bound
-    @catchErrors({ restart: true })
     public setCandidateTokenAddress(address: string) {
         if (this.candidateTokenAddress === address) {
             return;
@@ -349,8 +343,10 @@ export class MainStore extends AbstractStore {
         }
     }
 
-    protected async updateCandidateTokenInfo(address: string) {
-        const { validation, data } = await Api.getTokenInfo(address);
+    @catchErrors({ restart: true })
+    @asyncAction
+    protected * updateCandidateTokenInfo(address: string) {
+        const { validation, data } = yield Api.getTokenInfo(address);
 
         if (validation) {
            this.validation.tokenAddress = validation.address;
@@ -365,19 +361,34 @@ export class MainStore extends AbstractStore {
            }
 
            if (address === this.candidateTokenAddress) {
-               this.setCandidateTokenInfo(data);
+               this.candidateTokenInfo = data;
            }
         }
     }
 
-    @action.bound
-    public approveCandidateToken() {
-        Api.addToken(this.candidateTokenAddress).then(() => {
-            Api.getCurrencyList();
-        });
+    @pending
+    @catchErrors({ restart: true })
+    @asyncAction
+    public * approveCandidateToken() {
+        const candidateTokenAddress = this.candidateTokenAddress;
         this.candidateTokenAddress = '';
         this.candidateTokenInfo = undefined;
         this.validation.tokenAddress = '';
+        const { data: currencyInfo } = yield Api.addToken(candidateTokenAddress);
+        if (currencyInfo) {
+            this.currencyMap.set(currencyInfo.address, currencyInfo);
+        }
+    }
+
+    @pending
+    @catchErrors({ restart: true })
+    @asyncAction
+    public * removeToken(address: string) {
+        const success = yield Api.removeToken(address);
+
+        if (success) {
+            this.currencyMap.delete(address);
+        }
     }
 }
 
