@@ -67,6 +67,14 @@ describe('Api',  async function() {
         expect(response2.data).to.have.lengthOf(3);
     });
 
+    it('should remove token', async function() {
+        const response = await Api.removeToken(tokenAddress);
+        expect(response.data).equal(true);
+
+        const response2 = await Api.getCurrencyList();
+        expect(response2.data).to.have.lengthOf(2);
+    });
+
     it('should check connection', async function() {
         const response = await Api.checkConnection();
         expect(response.data).equal(true);

@@ -1,6 +1,10 @@
+@import "guide.less";
+
 @import 'sub/add-account/index';
+@import 'sub/create-account/index';
 @import 'sub/empty-account-list/index';
 @import 'sub/delete-account-confirmation/index';
+@import 'sub/add-token/index';
 
 .sonm-wallets {
   display: grid;
@@ -16,6 +20,11 @@
   &__list {
     grid-column: 1;
     grid-row: 2;
+
+    &-item-inner {
+      border: 1px solid @color-border;
+      width: ~'calc(100% - 20px)';
+    }
   }
 
   &__buttons {

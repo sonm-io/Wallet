@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
+import { FormField, FormRow, Form } from 'app/components/common/form';
+import { Input } from 'app/components/common/input';
 import { IValidation } from 'ipc/types';
 import { getMessageText } from 'app/api/error-messages';
 
@@ -10,7 +12,6 @@ export interface ICreateAccountForm {
 }
 
 export interface IProps {
-    className?: string;
     validation?: IValidation;
     onSubmit: (data: ICreateAccountForm) => void;
     onClickCross: () => void;
@@ -33,12 +34,10 @@ export class CreateAccount extends React.Component<IProps, any> {
             validation.name = getMessageText('name_required');
         }
 
-        if (this.state.password.length < 8) {
-            validation.password = getMessageText('password_length');
-        }
-
-        if (this.state.password.length < 1) {
+        if (!this.state.password) {
             validation.password = getMessageText('password_required');
+        } else if (this.state.password.length < 8) {
+            validation.password = getMessageText('password_length');
         }
 
         if (this.state.password !== this.state.confirmation) {
@@ -81,45 +80,53 @@ export class CreateAccount extends React.Component<IProps, any> {
     public render() {
         return (
             <Dialog onClickCross={this.handleClickCross}>
-                <form className="sonm-wallets-add-account__content" onSubmit={this.handleSubmit}>
-                    <h3 className="sonm-wallets-add-account__header">New account</h3>
-                    <label className="sonm-wallets-add-account__label">
-                        <span className="sonm-wallets-add-account__label-text">Password</span>
-                        <span className="sonm-wallets-add-account__label-error">{this.state.validation.password}</span>
-                        <input
-                            type="password"
-                            className="sonm-wallets-add-account__input"
-                            name="password"
-                            onChange={this.handleChangeInput}
-                        />
-                    </label>
-                    <label className="sonm-wallets-add-account__label">
-                        <span className="sonm-wallets-add-account__label-text">Password confirmation</span>
-                        <span className="sonm-wallets-add-account__label-error">{this.state.validation.confirmation}</span>
-                        <input
-                            type="password"
-                            className="sonm-wallets-add-account__input"
-                            name="confirmation"
-                            onChange={this.handleChangeInput}
-                        />
-                    </label>
-                    <label className="sonm-wallets-add-account__label">
-                        <span className="sonm-wallets-add-account__label-text">Enter account name</span>
-                        <span className="sonm-wallets-add-account__label-error">{this.state.validation.name}</span>
-                        <input
-                            type="text"
-                            className="sonm-wallets-add-account__input"
-                            name="name"
-                            onChange={this.handleChangeInput}
-                        />
-                    </label>
+                <Form className="sonm-wallets-create-account__form" onSubmit={this.handleSubmit}>
+                    <h3>New account</h3>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label="Password"
+                            error={this.state.validation.password}
+                        >
+                            <Input
+                                type="password"
+                                name="password"
+                                onChange={this.handleChangeInput}
+                            />
+                        </FormField>
+                    </FormRow>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label="Password confirmation"
+                            error={this.state.validation.confirmation}
+                        >
+                            <Input
+                                type="password"
+                                name="confirmation"
+                                onChange={this.handleChangeInput}
+                            />
+                        </FormField>
+                    </FormRow>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label="Account name"
+                            error={this.state.validation.name}
+                        >
+                            <Input
+                                type="text"
+                                name="name"
+                                onChange={this.handleChangeInput}
+                            />
+                        </FormField>
+                    </FormRow>
                     <Button
-                        className="sonm-wallets-add-account__submit"
                         type="submit"
                     >
                         Create
                     </Button>
-                </form>
+                </Form>
             </Dialog>
         );
     }

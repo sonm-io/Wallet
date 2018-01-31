@@ -7,7 +7,6 @@ import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
 import { AlertList } from './sub/alerts';
 import { NavMenu } from './sub/nav-menu/index';
-import { Alert } from 'app/components/common/alert';
 
 interface IProps {
     className?: string;
@@ -80,12 +79,6 @@ export class App extends React.Component<IProps, any> {
                             /> : null
                         }
                         <AlertList className="sonm-app__alert-list" rootStore={this.props.rootStore}/>
-                        <Alert
-                            type="warning"
-                            id="offline"
-                        >
-                            Wallet works in testnet! Do not use real keys, Ether or tokens.
-                        </Alert>
                     </div>
                     <div className="sonm-app__content">
                         <div className="sonm-app__content-scroll-ct">

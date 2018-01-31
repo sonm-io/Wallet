@@ -125,6 +125,7 @@ class Api {
             'getSonmTokenAddress': this.getSonmTokenAddress,
 
             'addToken': this.addToken,
+            'removeToken': this.removeToken,
             'getTokenInfo': this.getTokenInfo,
         };
 
@@ -590,6 +591,22 @@ class Api {
                     },
                 };
             }
+        } else {
+            throw new Error('required_params_missed');
+        }
+    }
+
+    public removeToken = async (data: IPayload): Promise<IResponse> => {
+        if (data.address) {
+            const tokenList = await this.getTokenList();
+            await tokenList.remove(data.address);
+
+            this.storage.tokens = tokenList.getList();
+            await this.saveData();
+
+            return {
+                data: true,
+            };
         } else {
             throw new Error('required_params_missed');
         }

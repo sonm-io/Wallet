@@ -1,12 +1,15 @@
 @import "guide.less";
 
+@import "sub/item/index";
+@import "sub/delete-confirmation/index";
+
 @currency-balance-list-header-bg: @color-gray-bg;
 @currency-balance-list-item-bg: @color-light-gray-bg;
 
 .sonm-currency-balance-list {
   display: inline-block;
   min-width: 235px;
-  color: @color-font;
+  color: @color-font-gray;
   font-weight: 500;
 
   &__list {
@@ -34,13 +37,28 @@
     display: flex;
   }
 
-  &__balance {
-    flex-grow: 1;
-    margin: 0 0 0 10px;
-    font-weight: 400;
-  }
+  &__add-token {
+    display: block;
+    width: 100%;
 
-  &__icon {
-    flex-shrink: 0;
+    color: @color-blue;
+    text-decoration: none;
+    font-weight: normal;
+    text-align: center;
+    font-size: 15px;
+
+    &:active,
+    &:hover {
+      text-decoration: none;
+      font-weight: normal;
+      color: @color-blue;
+    }
+
+    &:focus {
+      text-decoration: none;
+      outline: @color-blue 1px dashed;
+      color: @color-blue;
+      font-weight: normal;
+    }
   }
 }

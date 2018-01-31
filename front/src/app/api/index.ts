@@ -39,8 +39,9 @@ function createPromise(
             }
 
             if (response.success) {
-                // TODO remove
-                console.log(type, response, payload);
+                if (process.env.NODE_ENV !== 'production') {
+                    console.log(type, response, payload);
+                }
                 //
                 done(response);
             } else {
@@ -161,6 +162,10 @@ export class Api {
 
     public static async addToken(address: string): Promise<IResult<ICurrencyInfo>>  {
         return createPromise('addToken', { address });
+    }
+
+    public static async removeToken(address: string): Promise<IResult<boolean>>  {
+        return createPromise('removeToken', { address });
     }
 
     public static async getTokenInfo(address: string): Promise<IResult<ICurrencyInfo>>  {

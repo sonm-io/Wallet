@@ -10,6 +10,7 @@ import { Button } from 'app/components/common/button';
 import { AddAccount, IAddAccountForm } from './sub/add-account';
 import { CreateAccount, ICreateAccountForm } from './sub/create-account';
 import { EmptyAccountList } from './sub/empty-account-list';
+import { AddToken } from './sub/add-token';
 import { navigate } from 'app/router/navigate';
 import { IValidation } from 'app/api/types';
 import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
@@ -17,6 +18,7 @@ import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
 enum WalletDialogs {
     new = 'new',
     add = 'add',
+    addToken = 'add-token',
     none = '',
 }
 
@@ -38,11 +40,11 @@ export class Wallets extends React.Component<IProps, IState> {
     public state = {
         deleteAddress: '',
         visibleDialog: WalletDialogs.none,
-        validation: {} as IValidation ,
+        validation: {} as IValidation,
     };
 
     protected handleClickAccount(address: string) {
-        navigate({ path: `/accounts/${address}` }); // TODO move to router
+        navigate({path: `/accounts/${address}`}); // TODO move to router
     }
 
     private handleDelete = (deleteAddress: string) => {
@@ -61,7 +63,7 @@ export class Wallets extends React.Component<IProps, IState> {
             data.name,
         ) as any; // ;(
 
-        this.setState({ validation });
+        this.setState({validation});
 
         if (this.isValidationEmpty(validation)) {
             this.closeDialog();
@@ -91,6 +93,20 @@ export class Wallets extends React.Component<IProps, IState> {
         this.props.rootStore.mainStore.renameAccount(address, name);
     }
 
+    protected handleRequireAddToken = () => {
+        this.switchDialog(WalletDialogs.addToken);
+    }
+
+    protected handleDeleteToken = (address: string) => {
+        debugger;
+        this.props.rootStore.mainStore.removeToken(address);
+    }
+
+    protected handleSubmitAddToken = () => {
+        this.props.rootStore.mainStore.approveCandidateToken();
+        this.closeDialog();
+    }
+
     public render() {
         const {
             className,
@@ -118,6 +134,7 @@ export class Wallets extends React.Component<IProps, IState> {
                                         {...x}
                                         onClickIcon={this.handleClickAccount}
                                         onRename={this.handleRename}
+                                        className="sonm-wallets__list-item-inner"
                                         hasButtons
                                     />
                                 </DeletableItem>
@@ -128,6 +145,8 @@ export class Wallets extends React.Component<IProps, IState> {
                 <CurrencyBalanceList
                     className="sonm-wallets__balances"
                     currencyBalanceList={this.props.rootStore.mainStore.fullBalanceList}
+                    onRequireAddToken={this.handleRequireAddToken}
+                    onDeleteToken={this.handleDeleteToken}
                 />
                 <div className="sonm-wallets__buttons">
                     <Button
@@ -150,7 +169,6 @@ export class Wallets extends React.Component<IProps, IState> {
                                 validation={this.state.validation}
                                 onSubmit={this.handleCreateAccount}
                                 onClickCross={this.closeDialog}
-                                className="sonm-wallets__create-button"
                             />
                         )
                         : null}
@@ -161,7 +179,14 @@ export class Wallets extends React.Component<IProps, IState> {
                                 validation={this.state.validation}
                                 onSubmit={this.handleAddAccount}
                                 onClickCross={this.closeDialog}
-                                className="sonm-wallets__add-button"
+                            />
+                        )
+                        : null}
+                    {this.state.visibleDialog === WalletDialogs.addToken
+                        ? (
+                            <AddToken
+                                mainStore={this.props.rootStore.mainStore}
+                                onClickCross={this.closeDialog}
                             />
                         )
                         : null}
