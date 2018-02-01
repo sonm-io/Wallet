@@ -3,6 +3,8 @@ const url = require('url');
 const electron = require('electron');
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
+const Menu = electron.Menu;
+const MenuItem = electron.MenuItem;
 
 let mainWindow = null;
 
@@ -26,10 +28,13 @@ function initialize () {
 
 function createWindow () {
     const windowOptions = {
+        title: app.getName(),
+        //resizable: true,
         width: 1280,
         height: 840,
-        title: app.getName(),
-        resizable: false,
+        minWidth: 1280,
+        minHeight: 840,
+        maxWidth: 1280,
         webPreferences: {
             webSecurity: false
         }
@@ -49,6 +54,52 @@ function createWindow () {
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
+
+    // Create the Application's main menu
+    const template = [{
+        label: 'Electron',
+        submenu: [
+            {
+                label: 'Quit',
+                accelerator: 'Command+Q',
+                click: function() { app.quit(); }
+            },
+        ]
+    },
+        {
+            label: 'Edit',
+            submenu: [
+                {
+                    label: 'Copy',
+                    accelerator: 'Command+C',
+                    selector: 'copy:'
+                },
+                {
+                    label: 'Paste',
+                    accelerator: 'Command+V',
+                    selector: 'paste:'
+                }
+            ]
+        },
+        {
+            label: 'View',
+            submenu: [
+                {
+                    label: 'Reload',
+                    accelerator: 'Command+R',
+                    click: function() { BrowserWindow.getFocusedWindow().reloadIgnoringCache(); }
+                },
+                {
+                    label: 'Toggle DevTools',
+                    accelerator: 'Alt+Command+I',
+                    click: function() { BrowserWindow.getFocusedWindow().toggleDevTools(); }
+                },
+            ]
+        },
+    ];
+
+    menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
 }
 
 initialize();
