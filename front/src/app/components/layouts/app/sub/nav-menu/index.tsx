@@ -20,7 +20,7 @@ export class NavMenu extends React.PureComponent<INavMenuProps, any> {
 
         const url = event.target.getAttribute('href');
 
-        if (this.props.onChange && this.disabledUrlList.indexOf(url) === -1 && url !== this.props.url) {
+        if (this.props.onChange && this.disabledUrlList.indexOf(url) === -1) {
              this.props.onChange(url);
         }
     }
