@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { default as AntdAlertd } from 'antd/es/alert';
+import { Alert } from 'app/components/common/alert';
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
 import { RootStore } from 'app/stores';
@@ -70,15 +70,10 @@ export class App extends React.Component<IProps, any> {
                     </div>
                     <div className="sonm-app__alert-group">
                         {this.props.rootStore.isOffline
-                            ? <AntdAlertd
-                                key="offline"
-                                showIcon
-                                message="Offline"
-                                description="No blockchain node connection"
-                                type="warning"
-                            /> : null
+                            ? <Alert type="error" id="no-connect">No blockchain node connection</Alert>
+                            : null
                         }
-                        <AlertList className="sonm-app__alert-list" rootStore={this.props.rootStore}/>
+                        <AlertList className="sonm-app__alert-list" rootStore={this.props.rootStore} />
                     </div>
                     <div className="sonm-app__content">
                         <div className="sonm-app__content-scroll-ct">

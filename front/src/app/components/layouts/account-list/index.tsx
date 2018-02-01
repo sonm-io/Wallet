@@ -55,8 +55,8 @@ export class Wallets extends React.Component<IProps, IState> {
         this.props.rootStore.mainStore.deleteAccount(deleteAddress);
     }
 
-    protected isValidationEmpty(obj: object) {
-        return Object.keys(obj).length === 0;
+    protected isValidationEmpty(validation: IValidation) {
+        return Object.keys(validation).every(x => validation[x] === '');
     }
 
     protected handleAddAccount = async (data: IAddAccountForm) => {
@@ -67,7 +67,7 @@ export class Wallets extends React.Component<IProps, IState> {
             data.name,
         ) as any; // ;(
 
-        this.setState({validation});
+        this.setState({ validation });
 
         if (this.isValidationEmpty(validation)) {
             this.closeDialog();
