@@ -7,6 +7,7 @@ import { rootStore } from './stores';
 import { Login } from './components/layouts/login';
 import LocaleProvider from 'antd/es/locale-provider';
 import * as enUS from 'antd/lib/locale-provider/en_US';
+import { IWalletListItem } from 'app/api/types';
 
 interface ILocationParams {
     pathname: string;
@@ -31,11 +32,11 @@ async function renderByPath({ pathname, search }: ILocationParams) {
     );
 }
 
-async function handleLogin() {
+async function handleLogin(wallet: IWalletListItem) {
     history.listen(renderByPath);
 
     await Promise.all([
-        rootStore.mainStore.init(),
+        rootStore.mainStore.init(wallet),
         rootStore.historyStore.init(),
     ]);
 

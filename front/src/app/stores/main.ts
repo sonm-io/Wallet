@@ -20,6 +20,7 @@ import { trimZeros } from '../utils/trim-zeros';
 import { getMessageText } from 'app/api/error-messages';
 import { RootStore } from './';
 import { validateEtherAddress } from '../utils/validation/validate-ether-address';
+import { IWalletListItem } from 'app/api/types';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -44,6 +45,20 @@ export class MainStore extends AbstractStore {
     public static ADDRESS_ETHER = '0x';
 
     protected rootStore: RootStore;
+
+    @observable.ref protected walletInfo?: IWalletListItem;
+
+    @computed public get walletName(): string {
+        return this.walletInfo ? this.walletInfo.name : '';
+    }
+
+    @computed public get networkName(): string {
+        return this.walletInfo ? this.walletInfo.chainId : '';
+    }
+
+    @computed public get nodeUrl(): string {
+        return this.walletInfo ? this.walletInfo.nodeUrl : '';
+    }
 
     @observable public validation = { ...emptyForm };
 
@@ -213,7 +228,9 @@ export class MainStore extends AbstractStore {
     @pending
     @catchErrors({ restart: true })
     @asyncAction
-    public * init() {
+    public * init(wallet: IWalletListItem) {
+        this.walletInfo = wallet;
+
         this.primaryTokenAddr = (yield Api.getSonmTokenAddress()).data;
 
         const [{data: currencyList}] = yield Promise.all([
