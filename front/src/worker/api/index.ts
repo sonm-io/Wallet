@@ -19,6 +19,10 @@ interface INodes {
     [index: string]: string;
 }
 
+interface ITokens {
+    [index: string]: t.ICurrencyInfo[];
+}
+
 interface IPayload {
     [index: string]: any;
 }
@@ -72,6 +76,21 @@ const DEFAULT_NODES = {
     live: 'https://mainnet.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
 } as INodes;
+
+const DEFAULT_TOKENS = {
+    live: [{
+        name: 'STORJ',
+        decimals: 18,
+        symbol: 'STORJ',
+        address:  '0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac',
+    }],
+    rinkeby: [{
+        name: 'PIG',
+        decimals: 18,
+        symbol: 'PIG',
+        address:  '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
+    }],
+} as ITokens;
 
 class Api {
     private routes: {
@@ -783,9 +802,7 @@ class Api {
 
     public getScamTokenList = async (data: IPayload): Promise<IResponse> => {
         return {
-            data: [
-                '0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac',
-            ],
+            data: DEFAULT_TOKENS[this.storage.settings.chainId],
         };
     }
 

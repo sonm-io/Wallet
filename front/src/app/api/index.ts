@@ -172,7 +172,7 @@ export class Api {
         return createPromise('getTokenInfo', { address });
     }
 
-    public static async getScamTokenList(): Promise<IResult<string[]>>  {
+    public static async getScamTokenList(): Promise<IResult<ICurrencyInfo[]>>  {
         return createPromise('getScamTokenList');
     }
 }
