@@ -75,6 +75,11 @@ describe('Api',  async function() {
         expect(response2.data).to.have.lengthOf(2);
     });
 
+    it('should get friendly token list', async function() {
+        const response = await Api.getScamTokenList();
+        expect(response.data).to.have.lengthOf(1);
+    });
+
     it('should check connection', async function() {
         const response = await Api.checkConnection();
         expect(response.data).equal(true);
