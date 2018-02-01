@@ -50,8 +50,9 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border-color: @color-brand-bg;
-  position: sticky;
+  border: 0;
+  border-left: 1px solid  @color-brand-bg;
+  border-right: 1px solid  @color-brand-bg;
 
   &__logo {
     background: url('./sonm-wallet-logo.svg') no-repeat left;
@@ -60,14 +61,56 @@
   }
 
   &__total {
-    margin: 0 0 0 16px;
-    font-size: 20px;
-    font-weight: 100;
-    color: @color-light-font;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0;
+    margin: 0;
 
-    &-group {
-      padding: 0;
-      margin: 0;
+    &-item {
+      display: inline-block;
+      margin: 0 0 0 16px;
+      font-size: 20px;
+      font-weight: 100;
+      color: @color-light-font;
     }
+  }
+
+  &--rinkeby {
+    --color-nav-menu-selection: @color-pink;
+  }
+
+  &--live {
+    --color-nav-menu-selection: @color-green;
+  }
+
+  &__network {
+    display: inline-block;
+    vertical-align: middle;
+    color: @color-white;
+    padding: 8px 5px;
+    margin: 0 0 0 20px;
+    height: 100%;
+    font-weight: 100;;
+    font-size: 14px;
+    max-width: 150px;
+    overflow: hidden;
+
+    &-url {
+      overflow: hidden;
+      width: 100%;
+      font-size: 12px;
+      text-overflow: ellipsis;
+    }
+
+    &-type {
+      text-align: justify;
+      width: 70%;
+    }
+
+    background-color: var(--color-nav-menu-selection);
+  }
+
+  &__right-group {
+    align-self: stretch;
   }
 }
