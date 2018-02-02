@@ -15,6 +15,7 @@ import { navigate } from 'app/router/navigate';
 import { IValidation } from 'app/api/types';
 import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
 import { DownloadFile } from 'app/components/common/download-file';
+import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
 
 enum WalletDialogs {
@@ -139,7 +140,7 @@ export class Wallets extends React.Component<IProps, IState> {
                         height={40}
                         className="sonm-accounts__export-wallet-button"
                     >
-                        Export wallet
+                        <Icon i="export"/>Export wallet
                     </Button>
                 </DownloadFile>
                 <div className="sonm-accounts__list">

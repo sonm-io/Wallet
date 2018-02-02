@@ -23,16 +23,16 @@
   font-weight: 500;
   outline: none;
   text-align: center;
-  text-decoration: none;
 
   &:focus {
     outline: @outline;
-    text-decoration: none;
   }
 
+  text-decoration: none !important;
+  &:focus,
   &:active,
   &:visited {
-    text-decoration: none;
+    text-decoration: none !important;
   }
 
   //&--color-violet {
@@ -51,8 +51,8 @@
   }
 
   &--color-gray {
-    --color: @color-dark-gray-bg;
-    --color-active: desaturate(@color-dark-gray-bg, 20%);
+    --color: @color-font-gray;
+    --color-active: desaturate(@color-font-gray, 20%);
   }
 
   background-color: var(--color);
