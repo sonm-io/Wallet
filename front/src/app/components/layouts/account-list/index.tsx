@@ -129,9 +129,18 @@ export class Wallets extends React.Component<IProps, IState> {
                 <DownloadFile
                     getData={this.props.rootStore.mainStore.getWalletExportText}
                     className="sonm-accounts__export-wallet"
-                    fileName={`this.props.rootStore.mainStore.walletName.json`}
+                    fileName={`${this.props.rootStore.mainStore.walletName}.json`}
                 >
-                    Export wallet
+                    <Button
+                        tag="div"
+                        color="gray"
+                        square
+                        transparent
+                        height={40}
+                        className="sonm-accounts__export-wallet-button"
+                    >
+                        Export wallet
+                    </Button>
                 </DownloadFile>
                 <div className="sonm-accounts__list">
                     { this.props.rootStore.mainStore.accountList.length === 0
@@ -169,16 +178,17 @@ export class Wallets extends React.Component<IProps, IState> {
                     <Button
                         type="button"
                         onClick={this.openAddWalletDialog}
+                        color="violet"
                         className="sonm-accounts__button"
                     >
-                        Add account
+                        IMPORT ACCOUNT
                     </Button>
                     <Button
                         type="button"
                         onClick={this.openNewWalletDialog}
                         className="sonm-accounts__button"
                     >
-                        New account
+                        CREATE ACCOUNT
                     </Button>
                     {this.state.visibleDialog === WalletDialogs.new
                         ? (

@@ -22,9 +22,17 @@
   font-size: ~"calc(15/40 * var(--height))";
   font-weight: 500;
   outline: none;
+  text-align: center;
+  text-decoration: none;
 
   &:focus {
     outline: @outline;
+    text-decoration: none;
+  }
+
+  &:active,
+  &:visited {
+    text-decoration: none;
   }
 
   //&--color-violet {
