@@ -19,7 +19,6 @@ import { AbstractStore } from './abstract-store';
 const { pending, catchErrors } = AbstractStore;
 import { etherToGwei } from 'app/utils/ether-to-gwei';
 import { gweiToEther } from 'app/utils/gwei-to-ether';
-import { trimZeros } from 'app/utils/trim-zeros';
 import { RootStore } from './';
 import {
     validateEtherAddress,
@@ -188,7 +187,7 @@ export class SendStore extends AbstractStore {
 
         keys.forEach(key => {
             if (values[key] !== undefined) {
-                this.userInput[key] = trimZeros(values[key]);
+                this.userInput[key] = String(values[key]);
 
                 if (this.userInputTouched.indexOf(key) === -1) {
                     this.userInputTouched.push(key);
