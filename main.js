@@ -87,12 +87,12 @@ function createWindow () {
                 {
                     label: 'Reload',
                     accelerator: 'Command+R',
-                    click: function() { BrowserWindow.getFocusedWindow().reloadIgnoringCache(); }
+                    click: function() { mainWindow.reload(); }
                 },
                 {
                     label: 'Toggle DevTools',
                     accelerator: 'Alt+Command+I',
-                    click: function() { BrowserWindow.getFocusedWindow().toggleDevTools(); }
+                    click: function() { mainWindow.toggleDevTools(); }
                 },
             ]
         },
