@@ -62,11 +62,6 @@ export interface ISettings {
     language: string;
 }
 
-export interface IWalletExport {
-    walletName: string;
-    fileContent: string;
-}
-
 export interface IWalletListItem {
     name: string;
     chainId: string;
