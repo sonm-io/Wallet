@@ -7,14 +7,19 @@
 @import 'sub/add-token/index';
 @import "sub/show-private-key/index";
 
-.sonm-wallets {
+.sonm-accounts {
   display: grid;
   grid-template-rows: 50px 1fr auto;
   grid-template-columns: 1fr 270px;
   grid-gap: 20px;
 
-  &__header {
+  &__export-wallet {
     grid-column: 1;
+    grid-row: 1;
+  }
+
+  &__header {
+    grid-column: 2;
     grid-row: 1;
   }
 

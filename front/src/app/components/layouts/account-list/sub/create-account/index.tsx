@@ -80,7 +80,7 @@ export class CreateAccount extends React.Component<IProps, any> {
     public render() {
         return (
             <Dialog onClickCross={this.handleClickCross}>
-                <Form className="sonm-wallets-create-account__form" onSubmit={this.handleSubmit}>
+                <Form className="sonm-accounts-create-account__form" onSubmit={this.handleSubmit}>
                     <h3>New account</h3>
                     <FormRow>
                         <FormField
