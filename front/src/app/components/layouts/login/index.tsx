@@ -9,6 +9,7 @@ import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
 import { getMessageText } from 'app/api/error-messages';
 import { IWalletListItem } from 'app/api/types';
+import { Upload } from 'app/components/common/upload';
 
 interface IProps {
     className?: string;
@@ -17,7 +18,7 @@ interface IProps {
 
 class BlackWalletSelect extends BlackSelect<IWalletListItem> {}
 
-type TAction = 'select-wallet' | 'create-new' | 'enter-password';
+type TAction = 'select-wallet' | 'create-new' | 'enter-password' | 'import-wallet';
 
 interface IRefs {
     loginBtn: Button | null;
@@ -117,6 +118,14 @@ export class Login extends React.Component<IProps, any> {
 
         this.setState({
             currentAction: 'create-new',
+        });
+    }
+
+    protected handleStartImport = (event: any) => {
+        event.preventDefault();
+
+        this.setState({
+            currentAction: 'import-wallet',
         });
     }
 
@@ -280,6 +289,69 @@ export class Login extends React.Component<IProps, any> {
         );
     }
 
+    protected handleOpenTextFile() {
+        debugger;
+    }
+
+    protected renderImportWallet() {
+        if (this.state.currentAction !== 'import-wallet') {
+            return null;
+        }
+
+        return (
+            <Dialog onClickCross={this.handleReturn} color="dark">
+                <form className="sonm-login__popup-content" onSubmit={this.handleLogin}>
+                    <h3 className="sonm-login__popup-header">Import wallet</h3>
+                    <label className="sonm-login__label">
+                        <span className="sonm-login__label-text">File</span>
+                        <span className="sonm-login__label-error">{this.state.validation.walletFile}</span>
+                        <Upload
+                            onOpenTextFile={this.handleOpenTextFile}
+                            className="sonm-login__upload"
+                            buttonProps={{
+                                square: true,
+                                height: 40,
+                                transparent: true,
+                            }}
+                        >
+                            Select file
+                        </Upload>
+                    </label>
+                    <label className="sonm-login__label">
+                        <span className="sonm-login__label-text">Name</span>
+                        <span className="sonm-login__label-error">{this.state.validation.name}</span>
+                        <input
+                            autoComplete="off"
+                            ref={setFocus}
+                            type="name"
+                            className="sonm-login__input"
+                            name="password"
+                            onChange={this.handleChangeInput}
+                        />
+                    </label>
+                    <label className="sonm-login__label">
+                        <span className="sonm-login__label-text">Password</span>
+                        <span className="sonm-login__label-error">{this.state.validation.password}</span>
+                        <input
+                            autoComplete="off"
+                            ref={setFocus}
+                            type="password"
+                            className="sonm-login__input"
+                            name="password"
+                            onChange={this.handleChangeInput}
+                        />
+                    </label>
+                    <Button
+                        className="sonm-login__import"
+                        type="submit"
+                    >
+                        Import
+                    </Button>
+                </form>
+            </Dialog>
+        );
+    }
+
     protected renderLoginPopup() {
         if (this.state.currentAction !== 'enter-password') {
             return null;
@@ -396,11 +468,15 @@ export class Login extends React.Component<IProps, any> {
                         <div className="sonm-login__logo" />
                         {this.renderSelect()}
                         <button type="button" className="sonm-login__add-wallet" onClick={this.handleStartCreateNew}>
-                            Add wallet
+                            Create wallet
+                        </button>
+                        <button type="button" className="sonm-login__add-wallet" onClick={this.handleStartImport}>
+                            Import wallet
                         </button>
                     </div>
                     {this.renderNewWalletPopup()}
                     {this.renderLoginPopup()}
+                    {this.renderImportWallet()}
                 </div>
             </LoadMask>
         );

@@ -140,7 +140,7 @@ export class Wallets extends React.Component<IProps, IState> {
                         height={40}
                         className="sonm-accounts__export-wallet-button"
                     >
-                        <Icon i="export"/>Export wallet
+                        <Icon i="export"/>{' Export wallet'}
                     </Button>
                 </DownloadFile>
                 <div className="sonm-accounts__list">
