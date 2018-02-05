@@ -1,3 +1,7 @@
+@import "./antd.less";
+
+@sonm-tx-list-cell-padding: 10px;
+
 .sonm-tx-list {
 
   &__currency-col,
@@ -9,7 +13,7 @@
 
 .sonm-history {
   display: grid;
-  grid-template-columns: 200px 200px 1fr;
+  grid-template-columns: 220px 200px 1fr;
   grid-template-rows: @big-select-height 30px 1fr;
   grid-gap: 10px;
 
@@ -37,29 +41,28 @@
   &__table {
     grid-column: ~"1 / 4";
     grid-row: 3;
-
-    & table {
-      table-layout: fixed;
-    }
   }
 }
 
 .sonm-tx-list {
-  &__col {
+
+  & table {
+    table-layout: fixed;
+    font-size: 12px;
+  }
+
+  & &__cell {
+    padding: @sonm-tx-list-cell-padding;
+    font-size: 12px;
+    text-align: left;
+    vertical-align: bottom;
 
     &-from {
-      width: 200px;
-
-      &-ct {
-        display: grid;
-        grid-template-columns: min-content auto;
-        grid-template-row: 1fr 1fr;
-        grid-gap: 5px;
-      }
+      width: 300px;
+      padding-left: @sonm-tx-list-cell-padding + 25px;
+      position: relative;
 
       &-name {
-        grid-row: 1;
-        grid-column: 2;
         font-weight: bold;
         max-width: 190px;
         white-space: nowrap;
@@ -67,14 +70,10 @@
         text-overflow: ellipsis;
       }
 
-      &-addr {
-        grid-row: 2;
-        grid-column: 2;
-      }
-
       &-icon {
-        grid-row: 2;
-        grid-column: 1;
+        position: absolute;
+        left: @sonm-tx-list-cell-padding;
+        bottom: @sonm-tx-list-cell-padding;
       }
     }
 
@@ -83,20 +82,14 @@
     }
 
     &-to {
-      width: 200px;
-
-      &-ct {
-        display: flex;
-        justify-content: center;
-        vertical-align: middle;
-      }
-
-      &-hash {
-        margin: 0 0 0 5px;
-      }
+      width: 300px;
+      padding-left: @sonm-tx-list-cell-padding + 25px;
+      position: relative;
 
       &-icon {
-        flex-shrink: 0;
+        position: absolute;
+        left: @sonm-tx-list-cell-padding;
+        bottom: @sonm-tx-list-cell-padding;
       }
     }
 
@@ -107,7 +100,7 @@
         color: @color-green;
       }
 
-      &--fail {
+      &--failed {
         color: @color-red;
       }
 
@@ -118,6 +111,18 @@
 
     &-amount {
       width: 150px;
+
+      &-ct {
+        display: flex;
+        align-items: end;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+      }
+    }
+
+    &-hash {
+      vertical-align: bottom;
     }
   }
 }

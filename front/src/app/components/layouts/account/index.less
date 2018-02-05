@@ -1,4 +1,5 @@
 @import "guide.less";
+@import "./antd.less";
 
 @account-padding: 20px;
 @currency-balance-list-header-bg: @color-gray-bg;
@@ -43,6 +44,15 @@
   &__tokens {
     grid-column: ~"1 / 2";
     grid-row: 2;
+
+    padding: 0;
+    margin: 0;
+  }
+
+  &__warning {
+    margin-bottom: 5px;
+    font-size: 15px;
+    font-weight: bold;
   }
 
   &__give-me {

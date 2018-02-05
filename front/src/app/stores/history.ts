@@ -3,10 +3,10 @@ import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
 import { AbstractStore } from './abstract-store';
+import { RootStore } from './';
 const { pending } = AbstractStore;
 
 const Api = api.Api;
-const DAY = 1000 * 60 * 60 * 24;
 
 export interface ISendForm {
     from: string;
@@ -29,7 +29,7 @@ export class HistoryStore extends AbstractStore {
     @observable public toAddress = '';
     @observable public fromAddress = '';
     @observable public timeStart = moment('20171201', 'YYYYMMDD').valueOf();
-    @observable public timeEnd = Date.now() + DAY;
+    @observable public timeEnd = moment().endOf('day').valueOf();
     @observable public page = 1;
     @observable public total = 0;
     @observable public perPage = ITEMS_PER_PAGE;
@@ -45,6 +45,14 @@ export class HistoryStore extends AbstractStore {
     }
 
     protected isInitiated = false;
+
+    protected rootStore: RootStore;
+
+    public constructor(rootStore: RootStore) {
+        super({ errorProcessor: rootStore.uiStore });
+
+        this.rootStore = rootStore;
+    }
 
     @pending
     public async init() {
@@ -100,14 +108,30 @@ export class HistoryStore extends AbstractStore {
 
     @action
     public setFilterFrom = (from: string) => {
-        this.fromAddress = from === 'all' ? '' : from;
-        this.page = 1;
+        from = (from === 'all' ? '' : from);
+
+        if (from !== this.fromAddress || this.page !== 1) {
+            this.fromAddress = from;
+            this.page = 1;
+
+            return true;
+        }
+
+        return false;
     }
 
     @action
     public setFilterCurrency = (currency: string) => {
-        this.curencyAddress = currency === 'all' ? '' : currency;
-        this.page = 1;
+        currency = (currency === 'all' ? '' : currency);
+
+        if (currency !== this.curencyAddress || this.page !== 1) {
+            this.curencyAddress = currency;
+            this.page = 1;
+
+            return true;
+        }
+
+        return false;
     }
 
     @action

@@ -1,14 +1,40 @@
 import { useStrict } from 'mobx';
 
-import { UserStore } from './user';
 import { HistoryStore } from './history';
 import { MainStore } from './main';
+import { SendStore } from './send';
+import { UiStore } from './ui';
+import { AbstractStore } from './abstract-store';
 
 useStrict(true);
 
-export const Store = new UserStore();
-export const historyStore = new HistoryStore();
-export const mainStore = new MainStore();
+export class RootStore {
+    public historyStore: HistoryStore;
+    public mainStore: MainStore;
+    public sendStore: SendStore;
+    public uiStore: UiStore;
 
-(window as any).___main = mainStore;
-(window as any).___history = historyStore;
+    constructor() {
+        // should be first cause used in all stores;
+        this.uiStore = new UiStore();
+
+        this.historyStore = new HistoryStore(this);
+        this.mainStore = new MainStore(this);
+        this.sendStore = new SendStore(this);
+    }
+
+    public get isPending() {
+        return AbstractStore.getAccumulatedFlag('isPending', this.historyStore, this.mainStore, this.sendStore);
+    }
+
+    public get isOffline() {
+        return AbstractStore.getAccumulatedFlag('isOffline', this.historyStore, this.mainStore, this.sendStore);
+    }
+
+}
+
+export const rootStore = new RootStore();
+
+(window as any).__rootStore = rootStore;
+
+export default rootStore;

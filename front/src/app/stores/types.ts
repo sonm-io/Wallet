@@ -19,6 +19,9 @@ export interface ISendFormValues {
     gasPrice: string;
     gasLimit: string;
     toAddress: string;
+    fromAddress: string;
+    currencyAddress: string;
+    password: string;
 }
 
 export interface ISendValidation extends IValidation {

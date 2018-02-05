@@ -4,7 +4,7 @@ import * as cn from 'classnames';
 export interface IAlertProps {
     id: string;
     className?: string;
-    onClosed: (id: string) => void;
+    onClosed?: (id: string) => void;
     hideDelay?: number;
     children: any;
     type: string;
@@ -26,6 +26,7 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
             className,
             type,
             children,
+            onClosed,
             hideDelay = 0,
         } = this.props;
 
@@ -38,7 +39,10 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
                 style={{ '--hide-delay': hideDelay }}
             >
                 <span className="sonm-alert__message">{children}</span>
-                <button type="button" className="sonm-alert__cross" onClick={this.handleClickCross}> + </button>
+                {onClosed
+                    ? <button type="button" className="sonm-alert__cross" onClick={this.handleClickCross}> + </button>
+                    : null
+                }
             </div>
         );
     }

@@ -8,27 +8,14 @@ interface IDownloadProps {
 }
 
 export class DownloadFile extends React.PureComponent<IDownloadProps, any> {
-
-    private handleClick = (event: any) => {
-        event.preventDefault();
-
-        const { data, fileName } = this.props;
-
-        const element = document.createElement('a');
-        const file = new Blob([data], { type: 'text/json' });
-        element.href = URL.createObjectURL(file);
-        element.download = fileName;
-        element.click();
-    }
-
     public render() {
-        const { className, fileName } = this.props;
+        const { className, fileName, data } = this.props;
 
         return (
             <a
                 className={cn('sonm-download-file', className)}
-                onClick={this.handleClick}
-                href={`/download/${fileName}`}
+                href={`data:text/plain;utf8,${data}`}
+                download={fileName}
             />
         );
     }

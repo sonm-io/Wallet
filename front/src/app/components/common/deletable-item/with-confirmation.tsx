@@ -4,9 +4,9 @@ import * as React from 'react';
 
 import { DeletableItem, IDeletableItemProps } from './index';
 
-export interface IDeletableItemWithConfirmationProps<T> extends IDeletableItemProps {
-    Confirmation: React.ComponentClass<T> | React.SFC<T>;
-    item: T;
+export interface IDeletableItemWithConfirmationProps<TItemProps> extends IDeletableItemProps {
+    Confirmation: React.ComponentClass<TItemProps> | React.SFC<TItemProps>;
+    item: TItemProps;
 }
 
 export class DeletableItemWithConfirmation<T> extends React.PureComponent<IDeletableItemWithConfirmationProps<T>, any> {
@@ -29,7 +29,7 @@ export class DeletableItemWithConfirmation<T> extends React.PureComponent<IDelet
         this.setState({ isConfirmationVisible: false });
     }
 
-    protected handleCancel= () => {
+    protected handleCancel = () => {
         this.setState({ isConfirmationVisible: false });
     }
 
@@ -54,8 +54,19 @@ export class DeletableItemWithConfirmation<T> extends React.PureComponent<IDelet
                             >
                                 <Confirmation {...item} />
                                 <div className="sonm-deletable-item__confirmation-button-group">
-                                    <Button className="sonm-deletable-item__confirmation-button" transparent onClick={this.handleCancel}>Cancel</Button>
-                                    <Button className="sonm-deletable-item__confirmation-button" onClick={this.handleConfirm}>Delete</Button>
+                                    <Button
+                                        className="sonm-deletable-item__confirmation-button"
+                                        transparent
+                                        onClick={this.handleCancel}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        className="sonm-deletable-item__confirmation-button"
+                                        onClick={this.handleConfirm}
+                                    >
+                                        Delete
+                                    </Button>
                                 </div>
                             </Dialog>
                         )

@@ -1,22 +1,19 @@
 import * as React from 'react';
 import { Alert } from 'app/components/common/alert';
 import { Hash } from 'app/components/common/hash-view';
-import { inject, observer } from 'mobx-react';
-import { MainStore } from 'app/stores/main';
+import { observer } from 'mobx-react';
+import { RootStore } from 'app/stores/';
 import { IAlert } from 'app/stores/types';
 
 interface IProps {
     className?: string;
-    mainStore?: MainStore;
+    rootStore: RootStore;
 }
 
-@inject('mainStore')
 @observer
 export class AlertList extends React.Component<IProps, any> {
     public handleClosed = (id: string) => {
-        if (!this.props.mainStore) { return; }
-
-        this.props.mainStore.closeAlert(id);
+        this.props.rootStore.uiStore.closeAlert(id);
     }
 
     protected getText(alert: IAlert): any[] {
@@ -37,11 +34,9 @@ export class AlertList extends React.Component<IProps, any> {
     }
 
     public render() {
-        if (!this.props.mainStore) { return null; }
-
         return <div className="sonm-alert-list__ct">
             <div className="sonm-alert-list">
-                {Array.from(this.props.mainStore.alerts.entries()).map(([id, alert]) => <Alert
+                {Array.from(this.props.rootStore.uiStore.alerts.entries()).map(([id, alert]) => <Alert
                     type={alert.type}
                     className="sonm-alert-list__item"
                     key={id}

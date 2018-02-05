@@ -4,7 +4,174 @@
     <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAaCAYAAABGiCfwAAAACXBIWXMAAAsSAAALEgHS3X78AAAEH0lEQVRIicWWS0wbRxjHf7F69Dhc8UPkwhqbSEW8XLiENKSphKggjRoFqYSSAAeKah6XUCk4h5ZIhcSV4ACJkGOpVEpKg5IcSpsgfIklrESthKm9p1bmcc16fN8e7F12eTWHKh1p5f3G3/z/M9/jv3NC13WOG8Kn1AA9QAvw/iEufwBrQEzm1N+PwzpxFFmJJAqcOXY39pEAwkeRHkomfEoYuGud83ncVFcpVFcp5lw6o5LOqOS2d/ZDDMucGv1XMuFTYsBVw25qrGN0cICmhtojj5NMvWZ6do7k+ivr9AOZU3tsjrqum4/TWxl1eit1p7dSdwdq9YfLT3Qtr5lPOpM51n64/ER3B2p1A8PprYxa8a1EHVaiZCplAwm1tum9QyO6ltf0re1tXctreu/QiB5qbdPvx38wfZOp1H7CDoPDUQpdGRAzTrsUnyPoL+ZmM6sCUB3w8/G5FgBeporham6oozrgx+USpl/Qr7AUn7MGL1bCL+ZM+JQIMAEwOtjPyGD/kfl523Fndp7p2XnDvCVzasRRMnoAXELQ191lLni0/IxA6CyeYD2XegaQsgDA8Ne3zFN/dLELT7CeQOgsj5afmWv7urtwCYEV31HqpwqAy53tCOEEYGtnl/B4hLyUACTXX/HF0CiAGc6bk9OkM8Xw5aUkPB5ha2cXACGcXO5sN8gqhE+pcVBUBgAunDNf+eXF2oHQGKV94cMzNvswn/14QIsDKDOs05aGbW6sOwDk87iPtQGqA3sYVjygzGG1jBBuZlWCfoXP9sKASwgWZqYAiNy+A8DCzJQ1L4wO9hP0KyRTr214pXHqvQNbA3q/HGNhZoq730zQ130FLV/gdJWCEE42syqu0m/Qr7D+/CkbGZWTLidBv8JmVmV6do6fYnP7Yd/YyKQsIIQTr6ec8I0Iv/68SNCvIGUBTUqEKAIaPQigSYnPU47XXQ7AS0vOjOo1yBzAG8PaKFVWX3cXSw/MHuHm7WlOCsHWzi7XhsbwBOu5NjRmgt2P/2j6Xv/8CtFvIzY8gwynt7LGkJbh8Qmb1k1MfmezQ61tVhnSQ61ttv+tsqXlNX14fMLqX2MoyF9AhUsI1p8/tSXW2P1GRuXS1YPK8tvjRXxu9/5iQMoCja3tRp/+LXPqKaMaY1BszHvxRXPBymqC8xe72Mio+DzlB4gAfG43GxmVD85/wspqwpy/F180BcHAN8iigAYwPTtvimpzQx3VVQrpTBavu9wmZVDMrRBOVl6s0dRYR3NDsTeLFWnmXCvh7308hU/pAB5Dsaesyr+ymjBVY2U1QfrPLE2N9TQ11CJlgY2Man5cN7Mqn3YPWE/VKXPqso2sRBgFvjIIo5MRk+RtxspqgvCNiJXoe5lTw4bxTq8F/++Fx0L4bq5yh5D28B9cUv8BUoBqTsHj58wAAAAASUVORK5CYII=" rel="icon" type="image/x-icon" />
     <meta charset="utf-8">
     <title>SONM Wallet</title>
+    <style>
+        body {
+            background-color: #eeeeee;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sonm-not-supported {
+            font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;;
+            color: #fff;
+            background: #0B1C26;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            line-height: 90vh;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .sonm-not-supported a {
+            color: #32c3d0;
+            text-decoration: underline;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .sonm-not-supported a:hover,
+        .sonm-not-supported a:active,
+        .sonm-not-supported a:visited,
+        .sonm-not-supported a {
+            text-decoration: underline;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .sonm-not-supported__logo {
+            margin: 0;
+            padding: 0;
+            background-image: url("data:image/svg+xml,%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 300'%3E%3Cstyle%3E.st0%7Bfill:%23f2f2f2%7D%3C/style%3E%3ClinearGradient id='SVGID_1_' gradientUnits='userSpaceOnUse' x2='.707' y2='.707'%3E%3Cstop offset='0' stop-color='%23dedfe3'/%3E%3Cstop offset='.178' stop-color='%23dadbdf'/%3E%3Cstop offset='.361' stop-color='%23cecfd3'/%3E%3Cstop offset='.546' stop-color='%23b9bcbf'/%3E%3Cstop offset='.732' stop-color='%239ca0a2'/%3E%3Cstop offset='.918' stop-color='%23787d7e'/%3E%3Cstop offset='1' stop-color='%23656b6c'/%3E%3C/linearGradient%3E%3Cpath class='st0' d='M420.4 86.4h-14.3c-1.7 0-2.9.8-3.3 2.5L390 154.1c-1.5 8.9-3.1 17.8-4.8 26.5 0 .2-.4.6-.8.6-.2 0-.4-.2-.4-.6l-5.2-25.9-14.5-65.8c-.4-1.7-1.9-2.5-3.3-2.5h-13.5c-2.7 0-3.3 1-3.5 2.1-4.6 22.4-9.3 43.9-13.9 66.2-1.5 8.3-3.3 17.4-4.8 25.9 0 .2-.4.4-.6.4-.2 0-.4-.2-.6-.4l-5-26.7c-4.5-21.5-8.7-43-13.5-64.6-.2-1.7-.8-2.9-3.1-2.9h-15.3c-3.1 0-2.9 1.9-2.9 3.5l28.4 122.3c.6 1.7 1.7 1.9 3.5 1.9H332c2.1 0 3.1-.4 3.7-2.1 4.4-22.1 9.5-44.5 13.9-66.6 1.2-7 2.9-14.5 4.1-21.3 0-.2.2-.2.4-.2 0 0 .2 0 .2.2l4.1 20.9c5 22.4 9.5 44.7 14.3 67.1.4 1.7 1.9 2.1 3.5 2.1h15.9c1.9 0 3.1-.8 3.5-2.3l27.7-121.5c.6-2.4.2-4-2.9-4zM479.6 88.9c-.4-2.3-1.7-2.5-3.5-2.5h-20.7c-2.3 0-3.3 1-3.7 2.7l-30.4 121.3c-.6 2.5 0 3.7 3.1 3.7H438c1.5 0 2.9-.6 3.3-2.1l5.6-24c.4-.8.4-1.7 2.1-1.7h33.5c1.2 0 1.4.6 1.9 1.9l5.8 23.8c.4 1.4 1.7 2.1 3.5 2.1h14.7c3.1 0 2.9-2.5 2.5-3.9L479.6 88.9zm-1.4 80.7h-25c-1.4 0-1.4-.4-1.2-1.9l7.9-33.7 5.2-24.4c.2-.8 1-.8 1.2.2l5.4 24.8 7.9 33.1c.2 1.5-.2 1.9-1.4 1.9zM599.1 196.1h-48c-2.1 0-2.3-.8-2.3-2.5V88.9c0-1.9-1-2.5-2.9-2.5h-14.5c-2.1 0-2.9.8-2.9 2.7v122.1c0 1.9 1 2.9 3.1 2.9h67.7c1.9 0 2.7-1 2.7-3.1v-12c0-2.1-1.3-2.9-2.9-2.9zM690 196.1h-48c-2.1 0-2.3-.8-2.3-2.5V88.9c0-1.9-1-2.5-2.9-2.5h-14.5c-2.1 0-2.9.8-2.9 2.7v122.1c0 1.9 1 2.9 3.1 2.9h67.7c1.9 0 2.7-1 2.7-3.1v-12c0-2.1-1.3-2.9-2.9-2.9zM781 196.1h-48.8c-1.9 0-2.7-.6-2.7-2.5v-34.4c0-1.7.6-2.5 2.5-2.5h39.9c1.9 0 2.7-1 2.7-2.9V142c0-2.1-.8-3.1-2.9-3.1H732c-1.9 0-2.5-.6-2.5-2.7v-30c0-1.4.6-2.1 2.5-2.1h48.2c1.9 0 2.9-1.2 2.9-3.1V89.3c0-2.1-1.5-2.9-3.1-2.9h-67.7c-2.1 0-3.1 1-3.1 2.9v121.9c0 1.9 1.2 2.9 3.1 2.9H781c2.1 0 2.9-1 2.9-3.1v-12c0-1.9-1.2-2.9-2.9-2.9zM873.2 86.4H797c-2.1 0-3.1 1-3.1 2.9v11.8c0 2.3 1 3.1 3.1 3.1h24.8c2.1 0 2.5.8 2.5 2.3l-.2 104.9c0 1.9 1.2 2.7 3.3 2.7h14.3c2.1 0 2.9-.8 2.9-2.9l.2-104.9c0-1.4.6-2.1 2.5-2.1h25.9c2.1 0 2.9-1.2 2.9-3.1v-12c0-1.7-1.1-2.7-2.9-2.7zM124.4 48.4c-56.2 0-101.9 45.7-101.9 101.9s45.7 101.9 101.9 101.9 101.9-45.7 101.9-101.9S180.6 48.4 124.4 48.4zM183.9 164c12.5-6.1 21.5-18.3 23.1-32.7 1.4 6.1 2.2 12.5 2.2 19 0 11-2.1 21.6-6 31.3-1.3-9.7-9.4-17.2-19.3-17.6zm-35.8.2c5.4 2.5 11.3 3.9 17.6 3.9 1.9 0 3.7-.1 5.6-.4-4.9 3.5-8.1 9.2-8.3 15.6-3-7.7-8.2-14.3-14.9-19.1zm-24 62.2c-15.6 0-28.3-12.7-28.3-28.3 0-15.6 12.7-28.3 28.3-28.3 15.6 0 28.3 12.7 28.3 28.3 0 15.6-12.7 28.3-28.3 28.3zm-38.7-43.1c-.3-6.4-3.5-12-8.4-15.5 1.9.3 3.9.4 5.9.4 6 0 11.6-1.3 16.8-3.5-6.5 4.6-11.5 11.1-14.3 18.6zm-13.2.9c0 3.8-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7 7 3.1 7 7zm59-101.2c0 3.8-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7 7 3.1 7 7zm-6.9 20.2c3.2 0 6.1-.7 8.8-2-5.1 6.5-8.3 14.6-8.8 23.4-.4-8.8-3.6-16.9-8.7-23.4 2.6 1.2 5.5 2 8.7 2zm0 25.6c.7 13.1 7.4 24.6 17.5 31.7-5.4-2.5-11.3-3.9-17.6-3.9-6 0-11.6 1.3-16.8 3.5 9.7-7.1 16.2-18.4 16.9-31.3zm13.1-2.1c0-15.6 12.7-28.3 28.3-28.3 15.6 0 28.3 12.7 28.3 28.3S181.3 155 165.7 155c-15.6-.1-28.3-12.7-28.3-28.3zm28.3-41.5c-8.8 0-17 2.8-23.7 7.5a20 20 0 0 0 2.5-9.7c0-6.9-3.5-13-8.7-16.6 18.1 2.4 34.3 10.5 46.9 22.5-5.2-2.4-11-3.7-17-3.7zM104 83c0 3.5.9 6.8 2.5 9.7-6.7-4.7-14.9-7.4-23.6-7.4-5.8 0-11.3 1.2-16.4 3.4C78.9 76.8 95 68.8 112.7 66.4 107.5 70 104 76.1 104 83zM82.8 98.4c15.6 0 28.3 12.7 28.3 28.3S98.4 155 82.8 155s-28.3-12.7-28.3-28.3 12.8-28.3 28.3-28.3zm100.3 78.8c3.9 0 7 3.1 7 7 0 3.8-3.1 7-7 7s-7-3.1-7-7 3.1-7 7-7zM41.7 132.1c1.8 14.1 10.7 25.9 22.9 31.9-9.7.3-17.6 7.3-19.3 16.5-3.6-9.4-5.6-19.6-5.6-30.3 0-6.2.7-12.3 2-18.1zm16.7 71.1c2.1.8 4.4 1.2 6.8 1.2 7.6 0 14.2-4.2 17.6-10.3-.1 1.3-.2 2.7-.2 4.1 0 13.4 6.3 25.3 16.2 32.9-16.1-5.2-30.1-15-40.4-27.9zm90.6 28.1c10.1-7.6 16.6-19.6 16.6-33.2 0-1.4-.1-2.8-.2-4.2 3.4 6.2 10.1 10.5 17.7 10.5 2.7 0 5.3-.5 7.6-1.5-10.6 13.3-25 23.3-41.7 28.4z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+            height: 160px;
+            background-size: 190px;
+            box-sizing: border-box;
+        }
+
+        .sonm-not-supported__center {
+            width: 580px;
+            height: 0;
+            display: inline-block;
+            line-height: 1.5;
+            box-sizing: border-box;
+            animation: bua 2s linear;
+        }
+
+        .sonm-not-supported__inner {
+            margin: 0;
+            padding: 50px 50px;
+            border: 2px solid #0F212B;
+            background: #0C1E2A;
+            width: 100%;
+            height: 440px;
+            box-sizing: border-box;
+        }
+
+        .sonm-not-supported__header {
+            margin: 0;
+            padding: 0;
+            color: #f2f2f2;
+            font-size: 30px;
+            font-weight: 400;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .sonm-not-supported__support {
+            margin: 0 auto;
+            padding: 0;
+            box-sizing: border-box;
+            text-align: justify;
+            width: 310px;
+            display: block;
+        }
+
+        .sonm-not-supported__support-sub-header {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-weight: 100;
+            font-size: 16px;
+            display: inline-block;
+            margin: 5px 0;
+            color: #fff;
+        }
+
+        .sonm-not-supported__star {
+            margin: 0;
+            padding: 0;
+            height: 130px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M23 12l-2.44-2.78.34-3.68-3.61-.82-1.89-3.18L12 3 8.6 1.54 6.71 4.72l-3.61.81.34 3.68L1 12l2.44 2.78-.34 3.69 3.61.82 1.89 3.18L12 21l3.4 1.46 1.89-3.18 3.61-.82-.34-3.68L23 12m-10 5h-2v-2h2v2m0-4h-2V7h2v6z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100px;
+            box-sizing: border-box;
+        }
+
+        .sonm-not-supported__chrome {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        .sonm-not-supported__firefox {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            float: right;
+            display: inline-block;
+        }
+
+        .sonm-not-supported__item {
+            list-style: none;
+            text-transform: uppercase;
+            box-sizing: border-box;
+        }
+
+        .sonm-not-supported__intruction {
+            clear: both;
+            margin: 30px 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        @keyframes bua {
+            0% { opacity: 0 }
+            50% { opacity: 0 }
+            100% { opacity: 1 }
+        }
+    </style>
 <body>
-<div id="root" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;"></div>
+<div id="root" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
+    <div class="sonm-not-supported">
+        <div class="sonm-not-supported__center">
+            <div class="sonm-not-supported__logo">
+            </div>
+            <div class="sonm-not-supported__inner">
+                <h1 class="sonm-not-supported__header">
+                    It looks like <br /> your browser is not supported
+                </h1>
+                <div class="sonm-not-supported__star">
+                </div>
+                <ul class="sonm-not-supported__support">
+                    <h2 class="sonm-not-supported__support-sub-header">Currently we support browsers listed below</h2>
+                    <li class="sonm-not-supported__chrome sonm-not-supported__item"><a href="https://www.google.ru/chrome/browser/desktop/index.html">Chrome</a></li>
+                    <li class="sonm-not-supported__firefox sonm-not-supported__item"><a href="https://www.mozilla.org/ru/firefox/new/">Firefox</a></li>
+                </ul>
+                <div class="sonm-not-supported__intruction">
+                    Also you may <a href="https://docs.sonm.io/guides/sonm-wallet-guide">click here</a> and follow the instruction
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

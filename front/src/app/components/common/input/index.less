@@ -1,0 +1,22 @@
+@import "guide.less";
+
+.sonm-input {
+  font-size: 16px;
+  color: @color-font-dark;
+  font-weight: 400;
+  line-height: 36px;
+  height: 36px;
+  box-sizing: padding-box;
+  background-color: transparent;
+  border: solid 0 @color-blue;
+  border-bottom-width: 1px;
+  width: 100%;
+  transition: border-bottom-width;
+  padding: 0;
+  margin: 5px 0;
+
+  &:focus {
+    outline: none;
+    border-bottom-width: 2px;
+  }
+}

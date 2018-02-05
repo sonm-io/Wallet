@@ -10,6 +10,7 @@ export interface IButtonProps extends React.ButtonHTMLAttributes<any> {
     children?: any;
     height?: number;
     type?: string;
+    tag?: string;
 }
 
 export class Button extends React.PureComponent<IButtonProps> {
@@ -38,8 +39,10 @@ export class Button extends React.PureComponent<IButtonProps> {
                 ? {'--height': `${height}px`, ...rest.style}
                 : rest.style;
 
+        const Tag = this.props.tag || 'button';
+
         return (
-            <button
+            <Tag
                 {...rest}
                 ref={this.saveRef}
                 className={cn(
@@ -55,7 +58,7 @@ export class Button extends React.PureComponent<IButtonProps> {
                 type={type === undefined ? 'button' : type}
             >
                 {children}
-            </button>
+            </Tag>
         );
     }
 }

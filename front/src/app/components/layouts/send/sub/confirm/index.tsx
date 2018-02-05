@@ -1,62 +1,76 @@
 import * as React from 'react';
-import { Input, Icon, Form } from 'antd';
+import Input from 'antd/es/input';
+import Icon from 'antd/es/icon';
+import { Form, FormField } from 'app/components/common/form';
+
 import * as cn from 'classnames';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';
-import { inject, observer } from 'mobx-react';
-import { MainStore } from 'app/stores/main';
+import { observer } from 'mobx-react';
+import { RootStore } from 'app/stores/';
 import { HistoryStore } from 'app/stores/history';
 import { Header } from 'app/components/common/header';
 
 interface IProps {
     className?: string;
-    mainStore?: MainStore;
+    rootStore: RootStore;
     historyStore?: HistoryStore;
     onSuccess: () => void;
     onBack: () => void;
 }
 
-@inject('mainStore', 'historyStore')
 @observer
 export class SendConfirm extends React.Component<IProps, any> {
+    public state = {
+        password: '',
+        validationPassword: '',
+    };
+
     public handleConfrim = async (event: any) => {
-        const mainStore = this.props.mainStore;
-        const historyStore = this.props.historyStore;
-        if (!mainStore || !historyStore) { return; }
+        const sendStore = this.props.rootStore.sendStore;
+        const historyStore = this.props.rootStore.historyStore;
 
         event.preventDefault();
 
         const password = event.target.password.value;
 
-        const isPasswordValid = await mainStore.checkSelectedAccountPassword(password);
+        const isPasswordValid = await sendStore.checkSelectedAccountPassword(password);
 
         if (isPasswordValid) {
-            (mainStore.confirmTransaction(password) as any).then(() => historyStore.update());
+            (sendStore.confirmTransaction(password) as any).then(() => historyStore.update());
+
+            sendStore.resetUserInput();
+
+            this.setState({ validationPassword: '' });
 
             this.props.onSuccess();
+        } else {
+            this.setState({ validationPassword: 'Invalid password' });
         }
     }
 
     public handleCancel = () => {
-        this.props.mainStore && this.props.mainStore.resetValidation();
+        this.props.rootStore.sendStore.resetValidation();
 
         this.props.onBack();
     }
 
+    public handleChange = (e: any) => {
+        this.setState({ password: e.target.value });
+    }
+
     public render() {
-        const mainStore = this.props.mainStore;
+        const mainStore = this.props.rootStore.mainStore;
+        const sendStore = this.props.rootStore.sendStore;
 
-        if (!mainStore) { return null; }
-
-        const accountAddress = mainStore.selectedAccountAddress;
+        const accountAddress = sendStore.fromAddress;
         const account = mainStore.accountMap.get(accountAddress);
         const accountName = account ? account.name : '';
-        const currency = mainStore.currencyMap.get(mainStore.selectedCurrencyAddress);
-        const amount = mainStore.values.amount;
-        const gasLimit = mainStore.values.gasLimit;
-        const gasPrice = mainStore.values.gasPrice;
-        const toAddress = mainStore.values.toAddress;
-        const passwordValidationMsg = mainStore.validation.password;
+        const currency = mainStore.currencyMap.get(sendStore.currencyAddress);
+        const amount = sendStore.amount;
+        const gasLimit = sendStore.gasLimit;
+        const gasPrice = sendStore.gasPriceGwei;
+        const toAddress = sendStore.toAddress;
 
         if (!currency) { return null; }
 
@@ -85,38 +99,45 @@ export class SendConfirm extends React.Component<IProps, any> {
                     <dt>Gas price</dt>
                     <dd>{gasPrice} Gwei</dd>
                 </dl>
-                <Form onSubmit={this.handleConfrim} className="sonm-send-confirm__password-form">
+                <div className="sonm-send-confirm__password">
                     <h2 className="sonm-send-confirm__password-header">Please enter account password</h2>
-                    <Form.Item
-                        className="sonm-send-confirm__password-field"
-                        validateStatus={passwordValidationMsg ? 'error' : 'success'}
-                        help={passwordValidationMsg}
-                    >
-                        <Input
-                            name="password"
-                            className="sonm-send-confirm__password-input"
-                            prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
-                            type="password"
-                            placeholder="Password"
-                        />
-                    </Form.Item>
-                    <Button
-                        className="sonm-send-confirm__password-button"
-                        transparent
-                        type="button"
-                        onClick={this.handleCancel}
-                    >
-                        Back
-                    </Button>
-                    <Button
-                        disabled={mainStore.isOffline}
-                        className="sonm-send-confirm__password-button"
-                        type="submit"
-                        color="violet"
-                    >
-                        Send
-                    </Button>
-                </Form>
+                    <Form onSubmit={this.handleConfrim} className="sonm-send-confirm__password-form">
+                        <FormField
+                            label=""
+                            className="sonm-send-confirm__password-field"
+                            error={this.state.validationPassword}
+                        >
+                            <Input
+                                autoComplete="off"
+                                name="password"
+                                className="sonm-send-confirm__password-input"
+                                prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                                type="password"
+                                placeholder="Password"
+                                value={this.state.password}
+                                onChange={this.handleChange}
+                            />
+                        </FormField>
+                        <div className="sonm-send-confirm__password-button-ct">
+                            <Button
+                                className="sonm-send-confirm__password-button"
+                                transparent
+                                type="button"
+                                onClick={this.handleCancel}
+                            >
+                                Back
+                            </Button>
+                            <Button
+                                disabled={mainStore.isOffline}
+                                className="sonm-send-confirm__password-button"
+                                type="submit"
+                                color="violet"
+                            >
+                                Send
+                            </Button>
+                        </div>
+                    </Form>
+                </div>
             </div>
         );
     }
