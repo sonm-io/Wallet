@@ -494,7 +494,7 @@ export class Login extends React.Component<IProps, IState> {
                         />
                     </label>
                     <label className="sonm-login__label">
-                        <span className="sonm-login__label-text">Password confirmation</span>
+                        <span className="sonm-login__label-text">Confirm password</span>
                         <span className="sonm-login__label-error">{this.state.validation.newPasswordConfirmation}</span>
                         <input
                             autoComplete="off"
@@ -505,7 +505,7 @@ export class Login extends React.Component<IProps, IState> {
                         />
                     </label>
                     <label className="sonm-login__label">
-                        <span className="sonm-login__label-text">Network</span>
+                        <span className="sonm-login__label-text">Ethereum network</span>
                         <BlackSelect
                             value={this.state.network.toString()}
                             name="network"
@@ -544,12 +544,22 @@ export class Login extends React.Component<IProps, IState> {
                     >
                         <div className="sonm-login__logo" />
                         {this.renderSelect()}
-                        <button type="button" className="sonm-login__add-wallet" onClick={this.handleStartCreateNew}>
-                            Create wallet
-                        </button>
-                        <button type="button" className="sonm-login__add-wallet" onClick={this.handleStartImport}>
-                            Import wallet
-                        </button>
+                        <div className="sonm-login__actions">
+                            <a
+                                href="#create"
+                                className="sonm-login__create-button"
+                                onClick={this.handleStartCreateNew}
+                            >
+                                Create wallet
+                            </a>
+                            <a
+                                href="#import"
+                                className="sonm-login__import-button"
+                                onClick={this.handleStartImport}
+                            >
+                                Import wallet
+                            </a>
+                        </div>
                     </div>
                     {this.renderCreateWalletPopup()}
                     {this.renderLoginPopup()}

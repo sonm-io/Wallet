@@ -11,6 +11,7 @@ interface IBalanceViewProps {
 }
 
 import * as cn from 'classnames';
+import trimZeros from 'app/utils/trim-zeros';
 
 export class Balance extends React.PureComponent<IBalanceViewProps, any> {
     public static defaultProps: Partial<IBalanceViewProps> = {
@@ -33,6 +34,8 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
                 ? balance.slice(0, dotIdx + 1 + (this.props.decimals as number))
                 : balance;
         }
+
+        out = trimZeros(out);
 
         const style = fontSizePx
             ? { fontSize: `${fontSizePx}px` }
