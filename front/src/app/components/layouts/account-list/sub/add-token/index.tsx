@@ -24,6 +24,8 @@ export class AddToken extends React.Component<IProps, {}> {
         event.preventDefault();
 
         this.props.mainStore.approveCandidateToken();
+
+        this.props.onClickCross();
     }
 
     protected handleChangeInput = async (event: any) => {
