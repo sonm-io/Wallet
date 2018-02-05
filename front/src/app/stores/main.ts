@@ -419,6 +419,20 @@ export class MainStore extends AbstractStore {
             return privateKey;
         }
     }
+
+    @pending
+    @asyncAction
+    protected * exportWallet() {
+        const { data: text } = yield Api.exportWallet();
+
+        return text;
+    }
+
+    public getWalletExportText = async () => {
+        const text = await this.exportWallet();
+
+        return String(text);
+    }
 }
 
 export default MainStore;

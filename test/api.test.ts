@@ -132,14 +132,15 @@ describe('Api',  async function() {
 
     it('should export wallet && import wallet', async function() {
         const response = await Api.exportWallet();
-        expect(response).to.have.nested.property('data.walletName');
-        expect(response).to.have.nested.property('data.fileContent');
+        expect(response.data).to.be.a('string');
 
         if (response.data) {
-            expect(response.data.walletName).equal(walletName);
+            const walletImportName = 'wallet 2';
 
-            const response2 = await Api.importWallet(walletPassword, 'wallet 2', response.data.fileContent);
-            expect(response2.data).equal(true);
+            const response2 = await Api.importWallet(walletPassword, walletImportName , response.data);
+            expect(response2).to.have.nested.property('data.name', walletImportName);
+            expect(response2).to.have.nested.property('data.chainId');
+            expect(response2).to.have.nested.property('data.nodeUrl');
 
             const response3 = await Api.getWalletList();
             expect(response3.data).to.have.lengthOf(2);

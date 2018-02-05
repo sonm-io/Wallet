@@ -2,21 +2,15 @@
 
 @sonm-form-padding: 10px;
 
+:root {
+  --color-form-header: @color-font-dark;
+}
+
 .sonm-form {
   display: flex;
   flex-flow: column nowrap;
   align-items: stretch;
   padding: 0;
-
-  & > h3,
-  & > h2,
-  & > h1 {
-    font-weight: 500;
-    font-size: 18px;
-    color: @color-brand-bg;
-    padding: 0;
-    margin: 0;
-  }
 
   &__row {
     flex: 0 1;
@@ -46,8 +40,11 @@
     }
   }
 
+  & > h3,
+  & > h2,
+  & > h1,
   &__header {
-    color: @color-font-dark;
+    color: var(--color-form-header);
     font-size: 18px;
     font-weight: 500;
     text-align: center;

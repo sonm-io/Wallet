@@ -63,11 +63,13 @@ export class App extends React.Component<IProps, any> {
                                             className="sonm-nav__total-item"
                                             fullString={etherBalance}
                                             fontSizePx={18}
+                                            decimals={2}
                                         />
                                         <Balance
                                             className="sonm-nav__total-item"
                                             fullString={primaryTokenBalance}
                                             fontSizePx={18}
+                                            decimals={2}
                                         />
                                     </div>
                                     <div className="sonm-nav__network">

@@ -12,7 +12,6 @@ import {
     IValidation,
     ITxListFilter,
     ISettings,
-    IWalletExport,
     IWalletListItem,
 } from './types';
 
@@ -79,11 +78,11 @@ export class Api {
         return createPromise('unlockWallet', { password, walletName });
     }
 
-    public static async importWallet(password: string, walletName: string, json: string): Promise<IResult<boolean>>  {
-        return createPromise('importWallet', { password, walletName, json });
+    public static async importWallet(password: string, walletName: string, file: string): Promise<IResult<IWalletListItem>>  {
+        return createPromise('importWallet', { password, walletName, file });
     }
 
-    public static async exportWallet(): Promise<IResult<IWalletExport>>  {
+    public static async exportWallet(): Promise<IResult<string>>  {
         return createPromise('exportWallet');
     }
 

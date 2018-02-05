@@ -1,4 +1,7 @@
 .sonm-login {
+  --color-form-header: @color-font-gray;
+  --color-form-field-text: @color-font-gray;
+
   background-color: @color-brand-bg;
   min-height: 680px;
 
@@ -90,6 +93,9 @@
     width: 200px;
   }
 
+  &__form {
+    min-width: 330px;
+  }
 
   &__popup {
     &-header {
@@ -114,22 +120,44 @@
     background: url('./logo.svg') no-repeat center;
   }
 
-  &__add-wallet {
-    margin: 20px 0;
-    display: block;
-    border: none;
-    outline: none;
-    background: transparent none;
-    color: @color-blue;
+  &__actions {
+    margin: 10px 0 0 0;
+  }
+
+  &__import-button,
+  &__create-button {
     font-size: 18px;
+
     cursor: pointer;
-    padding: 5px;
+    opacity: 0.5;
+    margin: 0 10px 0 0;
+    padding: 5px 0;
+
+    text-decoration: none;
+    &:focus,
+    &:hover,
+    &:active,
+    &:visited {
+      text-decoration: none;
+    }
 
     &:focus,
     &:active {
       outline: @outline;
       outline-offset: 3px;
     }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  & &__create-button {
+    color: @color-blue;
+  }
+
+  & &__import-button {
+    color: @color-font-gray;
   }
 
   &__network-type {

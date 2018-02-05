@@ -107,7 +107,6 @@ class Api {
 
     private secretKey: string;
     private hash: string;
-    private walletName: string;
     private tokenList: any;
 
     private constructor() {
@@ -285,7 +284,6 @@ class Api {
     }
 
     private setWalletHash(name: string) {
-        this.walletName = name;
         this.hash = `sonm_${SHA256(name).toString(Hex)}`;
     }
 
@@ -333,43 +331,41 @@ class Api {
     }
 
     public importWallet = async (data: IPayload): Promise<IResponse> => {
-        if (data.password && data.json && data.walletName) {
+        if (data.password && data.file && data.walletName) {
             try {
-                const json = JSON.parse(data.json);
+                this.setWalletHash(data.walletName);
+                this.secretKey = data.password;
 
-                if (json.encryptedData) {
-                    this.setWalletHash(data.walletName);
-                    this.secretKey = data.password;
+                const storage = this.decrypt(data.file);
 
-                    const storage = this.decrypt(json.encryptedData);
+                if (storage) {
+                    this.storage = storage;
+                    await this.saveData();
 
-                    if (storage) {
-                        this.storage = storage;
-                        await this.saveData();
+                    // add wallet to list
+                    const walletList = await this.getWallets();
 
-                        // add wallet to list
-                        const walletList = await this.getWallets();
-                        walletList.data.push(data.walletName);
+                    const walletInfo = {
+                        name: data.walletName,
+                        chainId: this.storage.settings.chainId,
+                        nodeUrl: this.storage.settings.nodeUrl,
+                    };
+                    walletList.data.push(walletInfo);
 
-                        const tokenList = await this.getTokenList();
-                        for (const token of this.storage.tokens) {
-                            tokenList.add(token.address);
-                        }
-
-                        await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
-
-                        return {
-                            data: true,
-                        };
-                    } else {
-                        return {
-                            data: false,
-                        };
+                    const tokenList = await this.getTokenList();
+                    for (const token of this.storage.tokens) {
+                        tokenList.add(token.address);
                     }
+
+                    await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
+
+                    return {
+                        data: walletInfo,
+                    };
                 } else {
                     return {
                         validation: {
-                            file: 'json_error',
+                            password: 'password_not_valid',
                         },
                     };
                 }
@@ -440,12 +436,7 @@ class Api {
 
     public exportWallet = async (): Promise<IResponse> => {
         return {
-            data: {
-                walletName: this.walletName,
-                fileContent: JSON.stringify({
-                    encryptedData: this.encrypt(this.storage),
-                }),
-            },
+            data: this.encrypt(this.storage),
         };
     }
 

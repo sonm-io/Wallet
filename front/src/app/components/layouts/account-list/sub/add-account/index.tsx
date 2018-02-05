@@ -155,7 +155,7 @@ export class AddAccount extends React.Component<IProps, any> {
 
         return (
             <Dialog onClickCross={this.handleClickCross} height={this.state.address === '' ? 420 : 530}>
-                <Form className="sonm-wallets-add-account__form" onSubmit={this.handleSubmit}>
+                <Form className="sonm-accounts-add-account__form" onSubmit={this.handleSubmit}>
                     <h3>Add account</h3>
                     <FormRow>
                         <FormField
@@ -166,7 +166,7 @@ export class AddAccount extends React.Component<IProps, any> {
                         >
                             <Upload
                                 onOpenTextFile={this.handleOpenTextFile}
-                                className="sonm-wallets-add-account__upload"
+                                className="sonm-accounts-add-account__upload"
                                 buttonProps={{
                                     square: true,
                                     height: 40,
@@ -215,13 +215,13 @@ export class AddAccount extends React.Component<IProps, any> {
                     {this.state.address === '' ? null :
                         <FormRow>
                             <FormField fullWidth>
-                                <div className="sonm-wallets-add-account__preview-ct">
+                                <div className="sonm-accounts-add-account__preview-ct">
                                     <IdentIcon
-                                        className="sonm-wallets-add-account__preview-icon"
+                                        className="sonm-accounts-add-account__preview-icon"
                                         address={this.state.address}
                                     />
                                     <Hash
-                                        className="sonm-wallets-add-account__preview-address"
+                                        className="sonm-accounts-add-account__preview-address"
                                         hash={this.state.address}
                                     />
                                 </div>

@@ -14,6 +14,8 @@ import { AddToken } from './sub/add-token';
 import { navigate } from 'app/router/navigate';
 import { IValidation } from 'app/api/types';
 import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
+import { DownloadFile } from 'app/components/common/download-file';
+import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
 
 enum WalletDialogs {
@@ -121,11 +123,27 @@ export class Wallets extends React.Component<IProps, IState> {
         } = this.props;
 
         return (
-            <div className={cn('sonm-wallets', className)}>
-                <Header className="sonm-wallets__header">
+            <div className={cn('sonm-accounts', className)}>
+                <Header className="sonm-accounts__header">
                     Accounts
                 </Header>
-                <div className="sonm-wallets__list">
+                <DownloadFile
+                    getData={this.props.rootStore.mainStore.getWalletExportText}
+                    className="sonm-accounts__export-wallet"
+                    fileName={`sonm-wallet-${this.props.rootStore.mainStore.walletName}.json`}
+                >
+                    <Button
+                        tag="div"
+                        color="gray"
+                        square
+                        transparent
+                        height={40}
+                        className="sonm-accounts__export-wallet-button"
+                    >
+                        <Icon i="export"/>{' Export wallet'}
+                    </Button>
+                </DownloadFile>
+                <div className="sonm-accounts__list">
                     { this.props.rootStore.mainStore.accountList.length === 0
                         ? <EmptyAccountList/>
                         :  this.props.rootStore.mainStore.accountList.map((x: IAccountItemProps) => {
@@ -133,7 +151,7 @@ export class Wallets extends React.Component<IProps, IState> {
                                 <DeletableItem
                                     item={x}
                                     Confirmation={DeleteAccountConfirmation}
-                                    className="sonm-wallets__list-item"
+                                    className="sonm-accounts__list-item"
                                     onDelete={this.handleDelete}
                                     key={x.address}
                                     id={x.address}
@@ -143,7 +161,7 @@ export class Wallets extends React.Component<IProps, IState> {
                                         onClickIcon={this.handleClickAccount}
                                         onClickShowPrivateKey={this.handleShowPrivateKey}
                                         onRename={this.handleRename}
-                                        className="sonm-wallets__list-item-inner"
+                                        className="sonm-accounts__list-item-inner"
                                         hasButtons
                                     />
                                 </DeletableItem>
@@ -152,25 +170,26 @@ export class Wallets extends React.Component<IProps, IState> {
                     }
                 </div>
                 <CurrencyBalanceList
-                    className="sonm-wallets__balances"
+                    className="sonm-accounts__balances"
                     currencyBalanceList={this.props.rootStore.mainStore.fullBalanceList}
                     onRequireAddToken={this.handleRequireAddToken}
                     onDeleteToken={this.handleDeleteToken}
                 />
-                <div className="sonm-wallets__buttons">
+                <div className="sonm-accounts__buttons">
                     <Button
                         type="button"
                         onClick={this.openAddWalletDialog}
-                        className="sonm-wallets__button"
+                        color="violet"
+                        className="sonm-accounts__button"
                     >
-                        Add account
+                        IMPORT ACCOUNT
                     </Button>
                     <Button
                         type="button"
                         onClick={this.openNewWalletDialog}
-                        className="sonm-wallets__button"
+                        className="sonm-accounts__button"
                     >
-                        New account
+                        CREATE ACCOUNT
                     </Button>
                     {this.state.visibleDialog === WalletDialogs.new
                         ? (
