@@ -113,7 +113,7 @@ module.exports = {
                 /en-gb\.js/,
             ),
 
-            new webpack.optimize.ModuleConcatenationPlugin(),
+            // new webpack.optimize.ModuleConcatenationPlugin(),
 
             new webpack.EnvironmentPlugin(['NODE_ENV']),
 
