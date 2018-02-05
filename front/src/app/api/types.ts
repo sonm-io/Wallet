@@ -73,4 +73,9 @@ export interface IWalletList {
     data: IWalletListItem[];
 }
 
+export enum NetworkEnum {
+    live,
+    rinkeby,
+}
+
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

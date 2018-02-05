@@ -9,17 +9,21 @@
 
 .sonm-accounts {
   display: grid;
-  grid-template-rows: 50px 1fr auto;
+  grid-template-rows: auto 1fr auto;
   grid-template-columns: 1fr 270px;
   grid-gap: 20px;
 
   &__export-wallet {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
   }
 
+  & &__export-wallet-button {
+    display: block;
+  }
+
   &__header {
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 1;
   }
 
