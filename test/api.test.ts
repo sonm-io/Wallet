@@ -136,8 +136,11 @@ describe('Api',  async function() {
 
         if (response.data) {
             const response2 = await Api.importWallet(walletPassword, 'wallet 2', response.data);
-            console.log(response2);
-            expect(response2.data).equal(true);
+            expect(response2).to.have.nested.property('data.name');
+            expect(response2).to.have.nested.property('data.chainId');
+            expect(response2).to.have.nested.property('data.nodeUrl');
+            expect(response2).to.have.nested.property('data.name');
+
 
             const response3 = await Api.getWalletList();
             expect(response3.data).to.have.lengthOf(2);

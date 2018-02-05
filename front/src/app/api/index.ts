@@ -78,7 +78,7 @@ export class Api {
         return createPromise('unlockWallet', { password, walletName });
     }
 
-    public static async importWallet(password: string, walletName: string, file: string): Promise<IResult<boolean>>  {
+    public static async importWallet(password: string, walletName: string, file: string): Promise<IResult<IWalletListItem>>  {
         return createPromise('importWallet', { password, walletName, file });
     }
 

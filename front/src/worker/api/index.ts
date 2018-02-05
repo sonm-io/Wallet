@@ -344,7 +344,13 @@ class Api {
 
                     // add wallet to list
                     const walletList = await this.getWallets();
-                    walletList.data.push(data.walletName);
+
+                    const walletInfo = {
+                        name: data.walletName,
+                        chainId: this.storage.settings.chainId,
+                        nodeUrl: this.storage.settings.nodeUrl,
+                    };
+                    walletList.data.push(walletInfo);
 
                     const tokenList = await this.getTokenList();
                     for (const token of this.storage.tokens) {
@@ -354,11 +360,13 @@ class Api {
                     await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
 
                     return {
-                        data: true,
+                        data: walletInfo,
                     };
                 } else {
                     return {
-                        data: false,
+                        validation: {
+                            password: 'password_not_valid',
+                        },
                     };
                 }
             } catch (err) {
