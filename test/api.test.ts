@@ -135,12 +135,12 @@ describe('Api',  async function() {
         expect(response.data).to.be.a('string');
 
         if (response.data) {
-            const response2 = await Api.importWallet(walletPassword, 'wallet 2', response.data);
-            expect(response2).to.have.nested.property('data.name');
+            const walletImportName = 'wallet 2';
+
+            const response2 = await Api.importWallet(walletPassword, walletImportName , response.data);
+            expect(response2).to.have.nested.property('data.name', walletImportName);
             expect(response2).to.have.nested.property('data.chainId');
             expect(response2).to.have.nested.property('data.nodeUrl');
-            expect(response2).to.have.nested.property('data.name');
-
 
             const response3 = await Api.getWalletList();
             expect(response3.data).to.have.lengthOf(2);
