@@ -6,7 +6,6 @@ import {
     ISendTransactionResult,
     TransactionStatus,
 } from 'app/api';
-import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import {
     ISendFormValues,
@@ -315,16 +314,28 @@ ${result.amount} ${currencyName} has been sent to the address ${result.toAddress
             this.fromAddress,
         ) as IAccountInfo;
 
-        let amount = new BigNumber(
+        let amount = createBigNumber(
             account.currencyBalanceMap[this.currencyAddress],
         );
 
-        if (this.rootStore.mainStore.etherAddress === this.currencyAddress) {
-            const fee = new BigNumber(this.gasPriceEther).mul(this.gasLimit);
-            amount = amount.minus(fee);
+        if (amount) {
+            if (this.rootStore.mainStore.etherAddress === this.currencyAddress) {
+                const gasPrice = createBigNumber(this.gasPriceEther);
+                const gasLimit = createBigNumber(this.gasLimit);
+
+                if (gasLimit && gasPrice) {
+                    const fee = gasPrice.mul(gasLimit);
+
+                    amount = amount.minus(fee);
+
+                    if (amount.lessThan(0)) {
+                        amount = undefined;
+                    }
+                }
+            }
         }
 
-        return amount.lessThan(0) ? '0' : amount.toString();
+        return amount === undefined ? '' : amount.toString();
     }
 }
 
