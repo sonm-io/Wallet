@@ -565,6 +565,7 @@ export class Login extends React.Component<IProps, IState> {
                     {this.renderLoginPopup()}
                     {this.renderImportWalletPopup()}
                 </div>
+                <div className="sonm-login__version">Version: {VERSION}</div>
             </LoadMask>
         );
     }

@@ -38,7 +38,7 @@ function createPromise(
             }
 
             if (response.success) {
-                if (process.env.NODE_ENV !== 'production') {
+                if (IS_DEV) {
                     console.log(type, response, payload);
                 }
                 //
