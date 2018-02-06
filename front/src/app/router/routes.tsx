@@ -24,6 +24,7 @@ const navigateToHistory = (accountAddress: string = '', currencyAddress: string 
 };
 const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
+const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 
 const routes = [
@@ -58,6 +59,7 @@ const routes = [
                     const content = next && next.content
                         ? next.content
                         : <Send
+                            onNotAvailable={navigateToMain}
                             rootStore={rootStore}
                             initialAddress={initialAddress}
                             initialCurrency={initialCurrency}
