@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 
 interface IInputProps extends React.InputHTMLAttributes<any> {
-    autofocus?: boolean;
+    autoFocus?: boolean;
 }
 
 interface IFocusable {
@@ -17,15 +17,17 @@ export class Input extends React.Component<IInputProps, any> implements IFocusab
     protected inputNode: IFocusable | null = null;
 
     protected saveRef = (ref: HTMLInputElement) => {
-        if (this.inputNode === null && ref !== null) {
+        if (this.props.autoFocus && !this.inputNode && ref !== null) {
             ref.focus();
         }
         this.inputNode = ref;
     }
 
     public render() {
-        return <div className={cn('sonm-input', this.props.className)}>
-            <input {...this.props} className="sonm-input__input" />
+        const { autoFocus, className, ...rest } = this.props;
+
+        return <div className={cn('sonm-input', className)}>
+            <input {...rest} className="sonm-input__input" ref={this.saveRef}/>
             <div className="sonm-input__underline" />
         </div>;
     }

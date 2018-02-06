@@ -70,7 +70,7 @@ export class ShowPassword extends React.Component<IProps, any> {
                                 error={this.state.validationPassword}
                             >
                                 <Input
-                                    autofocus
+                                    autoFocus
                                     type="password"
                                     value={this.state.password}
                                     onChange={this.handleChangePassword}
