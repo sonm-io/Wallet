@@ -249,7 +249,7 @@ class Api {
                 };
             } else {
                 return {
-                    data: true,
+                    data: client.privateKey,
                 };
             }
         } else {
@@ -257,8 +257,9 @@ class Api {
 
             try {
                 const privateKey = await utils.recoverPrivateKey(accounts[address].json, password);
-                client.factory.setPrivateKey(privateKey.toString('hex'));
+                client.factory.setPrivateKey(privateKey);
                 client.password = password;
+                client.privateKey = privateKey;
 
                 return {
                     data: privateKey,
