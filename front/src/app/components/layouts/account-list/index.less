@@ -1,0 +1,55 @@
+@import "guide.less";
+
+@import 'sub/add-account/index';
+@import 'sub/create-account/index';
+@import 'sub/empty-account-list/index';
+@import 'sub/delete-account-confirmation/index';
+@import 'sub/add-token/index';
+@import "sub/show-private-key/index";
+
+.sonm-accounts {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr 270px;
+  grid-gap: 20px;
+
+  &__export-wallet {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  & &__export-wallet-button {
+    display: block;
+  }
+
+  &__header {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  &__list {
+    grid-column: 1;
+    grid-row: 2;
+
+    &-item-inner {
+      border: 1px solid @color-border;
+      width: ~'calc(100% - 20px)';
+    }
+  }
+
+  &__buttons {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  &__button {
+    margin-right: 20px;
+  }
+
+  &__balances {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+
+}

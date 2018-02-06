@@ -1,28 +1,60 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { Button } from 'app/components/common/button';
-import { Api } from 'app/api';
+import { Api, NetworkEnum } from 'app/api';
 import { IValidation } from 'ipc/types';
 import { BlackSelect } from 'app/components/common/black-select';
 import { Dialog } from 'app/components/common/dialog';
 import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
 import { getMessageText } from 'app/api/error-messages';
+import { IWalletListItem } from 'app/api/types';
+import { IFileOpenResult, Upload } from 'app/components/common/upload';
+import { Form, FormButtons, FormHeader, FormRow, FormField } from 'app/components/common/form';
 
 interface IProps {
     className?: string;
-    onLogin: () => void;
+    onLogin: (wallet: IWalletListItem) => void;
 }
 
-class BlackWalletSelect extends BlackSelect<string> {}
+class BlackWalletSelect extends BlackSelect<IWalletListItem> {}
 
-type TAction = 'select-wallet' | 'create-new' | 'enter-password';
+type TAction = 'select-wallet' | 'create-new' | 'enter-password' | 'import-wallet';
 
 interface IRefs {
     loginBtn: Button | null;
 }
 
-export class Login extends React.Component<IProps, any> {
+const networkSelectList = [NetworkEnum.live, NetworkEnum.rinkeby].map(x => x.toString());
+
+const emptyValidation: IValidation = {};
+
+interface IState {
+    currentAction: TAction;
+    password: string;
+    newName: string;
+    newPassword: string;
+    newPasswordConfirmation: string;
+    encodedWallet: string;
+    encodedWalletFileName: string;
+    listOfWallets: IWalletListItem[];
+    name: string;
+    pending: boolean;
+    error: string;
+    network: NetworkEnum;
+    validation: IValidation;
+}
+
+const emptyForm: Pick<IState, any> = {
+    password: '',
+    newName: '',
+    newPassword: '',
+    newPasswordConfirmation: '',
+    encodedWallet: '',
+    encodedWalletFileName: '',
+};
+
+export class Login extends React.Component<IProps, IState> {
     protected nodes: IRefs = {
         loginBtn: null,
     };
@@ -32,42 +64,49 @@ export class Login extends React.Component<IProps, any> {
         password: '',
         newName: '',
         newPassword: '',
-        confirmation: '',
-        wallets: ([] as string[]),
+        newPasswordConfirmation: '',
+        encodedWallet: '',
+        encodedWalletFileName: '',
+        listOfWallets: ([] as IWalletListItem[]),
         name: '',
         pending: false,
         error: '',
-
-        validation: ({} as IValidation),
+        network: NetworkEnum.live,
+        validation: emptyValidation,
     };
 
     protected getWalletList = async () =>  {
         this.setState({ pending: true });
 
-        const { data } = await Api.getWalletList();
-        const wallets = data as string[];
+        const { data: walletlList } = await Api.getWalletList();
+
+        if (walletlList === undefined) {
+            return;
+        }
+
+        const listOfWallets = walletlList;
 
         let name = '';
         const savedName = window.localStorage.getItem('sonm-last-used-wallet');
 
-        if (savedName && wallets.indexOf(savedName) !== -1) {
+        if (savedName && listOfWallets.some(x => x.name === savedName)) {
             name = savedName;
-        } else if (wallets.length > 0) {
-            name = wallets[0];
+        } else if (listOfWallets.length > 0) {
+            name = listOfWallets[0].name;
         }
 
-        const update: any = {
+        const update: any = { // TODO use Partial<IState>
             pending: false,
-            wallets,
+            listOfWallets,
             name,
         };
 
-        if (wallets.length === 1) {
-            update.name = wallets[0];
+        if (listOfWallets.length === 1) {
+            update.name = listOfWallets[0].name;
             update.currentAction = 'enter-password';
         }
 
-        if (wallets.length === 0) {
+        if (listOfWallets.length === 0) {
             update.currentAction = 'create-new';
         }
 
@@ -76,9 +115,11 @@ export class Login extends React.Component<IProps, any> {
 
     protected async fastLogin() {
         if (window.localStorage.getItem('sonm-4ever')) {
-            const { data } = await Api.setSecretKey('1', '1');
+            const { data } = await Api.unlockWallet('1', '1');
             if (data) {
-                this.props.onLogin();
+                const wallet = this.findWalletByName('1');
+
+                this.props.onLogin(wallet);
             }
         }
     }
@@ -89,40 +130,46 @@ export class Login extends React.Component<IProps, any> {
         this.getWalletList();
     }
 
-    protected handleRequireNewWallet = () => {
-        this.setState({ creating: true });
-    }
-
-    protected handleStartLogin = (event: any) => {
+    protected openDialog(currentAction: TAction, event: React.MouseEvent<HTMLAnchorElement>) {
         event.preventDefault();
 
-        this.setState({
-            currentAction: 'enter-password',
-        });
+        const update: Pick<IState, any> = { ...emptyForm };
+
+        update.currentAction = currentAction;
+
+        this.setState(update);
     }
 
-    protected handleStartCreateNew = (event: any) => {
-        event.preventDefault();
+    protected handleStartLogin = this.openDialog.bind(this, 'enter-password');
+    protected handleStartCreateNew = this.openDialog.bind(this, 'create-new');
+    protected handleStartImport = this.openDialog.bind(this, 'import-wallet');
 
-        this.setState({
-            currentAction: 'create-new',
-        });
+    protected findWalletByName(name: string) {
+        const wallet = this.state.listOfWallets.find(x => x.name === this.state.name);
+
+        if (wallet === undefined) {
+            throw new Error('Wallet not found');
+        }
+
+        return wallet;
     }
 
-    protected handleLogin = async (event: any) => {
+    protected handleSubmitLogin = async (event: any) => {
         event.preventDefault();
 
         this.setState({ pending: true });
 
         try {
-            const { validation, data: success } = await Api.setSecretKey(this.state.password, this.state.name);
+            const { validation, data: success } = await Api.unlockWallet(this.state.password, this.state.name);
 
             if (validation) {
                 this.setState({ validation });
             }
 
+            const wallet = this.findWalletByName(this.state.name);
+
             if (success) {
-                this.props.onLogin();
+                this.props.onLogin(wallet);
                 return;
             }
 
@@ -133,44 +180,29 @@ export class Login extends React.Component<IProps, any> {
         this.setState({ pending: false });
     }
 
-    protected handleCreateNew = async (event: any) => {
+    protected handleSubmitCreate = async (event: any) => {
         event.preventDefault();
 
-        let invalid = false;
+        const valid = this.validateNewName() && this.validateNewPassword();
 
-        if (this.state.newName.length < 1 || this.state.newName.length > 20) {
-            this.setState({ validation: { newName: getMessageText('wallet_name_length') } });
-            invalid = true;
-        }
-
-        if (this.state.newPassword.length < 1) {
-            this.setState({ validation: { newPassword: getMessageText('password_required') } });
-            invalid = true;
-        }
-
-        if (this.state.wallets.indexOf(this.state.newName) !== -1) {
-            this.setState({ validation: { newName: getMessageText('wallet_allready_exists') } });
-            invalid = true;
-        }
-
-        if (this.state.newPassword !== this.state.confirmation) {
-            this.setState({ validation: { confirmation: getMessageText('password_not_match') } });
-            invalid = true;
-        }
-
-        if (!invalid) {
+        if (valid) {
             this.setState({
                 pending: true,
             });
 
             try {
-                const { validation } = await Api.setSecretKey(this.state.newPassword, this.state.newName);
+                const { validation, data: walletListItem } = await Api.createWallet(
+                    this.state.newPassword,
+                    this.state.newName,
+                    this.state.network.toString(),
+                );
 
                 if (validation) {
                     this.setState({ validation });
-                } else {
+                } else if (walletListItem) {
                     window.localStorage.setItem('sonm-last-used-wallet', this.state.newName);
-                    this.props.onLogin();
+
+                    this.props.onLogin(walletListItem);
                     return;
                 }
 
@@ -184,9 +216,74 @@ export class Login extends React.Component<IProps, any> {
         }
     }
 
+    protected handleSubmitImport = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const valid = this.validateNewName();
+
+        if (valid) {
+            this.setState({
+                pending: true,
+            });
+
+            const { password, newName, encodedWallet } = this.state;
+
+            const { data: walletInfo, validation } = await Api.importWallet(password, newName, encodedWallet);
+
+            if (validation) {
+                this.setState({
+                    validation,
+                    pending: false,
+                });
+            } else if (walletInfo) {
+                this.props.onLogin(walletInfo);
+                return;
+            }
+        }
+    }
+
+    protected validateNewName() {
+        let valid = true;
+
+        if (this.state.newName.length < 1 || this.state.newName.length > 20) {
+            this.setState({ validation: { newName: getMessageText('wallet_name_length') } });
+            valid = false;
+        } else {
+            const foundByName = this.state.listOfWallets.find(x => x.name === this.state.newName);
+            if (foundByName) {
+                this.setState({ validation: { newName: getMessageText('wallet_allready_exists') } });
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+
+    protected validateNewPassword() {
+        let valid = true;
+
+        if (this.state.newPassword.length < 1) {
+            this.setState({ validation: { newPassword: getMessageText('password_required') } });
+            valid = false;
+        }
+
+        if (this.state.newPassword !== this.state.newPasswordConfirmation) {
+            this.setState({ validation: { newPasswordConfirmation: getMessageText('password_not_match') } });
+            valid = false;
+        }
+
+        return valid;
+    }
+
     protected handleChangeInput = (event: any) => {
         this.setState({
             [event.target.name]: event.target.value,
+        });
+    }
+
+    protected handleChangeSelect = (params: any) => {
+        this.setState({
+            [params.name]: params.value,
         });
     }
 
@@ -213,15 +310,23 @@ export class Login extends React.Component<IProps, any> {
         this.nodes.loginBtn = ref;
     }
 
+    protected renderWalletOption(record: IWalletListItem) {
+        return <span className={`sonm-login__wallet-option--${record.chainId}`}>
+            {record.name}
+        </span>;
+    }
+
     protected renderSelect() {
         return (
             <form className="sonm-login__wallet-form" onSubmit={this.handleStartLogin}>
                 <BlackWalletSelect
+                    render={this.renderWalletOption}
                     className="sonm-login__wallet-select"
                     name="name"
                     onChange={this.handleChangeWallet}
                     value={this.state.name}
-                    options={this.state.wallets}
+                    keyIndex="name"
+                    options={this.state.listOfWallets}
                 />
                 <Button
                     height={50}
@@ -237,6 +342,93 @@ export class Login extends React.Component<IProps, any> {
         );
     }
 
+    protected handleOpenTextFile = (params: IFileOpenResult) => {
+        if (params.error) {
+            this.setState({
+                validation: { encodedWallet: params.error },
+                encodedWallet: '',
+            });
+        } else {
+            this.setState({
+                encodedWallet: params.text,
+                encodedWalletFileName: params.fileName,
+            });
+        }
+    }
+
+    protected renderImportWalletPopup() {
+        if (this.state.currentAction !== 'import-wallet') {
+            return null;
+        }
+
+        return (
+            <Dialog onClickCross={this.handleReturn} color="dark">
+                <Form onSubmit={this.handleSubmitImport} className="sonm-login__form">
+                    <FormHeader>Import wallet</FormHeader>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label="Wallet file"
+                            error={this.state.validation.encodedWallet}
+                            success={this.state.encodedWalletFileName ? this.state.encodedWalletFileName : ''}
+                        >
+                            <Upload
+                                onOpenTextFile={this.handleOpenTextFile}
+                                buttonProps={{
+                                    square: true,
+                                    height: 40,
+                                    transparent: true,
+                                }}
+                            >
+                                Select file
+                            </Upload>
+                        </FormField>
+                    </FormRow>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label="Wallet name"
+                            error={this.state.validation.newName}
+                        >
+                            <input
+                                autoComplete="off"
+                                ref={setFocus}
+                                type="newName"
+                                className="sonm-login__input"
+                                name="newName"
+                                onChange={this.handleChangeInput}
+                            />
+                        </FormField>
+                    </FormRow>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label="Password for file"
+                            error={this.state.validation.password}
+                        >
+                            <input
+                                autoComplete="off"
+                                ref={setFocus}
+                                type="password"
+                                className="sonm-login__input"
+                                name="password"
+                                onChange={this.handleChangeInput}
+                            />
+                        </FormField>
+                    </FormRow>
+                    <FormButtons>
+                        <Button
+                            className="sonm-login__import"
+                            type="submit"
+                        >
+                            Import
+                        </Button>
+                    </FormButtons>
+                </Form>
+            </Dialog>
+        );
+    }
+
     protected renderLoginPopup() {
         if (this.state.currentAction !== 'enter-password') {
             return null;
@@ -244,7 +436,7 @@ export class Login extends React.Component<IProps, any> {
 
         return (
             <Dialog onClickCross={this.handleReturn} color="dark">
-                <form className="sonm-login__popup-content" onSubmit={this.handleLogin}>
+                <form className="sonm-login__popup-content" onSubmit={this.handleSubmitLogin}>
                     <h3 className="sonm-login__popup-header">Enter password</h3>
                     <label className="sonm-login__label">
                         <span className="sonm-login__label-text">Password</span>
@@ -269,14 +461,14 @@ export class Login extends React.Component<IProps, any> {
         );
     }
 
-    protected renderNewWalletPopup() {
+    protected renderCreateWalletPopup() {
         if (this.state.currentAction !== 'create-new') {
             return null;
         }
 
         return (
             <Dialog onClickCross={this.handleReturn} color="dark">
-                <form className="sonm-login__popup-content" onSubmit={this.handleCreateNew}>
+                <form className="sonm-login__popup-content" onSubmit={this.handleSubmitCreate}>
                     <h3 className="sonm-login__popup-header">New wallet</h3>
                     <label className="sonm-login__label">
                         <span className="sonm-login__label-text">Wallet name</span>
@@ -302,14 +494,24 @@ export class Login extends React.Component<IProps, any> {
                         />
                     </label>
                     <label className="sonm-login__label">
-                        <span className="sonm-login__label-text">Password confirmation</span>
-                        <span className="sonm-login__label-error">{this.state.validation.confirmation}</span>
+                        <span className="sonm-login__label-text">Confirm password</span>
+                        <span className="sonm-login__label-error">{this.state.validation.newPasswordConfirmation}</span>
                         <input
                             autoComplete="off"
                             type="password"
                             className="sonm-login__input"
-                            name="confirmation"
+                            name="newPasswordConfirmation"
                             onChange={this.handleChangeInput}
+                        />
+                    </label>
+                    <label className="sonm-login__label">
+                        <span className="sonm-login__label-text">Ethereum network</span>
+                        <BlackSelect
+                            value={this.state.network.toString()}
+                            name="network"
+                            className="sonm-login__network-type"
+                            onChange={this.handleChangeSelect}
+                            options={networkSelectList}
                         />
                     </label>
                     <Button
@@ -342,12 +544,26 @@ export class Login extends React.Component<IProps, any> {
                     >
                         <div className="sonm-login__logo" />
                         {this.renderSelect()}
-                        <button type="button" className="sonm-login__add-wallet" onClick={this.handleStartCreateNew}>
-                            Add wallet
-                        </button>
+                        <div className="sonm-login__actions">
+                            <a
+                                href="#create"
+                                className="sonm-login__create-button"
+                                onClick={this.handleStartCreateNew}
+                            >
+                                Create wallet
+                            </a>
+                            <a
+                                href="#import"
+                                className="sonm-login__import-button"
+                                onClick={this.handleStartImport}
+                            >
+                                Import wallet
+                            </a>
+                        </div>
                     </div>
-                    {this.renderNewWalletPopup()}
+                    {this.renderCreateWalletPopup()}
                     {this.renderLoginPopup()}
+                    {this.renderImportWalletPopup()}
                 </div>
             </LoadMask>
         );

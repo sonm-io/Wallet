@@ -1,23 +1,22 @@
 import * as React from 'react';
-import { Form, Input } from 'antd';
+import Input from 'antd/es/input';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { CurrencyBigSelect } from 'app/components/common/currency-big-select';
-import { FormComponentProps } from 'antd/lib/form/Form';
 import * as cn from 'classnames';
-import * as BigNumber from 'bignumber.js';
-import { inject, observer } from 'mobx-react';
+import { observer } from 'mobx-react';
 import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
 import { IdentIcon } from 'app/components/common/ident-icon';
-import { MainStore, ISendFormValues } from 'app/stores/main';
+import { Form, FormRow, FormField } from 'app/components/common/form';
+import { SendStore } from 'app/stores/send';
+import { RootStore } from 'app/stores';
 import { Header } from 'app/components/common/header';
-// import { gweiToEther } from 'app/utils/gwei-to-ether';
-// import { etherToGwei } from 'app/utils/ether-to-gwei';
-import { trimZeros } from 'app/utils/trim-zeros';
+import { ISendFormValues } from '../../../stores/types';
+import etherToGwei from '../../../utils/ether-to-gwei';
 
-interface IProps extends FormComponentProps {
+interface IProps {
     className?: string;
-    mainStore?: MainStore;
+    rootStore: RootStore;
     initialCurrency?: string;
     initialAddress?: string;
     onRequireConfirmation: () => void;
@@ -26,77 +25,64 @@ interface IProps extends FormComponentProps {
 type PriorityInput = new () => ButtonGroup<string>;
 const PriorityInput = ButtonGroup as PriorityInput;
 
-const ADDRESS_REGEX = /^(0x)?[0-9a-fA-F]{40}$/i;
-
-@inject('historyStore', 'mainStore')
 @observer
-export class SendSrc extends React.Component<IProps, any> {
-    public state = {
-        addressTarget: '',
-    };
-
+export class Send extends React.Component<IProps, any> {
     public componentWillMount() {
-        this.props.initialAddress && this.mainStore.selectAccount(this.props.initialAddress);
-        this.props.initialCurrency && this.mainStore.selectCurrency(this.props.initialCurrency);
+        if (this.props.initialAddress) {
+            this.props.rootStore.sendStore.setUserInput({ fromAddress: this.props.initialAddress });
+        }
 
-        this.setState({ addressTarget: this.mainStore.values.toAddress });
+        if (this.props.initialCurrency) {
+            this.props.rootStore.sendStore.setUserInput({ currencyAddress: this.props.initialCurrency });
+        }
+
+        this.setState({ addressTarget: this.props.rootStore.sendStore.toAddress });
     }
 
-    protected get mainStore(): MainStore {
-        if (!this.props.mainStore) { throw new Error('mainStore is undefined'); }
-
-        return this.props.mainStore;
+    protected get sendStore(): SendStore {
+        return this.props.rootStore.sendStore;
     }
 
-    protected handleSubmit = (event: React.FormEvent<Form>) => {
+    protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        this.props.form.validateFields(
-            { force: true },
-            async (err, values: ISendFormValues) => {
-                if (err) { return; }
-
-                this.mainStore.setSendParams(values);
-
-                this.props.onRequireConfirmation();
-            },
-        );
+        if (this.props.rootStore.sendStore.isFormValid) {
+            this.props.onRequireConfirmation();
+        }
     }
 
-    protected updateField(name: string) {
-      if (this.props.form.isFieldsTouched([name])) {
-        this.props.form.validateFields(
-          [name],
-          { force: true },
-          Function.prototype as any,
-        );
-      }
+    protected handleChangeFormInput(value: Partial<ISendFormValues>) {
+        this.props.rootStore.sendStore.setUserInput(value);
     }
 
-    protected handleChangeAccount = (address: string) => {
-        this.mainStore.selectAccount(address);
+    protected handleChangeFormInputEvent(name: keyof ISendFormValues, event: React.ChangeEvent<HTMLInputElement>) {
+        const value = event.target.value;
 
-        this.updateField('toAddress');
-        this.updateField('amount');
+        this.handleChangeFormInput({ [name]: value });
     }
 
-    protected handleChangeCurrency = (address: string) => {
-        this.mainStore.selectCurrency(address);
+    protected handleChangeTargetAddress = this.handleChangeFormInputEvent.bind(this, 'toAddress');
 
-        this.updateField('amount');
-    }
+    protected handleChangeAccount = (fromAddress: string) => this.handleChangeFormInput({ fromAddress });
+
+    protected handleChangeCurrency = (currencyAddress: string) => this.handleChangeFormInput({ currencyAddress });
+
+    protected handleChangeAmount = this.handleChangeFormInputEvent.bind(this, 'amount');
+
+    protected handleChangeGasLimit = this.handleChangeFormInputEvent.bind(this, 'gasLimit');
+
+    protected handleChangeGasPrice = this.handleChangeFormInputEvent.bind(this, 'gasPrice');
 
     protected handleSetMaximum = () => {
-        const { gasPrice, gasLimit } = this.props.form.getFieldsValue(['gasPrice', 'gasLimit']) as any;
-        this.props.form.setFieldsValue({
-            amount: this.mainStore.getMaxValue(gasPrice, gasLimit),
+        this.props.rootStore.sendStore.setUserInput({
+            amount: this.props.rootStore.sendStore.currentBalanceMaximum,
         });
     }
 
     // TODO
     protected handleChangePriority = (value: string) => {
-        const [min, max] = this.mainStore.gasPriceThresholds;
-        let gasPrice = this.mainStore.averageGasPrice;
+        const [min, max] = this.props.rootStore.mainStore.gasPriceThresholds;
+        let gasPrice = this.props.rootStore.mainStore.averageGasPriceEther;
 
         if (value === 'low') {
             gasPrice = min;
@@ -104,195 +90,83 @@ export class SendSrc extends React.Component<IProps, any> {
             gasPrice = max;
         }
 
-        this.props.form.setFieldsValue({
-            gasPrice,
-        });
+        gasPrice = etherToGwei(gasPrice);
 
-        this.mainStore.setUserGasPrice(gasPrice);
+        this.props.rootStore.sendStore.setUserInput({ gasPrice });
     }
-
-    protected handleChangeTargetAddress = (event: any) => {
-        const value = event.target.value;
-
-        if (value !== this.state.addressTarget) {
-            this.setState({ addressTarget: value });
-        }
-    }
-
-    protected handleChangeGasPrice = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-
-        if (SendSrc.createBigNumber(value) === undefined) { return; }
-
-        this.mainStore.setUserGasPrice(value);
-    }
-
-    protected static createBigNumber(value: string) {
-        try {
-            const bn  = new BigNumber(value);
-            return new BigNumber(bn.toFixed(18));
-        } catch (e) {
-            return undefined;
-        }
-    }
-
-    protected static validatePositiveInteger(rule: any, value: string, cb: (msg?: string) => void): boolean {
-        if (value.indexOf(',') !== -1 || value.indexOf('.') !== -1) {
-            cb('Value should be positive integer');
-            return false;
-        }
-
-        SendSrc.validatePositiveNumber(rule, value, cb);
-
-        return true;
-    }
-
-    protected validateTargetAddress = (rule: any, value: string, cb: (msg?: string) => void) => {
-        if (value === '') {
-            return cb('Please input address');
-        }
-
-        if (!ADDRESS_REGEX.test(value)) {
-            return cb('Please input correct address');
-        }
-
-        if (this.mainStore.selectedAccountAddress === value) {
-            return cb('The destination address must differ the sender address');
-        }
-
-        cb();
-    }
-
-    protected static validatePositiveNumber(rule: any, value: string, cb: (msg?: string) => void): boolean {
-        if (value === '') {
-            cb('Required value');
-            return false;
-        }
-
-        const amount = SendSrc.createBigNumber(value);
-
-        if (amount === undefined) {
-            cb('Incorrect amount');
-            return false;
-        }
-
-        if (amount.lessThanOrEqualTo(0)) {
-            cb('Value should be positive');
-            return false;
-        }
-
-        cb();
-        return true;
-    }
-
-    protected validateAmount = (rule: any, value: string, cb: (msg?: string) => void): void => {
-        let error;
-        const setError = (e?: string) => error = e;
-
-        SendSrc.validatePositiveNumber(rule, value, setError);
-
-        if (!error) {
-            const currentMax = SendSrc.createBigNumber(this.mainStore.currentBalanceMaximum);
-
-            if (currentMax === undefined) {
-                error = 'Maximum values is undetermined';
-            } else if (currentMax.lessThan(value)) {
-                error = 'Value is greater than maximum';
-            }
-        }
-
-        error ? cb(error) : cb();
-    }
-
-    protected decorateToAddress = this.props.form.getFieldDecorator('toAddress', {
-        initialValue: trimZeros(this.mainStore.values.toAddress),
-        rules: [
-            { validator: this.validateTargetAddress },
-        ],
-    });
-
-    protected decorateAmount = this.props.form.getFieldDecorator('amount', {
-        initialValue: trimZeros(this.mainStore.values.amount),
-        rules: [
-            { validator: this.validateAmount },
-        ],
-    });
-
-    protected decorateGasLimit = this.props.form.getFieldDecorator('gasLimit', {
-        initialValue: trimZeros(this.mainStore.values.gasLimit || MainStore.DEFAULT_GAS_LIMIT),
-        rules: [
-            { validator: SendSrc.validatePositiveInteger },
-        ],
-    });
-
-    protected decorateGasPrice = this.props.form.getFieldDecorator('gasPrice', {
-        initialValue: trimZeros(this.mainStore.userGasPrice),
-        rules: [
-            { validator: SendSrc.validatePositiveNumber },
-        ],
-    });
 
     public render() {
         const {
             className,
         } = this.props;
 
-        const balanceList = this.mainStore.currentBalanceList;
-        const selectedCurrencyAddress = this.mainStore.selectedCurrencyAddress;
+        const sendStore = this.props.rootStore.sendStore;
+        const balanceList = sendStore.currentBalanceList;
 
         return (
             <div className={cn('sonm-send', className)}>
                 <Header className="sonm-send__header">
                     Send
                 </Header>
+
                 <Form onSubmit={this.handleSubmit} className="sonm-send__form">
-                    <Form.Item
-                        label="From"
-                        className="sonm-send__account-select"
-                    >
-                        <AccountBigSelect
-                            returnPrimitive
-                            onChange={this.handleChangeAccount}
-                            accounts={this.mainStore.accountList}
-                            value={this.mainStore.selectedAccountAddress}
-                        />
-                    </Form.Item>
-                    <div className="sonm-send__form-second-line">
-                        <Form.Item
-                            label="To"
-                            className="sonm-send__target"
+                    <FormRow className="sonm-send__row-from-address">
+                        <FormField
+                            className="sonm-send__address-from-field"
+                            label="From"
                         >
-                            {this.decorateToAddress(
-                                <Input
-                                    onChange={this.handleChangeTargetAddress}
-                                    placeholder="Address"
-                                />,
-                            )}
-                        </Form.Item>
-                        <div className="sonm-send__target-icon">
-                            <IdentIcon address={this.state.addressTarget}/>
-                        </div>
+                            <AccountBigSelect
+                                returnPrimitive
+                                onChange={this.handleChangeAccount}
+                                accounts={this.props.rootStore.mainStore.accountList}
+                                value={this.props.rootStore.sendStore.fromAddress}
+                            />
+                        </FormField>
+                    </FormRow>
+
+                    <FormRow className="sonm-send__row-to-address">
+                        <FormField
+                            className="sonm-send__address-to-field"
+                            error={sendStore.validationToAddress}
+                            label="To"
+                        >
+                            <Input
+                                onChange={this.handleChangeTargetAddress}
+                                placeholder="Address"
+                                value={sendStore.userInput.toAddress}
+                            />
+                        </FormField>
+
+                        <IdentIcon
+                            address={sendStore.toAddress}
+                            className="sonm-send__address-to-icon"
+                        />
+
                         <CurrencyBigSelect
                             className="sonm-send__currency-select"
                             returnPrimitive
                             currencies={balanceList}
                             onChange={this.handleChangeCurrency}
-                            value={selectedCurrencyAddress}
+                            value={sendStore.currencyAddress}
                         />
-                    </div>
-                    <Form.Item
-                        label="Amount"
-                        className="sonm-send__currency-amount"
-                    >
-                        {this.decorateAmount(
+                    </FormRow>
+
+                    <FormRow className="sonm-send__row-amount">
+                        <FormField
+                            error={sendStore.validationAmount}
+                            label="Amount"
+                        >
                             <Input
-                                autoComplete="off"
                                 className="sonm-send__input"
+                                onChange={this.handleChangeAmount}
+                                autoComplete="off"
                                 placeholder="Amount"
-                            />,
-                        )}
+                                value={sendStore.userInput.amount}
+                            />
+                        </FormField>
+
                         <Button
-                            className="sonm-send__set-max"
+                            className="sonm-send__max-amount-btn"
                             color="blue"
                             transparent
                             square
@@ -300,54 +174,62 @@ export class SendSrc extends React.Component<IProps, any> {
                         >
                             Add maximum
                         </Button>
-                    </Form.Item>
-                    <Form.Item
-                        label="Gas limit"
-                        className="sonm-send__gas-limit"
-                    >
-                        {this.decorateGasLimit(
-                            <Input
-                                autoComplete="off"
-                                className="sonm-send__input"
-                                placeholder="Gas limit"
-                            />,
-                        )}
-                    </Form.Item>
-                    <div className="sonm-send__last-line">
-                        <Form.Item
-                            label="Gas price"
-                            className="sonm-send__gas-price"
+                    </FormRow>
+
+                    <FormRow className="sonm-send__row-gas-limit">
+                        <FormField
+                            label="Gas limit"
+                            error={sendStore.validationGasLimit}
                         >
-                            {this.decorateGasPrice(
-                                <Input
-                                    autoComplete="off"
-                                    className="sonm-send__input"
-                                    placeholder="Gas price"
-                                    onChange={this.handleChangeGasPrice}
-                                />,
-                            )}
-                            <span className="sonm-send__input-suffix">
-                                Gwei
-                            </span>
-                            <PriorityInput
-                                valueList={['low', 'normal', 'high']}
-                                value={this.mainStore.priority}
-                                onChange={this.handleChangePriority}
+                            <Input
+                                className="sonm-send__input"
+                                value={sendStore.userInput.gasLimit}
+                                onChange={this.handleChangeGasLimit}
+                                autoComplete="off"
+                                placeholder={sendStore.gasLimit}
                             />
-                        </Form.Item>
-                    </div>
-                    <Button
-                        onClick={this.handleSubmit}
-                        type="submit"
-                        color="violet"
-                        className="sonm-send__submit"
-                    >
-                        NEXT
-                    </Button>
+                        </FormField>
+                    </FormRow>
+
+                    <FormRow className="sonm-send__row-gas-price">
+                        <FormField
+                            label="Gas price"
+                            error={sendStore.validationGasPrice}
+                        >
+                            <Input
+                                className="sonm-send__input"
+                                value={sendStore.userInput.gasPrice}
+                                onChange={this.handleChangeGasPrice}
+                                autoComplete="off"
+                                placeholder={sendStore.gasPriceGwei}
+                            />
+                        </FormField>
+
+                        <span className="sonm-send__gas-price-unit">
+                            Gwei
+                        </span>
+
+                        <PriorityInput
+                            className="sonm-send__gas-price-buttons"
+                            valueList={['low', 'normal', 'high']}
+                            value={this.props.rootStore.sendStore.priority}
+                            onChange={this.handleChangePriority}
+                        />
+                    </FormRow>
+
+                    <FormRow className="sonm-send__row-submit">
+                        <Button
+                            onClick={this.handleSubmit}
+                            type="submit"
+                            color="violet"
+                            disabled={!sendStore.isFormValid || !sendStore.hasNecessaryValues}
+                            className="sonm-send__submit"
+                        >
+                            NEXT
+                        </Button>
+                    </FormRow>
                 </Form>
             </div>
         );
     }
 }
-
-export const Send = Form.create()(SendSrc);

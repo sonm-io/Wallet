@@ -1,6 +1,8 @@
 @sonm-button-height: 40px;
 
 .sonm-button {
+  -webkit-appearance: none !important;;
+
   --height: @sonm-button-height;
   --half-height: ~"calc(var(--height) / 2)";
 
@@ -20,9 +22,18 @@
   font-size: ~"calc(15/40 * var(--height))";
   font-weight: 500;
   outline: none;
+  text-align: center;
 
   &:focus {
     outline: @outline;
+  }
+
+  text-decoration: none;
+  &:hover,
+  &:focus,
+  &:active,
+  &:visited {
+    text-decoration: none;
   }
 
   //&--color-violet {
@@ -41,13 +52,14 @@
   }
 
   &--color-gray {
-    --color: @color-dark-gray-bg;
-    --color-active: desaturate(@color-dark-gray-bg, 20%);
+    --color: @color-font-gray;
+    --color-active: desaturate(@color-font-gray, 20%);
   }
 
   background-color: var(--color);
   border: solid 1px var(--color);
   color: white;
+  -webkit-text-fill-color: white;
 
   &:active {
     box-shadow: none;
@@ -59,10 +71,24 @@
   &--transparent {
     background-color: transparent !important;
     color: var(--color);
+    -webkit-text-fill-color: var(--color);
     box-shadow: none;
 
     &:hover {
       box-shadow: @shadow;
+    }
+  }
+
+  &[disabled] {
+    background-color: @color-dark-gray-bg;
+    color: @color-light-gray;
+    -webkit-text-fill-color: @color-light-gray;
+    border-color: @color-dark-gray-bg;
+    box-shadow: none;
+
+    &:hover,
+    &:active {
+      box-shadow: none;
     }
   }
 }

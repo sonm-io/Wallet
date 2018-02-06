@@ -1,0 +1,43 @@
+@import "guide.less";
+
+body {
+  --input-color-mod: @color-blue;
+}
+
+.sonm-input {
+  position: relative;
+  margin: 5px 0;
+
+  &__input {
+    font-size: 16px;
+    color: @color-font-dark;
+    font-weight: 400;
+    line-height: 36px;
+    height: 36px;
+    box-sizing: padding-box;
+    background-color: transparent;
+    width: 100%;
+    transition: border-bottom-width;
+    padding: 0;
+    margin: 0;
+    border: 0;
+
+    outline: none;
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__underline {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--input-color-mod);
+  }
+
+  &__input:focus + &__underline {
+    height: 2px;
+  }
+}

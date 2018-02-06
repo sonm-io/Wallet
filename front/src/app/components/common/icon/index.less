@@ -1,0 +1,42 @@
+.sonm-icon {
+  display: inline-block;
+  border: 0;
+  padding: 0;
+  background: transparent center no-repeat;
+  background-size: contain;
+  text-decoration: none;
+  color: transparent;
+  font-size: inherit;
+
+  &:visited,
+  &:active,
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:focus,
+  &:active {
+    outline: @outline;
+  }
+
+  &:before {
+    font-size: .8em;
+    content: '  ';
+  }
+
+  &--download {
+    background-image: url(download.svg);
+  }
+
+  &--eye {
+    background-image: url(eye.svg);
+  }
+
+  &--pencil {
+    background-image: url(pencil.svg);
+  }
+
+  &--export {
+    background-image: url(export.svg);
+  }
+}
