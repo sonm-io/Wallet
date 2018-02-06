@@ -5,7 +5,8 @@
 @sonm-form-field-font-size: 14px;
 
 :root {
-  --color-form-field-text: color-font-gray;
+  --color-form-field-text: @color-font-gray;
+  --input-color-mod2: @color-border;
 }
 
 .sonm-form-field {
@@ -14,16 +15,19 @@
   &--error {
     color: @color-pink;
     --input-color-mod: @color-pink;
+    --input-color-mod2: @color-pink;
   }
 
   &--success {
     color: @color-green;
     --input-color-mod: @color-green;
+    --input-color-mod2: @color-green;
   }
 
   &--warning {
     color: @color-orange;
     --input-color-mod: @color-orange;
+    --input-color-mod2: @color-orange;
   }
 
   &--info {
@@ -40,6 +44,10 @@
   &__label {
     line-height: 100%;
     height: @sonm-form-field-font-size;
+  }
+
+  & &__input > input {
+    border-color: var(--input-color-mod2)
   }
 
   &__label {
