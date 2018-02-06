@@ -11,8 +11,8 @@ import { Form, FormRow, FormField } from 'app/components/common/form';
 import { SendStore } from 'app/stores/send';
 import { RootStore } from 'app/stores';
 import { Header } from 'app/components/common/header';
-import { ISendFormValues } from '../../../stores/types';
-import etherToGwei from '../../../utils/ether-to-gwei';
+import { ISendFormValues } from 'app/stores/types';
+import { etherToGwei } from 'app/utils/ether-to-gwei';
 
 interface IProps {
     className?: string;
@@ -20,6 +20,7 @@ interface IProps {
     initialCurrency?: string;
     initialAddress?: string;
     onRequireConfirmation: () => void;
+    onNotAvailable: () => void;
 }
 
 type PriorityInput = new () => ButtonGroup<string>;
@@ -28,6 +29,10 @@ const PriorityInput = ButtonGroup as PriorityInput;
 @observer
 export class Send extends React.Component<IProps, any> {
     public componentWillMount() {
+        if (this.props.rootStore.mainStore.accountAddressList.length === 0) {
+            this.props.onNotAvailable();
+        }
+
         if (this.props.initialAddress) {
             this.props.rootStore.sendStore.setUserInput({ fromAddress: this.props.initialAddress });
         }
