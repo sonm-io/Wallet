@@ -1,10 +1,12 @@
 import * as React from 'react';
+import * as cn from 'classnames';
 import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
 import { Input } from 'app/components/common/input';
 import { Form, FormRow, FormField, FormHeader, FormButtons } from 'app/components/common/form';
 import { MainStore } from 'app/stores/main';
-import { getMessageText } from '../../../../../api/error-messages';
+import { getMessageText } from 'app/api/error-messages';
+import { Hash } from 'app/components/common/hash-view';
 
 export interface IProps {
     address: string;
@@ -46,33 +48,50 @@ export class ShowPassword extends React.Component<IProps, any> {
     }
 
     public render() {
+        const when = this.state.privateKey === '' ? 'before' : 'after';
 
         return (
-            <Dialog onClickCross={this.props.onClose}>
+            <Dialog
+                onClickCross={this.props.onClose}
+                className={`sonm-show-key__dialog sonm-show-key__dialog--${when}`}
+            >
                 <Form onSubmit={this.handleSubmit} className="sonm-show-key__form">
-                    <FormHeader>Show private key</FormHeader>
-                    <FormRow>
-                        <FormField
-                            fullWidth
-                            label="Password"
-                            error={this.state.validationPassword}
-                        >
-                            <Input type="password" value={this.state.password} onChange={this.handleChangePassword}/>
-                        </FormField>
-                    </FormRow>
-                    <FormRow>
-                        <FormField label="Private key">
-                            <div className="sonm-show-key__key">
-                                {this.state.privateKey ? this.state.privateKey : '?'}
-                            </div>
-                        </FormField>
-                    </FormRow>
-                    <FormButtons>
+                    <FormHeader>
+                        {when === 'before'
+                            ? 'Show private key'
+                            : 'Private key'
+                        }
+                    </FormHeader>
+                    {when === 'before'
+                        ? <FormRow key="before">
+                            <FormField
+                                fullWidth
+                                label="Password"
+                                error={this.state.validationPassword}
+                            >
+                                <Input
+                                    autoFocus
+                                    type="password"
+                                    value={this.state.password}
+                                    onChange={this.handleChangePassword}
+                                />
+                            </FormField>
+                        </FormRow> : null}
+                    <Hash
+                        hash={this.state.privateKey}
+                        keepHashString
+                        hasCopyButton
+                        className={cn(
+                            'sonm-show-key__hash', {
+                            'sonm-show-key__hash--visible': when === 'after',
+                        })}
+                    />
+                    <FormButtons key="b">
                         <Button
-                            className=""
-                            type="submit"
+                            onClick={when === 'after' ? this.props.onClose : undefined}
+                            type={when === 'after' ? 'button' : 'submit'}
                         >
-                            Show
+                            {when === 'before' ? 'Show' : 'Close'}
                         </Button>
                     </FormButtons>
                 </Form>

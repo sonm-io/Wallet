@@ -7,6 +7,30 @@
   }
 
   &__form {
-    width: 490px;
+
+  }
+
+  &__dialog {
+    transition: all .25s;
+
+    &--before {
+      width: 280px;
+      height: 250px;
+    }
+
+    &--after {
+      width: 580px;
+      height: 220px;
+    }
+  }
+
+  &__hash {
+    transition: all .25s .25s;
+    opacity: 0;
+    margin: 0 0 20px 0;
+
+    &--visible {
+      opacity: 1;
+    }
   }
 }

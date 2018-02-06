@@ -103,7 +103,7 @@
     "analyze": "cross-env NODE_ENV=production WEBPACK_ANALYZE=1 webpack --config ./front/config/webpack.config.js",
     "webpack": "cross-env NODE_ENV=development webpack --config ./front/config/webpack.config.js",
     "webpack:one": "cross-env NODE_ENV=production BUILD_TYPE=singleFile webpack --config ./front/config/webpack.config.js",
-    "webpack:web": "cross-env NODE_ENV=production BUILD_TYPE=web webpack --config ./front/config/webpack.config.js",
+    "webpack:web": "cross-env SOURCE_MAP=1 NODE_ENV=production BUILD_TYPE=web webpack --config ./front/config/webpack.config.js",
     "prety": "prettier --write front/src/**/*.tsx && prettier --write front/src/**/*.ts",
     "sg": "styleguidist server",
     "karma": "cross-env NODE_ENV=production BUILD_TYPE=singleFile ./node_modules/karma/bin/karma start --browsers Chrome",
