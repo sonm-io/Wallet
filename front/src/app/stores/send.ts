@@ -98,7 +98,7 @@ export class SendStore extends AbstractStore {
             if (gasPrice === '') {
                 result.push('Required field');
             } else {
-                result.push(...validatePositiveInteger(gasPrice));
+                result.push(...validatePositiveNumber(gasPrice));
             }
         }
 
@@ -161,11 +161,13 @@ export class SendStore extends AbstractStore {
 
         if (this.userInput.gasPrice !== '') {
             const [min, max] = this.rootStore.mainStore.gasPriceThresholds;
-            const userInput = new BigNumber(gweiToEther(this.userInput.gasPrice));
-            if (userInput.lessThanOrEqualTo(min)) {
-                result = 'low';
-            } else if (userInput.greaterThanOrEqualTo(max)) {
-                result = 'high';
+            const userInput = createBigNumber(gweiToEther(this.userInput.gasPrice));
+            if (userInput) {
+                if (userInput.lessThanOrEqualTo(min)) {
+                    result = 'low';
+                } else if (userInput.greaterThanOrEqualTo(max)) {
+                    result = 'high';
+                }
             }
         }
 
