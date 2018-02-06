@@ -307,7 +307,7 @@ export class MainStore extends AbstractStore {
     @pending
     @catchErrors({ restart: false })
     @asyncAction
-    public * giveMeMore(accountAddress: string, password: string) {
+    public * giveMeMore(password: string, accountAddress: string) {
         const { validation } = yield Api.requestTestTokens(password, accountAddress);
 
         if (validation) {

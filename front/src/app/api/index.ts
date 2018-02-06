@@ -90,7 +90,7 @@ export class Api {
         return createPromise('checkConnection');
     }
 
-    public static async getPrivateKey(password: string, address: string): Promise<IResult<boolean>>  {
+    public static async getPrivateKey(password: string, address: string): Promise<IResult<string>>  {
         return createPromise('account.getPrivateKey', { address, password });
     }
 
