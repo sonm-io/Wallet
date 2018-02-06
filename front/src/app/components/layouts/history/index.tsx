@@ -80,9 +80,7 @@ export class History extends React.Component<IProps, any> {
         render: (_, record) => {
             const addr = record.currencyAddress;
             const currency = this.props.rootStore.mainStore.currencyMap.get(addr);
-            const symbol = currency
-                ? currency.symbol
-                : 'None';
+            const symbol = record.currencySymbol || (currency ? currency.symbol : 'None');
 
             const result = [
                 <Balance
