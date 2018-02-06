@@ -1,6 +1,14 @@
 .sonm-download-file {
   display: inline-block;
 
+  text-decoration: none;
+  &:hover,
+  &:focus,
+  &:active,
+  &:visited {
+    text-decoration: none;
+  }
+
   &--pending {
     opacity: 0.5;
   }
