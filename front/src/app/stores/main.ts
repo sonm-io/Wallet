@@ -90,8 +90,8 @@ export class MainStore extends AbstractStore {
         if (this.averageGasPriceEther !== '') {
             const bn = new BigNumber(this.averageGasPriceEther);
 
-            min = trimZeros(bn.mul(0.5).toFixed(9));
-            max = trimZeros(bn.mul(1.5).toFixed(9));
+            min = trimZeros(bn.mul(0.5).toFixed(18));
+            max = trimZeros(bn.mul(1.5).toFixed(18));
         }
 
         return [min, max];
