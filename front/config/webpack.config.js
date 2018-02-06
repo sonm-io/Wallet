@@ -10,6 +10,7 @@ const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 const buildType = process.env.BUILD_TYPE || '';
 const isDev = process.env.NODE_ENV !== 'production';
+const sourceMap = process.env.SOURCE_MAP;
 
 const extractLess = new ExtractTextPlugin({
     filename: isDev ? '[name].css' : '[name].[contenthash].css',
@@ -104,7 +105,10 @@ module.exports = {
                 ? new HtmlWebpackInlineSourcePlugin()
                 : null,
 
-            isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
+            isDev ? null : new MinifyPlugin({
+            }, {
+                sourceMap: sourceMap ? 'source-map' : false,
+            }),
 
             new webpack.NoEmitOnErrorsPlugin(),
 

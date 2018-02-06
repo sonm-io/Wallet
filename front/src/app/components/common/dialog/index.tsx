@@ -21,6 +21,7 @@ export class Dialog extends React.PureComponent<IDialogProps> {
             color = 'light',
             children,
             height,
+            className,
         } = this.props;
 
         const style = height
@@ -34,7 +35,7 @@ export class Dialog extends React.PureComponent<IDialogProps> {
                     key="popup-pale"
                 />
                 <div className="sonm-popup__outer" key="popup-content">
-                    <div className="sonm-popup__inner" style={style}>
+                    <div className={cn('sonm-popup__inner', className)} style={style}>
                         {this.props.onClickCross
                             ? <button
                                 type="button"

@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 
 interface IInputProps extends React.InputHTMLAttributes<any> {
+    autofocus?: boolean;
 }
 
 interface IFocusable {
@@ -15,7 +16,12 @@ export class Input extends React.Component<IInputProps, any> implements IFocusab
 
     protected inputNode: IFocusable | null = null;
 
-    protected saveRef = (ref: HTMLInputElement) => this.inputNode = ref;
+    protected saveRef = (ref: HTMLInputElement) => {
+        if (this.inputNode === null && ref !== null) {
+            ref.focus();
+        }
+        this.inputNode = ref;
+    }
 
     public render() {
         return <div className={cn('sonm-input', this.props.className)}>
