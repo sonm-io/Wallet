@@ -333,13 +333,12 @@ class Api {
 
     public importWallet = async (data: IPayload): Promise<IResponse> => {
         if (data.password && data.file && data.walletName) {
-            try {
-                this.setWalletHash(data.walletName);
-                this.secretKey = data.password;
+            if (data.file.substr(0,4) === 'sonm') {
+                try {
+                    this.setWalletHash(data.walletName);
+                    this.secretKey = data.password;
 
-                const storage = this.decrypt(data.file);
-
-                if (storage) {
+                    const storage = this.decrypt(data.file.substr(4));
                     this.storage = storage;
                     await this.saveData();
 
@@ -363,17 +362,17 @@ class Api {
                     return {
                         data: walletInfo,
                     };
-                } else {
+                } catch (err) {
                     return {
                         validation: {
                             password: 'password_not_valid',
                         },
                     };
                 }
-            } catch (err) {
+            } else {
                 return {
                     validation: {
-                        file: 'json_error',
+                        file: 'not_sonm_wallet_file',
                     },
                 };
             }
@@ -437,7 +436,7 @@ class Api {
 
     public exportWallet = async (): Promise<IResponse> => {
         return {
-            data: this.encrypt(this.storage),
+            data: 'sonm' + this.encrypt(this.storage),
         };
     }
 
