@@ -812,6 +812,7 @@ class Api {
         const transactions = this.storage.transactions;
         const gasPrice = utils.toWei(data.gasPrice, 'ether');
         const amount = utils.toWei(data.amount, 'ether');
+        const token = this.storage.tokens.find((item: t.ICurrencyInfo) => item.address === currencyAddress);
 
         const transaction = {
             timestamp,
@@ -819,6 +820,7 @@ class Api {
             toAddress,
             amount: data.amount,
             currencyAddress,
+            currencySymbol: token.symbol,
             hash: PENDING_HASH,
             fee: null,
             status: 'pending',

@@ -190,6 +190,7 @@ describe('Api',  async function() {
                 expect(transactions[0].fromAddress).equal(address);
                 expect(transactions[0].toAddress).equal(to);
                 expect(transactions[0].amount).equal(amount);
+                expect(transactions[0].currencySymbol).equal('Ether');
             }
 
             const currencies = await Api.getCurrencyList();
@@ -212,6 +213,7 @@ describe('Api',  async function() {
                         expect(transactions2[0].toAddress).equal(to);
                         expect(transactions2[0].amount).equal(amount);
                         expect(transactions2[0].currencyAddress).equal(currencies.data[1].address);
+                        expect(transactions2[0].currencySymbol).equal('SNMT');
                     }
                 }
             }
