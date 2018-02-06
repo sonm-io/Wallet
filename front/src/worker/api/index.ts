@@ -145,7 +145,7 @@ class Api {
             'addToken': this.addToken,
             'removeToken': this.removeToken,
             'getTokenInfo': this.getTokenInfo,
-            'getScamTokenList': this.getScamTokenList,
+            'getPresetTokenList': this.getPresetTokenList,
         };
 
         this.storage = {
@@ -792,7 +792,7 @@ class Api {
         }
     }
 
-    public getScamTokenList = async (data: IPayload): Promise<IResponse> => {
+    public getPresetTokenList = async (data: IPayload): Promise<IResponse> => {
         return {
             data: DEFAULT_TOKENS[this.storage.settings.chainId],
         };
