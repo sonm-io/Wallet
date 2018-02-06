@@ -79,10 +79,16 @@ export class History extends React.Component<IProps, any> {
         title: 'Amount / fee',
         render: (_, record) => {
             const addr = record.currencyAddress;
-            const currency = this.props.rootStore.mainStore.currencyMap.get(addr);
-            const symbol = currency
-                ? currency.symbol
-                : 'None';
+
+            let symbol = record.currencySymbol || '';
+
+            if (!symbol) {
+                const currency = this.props.rootStore.mainStore.currencyMap.get(addr);
+
+                if (currency) {
+                    symbol = currency.symbol;
+                }
+            }
 
             const result = [
                 <Balance

@@ -22,6 +22,7 @@ export interface  ISendTransaction {
 }
 
 export interface ISendTransactionResult extends ISendTransaction {
+    currencySymbol: string;
     fee?: string;
     confirmCount: number;
     status: TransactionStatus;
