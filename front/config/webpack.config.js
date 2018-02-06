@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const { getFullPath, readJson } = require('./utils');
+const { getFullPath, readJson, getPackageJson } = require('./utils');
 
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 
@@ -119,13 +119,18 @@ module.exports = {
                 /en-gb\.js/,
             ),
 
-            // new webpack.optimize.ModuleConcatenationPlugin(),
+            new webpack.optimize.ModuleConcatenationPlugin(),
 
             new webpack.EnvironmentPlugin(['NODE_ENV']),
 
             extractLess,
 
             new CssoWebpackPlugin(),
+
+            new webpack.DefinePlugin({
+                IS_DEV: JSON.stringify(isDev),
+                VERSION: JSON.stringify(getPackageJson().version),
+            }),
         ];
 
         return plugins.filter(x => x);
