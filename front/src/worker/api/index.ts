@@ -372,7 +372,7 @@ class Api {
             } else {
                 return {
                     validation: {
-                        file: 'not_sonm_wallet_file',
+                        encodedWallet: 'not_sonm_wallet_file',
                     },
                 };
             }
