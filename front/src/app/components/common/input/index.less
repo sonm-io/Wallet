@@ -1,7 +1,8 @@
 @import "guide.less";
 
-body {
-  --input-color-mod: @color-blue;
+:root {
+  --color-input-underline: @color-blue;
+  --color-input-text: @color-font-dark;
 }
 
 .sonm-input {
@@ -10,7 +11,7 @@ body {
 
   &__input {
     font-size: 16px;
-    color: @color-font-dark;
+    color: var(--color-input-text);
     font-weight: 400;
     line-height: 36px;
     height: 36px;
@@ -34,7 +35,7 @@ body {
     left: 0;
     right: 0;
     height: 1px;
-    background-color: var(--input-color-mod);
+    background-color: var(--color-input-underline);
   }
 
   &__input:focus + &__underline {

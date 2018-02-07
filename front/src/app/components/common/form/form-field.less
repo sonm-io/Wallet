@@ -6,7 +6,7 @@
 
 :root {
   --color-form-field-text: @color-font-gray;
-  --input-color-mod2: @color-border;
+  --color-input-border: @color-border;
 }
 
 .sonm-form-field {
@@ -14,25 +14,25 @@
 
   &--error {
     color: @color-pink;
-    --input-color-mod: @color-pink;
-    --input-color-mod2: @color-pink;
+    --color-input-underline: @color-pink;
+    --color-input-border: @color-pink;
   }
 
   &--success {
     color: @color-green;
-    --input-color-mod: @color-green;
-    --input-color-mod2: @color-green;
+    --color-input-underline: @color-green;
+    --color-input-border: @color-green;
   }
 
   &--warning {
     color: @color-orange;
-    --input-color-mod: @color-orange;
-    --input-color-mod2: @color-orange;
+    --color-input-underline: @color-orange;
+    --color-input-border: @color-orange;
   }
 
   &--info {
     color: @color-blue;
-    --input-color-mod:  @color-blue;
+    --color-input-underline:  @color-blue;
   }
 
   &--full-width {
@@ -47,7 +47,7 @@
   }
 
   & &__input > input {
-    border-color: var(--input-color-mod2)
+    border-color: var(--color-input-border)
   }
 
   &__label {

@@ -4,12 +4,21 @@ import * as cn from 'classnames';
 interface IFormProps extends React.FormHTMLAttributes<any> {
     className?: string;
     children: any;
+    theme?: string;
 }
 
 export function Form(props: IFormProps) {
-    const { className, ...rest } = props;
+    const { className, theme, ...rest } = props;
 
-    return <form className={cn('sonm-form', className)} {...rest}>
+    return <form
+        className={cn(
+            'sonm-form',
+            className, {
+                [`sonm-form--theme-${theme}`]: theme,
+            },
+        )}
+        {...rest}
+    >
         {props.children}
     </form>;
 }
