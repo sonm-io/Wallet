@@ -7,6 +7,7 @@ import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
 import { AlertList } from './sub/alerts';
 import { NavMenu } from './sub/nav-menu/index';
+import { Icon } from 'app/components/common/icon';
 
 interface IProps {
     className?: string;
@@ -15,6 +16,7 @@ interface IProps {
     selectedNavMenuItem: string;
     rootStore: RootStore;
     onNavigate: (url: string) => void;
+    onExit: () => void;
 }
 
 @observer
@@ -24,6 +26,12 @@ export class App extends React.Component<IProps, any> {
         { title: 'Send', url: '/send' },
         { title: 'History', url: '/history' },
     ];
+
+    protected handleExit = (event: any) => {
+        event.preventDefault();
+
+        this.props.onExit();
+    }
 
     public render() {
         const rootStore = this.props.rootStore;
@@ -51,36 +59,44 @@ export class App extends React.Component<IProps, any> {
                     <div className="sonm-app__nav">
                         <div className={`sonm-nav sonm-nav--${mainStore.networkName}`}>
                             <div className="sonm-nav__logo" />
-                                <NavMenu
-                                    url={selectedNavMenuItem}
-                                    items={App.menuConfig}
-                                    disabled={disabledMenu}
-                                    onChange={this.props.onNavigate}
-                                />
-                                <div className="sonm-nav__right-group">
-                                    <div className="sonm-nav__total">
-                                        <Balance
-                                            className="sonm-nav__total-item"
-                                            fullString={etherBalance}
-                                            fontSizePx={18}
-                                            decimals={2}
-                                        />
-                                        <Balance
-                                            className="sonm-nav__total-item"
-                                            fullString={primaryTokenBalance}
-                                            fontSizePx={18}
-                                            decimals={2}
-                                        />
+                            <NavMenu
+                                url={selectedNavMenuItem}
+                                items={App.menuConfig}
+                                disabled={disabledMenu}
+                                onChange={this.props.onNavigate}
+                            />
+                            <div className="sonm-nav__right-group">
+                                <div className="sonm-nav__total">
+                                    <Balance
+                                        className="sonm-nav__total-item"
+                                        fullString={etherBalance}
+                                        fontSizePx={18}
+                                        decimals={2}
+                                    />
+                                    <Balance
+                                        className="sonm-nav__total-item"
+                                        fullString={primaryTokenBalance}
+                                        fontSizePx={18}
+                                        decimals={2}
+                                    />
+                                </div>
+                                <div className="sonm-nav__network">
+                                    <div className="sonm-nav__network-type">
+                                        {mainStore.networkName === 'live' ? 'LIVENET' : 'TESTNET'}
                                     </div>
-                                    <div className="sonm-nav__network">
-                                        <div className="sonm-nav__network-type">
-                                            {mainStore.networkName === 'live' ? 'LIVENET' : 'TESTNET'}
-                                        </div>
-                                        <div className="sonm-nav__network-url">
-                                            {mainStore.nodeUrl.replace('https://', '')}
-                                        </div>
+                                    <div className="sonm-nav__network-url">
+                                        {mainStore.nodeUrl.replace('https://', '')}
                                     </div>
                                 </div>
+                                <Icon
+                                    title="logout"
+                                    href="#exit"
+                                    tag="a"
+                                    i="Exit"
+                                    onClick={this.handleExit}
+                                    className="sonm-nav__exit-icon"
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className="sonm-app__alert-group">

@@ -5,12 +5,13 @@
   background: transparent center no-repeat;
   background-size: contain;
   text-decoration: none;
-  color: transparent;
-  font-size: inherit;
+  position: relative;
+  vertical-align: middle;
 
-  &:visited,
-  &:active,
-  &:hover {
+  a&:focus,
+  a&:visited,
+  a&:active,
+  a&:hover {
     text-decoration: none;
   }
 
@@ -24,19 +25,11 @@
     content: '  ';
   }
 
-  &--download {
-    background-image: url(download.svg);
-  }
-
-  &--eye {
-    background-image: url(eye.svg);
-  }
-
-  &--pencil {
-    background-image: url(pencil.svg);
-  }
-
-  &--export {
-    background-image: url(export.svg);
+  & svg {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
   }
 }
