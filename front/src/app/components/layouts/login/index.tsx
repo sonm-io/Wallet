@@ -44,7 +44,6 @@ interface IState {
     error: string;
     network: NetworkEnum;
     validation: IValidation;
-    loginDisabled: boolean;
 }
 
 const emptyForm: Pick<IState, any> = {
@@ -75,7 +74,6 @@ export class Login extends React.Component<IProps, IState> {
         error: '',
         network: NetworkEnum.live,
         validation: emptyValidation,
-        loginDisabled: true,
     };
 
     protected getWalletList = async () =>  {
@@ -111,10 +109,6 @@ export class Login extends React.Component<IProps, IState> {
 
         if (listOfWallets.length === 0) {
             update.currentAction = 'create-new';
-        } else {
-            this.setState({
-                loginDisabled: false,
-            });
         }
 
         this.setState(update);
@@ -342,7 +336,7 @@ export class Login extends React.Component<IProps, IState> {
                     onClick={this.handleStartLogin}
                     type="submit"
                     ref={this.saveLoginBtnRef}
-                    disabled={this.state.loginDisabled}
+                    disabled={this.state.listOfWallets.length === 0}
                 >
                     Login
                 </Button>
