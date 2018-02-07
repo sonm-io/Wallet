@@ -19,7 +19,6 @@ import { delay } from 'app/utils/async-delay';
 import { trimZeros } from '../utils/trim-zeros';
 import { getMessageText } from 'app/api/error-messages';
 import { RootStore } from './';
-import { validateEtherAddress } from '../utils/validation/validate-ether-address';
 import { IWalletListItem } from 'app/api/types';
 
 const sortByName = sortBy(['name', 'address']);
@@ -29,14 +28,12 @@ interface IMainFormValues {
     password: string;
     passwordConfirmation: string;
     accountName: string;
-    tokenAddress: string;
 }
 
 const emptyForm: IMainFormValues = {
     password: '',
     passwordConfirmation: '',
     accountName: '',
-    tokenAddress: '',
 }
 
 Object.freeze(emptyForm);
@@ -320,80 +317,6 @@ export class MainStore extends AbstractStore {
                 type: AlertType.success,
                 message: getMessageText('wait_your_tokens'),
             });
-        }
-    }
-
-    @observable
-    public candidateTokenAddress: string = '';
-
-    @observable
-    public candidateTokenInfo: ICurrencyInfo | undefined;
-
-    @computed get validationCandidateToken(): string {
-        const tokenAddress = this.candidateTokenAddress;
-        const etherAddressValidation = validateEtherAddress(tokenAddress);
-        let result: string;
-
-        if (etherAddressValidation.length) {
-            result = etherAddressValidation.join(' ;');
-        } else if (this.currencyMap.has(tokenAddress)) {
-            result = getMessageText('token_already_exists');
-        } else {
-            result = this.validation.tokenAddress;
-        }
-
-        return result;
-    }
-
-    @action.bound
-    public setCandidateTokenAddress(address: string) {
-        if (this.candidateTokenAddress === address) {
-            return;
-        }
-
-        this.candidateTokenAddress = address;
-        this.candidateTokenInfo = undefined;
-        this.validation.tokenAddress = '';
-
-        if (this.validationCandidateToken === '') {
-            this.updateCandidateTokenInfo(address);
-        }
-    }
-
-    @catchErrors({ restart: true })
-    @asyncAction
-    protected * updateCandidateTokenInfo(address: string) {
-        const { validation, data } = yield Api.getTokenInfo(address);
-
-        if (validation) {
-           this.validation.tokenAddress = validation.address;
-        } else {
-           if (data === undefined) {
-               throw new Error('Undefined token info');
-           }
-
-           // TODO remove
-           if (!data) {
-               return;
-           }
-
-           if (address === this.candidateTokenAddress) {
-               this.candidateTokenInfo = data;
-           }
-        }
-    }
-
-    @pending
-    @catchErrors({ restart: true })
-    @asyncAction
-    public * approveCandidateToken() {
-        const candidateTokenAddress = this.candidateTokenAddress;
-        this.candidateTokenAddress = '';
-        this.candidateTokenInfo = undefined;
-        this.validation.tokenAddress = '';
-        const { data: currencyInfo } = yield Api.addToken(candidateTokenAddress);
-        if (currencyInfo) {
-            this.currencyMap.set(currencyInfo.address, currencyInfo);
         }
     }
 
