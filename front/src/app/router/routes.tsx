@@ -27,6 +27,10 @@ const navigateToSuccess = () => navigate({ path: '/send/success' });
 const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 
+function reload() {
+    window.location.reload(true);
+}
+
 const routes = [
     {
         path: '/',
@@ -38,6 +42,7 @@ const routes = [
                     <App
                         rootStore={rootStore}
                         onNavigate={navigateTo}
+                        onExit={reload}
                         selectedNavMenuItem={inner.pathKey}
                         {...inner.props}
                     >

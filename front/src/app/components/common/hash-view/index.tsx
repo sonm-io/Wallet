@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Icon } from '../icon';
 
 const LAST_SYMBOL_AMOUNT = 6;
 
@@ -71,7 +72,9 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
                     {end}
                 </span>
                 {showCopyButton
-                    ? <button className="sonm-hash__copy" onClickCapture={this.handleClickCopy} />
+                    ? <button className="sonm-hash__copy" title="copy" onClickCapture={this.handleClickCopy}>
+                        <Icon i="Copy" color="#000" />
+                    </button>
                     : null
                 }
             </Tag>

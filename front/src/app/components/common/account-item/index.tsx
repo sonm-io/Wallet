@@ -86,13 +86,13 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                             data={json}
                             fileName={`account-${address}.json`}
                         >
-                            <Icon i="download" className="sonm-account-item__action"/>
+                            <Icon i="Download" className="sonm-account-item__action"/>
                         </DownloadFile>
                         {this.props.onClickShowPrivateKey ?
                             <a href="#show-private-key"
                                onClick={this.handleShowPrivateKey}
                             >
-                                <Icon i="eye" className="sonm-account-item__action"/>
+                                <Icon i="Eye" className="sonm-account-item__action"/>
                             </a> : null}
                     </div>
                     : null}
@@ -174,7 +174,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             if (onRename) {
                 result.push(
                     <button key="b" className="sonm-account-item__edit-button" onClick={this.startEdit}>
-                        <Icon i="pencil" className="sonm-account-item__edit-icon"/>
+                        <Icon i="Pencil" className="sonm-account-item__edit-icon"/>
                     </button>,
                 );
             }
