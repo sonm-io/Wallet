@@ -12,6 +12,13 @@
   align-items: stretch;
   padding: 0;
 
+  &--theme-dark {
+    --color-form-field-text: @color-light-font;
+    --color-input-help-text: @color-light-font;
+    --color-input-underline: @color-blue;
+    --color-input-text: @color-white;
+  }
+
   &__row {
     flex: 0 1;
     display: flex;
@@ -49,7 +56,7 @@
     font-weight: 500;
     text-align: center;
     display: block;
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 0;
     padding: 0;
   }
 }

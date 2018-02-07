@@ -108,11 +108,6 @@ export class Wallets extends React.Component<IProps, IState> {
         this.props.rootStore.mainStore.removeToken(address);
     }
 
-    protected handleSubmitAddToken = () => {
-        this.props.rootStore.mainStore.approveCandidateToken();
-        this.closeDialog();
-    }
-
     protected handleShowPrivateKey = (address: string) => {
         this.switchDialog(WalletDialogs.showPrivateKey, address);
     }
@@ -213,7 +208,7 @@ export class Wallets extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.addToken
                         ? (
                             <AddToken
-                                mainStore={this.props.rootStore.mainStore}
+                                addTokenStore={this.props.rootStore.addTokenStore}
                                 onClickCross={this.closeDialog}
                             />
                         )

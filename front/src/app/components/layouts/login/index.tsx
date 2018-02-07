@@ -10,7 +10,10 @@ import { setFocus } from 'app/components/common/utils/setFocus';
 import { getMessageText } from 'app/api/error-messages';
 import { IWalletListItem } from 'app/api/types';
 import { IFileOpenResult, Upload } from 'app/components/common/upload';
+import { Icon } from 'app/components/common/icon';
+import { Input } from 'app/components/common/input';
 import { Form, FormButtons, FormHeader, FormRow, FormField } from 'app/components/common/form';
+import shortString from 'app/utils/short-string';
 
 interface IProps {
     className?: string;
@@ -43,7 +46,6 @@ interface IState {
     error: string;
     network: NetworkEnum;
     validation: IValidation;
-    loginDisabled: boolean;
 }
 
 const emptyForm: Pick<IState, any> = {
@@ -74,7 +76,6 @@ export class Login extends React.Component<IProps, IState> {
         error: '',
         network: NetworkEnum.live,
         validation: emptyValidation,
-        loginDisabled: true,
     };
 
     protected getWalletList = async () =>  {
@@ -110,10 +111,6 @@ export class Login extends React.Component<IProps, IState> {
 
         if (listOfWallets.length === 0) {
             update.currentAction = 'create-new';
-        } else {
-            this.setState({
-                loginDisabled: false,
-            });
         }
 
         this.setState(update);
@@ -341,7 +338,7 @@ export class Login extends React.Component<IProps, IState> {
                     onClick={this.handleStartLogin}
                     type="submit"
                     ref={this.saveLoginBtnRef}
-                    disabled={this.state.loginDisabled}
+                    disabled={this.state.listOfWallets.length === 0}
                 >
                     Login
                 </Button>
@@ -371,14 +368,17 @@ export class Login extends React.Component<IProps, IState> {
 
         return (
             <Dialog onClickCross={this.handleReturn} color="dark">
-                <Form onSubmit={this.handleSubmitImport} className="sonm-login__form">
+                <Form onSubmit={this.handleSubmitImport} className="sonm-login__form" theme="dark">
                     <FormHeader>Import wallet</FormHeader>
                     <FormRow>
                         <FormField
                             fullWidth
                             label="Wallet file"
                             error={this.state.validation.encodedWallet}
-                            success={this.state.encodedWalletFileName ? this.state.encodedWalletFileName : ''}
+                            success={this.state.encodedWalletFileName
+                                ? shortString(this.state.encodedWalletFileName, 20)
+                                : ''
+                            }
                         >
                             <Upload
                                 onOpenTextFile={this.handleOpenTextFile}
@@ -398,7 +398,7 @@ export class Login extends React.Component<IProps, IState> {
                             label="Wallet name"
                             error={this.state.validation.newName}
                         >
-                            <input
+                            <Input
                                 autoComplete="off"
                                 ref={setFocus}
                                 type="newName"
@@ -414,7 +414,7 @@ export class Login extends React.Component<IProps, IState> {
                             label="Password for file"
                             error={this.state.validation.password}
                         >
-                            <input
+                            <Input
                                 autoComplete="off"
                                 ref={setFocus}
                                 type="password"
@@ -526,7 +526,7 @@ export class Login extends React.Component<IProps, IState> {
                         className="sonm-login__create"
                         type="submit"
                     >
-                        Add wallet
+                        Create wallet
                     </Button>
                 </form>
             </Dialog>
@@ -558,14 +558,14 @@ export class Login extends React.Component<IProps, IState> {
                                 className="sonm-login__create-button"
                                 onClick={this.handleStartCreateNew}
                             >
-                                Create wallet
+                                CREATE WALLET
                             </a>
                             <a
                                 href="#import"
                                 className="sonm-login__import-button"
                                 onClick={this.handleStartImport}
                             >
-                                Import wallet
+                                <Icon i="Export" />IMPORT WALLET
                             </a>
                         </div>
                     </div>

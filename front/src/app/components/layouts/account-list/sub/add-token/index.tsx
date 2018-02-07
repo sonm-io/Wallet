@@ -4,17 +4,11 @@ import { Button } from 'app/components/common/button';
 import { FormField, FormRow, Form, FormButtons } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
-import { MainStore } from 'app/stores/main';
+import { AddTokenStore } from 'app/stores/add-token';
 import { observer } from 'mobx-react';
 
 export interface IProps {
-    /*tokenAddress: string;
-    validationTokenAddress: string;
-    onSubmit: (address: string) => void;
-    onClickCross: () => void;
-    onChangeTokenAddress: (tokenAddress: string) => void;
-    tokenInfo?: ICurrencyInfo;*/
-    mainStore: MainStore;
+    addTokenStore: AddTokenStore;
     onClickCross: () => void;
 }
 
@@ -23,7 +17,7 @@ export class AddToken extends React.Component<IProps, {}> {
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        this.props.mainStore.approveCandidateToken();
+        this.props.addTokenStore.approveCandidateToken();
 
         this.props.onClickCross();
     }
@@ -31,16 +25,22 @@ export class AddToken extends React.Component<IProps, {}> {
     protected handleChangeInput = async (event: any) => {
         const address = event.target.value.trim();
 
-        this.props.mainStore.setCandidateTokenAddress(address);
+        this.props.addTokenStore.setCandidateTokenAddress(address);
+    }
+
+    protected handleClose = () => {
+        this.props.addTokenStore.resetCandidateToken();
+
+        this.props.onClickCross();
     }
 
     public render() {
-        const tokenInfo = this.props.mainStore.candidateTokenInfo;
-        const tokenAddress = this.props.mainStore.candidateTokenAddress;
-        const validation = this.props.mainStore.validationCandidateToken;
+        const tokenInfo = this.props.addTokenStore.candidateTokenInfo;
+        const tokenAddress = this.props.addTokenStore.candidateTokenAddress;
+        const validation = this.props.addTokenStore.validationCandidateToken;
 
         return (
-            <Dialog onClickCross={this.props.onClickCross} height={tokenInfo ? 350 : 230}>
+            <Dialog onClickCross={this.handleClose} height={tokenInfo ? 350 : 230}>
                 <Form className="sonm-add-token__form" onSubmit={this.handleSubmit}>
                     <h3>Add token</h3>
                     <FormRow>
@@ -50,6 +50,7 @@ export class AddToken extends React.Component<IProps, {}> {
                             error={tokenAddress.length === 0 ? '' : validation}
                         >
                             <Input
+                                autoFocus
                                 value={tokenAddress}
                                 type="text"
                                 name="address"

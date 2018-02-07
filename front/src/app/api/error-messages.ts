@@ -18,8 +18,8 @@ export const messages: IValidation = {
     insufficient_funds: 'There is not enough Ether for the transaction',
     required_params_missed: 'Required parameter missed',
     not_sonm_wallet_file: 'This is not SONM wallet export file',
-    not_erc20_token: 'Not ERC20 token',
-    not_smart_contract: 'Not smart contract',
+    not_erc20_token: 'Token is not ERC20',
+    not_smart_contract: 'Address is not a token contract address',
 };
 
 export function getMessageText(code: string) {
