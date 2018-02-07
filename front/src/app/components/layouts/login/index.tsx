@@ -11,6 +11,7 @@ import { getMessageText } from 'app/api/error-messages';
 import { IWalletListItem } from 'app/api/types';
 import { IFileOpenResult, Upload } from 'app/components/common/upload';
 import { Form, FormButtons, FormHeader, FormRow, FormField } from 'app/components/common/form';
+import shortString from '../../../utils/short-string';
 
 interface IProps {
     className?: string;
@@ -378,7 +379,10 @@ export class Login extends React.Component<IProps, IState> {
                             fullWidth
                             label="Wallet file"
                             error={this.state.validation.encodedWallet}
-                            success={this.state.encodedWalletFileName ? this.state.encodedWalletFileName : ''}
+                            success={this.state.encodedWalletFileName
+                                ? shortString(this.state.encodedWalletFileName, 20)
+                                : ''
+                            }
                         >
                             <Upload
                                 onOpenTextFile={this.handleOpenTextFile}
@@ -526,7 +530,7 @@ export class Login extends React.Component<IProps, IState> {
                         className="sonm-login__create"
                         type="submit"
                     >
-                        Add wallet
+                        Create wallet
                     </Button>
                 </form>
             </Dialog>

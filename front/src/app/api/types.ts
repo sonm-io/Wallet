@@ -75,8 +75,8 @@ export interface IWalletList {
 }
 
 export enum NetworkEnum {
-    live = 'live',
-    rinkeby = 'rinkeby',
+    live = 'Livenet',
+    rinkeby = 'Rinkeby',
 }
 
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';
