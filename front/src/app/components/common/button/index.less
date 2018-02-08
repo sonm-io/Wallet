@@ -2,6 +2,7 @@
 
 .sonm-button {
   -webkit-appearance: none !important;;
+  cursor: pointer;
 
   --height: @sonm-button-height;
   --half-height: ~"calc(var(--height) / 2)";
@@ -85,6 +86,7 @@
     -webkit-text-fill-color: @color-light-gray;
     border-color: @color-dark-gray-bg;
     box-shadow: none;
+    cursor: not-allowed;
 
     &:hover,
     &:active {
