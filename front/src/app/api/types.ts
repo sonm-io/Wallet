@@ -22,6 +22,7 @@ export interface  ISendTransaction {
 }
 
 export interface ISendTransactionResult extends ISendTransaction {
+    currencySymbol: string;
     fee?: string;
     confirmCount: number;
     status: TransactionStatus;
@@ -54,6 +55,28 @@ export interface ITxListFilter {
     timeStart?: number;
     timeEnd?: number;
     query?: string;
+}
+
+export interface ISettings {
+    chainId: string;
+    nodeUrl: string;
+    language: string;
+}
+
+export interface IWalletListItem {
+    name: string;
+    chainId: string;
+    nodeUrl: string;
+}
+
+export interface IWalletList {
+    version: number;
+    data: IWalletListItem[];
+}
+
+export enum NetworkEnum {
+    live = 'Livenet',
+    rinkeby = 'Rinkeby',
 }
 
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

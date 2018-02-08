@@ -1,0 +1,47 @@
+@import "guide.less";
+
+@add-accoinut-inner-width: 400px;
+
+.sonm-accounts-add-account {
+  &__upload {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  &__submit-row {
+    justify-items: center;
+  }
+
+  &__form {
+    width: 300px;
+  }
+
+  &__preview {
+
+    &-title {
+      color: @color-light-font;
+      font-size: 13px;
+      display: block;
+    }
+
+    &-ct {
+      border: 1px solid @color-border;
+      border-radius: 0;
+      padding: 10px 15px;
+      margin: 0;
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+
+    &-icon {
+      flex-shrink: 0;
+    }
+
+    &-address {
+      margin-left: 10px;
+      font-weight: 500;
+      flex-shrink: 2;
+    }
+  }
+}

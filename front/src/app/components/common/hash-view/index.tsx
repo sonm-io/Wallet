@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Icon } from '../icon';
 
 const LAST_SYMBOL_AMOUNT = 6;
 
@@ -8,6 +9,7 @@ interface IBalanceViewProps {
     hash: string;
     prefix?: string;
     hasCopyButton?: boolean;
+    keepHashString?: boolean;
     onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
@@ -27,9 +29,17 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
     }
 
     public render() {
-        const { className, fontSizePx, hash, prefix, hasCopyButton, onClick } = this.props;
+        const {
+            className,
+            fontSizePx,
+            hash,
+            prefix,
+            hasCopyButton,
+            onClick,
+            keepHashString,
+        } = this.props;
 
-        const hash0x =  hash.startsWith('0x') ? hash : '0x' + hash;
+        const hash0x =  keepHashString || hash.startsWith('0x') ? hash : '0x' + hash;
 
         const len = hash0x.length;
         let start = hash0x;
@@ -60,11 +70,13 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
                 </span>
                 <span className="sonm-hash__end">
                     {end}
-                    {showCopyButton
-                        ? <button className="sonm-hash__copy" onClickCapture={this.handleClickCopy} />
-                        : null
-                    }
                 </span>
+                {showCopyButton
+                    ? <button className="sonm-hash__copy" title="copy" onClickCapture={this.handleClickCopy}>
+                        <Icon i="Copy" />
+                    </button>
+                    : null
+                }
             </Tag>
         );
     }

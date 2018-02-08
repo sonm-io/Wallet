@@ -10,15 +10,26 @@ export interface IButtonProps extends React.ButtonHTMLAttributes<any> {
     children?: any;
     height?: number;
     type?: string;
+    tag?: string;
+    autoFocus?: boolean;
 }
 
 export class Button extends React.PureComponent<IButtonProps> {
     protected buttonNode?: HTMLButtonElement;
 
-    protected saveRef = (ref: HTMLButtonElement | null) => ref && (this.buttonNode = ref);
+    protected saveRef = (ref: HTMLButtonElement | null) => {
+        if (ref !== null) {
+
+            if (this.props.autoFocus && this.buttonNode === undefined && ref.focus) {
+                ref.focus();
+            }
+
+            this.buttonNode = ref;
+        }
+    }
 
     public focus = () => {
-        this.buttonNode && this.buttonNode.focus();
+        this.buttonNode && this.buttonNode.focus && this.buttonNode.focus();
     }
 
     public render() {
@@ -38,8 +49,10 @@ export class Button extends React.PureComponent<IButtonProps> {
                 ? {'--height': `${height}px`, ...rest.style}
                 : rest.style;
 
+        const Tag = this.props.tag || 'button';
+
         return (
-            <button
+            <Tag
                 {...rest}
                 ref={this.saveRef}
                 className={cn(
@@ -55,7 +68,7 @@ export class Button extends React.PureComponent<IButtonProps> {
                 type={type === undefined ? 'button' : type}
             >
                 {children}
-            </button>
+            </Tag>
         );
     }
 }

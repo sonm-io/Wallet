@@ -1,122 +1,106 @@
-const path = require('path')
-const url = require('url')
-const electron = require('electron')
-const autoUpdater = require('./auto-updater')
+const path = require('path');
+const url = require('url');
+const electron = require('electron');
+const BrowserWindow = electron.BrowserWindow;
+const app = electron.app;
+const Menu = electron.Menu;
+const MenuItem = electron.MenuItem;
 
-const BrowserWindow = electron.BrowserWindow
-const app = electron.app
-
-const debug = /--debug/.test(process.argv[2])
-
-if (process.mas) {
-  app.setName('SONM Wallet')
-}
-
-console.log('process.version (node-js)', process.version)
-
-let mainWindow = null
+let mainWindow = null;
 
 function initialize () {
-  const shouldQuit = checkSingleInstance()
+    app.on('ready', function () {
+        createWindow();
+    });
 
-  if (shouldQuit) {
-    return app.quit()
-  }
+    app.on('window-all-closed', function () {
+        if (process.platform !== 'darwin') {
+            app.quit();
+        }
+    });
 
-  loadMainProcess()
-
-  app.on('ready', function () {
-    createWindow()
-    autoUpdater.initialize()
-  })
-
-  app.on('window-all-closed', function () {
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
-  })
-
-  app.on('activate', function () {
-    if (mainWindow === null) {
-      createWindow()
-    }
-  })
+    app.on('activate', function () {
+        if (mainWindow === null) {
+            createWindow();
+        }
+    });
 }
 
 function createWindow () {
-  const windowOptions = {
-    width: 1080,
-    minWidth: 680,
-    height: 840,
-    title: app.getName(),
-    webPreferences: {
-      webSecurity: false
+    const windowOptions = {
+        title: app.getName(),
+        //resizable: true,
+        width: 1280,
+        height: 840,
+        minWidth: 1280,
+        minHeight: 840,
+        maxWidth: 1280,
+        webPreferences: {
+            webSecurity: false
+        }
+    };
+
+    if (process.platform === 'linux') {
+        windowOptions.icon = path.join(__dirname, '/front/assets/app-icon.svg');
     }
-  }
 
-  if (process.platform === 'linux') {
-    windowOptions.icon = path.join(__dirname, '/assets/app-icon/png/512.png')
-  }
+    mainWindow = new BrowserWindow(windowOptions);
+    mainWindow.loadURL(url.format({
+        protocol: 'file',
+        slashes: true,
+        pathname: path.join(__dirname, 'docs/index.html')
+    }));
 
-  mainWindow = new BrowserWindow(windowOptions)
-  mainWindow.loadURL(url.format({
-    protocol: 'file',
-    slashes: true,
-    pathname: path.join(__dirname, 'workspaces/front/bundle/index.html')
-  }))
+    mainWindow.on('closed', function () {
+        mainWindow = null;
+    });
 
-  // Launch fullscreen with DevTools open, usage: npm run debug
-  if (debug) {
-    mainWindow.webContents.openDevTools()
-    mainWindow.maximize()
-    require('devtron').install()
-  }
+    // Create the Application's main menu
+    const template = [{
+        label: 'Electron',
+        submenu: [
+            {
+                label: 'Quit',
+                accelerator: 'Command+Q',
+                click: function() { app.quit(); }
+            },
+        ]
+    },
+        {
+            label: 'Edit',
+            submenu: [
+                {
+                    label: 'Copy',
+                    accelerator: 'Command+C',
+                    selector: 'copy:'
+                },
+                {
+                    label: 'Paste',
+                    accelerator: 'Command+V',
+                    selector: 'paste:'
+                }
+            ]
+        },
+        {
+            label: 'View',
+            submenu: [
+                {
+                    label: 'Reload',
+                    accelerator: 'Command+R',
+                    click: function() { mainWindow.reload(); }
+                },
+                {
+                    label: 'Toggle DevTools',
+                    accelerator: 'Alt+Command+I',
+                    click: function() { mainWindow.toggleDevTools(); }
+                },
+            ]
+        },
+    ];
 
-  mainWindow.on('closed', function () {
-    mainWindow = null
-  })
+    menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
 }
 
-// Make this app a single instance app.
-//
-// The main window will be restored and focused instead of a second window
-// opened when a person attempts to launch a second instance.
-//
-// Returns true if the current version of the app should quit instead of
-// launching.
-function checkSingleInstance () {
-  if (process.mas) {
-    return false
-  }
-
-  return app.makeSingleInstance(function () {
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) {
-        mainWindow.restore()
-      }
-      mainWindow.focus()
-    }
-  })
-}
-
-// Require each JS file in the main-process dir
-function loadMainProcess () {
-  autoUpdater.updateMenu()
-}
-
-// Handle Squirrel on Windows startup events
-switch (process.argv[1]) {
-  case '--squirrel-install':
-    autoUpdater.createShortcut(() => app.quit())
-    break
-  case '--squirrel-uninstall':
-    autoUpdater.removeShortcut(() => app.quit())
-    break
-  case '--squirrel-obsolete':
-  case '--squirrel-updated':
-    app.quit()
-    break
-  default:
-    initialize()
-}
+initialize();
 
