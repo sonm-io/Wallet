@@ -14,6 +14,7 @@ import { Icon } from 'app/components/common/icon';
 import { Input } from 'app/components/common/input';
 import { Form, FormButtons, FormHeader, FormRow, FormField } from 'app/components/common/form';
 import shortString from 'app/utils/short-string';
+import { Disclaimer } from './sub/disclaimer/index';
 
 interface IProps {
     className?: string;
@@ -22,7 +23,13 @@ interface IProps {
 
 class BlackWalletSelect extends BlackSelect<IWalletListItem> {}
 
-type TAction = 'select-wallet' | 'create-new' | 'enter-password' | 'import-wallet';
+enum EnumAction {
+    selectWallet,
+    createNew,
+    enterPassword,
+    importWallet,
+    disclaimer,
+}
 
 interface IRefs {
     loginBtn: Button | null;
@@ -33,7 +40,7 @@ const networkSelectList = [NetworkEnum.live, NetworkEnum.rinkeby].map(x => x.toS
 const emptyValidation: IValidation = {};
 
 interface IState {
-    currentAction: TAction;
+    currentAction: EnumAction;
     password: string;
     newName: string;
     newPassword: string;
@@ -63,7 +70,7 @@ export class Login extends React.Component<IProps, IState> {
     };
 
     public state = {
-        currentAction: ('select-wallet' as TAction),
+        currentAction: EnumAction.disclaimer,
         password: '',
         newName: '',
         newPassword: '',
@@ -78,6 +85,19 @@ export class Login extends React.Component<IProps, IState> {
         validation: emptyValidation,
     };
 
+    protected noTimer = false;
+
+    public componentDidMount() {
+        const hideDisclaimer = Boolean(window.localStorage.getItem('sonm-hide-disclaimer'));
+
+        this.noTimer = hideDisclaimer;
+        this.setState({
+            currentAction: hideDisclaimer
+                ? EnumAction.selectWallet
+                : EnumAction.disclaimer,
+        });
+    }
+
     protected getWalletList = async () =>  {
         this.setState({ pending: true });
 
@@ -89,7 +109,7 @@ export class Login extends React.Component<IProps, IState> {
 
         const listOfWallets = walletlList;
 
-        let name = '';
+        let name = this.state.name;
         const savedName = window.localStorage.getItem('sonm-last-used-wallet');
 
         if (savedName && listOfWallets.some(x => x.name === savedName)) {
@@ -98,22 +118,33 @@ export class Login extends React.Component<IProps, IState> {
             name = listOfWallets[0].name;
         }
 
-        const update: any = { // TODO use Partial<IState>
+        const update: Pick<IState, 'pending' | 'listOfWallets' | 'name'> = {
             pending: false,
             listOfWallets,
             name,
         };
 
-        if (listOfWallets.length === 1) {
-            update.name = listOfWallets[0].name;
-            update.currentAction = 'enter-password';
+        this.setState(update, () => {
+            if (this.state.currentAction !== EnumAction.disclaimer) {
+                this.nextAction();
+            }
+        });
+    }
+
+    protected nextAction() {
+        let currentAction = EnumAction.selectWallet;
+        let name = this.state.name;
+
+        if (this.state.listOfWallets.length === 1) {
+            name = this.state.listOfWallets[0].name;
+            currentAction = EnumAction.enterPassword;
         }
 
-        if (listOfWallets.length === 0) {
-            update.currentAction = 'create-new';
+        if (this.state.listOfWallets.length === 0) {
+            currentAction = EnumAction.createNew;
         }
 
-        this.setState(update);
+        this.setState({ name, currentAction });
     }
 
     protected async fastLogin() {
@@ -133,7 +164,7 @@ export class Login extends React.Component<IProps, IState> {
         this.getWalletList();
     }
 
-    protected openDialog(currentAction: TAction, event: React.MouseEvent<HTMLAnchorElement>) {
+    protected openDialog(currentAction: EnumAction, event: React.MouseEvent<HTMLAnchorElement>) {
         event.preventDefault();
 
         const update: Pick<IState, any> = { ...emptyForm };
@@ -143,9 +174,9 @@ export class Login extends React.Component<IProps, IState> {
         this.setState(update);
     }
 
-    protected handleStartLogin = this.openDialog.bind(this, 'enter-password');
-    protected handleStartCreateNew = this.openDialog.bind(this, 'create-new');
-    protected handleStartImport = this.openDialog.bind(this, 'import-wallet');
+    protected handleStartLogin = this.openDialog.bind(this, EnumAction.enterPassword);
+    protected handleStartCreateNew = this.openDialog.bind(this, EnumAction.createNew);
+    protected handleStartImport = this.openDialog.bind(this, EnumAction.importWallet);
 
     protected findWalletByName(name: string) {
         const wallet = this.state.listOfWallets.find(x => x.name === this.state.name);
@@ -303,7 +334,7 @@ export class Login extends React.Component<IProps, IState> {
     }
 
     protected handleReturn = () => {
-        this.setState({ currentAction: 'select-wallet', validation: {} });
+        this.setState({ currentAction: EnumAction.selectWallet, validation: {} });
     }
 
     protected saveLoginBtnRef = (ref: Button | null) => {
@@ -365,7 +396,7 @@ export class Login extends React.Component<IProps, IState> {
     }
 
     protected renderImportWalletPopup() {
-        if (this.state.currentAction !== 'import-wallet') {
+        if (this.state.currentAction !== EnumAction.importWallet) {
             return null;
         }
 
@@ -441,7 +472,7 @@ export class Login extends React.Component<IProps, IState> {
     }
 
     protected renderLoginPopup() {
-        if (this.state.currentAction !== 'enter-password') {
+        if (this.state.currentAction !== EnumAction.enterPassword) {
             return null;
         }
 
@@ -473,7 +504,7 @@ export class Login extends React.Component<IProps, IState> {
     }
 
     protected renderCreateWalletPopup() {
-        if (this.state.currentAction !== 'create-new') {
+        if (this.state.currentAction !== EnumAction.createNew) {
             return null;
         }
 
@@ -536,6 +567,34 @@ export class Login extends React.Component<IProps, IState> {
         );
     }
 
+    protected handleCloseDisclaimer = () => {
+        this.noTimer = true;
+        this.nextAction();
+    }
+
+    protected handleCloseDisclaimerForever = () => {
+        window.localStorage.setItem('sonm-hide-disclaimer', '1');
+        this.handleCloseDisclaimer();
+    }
+
+    protected renderDisclaimer() {
+        if (this.state.currentAction !== EnumAction.disclaimer) {
+            return null;
+        }
+
+        return <Disclaimer
+            onCloseForever={this.handleCloseDisclaimerForever}
+            onClose={this.handleCloseDisclaimer}
+            noTimer={this.noTimer}
+        />;
+    }
+
+    protected handleInfo = (event: any) => {
+        event.preventDefault();
+
+        this.setState({ currentAction: EnumAction.disclaimer });
+    }
+
     public render() {
         const {
             className,
@@ -550,7 +609,7 @@ export class Login extends React.Component<IProps, IState> {
                     <div
                         className={cn(
                             'sonm-login__center', {
-                            'sonm-login__center--blurred': this.state.currentAction !== 'select-wallet',
+                            'sonm-login__center--blurred': this.state.currentAction !== EnumAction.selectWallet,
                         })}
                     >
                         <div className="sonm-login__logo" />
@@ -558,23 +617,31 @@ export class Login extends React.Component<IProps, IState> {
                         <div className="sonm-login__actions">
                             <a
                                 href="#create"
-                                className="sonm-login__create-button"
+                                className="onm-login__action-button sonm-login__create-button"
                                 onClick={this.handleStartCreateNew}
                             >
                                 CREATE WALLET
                             </a>
                             <a
                                 href="#import"
-                                className="sonm-login__import-button"
+                                className="onm-login__action-button sonm-login__import-button"
                                 onClick={this.handleStartImport}
                             >
                                 <Icon i="Export" />IMPORT WALLET
+                            </a>
+                            <a
+                                onClick={this.handleInfo}
+                                href="#info"
+                                className="sonm-login__action-button sonm-login__info-button"
+                            >
+                                <Icon i="Info" />
                             </a>
                         </div>
                     </div>
                     {this.renderCreateWalletPopup()}
                     {this.renderLoginPopup()}
                     {this.renderImportWalletPopup()}
+                    {this.renderDisclaimer()}
                 </div>
                 <div className="sonm-login__version">Version: {VERSION}</div>
             </LoadMask>

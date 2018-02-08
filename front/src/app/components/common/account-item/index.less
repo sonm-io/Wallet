@@ -12,6 +12,7 @@
   font-weight: normal ;
   height: @account-item-height;
   line-height: @account-item-line-height !important;
+  color: @color-font-gray;
 
   &__blockies {
     margin: 5px;
@@ -38,7 +39,6 @@
   &__ether,
   &__sonm {
     font-size: 18px;
-    color: @color-font-gray;
     padding: 0;
     margin: 1px 5px;
   }
@@ -116,10 +116,11 @@
   }
 
   & &__action {
-    min-width: 20px;
+    font-size: 20px;
+    margin: 0 10px 0 0;
   }
 
-  &__buttons a {
-    margin: 0 10px 0 0;
+  &__buttons {
+    margin: 0 0 0 10px;
   }
 }
