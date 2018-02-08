@@ -38,6 +38,8 @@ interface IState {
     validation?: IValidation;
 }
 
+const emptyValidation: IValidation = {};
+
 class DeletableItem extends DeletableItemWithConfirmation<IAccountItemProps> {}
 
 @observer
@@ -46,7 +48,7 @@ export class Wallets extends React.Component<IProps, IState> {
         deleteAddress: '',
         visibleDialog: WalletDialogs.none,
         visibleDialogProps: [] as any[],
-        validation: {} as IValidation,
+        validation: emptyValidation,
     };
 
     protected handleClickAccount(address: string) {
@@ -92,7 +94,10 @@ export class Wallets extends React.Component<IProps, IState> {
         });
     }
 
-    protected closeDialog = this.switchDialog.bind(this, WalletDialogs.none);
+    protected closeDialog = () => {
+        this.setState({ validation: emptyValidation });
+        this.switchDialog(WalletDialogs.none);
+    }
     protected openNewWalletDialog = this.switchDialog.bind(this, WalletDialogs.new);
     protected openAddWalletDialog = this.switchDialog.bind(this, WalletDialogs.add);
 
