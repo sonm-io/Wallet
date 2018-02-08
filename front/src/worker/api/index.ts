@@ -293,6 +293,8 @@ class Api {
             this.setWalletHash(data.walletName);
             this.secretKey = data.password;
 
+            data.chainId = data.chainId.toLowerCase();
+
             this.storage.version = STORAGE_VERSION;
             this.storage.settings = {
                 chainId: data.chainId,
@@ -310,14 +312,24 @@ class Api {
 
             walletList.data.push(wallet);
 
-            const tokenList = await this.getTokenList();
-            this.storage.tokens = tokenList.getList();
+            try {
+                const tokenList = await this.getTokenList();
+                this.storage.tokens = tokenList.getList();
 
-            await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
+                await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
 
-            return {
-                data: wallet,
-            };
+                return {
+                    data: wallet,
+                };
+            } catch (err) {
+                console.log(err);
+
+                return {
+                    validation: {
+                        newName: 'network_error',
+                    },
+                };
+            }
         } else {
             const validation = {
                 password: !data.password ? 'password_required' : null,
@@ -697,13 +709,11 @@ class Api {
 
                     await this.saveData();
 
-                    const tokenList = await this.getTokenList();
-
                     return {
                         data: {
                             address,
                             name: data.name,
-                            currencyBalanceMap: await tokenList.getBalances(address),
+                            currencyBalanceMap: await this.getCurrencyBalances(address),
                         },
                     };
                 } else {
@@ -827,28 +837,33 @@ class Api {
 
         transactions.unshift(transaction);
 
-        const txResult = (currencyAddress === '0x'
-            ? await client.account.sendEther(
-                toAddress,
-                amount,
-                gasLimit,
-                gasPrice)
-            : await client.account.sendTokens(
-                toAddress,
-                amount,
-                currencyAddress,
-                gasLimit,
-                gasPrice,
-            ));
+        try {
+            const txResult = (currencyAddress === '0x'
+                ? await client.account.sendEther(
+                    toAddress,
+                    amount,
+                    gasLimit,
+                    gasPrice)
+                : await client.account.sendTokens(
+                    toAddress,
+                    amount,
+                    currencyAddress,
+                    gasLimit,
+                    gasPrice,
+                ));
 
-        transaction.hash = await txResult.getHash();
+            transaction.hash = await txResult.getHash();
 
-        await this.saveData();
-        await this.proceedTx(transaction, txResult);
+            await this.saveData();
+            await this.proceedTx(transaction, txResult);
 
-        return {
-            data: transaction,
-        };
+            return {
+                data: transaction,
+            };
+        } catch (err) {
+            transactions.shift();
+            throw err;
+        }
     }
 
     private async proceedTx(transaction: any, txResult: any) {

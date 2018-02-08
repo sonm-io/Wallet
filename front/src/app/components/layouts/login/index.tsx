@@ -201,7 +201,10 @@ export class Login extends React.Component<IProps, IState> {
                 );
 
                 if (validation) {
-                    this.setState({ validation });
+                    this.setState({
+                        pending: false,
+                        validation,
+                    });
                 } else if (walletListItem) {
                     window.localStorage.setItem('sonm-last-used-wallet', this.state.newName);
 

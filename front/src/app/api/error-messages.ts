@@ -20,6 +20,7 @@ export const messages: IValidation = {
     not_sonm_wallet_file: 'This is not SONM wallet export file',
     not_erc20_token: 'Token is not ERC20',
     not_smart_contract: 'Address is not a token contract address',
+    network_error: 'Ethereum node is unavailable',
 };
 
 export function getMessageText(code: string) {
