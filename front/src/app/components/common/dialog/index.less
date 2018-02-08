@@ -1,6 +1,7 @@
 @import "guide.less";
 
 .sonm-popup {
+
   &__pale,
   &__outer {
     z-index: @z-k2;
@@ -33,6 +34,8 @@
     margin-top: 0;
     opacity: 1;
     animation: inner-fade-in 0.25s ease;
+    max-height: 100vh;
+    overflow: auto;
 
     background-color: @color-white;
     border: solid 1px @color-border;
