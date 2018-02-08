@@ -480,7 +480,7 @@ export class Login extends React.Component<IProps, IState> {
             <Dialog onClickCross={this.handleReturn} color="dark">
                 <form className="sonm-login__popup-content" onSubmit={this.handleSubmitLogin}>
                     <h3 className="sonm-login__popup-header">Enter password</h3>
-                    <label className="sonm-login__label">
+                    <div className="sonm-login__label">
                         <span className="sonm-login__label-text">Password</span>
                         <span className="sonm-login__label-error">{this.state.validation.password}</span>
                         <input
@@ -491,7 +491,7 @@ export class Login extends React.Component<IProps, IState> {
                             name="password"
                             onChange={this.handleChangeInput}
                         />
-                    </label>
+                    </div>
                     <Button
                         className="sonm-login__create"
                         type="submit"
@@ -512,7 +512,7 @@ export class Login extends React.Component<IProps, IState> {
             <Dialog onClickCross={this.handleReturn} color="dark">
                 <form className="sonm-login__popup-content" onSubmit={this.handleSubmitCreate}>
                     <h3 className="sonm-login__popup-header">New wallet</h3>
-                    <label className="sonm-login__label">
+                    <div className="sonm-login__label">
                         <span className="sonm-login__label-text">Wallet name</span>
                         <span className="sonm-login__label-error">{this.state.validation.newName}</span>
                         <input
@@ -523,8 +523,8 @@ export class Login extends React.Component<IProps, IState> {
                             name="newName"
                             onChange={this.handleChangeInput}
                         />
-                    </label>
-                    <label className="sonm-login__label">
+                    </div>
+                    <div className="sonm-login__label">
                         <span className="sonm-login__label-text">Password</span>
                         <span className="sonm-login__label-error">{this.state.validation.newPassword}</span>
                         <input
@@ -534,8 +534,8 @@ export class Login extends React.Component<IProps, IState> {
                             name="newPassword"
                             onChange={this.handleChangeInput}
                         />
-                    </label>
-                    <label className="sonm-login__label">
+                    </div>
+                    <div className="sonm-login__label">
                         <span className="sonm-login__label-text">Confirm password</span>
                         <span className="sonm-login__label-error">{this.state.validation.newPasswordConfirmation}</span>
                         <input
@@ -545,8 +545,8 @@ export class Login extends React.Component<IProps, IState> {
                             name="newPasswordConfirmation"
                             onChange={this.handleChangeInput}
                         />
-                    </label>
-                    <label className="sonm-login__label">
+                    </div>
+                    <div className="sonm-login__label">
                         <span className="sonm-login__label-text">Ethereum network</span>
                         <BlackSelect
                             value={this.state.network.toString()}
@@ -555,7 +555,7 @@ export class Login extends React.Component<IProps, IState> {
                             onChange={this.handleChangeSelect}
                             options={networkSelectList}
                         />
-                    </label>
+                    </div>
                     <Button
                         className="sonm-login__create"
                         type="submit"
