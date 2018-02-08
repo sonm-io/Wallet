@@ -22,7 +22,7 @@ export class Disclaimer extends React.PureComponent<IProps, any> {
     protected checkTimer = () => {
         const now = Date.now();
         const end = this.startTime + (1000 * Disclaimer.TIMER_TIME_SEC);
-        let dontShowButtonText = 'I agree, don\'t show again';
+        let dontShowButtonText = 'I understand, don\'t show again';
 
         if (end > now) {
             dontShowButtonText = String(Math.ceil((end - now) / 1000));
@@ -94,7 +94,7 @@ export class Disclaimer extends React.PureComponent<IProps, any> {
                 >
                     {this.state.dontShowButtonText}
                 </Button>}
-                <Button autoFocus onClick={this.props.onClose}>I AGREE</Button>
+                <Button autoFocus onClick={this.props.onClose}>I UNDERSTAND</Button>
             </div>
         </Dialog>;
     }
