@@ -52,7 +52,7 @@ export class Disclaimer extends React.PureComponent<IProps, any> {
         return <Dialog className="sonm-disclaimer" color="dark">
             <h1>Welcome to SONM Wallet</h1>
             <p className="sonm-disclaimer__marker">
-                Before you start, please take some time to understand this information for your own safety.
+                Before you start, please read carefully and understand this information for your safety.
                 Your funds may be stolen if you do not heed these warnings.
             </p>
             <p>
@@ -65,21 +65,24 @@ export class Disclaimer extends React.PureComponent<IProps, any> {
                 We take reasonable security measures about the safety of your Keystore files and Private Keys, but we must explicitly note that independent security audit was not performed yet. Besides, we (like many other projects) use external libraries and dependencies that may contain vulnerabilities, that may lead to an information leak.
             </p>
             <p className="sonm-disclaimer__border">
-                <b>Only cold storage!</b>
+                <b>Only cold storage! </b>
                 <br />
-                Cryprocurrencies is a fast evolving technology, many different wallets were hacked at different times. The only safe way to keep your cryprocurrency is the <b>cold storage</b>.
-                Safety requires solid understanding of what is happening, ideally you should understand why the <b>cold storage</b> is the only safe option. This is a subject of a personal research.
+                Cryptocurrencies are a fast evolving technology, many different wallets were hacked at different times.
+                The only way to keep your cryptocurrency funds safe is the cold storage.
+                Safety requires a solid understanding of what is happening, ideally, you should understand why the cold storage is the only safe option.
+                This is a subject of personal research.
             </p>
             <ul>
                 <h2>Restrictions</h2>
                 <li>
-                    <b className="sonm-disclaimer__pink">WE STRONGLY RECOMMEND</b> you to use the SONM Wallet only for practical work with SONM system, for practical exercises with Ether and tokens.
+                    <b className="sonm-disclaimer__pink">WE STRONGLY RECOMMEND</b> you to use the SONM Wallet only for practical work with SONM system, for practical exercises with Ether and SONM tokens.
                 </li>
                 <li>
                     <b className="sonm-disclaimer__pink">DO NOT</b> use the SONM Wallet to store significant amounts of Ether and tokens. Any working online wallets can potentially be hacked.
                 </li>
                 <li>
-                    The way to safely work with Ether and tokens is the subject of a separate personal study by every citizen and <b className="sonm-disclaimer__pink">NOT TRIVIAL.</b> It requires specialized knowledge and research.
+                    The way to safely work with Ether and tokens is the subject of a separate personal study by every citizen and is <b className="sonm-disclaimer__pink">NOT TRIVIAL. </b>
+                    It requires specialized knowledge and research.
                 </li>
             </ul>
             <p>
