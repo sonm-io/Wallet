@@ -44,7 +44,7 @@ describe('Api',  async function() {
 
         if (response.data) {
             expect(response.data[0].symbol).equal('Ether');
-            expect(response.data[1].symbol).equal('SNMT');
+            expect(response.data[1].symbol).equal('SNM');
         }
     });
 
@@ -157,7 +157,7 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('validation.password');
     });
 
-    it('should send ether and snmt', async function() {
+    it('should send ether and snm', async function() {
         const amount = '0.000000000000000002';
         const to = 'fd0c80ba15cbf19770319e5e76ae05012314608f';
         const tx = {
@@ -213,7 +213,7 @@ describe('Api',  async function() {
                         expect(transactions2[0].toAddress).equal(to);
                         expect(transactions2[0].amount).equal(amount);
                         expect(transactions2[0].currencyAddress).equal(currencies.data[1].address);
-                        expect(transactions2[0].currencySymbol).equal('SNMT');
+                        expect(transactions2[0].currencySymbol).equal('SNM');
                     }
                 }
             }

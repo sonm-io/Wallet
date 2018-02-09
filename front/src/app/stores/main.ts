@@ -152,10 +152,10 @@ export class MainStore extends AbstractStore {
                 name: account.name,
                 etherBalance: isCurrencyListEmpty
                     ? ''
-                    : `${account.currencyBalanceMap[etherAddress]} ${this.etherInfo.symbol}`,
+                    : `${account.currencyBalanceMap[etherAddress] || ''} ${this.etherInfo.symbol}`,
                 primaryTokenBalance: isCurrencyListEmpty
                     ? ''
-                    : `${account.currencyBalanceMap[primaryTokenAddress]} ${this.primaryTokenInfo.symbol}`,
+                    : `${account.currencyBalanceMap[primaryTokenAddress] || ''} ${this.primaryTokenInfo.symbol}`,
             };
 
             return props;
