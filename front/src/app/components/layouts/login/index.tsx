@@ -434,7 +434,6 @@ export class Login extends React.Component<IProps, IState> {
                         >
                             <Input
                                 autoComplete="off"
-                                ref={setFocus}
                                 type="newName"
                                 className="sonm-login__input"
                                 name="newName"
@@ -450,7 +449,6 @@ export class Login extends React.Component<IProps, IState> {
                         >
                             <Input
                                 autoComplete="off"
-                                ref={setFocus}
                                 type="password"
                                 className="sonm-login__input"
                                 name="password"
