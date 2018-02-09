@@ -32,9 +32,8 @@ export class Dialog extends React.PureComponent<IDialogProps> {
             <div className={cn('sonm-popup', { 'sonm-popup--dark': color === 'dark'})}>
                 <div
                     className="sonm-popup__pale"
-                    key="popup-pale"
                 />
-                <div className="sonm-popup__outer" key="popup-content">
+                <div className="sonm-popup__outer">
                     <div className={cn('sonm-popup__inner', className)} style={style}>
                         {this.props.onClickCross
                             ? <button

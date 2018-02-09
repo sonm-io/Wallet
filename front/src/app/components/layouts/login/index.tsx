@@ -617,25 +617,25 @@ export class Login extends React.Component<IProps, IState> {
                         <div className="sonm-login__actions">
                             <a
                                 href="#create"
-                                className="onm-login__action-button sonm-login__create-button"
+                                className="sonm-login__action-button sonm-login__create-button"
                                 onClick={this.handleStartCreateNew}
                             >
                                 CREATE WALLET
                             </a>
                             <a
                                 href="#import"
-                                className="onm-login__action-button sonm-login__import-button"
+                                className="sonm-login__action-button sonm-login__import-button"
                                 onClick={this.handleStartImport}
                             >
                                 <Icon i="Export" />IMPORT WALLET
                             </a>
-                            <a
+                            <Icon
+                                tag="a"
                                 onClick={this.handleInfo}
                                 href="#info"
                                 className="sonm-login__action-button sonm-login__info-button"
-                            >
-                                <Icon i="Info" />
-                            </a>
+                                i="Info"
+                            />
                         </div>
                     </div>
                     {this.renderCreateWalletPopup()}

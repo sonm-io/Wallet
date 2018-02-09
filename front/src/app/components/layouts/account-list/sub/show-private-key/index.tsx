@@ -77,15 +77,16 @@ export class ShowPassword extends React.Component<IProps, any> {
                                 />
                             </FormField>
                         </FormRow> : null}
-                    <Hash
-                        hash={this.state.privateKey}
-                        keepHashString
-                        hasCopyButton
-                        className={cn(
-                            'sonm-show-key__hash', {
-                            'sonm-show-key__hash--visible': when === 'after',
-                        })}
-                    />
+                    {when === 'after' ?
+                        <Hash
+                            hash={this.state.privateKey}
+                            keepHashString
+                            hasCopyButton
+                            className={cn(
+                                'sonm-show-key__hash', {
+                                'sonm-show-key__hash--visible': when === 'after',
+                            })}
+                        /> : null }
                     <FormButtons key="b">
                         <Button
                             onClick={when === 'after' ? this.props.onClose : undefined}

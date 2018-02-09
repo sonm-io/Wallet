@@ -1,10 +1,38 @@
 @import "guide.less";
 
 .sonm-popup {
+  padding: 0;
+  margin: 0;
+  border: 0;
 
-  &__pale,
-  &__outer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  &__pale {
     z-index: @z-k2;
+  }
+
+  &__outer,
+  &__inner {
+    z-index: @z-k2 + 1;
+  }
+
+  &__outer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+
+    padding: 10px;
+    margin: 0;
+    border: 0;
   }
 
   &__pale {
@@ -12,35 +40,27 @@
 
     opacity: 0.7;
     background-color: @color-brand-bg;
-    position: fixed;
+    position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-  }
 
-  &__outer {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0;
+    margin: 0;
+    border: 0;
   }
 
   &__inner {
-    margin-top: 0;
+    margin: 0;
+    padding: 40px;
+
     opacity: 1;
     animation: inner-fade-in 0.25s ease;
-    max-height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
 
     background-color: @color-white;
     border: solid 1px @color-border;
-    padding: 40px;
     display: flex;
     flex-direction: column;
     z-index: @z-k2 + 1;

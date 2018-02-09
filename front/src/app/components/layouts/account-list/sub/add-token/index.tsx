@@ -40,7 +40,7 @@ export class AddToken extends React.Component<IProps, {}> {
         const validation = this.props.addTokenStore.validationCandidateToken;
 
         return (
-            <Dialog onClickCross={this.handleClose} height={tokenInfo ? 350 : 230}>
+            <Dialog onClickCross={this.handleClose} height={tokenInfo ? 380 : 260}>
                 <Form className="sonm-add-token__form" onSubmit={this.handleSubmit}>
                     <h3>Add token</h3>
                     <FormRow>
