@@ -1,4 +1,9 @@
+@import "./sub/disclaimer/index";
+
 .sonm-login {
+  --color-form-header: @color-font-gray;
+  --color-form-field-text: @color-font-gray;
+
   background-color: @color-brand-bg;
   min-height: 680px;
 
@@ -17,6 +22,15 @@
     bottom: 0;
     left: 0;
     right: 0;
+  }
+
+  &__version {
+    position: fixed;
+    right: 5px;
+    bottom: 5px;
+    color: @color-white;
+    z-index: @z-everest + 100;
+    font-size: 10px;
   }
 
   &__center {
@@ -86,14 +100,17 @@
   }
 
   &__create {
-    margin: 10px 0 0;
+    margin: 30px 0 0;
     width: 200px;
   }
 
+  &__form {
+    min-width: 330px;
+  }
 
   &__popup {
     &-header {
-      color: @color-font;
+      color: @color-font-gray;
       font-weight: 500;
       text-align: center;
       font-size: 18px;
@@ -114,21 +131,71 @@
     background: url('./logo.svg') no-repeat center;
   }
 
-  &__add-wallet {
-    margin: 20px 0;
-    display: block;
-    border: none;
-    outline: none;
-    background: transparent none;
-    color: @color-blue;
+  &__actions {
+    margin: 30px 0 0 0;
+  }
+
+  &__action-button {
     font-size: 18px;
+
     cursor: pointer;
-    padding: 5px;
+    opacity: 0.5;
+    margin: 0 10px 0 0;
+    padding: 5px 0;
+
+    text-decoration: none;
+    &:focus,
+    &:hover,
+    &:active,
+    &:visited {
+      text-decoration: none;
+    }
 
     &:focus,
     &:active {
       outline: @outline;
       outline-offset: 3px;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  & &__info-button {
+    color: @color-blue;
+    margin: 0 0 0 10px;
+    font-size: 30px;
+    vertical-align: middle;
+  }
+
+  & &__import-button {
+    color: @color-font-gray;
+    margin: 0 0 0 10px;
+  }
+
+  & &__create-button {
+    color: @color-blue;
+    margin: 0;
+  }
+
+  & &__network-type {
+    margin-top: 7px;
+    z-index: @z-everest + 1;
+  }
+
+  &__wallet-option {
+    &--rinkeby {
+      &:before {
+        content: '{testnet} ';
+        opacity: 0.5;
+      }
+    }
+    &--livenet {
+      &:before {
+        content: '{livenet} ';
+        opacity: 0.5;
+      }
     }
   }
 }

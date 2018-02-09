@@ -15,3 +15,9 @@ declare module 'lodash/fp/debounce' {
     namespace debounce {}
     export = debounce;
 }
+
+declare module 'lodash/fp/capitalize' {
+    function capitalize(s: string): string;
+    namespace capitalize {}
+    export = capitalize;
+}

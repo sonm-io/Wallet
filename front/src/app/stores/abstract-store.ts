@@ -2,10 +2,25 @@ import { observable, action, computed, when } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api';
-import { WalletApiError, IAlert, AlertType } from './types';
+import { WalletApiError } from './types';
 import { getMessageText } from 'app/api/error-messages';
 
+type FuncProcessError = (err: Error) => void;
+interface IErrorProcessor {
+    processError: FuncProcessError;
+}
+
+interface IAbstractStoreCtrArgs {
+    errorProcessor: IErrorProcessor;
+}
+
 export class AbstractStore {
+    constructor(args: IAbstractStoreCtrArgs) {
+        this.errorProcessor = args.errorProcessor;
+    }
+
+    protected errorProcessor: IErrorProcessor;
+
     @asyncAction
     protected * goOffline() {
         if (this.isOffline) { return; }
@@ -45,23 +60,7 @@ export class AbstractStore {
         return this.pendingSet.size > 0;
     }
 
-    protected static alertIdx = 0;
-    @observable public alerts: Map<string, IAlert> = new Map();
-
     @observable public isOffline = false;
-
-    @action
-    public addAlert(alert: IAlert) {
-        if (this.alerts.has(alert.message)) {
-            this.alerts.delete(alert.message);
-        }
-        this.alerts.set(`${new Date()}-${AbstractStore.alertIdx++}`, alert);
-    }
-
-    @action
-    public closeAlert(id: string) {
-        this.alerts.delete(id);
-    }
 
     @action
     protected handleError(e: WalletApiError, restart: boolean) {
@@ -76,7 +75,7 @@ export class AbstractStore {
                 },
             );
         } else {
-            this.addAlert({ message: e.message, type: AlertType.error });
+           this.errorProcessor.processError(e);
         }
     }
 

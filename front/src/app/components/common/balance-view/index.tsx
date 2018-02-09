@@ -11,6 +11,7 @@ interface IBalanceViewProps {
 }
 
 import * as cn from 'classnames';
+import trimZeros from 'app/utils/trim-zeros';
 
 export class Balance extends React.PureComponent<IBalanceViewProps, any> {
     public static defaultProps: Partial<IBalanceViewProps> = {
@@ -34,6 +35,8 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
                 : balance;
         }
 
+        out = trimZeros(out);
+
         const style = fontSizePx
             ? { fontSize: `${fontSizePx}px` }
             : undefined;
@@ -43,11 +46,11 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
                 className={cn('sonm-balance', className)}
                 style={style}
             >
-                <span className="sonm-balance__symbol">
-                    {symbol}
-                </span>
                 <span className="sonm-balance__number">
                     {prefix} {out}
+                </span>
+                <span className="sonm-balance__symbol">
+                    {symbol}
                 </span>
             </div>
         );
