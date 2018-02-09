@@ -3,6 +3,7 @@ import * as cn from 'classnames';
 
 interface IInputProps extends React.InputHTMLAttributes<any> {
     autoFocus?: boolean;
+    allowAutoComplete?: boolean;
 }
 
 interface IFocusable {
@@ -10,10 +11,6 @@ interface IFocusable {
 }
 
 export class Input extends React.Component<IInputProps, any> implements IFocusable {
-    protected static defaultProps = {
-        mod: 'default',
-    }
-
     protected inputNode: IFocusable | null = null;
 
     protected saveRef = (ref: HTMLInputElement) => {
@@ -24,10 +21,11 @@ export class Input extends React.Component<IInputProps, any> implements IFocusab
     }
 
     public render() {
-        const { autoFocus, className, ...rest } = this.props;
+        const { autoFocus, className, allowAutoComplete, ...rest } = this.props;
+        const autoComplete = allowAutoComplete ? 'on' : 'off';
 
         return <div className={cn('sonm-input', className)}>
-            <input {...rest} className="sonm-input__input" ref={this.saveRef}/>
+            <input {...rest} className="sonm-input__input" ref={this.saveRef} autoComplete={autoComplete}/>
             <div className="sonm-input__underline" />
         </div>;
     }
