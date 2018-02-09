@@ -53,7 +53,7 @@ export class History extends React.Component<IProps, any> {
             const account = this.props.rootStore.mainStore.accountMap.get(addr);
             const name = account
                 ? account.name
-                : addr;
+                : '';
 
             return [
                 <div key="0" className="sonm-tx-list__cell-from-name">{name}</div>,
@@ -67,10 +67,15 @@ export class History extends React.Component<IProps, any> {
         title: 'To',
         render: (_, record) => {
             const addr = record.toAddress;
+            const account = this.props.rootStore.mainStore.accountMap.get(addr);
+            const name = account
+                ? account.name
+                : '';
 
             return [
-                <IdentIcon key="0" address={addr} width={20} className="sonm-tx-list__cell-to-icon" />,
-                <Hash key="1" hash={addr} hasCopyButton className="sonm-tx-list__cell-to-hash" />,
+                <div key="0" className="sonm-tx-list__cell-from-name">{name}</div>,
+                <IdentIcon key="1" address={addr} width={20} className="sonm-tx-list__cell-to-icon" />,
+                <Hash key="2" hash={addr} hasCopyButton className="sonm-tx-list__cell-to-hash" />,
             ];
         },
     }, {
