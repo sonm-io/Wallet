@@ -73,14 +73,13 @@ function createPromise(
 }
 
 const DEFAULT_NODES: INodes = {
-    livenet: 'https://ropsten.infura.io',
-    live: 'https://ropsten.infura.io',
     default: 'https://ropsten.infura.io',
+    livenet: 'https://ropsten.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
 };
 
 const DEFAULT_TOKENS = {
-    live: [{
+    livenet: [{
         name: 'STORJ',
         decimals: 18,
         symbol: 'STORJ',
@@ -366,7 +365,7 @@ class Api {
                     try {
                         const tokenList = await this.getTokenList();
                         for (const token of this.storage.tokens) {
-                            tokenList.add(token.address);
+                            await tokenList.add(token.address);
                         }
                     } catch (err) {}
 
@@ -419,7 +418,7 @@ class Api {
                         this.storage.tokens = tokenList.getList();
                     } else {
                         for (const token of this.storage.tokens) {
-                            tokenList.add(token.address);
+                            await tokenList.add(token.address);
                         }
                     }
                 } catch (err) {}
@@ -466,7 +465,7 @@ class Api {
                 const tokenList = await this.getTokenList();
 
                 for (const token of this.storage.tokens) {
-                    tokenList.add(token.address);
+                    await tokenList.add(token.address);
                 }
             } else if (!this.storage.tokens.length) {
                 const tokenList = await this.getTokenList();

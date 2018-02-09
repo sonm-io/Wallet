@@ -82,7 +82,7 @@ export class App extends React.Component<IProps, any> {
                                 </div>
                                 <div className="sonm-nav__network">
                                     <div className="sonm-nav__network-type">
-                                        {mainStore.networkName === 'live' ? 'LIVENET' : 'TESTNET'}
+                                        {mainStore.networkName === 'livenet' ? 'LIVENET' : 'TESTNET'}
                                     </div>
                                     <div className="sonm-nav__network-url">
                                         {mainStore.nodeUrl.replace('https://', '')}
