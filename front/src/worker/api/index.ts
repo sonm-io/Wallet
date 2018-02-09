@@ -72,10 +72,12 @@ function createPromise(
     });
 }
 
-const DEFAULT_NODES = {
+const DEFAULT_NODES: INodes = {
+    livenet: 'https://ropsten.infura.io',
     live: 'https://ropsten.infura.io',
+    default: 'https://ropsten.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
-} as INodes;
+};
 
 const DEFAULT_TOKENS = {
     live: [{
@@ -296,9 +298,16 @@ class Api {
             data.chainId = data.chainId.toLowerCase();
 
             this.storage.version = STORAGE_VERSION;
+
+            let chainId = data.chainId;
+            let nodeUrl = DEFAULT_NODES[chainId];
+            if (nodeUrl === undefined) {
+                chainId = 'default';
+                nodeUrl = DEFAULT_NODES.default;
+            }
             this.storage.settings = {
-                chainId: data.chainId,
-                nodeUrl: DEFAULT_NODES[data.chainId],
+                chainId,
+                nodeUrl,
             };
             await this.saveData();
 
