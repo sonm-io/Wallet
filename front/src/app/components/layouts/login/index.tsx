@@ -320,7 +320,7 @@ export class Login extends React.Component<IProps, IState> {
 
     protected handleChangeSelect = (params: any) => {
         this.setState({
-            [params.name]: params.value,
+            [params.name]: params.value.toLowerCase(),
         });
     }
 
@@ -547,7 +547,7 @@ export class Login extends React.Component<IProps, IState> {
                     <div className="sonm-login__label">
                         <span className="sonm-login__label-text">Ethereum network</span>
                         <BlackSelect
-                            value={this.state.network.toString()}
+                            value={String(this.state.network)}
                             name="network"
                             className="sonm-login__network-type"
                             onChange={this.handleChangeSelect}

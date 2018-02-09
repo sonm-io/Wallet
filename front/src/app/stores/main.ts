@@ -50,7 +50,7 @@ export class MainStore extends AbstractStore {
     }
 
     @computed public get networkName(): string {
-        return this.walletInfo ? this.walletInfo.chainId : '';
+        return (this.walletInfo ? this.walletInfo.chainId : '').toLowerCase();
     }
 
     @computed public get nodeUrl(): string {

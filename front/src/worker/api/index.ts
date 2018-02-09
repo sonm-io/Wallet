@@ -73,8 +73,8 @@ function createPromise(
 }
 
 const DEFAULT_NODES: INodes = {
-    default: 'https://ropsten.infura.io',
-    livenet: 'https://ropsten.infura.io',
+    default: 'https://mainnet.infura.io',
+    livenet: 'https://mainnet.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
 };
 
