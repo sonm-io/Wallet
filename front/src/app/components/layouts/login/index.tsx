@@ -62,6 +62,7 @@ const emptyForm: Pick<IState, any> = {
     newPasswordConfirmation: '',
     encodedWallet: '',
     encodedWalletFileName: '',
+    network: NetworkEnum.live,
 };
 
 export class Login extends React.Component<IProps, IState> {
