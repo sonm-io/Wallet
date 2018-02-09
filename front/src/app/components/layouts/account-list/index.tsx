@@ -172,7 +172,7 @@ export class Wallets extends React.Component<IProps, IState> {
                 <CurrencyBalanceList
                     className="sonm-accounts__balances"
                     currencyBalanceList={this.props.rootStore.mainStore.fullBalanceList}
-                    onRequireAddToken={this.handleRequireAddToken}
+                    onRequireAddToken={this.props.rootStore.isOffline ? undefined : this.handleRequireAddToken}
                     onDeleteToken={this.handleDeleteToken}
                 />
                 <div className="sonm-accounts__buttons">
