@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
-import { FormField, FormRow, Form } from 'app/components/common/form';
+import { FormField, FormRow, Form, FormButtons } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
 import { IValidation } from 'ipc/types';
 import { getMessageText } from 'app/api/error-messages';
@@ -121,11 +121,13 @@ export class CreateAccount extends React.Component<IProps, any> {
                             />
                         </FormField>
                     </FormRow>
-                    <Button
-                        type="submit"
-                    >
-                        Create
-                    </Button>
+                    <FormButtons>
+                        <Button
+                            type="submit"
+                        >
+                            Create
+                        </Button>
+                    </FormButtons>
                 </Form>
             </Dialog>
         );
