@@ -38,7 +38,7 @@ function createPromise(
             }
 
             if (response.success) {
-                if (true || IS_DEV) {
+                if (IS_DEV) {
                     console.log(type, response, payload);
                 }
                 //
