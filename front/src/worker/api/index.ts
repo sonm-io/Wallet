@@ -321,24 +321,14 @@ class Api {
 
             walletList.data.push(wallet);
 
-            try {
-                const tokenList = await this.getTokenList();
-                this.storage.tokens = tokenList.getList();
+            const tokenList = await this.getTokenList();
+            this.storage.tokens = tokenList.getList();
 
-                await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
+            await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
 
-                return {
-                    data: wallet,
-                };
-            } catch (err) {
-                console.log(err);
-
-                return {
-                    validation: {
-                        newName: 'network_error',
-                    },
-                };
-            }
+            return {
+                data: wallet,
+            };
         } else {
             const validation = {
                 password: !data.password ? 'password_required' : null,
@@ -373,10 +363,12 @@ class Api {
                     };
                     walletList.data.push(walletInfo);
 
-                    const tokenList = await this.getTokenList();
-                    for (const token of this.storage.tokens) {
-                        tokenList.add(token.address);
-                    }
+                    try {
+                        const tokenList = await this.getTokenList();
+                        for (const token of this.storage.tokens) {
+                            tokenList.add(token.address);
+                        }
+                    } catch (err) {}
 
                     await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
 
@@ -420,16 +412,19 @@ class Api {
             if (dataFromStorage) {
                 this.storage = dataFromStorage;
 
-                const tokenList = await this.getTokenList();
+                try {
+                    const tokenList = await this.getTokenList();
 
-                if (!this.storage.tokens.length) {
-                    this.storage.tokens = tokenList.getList();
-                    await this.saveData();
-                }
+                    if (!this.storage.tokens.length) {
+                        this.storage.tokens = tokenList.getList();
+                    } else {
+                        for (const token of this.storage.tokens) {
+                            tokenList.add(token.address);
+                        }
+                    }
+                } catch (err) {}
 
-                for (const token of this.storage.tokens) {
-                    tokenList.add(token.address);
-                }
+                await this.saveData();
 
                 this.processTransactions();
 
@@ -464,6 +459,22 @@ class Api {
     public getAccountList = async (): Promise<IResponse> => {
         const accounts = await this.getAccounts() || {};
         const addresses = Object.keys(accounts);
+
+        //lazy init tokens
+        try {
+            if (this.storage.tokens.length !== this.tokenList.getList().length) {
+                const tokenList = await this.getTokenList();
+
+                for (const token of this.storage.tokens) {
+                    tokenList.add(token.address);
+                }
+            } else if (!this.storage.tokens.length) {
+                const tokenList = await this.getTokenList();
+                this.storage.tokens = tokenList.getList();
+
+                await this.saveData();
+            }
+        } catch (err) {}
 
         const requests = [];
         for (const address of Object.keys(accounts)) {
