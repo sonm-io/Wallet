@@ -460,6 +460,22 @@ class Api {
         const accounts = await this.getAccounts() || {};
         const addresses = Object.keys(accounts);
 
+        //lazy init tokens
+        try {
+            if (this.storage.tokens.length !== this.tokenList.getList().length) {
+                const tokenList = await this.getTokenList();
+
+                for (const token of this.storage.tokens) {
+                    tokenList.add(token.address);
+                }
+            } else if (!this.storage.tokens.length) {
+                const tokenList = await this.getTokenList();
+                this.storage.tokens = tokenList.getList();
+
+                await this.saveData();
+            }
+        } catch (err) {}
+
         const requests = [];
         for (const address of Object.keys(accounts)) {
             requests.push(this.getCurrencyBalances(address));
