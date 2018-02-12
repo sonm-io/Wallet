@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import { Icon } from '../icon';
 
 export type TColor = 'light' | 'dark';
 
@@ -36,10 +37,13 @@ export class Dialog extends React.PureComponent<IDialogProps> {
                 <div className="sonm-popup__outer">
                     <div className={cn('sonm-popup__inner', className)} style={style}>
                         {this.props.onClickCross
-                            ? <button
-                                type="button"
-                                className="sonm-popup__cross"
-                                onClick={this.handleClickCross}> + </button>
+                            ? <Icon
+                                    i="Close"
+                                    tag="button"
+                                    type="button"
+                                    className="sonm-popup__cross"
+                                    onClick={this.handleClickCross}
+                            />
                             : null}
                         {children}
                     </div>

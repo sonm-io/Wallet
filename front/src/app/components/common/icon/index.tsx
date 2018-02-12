@@ -11,6 +11,7 @@ const icons: any = {
     Copy: require('./copy.svg').default,
     Download: require('./download.svg').default,
     Info: require('./info.svg').default,
+    Close: require('./close.svg').default,
 }
 
 interface IAny {
