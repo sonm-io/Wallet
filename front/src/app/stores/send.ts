@@ -71,6 +71,10 @@ export class SendStore extends AbstractStore {
         return this.userInput.toAddress;
     }
 
+    @computed public get currentCurrency() {
+        return this.rootStore.mainStore.currencyMap.get(this.currencyAddress);
+    }
+
     protected isFieldTouched(fieldName: keyof ISendFormValues) {
         return this.userInputTouched.indexOf(fieldName) !== -1;
     }
@@ -121,6 +125,15 @@ export class SendStore extends AbstractStore {
                 result.push('Required field');
             } else {
                 result.push(...validatePositiveNumber(amount));
+
+                if (result.length === 0) {
+                    const decimalDigits = amount.split('.')[1];
+                    const decimals = this.currentCurrency ? Number(this.currentCurrency.decimals) : 0;
+
+                    if (decimalDigits && decimalDigits.length > decimals) {
+                        result.push(`Too many decimal digits. Maximum: ${decimals}`);
+                    }
+                }
 
                 if (result.length === 0) {
                     const currentMax = createBigNumber(this.currentBalanceMaximum);
