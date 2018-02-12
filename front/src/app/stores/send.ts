@@ -39,14 +39,18 @@ Object.freeze(emptyForm);
 // const allFormKeys = Object.keys(emptyForm) as Array<keyof ISendFormValues>;
 
 export class SendStore extends AbstractStore {
-    public static DEFAULT_GAS_LIMIT = '250000';
-
     protected rootStore: RootStore;
 
     constructor(rootStore: RootStore) {
         super({ errorProcessor: rootStore.uiStore });
 
         this.rootStore = rootStore;
+    }
+
+    @computed get defaultGasLimit() {
+        return this.rootStore.mainStore.networkName === 'livenet'
+            ? '50000'
+            : '250000';
     }
 
     @observable public userInput: ISendFormValues = { ...emptyForm };
@@ -134,7 +138,7 @@ export class SendStore extends AbstractStore {
     }
 
     @computed public get gasLimit() {
-        return this.userInput.gasLimit || SendStore.DEFAULT_GAS_LIMIT;
+        return this.userInput.gasLimit || this.defaultGasLimit;
     }
 
     @computed public get validationGasLimit() {
