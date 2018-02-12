@@ -39,14 +39,18 @@ Object.freeze(emptyForm);
 // const allFormKeys = Object.keys(emptyForm) as Array<keyof ISendFormValues>;
 
 export class SendStore extends AbstractStore {
-    public static DEFAULT_GAS_LIMIT = '250000';
-
     protected rootStore: RootStore;
 
     constructor(rootStore: RootStore) {
         super({ errorProcessor: rootStore.uiStore });
 
         this.rootStore = rootStore;
+    }
+
+    @computed get defaultGasLimit() {
+        return this.rootStore.mainStore.networkName === 'livenet'
+            ? '50000'
+            : '250000';
     }
 
     @observable public userInput: ISendFormValues = { ...emptyForm };
@@ -65,6 +69,10 @@ export class SendStore extends AbstractStore {
 
     @computed public get toAddress() {
         return this.userInput.toAddress;
+    }
+
+    @computed public get currentCurrency() {
+        return this.rootStore.mainStore.currencyMap.get(this.currencyAddress);
     }
 
     protected isFieldTouched(fieldName: keyof ISendFormValues) {
@@ -119,6 +127,15 @@ export class SendStore extends AbstractStore {
                 result.push(...validatePositiveNumber(amount));
 
                 if (result.length === 0) {
+                    const decimalDigits = amount.split('.')[1];
+                    const decimals = this.currentCurrency ? Number(this.currentCurrency.decimals) : 0;
+
+                    if (decimalDigits && decimalDigits.length > decimals) {
+                        result.push(`Too many decimal digits. Maximum: ${decimals}`);
+                    }
+                }
+
+                if (result.length === 0) {
                     const currentMax = createBigNumber(this.currentBalanceMaximum);
 
                     if (currentMax === undefined) {
@@ -134,7 +151,7 @@ export class SendStore extends AbstractStore {
     }
 
     @computed public get gasLimit() {
-        return this.userInput.gasLimit || SendStore.DEFAULT_GAS_LIMIT;
+        return this.userInput.gasLimit || this.defaultGasLimit;
     }
 
     @computed public get validationGasLimit() {

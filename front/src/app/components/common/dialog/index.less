@@ -4,6 +4,16 @@
   padding: 0;
   margin: 0;
   border: 0;
+  z-index: @z-k2;
+
+  &__pale {
+    z-index: @z-k2 + 1;
+  }
+
+  &__outer,
+  &__inner {
+    z-index: @z-k2 + 2;
+  }
 
   position: fixed;
   top: 0;
@@ -12,15 +22,6 @@
   bottom: 0;
   overflow-x: hidden;
   overflow-y: auto;
-
-  &__pale {
-    z-index: @z-k2;
-  }
-
-  &__outer,
-  &__inner {
-    z-index: @z-k2 + 1;
-  }
 
   &__outer {
     display: flex;
@@ -80,21 +81,16 @@
     }
   }
 
-  &__cross {
+  & &__cross {
     color: @color-dark-gray-bg;
     border: 1px dashed transparent;
     border-radius: 50%;
     background: none;
-    display: block;
     position: absolute;
     top: 4px;
     right: 4px;
     height: 30px;
-    line-height: 28px;
     width: 30px;
-    font-size: 30px;
-    font-weight: 100;
-    transform: rotate(45deg);
     cursor: pointer;
 
     &:focus,

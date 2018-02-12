@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import { Icon } from '../icon';
 
 export interface IAlertProps {
     id: string;
@@ -40,7 +41,7 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
             >
                 <span className="sonm-alert__message">{children}</span>
                 {onClosed
-                    ? <button type="button" className="sonm-alert__cross" onClick={this.handleClickCross}> + </button>
+                    ? <Icon i="Close" type="button" className="sonm-alert__cross" onClick={this.handleClickCross} />
                     : null
                 }
             </div>
