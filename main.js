@@ -8,6 +8,17 @@ const MenuItem = electron.MenuItem;
 
 let mainWindow = null;
 
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.focus();
+    }
+});
+
+if (isSecondInstance) {
+    app.quit()
+}
+
 function initialize () {
     app.on('ready', function () {
         createWindow();
