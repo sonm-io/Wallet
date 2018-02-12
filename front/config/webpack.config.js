@@ -117,7 +117,8 @@ module.exports = {
 
             new HtmlWebpackPlugin({
                 inject: true,
-                template: getFullPath('./assets/entry.html'),
+                // do not use template if electron
+                template:  process.env.PLATFORM ? getFullPath('./assets/electron-entry.html') : getFullPath('./assets/entry.html'),
                 inlineSource: '.(js|css)$',
             }),
 
@@ -148,6 +149,7 @@ module.exports = {
             new webpack.DefinePlugin({
                 IS_DEV: JSON.stringify(isDev),
                 VERSION: JSON.stringify(getPackageJson().version),
+                PLATFORM: JSON.stringify(process.env.PLATFORM),
             }),
         ];
 
