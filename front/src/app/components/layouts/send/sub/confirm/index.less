@@ -73,8 +73,11 @@
 
     border: @confirm-border;
     padding: @confirm-padding 30px 30px;
-    font-size: 16px;
     margin: 0;
+
+    font-size: 16px;
+
+    overflow: hidden;
 
     dt {
       font-weight: bold;
@@ -83,6 +86,8 @@
     }
 
     dd {
+      overflow: hidden;
+      text-overflow: ellipsis;
       display: block;
       margin: 0 0 20px 0;
     }
