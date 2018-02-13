@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "sonm-wallet",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "SONM Wallet",
   "main": "main.js",
   "directories": {},
@@ -32,7 +32,7 @@
     "css-loader": "^0.28.7",
     "csso-webpack-plugin": "^1.0.0-beta.10",
     "devtron": "1.4.0",
-    "electron": "^1.7.10",
+    "electron": "^1.8.2",
     "electron-packager": "^10.1.1",
     "eslint": "4.11.0",
     "eslint-plugin-lodash-fp": "2.1.3",
@@ -110,9 +110,10 @@
     "sg": "styleguidist server",
     "karma": "cross-env NODE_ENV=production BUILD_TYPE=singleFile ./node_modules/karma/bin/karma start --browsers Chrome",
     "karma:headless": "cross-env NODE_ENV=production BUILD_TYPE=singleFile ./node_modules/karma/bin/karma start --browsers ChromeHeadless --single-run --reporters teamcity --colors false",
-    "electron:macos": "cross-env PLATFORM=darwin node build.js",
-    "electron:windows": "cross-env PLATFORM=win32 node build.js",
-    "electron:linux": "cross-env PLATFORM=linux node build.js"
+    "electron": "npm run webpack:web && node build.js",
+    "electron:macos": "cross-env PLATFORM=darwin npm run electron",
+    "electron:windows": "cross-env PLATFORM=win32 npm run electron",
+    "electron:linux": "cross-env PLATFORM=linux npm run electron"
   },
   "repository": {
     "type": "git",

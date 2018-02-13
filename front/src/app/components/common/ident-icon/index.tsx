@@ -4,6 +4,7 @@ const ICON_PIXEL_SIZE = 8;
 
 export interface IProps {
     address: string;
+    onlyGeneratedIcon?: boolean;
     className?: string;
     width?: number;
 }
@@ -41,7 +42,7 @@ export class IdentIcon extends React.Component<IProps, any> {
     protected checkAddress(address: string): boolean {
         return (address.length === 40 && !address.startsWith('0x'))
             || (address.length === 42 && address.startsWith('0x'))
-            || (IdentIcon.icons[address]);
+            || (!this.props.onlyGeneratedIcon && IdentIcon.icons[address]);
     }
 
     private canvas: HTMLCanvasElement | null = null;
@@ -196,6 +197,7 @@ export class IdentIcon extends React.Component<IProps, any> {
             className,
             width,
             address,
+            onlyGeneratedIcon,
         } = this.props;
         const canvasSize = this.getCanvasSize();
 
@@ -206,7 +208,9 @@ export class IdentIcon extends React.Component<IProps, any> {
                 className={cn(
                     className,
                     'sonm-ident-icon__wrapper',
-                    IdentIcon.icons[address] && `sonm-ident-icon__icon-${IdentIcon.icons[address]}`,
+                    (!onlyGeneratedIcon && IdentIcon.icons[address])
+                        ? `sonm-ident-icon__icon-${IdentIcon.icons[address]}`
+                        : undefined,
                 )}
                 style={{ width: width as number, height: width as number }}
             >

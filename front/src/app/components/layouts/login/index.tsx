@@ -349,7 +349,7 @@ export class Login extends React.Component<IProps, IState> {
     }
 
     protected renderWalletOption(record: IWalletListItem) {
-        return <span className={`sonm-login__wallet-option--${record.chainId}`}>
+        return <span className={`sonm-login__wallet-option sonm-login__wallet-option--${record.chainId}`}>
             {record.name}
         </span>;
     }

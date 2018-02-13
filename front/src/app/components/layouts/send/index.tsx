@@ -143,6 +143,7 @@ export class Send extends React.Component<IProps, any> {
                         </FormField>
 
                         <IdentIcon
+                            onlyGeneratedIcon
                             address={sendStore.toAddress}
                             className="sonm-send__address-to-icon"
                         />

@@ -4,9 +4,21 @@ const electron = require('electron');
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
 const Menu = electron.Menu;
-const MenuItem = electron.MenuItem;
 
 let mainWindow = null;
+
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore();
+        }
+        mainWindow.focus();
+    }
+});
+
+if (isSecondInstance) {
+    app.quit();
+}
 
 function initialize () {
     app.on('ready', function () {
@@ -14,9 +26,7 @@ function initialize () {
     });
 
     app.on('window-all-closed', function () {
-        if (process.platform !== 'darwin') {
-            app.quit();
-        }
+        app.quit();
     });
 
     app.on('activate', function () {
@@ -31,13 +41,13 @@ function createWindow () {
         title: app.getName(),
         //resizable: true,
         width: 1280,
-        height: 840,
+        height: 670,
         minWidth: 1280,
-        minHeight: 840,
+        minHeight: 670,
         maxWidth: 1280,
         webPreferences: {
-            webSecurity: false
-        }
+            webSecurity: false,
+        },
     };
 
     if (process.platform === 'linux') {
@@ -48,7 +58,7 @@ function createWindow () {
     mainWindow.loadURL(url.format({
         protocol: 'file',
         slashes: true,
-        pathname: path.join(__dirname, 'docs/index.html')
+        pathname: path.join(__dirname, 'docs/index.html'),
     }));
 
     mainWindow.on('closed', function () {
@@ -62,24 +72,47 @@ function createWindow () {
             {
                 label: 'Quit',
                 accelerator: 'Command+Q',
-                click: function() { app.quit(); }
+                click: function() { app.quit(); },
             },
-        ]
+        ],
     },
         {
             label: 'Edit',
             submenu: [
                 {
+                    label: 'Undo',
+                    accelerator: 'Command+Z',
+                    selector: 'undo:',
+                },
+                {
+                    label: 'Redo',
+                    accelerator: 'Shift+Command+Z',
+                    selector: 'redo:',
+                },
+                {
+                    type: 'separator',
+                },
+                {
+                    label: 'Cut',
+                    accelerator: 'Command+X',
+                    selector: 'cut:',
+                },
+                {
                     label: 'Copy',
                     accelerator: 'Command+C',
-                    selector: 'copy:'
+                    selector: 'copy:',
                 },
                 {
                     label: 'Paste',
                     accelerator: 'Command+V',
-                    selector: 'paste:'
-                }
-            ]
+                    selector: 'paste:',
+                },
+                {
+                    label: 'Select All',
+                    accelerator: 'Command+A',
+                    selector: 'selectAll:',
+                },
+            ],
         },
         {
             label: 'View',
@@ -87,18 +120,18 @@ function createWindow () {
                 {
                     label: 'Reload',
                     accelerator: 'Command+R',
-                    click: function() { mainWindow.reload(); }
+                    click: function() { mainWindow.reload(); },
                 },
                 {
                     label: 'Toggle DevTools',
                     accelerator: 'Alt+Command+I',
-                    click: function() { mainWindow.toggleDevTools(); }
+                    click: function() { mainWindow.toggleDevTools(); },
                 },
-            ]
+            ],
         },
     ];
 
-    menu = Menu.buildFromTemplate(template);
+    const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 }
 
