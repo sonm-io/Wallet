@@ -44,7 +44,7 @@ describe('Api',  async function() {
 
         if (response.data) {
             expect(response.data[0].symbol).equal('Ether');
-            expect(response.data[1].symbol).equal('SNMT');
+            expect(response.data[1].symbol).equal('SNM');
         }
     });
 
@@ -73,6 +73,11 @@ describe('Api',  async function() {
 
         const response2 = await Api.getCurrencyList();
         expect(response2.data).to.have.lengthOf(2);
+    });
+
+    it('should get friendly token list', async function() {
+        const response = await Api.getScamTokenList();
+        expect(response.data).to.have.lengthOf(1);
     });
 
     it('should check connection', async function() {
@@ -127,14 +132,15 @@ describe('Api',  async function() {
 
     it('should export wallet && import wallet', async function() {
         const response = await Api.exportWallet();
-        expect(response).to.have.nested.property('data.walletName');
-        expect(response).to.have.nested.property('data.fileContent');
+        expect(response.data).to.be.a('string');
 
         if (response.data) {
-            expect(response.data.walletName).equal(walletName);
+            const walletImportName = 'wallet 2';
 
-            const response2 = await Api.importWallet(walletPassword, 'wallet 2', response.data.fileContent);
-            expect(response2.data).equal(true);
+            const response2 = await Api.importWallet(walletPassword, walletImportName , response.data);
+            expect(response2).to.have.nested.property('data.name', walletImportName);
+            expect(response2).to.have.nested.property('data.chainId');
+            expect(response2).to.have.nested.property('data.nodeUrl');
 
             const response3 = await Api.getWalletList();
             expect(response3.data).to.have.lengthOf(2);
@@ -151,7 +157,7 @@ describe('Api',  async function() {
         expect(response).to.have.nested.property('validation.password');
     });
 
-    it('should send ether and snmt', async function() {
+    it('should send ether and snm', async function() {
         const amount = '0.000000000000000002';
         const to = 'fd0c80ba15cbf19770319e5e76ae05012314608f';
         const tx = {
@@ -184,6 +190,7 @@ describe('Api',  async function() {
                 expect(transactions[0].fromAddress).equal(address);
                 expect(transactions[0].toAddress).equal(to);
                 expect(transactions[0].amount).equal(amount);
+                expect(transactions[0].currencySymbol).equal('Ether');
             }
 
             const currencies = await Api.getCurrencyList();
@@ -206,6 +213,7 @@ describe('Api',  async function() {
                         expect(transactions2[0].toAddress).equal(to);
                         expect(transactions2[0].amount).equal(amount);
                         expect(transactions2[0].currencyAddress).equal(currencies.data[1].address);
+                        expect(transactions2[0].currencySymbol).equal('SNM');
                     }
                 }
             }

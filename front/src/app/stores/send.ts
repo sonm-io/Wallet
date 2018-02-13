@@ -6,7 +6,6 @@ import {
     ISendTransactionResult,
     TransactionStatus,
 } from 'app/api';
-import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import {
     ISendFormValues,
@@ -19,7 +18,6 @@ import { AbstractStore } from './abstract-store';
 const { pending, catchErrors } = AbstractStore;
 import { etherToGwei } from 'app/utils/ether-to-gwei';
 import { gweiToEther } from 'app/utils/gwei-to-ether';
-import { trimZeros } from 'app/utils/trim-zeros';
 import { RootStore } from './';
 import {
     validateEtherAddress,
@@ -41,14 +39,18 @@ Object.freeze(emptyForm);
 // const allFormKeys = Object.keys(emptyForm) as Array<keyof ISendFormValues>;
 
 export class SendStore extends AbstractStore {
-    public static DEFAULT_GAS_LIMIT = '250000';
-
     protected rootStore: RootStore;
 
     constructor(rootStore: RootStore) {
         super({ errorProcessor: rootStore.uiStore });
 
         this.rootStore = rootStore;
+    }
+
+    @computed get defaultGasLimit() {
+        return this.rootStore.mainStore.networkName === 'livenet'
+            ? '50000'
+            : '250000';
     }
 
     @observable public userInput: ISendFormValues = { ...emptyForm };
@@ -67,6 +69,10 @@ export class SendStore extends AbstractStore {
 
     @computed public get toAddress() {
         return this.userInput.toAddress;
+    }
+
+    @computed public get currentCurrency() {
+        return this.rootStore.mainStore.currencyMap.get(this.currencyAddress);
     }
 
     protected isFieldTouched(fieldName: keyof ISendFormValues) {
@@ -99,7 +105,7 @@ export class SendStore extends AbstractStore {
             if (gasPrice === '') {
                 result.push('Required field');
             } else {
-                result.push(...validatePositiveInteger(gasPrice));
+                result.push(...validatePositiveNumber(gasPrice));
             }
         }
 
@@ -121,6 +127,15 @@ export class SendStore extends AbstractStore {
                 result.push(...validatePositiveNumber(amount));
 
                 if (result.length === 0) {
+                    const decimalDigits = amount.split('.')[1];
+                    const decimals = this.currentCurrency ? Number(this.currentCurrency.decimals) : 0;
+
+                    if (decimalDigits && decimalDigits.length > decimals) {
+                        result.push(`Too many decimal digits. Maximum: ${decimals}`);
+                    }
+                }
+
+                if (result.length === 0) {
                     const currentMax = createBigNumber(this.currentBalanceMaximum);
 
                     if (currentMax === undefined) {
@@ -136,7 +151,7 @@ export class SendStore extends AbstractStore {
     }
 
     @computed public get gasLimit() {
-        return this.userInput.gasLimit || SendStore.DEFAULT_GAS_LIMIT;
+        return this.userInput.gasLimit || this.defaultGasLimit;
     }
 
     @computed public get validationGasLimit() {
@@ -162,11 +177,13 @@ export class SendStore extends AbstractStore {
 
         if (this.userInput.gasPrice !== '') {
             const [min, max] = this.rootStore.mainStore.gasPriceThresholds;
-            const userInput = new BigNumber(gweiToEther(this.userInput.gasPrice));
-            if (userInput.lessThanOrEqualTo(min)) {
-                result = 'low';
-            } else if (userInput.greaterThanOrEqualTo(max)) {
-                result = 'high';
+            const userInput = createBigNumber(gweiToEther(this.userInput.gasPrice));
+            if (userInput) {
+                if (userInput.lessThanOrEqualTo(min)) {
+                    result = 'low';
+                } else if (userInput.greaterThanOrEqualTo(max)) {
+                    result = 'high';
+                }
             }
         }
 
@@ -188,7 +205,7 @@ export class SendStore extends AbstractStore {
 
         keys.forEach(key => {
             if (values[key] !== undefined) {
-                this.userInput[key] = trimZeros(values[key]);
+                this.userInput[key] = String(values[key]);
 
                 if (this.userInputTouched.indexOf(key) === -1) {
                     this.userInputTouched.push(key);
@@ -314,16 +331,28 @@ ${result.amount} ${currencyName} has been sent to the address ${result.toAddress
             this.fromAddress,
         ) as IAccountInfo;
 
-        let amount = new BigNumber(
+        let amount = createBigNumber(
             account.currencyBalanceMap[this.currencyAddress],
         );
 
-        if (this.rootStore.mainStore.etherAddress === this.currencyAddress) {
-            const fee = new BigNumber(this.gasPriceEther).mul(this.gasLimit);
-            amount = amount.minus(fee);
+        if (amount) {
+            if (this.rootStore.mainStore.etherAddress === this.currencyAddress) {
+                const gasPrice = createBigNumber(this.gasPriceEther);
+                const gasLimit = createBigNumber(this.gasLimit);
+
+                if (gasLimit && gasPrice) {
+                    const fee = gasPrice.mul(gasLimit);
+
+                    amount = amount.minus(fee);
+
+                    if (amount.lessThan(0)) {
+                        amount = undefined;
+                    }
+                }
+            }
         }
 
-        return amount.lessThan(0) ? '0' : amount.toString();
+        return amount === undefined ? '' : amount.toString();
     }
 }
 

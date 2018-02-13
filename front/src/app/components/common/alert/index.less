@@ -5,7 +5,7 @@
 
 .sonm-alert {
   position: relative;
-  z-index: @z-everest;
+  z-index: @z-kangchenjunga;
   border: 0 solid;
   padding: @alert-padding-vert @alert-padding-hor;
   transition: opacity 0.15s ease;
@@ -34,22 +34,18 @@
 
   }
 
-  &__cross {
-    z-index: @z-everest + 1;
+  & &__cross {
+    z-index: @z-kangchenjunga + 1;
     border: 1px dashed transparent;
     border-radius: 50%;
     background: none;
     display: block;
     position: absolute;
-    top: @alert-padding-vert;
-    right: @alert-padding-hor;
     height: 30px;
-    line-height: 28px;
     width: 30px;
-    font-size: 30px;
-    transform: rotate(45deg);
     cursor: pointer;
-    font-weight: 400;
+    right: 7px;
+    top: 7px;
 
     &:focus,
     &:active {

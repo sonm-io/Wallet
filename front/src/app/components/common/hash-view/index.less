@@ -36,20 +36,16 @@
     outline-offset: 0;
     display: inline-block;
     border: 0 solid transparent;
-    margin: 1px 5px;
+    margin: 1px 2px;
     padding: 0;
-    background: transparent url(./copy-icon.svg) center no-repeat;
-    background-size: contain;
-    width: 20px;
     cursor: pointer;
+    color: inherit;
+    background: transparent none;
+    appearance: none;
 
     &:focus,
     &:active {
       outline: @outline;
-    }
-
-    &:before {
-      content: ' ';
     }
   }
 }

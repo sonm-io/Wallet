@@ -1,5 +1,9 @@
 @nav-menu-line-height: 50px;
 
+:root {
+  --color-nav-menu-selection: @color-pink;
+}
+
 .sonm-app-nav-menu {
   background: @color-brand-bg;
   color: @color-light-font;
@@ -40,7 +44,7 @@
     }
 
     &--active {
-      border-color: @color-pink;
+      border-color: var(--color-nav-menu-selection);
       background-color: ~"rgba(255, 255, 255, 0.05)";
 
       & .sonm-app-nav-menu__item-link {

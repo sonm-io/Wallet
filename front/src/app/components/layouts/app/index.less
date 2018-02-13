@@ -7,7 +7,7 @@
 .sonm-app {
   margin: 0 auto;
   width: 1280px;
-  min-height: 100vh;
+  height: 100vh;
   border: 0;
   display: flex;
   flex-direction: column;
@@ -28,7 +28,7 @@
       margin: 0;
       position: relative;
       padding: 20px 50px 50px 50px;
-      min-height: 680px;
+      min-height: 50px;
       display:  flex;
       flex-direction:  column;
     }
@@ -38,7 +38,6 @@
     border: 1px solid @color-border;
     border-top-width: 0;
     border-bottom-width: 0;
-    position: sticky;
   }
 }
 
@@ -51,24 +50,79 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border-color: @color-brand-bg;
-  position: sticky;
+  border: 0;
+  border-left: 1px solid  @color-brand-bg;
+  border-right: 1px solid  @color-brand-bg;
 
   &__logo {
-    background: url('./sonm-wallet-logo.svg') no-repeat center;
+    background: url('./sonm-wallet-logo.svg') no-repeat left;
     width: 160px;
     height: 40px;
   }
 
   &__total {
-    margin: 0 0 0 16px;
-    font-size: 20px;
-    font-weight: 100;
-    color: @color-light-font;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0;
+    margin: 0;
 
-    &-group {
-      padding: 0;
-      margin: 0;
+    &-item {
+      display: inline-block;
+      margin: 0 0 0 16px;
+      font-size: 20px;
+      font-weight: 100;
+      color: @color-light-font;
+    }
+  }
+
+  &--rinkeby {
+    --color-nav-menu-selection: @color-pink;
+  }
+
+  &--livenet {
+    --color-nav-menu-selection: @color-green;
+  }
+
+  &__network {
+    display: inline-block;
+    vertical-align: middle;
+    color: @color-white;
+    padding: 8px 5px;
+    margin: 0 0 0 20px;
+    height: 100%;
+    font-weight: 100;;
+    font-size: 14px;
+    max-width: 150px;
+    overflow: hidden;
+
+    &-url {
+      overflow: hidden;
+      width: 100%;
+      font-size: 12px;
+      text-overflow: ellipsis;
+    }
+
+    &-type {
+      text-align: justify;
+      width: 70%;
+    }
+
+    background-color: var(--color-nav-menu-selection);
+  }
+
+  &__right-group {
+    align-self: stretch;
+  }
+
+  & &__exit-icon {
+    margin: 1px 0 1px 10px;
+    font-size: 20px;
+    color: var(--color-nav-menu-selection);
+    vertical-align: middle;
+
+    &:active,
+    &:hover {
+      color: @color-white;
     }
   }
 }

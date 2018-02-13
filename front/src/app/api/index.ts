@@ -12,7 +12,6 @@ import {
     IValidation,
     ITxListFilter,
     ISettings,
-    IWalletExport,
     IWalletListItem,
 } from './types';
 
@@ -39,7 +38,7 @@ function createPromise(
             }
 
             if (response.success) {
-                if (process.env.NODE_ENV !== 'production') {
+                if (IS_DEV) {
                     console.log(type, response, payload);
                 }
                 //
@@ -79,11 +78,11 @@ export class Api {
         return createPromise('unlockWallet', { password, walletName });
     }
 
-    public static async importWallet(password: string, walletName: string, json: string): Promise<IResult<boolean>>  {
-        return createPromise('importWallet', { password, walletName, json });
+    public static async importWallet(password: string, walletName: string, file: string): Promise<IResult<IWalletListItem>>  {
+        return createPromise('importWallet', { password, walletName, file });
     }
 
-    public static async exportWallet(): Promise<IResult<IWalletExport>>  {
+    public static async exportWallet(): Promise<IResult<string>>  {
         return createPromise('exportWallet');
     }
 
@@ -91,7 +90,7 @@ export class Api {
         return createPromise('checkConnection');
     }
 
-    public static async getPrivateKey(password: string, address: string): Promise<IResult<boolean>>  {
+    public static async getPrivateKey(password: string, address: string): Promise<IResult<string>>  {
         return createPromise('account.getPrivateKey', { address, password });
     }
 
@@ -170,6 +169,10 @@ export class Api {
 
     public static async getTokenInfo(address: string): Promise<IResult<ICurrencyInfo>>  {
         return createPromise('getTokenInfo', { address });
+    }
+
+    public static async getScamTokenList(): Promise<IResult<ICurrencyInfo[]>>  {
+        return createPromise('getPresetTokenList');
     }
 }
 

@@ -14,12 +14,16 @@ import { AddToken } from './sub/add-token';
 import { navigate } from 'app/router/navigate';
 import { IValidation } from 'app/api/types';
 import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
+import { DownloadFile } from 'app/components/common/download-file';
+import { Icon } from 'app/components/common/icon';
+import ShowPassword from './sub/show-private-key/index';
 
 enum WalletDialogs {
-    new = 'new',
-    add = 'add',
-    addToken = 'add-token',
-    none = '',
+    new,
+    add,
+    addToken,
+    none,
+    showPrivateKey,
 }
 
 interface IProps {
@@ -30,8 +34,11 @@ interface IProps {
 interface IState {
     deleteAddress: string;
     visibleDialog: WalletDialogs;
+    visibleDialogProps: any[];
     validation?: IValidation;
 }
+
+const emptyValidation: IValidation = {};
 
 class DeletableItem extends DeletableItemWithConfirmation<IAccountItemProps> {}
 
@@ -40,7 +47,8 @@ export class Wallets extends React.Component<IProps, IState> {
     public state = {
         deleteAddress: '',
         visibleDialog: WalletDialogs.none,
-        validation: {} as IValidation,
+        visibleDialogProps: [] as any[],
+        validation: emptyValidation,
     };
 
     protected handleClickAccount(address: string) {
@@ -51,8 +59,8 @@ export class Wallets extends React.Component<IProps, IState> {
         this.props.rootStore.mainStore.deleteAccount(deleteAddress);
     }
 
-    protected isValidationEmpty(obj: object) {
-        return Object.keys(obj).length === 0;
+    protected isValidationEmpty(validation: IValidation) {
+        return Object.keys(validation).every(x => validation[x] === '');
     }
 
     protected handleAddAccount = async (data: IAddAccountForm) => {
@@ -63,7 +71,7 @@ export class Wallets extends React.Component<IProps, IState> {
             data.name,
         ) as any; // ;(
 
-        this.setState({validation});
+        this.setState({ validation });
 
         if (this.isValidationEmpty(validation)) {
             this.closeDialog();
@@ -79,13 +87,17 @@ export class Wallets extends React.Component<IProps, IState> {
         this.closeDialog();
     }
 
-    protected switchDialog(name: WalletDialogs) {
+    protected switchDialog(name: WalletDialogs, ...args: any[]) {
         this.setState({
             visibleDialog: name,
+            visibleDialogProps: args,
         });
     }
 
-    protected closeDialog = this.switchDialog.bind(this, WalletDialogs.none);
+    protected closeDialog = () => {
+        this.setState({ validation: emptyValidation });
+        this.switchDialog(WalletDialogs.none);
+    }
     protected openNewWalletDialog = this.switchDialog.bind(this, WalletDialogs.new);
     protected openAddWalletDialog = this.switchDialog.bind(this, WalletDialogs.add);
 
@@ -98,13 +110,11 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     protected handleDeleteToken = (address: string) => {
-        debugger;
         this.props.rootStore.mainStore.removeToken(address);
     }
 
-    protected handleSubmitAddToken = () => {
-        this.props.rootStore.mainStore.approveCandidateToken();
-        this.closeDialog();
+    protected handleShowPrivateKey = (address: string) => {
+        this.switchDialog(WalletDialogs.showPrivateKey, address);
     }
 
     public render() {
@@ -113,11 +123,27 @@ export class Wallets extends React.Component<IProps, IState> {
         } = this.props;
 
         return (
-            <div className={cn('sonm-wallets', className)}>
-                <Header className="sonm-wallets__header">
+            <div className={cn('sonm-accounts', className)}>
+                <Header className="sonm-accounts__header">
                     Accounts
                 </Header>
-                <div className="sonm-wallets__list">
+                <DownloadFile
+                    getData={this.props.rootStore.mainStore.getWalletExportText}
+                    className="sonm-accounts__export-wallet"
+                    fileName={`sonm-wallet-${this.props.rootStore.mainStore.walletName}.json`}
+                >
+                    <Button
+                        tag="div"
+                        color="gray"
+                        square
+                        transparent
+                        height={40}
+                        className="sonm-accounts__export-wallet-button"
+                    >
+                        <Icon i="Export"/>{' Export wallet'}
+                    </Button>
+                </DownloadFile>
+                <div className="sonm-accounts__list">
                     { this.props.rootStore.mainStore.accountList.length === 0
                         ? <EmptyAccountList/>
                         :  this.props.rootStore.mainStore.accountList.map((x: IAccountItemProps) => {
@@ -125,7 +151,7 @@ export class Wallets extends React.Component<IProps, IState> {
                                 <DeletableItem
                                     item={x}
                                     Confirmation={DeleteAccountConfirmation}
-                                    className="sonm-wallets__list-item"
+                                    className="sonm-accounts__list-item"
                                     onDelete={this.handleDelete}
                                     key={x.address}
                                     id={x.address}
@@ -133,8 +159,9 @@ export class Wallets extends React.Component<IProps, IState> {
                                     <AccountItem
                                         {...x}
                                         onClickIcon={this.handleClickAccount}
+                                        onClickShowPrivateKey={this.handleShowPrivateKey}
                                         onRename={this.handleRename}
-                                        className="sonm-wallets__list-item-inner"
+                                        className="sonm-accounts__list-item-inner"
                                         hasButtons
                                     />
                                 </DeletableItem>
@@ -143,25 +170,26 @@ export class Wallets extends React.Component<IProps, IState> {
                     }
                 </div>
                 <CurrencyBalanceList
-                    className="sonm-wallets__balances"
+                    className="sonm-accounts__balances"
                     currencyBalanceList={this.props.rootStore.mainStore.fullBalanceList}
-                    onRequireAddToken={this.handleRequireAddToken}
+                    onRequireAddToken={this.props.rootStore.isOffline ? undefined : this.handleRequireAddToken}
                     onDeleteToken={this.handleDeleteToken}
                 />
-                <div className="sonm-wallets__buttons">
+                <div className="sonm-accounts__buttons">
                     <Button
                         type="button"
                         onClick={this.openAddWalletDialog}
-                        className="sonm-wallets__button"
+                        color="violet"
+                        className="sonm-accounts__button"
                     >
-                        Add account
+                        IMPORT ACCOUNT
                     </Button>
                     <Button
                         type="button"
                         onClick={this.openNewWalletDialog}
-                        className="sonm-wallets__button"
+                        className="sonm-accounts__button"
                     >
-                        New account
+                        CREATE ACCOUNT
                     </Button>
                     {this.state.visibleDialog === WalletDialogs.new
                         ? (
@@ -185,8 +213,17 @@ export class Wallets extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.addToken
                         ? (
                             <AddToken
-                                mainStore={this.props.rootStore.mainStore}
+                                addTokenStore={this.props.rootStore.addTokenStore}
                                 onClickCross={this.closeDialog}
+                            />
+                        )
+                        : null}
+                    {this.state.visibleDialog === WalletDialogs.showPrivateKey
+                        ? (
+                            <ShowPassword
+                                mainStore={this.props.rootStore.mainStore}
+                                address={this.state.visibleDialogProps[0]}
+                                onClose={this.closeDialog}
                             />
                         )
                         : null}

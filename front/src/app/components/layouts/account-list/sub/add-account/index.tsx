@@ -8,6 +8,7 @@ import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Input } from 'app/components/common/input/index';
 import { getMessageText } from 'app/api/error-messages'; // TODO move to context
 import { FormField, FormRow, Form, FormButtons } from 'app/components/common/form';
+import { shortString } from 'app/utils/short-string';
 
 // import { setFocus } from 'app/components/common/utils/setFocus';
 
@@ -120,7 +121,7 @@ export class AddAccount extends React.Component<IProps, any> {
 
             update.address = address.startsWith('0x') ? address : `0x${address}`;
             update.json = lowerCase;
-            update.fileSuccess = `File ${params.fileName} has been selected`;
+            update.fileSuccess = params.fileName;
             update.validation = { ...this.state.validation, json: '' };
 
             const nameInput = this.nodes.name;
@@ -154,19 +155,19 @@ export class AddAccount extends React.Component<IProps, any> {
         const validation: IValidation = this.state.validation;
 
         return (
-            <Dialog onClickCross={this.handleClickCross} height={this.state.address === '' ? 420 : 530}>
-                <Form className="sonm-wallets-add-account__form" onSubmit={this.handleSubmit}>
+            <Dialog onClickCross={this.handleClickCross} height={this.state.address === '' ? 440 : 550}>
+                <Form className="sonm-accounts-add-account__form" onSubmit={this.handleSubmit}>
                     <h3>Add account</h3>
                     <FormRow>
                         <FormField
                             fullWidth
                             label=""
                             error={validation.json}
-                            success={this.state.fileSuccess}
+                            success={shortString(this.state.fileSuccess, 20)}
                         >
                             <Upload
                                 onOpenTextFile={this.handleOpenTextFile}
-                                className="sonm-wallets-add-account__upload"
+                                className="sonm-accounts-add-account__upload"
                                 buttonProps={{
                                     square: true,
                                     height: 40,
@@ -215,13 +216,13 @@ export class AddAccount extends React.Component<IProps, any> {
                     {this.state.address === '' ? null :
                         <FormRow>
                             <FormField fullWidth>
-                                <div className="sonm-wallets-add-account__preview-ct">
+                                <div className="sonm-accounts-add-account__preview-ct">
                                     <IdentIcon
-                                        className="sonm-wallets-add-account__preview-icon"
+                                        className="sonm-accounts-add-account__preview-icon"
                                         address={this.state.address}
                                     />
                                     <Hash
-                                        className="sonm-wallets-add-account__preview-address"
+                                        className="sonm-accounts-add-account__preview-address"
                                         hash={this.state.address}
                                     />
                                 </div>

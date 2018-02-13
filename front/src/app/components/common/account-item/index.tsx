@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IdentIcon } from '../ident-icon';
 import * as cn from 'classnames';
-import Icon from 'antd/es/icon';
+import { Icon } from '../icon';
 import { Balance } from '../balance-view';
 import { Hash } from '../hash-view';
 import { DownloadFile } from '../download-file';
@@ -15,6 +15,7 @@ export interface IAccountItemProps {
     primaryTokenBalance: string;
     onRename?: (newName: string, address: string) => void;
     onClickIcon?: (address: string) => void;
+    onClickShowPrivateKey?: (address: string) => void;
     hasButtons?: boolean;
 }
 
@@ -30,6 +31,14 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
 
         if (this.props.onClickIcon) {
             this.props.onClickIcon(this.props.address);
+        }
+    }
+
+    protected handleShowPrivateKey = (event: any) => {
+        event.preventDefault();
+
+        if (this.props.onClickShowPrivateKey) {
+            this.props.onClickShowPrivateKey(this.props.address);
         }
     }
 
@@ -72,8 +81,19 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                 />
                 {hasButtons && json
                     ?
-                    <div className="sonm-account-item__download">
-                        <DownloadFile data={json} fileName={`account-${address}.json`}/>
+                    <div className="sonm-account-item__buttons">
+                        <DownloadFile
+                            data={json}
+                            fileName={`account-${address}.json`}
+                        >
+                            <Icon i="Download" className="sonm-account-item__action"/>
+                        </DownloadFile>
+                        {this.props.onClickShowPrivateKey ?
+                            <a href="#show-private-key"
+                               onClick={this.handleShowPrivateKey}
+                            >
+                                <Icon i="Eye" className="sonm-account-item__action"/>
+                            </a> : null}
                     </div>
                     : null}
             </div>
@@ -153,8 +173,8 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
 
             if (onRename) {
                 result.push(
-                    <button key="b" className="sonm-account-item__edit-icon" onClick={this.startEdit}>
-                        <Icon type="edit" />
+                    <button key="b" className="sonm-account-item__edit-button" onClick={this.startEdit}>
+                        <Icon i="Pencil" className="sonm-account-item__edit-icon"/>
                     </button>,
                 );
             }

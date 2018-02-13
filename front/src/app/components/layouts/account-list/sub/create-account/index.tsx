@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
-import { FormField, FormRow, Form } from 'app/components/common/form';
+import { FormField, FormRow, Form, FormButtons } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
 import { IValidation } from 'ipc/types';
 import { getMessageText } from 'app/api/error-messages';
@@ -80,7 +80,7 @@ export class CreateAccount extends React.Component<IProps, any> {
     public render() {
         return (
             <Dialog onClickCross={this.handleClickCross}>
-                <Form className="sonm-wallets-create-account__form" onSubmit={this.handleSubmit}>
+                <Form className="sonm-accounts-create-account__form" onSubmit={this.handleSubmit}>
                     <h3>New account</h3>
                     <FormRow>
                         <FormField
@@ -121,11 +121,13 @@ export class CreateAccount extends React.Component<IProps, any> {
                             />
                         </FormField>
                     </FormRow>
-                    <Button
-                        type="submit"
-                    >
-                        Create
-                    </Button>
+                    <FormButtons>
+                        <Button
+                            type="submit"
+                        >
+                            Create
+                        </Button>
+                    </FormButtons>
                 </Form>
             </Dialog>
         );

@@ -1,0 +1,36 @@
+.sonm-icon {
+  display: inline-block;
+  border: 0;
+  padding: 0;
+  background: transparent center no-repeat;
+  background-size: contain;
+  text-decoration: none;
+  position: relative;
+  vertical-align: baseline;
+  -webkit-appearance: none !important;
+
+  a&:focus,
+  a&:visited,
+  a&:active,
+  a&:hover {
+    text-decoration: none;
+  }
+
+  &:focus,
+  &:active {
+    outline: @outline;
+  }
+
+  &:before {
+    font-size: .8em;
+    content: '  ';
+  }
+
+  & svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+  }
+}

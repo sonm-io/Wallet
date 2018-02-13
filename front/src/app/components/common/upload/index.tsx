@@ -12,9 +12,9 @@ export interface IUploadProps {
 }
 
 export interface IFileOpenResult {
-    text?: string;
-    error?: any;
-    fileName?: string;
+    text: string;
+    error?: string;
+    fileName: string;
 }
 
 export class Upload extends React.PureComponent<IUploadProps, any> {
@@ -28,46 +28,47 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
         }
 
         const { onOpenTextFile } = this.props;
-        if (!onOpenTextFile) {
-            return;
-        }
 
-        const file = event.target.files[0];
-        if (file.size > MAX_FILE_SIZE) {
-            throw new Error('Too big file');
-        }
+        if (onOpenTextFile) {
+            const file = event.target.files[0];
+            if (file.size > MAX_FILE_SIZE) {
+                throw new Error('Too big file');
+            }
 
-        const fileReader = new FileReader();
+            const fileReader = new FileReader();
 
-        fileReader.addEventListener('load', () => {
-            this.setState({ pending: false });
-            onOpenTextFile({
-                text: fileReader.result,
-                fileName: file.name,
+            fileReader.addEventListener('load', () => {
+                this.setState({ pending: false });
+                onOpenTextFile({
+                    text: fileReader.result,
+                    fileName: file.name,
+                });
             });
-        });
 
-        fileReader.addEventListener('error', (error: any) => {
-            this.setState({ pending: false });
-            onOpenTextFile({
-                error: String(error),
-                fileName: file.name,
+            fileReader.addEventListener('error', (error: any) => {
+                this.setState({ pending: false });
+                onOpenTextFile({
+                    error: String(error),
+                    fileName: file.name,
+                    text: '',
+                });
             });
-        });
 
-        this.setState({ pending: true });
-        try {
-            fileReader.readAsText(file);
-        } catch (e) {
-            this.setState({ pending: false });
-            onOpenTextFile({
-                error: String(e),
-                fileName: file.name,
-            });
+            this.setState({ pending: true });
+            try {
+                fileReader.readAsText(file);
+            } catch (e) {
+                this.setState({ pending: false });
+                onOpenTextFile({
+                    error: String(e),
+                    fileName: file.name,
+                    text: '',
+                });
+            }
+
+            event.preventDefault();
+            event.target.value = null;
         }
-
-        event.preventDefault();
-        event.target.value = null;
     }
 
     protected inputNode?: HTMLInputElement;

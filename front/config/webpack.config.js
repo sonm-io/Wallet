@@ -4,12 +4,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const { getFullPath, readJson } = require('./utils');
+const { getFullPath, readJson, getPackageJson } = require('./utils');
 
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 const buildType = process.env.BUILD_TYPE || '';
 const isDev = process.env.NODE_ENV !== 'production';
+const sourceMap = false; // process.env.SOURCE_MAP ? 'source-map' : undefined;
 
 const extractLess = new ExtractTextPlugin({
     filename: isDev ? '[name].css' : '[name].[contenthash].css',
@@ -80,6 +81,24 @@ module.exports = {
                         loader: 'ts-loader',
                     }],
                 },
+                {
+                    issuer: /\.tsx/,
+                    test: /\.svg$/,
+                    use: [
+                        "babel-loader",
+                        {
+                            loader: "react-svg-loader",
+                            options: {
+                                svgo: {
+                                    plugins: [
+                                        { removeTitle: false },
+                                    ],
+                                    floatPrecision: 2,
+                                },
+                            },
+                        },
+                    ],
+                },
             ];
 
             return rules.filter(x => x);
@@ -87,6 +106,8 @@ module.exports = {
     },
 
     watch: isDev,
+
+    devtool: sourceMap,
 
     plugins: (() => {
         const plugins = [
@@ -96,7 +117,8 @@ module.exports = {
 
             new HtmlWebpackPlugin({
                 inject: true,
-                template: getFullPath('./assets/entry.html'),
+                // do not use template if electron
+                template:  process.env.PLATFORM ? getFullPath('./assets/electron-entry.html') : getFullPath('./assets/entry.html'),
                 inlineSource: '.(js|css)$',
             }),
 
@@ -104,7 +126,10 @@ module.exports = {
                 ? new HtmlWebpackInlineSourcePlugin()
                 : null,
 
-            isDev ? null : new MinifyPlugin({}, { sourceMap: false }),
+            isDev ? null : new MinifyPlugin({
+            }, {
+                sourceMap: sourceMap,
+            }),
 
             new webpack.NoEmitOnErrorsPlugin(),
 
@@ -120,6 +145,12 @@ module.exports = {
             extractLess,
 
             new CssoWebpackPlugin(),
+
+            new webpack.DefinePlugin({
+                IS_DEV: JSON.stringify(isDev),
+                VERSION: JSON.stringify(getPackageJson().version),
+                PLATFORM: JSON.stringify(process.env.PLATFORM),
+            }),
         ];
 
         return plugins.filter(x => x);

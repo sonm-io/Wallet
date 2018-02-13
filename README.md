@@ -1,7 +1,7 @@
 # SONM Wallet
 
 
-### https://sonm-io.github.io/Wallet/
+### https://sonm-io.github.io/wallet-web/
 ### [Download the Latest Release](https://github.com/sonm-io/Wallet/releases/latest)
 
 ## User guide
@@ -11,12 +11,11 @@ https://docs.sonm.io/guides/sonm-wallet-guide
 
 SONM Wallet is SONM GUI, a software program that stores private and public keys and provide SONM functions for users (Consumers and Suppliers).
 
-SONM Wallet privides the following functions:
+SONM Wallet provides the following functions:
 
 * Manage user Ethereum accounts, support multiaccounts, create new account, export/import keystore files (UTC/JSON)
-* Send and receive Ether, SNM tokens, ERC-20 tokens
+* Send and receive Ether, SNM tokens and custom ERC20 tokens
 * View local transaction history
-* Add custom ERC-20 tokens (planned to be implemented in January 2018)
 * Manage user profile (SONM network profile), support multiprofiles (this and mentioned below bullet-list features are planned as part of MVP-livenet wallet release)
 * View orders in SONM Marketplace
 * Place Consumer's BID orders

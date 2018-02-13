@@ -12,6 +12,12 @@
   font-weight: normal ;
   height: @account-item-height;
   line-height: @account-item-line-height !important;
+  color: @color-font-gray;
+
+  & button {
+    background: transparent none;
+    appearance: none;
+  }
 
   &__blockies {
     margin: 5px;
@@ -38,7 +44,6 @@
   &__ether,
   &__sonm {
     font-size: 18px;
-    color: @color-font-gray;
     padding: 0;
     margin: 1px 5px;
   }
@@ -87,16 +92,15 @@
     vertical-align: bottom;
   }
 
-  &__edit-icon {
+  &__edit-button {
     vertical-align: bottom;
     cursor: pointer;
     border: 0;
     background-color: transparent;
     margin: 1px 5px;
     padding: 0;
-    line-height: 0;
-    height: @account-item-line-height;
 
+    outline: none;
     &:focus {
       outline: @outline;
       outline-offset: 0;
@@ -114,5 +118,15 @@
     &:focus {
       outline: none;
     }
+  }
+
+  & &__action {
+    font-size: 20px;
+    margin: 0 10px 0 0;
+    min-width: 26px;
+  }
+
+  &__buttons {
+    margin: 0 0 0 10px;
   }
 }
