@@ -14,13 +14,16 @@ export interface IAlertProps {
 export class Alert extends React.PureComponent<IAlertProps, any> {
     public componentDidMount() {
         if (this.props.hideDelay) {
-            setTimeout(() => this.setState({ closed: true }), this.props.onClosed);
+            setTimeout(
+                () => this.setState({ closed: true }),
+                this.props.onClosed,
+            );
         }
     }
 
     private handleClickCross = (event: any) => {
         this.props.onClosed && this.props.onClosed(this.props.id);
-    }
+    };
 
     public render() {
         const {
@@ -33,17 +36,18 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
 
         return (
             <div
-                className={cn(
-                    className,
-                    'sonm-alert',
-                    `sonm-alert--${type}`)}
+                className={cn(className, 'sonm-alert', `sonm-alert--${type}`)}
                 style={{ '--hide-delay': hideDelay }}
             >
                 <span className="sonm-alert__message">{children}</span>
-                {onClosed
-                    ? <Icon i="Close" type="button" className="sonm-alert__cross" onClick={this.handleClickCross} />
-                    : null
-                }
+                {onClosed ? (
+                    <Icon
+                        i="Close"
+                        type="button"
+                        className="sonm-alert__cross"
+                        onClick={this.handleClickCross}
+                    />
+                ) : null}
             </div>
         );
     }

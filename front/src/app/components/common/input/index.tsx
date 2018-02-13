@@ -10,7 +10,8 @@ interface IFocusable {
     focus: () => void;
 }
 
-export class Input extends React.Component<IInputProps, any> implements IFocusable {
+export class Input extends React.Component<IInputProps, any>
+    implements IFocusable {
     protected inputNode: IFocusable | null = null;
 
     protected saveRef = (ref: HTMLInputElement) => {
@@ -18,16 +19,23 @@ export class Input extends React.Component<IInputProps, any> implements IFocusab
             ref.focus();
         }
         this.inputNode = ref;
-    }
+    };
 
     public render() {
         const { autoFocus, className, allowAutoComplete, ...rest } = this.props;
         const autoComplete = allowAutoComplete ? 'on' : 'off';
 
-        return <div className={cn('sonm-input', className)}>
-            <input {...rest} className="sonm-input__input" ref={this.saveRef} autoComplete={autoComplete}/>
-            <div className="sonm-input__underline" />
-        </div>;
+        return (
+            <div className={cn('sonm-input', className)}>
+                <input
+                    {...rest}
+                    className="sonm-input__input"
+                    ref={this.saveRef}
+                    autoComplete={autoComplete}
+                />
+                <div className="sonm-input__underline" />
+            </div>
+        );
     }
 
     public focus() {

@@ -1,7 +1,9 @@
 import * as BigNumber from 'bignumber.js';
 import { trimZeros } from './trim-zeros';
 
-export function gweiToEther(value: string | BigNumber.BigNumber | number): string {
+export function gweiToEther(
+    value: string | BigNumber.BigNumber | number,
+): string {
     try {
         const v = new BigNumber(value);
 

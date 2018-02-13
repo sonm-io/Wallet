@@ -1,4 +1,4 @@
 declare module 'universal-router' {
-  const content: any;
-  export = content;
+    const content: any;
+    export = content;
 }

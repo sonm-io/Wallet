@@ -22,8 +22,10 @@ export class AbstractStore {
     protected errorProcessor: IErrorProcessor;
 
     @asyncAction
-    protected * goOffline() {
-        if (this.isOffline) { return; }
+    protected *goOffline() {
+        if (this.isOffline) {
+            return;
+        }
 
         this.isOffline = true;
 
@@ -56,7 +58,8 @@ export class AbstractStore {
         this.pendingSet.delete(pendingId);
     }
 
-    @computed public get isPending() {
+    @computed
+    public get isPending() {
         return this.pendingSet.size > 0;
     }
 
@@ -64,22 +67,28 @@ export class AbstractStore {
 
     @action
     protected handleError(e: WalletApiError, restart: boolean) {
-        if (e.code === 'network_error') { // TODO err code enum
+        if (e.code === 'network_error') {
+            // TODO err code enum
             this.goOffline();
         }
 
         if (e.code === 'network_error' && restart) {
-            when(() => !this.isOffline,
+            when(
+                () => !this.isOffline,
                 () => {
                     e.method.apply(e.scope, e.args);
                 },
             );
         } else {
-           this.errorProcessor.processError(e);
+            this.errorProcessor.processError(e);
         }
     }
 
-    public static pending(target: AbstractStore, propertyKey: string, descriptor: PropertyDescriptor) {
+    public static pending(
+        target: AbstractStore,
+        propertyKey: string,
+        descriptor: PropertyDescriptor,
+    ) {
         const method = descriptor.value;
 
         descriptor.value = async function() {
@@ -108,9 +117,10 @@ export class AbstractStore {
             try {
                 return await method.apply(store, args);
             } catch (errorStringCode) {
-
                 if (typeof errorStringCode !== 'string') {
-                    alert(`Unexpected exception from wallet API; Exception ${errorStringCode}`);
+                    alert(
+                        `Unexpected exception from wallet API; Exception ${errorStringCode}`,
+                    );
                 }
 
                 store.handleError(
@@ -125,9 +135,12 @@ export class AbstractStore {
                 );
             }
         };
-    }
+    };
 
-    public static getAccumulatedFlag(p: keyof AbstractStore, ...stores: AbstractStore[]): boolean {
+    public static getAccumulatedFlag(
+        p: keyof AbstractStore,
+        ...stores: AbstractStore[]
+    ): boolean {
         return stores.reduce(
             (b: boolean, store: AbstractStore) => b || Boolean(store[p]),
             false,

@@ -17,7 +17,11 @@ const getSearch = get('location.search');
  * @param query
  * @param mergeQuery will be merged with existing query params
  */
-export function navigate({ path, query, mergeQuery }: INavigateArgument): string {
+export function navigate({
+    path,
+    query,
+    mergeQuery,
+}: INavigateArgument): string {
     if (path == null) {
         path = getLocation(history);
     }
@@ -39,7 +43,9 @@ export function navigate({ path, query, mergeQuery }: INavigateArgument): string
     }
 
     const url =
-        query && Object.keys(query).length > 0 ? `${path}?${queryStr.stringify(query)}` : path;
+        query && Object.keys(query).length > 0
+            ? `${path}?${queryStr.stringify(query)}`
+            : path;
 
     (history as any).push(url);
 

@@ -1,6 +1,4 @@
-import {
-    IWalletList,
-} from '../app/api/types';
+import { IWalletList } from '../app/api/types';
 
 const migrations = {
     wallet_list: {
@@ -27,8 +25,8 @@ const migrations = {
             data.version = 1;
 
             data.settings = {
-               chainId: 'rinkeby',
-               nodeUrl: 'https://rinkeby.infura.io',
+                chainId: 'rinkeby',
+                nodeUrl: 'https://rinkeby.infura.io',
             };
 
             data.tokens = [];

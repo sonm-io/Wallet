@@ -11,21 +11,14 @@ export interface IButtonProps extends React.ButtonHTMLAttributes<any> {
 
 export class LoadMask extends React.PureComponent<IButtonProps> {
     public render() {
-        const {
-            className,
-            visible,
-            children,
-            white,
-        } = this.props;
+        const { className, visible, children, white } = this.props;
 
         return [
             <div
-                className={cn(
-                    className,
-                    'sonm-load-mask', {
-                        'sonm-load-mask--visible': visible,
-                        'sonm-load-mask--white': white,
-                    })}
+                className={cn(className, 'sonm-load-mask', {
+                    'sonm-load-mask--visible': visible,
+                    'sonm-load-mask--white': white,
+                })}
                 key="lm"
             >
                 <div className="sonm-load-mask__pale" />

@@ -9,12 +9,14 @@ export interface ITokenItemProps {
 }
 
 export function TokenDeleteConfirmation(props: ITokenItemProps) {
-    return <div>
-        <FormHeader>Are you sude want to delete token?</FormHeader>
-        <div className="sonm-token-delete-confirmation__info">
-            <TokenItem {...props}/>
+    return (
+        <div>
+            <FormHeader>Are you sude want to delete token?</FormHeader>
+            <div className="sonm-token-delete-confirmation__info">
+                <TokenItem {...props} />
+            </div>
         </div>
-    </div>;
+    );
 }
 
 export default TokenDeleteConfirmation;

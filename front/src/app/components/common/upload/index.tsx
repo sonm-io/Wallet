@@ -69,7 +69,7 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
             event.preventDefault();
             event.target.value = null;
         }
-    }
+    };
 
     protected inputNode?: HTMLInputElement;
 
@@ -79,13 +79,13 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
 
             this.inputNode.click();
         }
-    }
+    };
 
     protected saveInputRef = (ref: HTMLInputElement | null) => {
         if (ref !== null && this.inputNode !== ref) {
             this.inputNode = ref;
         }
-    }
+    };
 
     public render() {
         const { className, buttonProps, children } = this.props;
@@ -94,7 +94,7 @@ export class Upload extends React.PureComponent<IUploadProps, any> {
             <Button
                 tag="label"
                 disabled={this.state.pending}
-                style={{width: '100%', boxSizing: 'border-box'}}
+                style={{ width: '100%', boxSizing: 'border-box' }}
                 {...buttonProps}
                 className={cn('sonm-upload', className)}
                 type="button"

@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Dialog } from 'app/components/common/dialog';
 import { Button } from 'app/components/common/button';
-import { FormField, FormRow, Form, FormButtons } from 'app/components/common/form';
+import {
+    FormField,
+    FormRow,
+    Form,
+    FormButtons,
+} from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { AddTokenStore } from 'app/stores/add-token';
@@ -20,19 +25,19 @@ export class AddToken extends React.Component<IProps, {}> {
         this.props.addTokenStore.approveCandidateToken();
 
         this.props.onClickCross();
-    }
+    };
 
     protected handleChangeInput = async (event: any) => {
         const address = event.target.value.trim();
 
         this.props.addTokenStore.setCandidateTokenAddress(address);
-    }
+    };
 
     protected handleClose = () => {
         this.props.addTokenStore.resetCandidateToken();
 
         this.props.onClickCross();
-    }
+    };
 
     public render() {
         const tokenInfo = this.props.addTokenStore.candidateTokenInfo;
@@ -40,8 +45,14 @@ export class AddToken extends React.Component<IProps, {}> {
         const validation = this.props.addTokenStore.validationCandidateToken;
 
         return (
-            <Dialog onClickCross={this.handleClose} height={tokenInfo ? 380 : 260}>
-                <Form className="sonm-add-token__form" onSubmit={this.handleSubmit}>
+            <Dialog
+                onClickCross={this.handleClose}
+                height={tokenInfo ? 380 : 260}
+            >
+                <Form
+                    className="sonm-add-token__form"
+                    onSubmit={this.handleSubmit}
+                >
                     <h3>Add token</h3>
                     <FormRow>
                         <FormField
@@ -60,19 +71,28 @@ export class AddToken extends React.Component<IProps, {}> {
                     </FormRow>
                     <FormButtons>
                         <Button
-                            disabled={!!validation.length || !tokenAddress.length}
+                            disabled={
+                                !!validation.length || !tokenAddress.length
+                            }
                             type="submit"
                         >
                             Add token
                         </Button>
                     </FormButtons>
-                    {tokenInfo ?
+                    {tokenInfo ? (
                         <div className="sonm-add-token__preview">
-                            <IdentIcon className="sonm-add-token__preview-icon" address={tokenInfo.address}/>
-                            <span  className="sonm-add-token__preview-name">{tokenInfo.name}</span>
-                            <span  className="sonm-add-token__preview-ticker">{tokenInfo.symbol}</span>
+                            <IdentIcon
+                                className="sonm-add-token__preview-icon"
+                                address={tokenInfo.address}
+                            />
+                            <span className="sonm-add-token__preview-name">
+                                {tokenInfo.name}
+                            </span>
+                            <span className="sonm-add-token__preview-ticker">
+                                {tokenInfo.symbol}
+                            </span>
                         </div>
-                    : null}
+                    ) : null}
                 </Form>
             </Dialog>
         );

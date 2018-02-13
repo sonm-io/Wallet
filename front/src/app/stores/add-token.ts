@@ -1,9 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import {
-    Api,
-    ICurrencyInfo,
-} from 'app/api';
+import { Api, ICurrencyInfo } from 'app/api';
 import { AbstractStore } from './abstract-store';
 const { pending, catchErrors } = AbstractStore;
 import { getMessageText } from 'app/api/error-messages';
@@ -16,7 +13,7 @@ interface IFormValues {
 
 const emptyForm: IFormValues = {
     tokenAddress: '',
-}
+};
 
 Object.freeze(emptyForm);
 
@@ -31,13 +28,12 @@ export class AddTokenStore extends AbstractStore {
         this.rootStore = rootStore;
     }
 
-    @observable
-    public candidateTokenAddress: string = '';
+    @observable public candidateTokenAddress: string = '';
 
-    @observable
-    public candidateTokenInfo: ICurrencyInfo | undefined;
+    @observable public candidateTokenInfo: ICurrencyInfo | undefined;
 
-    @computed get validationCandidateToken(): string {
+    @computed
+    get validationCandidateToken(): string {
         const tokenAddress = this.candidateTokenAddress;
         const etherAddressValidation = validateEtherAddress(tokenAddress);
         let result: string;
@@ -70,7 +66,7 @@ export class AddTokenStore extends AbstractStore {
 
     @catchErrors({ restart: true })
     @asyncAction
-    protected * updateCandidateTokenInfo(address: string) {
+    protected *updateCandidateTokenInfo(address: string) {
         const { validation, data } = yield Api.getTokenInfo(address);
 
         if (validation) {
@@ -94,12 +90,17 @@ export class AddTokenStore extends AbstractStore {
     @pending
     @catchErrors({ restart: true })
     @asyncAction
-    public * approveCandidateToken() {
+    public *approveCandidateToken() {
         const candidateTokenAddress = this.candidateTokenAddress;
         this.resetCandidateToken();
-        const { data: currencyInfo } = yield Api.addToken(candidateTokenAddress);
+        const { data: currencyInfo } = yield Api.addToken(
+            candidateTokenAddress,
+        );
         if (currencyInfo) {
-            this.rootStore.mainStore.currencyMap.set(currencyInfo.address, currencyInfo);
+            this.rootStore.mainStore.currencyMap.set(
+                currencyInfo.address,
+                currencyInfo,
+            );
         }
     }
 

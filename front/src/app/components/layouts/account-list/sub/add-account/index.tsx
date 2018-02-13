@@ -7,7 +7,12 @@ import { IValidation } from 'ipc/types';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Input } from 'app/components/common/input/index';
 import { getMessageText } from 'app/api/error-messages'; // TODO move to context
-import { FormField, FormRow, Form, FormButtons } from 'app/components/common/form';
+import {
+    FormField,
+    FormRow,
+    Form,
+    FormButtons,
+} from 'app/components/common/form';
 import { shortString } from 'app/utils/short-string';
 
 // import { setFocus } from 'app/components/common/utils/setFocus';
@@ -59,12 +64,13 @@ export class AddAccount extends React.Component<IProps, any> {
 
         if (!this.state.json) {
             validation.json = getMessageText('select_file');
-        } else if (this.props.existingAccounts.indexOf(this.state.address) !== -1) {
+        } else if (
+            this.props.existingAccounts.indexOf(this.state.address) !== -1
+        ) {
             validation.json = getMessageText('account_already_exists');
         }
 
         if (Object.keys(validation).every(x => !validation[x])) {
-
             this.setState({ validation: {} });
 
             this.props.onSubmit({
@@ -72,13 +78,10 @@ export class AddAccount extends React.Component<IProps, any> {
                 password: this.state.password,
                 name: this.state.name,
             });
-
         } else {
-
             this.setState({ validation });
-
         }
-    }
+    };
 
     public componentDidMount() {
         // this.nodes.upload.focus(); // TODO
@@ -92,7 +95,7 @@ export class AddAccount extends React.Component<IProps, any> {
 
     protected handleClickCross = () => {
         this.props.onClickCross();
-    }
+    };
 
     protected nodes: IMapNameToFocusable = {};
 
@@ -100,7 +103,10 @@ export class AddAccount extends React.Component<IProps, any> {
 
     protected saveUploadInputNode = this.saveInputNode.bind(this, 'upload');
 
-    protected saveInputNode(name: string, ref: HTMLInputElement | HTMLButtonElement | null) {
+    protected saveInputNode(
+        name: string,
+        ref: HTMLInputElement | HTMLButtonElement | null,
+    ) {
         if (ref && this.nodes[name] !== ref) {
             this.nodes[name] = ref;
         }
@@ -110,16 +116,22 @@ export class AddAccount extends React.Component<IProps, any> {
         const update = {} as any;
 
         try {
-            if (params.error) { throw new Error(params.error); }
+            if (params.error) {
+                throw new Error(params.error);
+            }
 
             const lowerCase = params.text && params.text.toLowerCase();
             const json = JSON.parse(lowerCase as any);
 
             const address = json.address;
 
-            if (!address) { throw new Error('Incorrect file: no address'); }
+            if (!address) {
+                throw new Error('Incorrect file: no address');
+            }
 
-            update.address = address.startsWith('0x') ? address : `0x${address}`;
+            update.address = address.startsWith('0x')
+                ? address
+                : `0x${address}`;
             update.json = lowerCase;
             update.fileSuccess = params.fileName;
             update.validation = { ...this.state.validation, json: '' };
@@ -128,7 +140,6 @@ export class AddAccount extends React.Component<IProps, any> {
             if (nameInput !== null) {
                 nameInput.focus();
             }
-
         } catch (e) {
             update.fileSuccess = '';
             update.address = '';
@@ -139,7 +150,7 @@ export class AddAccount extends React.Component<IProps, any> {
         }
 
         this.setState(update);
-    }
+    };
 
     protected handleChangeInput = (event: any) => {
         this.setState({
@@ -149,14 +160,20 @@ export class AddAccount extends React.Component<IProps, any> {
                 [event.target.name]: '',
             },
         });
-    }
+    };
 
     public render() {
         const validation: IValidation = this.state.validation;
 
         return (
-            <Dialog onClickCross={this.handleClickCross} height={this.state.address === '' ? 440 : 550}>
-                <Form className="sonm-accounts-add-account__form" onSubmit={this.handleSubmit}>
+            <Dialog
+                onClickCross={this.handleClickCross}
+                height={this.state.address === '' ? 440 : 550}
+            >
+                <Form
+                    className="sonm-accounts-add-account__form"
+                    onSubmit={this.handleSubmit}
+                >
                     <h3>Add account</h3>
                     <FormRow>
                         <FormField
@@ -206,14 +223,11 @@ export class AddAccount extends React.Component<IProps, any> {
                         </FormField>
                     </FormRow>
                     <FormButtons>
-                        <Button
-                            type="submit"
-                            height={40}
-                        >
+                        <Button type="submit" height={40}>
                             Add
                         </Button>
                     </FormButtons>
-                    {this.state.address === '' ? null :
+                    {this.state.address === '' ? null : (
                         <FormRow>
                             <FormField fullWidth>
                                 <div className="sonm-accounts-add-account__preview-ct">
@@ -228,7 +242,7 @@ export class AddAccount extends React.Component<IProps, any> {
                                 </div>
                             </FormField>
                         </FormRow>
-                    }
+                    )}
                 </Form>
             </Dialog>
         );

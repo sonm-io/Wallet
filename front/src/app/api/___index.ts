@@ -11,7 +11,10 @@ import * as mock from './mock';
 export * from './types';
 
 export class Api {
-    public static async setSecretKey(password: string, name: string): Promise<IResult<boolean>>  {
+    public static async setSecretKey(
+        password: string,
+        name: string,
+    ): Promise<IResult<boolean>> {
         let validation;
         let data = true;
 
@@ -30,8 +33,11 @@ export class Api {
         };
     }
 
-    public static async addAccount(jsonRaw: string, password: string, name: string): Promise<IResult<IAccountInfo>> {
-
+    public static async addAccount(
+        jsonRaw: string,
+        password: string,
+        name: string,
+    ): Promise<IResult<IAccountInfo>> {
         await mock.delay(10);
 
         return {
@@ -39,13 +45,18 @@ export class Api {
         };
     }
 
-    public static async removeAccount(address: string): Promise<IResult<boolean>> {
+    public static async removeAccount(
+        address: string,
+    ): Promise<IResult<boolean>> {
         await mock.delay(10);
 
         return { data: true };
     }
 
-    public static async renameAccount(address: string, name: string): Promise<IResult<boolean>> {
+    public static async renameAccount(
+        address: string,
+        name: string,
+    ): Promise<IResult<boolean>> {
         await mock.delay(10);
 
         return { data: true };
@@ -63,8 +74,10 @@ export class Api {
         return mock.currencyListResult;
     }
 
-    public static async send(tx: ISendTransaction, password: string)
-    : Promise<IResult<ISendTransactionResult>> {
+    public static async send(
+        tx: ISendTransaction,
+        password: string,
+    ): Promise<IResult<ISendTransactionResult>> {
         await mock.delay(10);
 
         return mock.send(tx, password);
@@ -72,11 +85,11 @@ export class Api {
 
     public static async getSendTransactionList(
         filters?: {
-            currencyAddress?: string,
-            toAddress?: string,
-            fromAddress?: string,
-            timeStart?: number,
-            timeEnd?: number,
+            currencyAddress?: string;
+            toAddress?: string;
+            fromAddress?: string;
+            timeStart?: number;
+            timeEnd?: number;
         },
         limit?: number,
         offset?: number,
