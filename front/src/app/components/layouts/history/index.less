@@ -12,35 +12,36 @@
 }
 
 .sonm-history {
-  display: grid;
-  grid-template-columns: 220px 200px 1fr;
-  grid-template-rows: @big-select-height 30px 1fr;
-  grid-gap: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+  flex-wrap: wrap;
 
   &__select-account {
     width: 100%;
-    grid-column: ~"1 / 4";
-    grid-row: 1;
+    margin: 0 0 5px 0;
   }
 
   &__date-range {
-    grid-column: 1;
-    grid-row: 2;
+    width: ~'calc(30% - 5px)';
+    margin: 5px 5px 5px 0;
   }
 
   &__select-currency {
-    grid-column: 2;
-    grid-row: 2;
+    width: ~'calc(20% - 10px)';
+    margin: 5px;
   }
 
   &__query {
-    grid-column: 3;
-    grid-row: 2;
+    width: ~'calc(50% - 5px)';
+    margin: 5px 0 5px 5px;
   }
 
   &__table {
-    grid-column: ~"1 / 4";
-    grid-row: 3;
+    width: 100%;
+    margin: 5px 0;
   }
 }
 
