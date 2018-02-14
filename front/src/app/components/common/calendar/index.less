@@ -1,0 +1,247 @@
+@calendarCellWidth: 100% / 7;
+@calendarMonthInRow: 3;
+@calendarMonthCellWidth: 100% / @calendarMonthInRow;
+@calendarCellBorderColor: #e0e0e0;
+@calendarCellMarkedColor: #efefef;
+@calendarInputColor: rgb(73, 73, 255);
+@calendarCellFocusBorderColor: @calendarInputColor;
+@calendarCellSelectedColor: lighten(@calendarInputColor, 28%);
+@calendarActiveControlShadow: 0px 2px 2px 0px rgba(51, 51, 51, 0.3);
+
+.calendar {
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+        Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    padding: 0;
+    border: 0;
+    position: relative;
+    width: 240px;
+    height: 230px;
+
+    &__table-of-days {
+        padding: 0;
+        align-content: start;
+        margin: 5px 0;
+    }
+
+    &__table-of-months {
+        padding: 0;
+        border: solid 0 @calendarCellBorderColor;
+        border-top-width: 1px;
+        border-right-width: 1px;
+        align-content: stretch;
+        margin: 5px 0;
+    }
+
+    &__day-name,
+    &__day,
+    &__dummy {
+        margin: 0;
+        display: inline-block;
+        vertical-align: baseline;
+        width: @calendarCellWidth;
+        box-sizing: border-box;
+        border: solid 0 @calendarCellBorderColor;
+        padding: 3px 5px;
+        text-align: center;
+    }
+
+    &__dummy {
+        border-bottom-width: 1px;
+
+        &:after {
+            content: ' ';
+        }
+
+        &:last-of-type {
+            border-right-width: 1px;
+        }
+    }
+
+    &__day-name {
+        border-color: transparent;
+        text-align: center;
+    }
+
+    .calendar-hover-cell {
+        &:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        &:hover {
+            outline: none;
+            box-shadow: inset 0 0 0 1px @calendarCellFocusBorderColor;
+        }
+    }
+
+    &__day {
+        background: transparent none;
+        appearance: none;
+        -webkit-appearance: none !important;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        outline: none;
+        cursor: pointer;
+
+        &--marked {
+            background-color: @calendarCellMarkedColor;
+        }
+
+        &--selected {
+            background-color: @calendarCellSelectedColor;
+        }
+
+        &:nth-child(7n + 1) {
+            border-left-width: 1px;
+        }
+
+        &.week-0 {
+            border-top-width: 1px;
+        }
+
+        .calendar-hover-cell;
+    }
+
+    &__month {
+        margin: 0;
+        display: inline-block;
+        vertical-align: top;
+        width: @calendarMonthCellWidth;
+        box-sizing: border-box;
+        border: solid 0 @calendarCellBorderColor;
+        border-left-width: 1px;
+        border-bottom-width: 1px;
+        padding: 5px;
+        text-align: center;
+
+        .calendar-hover-cell;
+    }
+
+    &__value-day {
+        margin: 10px 0 0 0;
+        text-decoration: none;
+        color: @calendarCellFocusBorderColor;
+
+        &:visited {
+            color: @calendarCellFocusBorderColor;
+            text-decoration: underline;
+        }
+
+        &:hover {
+            color: @calendarCellFocusBorderColor;
+            text-decoration: underline;
+        }
+
+        &:active {
+            color: @calendarCellFocusBorderColor;
+            text-decoration: underline;
+        }
+    }
+
+    .calendar-control {
+        background: transparent none;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        border: solid 0;
+        outline: none !important;
+        box-shadow: none;
+        cursor: pointer;
+        box-sizing: border-box;
+        padding: 3px 5px;
+        margin: 0;
+        text-align: center;
+    }
+
+    .calendar-button {
+        border-width: 1px;
+        cursor: pointer;
+        box-shadow: none;
+
+        &:hover {
+            box-shadow: @calendarActiveControlShadow;
+        }
+
+        &:active {
+            box-shadow: none;
+            transform: translate(2px, 2px);
+        }
+    }
+
+    &__year-input {
+        .calendar-control;
+
+        float: right;
+        width: 60px;
+        border-color: @calendarInputColor;
+        border-width: 1px;
+    }
+
+    &__year-button {
+        .calendar-control;
+        .calendar-button;
+
+        float: right;
+        width: 60px;
+        border-color: @calendarCellBorderColor;
+
+        &:active {
+            border-color: @calendarInputColor;
+            transform: none;
+        }
+    }
+
+    &__month-button {
+        .calendar-control;
+        .calendar-button;
+
+        width: 110px;
+        border-color: @calendarCellBorderColor;
+    }
+
+    &__prev-month-button {
+        .calendar-control;
+        .calendar-button;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 25px;
+        border-color: @calendarCellBorderColor;
+
+        &:before {
+            content: '<';
+        }
+    }
+
+    &__next-month-button {
+        .calendar-control;
+        .calendar-button;
+
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 25px;
+        border-color: @calendarCellBorderColor;
+
+        &:after {
+            content: '>';
+        }
+    }
+
+    &__title {
+        width: 175px;
+        margin: 0 auto;
+    }
+
+    &__value-day {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 3px;
+        margin: 0;
+        text-align: center;
+    }
+}
