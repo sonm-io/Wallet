@@ -1,7 +1,7 @@
 {
     "private": false,
     "name": "sonm-wallet",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "SONM Wallet",
     "main": "main.js",
     "directories": {},
