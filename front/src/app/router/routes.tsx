@@ -13,13 +13,19 @@ import { navigate } from './navigate';
 let defaultAction;
 
 const navigateToSend = () => navigate({ path: '/send' });
-const navigateToHistory = (accountAddress: string = '', currencyAddress: string = '') => {
+const navigateToHistory = (
+    accountAddress: string = '',
+    currencyAddress: string = '',
+) => {
     navigate({
         path: '/history',
-        query: accountAddress || currencyAddress ? {
-            address: accountAddress,
-            currency: currencyAddress,
-        } : undefined,
+        query:
+            accountAddress || currencyAddress
+                ? {
+                      address: accountAddress,
+                      currency: currencyAddress,
+                  }
+                : undefined,
     });
 };
 const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
@@ -61,15 +67,18 @@ const routes = [
 
                     const next = await ctx.next();
 
-                    const content = next && next.content
-                        ? next.content
-                        : <Send
-                            onNotAvailable={navigateToMain}
-                            rootStore={rootStore}
-                            initialAddress={initialAddress}
-                            initialCurrency={initialCurrency}
-                            onRequireConfirmation={navigateToConfirmation}
-                        />;
+                    const content =
+                        next && next.content ? (
+                            next.content
+                        ) : (
+                            <Send
+                                onNotAvailable={navigateToMain}
+                                rootStore={rootStore}
+                                initialAddress={initialAddress}
+                                initialCurrency={initialCurrency}
+                                onRequireConfirmation={navigateToConfirmation}
+                            />
+                        );
 
                     if (next && next.popup) {
                         content.push(next.popup);
@@ -86,21 +95,25 @@ const routes = [
                         path: '/confirm',
                         action: (ctx: IContext) => ({
                             title: 'Confirmation',
-                            content: <SendConfirm
-                                rootStore={rootStore}
-                                onBack={navigateToSend}
-                                onSuccess={navigateToSuccess}
-                            />,
+                            content: (
+                                <SendConfirm
+                                    rootStore={rootStore}
+                                    onBack={navigateToSend}
+                                    onSuccess={navigateToSuccess}
+                                />
+                            ),
                         }),
                     },
                     {
                         path: '/success',
                         action: (ctx: IContext) => ({
                             title: 'Success',
-                            content: <SendSuccess
-                                onClickHistory={navigateToHistory}
-                                onClickSend={navigateToSend}
-                            />,
+                            content: (
+                                <SendSuccess
+                                    onClickHistory={navigateToHistory}
+                                    onClickSend={navigateToSend}
+                                />
+                            ),
                         }),
                     },
                 ],
@@ -114,22 +127,27 @@ const routes = [
                     return {
                         pathKey: '/history',
                         title: 'History',
-                        content: <History
-                            rootStore={rootStore}
-                            initialAddress={initialAddress}
-                            initialCurrency={initialCurrency}
-                        />,
+                        content: (
+                            <History
+                                rootStore={rootStore}
+                                initialAddress={initialAddress}
+                                initialCurrency={initialCurrency}
+                            />
+                        ),
                     };
                 },
             },
             {
                 path: '/accounts',
-                action: defaultAction = async (ctx: IContext) => {
+                action: (defaultAction = async (ctx: IContext) => {
                     const next = await ctx.next();
 
-                    const content = next && next.content
-                            ? next.content
-                            : <Wallets rootStore={rootStore}/>;
+                    const content =
+                        next && next.content ? (
+                            next.content
+                        ) : (
+                            <Wallets rootStore={rootStore} />
+                        );
 
                     if (next && next.popup) {
                         content.push(next.popup);
@@ -140,7 +158,7 @@ const routes = [
                         title: 'Accounts',
                         content,
                     };
-                },
+                }),
                 children: [
                     {
                         path: '/:address',
@@ -148,10 +166,12 @@ const routes = [
                             const initialAddress = params.address;
 
                             return {
-                                content: <Account
-                                    initialAddress={initialAddress}
-                                    rootStore={rootStore}
-                                />,
+                                content: (
+                                    <Account
+                                        initialAddress={initialAddress}
+                                        rootStore={rootStore}
+                                    />
+                                ),
                             };
                         },
                     },
@@ -184,4 +204,4 @@ interface IRouterResult {
     pathKey: string;
 }
 
-export {routes};
+export { routes };

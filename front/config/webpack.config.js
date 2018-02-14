@@ -3,10 +3,11 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const CssoWebpackPlugin = require('csso-webpack-plugin').default;
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+    .BundleAnalyzerPlugin;
 const { getFullPath, readJson, getPackageJson } = require('./utils');
 
-const MinifyPlugin = require("babel-minify-webpack-plugin");
+const MinifyPlugin = require('babel-minify-webpack-plugin');
 
 const buildType = process.env.BUILD_TYPE || '';
 const isDev = process.env.NODE_ENV !== 'production';
@@ -25,7 +26,10 @@ module.exports = {
 
     output: {
         filename: isDev ? '[name].js' : '[name].[hash].js',
-        path: buildType === 'web' ? getFullPath('../docs') :  getFullPath('../dist'),
+        path:
+            buildType === 'web'
+                ? getFullPath('../docs')
+                : getFullPath('../dist'),
     },
 
     resolve: {
@@ -33,8 +37,8 @@ module.exports = {
         extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
         alias: {
             './guide.less$': getFullPath('src/app/less/guide.less'),
-            'app': getFullPath('src/app'),
-            'worker': getFullPath('src/worker'),
+            app: getFullPath('src/app'),
+            worker: getFullPath('src/worker'),
             './node_modules': getFullPath('../node_modules'),
         },
     },
@@ -64,35 +68,36 @@ module.exports = {
                 {
                     test: /\.less$/,
                     use: extractLess.extract({
-                        disable:  buildType === 'singleFile',
+                        disable: buildType === 'singleFile',
                         fallback: 'style-loader',
                         use: ['css-loader', 'less-loader'],
                     }),
                 },
                 {
                     test: /\.worker\.ts$/,
-                    use: [{
-                        loader: 'worker-loader',
-                        options: {
-                            name: isDev ? '[name].js' : '[name].[hash].js',
-                            inline: buildType === 'singleFile',
+                    use: [
+                        {
+                            loader: 'worker-loader',
+                            options: {
+                                name: isDev ? '[name].js' : '[name].[hash].js',
+                                inline: buildType === 'singleFile',
+                            },
                         },
-                    }, {
-                        loader: 'ts-loader',
-                    }],
+                        {
+                            loader: 'ts-loader',
+                        },
+                    ],
                 },
                 {
                     issuer: /\.tsx/,
                     test: /\.svg$/,
                     use: [
-                        "babel-loader",
+                        'babel-loader',
                         {
-                            loader: "react-svg-loader",
+                            loader: 'react-svg-loader',
                             options: {
                                 svgo: {
-                                    plugins: [
-                                        { removeTitle: false },
-                                    ],
+                                    plugins: [{ removeTitle: false }],
                                     floatPrecision: 2,
                                 },
                             },
@@ -111,14 +116,14 @@ module.exports = {
 
     plugins: (() => {
         const plugins = [
-            process.env.WEBPACK_ANALYZE
-                ? new BundleAnalyzerPlugin()
-                : false,
+            process.env.WEBPACK_ANALYZE ? new BundleAnalyzerPlugin() : false,
 
             new HtmlWebpackPlugin({
                 inject: true,
                 // do not use template if electron
-                template:  process.env.PLATFORM ? getFullPath('./assets/electron-entry.html') : getFullPath('./assets/entry.html'),
+                template: process.env.PLATFORM
+                    ? getFullPath('./assets/electron-entry.html')
+                    : getFullPath('./assets/entry.html'),
                 inlineSource: '.(js|css)$',
             }),
 
@@ -126,10 +131,14 @@ module.exports = {
                 ? new HtmlWebpackInlineSourcePlugin()
                 : null,
 
-            isDev ? null : new MinifyPlugin({
-            }, {
-                sourceMap: sourceMap,
-            }),
+            isDev
+                ? null
+                : new MinifyPlugin(
+                      {},
+                      {
+                          sourceMap: sourceMap,
+                      },
+                  ),
 
             new webpack.NoEmitOnErrorsPlugin(),
 

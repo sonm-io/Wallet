@@ -14,14 +14,16 @@ const params = {
     asar: false,
     icon: './front/assets/app-icon',
     ignore: path => {
-        return Boolean(path)
-            && !path.startsWith('/docs')
-            && path !== '/package.json'
-            && path !== '/main.js';
+        return (
+            Boolean(path) &&
+            !path.startsWith('/docs') &&
+            path !== '/package.json' &&
+            path !== '/main.js'
+        );
     },
 };
 
-packager(params, function done_callback (err, appPaths) {
+packager(params, function done_callback(err, appPaths) {
     if (err) {
         console.log(err);
     }

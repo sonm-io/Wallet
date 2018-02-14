@@ -70,59 +70,88 @@ export class Api {
         password: string,
         walletName: string,
         chainId: string,
-    ): Promise<IResult<IWalletListItem>>  {
+    ): Promise<IResult<IWalletListItem>> {
         return createPromise('createWallet', { password, walletName, chainId });
     }
 
-    public static async unlockWallet(password: string, walletName: string): Promise<IResult<boolean>>  {
+    public static async unlockWallet(
+        password: string,
+        walletName: string,
+    ): Promise<IResult<boolean>> {
         return createPromise('unlockWallet', { password, walletName });
     }
 
-    public static async importWallet(password: string, walletName: string, file: string): Promise<IResult<IWalletListItem>>  {
+    public static async importWallet(
+        password: string,
+        walletName: string,
+        file: string,
+    ): Promise<IResult<IWalletListItem>> {
         return createPromise('importWallet', { password, walletName, file });
     }
 
-    public static async exportWallet(): Promise<IResult<string>>  {
+    public static async exportWallet(): Promise<IResult<string>> {
         return createPromise('exportWallet');
     }
 
-    public static async checkConnection(): Promise<IResult<boolean>>  {
+    public static async checkConnection(): Promise<IResult<boolean>> {
         return createPromise('checkConnection');
     }
 
-    public static async getPrivateKey(password: string, address: string): Promise<IResult<string>>  {
+    public static async getPrivateKey(
+        password: string,
+        address: string,
+    ): Promise<IResult<string>> {
         return createPromise('account.getPrivateKey', { address, password });
     }
 
-    public static async createAccount(passphase: string): Promise<IResult<boolean>>  {
+    public static async createAccount(
+        passphase: string,
+    ): Promise<IResult<boolean>> {
         return createPromise('account.create', { passphase });
     }
 
-    public static async getWalletList(): Promise<IResult<IWalletListItem[]>>  {
+    public static async getWalletList(): Promise<IResult<IWalletListItem[]>> {
         return createPromise('getWalletList');
     }
 
-    public static async getSettings(): Promise<IResult<string[]>>  {
+    public static async getSettings(): Promise<IResult<string[]>> {
         return createPromise('getSettings');
     }
 
-    public static async setSettings(settings: ISettings): Promise<IResult<string[]>>  {
+    public static async setSettings(
+        settings: ISettings,
+    ): Promise<IResult<string[]>> {
         return createPromise('setSettings', { settings });
     }
 
-    public static async addAccount(jsonRaw: string, password: string, name: string): Promise<IResult<IAccountInfo>> {
+    public static async addAccount(
+        jsonRaw: string,
+        password: string,
+        name: string,
+    ): Promise<IResult<IAccountInfo>> {
         return createPromise('account.add', { json: jsonRaw, password, name });
     }
 
-    public static async removeAccount(address: string): Promise<IResult<boolean>> {
+    public static async removeAccount(
+        address: string,
+    ): Promise<IResult<boolean>> {
         return createPromise('account.remove', { address });
     }
 
-    public static async requestTestTokens(password: string, address: string): Promise<IResult<boolean>> {
-        return createPromise('account.requestTestTokens', { address, password });
+    public static async requestTestTokens(
+        password: string,
+        address: string,
+    ): Promise<IResult<boolean>> {
+        return createPromise('account.requestTestTokens', {
+            address,
+            password,
+        });
     }
 
-    public static async renameAccount(address: string, name: string): Promise<IResult<boolean>> {
+    public static async renameAccount(
+        address: string,
+        name: string,
+    ): Promise<IResult<boolean>> {
         return createPromise('account.rename', { address, name });
     }
 
@@ -131,16 +160,18 @@ export class Api {
     }
 
     public static async ping(): Promise<IResult<object>> {
-        return createPromise('ping', {ping: true});
+        return createPromise('ping', { ping: true });
     }
 
     public static async getCurrencyList(): Promise<IResult<ICurrencyInfo[]>> {
         return createPromise('account.getCurrencies');
     }
 
-    public static async send(tx: ISendTransaction, password: string)
-    : Promise<IResult<ISendTransactionResult>> {
-        return createPromise('account.send', {...tx, password });
+    public static async send(
+        tx: ISendTransaction,
+        password: string,
+    ): Promise<IResult<ISendTransactionResult>> {
+        return createPromise('account.send', { ...tx, password });
     }
 
     public static async getSendTransactionList(
@@ -159,19 +190,25 @@ export class Api {
         return createPromise('getSonmTokenAddress');
     }
 
-    public static async addToken(address: string): Promise<IResult<ICurrencyInfo>>  {
+    public static async addToken(
+        address: string,
+    ): Promise<IResult<ICurrencyInfo>> {
         return createPromise('addToken', { address });
     }
 
-    public static async removeToken(address: string): Promise<IResult<boolean>>  {
+    public static async removeToken(
+        address: string,
+    ): Promise<IResult<boolean>> {
         return createPromise('removeToken', { address });
     }
 
-    public static async getTokenInfo(address: string): Promise<IResult<ICurrencyInfo>>  {
+    public static async getTokenInfo(
+        address: string,
+    ): Promise<IResult<ICurrencyInfo>> {
         return createPromise('getTokenInfo', { address });
     }
 
-    public static async getScamTokenList(): Promise<IResult<ICurrencyInfo[]>>  {
+    public static async getPresetTokenList(): Promise<IResult<ICurrencyInfo[]>>  {
         return createPromise('getPresetTokenList');
     }
 }

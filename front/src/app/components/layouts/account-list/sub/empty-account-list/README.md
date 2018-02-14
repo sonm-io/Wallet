@@ -1,3 +1,1 @@
-ololol: 
-
-    <EmptyAccountList/>
+ololol: <EmptyAccountList />;

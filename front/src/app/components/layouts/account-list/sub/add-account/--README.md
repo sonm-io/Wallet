@@ -1,3 +1,1 @@
-AddAccount: 
-
-    <AddAccount onSubmit={() => alert('AddAccount submit')}/>
+AddAccount: <AddAccount onSubmit={() => alert('AddAccount submit')} />;

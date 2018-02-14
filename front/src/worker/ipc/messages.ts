@@ -5,7 +5,13 @@ export class Response {
     public validation: any;
     public requestId: number;
 
-    constructor(type: string, requestId: number, data?: any, validation?: any, error?: any) {
+    constructor(
+        type: string,
+        requestId: number,
+        data?: any,
+        validation?: any,
+        error?: any,
+    ) {
         this.type = type;
         this.error = error === undefined ? null : error;
         this.data = data === undefined ? null : data;

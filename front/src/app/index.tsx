@@ -25,9 +25,7 @@ async function renderByPath({ pathname, search }: ILocationParams) {
     window.document.title = title;
 
     render(
-        <LocaleProvider locale={enUS as any}>
-            {content}
-        </LocaleProvider>,
+        <LocaleProvider locale={enUS as any}>{content}</LocaleProvider>,
         window.document.querySelector('#root'),
     );
 }

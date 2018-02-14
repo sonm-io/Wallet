@@ -13,14 +13,18 @@ export class DownloadFile extends React.PureComponent<IDownloadProps, any> {
     public state = {
         pending: false,
         downloadUrl: '',
-    }
+    };
 
     protected handleClick = async (event: any) => {
         if (this.state.pending) {
             event.preventDefault();
         }
 
-        if (this.state.downloadUrl === '' && this.props.getData && this.linkNode) {
+        if (
+            this.state.downloadUrl === '' &&
+            this.props.getData &&
+            this.linkNode
+        ) {
             this.setState({ pending: true });
 
             event.preventDefault();
@@ -29,12 +33,15 @@ export class DownloadFile extends React.PureComponent<IDownloadProps, any> {
             const blob = new Blob([data], { type: 'application/json' });
             const downloadUrl = window.URL.createObjectURL(blob);
 
-            this.setState({
-                pending: false,
-                downloadUrl,
-            }, () => this.linkNode && this.linkNode.click());
+            this.setState(
+                {
+                    pending: false,
+                    downloadUrl,
+                },
+                () => this.linkNode && this.linkNode.click(),
+            );
         }
-    }
+    };
 
     protected linkNode: HTMLAnchorElement | null = null;
 
@@ -42,7 +49,7 @@ export class DownloadFile extends React.PureComponent<IDownloadProps, any> {
         if (ref !== null) {
             this.linkNode = ref;
         }
-    }
+    };
 
     public render() {
         const { className, fileName, data, getData, children } = this.props;
@@ -54,12 +61,14 @@ export class DownloadFile extends React.PureComponent<IDownloadProps, any> {
         return (
             <a
                 ref={this.saveRef}
-                className={cn(
-                    'sonm-download-file',
-                    className, {
+                className={cn('sonm-download-file', className, {
                     'sonm-download-file--pending': this.state.pending,
                 })}
-                href={data ? `data:text/plain;utf8,${data}` : this.state.downloadUrl}
+                href={
+                    data
+                        ? `data:text/plain;utf8,${data}`
+                        : this.state.downloadUrl
+                }
                 download={fileName}
                 onClick={this.handleClick}
             >

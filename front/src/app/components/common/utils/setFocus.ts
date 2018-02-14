@@ -3,7 +3,9 @@ interface IHasFocus {
 }
 
 export function setFocus(node: IHasFocus | null) {
-    if (!node) { return; }
+    if (!node) {
+        return;
+    }
 
     node.focus();
 }

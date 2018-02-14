@@ -1,4 +1,10 @@
-import { observable, computed, IObservableArray, autorunAsync, action } from 'mobx';
+import {
+    observable,
+    computed,
+    IObservableArray,
+    autorunAsync,
+    action,
+} from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
@@ -29,19 +35,26 @@ export class HistoryStore extends AbstractStore {
     @observable public toAddress = '';
     @observable public fromAddress = '';
     @observable public timeStart = moment('20171201', 'YYYYMMDD').valueOf();
-    @observable public timeEnd = moment().endOf('day').valueOf();
+    @observable
+    public timeEnd = moment()
+        .endOf('day')
+        .valueOf();
     @observable public page = 1;
     @observable public total = 0;
     @observable public perPage = ITEMS_PER_PAGE;
 
     @observable public txMap = new Map<string, api.ISendTransactionResult>();
 
-    @observable protected inProgress: IObservableArray<api.ISendTransactionResult> = observable.array();
+    @observable
+    protected inProgress: IObservableArray<
+        api.ISendTransactionResult
+    > = observable.array();
 
     @observable.ref public currentList: api.ISendTransactionResult[] = [];
 
-    @computed public get totalPage() {
-        return this.total - (this.total % ITEMS_PER_PAGE) + ITEMS_PER_PAGE;
+    @computed
+    public get totalPage() {
+        return this.total - this.total % ITEMS_PER_PAGE + ITEMS_PER_PAGE;
     }
 
     protected isInitiated = false;
@@ -67,9 +80,9 @@ export class HistoryStore extends AbstractStore {
     protected createUpdateReaction() {
         autorunAsync(async () => {
             if (
-                this.filterParams
-                && this.page // update if any change
-                && this.isInitiated
+                this.filterParams &&
+                this.page && // update if any change
+                this.isInitiated
             ) {
                 this.update();
             }
@@ -108,7 +121,7 @@ export class HistoryStore extends AbstractStore {
 
     @action
     public setFilterFrom = (from: string) => {
-        from = (from === 'all' ? '' : from);
+        from = from === 'all' ? '' : from;
 
         if (from !== this.fromAddress || this.page !== 1) {
             this.fromAddress = from;
@@ -118,11 +131,11 @@ export class HistoryStore extends AbstractStore {
         }
 
         return false;
-    }
+    };
 
     @action
     public setFilterCurrency = (currency: string) => {
-        currency = (currency === 'all' ? '' : currency);
+        currency = currency === 'all' ? '' : currency;
 
         if (currency !== this.curencyAddress || this.page !== 1) {
             this.curencyAddress = currency;
@@ -132,24 +145,24 @@ export class HistoryStore extends AbstractStore {
         }
 
         return false;
-    }
+    };
 
     @action
     public setQuery = (query: string) => {
         this.query = query;
         this.page = 1;
-    }
+    };
 
     @action
     public setPage = (page: number) => {
         this.page = page;
-    }
+    };
 
     @action
     public setFilterTime = (start: number, end: number) => {
         this.timeStart = start;
         this.timeEnd = end;
-    }
+    };
 }
 
 export default HistoryStore;

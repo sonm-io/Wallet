@@ -1,4 +1,4 @@
-const {expect} = require('chai');
+const { expect } = require('chai');
 
 const walletName = 'wallet 1';
 const walletPassword = 'my secret key';
@@ -16,7 +16,7 @@ before(async function() {
     this.timeout(+Infinity);
     localStorage.clear();
 });
-describe('Api',  async function() {
+describe('Api', async function() {
     this.timeout(+Infinity);
 
     it('should ping', async function() {
@@ -30,7 +30,11 @@ describe('Api',  async function() {
     });
 
     it('should set secret key', async function() {
-        const response = await Api.createWallet(walletPassword, walletName, 'rinkeby');
+        const response = await Api.createWallet(
+            walletPassword,
+            walletName,
+            'rinkeby',
+        );
         expect(response.data).to.be.a('object');
 
         if (response.data && response.data.name) {
@@ -52,7 +56,9 @@ describe('Api',  async function() {
         const response = await Api.getTokenInfo(tokenAddress);
         expect(response.data).to.be.a('object');
 
-        const response2 = await Api.getTokenInfo('0x225b929916daadd5044d5934936313001f55d8f1');
+        const response2 = await Api.getTokenInfo(
+            '0x225b929916daadd5044d5934936313001f55d8f1',
+        );
         expect(response2).to.have.nested.property('validation.address');
 
         const response3 = await Api.getCurrencyList();
@@ -76,7 +82,7 @@ describe('Api',  async function() {
     });
 
     it('should get friendly token list', async function() {
-        const response = await Api.getScamTokenList();
+        const response = await Api.getPresetTokenList();
         expect(response.data).to.have.lengthOf(1);
     });
 
@@ -137,8 +143,15 @@ describe('Api',  async function() {
         if (response.data) {
             const walletImportName = 'wallet 2';
 
-            const response2 = await Api.importWallet(walletPassword, walletImportName , response.data);
-            expect(response2).to.have.nested.property('data.name', walletImportName);
+            const response2 = await Api.importWallet(
+                walletPassword,
+                walletImportName,
+                response.data,
+            );
+            expect(response2).to.have.nested.property(
+                'data.name',
+                walletImportName,
+            );
             expect(response2).to.have.nested.property('data.chainId');
             expect(response2).to.have.nested.property('data.nodeUrl');
 
@@ -149,7 +162,9 @@ describe('Api',  async function() {
 
     it('should check private key', async function() {
         const response = await Api.getPrivateKey(password, address);
-        expect(response.data).equal('69deaef1da6fd4d01489d7b46e8e3aab587d9fcd49de2080d367c3ef120689ef');
+        expect(response.data).equal(
+            '69deaef1da6fd4d01489d7b46e8e3aab587d9fcd49de2080d367c3ef120689ef',
+        );
     });
 
     it('should fail check private key', async function() {
@@ -212,7 +227,9 @@ describe('Api',  async function() {
                         expect(transactions2[0].fromAddress).equal(address);
                         expect(transactions2[0].toAddress).equal(to);
                         expect(transactions2[0].amount).equal(amount);
-                        expect(transactions2[0].currencyAddress).equal(currencies.data[1].address);
+                        expect(transactions2[0].currencyAddress).equal(
+                            currencies.data[1].address,
+                        );
                         expect(transactions2[0].currencySymbol).equal('SNM');
                     }
                 }
@@ -251,7 +268,7 @@ describe('Api',  async function() {
         }
     });
 
-    it('should remove account', async function () {
+    it('should remove account', async function() {
         const response1 = await Api.removeAccount(address);
         expect(response1.data).equal(true);
 

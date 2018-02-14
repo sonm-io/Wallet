@@ -34,14 +34,20 @@ export class Send extends React.Component<IProps, any> {
         }
 
         if (this.props.initialAddress) {
-            this.props.rootStore.sendStore.setUserInput({ fromAddress: this.props.initialAddress });
+            this.props.rootStore.sendStore.setUserInput({
+                fromAddress: this.props.initialAddress,
+            });
         }
 
         if (this.props.initialCurrency) {
-            this.props.rootStore.sendStore.setUserInput({ currencyAddress: this.props.initialCurrency });
+            this.props.rootStore.sendStore.setUserInput({
+                currencyAddress: this.props.initialCurrency,
+            });
         }
 
-        this.setState({ addressTarget: this.props.rootStore.sendStore.toAddress });
+        this.setState({
+            addressTarget: this.props.rootStore.sendStore.toAddress,
+        });
     }
 
     protected get sendStore(): SendStore {
@@ -54,35 +60,52 @@ export class Send extends React.Component<IProps, any> {
         if (this.props.rootStore.sendStore.isFormValid) {
             this.props.onRequireConfirmation();
         }
-    }
+    };
 
     protected handleChangeFormInput(value: Partial<ISendFormValues>) {
         this.props.rootStore.sendStore.setUserInput(value);
     }
 
-    protected handleChangeFormInputEvent(name: keyof ISendFormValues, event: React.ChangeEvent<HTMLInputElement>) {
+    protected handleChangeFormInputEvent(
+        name: keyof ISendFormValues,
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) {
         const value = event.target.value;
 
         this.handleChangeFormInput({ [name]: value });
     }
 
-    protected handleChangeTargetAddress = this.handleChangeFormInputEvent.bind(this, 'toAddress');
+    protected handleChangeTargetAddress = this.handleChangeFormInputEvent.bind(
+        this,
+        'toAddress',
+    );
 
-    protected handleChangeAccount = (fromAddress: string) => this.handleChangeFormInput({ fromAddress });
+    protected handleChangeAccount = (fromAddress: string) =>
+        this.handleChangeFormInput({ fromAddress });
 
-    protected handleChangeCurrency = (currencyAddress: string) => this.handleChangeFormInput({ currencyAddress });
+    protected handleChangeCurrency = (currencyAddress: string) =>
+        this.handleChangeFormInput({ currencyAddress });
 
-    protected handleChangeAmount = this.handleChangeFormInputEvent.bind(this, 'amount');
+    protected handleChangeAmount = this.handleChangeFormInputEvent.bind(
+        this,
+        'amount',
+    );
 
-    protected handleChangeGasLimit = this.handleChangeFormInputEvent.bind(this, 'gasLimit');
+    protected handleChangeGasLimit = this.handleChangeFormInputEvent.bind(
+        this,
+        'gasLimit',
+    );
 
-    protected handleChangeGasPrice = this.handleChangeFormInputEvent.bind(this, 'gasPrice');
+    protected handleChangeGasPrice = this.handleChangeFormInputEvent.bind(
+        this,
+        'gasPrice',
+    );
 
     protected handleSetMaximum = () => {
         this.props.rootStore.sendStore.setUserInput({
             amount: this.props.rootStore.sendStore.currentBalanceMaximum,
         });
-    }
+    };
 
     // TODO
     protected handleChangePriority = (value: string) => {
@@ -98,21 +121,17 @@ export class Send extends React.Component<IProps, any> {
         gasPrice = etherToGwei(gasPrice);
 
         this.props.rootStore.sendStore.setUserInput({ gasPrice });
-    }
+    };
 
     public render() {
-        const {
-            className,
-        } = this.props;
+        const { className } = this.props;
 
         const sendStore = this.props.rootStore.sendStore;
         const balanceList = sendStore.currentBalanceList;
 
         return (
             <div className={cn('sonm-send', className)}>
-                <Header className="sonm-send__header">
-                    Send
-                </Header>
+                <Header className="sonm-send__header">Send</Header>
 
                 <Form onSubmit={this.handleSubmit} className="sonm-send__form">
                     <FormRow className="sonm-send__row-from-address">
@@ -123,8 +142,12 @@ export class Send extends React.Component<IProps, any> {
                             <AccountBigSelect
                                 returnPrimitive
                                 onChange={this.handleChangeAccount}
-                                accounts={this.props.rootStore.mainStore.accountList}
-                                value={this.props.rootStore.sendStore.fromAddress}
+                                accounts={
+                                    this.props.rootStore.mainStore.accountList
+                                }
+                                value={
+                                    this.props.rootStore.sendStore.fromAddress
+                                }
                             />
                         </FormField>
                     </FormRow>
@@ -211,9 +234,7 @@ export class Send extends React.Component<IProps, any> {
                             />
                         </FormField>
 
-                        <span className="sonm-send__gas-price-unit">
-                            Gwei
-                        </span>
+                        <span className="sonm-send__gas-price-unit">Gwei</span>
 
                         <PriorityInput
                             className="sonm-send__gas-price-buttons"
@@ -228,7 +249,10 @@ export class Send extends React.Component<IProps, any> {
                             onClick={this.handleSubmit}
                             type="submit"
                             color="violet"
-                            disabled={!sendStore.isFormValid || !sendStore.hasNecessaryValues}
+                            disabled={
+                                !sendStore.isFormValid ||
+                                !sendStore.hasNecessaryValues
+                            }
                             className="sonm-send__submit"
                         >
                             NEXT

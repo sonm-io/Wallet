@@ -8,22 +8,20 @@ export interface IDeletableItemProps {
     id: string;
 }
 
-export class DeletableItem extends React.PureComponent<IDeletableItemProps, any> {
+export class DeletableItem extends React.PureComponent<
+    IDeletableItemProps,
+    any
+> {
     private handleDelete = () => {
         this.props.onDelete(this.props.id);
-    }
+    };
 
     public render() {
-        const {
-            className,
-            children,
-        } = this.props;
+        const { className, children } = this.props;
 
         return (
             <div className={cn('sonm-deletable-item', className)}>
-                <div className="sonm-deletable-item__children">
-                    {children}
-                </div>
+                <div className="sonm-deletable-item__children">{children}</div>
                 <button
                     type="button"
                     onClick={this.handleDelete}
@@ -32,7 +30,6 @@ export class DeletableItem extends React.PureComponent<IDeletableItemProps, any>
             </div>
         );
     }
-
 }
 
 export default DeletableItem;

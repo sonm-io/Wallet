@@ -14,13 +14,12 @@ export interface ICurrencyBigSelectProps {
 
 export { ICurrencyItemProps } from './sub/item';
 
-export class CurrencyBigSelect extends React.PureComponent<ICurrencyBigSelectProps, any> {
+export class CurrencyBigSelect extends React.PureComponent<
+    ICurrencyBigSelectProps,
+    any
+> {
     public render() {
-        const {
-            value,
-            currencies,
-            className,
-        } = this.props;
+        const { value, currencies, className } = this.props;
 
         return (
             <BigSelect
@@ -29,19 +28,21 @@ export class CurrencyBigSelect extends React.PureComponent<ICurrencyBigSelectPro
                 dropdownClassName="sonm-currency-big-select__dropdown"
                 onChange={this.handleChange}
             >
-                {
-                    currencies && currencies.map(currency => {
+                {currencies &&
+                    currencies.map(currency => {
                         return (
                             <Option
                                 title={currency.name}
                                 value={currency.address}
                                 key={currency.address}
                             >
-                                <CurrencyItem {...currency} className="sonm-currency-big-select__option"/>
+                                <CurrencyItem
+                                    {...currency}
+                                    className="sonm-currency-big-select__option"
+                                />
                             </Option>
                         );
-                    })
-                }
+                    })}
             </BigSelect>
         );
     }
@@ -51,10 +52,14 @@ export class CurrencyBigSelect extends React.PureComponent<ICurrencyBigSelectPro
             if (this.props.returnPrimitive) {
                 this.props.onChange(address as string);
             } else {
-                this.props.onChange(this.props.currencies.find(x => x.address as string === address));
+                this.props.onChange(
+                    this.props.currencies.find(
+                        x => (x.address as string) === address,
+                    ),
+                );
             }
         }
-    }
+    };
 }
 
 export default CurrencyBigSelect;
