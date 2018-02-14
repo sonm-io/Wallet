@@ -391,7 +391,7 @@ class Api {
         } else {
             const validation = {
                 password: !data.password ? 'password_required' : null,
-                payload: !data.encryptedData ? 'encryptedData_required' : null,
+                encodedWallet: !data.file ? 'walletFile_required' : null,
                 walletName: !data.walletName ? 'walletName_required' : null,
             };
 

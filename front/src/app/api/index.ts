@@ -171,7 +171,7 @@ export class Api {
         return createPromise('getTokenInfo', { address });
     }
 
-    public static async getScamTokenList(): Promise<IResult<ICurrencyInfo[]>>  {
+    public static async getPresetTokenList(): Promise<IResult<ICurrencyInfo[]>>  {
         return createPromise('getPresetTokenList');
     }
 }
