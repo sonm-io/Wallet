@@ -28,14 +28,23 @@ export class RootStore {
 
     public get isPending() {
         return AbstractStore.getAccumulatedFlag(
-            'isPending', this.historyStore, this.mainStore, this.sendStore, this.addTokenStore);
+            'isPending',
+            this.historyStore,
+            this.mainStore,
+            this.sendStore,
+            this.addTokenStore,
+        );
     }
 
     public get isOffline() {
         return AbstractStore.getAccumulatedFlag(
-            'isOffline', this.historyStore, this.mainStore, this.sendStore, this.addTokenStore);
+            'isOffline',
+            this.historyStore,
+            this.mainStore,
+            this.sendStore,
+            this.addTokenStore,
+        );
     }
-
 }
 
 export const rootStore = new RootStore();

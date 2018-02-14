@@ -7,11 +7,7 @@ export interface IHeaderProps extends React.ButtonHTMLAttributes<any> {
 }
 
 export function Header({ children, className }: IHeaderProps) {
-    return (
-        <h1 className={cn('sonm-header', className)}>
-            {children}
-        </h1>
-    );
+    return <h1 className={cn('sonm-header', className)}>{children}</h1>;
 }
 
 export default Header;

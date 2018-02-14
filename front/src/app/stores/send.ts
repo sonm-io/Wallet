@@ -12,7 +12,6 @@ import {
     TGasPricePriority,
     IPasswordCache,
     AlertType,
-
 } from './types';
 import { AbstractStore } from './abstract-store';
 const { pending, catchErrors } = AbstractStore;
@@ -47,7 +46,8 @@ export class SendStore extends AbstractStore {
         this.rootStore = rootStore;
     }
 
-    @computed get defaultGasLimit() {
+    @computed
+    get defaultGasLimit() {
         return this.rootStore.mainStore.networkName === 'livenet'
             ? '50000'
             : '250000';
@@ -59,19 +59,31 @@ export class SendStore extends AbstractStore {
 
     @observable protected serverValidation: ISendFormValues = { ...emptyForm };
 
-    @computed public get fromAddress() {
-        return this.userInput.fromAddress || this.rootStore.mainStore.accountMap.keys().next().value || '';
+    @computed
+    public get fromAddress() {
+        return (
+            this.userInput.fromAddress ||
+            this.rootStore.mainStore.accountMap.keys().next().value ||
+            ''
+        );
     }
 
-    @computed public get currencyAddress() {
-        return this.userInput.currencyAddress || this.rootStore.mainStore.currencyMap.keys().next().value || '';
+    @computed
+    public get currencyAddress() {
+        return (
+            this.userInput.currencyAddress ||
+            this.rootStore.mainStore.currencyMap.keys().next().value ||
+            ''
+        );
     }
 
-    @computed public get toAddress() {
+    @computed
+    public get toAddress() {
         return this.userInput.toAddress;
     }
 
-    @computed public get currentCurrency() {
+    @computed
+    public get currentCurrency() {
         return this.rootStore.mainStore.currencyMap.get(this.currencyAddress);
     }
 
@@ -79,16 +91,18 @@ export class SendStore extends AbstractStore {
         return this.userInputTouched.indexOf(fieldName) !== -1;
     }
 
-    @computed public get validationToAddress() {
+    @computed
+    public get validationToAddress() {
         const result: string[] = [];
         const toAddress = this.userInput.toAddress;
 
         if (this.isFieldTouched('toAddress')) {
-
             if (toAddress === '') {
                 result.push('Required field');
             } else if (toAddress === this.fromAddress) {
-                result.push('The destination address must differ the sender address');
+                result.push(
+                    'The destination address must differ the sender address',
+                );
             } else {
                 result.push(...validateEtherAddress(toAddress));
             }
@@ -97,7 +111,8 @@ export class SendStore extends AbstractStore {
         return result;
     }
 
-    @computed public get validationGasPrice() {
+    @computed
+    public get validationGasPrice() {
         const result: string[] = [];
         const gasPrice = this.gasPriceGwei;
 
@@ -112,11 +127,13 @@ export class SendStore extends AbstractStore {
         return result;
     }
 
-    @computed public get amount() {
+    @computed
+    public get amount() {
         return this.userInput.amount;
     }
 
-    @computed public get validationAmount() {
+    @computed
+    public get validationAmount() {
         const result: string[] = [];
         const amount = this.userInput.amount;
 
@@ -128,15 +145,21 @@ export class SendStore extends AbstractStore {
 
                 if (result.length === 0) {
                     const decimalDigits = amount.split('.')[1];
-                    const decimals = this.currentCurrency ? Number(this.currentCurrency.decimals) : 0;
+                    const decimals = this.currentCurrency
+                        ? Number(this.currentCurrency.decimals)
+                        : 0;
 
                     if (decimalDigits && decimalDigits.length > decimals) {
-                        result.push(`Too many decimal digits. Maximum: ${decimals}`);
+                        result.push(
+                            `Too many decimal digits. Maximum: ${decimals}`,
+                        );
                     }
                 }
 
                 if (result.length === 0) {
-                    const currentMax = createBigNumber(this.currentBalanceMaximum);
+                    const currentMax = createBigNumber(
+                        this.currentBalanceMaximum,
+                    );
 
                     if (currentMax === undefined) {
                         result.push('Maximum values is undetermined');
@@ -150,24 +173,30 @@ export class SendStore extends AbstractStore {
         return result;
     }
 
-    @computed public get gasLimit() {
+    @computed
+    public get gasLimit() {
         return this.userInput.gasLimit || this.defaultGasLimit;
     }
 
-    @computed public get validationGasLimit() {
+    @computed
+    public get validationGasLimit() {
         return this.userInput.gasLimit === ''
             ? []
             : validatePositiveInteger(this.userInput.gasLimit);
     }
 
-    @computed public get isFormValid() {
-        return this.validationToAddress.length === 0
-            && this.validationGasPrice.length === 0
-            && this.validationAmount.length === 0
-            && this.validationGasLimit.length === 0;
+    @computed
+    public get isFormValid() {
+        return (
+            this.validationToAddress.length === 0 &&
+            this.validationGasPrice.length === 0 &&
+            this.validationAmount.length === 0 &&
+            this.validationGasLimit.length === 0
+        );
     }
 
-    @computed public get hasNecessaryValues() {
+    @computed
+    public get hasNecessaryValues() {
         return this.userInput.amount && this.userInput.toAddress;
     }
 
@@ -177,7 +206,9 @@ export class SendStore extends AbstractStore {
 
         if (this.userInput.gasPrice !== '') {
             const [min, max] = this.rootStore.mainStore.gasPriceThresholds;
-            const userInput = createBigNumber(gweiToEther(this.userInput.gasPrice));
+            const userInput = createBigNumber(
+                gweiToEther(this.userInput.gasPrice),
+            );
             if (userInput) {
                 if (userInput.lessThanOrEqualTo(min)) {
                     result = 'low';
@@ -238,16 +269,21 @@ export class SendStore extends AbstractStore {
     protected passwordCache: IPasswordCache = {};
     @pending
     @asyncAction
-    public * checkSelectedAccountPassword(password: string) {
+    public *checkSelectedAccountPassword(password: string) {
         const accountAddress = this.fromAddress;
 
         let validationMessage = '';
 
-        if (accountAddress in this.passwordCache
-            && this.passwordCache[accountAddress] === password) {
+        if (
+            accountAddress in this.passwordCache &&
+            this.passwordCache[accountAddress] === password
+        ) {
             validationMessage = '';
         } else {
-            const {data: privateKey, validation} = yield Api.getPrivateKey(password, accountAddress);
+            const { data: privateKey, validation } = yield Api.getPrivateKey(
+                password,
+                accountAddress,
+            );
 
             if (privateKey) {
                 this.passwordCache[accountAddress] = password;
@@ -262,25 +298,28 @@ export class SendStore extends AbstractStore {
         return validationMessage === '';
     }
 
-    @computed get gasPriceEther() {
+    @computed
+    get gasPriceEther() {
         return this.userInput.gasPrice
             ? gweiToEther(this.userInput.gasPrice)
             : this.rootStore.mainStore.averageGasPriceEther;
     }
 
-    @computed get gasPriceGwei() {
+    @computed
+    get gasPriceGwei() {
         return this.userInput.gasPrice
             ? this.userInput.gasPrice
             : this.averageGasPriceGwei;
     }
 
-    @computed get averageGasPriceGwei() {
+    @computed
+    get averageGasPriceGwei() {
         return etherToGwei(this.rootStore.mainStore.averageGasPriceEther);
     }
 
     @catchErrors({ restart: false })
     @asyncAction
-    public * confirmTransaction(password: string) {
+    public *confirmTransaction(password: string) {
         const tx = {
             toAddress: this.userInput.toAddress,
             amount: this.userInput.amount,
@@ -300,18 +339,24 @@ export class SendStore extends AbstractStore {
 
         let alert;
         if (result.status === TransactionStatus.success) {
-            const currency = this.rootStore.mainStore.currencyMap.get(result.currencyAddress);
+            const currency = this.rootStore.mainStore.currencyMap.get(
+                result.currencyAddress,
+            );
             const currencyName = currency ? currency.symbol : '';
 
             alert = {
                 type: AlertType.success,
                 message: `Transaction is completed successfully. \
-${result.amount} ${currencyName} has been sent to the address ${result.toAddress}. TxHash ${result.hash}`,
+${result.amount} ${currencyName} has been sent to the address ${
+                    result.toAddress
+                }. TxHash ${result.hash}`,
             };
         } else if (result.status === TransactionStatus.failed) {
             alert = {
                 type: AlertType.error,
-                message: `Transaction to the address ${result.toAddress} was failed. TxHash ${result.hash}`,
+                message: `Transaction to the address ${
+                    result.toAddress
+                } was failed. TxHash ${result.hash}`,
             };
         } else {
             alert = {
@@ -336,7 +381,9 @@ ${result.amount} ${currencyName} has been sent to the address ${result.toAddress
         );
 
         if (amount) {
-            if (this.rootStore.mainStore.etherAddress === this.currencyAddress) {
+            if (
+                this.rootStore.mainStore.etherAddress === this.currencyAddress
+            ) {
                 const gasPrice = createBigNumber(this.gasPriceEther);
                 const gasLimit = createBigNumber(this.gasLimit);
 

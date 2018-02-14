@@ -11,7 +11,7 @@ export enum TransactionStatus {
     success = 'success',
 }
 
-export interface  ISendTransaction {
+export interface ISendTransaction {
     timestamp: number;
     fromAddress: string;
     toAddress: string;

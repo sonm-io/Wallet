@@ -12,12 +12,7 @@ export interface ICurrencyItemProps {
 
 export class CurrencyItem extends React.Component<ICurrencyItemProps, any> {
     public render() {
-        const {
-            className,
-            balance,
-            name,
-            symbol,
-        } = this.props;
+        const { className, balance, name, symbol } = this.props;
 
         return (
             <div className={cn('sonm-currency-item', className)}>

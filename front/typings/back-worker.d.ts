@@ -1,5 +1,7 @@
 declare module 'worker/*' {
     function factory(): Worker;
-    namespace factory {}
+    namespace factory {
+
+    }
     export = factory;
 }

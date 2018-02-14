@@ -1,3 +1,1 @@
-SendSuccess: 
-
-    <SendSuccess/>
+SendSuccess: <SendSuccess />;

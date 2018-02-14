@@ -31,33 +31,28 @@ export class App extends React.Component<IProps, any> {
         event.preventDefault();
 
         this.props.onExit();
-    }
+    };
 
     public render() {
         const rootStore = this.props.rootStore;
         const mainStore = rootStore.mainStore;
 
-        const {
-            className,
-            selectedNavMenuItem,
-            children,
-        } = this.props;
+        const { className, selectedNavMenuItem, children } = this.props;
 
-        const {
-            etherBalance,
-            primaryTokenBalance,
-            accountMap,
-        } = mainStore;
+        const { etherBalance, primaryTokenBalance, accountMap } = mainStore;
 
-        const disabledMenu = rootStore.isOffline || (accountMap.size === 0)
-            ? '/send'
-            : '';
+        const disabledMenu =
+            rootStore.isOffline || accountMap.size === 0 ? '/send' : '';
 
         return (
             <div className={cn('sonm-app', className)}>
                 <LoadMask white visible={rootStore.isPending}>
                     <div className="sonm-app__nav">
-                        <div className={`sonm-nav sonm-nav--${mainStore.networkName}`}>
+                        <div
+                            className={`sonm-nav sonm-nav--${
+                                mainStore.networkName
+                            }`}
+                        >
                             <div className="sonm-nav__logo" />
                             <NavMenu
                                 url={selectedNavMenuItem}
@@ -82,10 +77,15 @@ export class App extends React.Component<IProps, any> {
                                 </div>
                                 <div className="sonm-nav__network">
                                     <div className="sonm-nav__network-type">
-                                        {mainStore.networkName === 'livenet' ? 'LIVENET' : 'TESTNET'}
+                                        {mainStore.networkName === 'livenet'
+                                            ? 'LIVENET'
+                                            : 'TESTNET'}
                                     </div>
                                     <div className="sonm-nav__network-url">
-                                        {mainStore.nodeUrl.replace('https://', '')}
+                                        {mainStore.nodeUrl.replace(
+                                            'https://',
+                                            '',
+                                        )}
                                     </div>
                                 </div>
                                 <Icon
@@ -100,11 +100,15 @@ export class App extends React.Component<IProps, any> {
                         </div>
                     </div>
                     <div className="sonm-app__alert-group">
-                        {rootStore.isOffline
-                            ? <Alert type="error" id="no-connect">No blockchain node connection</Alert>
-                            : null
-                        }
-                        <AlertList className="sonm-app__alert-list" rootStore={rootStore} />
+                        {rootStore.isOffline ? (
+                            <Alert type="error" id="no-connect">
+                                No blockchain node connection
+                            </Alert>
+                        ) : null}
+                        <AlertList
+                            className="sonm-app__alert-list"
+                            rootStore={rootStore}
+                        />
                     </div>
                     <div className="sonm-app__content">
                         <div className="sonm-app__content-scroll-ct">

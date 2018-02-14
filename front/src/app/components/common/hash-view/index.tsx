@@ -16,7 +16,6 @@ interface IBalanceViewProps {
 import * as cn from 'classnames';
 
 export class Hash extends React.PureComponent<IBalanceViewProps, any> {
-
     protected static copyInput = createInput();
 
     protected handleClickCopy = (event: any) => {
@@ -26,7 +25,7 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
         Hash.copyInput.value = this.props.hash;
         Hash.copyInput.select();
         document.execCommand('Copy');
-    }
+    };
 
     public render() {
         const {
@@ -39,7 +38,8 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
             keepHashString,
         } = this.props;
 
-        const hash0x =  keepHashString || hash.startsWith('0x') ? hash : '0x' + hash;
+        const hash0x =
+            keepHashString || hash.startsWith('0x') ? hash : '0x' + hash;
 
         const len = hash0x.length;
         let start = hash0x;
@@ -50,9 +50,7 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
             end = hash0x.slice(len - LAST_SYMBOL_AMOUNT);
         }
 
-        const style = fontSizePx
-            ? { fontSize: `${fontSizePx}px` }
-            : undefined;
+        const style = fontSizePx ? { fontSize: `${fontSizePx}px` } : undefined;
 
         const showCopyButton = hasCopyButton && 1;
 
@@ -68,15 +66,16 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
                 <span className="sonm-hash__start">
                     {prefix} {start}
                 </span>
-                <span className="sonm-hash__end">
-                    {end}
-                </span>
-                {showCopyButton
-                    ? <button className="sonm-hash__copy" title="copy" onClickCapture={this.handleClickCopy}>
+                <span className="sonm-hash__end">{end}</span>
+                {showCopyButton ? (
+                    <button
+                        className="sonm-hash__copy"
+                        title="copy"
+                        onClickCapture={this.handleClickCopy}
+                    >
                         <Icon i="Copy" />
                     </button>
-                    : null
-                }
+                ) : null}
             </Tag>
         );
     }

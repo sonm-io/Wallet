@@ -20,19 +20,21 @@ export interface IAccountItemProps {
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {
-    public state  = {
+    public state = {
         isEdit: false,
     };
 
     protected inputRef?: any;
 
-    protected handleClickIcon = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    protected handleClickIcon = (
+        event: React.MouseEvent<HTMLAnchorElement>,
+    ) => {
         event.preventDefault();
 
         if (this.props.onClickIcon) {
             this.props.onClickIcon(this.props.address);
         }
-    }
+    };
 
     protected handleShowPrivateKey = (event: any) => {
         event.preventDefault();
@@ -40,7 +42,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         if (this.props.onClickShowPrivateKey) {
             this.props.onClickShowPrivateKey(this.props.address);
         }
-    }
+    };
 
     public render() {
         const {
@@ -55,11 +57,17 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
 
         return (
             <div className={cn('sonm-account-item', className)}>
-                <IdentIcon address={address} className="sonm-account-item__blockies"/>
-                {onClickIcon
-                    ? <a href="#" onClick={this.handleClickIcon} className="sonm-account-item__icon-link"/>
-                    : null
-                }
+                <IdentIcon
+                    address={address}
+                    className="sonm-account-item__blockies"
+                />
+                {onClickIcon ? (
+                    <a
+                        href="#"
+                        onClick={this.handleClickIcon}
+                        className="sonm-account-item__icon-link"
+                    />
+                ) : null}
                 <span className="sonm-account-item__name-wrapper">
                     {this.renderName()}
                 </span>
@@ -79,23 +87,30 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     fullString={primaryTokenBalance}
                     fontSizePx={16}
                 />
-                {hasButtons && json
-                    ?
+                {hasButtons && json ? (
                     <div className="sonm-account-item__buttons">
                         <DownloadFile
                             data={json}
                             fileName={`account-${address}.json`}
                         >
-                            <Icon i="Download" className="sonm-account-item__action"/>
+                            <Icon
+                                i="Download"
+                                className="sonm-account-item__action"
+                            />
                         </DownloadFile>
-                        {this.props.onClickShowPrivateKey ?
-                            <a href="#show-private-key"
-                               onClick={this.handleShowPrivateKey}
+                        {this.props.onClickShowPrivateKey ? (
+                            <a
+                                href="#show-private-key"
+                                onClick={this.handleShowPrivateKey}
                             >
-                                <Icon i="Eye" className="sonm-account-item__action"/>
-                            </a> : null}
+                                <Icon
+                                    i="Eye"
+                                    className="sonm-account-item__action"
+                                />
+                            </a>
+                        ) : null}
                     </div>
-                    : null}
+                ) : null}
             </div>
         );
     }
@@ -104,20 +119,23 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         if (this.inputRef) {
             this.inputRef.focus();
         }
-    }
+    };
 
     private startEdit = () => {
-        this.setState({
-            isEdit: true,
-        }, this.focusOnInput);
-    }
+        this.setState(
+            {
+                isEdit: true,
+            },
+            this.focusOnInput,
+        );
+    };
 
     private handleKeyUp = (event: any) => {
         if (event.keyCode === 13) {
             event.preventDefault();
             this.stopEdit();
         }
-    }
+    };
 
     private stopEdit = () => {
         if (this.props.onRename) {
@@ -130,23 +148,20 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         this.setState({
             isEdit: false,
         });
-    }
+    };
 
     private cancelEdit = () => {
         this.setState({
             isEdit: false,
         });
-    }
+    };
 
     private saveRef = (ref: any) => {
         this.inputRef = ref;
-    }
+    };
 
     public renderName() {
-        const {
-            name,
-            onRename,
-        } = this.props;
+        const { name, onRename } = this.props;
 
         const result = [];
 
@@ -173,8 +188,15 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
 
             if (onRename) {
                 result.push(
-                    <button key="b" className="sonm-account-item__edit-button" onClick={this.startEdit}>
-                        <Icon i="Pencil" className="sonm-account-item__edit-icon"/>
+                    <button
+                        key="b"
+                        className="sonm-account-item__edit-button"
+                        onClick={this.startEdit}
+                    >
+                        <Icon
+                            i="Pencil"
+                            className="sonm-account-item__edit-icon"
+                        />
                     </button>,
                 );
             }
