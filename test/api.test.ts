@@ -76,7 +76,7 @@ describe('Api',  async function() {
     });
 
     it('should get friendly token list', async function() {
-        const response = await Api.getScamTokenList();
+        const response = await Api.getPresetTokenList();
         expect(response.data).to.have.lengthOf(1);
     });
 
