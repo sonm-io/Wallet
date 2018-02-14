@@ -41,9 +41,9 @@ function createWindow () {
         title: app.getName(),
         //resizable: true,
         width: 1280,
-        height: 670,
+        height: 720,
         minWidth: 1280,
-        minHeight: 670,
+        minHeight: 720,
         maxWidth: 1280,
         webPreferences: {
             webSecurity: false,

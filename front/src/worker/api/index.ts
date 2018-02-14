@@ -567,11 +567,16 @@ class Api {
         for (const transaction of this.storage.transactions) {
             // remove pending
             if (transaction.hash !== PENDING_HASH) {
-                transactions.push(transaction);
-
                 if (transaction.status === 'pending') {
-                    const txResult = factory.createTxResult(transaction.hash);
-                    this.proceedTx(transaction, txResult);
+                    const checkTransaction = await factory.gethClient.method('getTransaction')(transaction.hash);
+                    if (checkTransaction) {
+                        transactions.push(transaction);
+
+                        const txResult = factory.createTxResult(transaction.hash);
+                        this.proceedTx(transaction, txResult);
+                    }
+                } else {
+                    transactions.push(transaction);
                 }
 
                 needSave = true;
