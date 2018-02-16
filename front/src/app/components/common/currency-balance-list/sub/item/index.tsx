@@ -7,6 +7,7 @@ export interface ITokenItemProps {
     address: string;
     balance: string;
     symbol: string;
+    decimalPointOffset: number;
 }
 
 export function TokenItem(props: ITokenItemProps) {
@@ -24,6 +25,7 @@ export function TokenItem(props: ITokenItemProps) {
                 balance={props.balance}
                 symbol={props.symbol}
                 fontSizePx={18}
+                decimalPointOffset={props.decimalPointOffset}
             />
         </Empty>
     );

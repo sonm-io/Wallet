@@ -36,7 +36,7 @@ const migrations = {
     },
 } as any;
 
-module.exports = function migrate(type: string, data: any) {
+export function migrate(type: string, data: any) {
     if (!data.version) {
         if (type === 'wallet_list') {
             data = {
@@ -55,4 +55,4 @@ module.exports = function migrate(type: string, data: any) {
     }
 
     return data;
-};
+}

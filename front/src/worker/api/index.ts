@@ -5,9 +5,9 @@ import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
 import * as ipc from '../ipc/ipc';
-import * as t from '../../app/api/types';
+import * as t from 'app/api/types';
 
-const migrate = require('../migrations.ts');
+import { migrate } from '../migrations';
 
 const { createSonmFactory, utils } = sonmApi;
 
@@ -75,11 +75,11 @@ const DEFAULT_NODES: INodes = {
     rinkeby: 'https://rinkeby.infura.io',
 };
 
-const DEFAULT_TOKENS = {
+const DEFAULT_TOKENS: ITokens = {
     livenet: [
         {
             name: 'STORJ',
-            decimals: 18,
+            decimalPointOffset: 18,
             symbol: 'STORJ',
             address: '0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac',
         },
@@ -87,12 +87,12 @@ const DEFAULT_TOKENS = {
     rinkeby: [
         {
             name: 'PIG',
-            decimals: 18,
+            decimalPointOffset: 18,
             symbol: 'PIG',
             address: '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
         },
     ],
-} as ITokens;
+};
 
 class Api {
     private routes: {
@@ -107,8 +107,8 @@ class Api {
         [index: string]: any;
     };
 
-    private secretKey: string;
-    private hash: string;
+    private secretKey: string = '';
+    private hash: string = '';
     private tokenList: any;
 
     private constructor() {
@@ -612,11 +612,15 @@ class Api {
             // remove pending
             if (transaction.hash !== PENDING_HASH) {
                 if (transaction.status === 'pending') {
-                    const checkTransaction = await factory.gethClient.method('getTransaction')(transaction.hash);
+                    const checkTransaction = await factory.gethClient.method(
+                        'getTransaction',
+                    )(transaction.hash);
                     if (checkTransaction) {
                         transactions.push(transaction);
 
-                        const txResult = factory.createTxResult(transaction.hash);
+                        const txResult = factory.createTxResult(
+                            transaction.hash,
+                        );
                         this.proceedTx(transaction, txResult);
                     }
                 } else {
@@ -657,7 +661,7 @@ class Api {
             const balancies = await tokenList.getBalances(address);
 
             for (const key of Object.keys(balancies)) {
-                balancies[key] = utils.fromWei(balancies[key], 'ether');
+                balancies[key] = balancies[key];
             }
 
             return balancies;
@@ -752,7 +756,7 @@ class Api {
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
-            data: utils.fromWei(gasPrice, 'ether'),
+            data: gasPrice,
         };
     };
 
@@ -916,8 +920,8 @@ class Api {
 
         const client = await this.initAccount(fromAddress);
         const transactions = this.storage.transactions;
-        const gasPrice = utils.toWei(data.gasPrice, 'ether');
-        const amount = utils.toWei(data.amount, 'ether');
+        const gasPrice = data.gasPrice;
+        const amount = data.amount;
         const token = this.storage.tokens.find(
             (item: t.ICurrencyInfo) => item.address === currencyAddress,
         );
@@ -929,6 +933,7 @@ class Api {
             amount: data.amount,
             currencyAddress,
             currencySymbol: token.symbol,
+            decimalPointOffset: token.decimalPointOffset,
             hash: PENDING_HASH,
             fee: null,
             status: 'pending',
@@ -972,7 +977,7 @@ class Api {
         const fee = await txResult.getTxPrice();
 
         transaction.status = receipt.status === '0x0' ? 'failed' : 'success';
-        transaction.fee = utils.fromWei(fee.toString(), 'ether');
+        transaction.fee = fee;
 
         await this.saveData();
     }

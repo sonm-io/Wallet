@@ -12,7 +12,7 @@ import { SendStore } from 'app/stores/send';
 import { RootStore } from 'app/stores';
 import { Header } from 'app/components/common/header';
 import { ISendFormValues } from 'app/stores/types';
-import { etherToGwei } from 'app/utils/ether-to-gwei';
+import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 
 interface IProps {
     className?: string;
@@ -75,10 +75,9 @@ export class Send extends React.Component<IProps, any> {
         this.handleChangeFormInput({ [name]: value });
     }
 
-    protected handleChangeTargetAddress = this.handleChangeFormInputEvent.bind(
-        this,
-        'toAddress',
-    );
+    protected handleChangeTargetAddress = (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => this.handleChangeFormInputEvent('toAddress', event);
 
     protected handleChangeAccount = (fromAddress: string) =>
         this.handleChangeFormInput({ fromAddress });
@@ -86,31 +85,28 @@ export class Send extends React.Component<IProps, any> {
     protected handleChangeCurrency = (currencyAddress: string) =>
         this.handleChangeFormInput({ currencyAddress });
 
-    protected handleChangeAmount = this.handleChangeFormInputEvent.bind(
-        this,
-        'amount',
-    );
+    protected handleChangeAmount = (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => this.handleChangeFormInputEvent('amountEther', event);
 
-    protected handleChangeGasLimit = this.handleChangeFormInputEvent.bind(
-        this,
-        'gasLimit',
-    );
+    protected handleChangeGasLimit = (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => this.handleChangeFormInputEvent('gasLimit', event);
 
-    protected handleChangeGasPrice = this.handleChangeFormInputEvent.bind(
-        this,
-        'gasPrice',
-    );
+    protected handleChangeGasPrice = (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => this.handleChangeFormInputEvent('gasPriceGwei', event);
 
     protected handleSetMaximum = () => {
         this.props.rootStore.sendStore.setUserInput({
-            amount: this.props.rootStore.sendStore.currentBalanceMaximum,
+            amountEther: this.props.rootStore.sendStore.currentBalanceMaximum,
         });
     };
 
     // TODO
     protected handleChangePriority = (value: string) => {
         const [min, max] = this.props.rootStore.mainStore.gasPriceThresholds;
-        let gasPrice = this.props.rootStore.mainStore.averageGasPriceEther;
+        let gasPrice = this.props.rootStore.mainStore.averageGasPrice;
 
         if (value === 'low') {
             gasPrice = min;
@@ -118,9 +114,9 @@ export class Send extends React.Component<IProps, any> {
             gasPrice = max;
         }
 
-        gasPrice = etherToGwei(gasPrice);
+        const gasPriceGwei = moveDecimalPoint(gasPrice, -9);
 
-        this.props.rootStore.sendStore.setUserInput({ gasPrice });
+        this.props.rootStore.sendStore.setUserInput({ gasPriceGwei });
     };
 
     public render() {
@@ -190,7 +186,7 @@ export class Send extends React.Component<IProps, any> {
                                 onChange={this.handleChangeAmount}
                                 autoComplete="off"
                                 placeholder="Amount"
-                                value={sendStore.userInput.amount}
+                                value={sendStore.userInput.amountEther}
                             />
                         </FormField>
 
@@ -227,7 +223,7 @@ export class Send extends React.Component<IProps, any> {
                         >
                             <Input
                                 className="sonm-send__input"
-                                value={sendStore.userInput.gasPrice}
+                                value={sendStore.userInput.gasPriceGwei}
                                 onChange={this.handleChangeGasPrice}
                                 autoComplete="off"
                                 placeholder={sendStore.gasPriceGwei}

@@ -39,7 +39,12 @@ export class App extends React.Component<IProps, any> {
 
         const { className, selectedNavMenuItem, children } = this.props;
 
-        const { etherBalance, primaryTokenBalance, accountMap } = mainStore;
+        const {
+            etherBalance,
+            primaryTokenBalance,
+            primaryTokenInfo,
+            accountMap,
+        } = mainStore;
 
         const disabledMenu =
             rootStore.isOffline || accountMap.size === 0 ? '/send' : '';
@@ -64,15 +69,21 @@ export class App extends React.Component<IProps, any> {
                                 <div className="sonm-nav__total">
                                     <Balance
                                         className="sonm-nav__total-item"
-                                        fullString={etherBalance}
+                                        balance={etherBalance}
+                                        symbol="Ether"
                                         fontSizePx={18}
-                                        decimals={2}
+                                        decimalPointOffset={18}
+                                        decimalDigitAmount={2}
                                     />
                                     <Balance
                                         className="sonm-nav__total-item"
-                                        fullString={primaryTokenBalance}
+                                        balance={primaryTokenBalance}
+                                        symbol={primaryTokenInfo.symbol}
                                         fontSizePx={18}
-                                        decimals={2}
+                                        decimalPointOffset={
+                                            primaryTokenInfo.decimalPointOffset
+                                        }
+                                        decimalDigitAmount={2}
                                     />
                                 </div>
                                 <div className="sonm-nav__network">

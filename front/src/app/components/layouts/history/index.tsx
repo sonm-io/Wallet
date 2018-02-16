@@ -130,6 +130,7 @@ export class History extends React.Component<IProps, any> {
                         key="0"
                         symbol={symbol}
                         balance={record.amount}
+                        decimalPointOffset={record.decimalPointOffset}
                     />,
                 ];
 
@@ -140,7 +141,8 @@ export class History extends React.Component<IProps, any> {
                             className="sonm-tx-list__cell-amount-fee"
                             balance={record.fee}
                             symbol="Ether"
-                            decimals={6}
+                            decimalDigitAmount={6}
+                            decimalPointOffset={18}
                         />,
                     );
                 }
