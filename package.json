@@ -110,7 +110,7 @@
         "webpack-without-browser-check": "cross-env PLATFORM=skipBrowserCheck NODE_ENV=development webpack --config ./front/config/webpack.config.js",
         "webpack:one": "cross-env NODE_ENV=production BUILD_TYPE=singleFile webpack --config ./front/config/webpack.config.js",
         "webpack:web": "cross-env SOURCE_MAP=1 NODE_ENV=production BUILD_TYPE=web webpack --config ./front/config/webpack.config.js",
-        "pretty": "prettier --write --config prettier.config.js ./test/**/* ./front/**/*.js ./front/**/*.ts ./front/**/*.tsx ./*.js ./*.json",
+        "pretty": "prettier --write --config .prettierrc ./test/**/* ./front/**/*.js ./front/**/*.ts ./front/**/*.tsx ./*.js ./*.json ./front/**/*.less",
         "sg": "styleguidist server",
         "karma": "cross-env NODE_ENV=production BUILD_TYPE=singleFile ./node_modules/karma/bin/karma start --browsers Chrome",
         "karma:headless": "cross-env NODE_ENV=production BUILD_TYPE=singleFile ./node_modules/karma/bin/karma start --browsers ChromeHeadless --single-un --reporters teamcity --colors false",

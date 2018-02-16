@@ -22,4 +22,4 @@ overrides:
     parser: markdown    
 - files: "*.less"
   options:
-    parser: postcss       
+    parser: css

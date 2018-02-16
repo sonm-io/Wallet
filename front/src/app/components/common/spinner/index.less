@@ -3,43 +3,44 @@
 @spiner-size: 150px;
 @spiner-size-half: @spiner-size / 2;
 
-
 .sonm-spinner {
-  overflow: hidden;
+    overflow: hidden;
 
-  &__svg {
-    display: block;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-@spiner-size-half, -@spiner-size-half);
-    background-size: contain;
-    height: @spiner-size;
-    width: @spiner-size;
-    margin: -1px;
-  }
-
-  &__circle {
-    height: @spiner-size;
-    width: @spiner-size;
-    transform-origin: @spiner-size-half @spiner-size-half;
-    opacity: 0.2;
-    animation: spinner-rotate 1s linear infinite;
-
-    &-path {
-      fill: @color-blue;
+    &__svg {
+        display: block;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-@spiner-size-half, -@spiner-size-half);
+        background-size: contain;
+        height: @spiner-size;
+        width: @spiner-size;
+        margin: -1px;
     }
 
-    &:first-child {
-      opacity: 0.1;
-    }
+    &__circle {
+        height: @spiner-size;
+        width: @spiner-size;
+        transform-origin: @spiner-size-half @spiner-size-half;
+        opacity: 0.2;
+        animation: spinner-rotate 1s linear infinite;
 
-    &:last-child {
-      opacity: 0.3;
+        &-path {
+            fill: @color-blue;
+        }
+
+        &:first-child {
+            opacity: 0.1;
+        }
+
+        &:last-child {
+            opacity: 0.3;
+        }
     }
-  }
 }
 
 @keyframes spinner-rotate {
-  100% { transform: rotate(360deg) }
+    100% {
+        transform: rotate(360deg);
+    }
 }
