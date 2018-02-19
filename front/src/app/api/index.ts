@@ -106,8 +106,18 @@ export class Api {
 
     public static async createAccount(
         passphase: string,
-    ): Promise<IResult<boolean>> {
+    ): Promise<IResult<string>> {
         return createPromise('account.create', { passphase });
+    }
+
+    public static async createAccountFromPrivateKey(
+        privateKey: string,
+        passphase: string,
+    ): Promise<IResult<string>> {
+        return createPromise('account.createFromPrivateKey', {
+            privateKey,
+            passphase,
+        });
     }
 
     public static async getWalletList(): Promise<IResult<IWalletListItem[]>> {
@@ -208,7 +218,9 @@ export class Api {
         return createPromise('getTokenInfo', { address });
     }
 
-    public static async getPresetTokenList(): Promise<IResult<ICurrencyInfo[]>>  {
+    public static async getPresetTokenList(): Promise<
+        IResult<ICurrencyInfo[]>
+    > {
         return createPromise('getPresetTokenList');
     }
 }

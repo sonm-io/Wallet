@@ -116,7 +116,7 @@ describe('Api', async function() {
         expect(response.data).to.be.a('string');
     });
 
-    it('should create account and recover private key from it', async function() {
+    it('should create account', async function() {
         const response = await Api.createAccount('testTestTest');
         expect(response.data).to.be.a('string');
     });
@@ -274,5 +274,33 @@ describe('Api', async function() {
 
         const response2 = await Api.getAccountList();
         expect(response2.data).to.have.lengthOf(0);
+    });
+
+    it('should create account from privateKey', async function() {
+        const privateKey =
+            '69deaef1da6fd4d01489d7b46e8e3aab587d9fcd49de2080d367c3ef120689ee';
+
+        const response = await Api.createAccountFromPrivateKey(
+            privateKey,
+            password,
+        );
+        expect(response.data).to.be.a('string');
+
+        if (response.data) {
+            const json1 = JSON.parse(response.data);
+
+            const response1 = await Api.addAccount(
+                response.data,
+                password,
+                'Wallet 2',
+            );
+            expect(response1.data).not.equal(null);
+
+            const response2 = await Api.getAccountList();
+            expect(response2.data).to.have.lengthOf(1);
+
+            const response3 = await Api.getPrivateKey(password, json1.address);
+            expect(response3.data).equal(privateKey);
+        }
     });
 });
