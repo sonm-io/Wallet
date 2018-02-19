@@ -272,7 +272,7 @@ class Api {
 
             try {
                 const privateKey = await utils.recoverPrivateKey(
-                    accounts[utils.add0x(address)].json,
+                    accounts[address].json,
                     password,
                 );
                 client.factory.setPrivateKey(privateKey);
