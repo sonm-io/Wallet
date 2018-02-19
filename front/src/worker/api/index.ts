@@ -129,7 +129,7 @@ class Api {
 
             'account.add': this.addAccount,
             'account.create': this.createAccount,
-            'account.createFromPrivateKey': this.createFromPrivateKey,
+            'account.createFromPrivateKey': this.createAccountFromPrivateKey,
             'account.remove': this.removeAccount,
             'account.rename': this.renameAccount,
 
@@ -232,6 +232,7 @@ class Api {
 
     public getPrivateKey = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
+            data.address = utils.add0x(data.address);
             const { address, password } = data;
 
             return this.checkAccountPassword(password, address);
@@ -271,7 +272,7 @@ class Api {
 
             try {
                 const privateKey = await utils.recoverPrivateKey(
-                    accounts[address].json,
+                    accounts[utils.add0x(address)].json,
                     password,
                 );
                 client.factory.setPrivateKey(privateKey);
@@ -828,6 +829,8 @@ class Api {
                     };
                 }
             } catch (err) {
+                console.log(err);
+
                 return {
                     validation: {
                         password: 'password_not_valid',

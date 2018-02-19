@@ -106,14 +106,14 @@ export class Api {
 
     public static async createAccount(
         passphase: string,
-    ): Promise<IResult<boolean>> {
+    ): Promise<IResult<string>> {
         return createPromise('account.create', { passphase });
     }
 
     public static async createAccountFromPrivateKey(
         privateKey: string,
         passphase: string,
-    ): Promise<IResult<boolean>> {
+    ): Promise<IResult<string>> {
         return createPromise('account.createFromPrivateKey', {
             privateKey,
             passphase,
