@@ -11,6 +11,7 @@ const MinifyPlugin = require('babel-minify-webpack-plugin');
 
 const buildType = process.env.BUILD_TYPE || '';
 const isDev = process.env.NODE_ENV !== 'production';
+const isAnalyze = process.env.WEBPACK_ANALYZE;
 const sourceMap = false; // process.env.SOURCE_MAP ? 'source-map' : undefined;
 
 const extractLess = new ExtractTextPlugin({
@@ -18,12 +19,17 @@ const extractLess = new ExtractTextPlugin({
     allChunks: true,
 });
 
-module.exports = {
-    entry: {
-        app: getFullPath('./src/entry.ts'),
-        style: getFullPath('./src/app/less/entry.less'),
-    },
+const entry = {
+    app: getFullPath('./src/entry.ts'),
+    style: getFullPath('./src/app/less/entry.less'),
+};
 
+if (isAnalyze) {
+    entry.back = getFullPath('./src/worker/back.worker.ts');
+}
+
+module.exports = {
+    entry,
     output: {
         filename: isDev ? '[name].js' : '[name].[hash].js',
         path:
@@ -36,6 +42,7 @@ module.exports = {
         modules: ['node_modules'],
         extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
         alias: {
+            'bn.js': 'node_modules/bn.js/lib/bn.js',
             './guide.less$': getFullPath('src/app/less/guide.less'),
             app: getFullPath('src/app'),
             worker: getFullPath('src/worker'),
@@ -73,21 +80,25 @@ module.exports = {
                         use: ['css-loader', 'less-loader'],
                     }),
                 },
-                {
-                    test: /\.worker\.ts$/,
-                    use: [
-                        {
-                            loader: 'worker-loader',
-                            options: {
-                                name: isDev ? '[name].js' : '[name].[hash].js',
-                                inline: buildType === 'singleFile',
-                            },
-                        },
-                        {
-                            loader: 'ts-loader',
-                        },
-                    ],
-                },
+                isAnalyze
+                    ? undefined
+                    : {
+                          test: /\.worker\.ts$/,
+                          use: [
+                              {
+                                  loader: 'worker-loader',
+                                  options: {
+                                      name: isDev
+                                          ? '[name].js'
+                                          : '[name].[hash].js',
+                                      inline: buildType === 'singleFile',
+                                  },
+                              },
+                              {
+                                  loader: 'ts-loader',
+                              },
+                          ],
+                      },
                 {
                     issuer: /\.tsx/,
                     test: /\.svg$/,
@@ -116,7 +127,7 @@ module.exports = {
 
     plugins: (() => {
         const plugins = [
-            process.env.WEBPACK_ANALYZE ? new BundleAnalyzerPlugin() : false,
+            isAnalyze ? new BundleAnalyzerPlugin() : false,
 
             new HtmlWebpackPlugin({
                 inject: true,
