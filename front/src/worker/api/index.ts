@@ -612,11 +612,15 @@ class Api {
             // remove pending
             if (transaction.hash !== PENDING_HASH) {
                 if (transaction.status === 'pending') {
-                    const checkTransaction = await factory.gethClient.method('getTransaction')(transaction.hash);
+                    const checkTransaction = await factory.gethClient.method(
+                        'getTransaction',
+                    )(transaction.hash);
                     if (checkTransaction) {
                         transactions.push(transaction);
 
-                        const txResult = factory.createTxResult(transaction.hash);
+                        const txResult = factory.createTxResult(
+                            transaction.hash,
+                        );
                         this.proceedTx(transaction, txResult);
                     }
                 } else {
@@ -657,7 +661,7 @@ class Api {
             const balancies = await tokenList.getBalances(address);
 
             for (const key of Object.keys(balancies)) {
-                balancies[key] = utils.fromWei(balancies[key], 'ether');
+                balancies[key] = balancies[key];
             }
 
             return balancies;
@@ -752,7 +756,7 @@ class Api {
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
-            data: utils.fromWei(gasPrice, 'ether'),
+            data: gasPrice,
         };
     };
 
@@ -916,8 +920,8 @@ class Api {
 
         const client = await this.initAccount(fromAddress);
         const transactions = this.storage.transactions;
-        const gasPrice = utils.toWei(data.gasPrice, 'ether');
-        const amount = utils.toWei(data.amount, 'ether');
+        const gasPrice = data.gasPrice;
+        const amount = data.amount;
         const token = this.storage.tokens.find(
             (item: t.ICurrencyInfo) => item.address === currencyAddress,
         );
@@ -972,7 +976,7 @@ class Api {
         const fee = await txResult.getTxPrice();
 
         transaction.status = receipt.status === '0x0' ? 'failed' : 'success';
-        transaction.fee = utils.fromWei(fee.toString(), 'ether');
+        transaction.fee = fee.toString();
 
         await this.saveData();
     }
