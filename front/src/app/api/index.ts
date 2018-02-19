@@ -110,6 +110,16 @@ export class Api {
         return createPromise('account.create', { passphase });
     }
 
+    public static async createAccountFromPrivateKey(
+        privateKey: string,
+        passphase: string,
+    ): Promise<IResult<boolean>> {
+        return createPromise('account.createFromPrivateKey', {
+            privateKey,
+            passphase,
+        });
+    }
+
     public static async getWalletList(): Promise<IResult<IWalletListItem[]>> {
         return createPromise('getWalletList');
     }
@@ -208,7 +218,9 @@ export class Api {
         return createPromise('getTokenInfo', { address });
     }
 
-    public static async getPresetTokenList(): Promise<IResult<ICurrencyInfo[]>>  {
+    public static async getPresetTokenList(): Promise<
+        IResult<ICurrencyInfo[]>
+    > {
         return createPromise('getPresetTokenList');
     }
 }

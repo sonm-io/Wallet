@@ -129,6 +129,7 @@ class Api {
 
             'account.add': this.addAccount,
             'account.create': this.createAccount,
+            'account.createFromPrivateKey': this.createFromPrivateKey,
             'account.remove': this.removeAccount,
             'account.rename': this.renameAccount,
 
@@ -294,6 +295,20 @@ class Api {
         if (data.passphase) {
             return {
                 data: JSON.stringify(utils.newAccount(data.passphase)),
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    private createAccountFromPrivateKey = async (
+        data: IPayload,
+    ): Promise<IResponse> => {
+        if (data.passphase && data.privateKey) {
+            return {
+                data: JSON.stringify(
+                    utils.newAccount(data.passphase, data.privateKey),
+                ),
             };
         } else {
             throw new Error('required_params_missed');
@@ -612,11 +627,15 @@ class Api {
             // remove pending
             if (transaction.hash !== PENDING_HASH) {
                 if (transaction.status === 'pending') {
-                    const checkTransaction = await factory.gethClient.method('getTransaction')(transaction.hash);
+                    const checkTransaction = await factory.gethClient.method(
+                        'getTransaction',
+                    )(transaction.hash);
                     if (checkTransaction) {
                         transactions.push(transaction);
 
-                        const txResult = factory.createTxResult(transaction.hash);
+                        const txResult = factory.createTxResult(
+                            transaction.hash,
+                        );
                         this.proceedTx(transaction, txResult);
                     }
                 } else {

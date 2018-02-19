@@ -116,8 +116,16 @@ describe('Api', async function() {
         expect(response.data).to.be.a('string');
     });
 
-    it('should create account and recover private key from it', async function() {
+    it('should create account', async function() {
         const response = await Api.createAccount('testTestTest');
+        expect(response.data).to.be.a('string');
+    });
+
+    it('should create account from provateKey and recover private key from it', async function() {
+        const response = await Api.createAccountFromPrivateKey(
+            '69deaef1da6fd4d01489d7b46e8e3aab587d9fcd49de2080d367c3ef120689ef',
+            'testTestTest',
+        );
         expect(response.data).to.be.a('string');
     });
 
