@@ -232,7 +232,6 @@ class Api {
 
     public getPrivateKey = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
-            data.address = utils.add0x(data.address);
             const { address, password } = data;
 
             return this.checkAccountPassword(password, address);
@@ -252,6 +251,8 @@ class Api {
                 },
             };
         }
+
+        address = utils.add0x(address);
 
         const client = await this.initAccount(address);
 
