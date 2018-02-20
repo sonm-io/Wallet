@@ -182,7 +182,7 @@ describe('Api', async function() {
             amount,
             currencyAddress: '0x',
             gasLimit: '50000',
-            gasPrice: '10000000',
+            gasPrice: '100000000000',
         };
 
         // error transaction

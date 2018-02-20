@@ -85,7 +85,8 @@ module.exports = {
                     }),
                 },
                 needsAnalyze
-                    ? {
+                    ? null
+                    : {
                           test: /\.worker\.ts$/,
                           use: [
                               {
@@ -101,8 +102,7 @@ module.exports = {
                                   loader: 'ts-loader',
                               },
                           ],
-                      }
-                    : null,
+                      },
                 {
                     issuer: /\.tsx/,
                     test: /\.svg$/,
