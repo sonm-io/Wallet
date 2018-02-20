@@ -907,6 +907,8 @@ class Api {
             password,
             gasLimit,
             timestamp,
+            amount,
+            gasPrice,
         } = data;
 
         const validation = await this.checkAccountPassword(
@@ -920,8 +922,6 @@ class Api {
 
         const client = await this.initAccount(fromAddress);
         const transactions = this.storage.transactions;
-        const gasPrice = data.gasPrice;
-        const amount = data.amount;
         const token = this.storage.tokens.find(
             (item: t.ICurrencyInfo) => item.address === currencyAddress,
         );
@@ -930,7 +930,7 @@ class Api {
             timestamp,
             fromAddress,
             toAddress,
-            amount: data.amount,
+            amount,
             currencyAddress,
             currencySymbol: token.symbol,
             decimalPointOffset: token.decimalPointOffset,
@@ -977,7 +977,7 @@ class Api {
         const fee = await txResult.getTxPrice();
 
         transaction.status = receipt.status === '0x0' ? 'failed' : 'success';
-        transaction.fee = utils.fromWei(fee.toString(), 'ether');
+        transaction.fee = fee.toString();
 
         await this.saveData();
     }
