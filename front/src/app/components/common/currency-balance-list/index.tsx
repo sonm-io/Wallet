@@ -9,6 +9,7 @@ export interface ICurrencyDetails {
     balance: string;
     address: string;
     name: string;
+    decimalPointOffset: number;
 }
 
 export interface ICurrencyBalanceListProps {

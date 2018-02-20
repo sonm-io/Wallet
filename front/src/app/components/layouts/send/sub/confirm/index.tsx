@@ -54,7 +54,7 @@ export class SendConfirm extends React.Component<IProps, any> {
     };
 
     public handleCancel = () => {
-        this.props.rootStore.sendStore.resetValidation();
+        this.props.rootStore.sendStore.resetServerValidation();
 
         this.props.onBack();
     };

@@ -8,9 +8,9 @@ import {
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
-import { AbstractStore } from './abstract-store';
+import { OnlineStore } from './online-store';
 import { RootStore } from './';
-const { pending } = AbstractStore;
+const { pending } = OnlineStore;
 
 const Api = api.Api;
 
@@ -25,7 +25,7 @@ export interface ISendForm {
 
 const ITEMS_PER_PAGE = 10;
 
-export class HistoryStore extends AbstractStore {
+export class HistoryStore extends OnlineStore {
     @observable public errors: any[] = [];
 
     @observable.ref public currentPageTxHashList: string[] = [];

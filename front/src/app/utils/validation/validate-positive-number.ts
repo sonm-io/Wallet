@@ -1,4 +1,4 @@
-import { createBigNumber } from '../create-big-number';
+import { createBigNumber, ZERO } from '../create-big-number';
 
 export function validatePositiveNumber(value: string): string[] {
     const result = [];
@@ -10,7 +10,7 @@ export function validatePositiveNumber(value: string): string[] {
 
         if (amount === undefined) {
             result.push('Incorrect amount');
-        } else if (amount.lessThanOrEqualTo(0)) {
+        } else if (amount.lte(ZERO)) {
             result.push('Value should be positive');
         }
     }

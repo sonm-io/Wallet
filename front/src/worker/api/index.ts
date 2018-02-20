@@ -5,9 +5,9 @@ import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
 import * as ipc from '../ipc/ipc';
-import * as t from '../../app/api/types';
+import * as t from 'app/api/types';
 
-const migrate = require('../migrations.ts');
+import { migrate } from '../migrations';
 
 const { createSonmFactory, utils } = sonmApi;
 
@@ -75,11 +75,11 @@ const DEFAULT_NODES: INodes = {
     rinkeby: 'https://rinkeby.infura.io',
 };
 
-const DEFAULT_TOKENS = {
+const DEFAULT_TOKENS: ITokens = {
     livenet: [
         {
             name: 'STORJ',
-            decimals: 18,
+            decimalPointOffset: 18,
             symbol: 'STORJ',
             address: '0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac',
         },
@@ -87,12 +87,12 @@ const DEFAULT_TOKENS = {
     rinkeby: [
         {
             name: 'PIG',
-            decimals: 18,
+            decimalPointOffset: 18,
             symbol: 'PIG',
             address: '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
         },
     ],
-} as ITokens;
+};
 
 class Api {
     private routes: {
@@ -107,8 +107,8 @@ class Api {
         [index: string]: any;
     };
 
-    private secretKey: string;
-    private hash: string;
+    private secretKey: string = '';
+    private hash: string = '';
     private tokenList: any;
 
     private constructor() {
@@ -933,6 +933,7 @@ class Api {
             amount: data.amount,
             currencyAddress,
             currencySymbol: token.symbol,
+            decimalPointOffset: token.decimalPointOffset,
             hash: PENDING_HASH,
             fee: null,
             status: 'pending',
@@ -976,7 +977,7 @@ class Api {
         const fee = await txResult.getTxPrice();
 
         transaction.status = receipt.status === '0x0' ? 'failed' : 'success';
-        transaction.fee = fee.toString();
+        transaction.fee = utils.fromWei(fee.toString(), 'ether');
 
         await this.saveData();
     }

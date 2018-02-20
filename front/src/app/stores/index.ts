@@ -5,7 +5,7 @@ import { MainStore } from './main';
 import { SendStore } from './send';
 import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
-import { AbstractStore } from './abstract-store';
+import { OnlineStore } from './online-store';
 
 useStrict(true);
 
@@ -27,7 +27,7 @@ export class RootStore {
     }
 
     public get isPending() {
-        return AbstractStore.getAccumulatedFlag(
+        return OnlineStore.getAccumulatedFlag(
             'isPending',
             this.historyStore,
             this.mainStore,
@@ -37,7 +37,7 @@ export class RootStore {
     }
 
     public get isOffline() {
-        return AbstractStore.getAccumulatedFlag(
+        return OnlineStore.getAccumulatedFlag(
             'isOffline',
             this.historyStore,
             this.mainStore,

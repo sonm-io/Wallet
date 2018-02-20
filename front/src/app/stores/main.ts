@@ -1,19 +1,26 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as sortBy from 'lodash/fp/sortBy';
 import { Api, IAccountInfo, ICurrencyInfo } from 'app/api';
-import * as BigNumber from 'bignumber.js';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import { IAccountItemProps } from 'app/components/common/account-item';
 import { AlertType } from './types';
-import { updateAddressMap } from './utils/updateAddressMap';
-import { AbstractStore } from './abstract-store';
-const { pending, catchErrors } = AbstractStore;
+import { updateAddressMap } from './utils/update-address-map';
+import { OnlineStore } from './online-store';
+const { pending, catchErrors } = OnlineStore;
 import { delay } from 'app/utils/async-delay';
 import { trimZeros } from '../utils/trim-zeros';
 import { getMessageText } from 'app/api/error-messages';
 import { RootStore } from './';
 import { IWalletListItem } from 'app/api/types';
+import {
+    createBigNumber,
+    TWO,
+    THREE,
+    ZERO,
+    BN,
+} from '../utils/create-big-number';
+import { normalizeCurrencyInfo } from './utils/normalize-currency-info';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -32,7 +39,19 @@ const emptyForm: IMainFormValues = {
 
 Object.freeze(emptyForm);
 
-export class MainStore extends AbstractStore {
+export class MainStore extends OnlineStore {
+    constructor(rootStore: RootStore) {
+        super({ errorProcessor: rootStore.uiStore });
+
+        this.rootStore = rootStore;
+
+        autorun(() => {
+            if (Array.from(this.currencyMap.keys()).length > 0) {
+                this.update();
+            }
+        });
+    }
+
     public static ADDRESS_ETHER = '0x';
 
     protected rootStore: RootStore;
@@ -56,13 +75,7 @@ export class MainStore extends AbstractStore {
 
     @observable public validation = { ...emptyForm };
 
-    constructor(rootStore: RootStore) {
-        super({ errorProcessor: rootStore.uiStore });
-
-        this.rootStore = rootStore;
-    }
-
-    @observable public averageGasPriceEther = '';
+    @observable public averageGasPrice = '';
 
     @observable public accountMap = new Map<string, IAccountInfo>();
 
@@ -83,11 +96,13 @@ export class MainStore extends AbstractStore {
         let min = '5';
         let max = '15';
 
-        if (this.averageGasPriceEther !== '') {
-            const bn = new BigNumber(this.averageGasPriceEther);
+        if (this.averageGasPrice !== '') {
+            const bn = createBigNumber(this.averageGasPrice);
 
-            min = trimZeros(bn.mul(0.5).toFixed(18));
-            max = trimZeros(bn.mul(1.5).toFixed(18));
+            if (bn) {
+                min = trimZeros(bn.div(TWO));
+                max = trimZeros(bn.mul(THREE).div(TWO));
+            }
         }
 
         return [min, max];
@@ -148,7 +163,7 @@ export class MainStore extends AbstractStore {
     ) {
         const item = fullList.find(x => x.address === address);
 
-        return item ? `${item.balance} ${item.symbol}` : '';
+        return item ? item.balance : '';
     }
 
     @computed
@@ -164,13 +179,11 @@ export class MainStore extends AbstractStore {
                 name: account.name,
                 etherBalance: isCurrencyListEmpty
                     ? ''
-                    : `${account.currencyBalanceMap[etherAddress] || ''} ${
-                          this.etherInfo.symbol
-                      }`,
+                    : account.currencyBalanceMap[etherAddress],
                 primaryTokenBalance: isCurrencyListEmpty
                     ? ''
-                    : `${account.currencyBalanceMap[primaryTokenAddress] ||
-                          ''} ${this.primaryTokenInfo.symbol}`,
+                    : account.currencyBalanceMap[primaryTokenAddress],
+                primaryTokenInfo: this.primaryTokenInfo,
             };
 
             return props;
@@ -187,7 +200,7 @@ export class MainStore extends AbstractStore {
         const result = Array.from(this.currencyMap.values()).map(
             (currency): ICurrencyItemProps => {
                 let touched = false;
-                const balance = accounts.reduce(
+                const balance: BN = accounts.reduce(
                     (sum: any, accountAddr: string) => {
                         const account = this.accountMap.get(
                             accountAddr,
@@ -197,19 +210,19 @@ export class MainStore extends AbstractStore {
 
                         if (userBalance) {
                             touched = true;
-                            sum = sum.plus(userBalance);
+                            sum = sum.add(createBigNumber(userBalance));
                         }
 
                         return sum;
                     },
-                    new BigNumber(0),
+                    ZERO,
                 );
 
                 return {
                     name: currency.name,
                     symbol: currency.symbol,
-                    decimals: currency.decimals,
-                    balance: touched ? trimZeros(balance.toFixed(18)) : '',
+                    decimalPointOffset: currency.decimalPointOffset,
+                    balance: touched ? balance.toString() : '',
                     address: currency.address,
                 };
             },
@@ -259,7 +272,10 @@ export class MainStore extends AbstractStore {
             this.autoUpdateIteration(), // wait for first update
         ]);
 
-        updateAddressMap<ICurrencyInfo>(currencyList, this.currencyMap);
+        updateAddressMap<ICurrencyInfo>(
+            currencyList.map(normalizeCurrencyInfo),
+            this.currencyMap,
+        );
     }
 
     @action
@@ -269,7 +285,7 @@ export class MainStore extends AbstractStore {
 
     @action
     protected setAverageGasPrice(gasPrice: string = '') {
-        this.averageGasPriceEther = gasPrice;
+        this.averageGasPrice = gasPrice;
     }
 
     public async update() {
@@ -283,7 +299,7 @@ export class MainStore extends AbstractStore {
     @catchErrors({ restart: true })
     protected async autoUpdateIteration(interval: number = UPDATE_INTERVAL) {
         try {
-            if (process.env.NODE_ENV !== 'production') {
+            if (IS_DEV) {
                 window.console.time('auto-update');
             }
 
@@ -293,7 +309,7 @@ export class MainStore extends AbstractStore {
 
             setTimeout(() => this.autoUpdateIteration(), 0);
         } finally {
-            if (process.env.NODE_ENV !== 'production') {
+            if (IS_DEV) {
                 window.console.timeEnd('auto-update');
             }
         }
@@ -391,3 +407,8 @@ export class MainStore extends AbstractStore {
 export default MainStore;
 
 export * from './types';
+
+/**
+ * 0xb900726a920ae31c4381b9d9ec1e0d7e990cac3c Zaschecoin
+ * 0xbda864e991a5ff6f7cc12a73ecb21fcefddd4795 ZASCHECOIN10
+ */

@@ -1,11 +1,12 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Api, ICurrencyInfo } from 'app/api';
-import { AbstractStore } from './abstract-store';
-const { pending, catchErrors } = AbstractStore;
+import { OnlineStore } from './online-store';
+const { pending, catchErrors } = OnlineStore;
 import { getMessageText } from 'app/api/error-messages';
 import { RootStore } from './';
 import { validateEtherAddress } from '../utils/validation/validate-ether-address';
+import { normalizeCurrencyInfo } from './utils/normalize-currency-info';
 
 interface IFormValues {
     tokenAddress: string;
@@ -17,7 +18,7 @@ const emptyForm: IFormValues = {
 
 Object.freeze(emptyForm);
 
-export class AddTokenStore extends AbstractStore {
+export class AddTokenStore extends OnlineStore {
     protected rootStore: RootStore;
 
     @observable public validation = { ...emptyForm };
@@ -96,10 +97,11 @@ export class AddTokenStore extends AbstractStore {
         const { data: currencyInfo } = yield Api.addToken(
             candidateTokenAddress,
         );
+
         if (currencyInfo) {
             this.rootStore.mainStore.currencyMap.set(
                 currencyInfo.address,
-                currencyInfo,
+                normalizeCurrencyInfo(currencyInfo),
             );
         }
     }

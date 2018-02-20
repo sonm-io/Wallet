@@ -10,12 +10,12 @@ interface IErrorProcessor {
     processError: FuncProcessError;
 }
 
-interface IAbstractStoreCtrArgs {
+interface IOnlineStoreCtrArgs {
     errorProcessor: IErrorProcessor;
 }
 
-export class AbstractStore {
-    constructor(args: IAbstractStoreCtrArgs) {
+export class OnlineStore {
+    constructor(args: IOnlineStoreCtrArgs) {
         this.errorProcessor = args.errorProcessor;
     }
 
@@ -85,14 +85,14 @@ export class AbstractStore {
     }
 
     public static pending(
-        target: AbstractStore,
+        target: OnlineStore,
         propertyKey: string,
         descriptor: PropertyDescriptor,
     ) {
         const method = descriptor.value;
 
         descriptor.value = async function() {
-            const me = this as AbstractStore;
+            const me = this as OnlineStore;
 
             const pendingId = me.startPending(propertyKey);
 
@@ -105,14 +105,14 @@ export class AbstractStore {
     }
 
     public static catchErrors = ({ restart = false }) => (
-        target: AbstractStore,
+        target: OnlineStore,
         propertyKey: string,
         descriptor: PropertyDescriptor,
     ) => {
         const method = descriptor.value;
 
         descriptor.value = async function(...args: any[]) {
-            const store = this as AbstractStore;
+            const store = this as OnlineStore;
 
             try {
                 return await method.apply(store, args);
@@ -138,14 +138,14 @@ export class AbstractStore {
     };
 
     public static getAccumulatedFlag(
-        p: keyof AbstractStore,
-        ...stores: AbstractStore[]
+        p: keyof OnlineStore,
+        ...stores: OnlineStore[]
     ): boolean {
         return stores.reduce(
-            (b: boolean, store: AbstractStore) => b || Boolean(store[p]),
+            (b: boolean, store: OnlineStore) => b || Boolean(store[p]),
             false,
         );
     }
 }
 
-export default AbstractStore;
+export default OnlineStore;
