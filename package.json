@@ -98,6 +98,7 @@
         "react": "^16.1.0",
         "react-addons-transition-group": "^15.6.2",
         "react-dom": "^16.1.0",
+        "selenium-cucumber-js": "^1.5.12",
         "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v1.0.11",
         "universal-router": "^4.3.0"
     },
