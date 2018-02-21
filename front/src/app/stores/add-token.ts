@@ -40,7 +40,9 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
     @computed
     get validationCandidateToken(): string {
         const tokenAddress = this.candidateTokenAddress;
-        const etherAddressValidation = validateEtherAddress(tokenAddress);
+        const etherAddressValidation = validateEtherAddress(tokenAddress).map(
+            this.localizator.getMessageText,
+        );
         let result: string;
 
         if (etherAddressValidation.length) {

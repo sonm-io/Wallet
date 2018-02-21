@@ -107,7 +107,11 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
                     ),
                 );
             } else {
-                result.push(...validateEtherAddress(toAddress));
+                result.push(
+                    ...validateEtherAddress(toAddress).map(
+                        this.localizator.getMessageText,
+                    ),
+                );
             }
         }
 
@@ -123,7 +127,11 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
             if (gasPrice === '') {
                 result.push(this.localizator.getMessageText('required_value'));
             } else {
-                result.push(...validatePositiveNumber(gasPrice));
+                result.push(
+                    ...validatePositiveNumber(gasPrice).map(
+                        this.localizator.getMessageText,
+                    ),
+                );
             }
         }
 
@@ -139,7 +147,11 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
             if (amount === '') {
                 result.push(this.localizator.getMessageText('required_value'));
             } else {
-                result.push(...validatePositiveNumber(amount));
+                result.push(
+                    ...validatePositiveNumber(amount).map(
+                        this.localizator.getMessageText,
+                    ),
+                );
 
                 if (result.length === 0) {
                     const decimalDigits = amount.split('.')[1];
@@ -194,7 +206,9 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     public get validationGasLimit() {
         return this.userInput.gasLimit === ''
             ? []
-            : validatePositiveInteger(this.userInput.gasLimit);
+            : validatePositiveInteger(this.userInput.gasLimit).map(
+                  this.localizator.getMessageText,
+              );
     }
 
     /**
