@@ -27,6 +27,7 @@ import {
     ZERO,
 } from 'app/utils/create-big-number';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
+import { ILocalizator, IValidation, IHasLocalizator } from 'app/localization';
 
 const emptyForm: ISendFormValues = {
     fromAddress: '',
@@ -40,13 +41,17 @@ const emptyForm: ISendFormValues = {
 Object.freeze(emptyForm);
 // const allFormKeys = Object.keys(emptyForm) as Array<keyof ISendFormValues>;
 
-export class SendStore extends OnlineStore {
+export class SendStore extends OnlineStore implements IHasLocalizator {
     protected rootStore: RootStore;
 
-    constructor(rootStore: RootStore) {
-        super({ errorProcessor: rootStore.uiStore });
+    constructor(rootStore: RootStore, localizator: ILocalizator) {
+        super({
+            errorProcessor: rootStore.uiStore,
+            localizator: localizator,
+        });
 
         this.rootStore = rootStore;
+        this.localizator = localizator;
     }
 
     @computed
@@ -321,7 +326,12 @@ export class SendStore extends OnlineStore {
 
     @action.bound
     protected setServerValidation(validation: Partial<ISendFormValues>) {
-        this.serverValidation = { ...emptyForm, ...validation };
+        this.serverValidation = {
+            ...emptyForm,
+            ...this.localizator.localizeValidationMessages(
+                validation as IValidation,
+            ),
+        };
     }
 
     @action.bound
@@ -367,7 +377,9 @@ export class SendStore extends OnlineStore {
             }
         }
 
-        this.serverValidation.password = validationMessage;
+        this.serverValidation.password = this.localizator.getMessageText(
+            validationMessage,
+        );
 
         return validationMessage === '';
     }
@@ -424,6 +436,8 @@ ${result.amount} ${currencyName} has been sent to the address ${
 
         return result;
     }
+
+    public readonly localizator: ILocalizator;
 }
 
 export default SendStore;

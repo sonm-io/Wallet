@@ -9,14 +9,13 @@ import { ButtonGroup } from 'app/components/common/button-group';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Form, FormRow, FormField } from 'app/components/common/form';
 import { SendStore } from 'app/stores/send';
-import { RootStore } from 'app/stores';
+import { rootStore } from 'app/stores';
 import { Header } from 'app/components/common/header';
 import { ISendFormValues } from 'app/stores/types';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 
 interface IProps {
     className?: string;
-    rootStore: RootStore;
     initialCurrency?: string;
     initialAddress?: string;
     onRequireConfirmation: () => void;
@@ -29,41 +28,41 @@ const PriorityInput = ButtonGroup as PriorityInput;
 @observer
 export class Send extends React.Component<IProps, any> {
     public componentWillMount() {
-        if (this.props.rootStore.mainStore.accountAddressList.length === 0) {
+        if (rootStore.mainStore.accountAddressList.length === 0) {
             this.props.onNotAvailable();
         }
 
         if (this.props.initialAddress) {
-            this.props.rootStore.sendStore.setUserInput({
+            rootStore.sendStore.setUserInput({
                 fromAddress: this.props.initialAddress,
             });
         }
 
         if (this.props.initialCurrency) {
-            this.props.rootStore.sendStore.setUserInput({
+            rootStore.sendStore.setUserInput({
                 currencyAddress: this.props.initialCurrency,
             });
         }
 
         this.setState({
-            addressTarget: this.props.rootStore.sendStore.toAddress,
+            addressTarget: rootStore.sendStore.toAddress,
         });
     }
 
     protected get sendStore(): SendStore {
-        return this.props.rootStore.sendStore;
+        return rootStore.sendStore;
     }
 
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        if (this.props.rootStore.sendStore.isFormValid) {
+        if (rootStore.sendStore.isFormValid) {
             this.props.onRequireConfirmation();
         }
     };
 
     protected handleChangeFormInput(value: Partial<ISendFormValues>) {
-        this.props.rootStore.sendStore.setUserInput(value);
+        rootStore.sendStore.setUserInput(value);
     }
 
     protected handleChangeFormInputEvent(
@@ -98,15 +97,15 @@ export class Send extends React.Component<IProps, any> {
     ) => this.handleChangeFormInputEvent('gasPriceGwei', event);
 
     protected handleSetMaximum = () => {
-        this.props.rootStore.sendStore.setUserInput({
-            amountEther: this.props.rootStore.sendStore.currentBalanceMaximum,
+        rootStore.sendStore.setUserInput({
+            amountEther: rootStore.sendStore.currentBalanceMaximum,
         });
     };
 
     // TODO
     protected handleChangePriority = (value: string) => {
-        const [min, max] = this.props.rootStore.mainStore.gasPriceThresholds;
-        let gasPrice = this.props.rootStore.mainStore.averageGasPrice;
+        const [min, max] = rootStore.mainStore.gasPriceThresholds;
+        let gasPrice = rootStore.mainStore.averageGasPrice;
 
         if (value === 'low') {
             gasPrice = min;
@@ -116,13 +115,13 @@ export class Send extends React.Component<IProps, any> {
 
         const gasPriceGwei = moveDecimalPoint(gasPrice, -9);
 
-        this.props.rootStore.sendStore.setUserInput({ gasPriceGwei });
+        rootStore.sendStore.setUserInput({ gasPriceGwei });
     };
 
     public render() {
         const { className } = this.props;
 
-        const sendStore = this.props.rootStore.sendStore;
+        const sendStore = rootStore.sendStore;
         const balanceList = sendStore.currentBalanceList;
 
         return (
@@ -138,12 +137,8 @@ export class Send extends React.Component<IProps, any> {
                             <AccountBigSelect
                                 returnPrimitive
                                 onChange={this.handleChangeAccount}
-                                accounts={
-                                    this.props.rootStore.mainStore.accountList
-                                }
-                                value={
-                                    this.props.rootStore.sendStore.fromAddress
-                                }
+                                accounts={rootStore.mainStore.accountList}
+                                value={rootStore.sendStore.fromAddress}
                             />
                         </FormField>
                     </FormRow>
@@ -235,7 +230,7 @@ export class Send extends React.Component<IProps, any> {
                         <PriorityInput
                             className="sonm-send__gas-price-buttons"
                             valueList={['low', 'normal', 'high']}
-                            value={this.props.rootStore.sendStore.priority}
+                            value={rootStore.sendStore.priority}
                             onChange={this.handleChangePriority}
                         />
                     </FormRow>

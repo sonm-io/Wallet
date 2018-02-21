@@ -10,7 +10,6 @@ import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
 import { delay } from 'app/utils/async-delay';
 import { trimZeros } from '../utils/trim-zeros';
-import { getMessageText } from 'app/api/error-messages';
 import { RootStore } from './';
 import { IWalletListItem } from 'app/api/types';
 import {
@@ -21,6 +20,7 @@ import {
     BN,
 } from '../utils/create-big-number';
 import { normalizeCurrencyInfo } from './utils/normalize-currency-info';
+import { IHasLocalizator, ILocalizator, IValidation } from 'app/localization';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -39,9 +39,12 @@ const emptyForm: IMainFormValues = {
 
 Object.freeze(emptyForm);
 
-export class MainStore extends OnlineStore {
-    constructor(rootStore: RootStore) {
-        super({ errorProcessor: rootStore.uiStore });
+export class MainStore extends OnlineStore implements IHasLocalizator {
+    constructor(rootStore: RootStore, localizator: ILocalizator) {
+        super({
+            errorProcessor: rootStore.uiStore,
+            localizator: localizator,
+        });
 
         this.rootStore = rootStore;
 
@@ -73,7 +76,7 @@ export class MainStore extends OnlineStore {
         return this.walletInfo ? this.walletInfo.nodeUrl : '';
     }
 
-    @observable public validation = { ...emptyForm };
+    @observable public serverValidation = { ...emptyForm };
 
     @observable public averageGasPrice = '';
 
@@ -322,13 +325,18 @@ export class MainStore extends OnlineStore {
         const { data, validation } = yield Api.addAccount(json, password, name);
 
         if (validation) {
-            this.validation = { ...emptyForm, ...validation };
+            this.serverValidation = {
+                ...emptyForm,
+                ...this.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
         } else {
-            this.validation = { ...emptyForm };
+            this.serverValidation = { ...emptyForm };
             this.accountMap.set(data.address, data);
         }
 
-        return this.validation;
+        return this.serverValidation;
     }
 
     @pending
@@ -351,14 +359,16 @@ export class MainStore extends OnlineStore {
         if (validation) {
             this.rootStore.uiStore.addAlert({
                 type: AlertType.error,
-                message: `SNM delivery delayed cause: ${getMessageText(
+                message: `SNM delivery delayed cause: ${this.rootStore.localizator.getMessageText(
                     validation.password,
                 )}`,
             });
         } else {
             this.rootStore.uiStore.addAlert({
                 type: AlertType.success,
-                message: getMessageText('wait_your_tokens'),
+                message: this.rootStore.localizator.getMessageText(
+                    'wait_your_tokens',
+                ),
             });
         }
     }
@@ -402,6 +412,8 @@ export class MainStore extends OnlineStore {
 
         return String(text);
     };
+
+    public readonly localizator: ILocalizator;
 }
 
 export default MainStore;

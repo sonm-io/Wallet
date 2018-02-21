@@ -7,7 +7,6 @@ import { BlackSelect } from 'app/components/common/black-select';
 import { Dialog } from 'app/components/common/dialog';
 import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
-import { getMessageText } from 'app/api/error-messages';
 import { IWalletListItem } from 'app/api/types';
 import { IFileOpenResult, Upload } from 'app/components/common/upload';
 import { Icon } from 'app/components/common/icon';
@@ -21,6 +20,7 @@ import {
 } from 'app/components/common/form';
 import shortString from 'app/utils/short-string';
 import { Disclaimer } from './sub/disclaimer/index';
+import { localizator } from 'app/localization';
 
 interface IProps {
     className?: string;
@@ -207,7 +207,7 @@ export class Login extends React.Component<IProps, IState> {
         );
 
         if (wallet === undefined) {
-            throw new Error('Wallet not found');
+            throw new Error('wallet_not_found');
         }
 
         return wallet;
@@ -321,7 +321,9 @@ export class Login extends React.Component<IProps, IState> {
 
         if (this.state.newName.length < 1 || this.state.newName.length > 20) {
             this.setState({
-                validation: { newName: getMessageText('wallet_name_length') },
+                validation: {
+                    newName: localizator.getMessageText('wallet_name_length'),
+                },
             });
             valid = false;
         } else {
@@ -331,7 +333,9 @@ export class Login extends React.Component<IProps, IState> {
             if (foundByName) {
                 this.setState({
                     validation: {
-                        newName: getMessageText('wallet_allready_exists'),
+                        newName: localizator.getMessageText(
+                            'wallet_allready_exists',
+                        ),
                     },
                 });
                 valid = false;
@@ -347,7 +351,9 @@ export class Login extends React.Component<IProps, IState> {
         if (this.state.newPassword.length < 1) {
             this.setState({
                 validation: {
-                    newPassword: getMessageText('password_required'),
+                    newPassword: localizator.getMessageText(
+                        'password_required',
+                    ),
                 },
             });
             valid = false;
@@ -356,7 +362,7 @@ export class Login extends React.Component<IProps, IState> {
         if (this.state.newPassword !== this.state.newPasswordConfirmation) {
             this.setState({
                 validation: {
-                    newPasswordConfirmation: getMessageText(
+                    newPasswordConfirmation: localizator.getMessageText(
                         'password_not_match',
                     ),
                 },
