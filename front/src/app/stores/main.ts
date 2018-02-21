@@ -43,7 +43,7 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     constructor(rootStore: RootStore, localizator: ILocalizator) {
         super({
             errorProcessor: rootStore.uiStore,
-            localizator: localizator,
+            localizator,
         });
 
         this.rootStore = rootStore;

@@ -47,7 +47,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     constructor(rootStore: RootStore, localizator: ILocalizator) {
         super({
             errorProcessor: rootStore.uiStore,
-            localizator: localizator,
+            localizator,
         });
 
         this.rootStore = rootStore;
@@ -413,10 +413,10 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
             alert = {
                 type: AlertType.success,
-                message: `Transaction is completed successfully. \
-${result.amount} ${currencyName} has been sent to the address ${
-                    result.toAddress
-                }. TxHash ${result.hash}`,
+                message: this.localizator.getMessageText([
+                    'tx_completed',
+                    [currencyName, result.toAddress, result.hash],
+                ]),
             };
         } else if (result.status === TransactionStatus.failed) {
             alert = {

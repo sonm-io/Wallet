@@ -6,7 +6,11 @@ import { SendStore } from './send';
 import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
 import { OnlineStore } from './online-store';
-import { localizator, ILocalizator, IHasLocalizator } from 'app/localization';
+import {
+    localizator as en,
+    ILocalizator,
+    IHasLocalizator,
+} from 'app/localization';
 
 useStrict(true);
 
@@ -52,7 +56,7 @@ export class RootStore implements IHasLocalizator {
     public readonly localizator: ILocalizator;
 }
 
-export const rootStore = new RootStore(localizator);
+export const rootStore = new RootStore(en);
 
 (window as any).__rootStore = rootStore;
 
