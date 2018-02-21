@@ -457,7 +457,7 @@ export class Login extends React.Component<IProps, IState> {
                     ref={this.saveLoginBtnRef}
                     disabled={this.state.listOfWallets.length === 0}
                 >
-                    Login
+                    {localizator.getMessageText('login')}
                 </Button>
             </form>
         );
@@ -588,7 +588,6 @@ export class Login extends React.Component<IProps, IState> {
                         />
                     </div>
                     <Button className="sonm-login__create" type="submit">
-                        Login
                         {localizator.getMessageText('login')}
                     </Button>
                 </form>
