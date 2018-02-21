@@ -10,17 +10,16 @@ interface IFormProps extends React.FormHTMLAttributes<any> {
 export function Form(props: IFormProps) {
     const { className, theme, ...rest } = props;
 
-    return <form
-        className={cn(
-            'sonm-form',
-            className, {
+    return (
+        <form
+            className={cn('sonm-form', className, {
                 [`sonm-form--theme-${theme}`]: theme,
-            },
-        )}
-        {...rest}
-    >
-        {props.children}
-    </form>;
+            })}
+            {...rest}
+        >
+            {props.children}
+        </form>
+    );
 }
 
 interface IFormRowProps {
@@ -29,13 +28,15 @@ interface IFormRowProps {
 }
 
 export function FormRow(props: IFormRowProps) {
-    return <div className={cn('sonm-form__row', props.className)}>
-        {props.children}
-    </div>;
+    return (
+        <div className={cn('sonm-form__row', props.className)}>
+            {props.children}
+        </div>
+    );
 }
 
 export enum JustifyStyle {
-    Start =  'flex-start',
+    Start = 'flex-start',
     End = 'flex-end',
     Center = 'center',
     SpaceBetween = 'space-between',
@@ -49,9 +50,14 @@ interface IFormButtonsProps {
 }
 
 export function FormButtons(props: IFormButtonsProps) {
-    return <div className={cn('sonm-form__buttons', props.className)} style={{ justifyContent: props.justify }}>
-        {props.children}
-    </div>;
+    return (
+        <div
+            className={cn('sonm-form__buttons', props.className)}
+            style={{ justifyContent: props.justify }}
+        >
+            {props.children}
+        </div>
+    );
 }
 
 (FormButtons as any).defaultProps = {
@@ -64,9 +70,11 @@ interface IFormHeaderProps {
 }
 
 export function FormHeader(props: IFormHeaderProps) {
-    return <h3 className={cn('sonm-form__header', props.className)}>
-        {props.children}
-    </h3>;
+    return (
+        <h3 className={cn('sonm-form__header', props.className)}>
+            {props.children}
+        </h3>
+    );
 }
 
 export default Form;

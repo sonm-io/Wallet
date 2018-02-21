@@ -34,10 +34,14 @@ export class SendConfirm extends React.Component<IProps, any> {
 
         const password = event.target.password.value;
 
-        const isPasswordValid = await sendStore.checkSelectedAccountPassword(password);
+        const isPasswordValid = await sendStore.checkSelectedAccountPassword(
+            password,
+        );
 
         if (isPasswordValid) {
-            (sendStore.confirmTransaction(password) as any).then(() => historyStore.update());
+            (sendStore.confirmTransaction(password) as any).then(() =>
+                historyStore.update(),
+            );
 
             sendStore.resetUserInput();
 
@@ -47,17 +51,17 @@ export class SendConfirm extends React.Component<IProps, any> {
         } else {
             this.setState({ validationPassword: 'Invalid password' });
         }
-    }
+    };
 
     public handleCancel = () => {
         this.props.rootStore.sendStore.resetValidation();
 
         this.props.onBack();
-    }
+    };
 
     public handleChange = (e: any) => {
         this.setState({ password: e.target.value });
-    }
+    };
 
     public render() {
         const mainStore = this.props.rootStore.mainStore;
@@ -72,20 +76,34 @@ export class SendConfirm extends React.Component<IProps, any> {
         const gasPrice = sendStore.gasPriceGwei;
         const toAddress = sendStore.toAddress;
 
-        if (!currency) { return null; }
+        if (!currency) {
+            return null;
+        }
 
         return (
             <div className={cn('sonm-send-confirm', this.props.className)}>
-                <Header className="sonm-send-confirm__header">Transfer confirmation</Header>
+                <Header className="sonm-send-confirm__header">
+                    Transfer confirmation
+                </Header>
                 <section className="sonm-send-confirm__from-to">
                     <div className="sonm-send-confirm__account">
-                        <IdentIcon address={accountAddress} className="sonm-send-confirm__account-blockies"/>
-                        <span className="sonm-send-confirm__account-name">{accountName}</span>
-                        <span className="sonm-send-confirm__account-addr">{accountAddress}</span>
+                        <IdentIcon
+                            address={accountAddress}
+                            className="sonm-send-confirm__account-blockies"
+                        />
+                        <span className="sonm-send-confirm__account-name">
+                            {accountName}
+                        </span>
+                        <span className="sonm-send-confirm__account-addr">
+                            {accountAddress}
+                        </span>
                     </div>
-                    <div className="sonm-send-confirm__arrow"/>
+                    <div className="sonm-send-confirm__arrow" />
                     <div className="sonm-send-confirm__account">
-                        <IdentIcon address={toAddress} className="sonm-send-confirm__account-blockies"/>
+                        <IdentIcon
+                            address={toAddress}
+                            className="sonm-send-confirm__account-blockies"
+                        />
                         <span className="sonm-send-confirm__account-target">
                             {toAddress}
                         </span>
@@ -93,15 +111,22 @@ export class SendConfirm extends React.Component<IProps, any> {
                 </section>
                 <dl className="sonm-send-confirm__values">
                     <dt>Amount</dt>
-                    <dd>{amount} {currency.symbol}</dd>
+                    <dd>
+                        {amount} {currency.symbol}
+                    </dd>
                     <dt>Gas limit</dt>
                     <dd>{gasLimit}</dd>
                     <dt>Gas price</dt>
                     <dd>{gasPrice} Gwei</dd>
                 </dl>
                 <div className="sonm-send-confirm__password">
-                    <h2 className="sonm-send-confirm__password-header">Please enter account password</h2>
-                    <Form onSubmit={this.handleConfrim} className="sonm-send-confirm__password-form">
+                    <h2 className="sonm-send-confirm__password-header">
+                        Please enter account password
+                    </h2>
+                    <Form
+                        onSubmit={this.handleConfrim}
+                        className="sonm-send-confirm__password-form"
+                    >
                         <FormField
                             label=""
                             className="sonm-send-confirm__password-field"
@@ -111,7 +136,12 @@ export class SendConfirm extends React.Component<IProps, any> {
                                 autoComplete="off"
                                 name="password"
                                 className="sonm-send-confirm__password-input"
-                                prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                                prefix={
+                                    <Icon
+                                        type="lock"
+                                        style={{ fontSize: 13 }}
+                                    />
+                                }
                                 type="password"
                                 placeholder="Password"
                                 value={this.state.password}

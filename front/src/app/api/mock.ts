@@ -17,40 +17,45 @@ export const newAccount: t.IAccountInfo = {
     currencyBalanceMap: {
         [SONM_ADDR]: '1',
     },
-}
+};
 
-export const transactionListResult: t.IResult<[t.ISendTransactionResult[], number]> = {
-    data: [[
-        {
-            timestamp: Date.now(),
-            fromAddress: VASYA_ADDR,
-            toAddress: PETYA_ADDR,
-            amount: 'amount',
-            currencyAddress: ETHER_ADDR,
-            currencySymbol: 'ETH',
-            gasPrice: '294',
-            gasLimit: '453',
-            fee: '198',
-            confirmCount: 0,
-            status: t.TransactionStatus.failed,
-            hash: 'hash1',
-        },
-        {
-            timestamp: Date.now(),
-            fromAddress: PETYA_ADDR,
-            toAddress: VASYA_ADDR,
-            amount: 'amount',
-            currencyAddress: SONM_ADDR,
-            currencySymbol: 'SNM',
-            gasPrice: '294',
-            gasLimit: '453',
-            fee: '198',
-            confirmCount: 0,
-            status: t.TransactionStatus.success,
-            hash: 'hash2',
-        },
-    ], 100],
-}
+export const transactionListResult: t.IResult<
+    [t.ISendTransactionResult[], number]
+> = {
+    data: [
+        [
+            {
+                timestamp: Date.now(),
+                fromAddress: VASYA_ADDR,
+                toAddress: PETYA_ADDR,
+                amount: 'amount',
+                currencyAddress: ETHER_ADDR,
+                currencySymbol: 'ETH',
+                gasPrice: '294',
+                gasLimit: '453',
+                fee: '198',
+                confirmCount: 0,
+                status: t.TransactionStatus.failed,
+                hash: 'hash1',
+            },
+            {
+                timestamp: Date.now(),
+                fromAddress: PETYA_ADDR,
+                toAddress: VASYA_ADDR,
+                amount: 'amount',
+                currencyAddress: SONM_ADDR,
+                currencySymbol: 'SNM',
+                gasPrice: '294',
+                gasLimit: '453',
+                fee: '198',
+                confirmCount: 0,
+                status: t.TransactionStatus.success,
+                hash: 'hash2',
+            },
+        ],
+        100,
+    ],
+};
 
 export const currencyListResult: t.IResult<t.ICurrencyInfo[]> = {
     data: [
@@ -77,10 +82,15 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             json: '',
             currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
-                    acc[currency.address] = String(Math.random() * 100).substr(0, 15);
+                    acc[currency.address] = String(Math.random() * 100).substr(
+                        0,
+                        15,
+                    );
 
                     return acc;
-                }, {}),
+                },
+                {},
+            ),
         },
         {
             name: 'Petya',
@@ -88,15 +98,23 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             json: '',
             currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
-                    acc[currency.address] = String(Math.random() * 100).substr(0, 15);
+                    acc[currency.address] = String(Math.random() * 100).substr(
+                        0,
+                        15,
+                    );
 
                     return acc;
-                }, {}),
+                },
+                {},
+            ),
         },
     ],
 };
 
-export function send(params: t.ISendTransaction, password: string): t.IResult<t.ISendTransactionResult> {
+export function send(
+    params: t.ISendTransaction,
+    password: string,
+): t.IResult<t.ISendTransactionResult> {
     const result: t.IResult<t.ISendTransactionResult> = {
         validation: undefined,
         data: undefined,

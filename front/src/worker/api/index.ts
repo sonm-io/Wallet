@@ -34,9 +34,9 @@ interface IWalletJson {
 
 interface IAccounts {
     [address: string]: {
-        json: IWalletJson,
-        name: string,
-        address: string,
+        json: IWalletJson;
+        name: string;
+        address: string;
     };
 }
 
@@ -50,10 +50,7 @@ function nextRequestId(): string {
     return 'request' + count++;
 }
 
-function createPromise(
-    action: string,
-    payload?: any,
-): Promise<any> {
+function createPromise(action: string, payload?: any): Promise<any> {
     return new Promise((resolve, reject) => {
         const reqId = nextRequestId();
 
@@ -79,31 +76,35 @@ const DEFAULT_NODES: INodes = {
 };
 
 const DEFAULT_TOKENS = {
-    livenet: [{
-        name: 'STORJ',
-        decimals: 18,
-        symbol: 'STORJ',
-        address:  '0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac',
-    }],
-    rinkeby: [{
-        name: 'PIG',
-        decimals: 18,
-        symbol: 'PIG',
-        address:  '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
-    }],
+    livenet: [
+        {
+            name: 'STORJ',
+            decimals: 18,
+            symbol: 'STORJ',
+            address: '0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac',
+        },
+    ],
+    rinkeby: [
+        {
+            name: 'PIG',
+            decimals: 18,
+            symbol: 'PIG',
+            address: '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
+        },
+    ],
 } as ITokens;
 
 class Api {
     private routes: {
-        [index: string]: any,
+        [index: string]: any;
     };
 
     private accounts: {
-        [index: string]: any,
+        [index: string]: any;
     };
 
     private storage: {
-        [index: string]: any,
+        [index: string]: any;
     };
 
     private secretKey: string;
@@ -114,17 +115,17 @@ class Api {
         this.accounts = {};
 
         this.routes = {
-            'ping': this.ping,
-            'getWalletList': this.getWalletList,
-            'checkConnection': this.checkConnection,
+            ping: this.ping,
+            getWalletList: this.getWalletList,
+            checkConnection: this.checkConnection,
 
-            'getSettings': this.getSettings,
-            'setSettings': this.setSettings,
+            getSettings: this.getSettings,
+            setSettings: this.setSettings,
 
-            'createWallet': this.createWallet,
-            'unlockWallet': this.unlockWallet,
-            'importWallet': this.importWallet,
-            'exportWallet': this.exportWallet,
+            createWallet: this.createWallet,
+            unlockWallet: this.unlockWallet,
+            importWallet: this.importWallet,
+            exportWallet: this.exportWallet,
 
             'account.add': this.addAccount,
             'account.create': this.createAccount,
@@ -141,12 +142,12 @@ class Api {
 
             'transaction.list': this.getTransactionList,
 
-            'getSonmTokenAddress': this.getSonmTokenAddress,
+            getSonmTokenAddress: this.getSonmTokenAddress,
 
-            'addToken': this.addToken,
-            'removeToken': this.removeToken,
-            'getTokenInfo': this.getTokenInfo,
-            'getPresetTokenList': this.getPresetTokenList,
+            addToken: this.addToken,
+            removeToken: this.removeToken,
+            getTokenInfo: this.getTokenInfo,
+            getPresetTokenList: this.getPresetTokenList,
         };
 
         this.storage = {
@@ -161,21 +162,29 @@ class Api {
     }
 
     public decrypt = (data: string): any => {
-        return data ? JSON.parse(AES.decrypt(data, this.secretKey).toString(Utf8)) : null;
-    }
+        return data
+            ? JSON.parse(AES.decrypt(data, this.secretKey).toString(Utf8))
+            : null;
+    };
 
     public encrypt = (data: any): string => {
-        return AES.encrypt(data ? JSON.stringify(data) : null, this.secretKey).toString();
-    }
+        return AES.encrypt(
+            data ? JSON.stringify(data) : null,
+            this.secretKey,
+        ).toString();
+    };
 
     public getWalletList = async (): Promise<IResponse> => {
         return {
             data: (await this.getWallets()).data,
         };
-    }
+    };
 
     private getWallets = async () => {
-        const walletList = await this.getDataFromStorage(KEY_WALLETS_LIST, false);
+        const walletList = await this.getDataFromStorage(
+            KEY_WALLETS_LIST,
+            false,
+        );
 
         if (walletList) {
             return walletList;
@@ -185,13 +194,13 @@ class Api {
                 data: [],
             };
         }
-    }
+    };
 
     public getSettings = async (): Promise<IResponse> => {
         return {
             data: this.storage.settings,
         };
-    }
+    };
 
     public setSettings = async (data: IPayload): Promise<IResponse> => {
         if (data.settings) {
@@ -204,7 +213,7 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     public checkConnection = async (): Promise<IResponse> => {
         try {
@@ -218,7 +227,7 @@ class Api {
                 data: false,
             };
         }
-    }
+    };
 
     public getPrivateKey = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
@@ -228,9 +237,12 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
-    private async checkAccountPassword(password: string, address: string): Promise<IResponse> {
+    private async checkAccountPassword(
+        password: string,
+        address: string,
+    ): Promise<IResponse> {
         if (!password) {
             return {
                 validation: {
@@ -254,10 +266,13 @@ class Api {
                 };
             }
         } else {
-            const accounts = await this.getAccounts() || {};
+            const accounts = (await this.getAccounts()) || {};
 
             try {
-                const privateKey = await utils.recoverPrivateKey(accounts[address].json, password);
+                const privateKey = await utils.recoverPrivateKey(
+                    accounts[address].json,
+                    password,
+                );
                 client.factory.setPrivateKey(privateKey);
                 client.password = password;
                 client.privateKey = privateKey;
@@ -283,7 +298,7 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     private setWalletHash(name: string) {
         this.hash = `sonm_${SHA256(name).toString(Hex)}`;
@@ -339,11 +354,11 @@ class Api {
                 validation,
             };
         }
-    }
+    };
 
     public importWallet = async (data: IPayload): Promise<IResponse> => {
         if (data.password && data.file && data.walletName) {
-            if (data.file.substr(0,4) === 'sonm') {
+            if (data.file.substr(0, 4) === 'sonm') {
                 try {
                     this.setWalletHash(data.walletName);
                     this.secretKey = data.password;
@@ -369,7 +384,11 @@ class Api {
                         }
                     } catch (err) {}
 
-                    await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
+                    await this.saveDataToStorage(
+                        KEY_WALLETS_LIST,
+                        walletList,
+                        false,
+                    );
 
                     return {
                         data: walletInfo,
@@ -391,7 +410,7 @@ class Api {
         } else {
             const validation = {
                 password: !data.password ? 'password_required' : null,
-                payload: !data.encryptedData ? 'encryptedData_required' : null,
+                encodedWallet: !data.file ? 'walletFile_required' : null,
                 walletName: !data.walletName ? 'walletName_required' : null,
             };
 
@@ -399,14 +418,17 @@ class Api {
                 validation,
             };
         }
-    }
+    };
 
     public unlockWallet = async (data: IPayload): Promise<IResponse> => {
         if (data.password && data.walletName) {
             this.setWalletHash(data.walletName);
             this.secretKey = data.password;
 
-            const dataFromStorage = await this.getDataFromStorage(this.hash, true);
+            const dataFromStorage = await this.getDataFromStorage(
+                this.hash,
+                true,
+            );
 
             if (dataFromStorage) {
                 this.storage = dataFromStorage;
@@ -447,21 +469,23 @@ class Api {
                 validation,
             };
         }
-    }
+    };
 
     public exportWallet = async (): Promise<IResponse> => {
         return {
             data: 'sonm' + this.encrypt(this.storage),
         };
-    }
+    };
 
     public getAccountList = async (): Promise<IResponse> => {
-        const accounts = await this.getAccounts() || {};
+        const accounts = (await this.getAccounts()) || {};
         const addresses = Object.keys(accounts);
 
         //lazy init tokens
         try {
-            if (this.storage.tokens.length !== this.tokenList.getList().length) {
+            if (
+                this.storage.tokens.length !== this.tokenList.getList().length
+            ) {
                 const tokenList = await this.getTokenList();
 
                 for (const token of this.storage.tokens) {
@@ -496,7 +520,8 @@ class Api {
                     address,
                     name: accounts[address].name,
                     json: JSON.stringify(accounts[address].json),
-                    currencyBalanceMap: balancies && balancies[i] ? balancies[i] : {},
+                    currencyBalanceMap:
+                        balancies && balancies[i] ? balancies[i] : {},
                 });
             }
         }
@@ -504,32 +529,48 @@ class Api {
         return {
             data: list,
         };
-    }
+    };
 
     private saveData = async () => {
         await this.saveDataToStorage(this.hash, this.storage, true);
-    }
+    };
 
-    private saveDataToStorage = async (key: string, data: any, encrypt: boolean): Promise<void> => {
+    private saveDataToStorage = async (
+        key: string,
+        data: any,
+        encrypt: boolean,
+    ): Promise<void> => {
         await createPromise('set', {
             key,
             value: encrypt ? this.encrypt(data) : JSON.stringify(data),
         });
-    }
+    };
 
-    private getDataFromStorage = async (key: string, decrypt: boolean): Promise<any> => {
+    private getDataFromStorage = async (
+        key: string,
+        decrypt: boolean,
+    ): Promise<any> => {
         const dataFromStorage = await createPromise('get', { key });
 
         if (dataFromStorage) {
             try {
-                let data = decrypt ? this.decrypt(dataFromStorage) : JSON.parse(dataFromStorage);
+                let data = decrypt
+                    ? this.decrypt(dataFromStorage)
+                    : JSON.parse(dataFromStorage);
 
                 if (!data.version || data.version !== STORAGE_VERSION) {
                     try {
-                        data = migrate(key === KEY_WALLETS_LIST ? 'wallet_list' : 'wallet', data);
+                        data = migrate(
+                            key === KEY_WALLETS_LIST ? 'wallet_list' : 'wallet',
+                            data,
+                        );
 
                         if (key === KEY_WALLETS_LIST) {
-                            await this.saveDataToStorage(KEY_WALLETS_LIST, data, false);
+                            await this.saveDataToStorage(
+                                KEY_WALLETS_LIST,
+                                data,
+                                false,
+                            );
                         } else {
                             await this.saveData();
                         }
@@ -545,11 +586,11 @@ class Api {
         } else {
             return false;
         }
-    }
+    };
 
     private getAccounts = async (): Promise<IAccounts | null> => {
         return this.storage.accounts || null;
-    }
+    };
 
     public async ping(): Promise<IResponse> {
         return {
@@ -560,18 +601,26 @@ class Api {
     }
 
     private async processTransactions() {
-        const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
+        const factory = createSonmFactory(
+            this.storage.settings.nodeUrl,
+            this.storage.settings.chainId,
+        );
         const transactions = [];
 
         let needSave = false;
         for (const transaction of this.storage.transactions) {
             // remove pending
             if (transaction.hash !== PENDING_HASH) {
-                transactions.push(transaction);
-
                 if (transaction.status === 'pending') {
-                    const txResult = factory.createTxResult(transaction.hash);
-                    this.proceedTx(transaction, txResult);
+                    const checkTransaction = await factory.gethClient.method('getTransaction')(transaction.hash);
+                    if (checkTransaction) {
+                        transactions.push(transaction);
+
+                        const txResult = factory.createTxResult(transaction.hash);
+                        this.proceedTx(transaction, txResult);
+                    }
+                } else {
+                    transactions.push(transaction);
                 }
 
                 needSave = true;
@@ -587,7 +636,10 @@ class Api {
 
     private async initAccount(address: string) {
         if (!this.accounts[address]) {
-            const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
+            const factory = createSonmFactory(
+                this.storage.settings.nodeUrl,
+                this.storage.settings.chainId,
+            );
 
             this.accounts[address] = {
                 factory,
@@ -612,7 +664,7 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     public addToken = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
@@ -636,7 +688,7 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     public removeToken = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
@@ -652,7 +704,7 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     public getTokenInfo = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
@@ -672,11 +724,14 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     private async getTokenList() {
         if (!this.tokenList) {
-            const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
+            const factory = createSonmFactory(
+                this.storage.settings.nodeUrl,
+                this.storage.settings.chainId,
+            );
             this.tokenList = await factory.createTokenList();
         }
 
@@ -687,35 +742,44 @@ class Api {
         return {
             data: this.storage.tokens,
         };
-    }
+    };
 
     public getGasPrice = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
+        const factory = createSonmFactory(
+            this.storage.settings.nodeUrl,
+            this.storage.settings.chainId,
+        );
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
             data: utils.fromWei(gasPrice, 'ether'),
         };
-    }
+    };
 
     public getSonmTokenAddress = async (): Promise<IResponse> => {
-        const factory = createSonmFactory(this.storage.settings.nodeUrl, this.storage.settings.chainId);
+        const factory = createSonmFactory(
+            this.storage.settings.nodeUrl,
+            this.storage.settings.chainId,
+        );
 
         return {
             data: await factory.getSonmTokenAddress(),
         };
-    }
+    };
 
     public addAccount = async (data: IPayload): Promise<IResponse> => {
         if (data.json && data.password) {
             try {
                 const json = JSON.parse(data.json.toLowerCase());
 
-                const accounts = await this.getAccounts() || {};
+                const accounts = (await this.getAccounts()) || {};
                 const address = utils.add0x(json.address);
 
                 if (!accounts[address]) {
-                    const privateKey = await utils.recoverPrivateKey(json, data.password);
+                    const privateKey = await utils.recoverPrivateKey(
+                        json,
+                        data.password,
+                    );
 
                     const client = await this.initAccount(json.address);
                     client.password = data.password;
@@ -732,7 +796,9 @@ class Api {
                         data: {
                             address,
                             name: data.name,
-                            currencyBalanceMap: await this.getCurrencyBalances(address),
+                            currencyBalanceMap: await this.getCurrencyBalances(
+                                address,
+                            ),
                         },
                     };
                 } else {
@@ -752,11 +818,11 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     public renameAccount = async (data: IPayload): Promise<IResponse> => {
         if (data.address && data.name) {
-            const accounts = await this.getAccounts() || {};
+            const accounts = (await this.getAccounts()) || {};
             if (accounts[data.address]) {
                 accounts[data.address].name = data.name;
                 await this.saveData();
@@ -770,12 +836,12 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     public removeAccount = async (data: IPayload): Promise<IResponse> => {
         if (data.address) {
             const address = data.address;
-            const accounts = await this.getAccounts() || {};
+            const accounts = (await this.getAccounts()) || {};
 
             if (accounts[address]) {
                 delete accounts[address];
@@ -790,11 +856,14 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     public requestTestTokens = async (data: IPayload): Promise<IResponse> => {
         if (data.address && data.password) {
-            const validation = await this.checkAccountPassword(data.password, data.address);
+            const validation = await this.checkAccountPassword(
+                data.password,
+                data.address,
+            );
 
             if (!validation.data) {
                 return validation;
@@ -808,7 +877,7 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
-    }
+    };
 
     public getTransactions = async () => {
         const data = await createPromise('get', { key: 'transactions' });
@@ -818,19 +887,28 @@ class Api {
         } else {
             return [];
         }
-    }
+    };
 
     public getPresetTokenList = async (data: IPayload): Promise<IResponse> => {
         return {
             data: DEFAULT_TOKENS[this.storage.settings.chainId],
         };
-    }
+    };
 
     public send = async (data: IPayload): Promise<IResponse> => {
+        const {
+            fromAddress,
+            toAddress,
+            currencyAddress,
+            password,
+            gasLimit,
+            timestamp,
+        } = data;
 
-        const { fromAddress, toAddress, currencyAddress, password, gasLimit, timestamp } = data;
-
-        const validation = await this.checkAccountPassword(password, fromAddress);
+        const validation = await this.checkAccountPassword(
+            password,
+            fromAddress,
+        );
 
         if (!validation.data) {
             return validation;
@@ -840,7 +918,9 @@ class Api {
         const transactions = this.storage.transactions;
         const gasPrice = utils.toWei(data.gasPrice, 'ether');
         const amount = utils.toWei(data.amount, 'ether');
-        const token = this.storage.tokens.find((item: t.ICurrencyInfo) => item.address === currencyAddress);
+        const token = this.storage.tokens.find(
+            (item: t.ICurrencyInfo) => item.address === currencyAddress,
+        );
 
         const transaction = {
             timestamp,
@@ -857,19 +937,21 @@ class Api {
         transactions.unshift(transaction);
 
         try {
-            const txResult = (currencyAddress === '0x'
-                ? await client.account.sendEther(
-                    toAddress,
-                    amount,
-                    gasLimit,
-                    gasPrice)
-                : await client.account.sendTokens(
-                    toAddress,
-                    amount,
-                    currencyAddress,
-                    gasLimit,
-                    gasPrice,
-                ));
+            const txResult =
+                currencyAddress === '0x'
+                    ? await client.account.sendEther(
+                          toAddress,
+                          amount,
+                          gasLimit,
+                          gasPrice,
+                      )
+                    : await client.account.sendTokens(
+                          toAddress,
+                          amount,
+                          currencyAddress,
+                          gasLimit,
+                          gasPrice,
+                      );
 
             transaction.hash = await txResult.getHash();
 
@@ -883,7 +965,7 @@ class Api {
             transactions.shift();
             throw err;
         }
-    }
+    };
 
     private async proceedTx(transaction: any, txResult: any) {
         const receipt = await txResult.getReceipt();
@@ -913,7 +995,11 @@ class Api {
                     }
                 }
 
-                if (filters.query && !item.toAddress.includes(filters.query) && !item.hash.includes(filters.query)) {
+                if (
+                    filters.query &&
+                    !item.toAddress.includes(filters.query) &&
+                    !item.hash.includes(filters.query)
+                ) {
                     ok = false;
                 }
 
@@ -935,12 +1021,9 @@ class Api {
         filtered = filtered.slice(offset, offset + limit);
 
         return {
-            data: [
-                filtered,
-                total,
-            ],
+            data: [filtered, total],
         };
-    }
+    };
 
     public async resolve(request: Request): Promise<IResponse> {
         if (this.routes[request.type]) {

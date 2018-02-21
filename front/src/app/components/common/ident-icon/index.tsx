@@ -4,6 +4,7 @@ const ICON_PIXEL_SIZE = 8;
 
 export interface IProps {
     address: string;
+    onlyGeneratedIcon?: boolean;
     className?: string;
     width?: number;
 }
@@ -33,21 +34,29 @@ export class IdentIcon extends React.Component<IProps, any> {
     private updateDataUrl(props: IProps | null, nextProps: IProps) {
         const address = nextProps.address;
 
-        if (props === null || props.address !== address || props.width !== nextProps.width) {
+        if (
+            props === null ||
+            props.address !== address ||
+            props.width !== nextProps.width
+        ) {
             this.draw(address);
         }
     }
 
     protected checkAddress(address: string): boolean {
-        return (address.length === 40 && !address.startsWith('0x'))
-            || (address.length === 42 && address.startsWith('0x'))
-            || (IdentIcon.icons[address]);
+        return (
+            (address.length === 40 && !address.startsWith('0x')) ||
+            (address.length === 42 && address.startsWith('0x')) ||
+            (!this.props.onlyGeneratedIcon && IdentIcon.icons[address])
+        );
     }
 
     private canvas: HTMLCanvasElement | null = null;
 
     private draw(address: string): void {
-        if (this.canvas === null) { return; }
+        if (this.canvas === null) {
+            return;
+        }
 
         const canvasSize = this.getCanvasSize();
 
@@ -65,7 +74,10 @@ export class IdentIcon extends React.Component<IProps, any> {
             }
         }
 
-        const seed = (address.length === 42 ? address : '0x' + address).toLowerCase();
+        const seed = (address.length === 42
+            ? address
+            : '0x' + address
+        ).toLowerCase();
 
         // The random number is a js implementation of the Xorshift PRNG
         const randseed: number[] = new Array(4); // Xorshift: [x, y, z, w] 32 bit values
@@ -75,7 +87,10 @@ export class IdentIcon extends React.Component<IProps, any> {
                 randseed[i] = 0;
             }
             for (let i = 0; i < seedStr.length; i++) {
-                randseed[i % 4] = ((randseed[i % 4] << 5) - randseed[i % 4]) + seed.charCodeAt(i);
+                randseed[i % 4] =
+                    (randseed[i % 4] << 5) -
+                    randseed[i % 4] +
+                    seed.charCodeAt(i);
             }
         }
 
@@ -86,7 +101,7 @@ export class IdentIcon extends React.Component<IProps, any> {
             randseed[0] = randseed[1];
             randseed[1] = randseed[2];
             randseed[2] = randseed[3];
-            randseed[3] = (randseed[3] ^ (randseed[3] >> 19) ^ t ^ (t >> 8));
+            randseed[3] = randseed[3] ^ (randseed[3] >> 19) ^ t ^ (t >> 8);
 
             return (randseed[3] >>> 0) / ((1 << 31) >>> 0);
         }
@@ -95,9 +110,9 @@ export class IdentIcon extends React.Component<IProps, any> {
             // saturation is the whole color spectrum
             const h = Math.floor(rand() * 360);
             // saturation goes from 40 to 100, it avoids greyish colors
-            const s = ((rand() * 60) + 40) + '%';
+            const s = rand() * 60 + 40 + '%';
             // lightness can be anything from 0 to 100, but probabilities are a bell curve around 50%
-            const l = ((rand() + rand() + rand() + rand()) * 25) + '%';
+            const l = (rand() + rand() + rand() + rand()) * 25 + '%';
 
             const color = 'hsl(' + h + ',' + s + ',' + l + ')';
             return color;
@@ -153,16 +168,21 @@ export class IdentIcon extends React.Component<IProps, any> {
                 cc.fillStyle = opts.color;
 
                 for (let i = 0; i < imageData.length; i++) {
-
                     // if data is 0, leave the background
                     if (imageData[i]) {
                         const row = Math.floor(i / width);
                         const col = i % width;
 
                         // if data is 2, choose spot color, if 1 choose foreground
-                        cc.fillStyle = (imageData[i] === 1) ? opts.color : opts.spotcolor;
+                        cc.fillStyle =
+                            imageData[i] === 1 ? opts.color : opts.spotcolor;
 
-                        cc.fillRect(col * opts.scale, row * opts.scale, opts.scale, opts.scale);
+                        cc.fillRect(
+                            col * opts.scale,
+                            row * opts.scale,
+                            opts.scale,
+                            opts.scale,
+                        );
                     }
                 }
             }
@@ -179,24 +199,20 @@ export class IdentIcon extends React.Component<IProps, any> {
             this.canvas = canvas;
             this.draw(this.props.address);
         }
-    }
+    };
 
     public shouldComponentUpdate() {
         return false;
     }
 
     private getCanvasSize(): number {
-        const x = this.props.width as number / ICON_PIXEL_SIZE;
+        const x = (this.props.width as number) / ICON_PIXEL_SIZE;
 
         return Math.ceil(x) * ICON_PIXEL_SIZE;
     }
 
     public render() {
-        const {
-            className,
-            width,
-            address,
-        } = this.props;
+        const { className, width, address, onlyGeneratedIcon } = this.props;
         const canvasSize = this.getCanvasSize();
 
         const correction = `-${(canvasSize - (width as number)) / 2}px`;
@@ -206,18 +222,26 @@ export class IdentIcon extends React.Component<IProps, any> {
                 className={cn(
                     className,
                     'sonm-ident-icon__wrapper',
-                    IdentIcon.icons[address] && `sonm-ident-icon__icon-${IdentIcon.icons[address]}`,
+                    !onlyGeneratedIcon && IdentIcon.icons[address]
+                        ? `sonm-ident-icon__icon-${IdentIcon.icons[address]}`
+                        : undefined,
                 )}
                 style={{ width: width as number, height: width as number }}
             >
-                {IdentIcon.icons[address] ? null :
-                <canvas
-                    className="sonm-ident-icon__canvas"
-                    ref={this.processCanvasRef}
-                    width={canvasSize}
-                    height={canvasSize}
-                    style={{ width: canvasSize, height: canvasSize, marginTop: correction, marginLeft: correction }}
-                />}
+                {IdentIcon.icons[address] ? null : (
+                    <canvas
+                        className="sonm-ident-icon__canvas"
+                        ref={this.processCanvasRef}
+                        width={canvasSize}
+                        height={canvasSize}
+                        style={{
+                            width: canvasSize,
+                            height: canvasSize,
+                            marginTop: correction,
+                            marginLeft: correction,
+                        }}
+                    />
+                )}
             </div>
         );
     }

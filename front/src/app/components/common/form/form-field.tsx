@@ -12,7 +12,11 @@ interface IFormFieldProps {
     fullWidth?: boolean;
 }
 
-const helpTextTypes: Array<keyof IFormFieldProps> = ['error', 'info', 'success'];
+const helpTextTypes: Array<keyof IFormFieldProps> = [
+    'error',
+    'info',
+    'success',
+];
 
 export class FormField extends React.PureComponent<IFormFieldProps, any> {
     public render() {
@@ -23,9 +27,7 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
             const raw = this.props[x];
 
             if (raw && raw.length) {
-                helpText = Array.isArray(raw)
-                    ? raw.join('; ')
-                    : raw;
+                helpText = Array.isArray(raw) ? raw.join('; ') : raw;
                 helpTextType = x;
             }
 
@@ -41,26 +43,32 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
             }
         }
 
-        return <label
-            className={cn(
-                'sonm-form-field',
-                this.props.className,
-                { [`sonm-form-field--${helpTextType}`]: Boolean(helpTextType) },
-                { [`sonm-form-field--full-width`]: Boolean(this.props.fullWidth) },
-            )}
-        >
-            <div className="sonm-form-field__label">
-                {label ? label : ''}
-            </div>
-            <div className="sonm-form-field__input">
-                {this.props.children}
-            </div>
-            <div
-                className="sonm-form-field__help"
+        return (
+            <label
+                className={cn(
+                    'sonm-form-field',
+                    this.props.className,
+                    {
+                        [`sonm-form-field--${helpTextType}`]: Boolean(
+                            helpTextType,
+                        ),
+                    },
+                    {
+                        [`sonm-form-field--full-width`]: Boolean(
+                            this.props.fullWidth,
+                        ),
+                    },
+                )}
             >
-                {helpText}
-            </div>
-        </label>;
+                <div className="sonm-form-field__label">
+                    {label ? label : ''}
+                </div>
+                <div className="sonm-form-field__input">
+                    {this.props.children}
+                </div>
+                <div className="sonm-form-field__help">{helpText}</div>
+            </label>
+        );
     }
 }
 

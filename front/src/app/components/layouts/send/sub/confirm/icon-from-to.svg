@@ -1,1 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2583.079 2534 14.357 51.3"><path data-name="Line 45" fill="none" stroke="#d8d8d8" stroke-miterlimit="10" d="M-2575.901 2534v49.374"/><g data-name="Group 602"><path data-name="Path 162" d="M-2583.079 2577.597l1.226-1.051 5.953 6.3 5.778-6.3 1.4 1.051-7.178 7.7z" fill="#d8d8d8"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2583.079 2534 14.357 51.3">
+    <path
+        data-name="Line 45"
+        fill="none"
+        stroke="#d8d8d8"
+        stroke-miterlimit="10"
+        d="M-2575.901 2534v49.374"
+    />
+    <g data-name="Group 602">
+        <path
+            data-name="Path 162"
+            d="M-2583.079 2577.597l1.226-1.051 5.953 6.3 5.778-6.3 1.4 1.051-7.178 7.7z"
+            fill="#d8d8d8"
+        />
+    </g>
+</svg>

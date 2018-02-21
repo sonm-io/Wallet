@@ -2,9 +2,7 @@ import { AbstractStore } from './abstract-store';
 
 export { AbstractStore } from './abstract-store';
 
-import {
-    IValidation,
-} from 'app/api';
+import { IValidation } from 'app/api';
 
 export interface IHasAddress {
     address: string;

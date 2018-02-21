@@ -19,18 +19,21 @@ export class Button extends React.PureComponent<IButtonProps> {
 
     protected saveRef = (ref: HTMLButtonElement | null) => {
         if (ref !== null) {
-
-            if (this.props.autoFocus && this.buttonNode === undefined && ref.focus) {
+            if (
+                this.props.autoFocus &&
+                this.buttonNode === undefined &&
+                ref.focus
+            ) {
                 ref.focus();
             }
 
             this.buttonNode = ref;
         }
-    }
+    };
 
     public focus = () => {
         this.buttonNode && this.buttonNode.focus && this.buttonNode.focus();
-    }
+    };
 
     public render() {
         const {
@@ -41,13 +44,12 @@ export class Button extends React.PureComponent<IButtonProps> {
             height,
             type,
             className,
-            ...rest,
+            ...rest
         } = this.props;
 
-        const style =
-            height
-                ? {'--height': `${height}px`, ...rest.style}
-                : rest.style;
+        const style = height
+            ? { '--height': `${height}px`, ...rest.style }
+            : rest.style;
 
         const Tag = this.props.tag || 'button';
 
@@ -55,15 +57,11 @@ export class Button extends React.PureComponent<IButtonProps> {
             <Tag
                 {...rest}
                 ref={this.saveRef}
-                className={cn(
-                    className,
-                    'sonm-button',
-                    {
-                        [`sonm-button--color-${color}`]: Boolean(color),
-                        'sonm-button--square-pants': square,
-                        'sonm-button--transparent': transparent,
-                    },
-                )}
+                className={cn(className, 'sonm-button', {
+                    [`sonm-button--color-${color}`]: Boolean(color),
+                    'sonm-button--square-pants': square,
+                    'sonm-button--transparent': transparent,
+                })}
                 style={style}
                 type={type === undefined ? 'button' : type}
             >

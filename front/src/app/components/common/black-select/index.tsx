@@ -14,7 +14,7 @@ const defaultClasses: ISelectCssClasses = {
     select: 'blackoselect',
     option: 'blackoselect__option',
     dropdown: 'blackoselect__dropdown',
-}
+};
 
 export interface ISelectOnChangeParams<T> {
     name: string;
@@ -40,7 +40,7 @@ export class BlackSelect<T> extends React.Component<ISelectProps<T>, any> {
 
     public static defaultProps: Partial<ISelectProps<any>> = {
         classes: defaultClasses,
-    }
+    };
 
     protected renderItem(record: T, key: string) {
         let result = null;
@@ -50,9 +50,7 @@ export class BlackSelect<T> extends React.Component<ISelectProps<T>, any> {
         } else {
             const str = String(record);
 
-            result = (str === '' || str === '[object Object]')
-                ? key
-                : str;
+            result = str === '' || str === '[object Object]' ? key : str;
         }
 
         return result;
@@ -68,10 +66,10 @@ export class BlackSelect<T> extends React.Component<ISelectProps<T>, any> {
                 name: this.props.name,
             });
         }
-    }
+    };
 
     public render() {
-        const s = (this.props.classes as ISelectCssClasses);
+        const s = this.props.classes as ISelectCssClasses;
         const className = this.props.className;
 
         return (
@@ -85,15 +83,15 @@ export class BlackSelect<T> extends React.Component<ISelectProps<T>, any> {
                 className={cn(className, s.select)}
                 optionLabelProp="children"
             >
-                {this.props.options.map(
-                    x => {
-                        const key = String(this.getKey(x));
+                {this.props.options.map(x => {
+                    const key = String(this.getKey(x));
 
-                        return (<RcOption value={key} key={key} className={s.option}>
+                    return (
+                        <RcOption value={key} key={key} className={s.option}>
                             {this.renderItem(x, key)}
-                        </RcOption>);
-                    },
-                )}
+                        </RcOption>
+                    );
+                })}
             </RcSelect>
         );
     }

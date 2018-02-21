@@ -30,28 +30,25 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
         if (balance) {
             const dotIdx = balance.indexOf('.');
 
-            out = (dotIdx !== -1)
-                ? balance.slice(0, dotIdx + 1 + (this.props.decimals as number))
-                : balance;
+            out =
+                dotIdx !== -1
+                    ? balance.slice(
+                          0,
+                          dotIdx + 1 + (this.props.decimals as number),
+                      )
+                    : balance;
         }
 
         out = trimZeros(out);
 
-        const style = fontSizePx
-            ? { fontSize: `${fontSizePx}px` }
-            : undefined;
+        const style = fontSizePx ? { fontSize: `${fontSizePx}px` } : undefined;
 
         return (
-            <div
-                className={cn('sonm-balance', className)}
-                style={style}
-            >
+            <div className={cn('sonm-balance', className)} style={style}>
                 <span className="sonm-balance__number">
                     {prefix} {out}
                 </span>
-                <span className="sonm-balance__symbol">
-                    {symbol}
-                </span>
+                <span className="sonm-balance__symbol">{symbol}</span>
             </div>
         );
     }

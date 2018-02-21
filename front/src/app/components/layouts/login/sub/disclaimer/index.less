@@ -5,87 +5,87 @@
 @sonm-disclaimer-padding: @sonm-disclaimer-padding-paragraph-top @sonm-disclaimer-padding-left @sonm-disclaimer-padding-paragraph-bottop;
 
 .sonm-disclaimer {
-  width: 90vw;
-  max-width: 800px;
-  font-size: 14px;
-  opacity: 0.95 !important;
-  align-items: left !important;
-  text-align: left;
-  padding: @sonm-disclaimer-padding-top 0 !important;
-  color: #ffffff;
-  font-weight: 200;
-
-  & > p {
-    margin: 10px 0 0 0;
-    padding: @sonm-disclaimer-padding;
-    text-indent: 0px;
-  }
-
-  & > h1,
-  & > h2,
-  & > h3 {
-    margin: 0;
-    padding: 0 @sonm-disclaimer-padding-left;
-    font-weight: bold;
-  }
-
-  & h1 {
-    font-size: 28px;
-  }
-
-  & h2 {
-    font-size: 20px;
-  }
-
-  &__pink {
-    color: @color-pink;
-  }
-
-  & b {
-    font-weight: 800;
-  }
-
-  & > &__border {
-    margin: 10px calc(@sonm-disclaimer-padding-left - 10px);
-    padding: 10px;
-    border: 1px solid @color-white;
-  }
-
-  &__marker {
-    background-color: @color-pink;
-  }
-
-  &__colored {
-    color: @color-pink;
-  }
-
-  & > ul {
-    margin: 20px 0;
-    padding: @sonm-disclaimer-padding;
-    list-style: none;
+    width: 90vw;
+    max-width: 800px;
+    font-size: 14px;
+    opacity: 0.95 !important;
+    align-items: left !important;
     text-align: left;
+    padding: @sonm-disclaimer-padding-top 0 !important;
+    color: #ffffff;
+    font-weight: 200;
 
-    & > li {
-      margin: 10px 0 0 30px;
+    & > p {
+        margin: 10px 0 0 0;
+        padding: @sonm-disclaimer-padding;
+        text-indent: 0px;
+    }
 
-      &:before {
-        content: '一 ';
+    & > h1,
+    & > h2,
+    & > h3 {
+        margin: 0;
+        padding: 0 @sonm-disclaimer-padding-left;
+        font-weight: bold;
+    }
+
+    & h1 {
+        font-size: 28px;
+    }
+
+    & h2 {
+        font-size: 20px;
+    }
+
+    &__pink {
         color: @color-pink;
-        font-weight: 500;
-      }
     }
-  }
 
-  &__buttons {
-    margin: 30px auto 0;
-    padding: @sonm-disclaimer-padding;
-
-    & > button {
-      margin: 0 20px 0 0;
+    & b {
+        font-weight: 800;
     }
-  }
 
-  &__timer {
-    width: 300px;
-  }
+    & > &__border {
+        margin: 10px calc(@sonm-disclaimer-padding-left - 10px);
+        padding: 10px;
+        border: 1px solid @color-white;
+    }
+
+    &__marker {
+        background-color: @color-pink;
+    }
+
+    &__colored {
+        color: @color-pink;
+    }
+
+    & > ul {
+        margin: 20px 0;
+        padding: @sonm-disclaimer-padding;
+        list-style: none;
+        text-align: left;
+
+        & > li {
+            margin: 10px 0 0 30px;
+
+            &:before {
+                content: '一 ';
+                color: @color-pink;
+                font-weight: 500;
+            }
+        }
+    }
+
+    &__buttons {
+        margin: 30px auto 0;
+        padding: @sonm-disclaimer-padding;
+
+        & > button {
+            margin: 0 20px 0 0;
+        }
+    }
+
+    &__timer {
+        width: 300px;
+    }
 }

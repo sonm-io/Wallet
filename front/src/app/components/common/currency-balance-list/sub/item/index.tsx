@@ -10,16 +10,23 @@ export interface ITokenItemProps {
 }
 
 export function TokenItem(props: ITokenItemProps) {
-    return <Empty>
-        <IdentIcon key="i" address={props.address} width={26} className="sonm-token-item__icon"/>
-        <Balance
-            key="b"
-            className="sonm-token-item__balance"
-            balance={props.balance}
-            symbol={props.symbol}
-            fontSizePx={18}
-        />
-    </Empty>;
+    return (
+        <Empty>
+            <IdentIcon
+                key="i"
+                address={props.address}
+                width={26}
+                className="sonm-token-item__icon"
+            />
+            <Balance
+                key="b"
+                className="sonm-token-item__balance"
+                balance={props.balance}
+                symbol={props.symbol}
+                fontSizePx={18}
+            />
+        </Empty>
+    );
 }
 
 export default TokenItem;

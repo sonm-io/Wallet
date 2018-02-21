@@ -3,7 +3,10 @@ import * as t from './types';
 export * from './types';
 
 export interface InterfaceIPC {
-    send<TParams, TResult>(method: string, payload: TParams): Promise<[TResult, t.IValidation | undefined]>;
+    send<TParams, TResult>(
+        method: string,
+        payload: TParams,
+    ): Promise<[TResult, t.IValidation | undefined]>;
     setRequestProcessor(processRequest: t.TRequestProcessor<any, any>): void;
 }
 
@@ -23,12 +26,11 @@ export class IPC implements InterfaceIPC {
     private errorMessageMap: t.IValidation;
 
     constructor(params: IIpcCtrArguments = {}) {
-        const {
-            worker = self,
-            errorMessageMap = {},
-        } = params;
+        const { worker = self, errorMessageMap = {} } = params;
 
-        if (!(worker instanceof Worker)) { throw new Error('worker is not IWebWorker implementation'); }
+        if (!(worker instanceof Worker)) {
+            throw new Error('worker is not IWebWorker implementation');
+        }
 
         this.worker = worker;
         this.worker.addEventListener('message', this.onMessage);
@@ -36,8 +38,14 @@ export class IPC implements InterfaceIPC {
     }
 
     private static generateSign(): string {
-        return `${Date.now().toString(36)}-` +
-            `${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+        return (
+            `${Date.now().toString(36)}-` +
+            `${Math.random()
+                .toString(36)
+                .slice(2)}-${Math.random()
+                .toString(36)
+                .slice(2)}`
+        );
     }
 
     private getListeners(requestId: string): t.TListener<any> {
@@ -52,19 +60,21 @@ export class IPC implements InterfaceIPC {
             const requestId = message.requestId;
 
             this.getListeners(requestId)(message);
-
         } else if (
-            processRequest !== undefined
-            && event.data
-            && event.data.method
-            && event.data.payload
-            && event.data.sign
-            && event.data.requestId
+            processRequest !== undefined &&
+            event.data &&
+            event.data.method &&
+            event.data.payload &&
+            event.data.sign &&
+            event.data.requestId
         ) {
             const sign = event.data.sign as string;
             const requestId = event.data.requestId as string;
 
-            const sendResponse = async (result?: t.IResult<any>, error?: Error) => {
+            const sendResponse = async (
+                result?: t.IResult<any>,
+                error?: Error,
+            ) => {
                 const success = result !== undefined;
 
                 const response: t.IResponse<any> = {
@@ -76,7 +86,7 @@ export class IPC implements InterfaceIPC {
                 };
 
                 if (result !== undefined) {
-                    const { data, validation/*, continuation*/ } = result;
+                    const { data, validation /*, continuation*/ } = result;
 
                     // if (continuation) {
                     //     response.done = false;
@@ -87,7 +97,6 @@ export class IPC implements InterfaceIPC {
 
                     response.data = data;
                     (response as t.IFormResponse<any>).validation = validation;
-
                 } else {
                     response.success = false;
                     response.error = String(event);
@@ -100,7 +109,7 @@ export class IPC implements InterfaceIPC {
                 .then(r => sendResponse(r, undefined))
                 .catch(e => sendResponse(undefined, e));
         }
-    }
+    };
 
     private getNextRequestId(): string {
         return 'request' + this.requestIdCount++;
@@ -110,23 +119,31 @@ export class IPC implements InterfaceIPC {
         return Object.keys(input).reduce((acc: t.IValidation, key: string) => {
             const phrase = input[key];
 
-            acc[key] = phrase in this.errorMessageMap
-                ? this.errorMessageMap[phrase]
-                : phrase;
+            acc[key] =
+                phrase in this.errorMessageMap
+                    ? this.errorMessageMap[phrase]
+                    : phrase;
 
             return acc;
         }, {});
     }
 
-    public send<TParams, TResult>(method: string, payload: TParams): Promise<[TResult, t.IValidation | undefined]> {
+    public send<TParams, TResult>(
+        method: string,
+        payload: TParams,
+    ): Promise<[TResult, t.IValidation | undefined]> {
         return new Promise((done, reject) => {
             const requestId = this.getNextRequestId();
 
-            const callback: t.TListener<TResult> = (response: t.IResponse<TResult>) => {
+            const callback: t.TListener<TResult> = (
+                response: t.IResponse<TResult>,
+            ) => {
                 const formResponse = response as t.IFormResponse<TResult>;
 
                 if (formResponse.validation !== undefined) {
-                    formResponse.validation = this.processValidation(formResponse.validation);
+                    formResponse.validation = this.processValidation(
+                        formResponse.validation,
+                    );
                 }
 
                 if (response.done) {
@@ -157,7 +174,9 @@ export class IPC implements InterfaceIPC {
         });
     }
 
-    public setRequestProcessor(processRequest: t.TRequestProcessor<any, any>): void {
+    public setRequestProcessor(
+        processRequest: t.TRequestProcessor<any, any>,
+    ): void {
         if (typeof processRequest === 'function') {
             this.processRequest = processRequest;
         }

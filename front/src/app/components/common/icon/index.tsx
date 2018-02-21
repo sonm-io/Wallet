@@ -12,7 +12,7 @@ const icons: any = {
     Download: require('./download.svg').default,
     Info: require('./info.svg').default,
     Close: require('./close.svg').default,
-}
+};
 
 interface IAny {
     [key: string]: any;

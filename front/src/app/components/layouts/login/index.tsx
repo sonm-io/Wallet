@@ -12,7 +12,13 @@ import { IWalletListItem } from 'app/api/types';
 import { IFileOpenResult, Upload } from 'app/components/common/upload';
 import { Icon } from 'app/components/common/icon';
 import { Input } from 'app/components/common/input';
-import { Form, FormButtons, FormHeader, FormRow, FormField } from 'app/components/common/form';
+import {
+    Form,
+    FormButtons,
+    FormHeader,
+    FormRow,
+    FormField,
+} from 'app/components/common/form';
 import shortString from 'app/utils/short-string';
 import { Disclaimer } from './sub/disclaimer/index';
 
@@ -35,7 +41,9 @@ interface IRefs {
     loginBtn: Button | null;
 }
 
-const networkSelectList = [NetworkEnum.live, NetworkEnum.rinkeby].map(x => x.toString());
+const networkSelectList = [NetworkEnum.live, NetworkEnum.rinkeby].map(x =>
+    x.toString(),
+);
 
 const emptyValidation: IValidation = {};
 
@@ -78,7 +86,7 @@ export class Login extends React.Component<IProps, IState> {
         newPasswordConfirmation: '',
         encodedWallet: '',
         encodedWalletFileName: '',
-        listOfWallets: ([] as IWalletListItem[]),
+        listOfWallets: [] as IWalletListItem[],
         name: '',
         pending: false,
         error: '',
@@ -89,7 +97,9 @@ export class Login extends React.Component<IProps, IState> {
     protected noTimer = false;
 
     public componentDidMount() {
-        const hideDisclaimer = Boolean(window.localStorage.getItem('sonm-hide-disclaimer'));
+        const hideDisclaimer = Boolean(
+            window.localStorage.getItem('sonm-hide-disclaimer'),
+        );
 
         this.noTimer = hideDisclaimer;
         this.setState({
@@ -99,7 +109,7 @@ export class Login extends React.Component<IProps, IState> {
         });
     }
 
-    protected getWalletList = async () =>  {
+    protected getWalletList = async () => {
         this.setState({ pending: true });
 
         const { data: walletlList } = await Api.getWalletList();
@@ -130,7 +140,7 @@ export class Login extends React.Component<IProps, IState> {
                 this.nextAction();
             }
         });
-    }
+    };
 
     protected nextAction() {
         let currentAction = EnumAction.selectWallet;
@@ -165,7 +175,10 @@ export class Login extends React.Component<IProps, IState> {
         this.getWalletList();
     }
 
-    protected openDialog(currentAction: EnumAction, event: React.MouseEvent<HTMLAnchorElement>) {
+    protected openDialog(
+        currentAction: EnumAction,
+        event: React.MouseEvent<HTMLAnchorElement>,
+    ) {
         event.preventDefault();
 
         const update: Pick<IState, any> = { ...emptyForm };
@@ -175,12 +188,23 @@ export class Login extends React.Component<IProps, IState> {
         this.setState(update);
     }
 
-    protected handleStartLogin = this.openDialog.bind(this, EnumAction.enterPassword);
-    protected handleStartCreateNew = this.openDialog.bind(this, EnumAction.createNew);
-    protected handleStartImport = this.openDialog.bind(this, EnumAction.importWallet);
+    protected handleStartLogin = this.openDialog.bind(
+        this,
+        EnumAction.enterPassword,
+    );
+    protected handleStartCreateNew = this.openDialog.bind(
+        this,
+        EnumAction.createNew,
+    );
+    protected handleStartImport = this.openDialog.bind(
+        this,
+        EnumAction.importWallet,
+    );
 
     protected findWalletByName(name: string) {
-        const wallet = this.state.listOfWallets.find(x => x.name === this.state.name);
+        const wallet = this.state.listOfWallets.find(
+            x => x.name === this.state.name,
+        );
 
         if (wallet === undefined) {
             throw new Error('Wallet not found');
@@ -195,7 +219,10 @@ export class Login extends React.Component<IProps, IState> {
         this.setState({ pending: true });
 
         try {
-            const { validation, data: success } = await Api.unlockWallet(this.state.password, this.state.name);
+            const { validation, data: success } = await Api.unlockWallet(
+                this.state.password,
+                this.state.name,
+            );
 
             if (validation) {
                 this.setState({ validation });
@@ -207,13 +234,12 @@ export class Login extends React.Component<IProps, IState> {
                 this.props.onLogin(wallet);
                 return;
             }
-
         } catch (e) {
             this.setState({ error: String(e) });
         }
 
         this.setState({ pending: false });
-    }
+    };
 
     protected handleSubmitCreate = async (event: any) => {
         event.preventDefault();
@@ -226,7 +252,10 @@ export class Login extends React.Component<IProps, IState> {
             });
 
             try {
-                const { validation, data: walletListItem } = await Api.createWallet(
+                const {
+                    validation,
+                    data: walletListItem,
+                } = await Api.createWallet(
                     this.state.newPassword,
                     this.state.newName,
                     this.state.network.toString(),
@@ -238,23 +267,26 @@ export class Login extends React.Component<IProps, IState> {
                         validation,
                     });
                 } else if (walletListItem) {
-                    window.localStorage.setItem('sonm-last-used-wallet', this.state.newName);
+                    window.localStorage.setItem(
+                        'sonm-last-used-wallet',
+                        this.state.newName,
+                    );
 
                     this.props.onLogin(walletListItem);
                     return;
                 }
-
             } catch (e) {
-
                 this.setState({
                     pending: false,
                     error: String(e),
                 });
             }
         }
-    }
+    };
 
-    protected handleSubmitImport = async (event: React.FormEvent<HTMLFormElement>) => {
+    protected handleSubmitImport = async (
+        event: React.FormEvent<HTMLFormElement>,
+    ) => {
         event.preventDefault();
 
         const valid = this.validateNewName();
@@ -266,7 +298,11 @@ export class Login extends React.Component<IProps, IState> {
 
             const { password, newName, encodedWallet } = this.state;
 
-            const { data: walletInfo, validation } = await Api.importWallet(password, newName, encodedWallet);
+            const { data: walletInfo, validation } = await Api.importWallet(
+                password,
+                newName,
+                encodedWallet,
+            );
 
             if (validation) {
                 this.setState({
@@ -278,18 +314,26 @@ export class Login extends React.Component<IProps, IState> {
                 return;
             }
         }
-    }
+    };
 
     protected validateNewName() {
         let valid = true;
 
         if (this.state.newName.length < 1 || this.state.newName.length > 20) {
-            this.setState({ validation: { newName: getMessageText('wallet_name_length') } });
+            this.setState({
+                validation: { newName: getMessageText('wallet_name_length') },
+            });
             valid = false;
         } else {
-            const foundByName = this.state.listOfWallets.find(x => x.name === this.state.newName);
+            const foundByName = this.state.listOfWallets.find(
+                x => x.name === this.state.newName,
+            );
             if (foundByName) {
-                this.setState({ validation: { newName: getMessageText('wallet_allready_exists') } });
+                this.setState({
+                    validation: {
+                        newName: getMessageText('wallet_allready_exists'),
+                    },
+                });
                 valid = false;
             }
         }
@@ -301,12 +345,22 @@ export class Login extends React.Component<IProps, IState> {
         let valid = true;
 
         if (this.state.newPassword.length < 1) {
-            this.setState({ validation: { newPassword: getMessageText('password_required') } });
+            this.setState({
+                validation: {
+                    newPassword: getMessageText('password_required'),
+                },
+            });
             valid = false;
         }
 
         if (this.state.newPassword !== this.state.newPasswordConfirmation) {
-            this.setState({ validation: { newPasswordConfirmation: getMessageText('password_not_match') } });
+            this.setState({
+                validation: {
+                    newPasswordConfirmation: getMessageText(
+                        'password_not_match',
+                    ),
+                },
+            });
             valid = false;
         }
 
@@ -317,13 +371,13 @@ export class Login extends React.Component<IProps, IState> {
         this.setState({
             [event.target.name]: event.target.value,
         });
-    }
+    };
 
     protected handleChangeSelect = (params: any) => {
         this.setState({
             [params.name]: params.value.toLowerCase(),
         });
-    }
+    };
 
     protected handleChangeWallet = (params: any) => {
         this.setState(
@@ -332,31 +386,45 @@ export class Login extends React.Component<IProps, IState> {
         );
 
         window.localStorage.setItem('sonm-last-used-wallet', params.value);
-    }
+    };
 
     protected handleReturn = () => {
-        this.setState({ currentAction: EnumAction.selectWallet, validation: {} });
-    }
+        this.setState({
+            currentAction: EnumAction.selectWallet,
+            validation: {},
+        });
+    };
 
     protected saveLoginBtnRef = (ref: Button | null) => {
-        if (!ref) { return; }
+        if (!ref) {
+            return;
+        }
 
         if (!this.nodes.loginBtn) {
             ref.focus();
         }
 
         this.nodes.loginBtn = ref;
-    }
+    };
 
     protected renderWalletOption(record: IWalletListItem) {
-        return <span className={`sonm-login__wallet-option sonm-login__wallet-option--${record.chainId}`}>
-            {record.name}
-        </span>;
+        return (
+            <span
+                className={`sonm-login__wallet-option sonm-login__wallet-option--${
+                    record.chainId
+                }`}
+            >
+                {record.name}
+            </span>
+        );
     }
 
     protected renderSelect() {
         return (
-            <form className="sonm-login__wallet-form" onSubmit={this.handleStartLogin}>
+            <form
+                className="sonm-login__wallet-form"
+                onSubmit={this.handleStartLogin}
+            >
                 <BlackWalletSelect
                     render={this.renderWalletOption}
                     className="sonm-login__wallet-select"
@@ -394,7 +462,7 @@ export class Login extends React.Component<IProps, IState> {
                 encodedWalletFileName: params.fileName,
             });
         }
-    }
+    };
 
     protected renderImportWalletPopup() {
         if (this.state.currentAction !== EnumAction.importWallet) {
@@ -403,16 +471,24 @@ export class Login extends React.Component<IProps, IState> {
 
         return (
             <Dialog onClickCross={this.handleReturn} color="dark">
-                <Form onSubmit={this.handleSubmitImport} className="sonm-login__form" theme="dark">
+                <Form
+                    onSubmit={this.handleSubmitImport}
+                    className="sonm-login__form"
+                    theme="dark"
+                >
                     <FormHeader>Import wallet</FormHeader>
                     <FormRow>
                         <FormField
                             fullWidth
                             label="Wallet file"
                             error={this.state.validation.encodedWallet}
-                            success={this.state.encodedWalletFileName
-                                ? shortString(this.state.encodedWalletFileName, 20)
-                                : ''
+                            success={
+                                this.state.encodedWalletFileName
+                                    ? shortString(
+                                          this.state.encodedWalletFileName,
+                                          20,
+                                      )
+                                    : ''
                             }
                         >
                             <Upload
@@ -458,10 +534,7 @@ export class Login extends React.Component<IProps, IState> {
                         </FormField>
                     </FormRow>
                     <FormButtons>
-                        <Button
-                            className="sonm-login__import"
-                            type="submit"
-                        >
+                        <Button className="sonm-login__import" type="submit">
                             Import
                         </Button>
                     </FormButtons>
@@ -477,11 +550,16 @@ export class Login extends React.Component<IProps, IState> {
 
         return (
             <Dialog onClickCross={this.handleReturn} color="dark">
-                <form className="sonm-login__popup-content" onSubmit={this.handleSubmitLogin}>
+                <form
+                    className="sonm-login__popup-content"
+                    onSubmit={this.handleSubmitLogin}
+                >
                     <h3 className="sonm-login__popup-header">Enter password</h3>
                     <div className="sonm-login__label">
                         <span className="sonm-login__label-text">Password</span>
-                        <span className="sonm-login__label-error">{this.state.validation.password}</span>
+                        <span className="sonm-login__label-error">
+                            {this.state.validation.password}
+                        </span>
                         <input
                             autoComplete="off"
                             ref={setFocus}
@@ -491,10 +569,7 @@ export class Login extends React.Component<IProps, IState> {
                             onChange={this.handleChangeInput}
                         />
                     </div>
-                    <Button
-                        className="sonm-login__create"
-                        type="submit"
-                    >
+                    <Button className="sonm-login__create" type="submit">
                         Login
                     </Button>
                 </form>
@@ -509,11 +584,18 @@ export class Login extends React.Component<IProps, IState> {
 
         return (
             <Dialog onClickCross={this.handleReturn} color="dark">
-                <form className="sonm-login__popup-content" onSubmit={this.handleSubmitCreate}>
+                <form
+                    className="sonm-login__popup-content"
+                    onSubmit={this.handleSubmitCreate}
+                >
                     <h3 className="sonm-login__popup-header">New wallet</h3>
                     <div className="sonm-login__label">
-                        <span className="sonm-login__label-text">Wallet name</span>
-                        <span className="sonm-login__label-error">{this.state.validation.newName}</span>
+                        <span className="sonm-login__label-text">
+                            Wallet name
+                        </span>
+                        <span className="sonm-login__label-error">
+                            {this.state.validation.newName}
+                        </span>
                         <input
                             autoComplete="off"
                             ref={setFocus}
@@ -525,7 +607,9 @@ export class Login extends React.Component<IProps, IState> {
                     </div>
                     <div className="sonm-login__label">
                         <span className="sonm-login__label-text">Password</span>
-                        <span className="sonm-login__label-error">{this.state.validation.newPassword}</span>
+                        <span className="sonm-login__label-error">
+                            {this.state.validation.newPassword}
+                        </span>
                         <input
                             autoComplete="off"
                             type="password"
@@ -535,8 +619,12 @@ export class Login extends React.Component<IProps, IState> {
                         />
                     </div>
                     <div className="sonm-login__label">
-                        <span className="sonm-login__label-text">Confirm password</span>
-                        <span className="sonm-login__label-error">{this.state.validation.newPasswordConfirmation}</span>
+                        <span className="sonm-login__label-text">
+                            Confirm password
+                        </span>
+                        <span className="sonm-login__label-error">
+                            {this.state.validation.newPasswordConfirmation}
+                        </span>
                         <input
                             autoComplete="off"
                             type="password"
@@ -546,7 +634,9 @@ export class Login extends React.Component<IProps, IState> {
                         />
                     </div>
                     <div className="sonm-login__label">
-                        <span className="sonm-login__label-text">Ethereum network</span>
+                        <span className="sonm-login__label-text">
+                            Ethereum network
+                        </span>
                         <BlackSelect
                             value={String(this.state.network)}
                             name="network"
@@ -555,10 +645,7 @@ export class Login extends React.Component<IProps, IState> {
                             options={networkSelectList}
                         />
                     </div>
-                    <Button
-                        className="sonm-login__create"
-                        type="submit"
-                    >
+                    <Button className="sonm-login__create" type="submit">
                         Create wallet
                     </Button>
                 </form>
@@ -569,46 +656,45 @@ export class Login extends React.Component<IProps, IState> {
     protected handleCloseDisclaimer = () => {
         this.noTimer = true;
         this.nextAction();
-    }
+    };
 
     protected handleCloseDisclaimerForever = () => {
         window.localStorage.setItem('sonm-hide-disclaimer', '1');
         this.handleCloseDisclaimer();
-    }
+    };
 
     protected renderDisclaimer() {
         if (this.state.currentAction !== EnumAction.disclaimer) {
             return null;
         }
 
-        return <Disclaimer
-            onCloseForever={this.handleCloseDisclaimerForever}
-            onClose={this.handleCloseDisclaimer}
-            noTimer={this.noTimer}
-        />;
+        return (
+            <Disclaimer
+                onCloseForever={this.handleCloseDisclaimerForever}
+                onClose={this.handleCloseDisclaimer}
+                noTimer={this.noTimer}
+            />
+        );
     }
 
     protected handleInfo = (event: any) => {
         event.preventDefault();
 
         this.setState({ currentAction: EnumAction.disclaimer });
-    }
+    };
 
     public render() {
-        const {
-            className,
-        } = this.props;
+        const { className } = this.props;
 
         return (
             <LoadMask visible={this.state.pending} className="sonm-login__spin">
                 <div className={cn('sonm-login', className)}>
-                    <div className="sonm-login__errors">
-                        {this.state.error}
-                    </div>
+                    <div className="sonm-login__errors">{this.state.error}</div>
                     <div
-                        className={cn(
-                            'sonm-login__center', {
-                            'sonm-login__center--blurred': this.state.currentAction !== EnumAction.selectWallet,
+                        className={cn('sonm-login__center', {
+                            'sonm-login__center--blurred':
+                                this.state.currentAction !==
+                                EnumAction.selectWallet,
                         })}
                     >
                         <div className="sonm-login__logo" />
