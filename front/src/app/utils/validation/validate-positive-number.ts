@@ -9,7 +9,7 @@ export function validatePositiveNumber(
     if (value === '') {
         result.push('required_value');
     } else {
-        const [a, b] = value.split(dotSymbol);
+        const [a, b = '0'] = value.split(dotSymbol);
         if (digitsRegex.test(a) && digitsRegex.test(b)) {
             if (Number(a) === 0 && Number(b) === 0) {
                 result.push('should_be_positive_number');

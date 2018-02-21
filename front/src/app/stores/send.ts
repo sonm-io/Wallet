@@ -102,7 +102,9 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
                 result.push('Required field');
             } else if (toAddress === this.fromAddress) {
                 result.push(
-                    'The destination address must differ the sender address',
+                    this.localizator.getMessageText(
+                        'destination_must_be_differ',
+                    ),
                 );
             } else {
                 result.push(...validateEtherAddress(toAddress));
@@ -119,7 +121,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
         if (this.isFieldTouched('gasPriceGwei')) {
             if (gasPrice === '') {
-                result.push('Required field');
+                result.push(this.localizator.getMessageText('required_value'));
             } else {
                 result.push(...validatePositiveNumber(gasPrice));
             }
@@ -135,7 +137,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
         if (this.isFieldTouched('amountEther')) {
             if (amount === '') {
-                result.push('Required field');
+                result.push(this.localizator.getMessageText('required_value'));
             } else {
                 result.push(...validatePositiveNumber(amount));
 
@@ -150,7 +152,10 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
                         decimalDigits.length > decimalPointOffset
                     ) {
                         result.push(
-                            `Too many decimal digits. Maximum: ${decimalPointOffset}`,
+                            this.localizator.getMessageText([
+                                'too_many_decimal_digits',
+                                [decimalPointOffset],
+                            ]),
                         );
                     }
                 }
@@ -161,9 +166,17 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
                     );
 
                     if (currentMax === undefined) {
-                        result.push('Maximum values is undetermined');
+                        result.push(
+                            this.localizator.getMessageText(
+                                'maximum_value_is_undetermined',
+                            ),
+                        );
                     } else if (currentMax.lt(createBigNumberAlways(amount))) {
-                        result.push('Value is greater than maximum');
+                        result.push(
+                            this.localizator.getMessageText(
+                                'value_is_greater_than_max',
+                            ),
+                        );
                     }
                 }
             }
@@ -406,24 +419,28 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
         let alert;
         if (result.status === TransactionStatus.success) {
-            const currency = this.rootStore.mainStore.currencyMap.get(
-                result.currencyAddress,
-            );
-            const currencyName = currency ? currency.symbol : '';
-
             alert = {
                 type: AlertType.success,
                 message: this.localizator.getMessageText([
-                    'tx_completed',
-                    [currencyName, result.toAddress, result.hash],
+                    'tx_has_been_completed',
+                    [
+                        moveDecimalPoint(
+                            result.amount,
+                            -result.decimalPointOffset,
+                        ),
+                        result.currencySymbol || '',
+                        result.toAddress,
+                        result.hash,
+                    ],
                 ]),
             };
         } else if (result.status === TransactionStatus.failed) {
             alert = {
                 type: AlertType.error,
-                message: `Transaction to the address ${
-                    result.toAddress
-                } was failed. TxHash ${result.hash}`,
+                message: this.localizator.getMessageText([
+                    'tx_has_been_failed',
+                    [result.toAddress, result.hash],
+                ]),
             };
         } else {
             alert = {

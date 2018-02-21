@@ -38,8 +38,31 @@ export const en: ILocalizationDictionary = {
     you_need_test_ether:
         'You need test Ether for token request. Get some here - ',
     wallet_not_found: 'Wallet not found',
-    tx_completed: ([amount, currencyName, toAddress, hash]: string[]) =>
-        `Transaction is completed successfully.${amount} ${currencyName} has been sent to the address ${toAddress}. TxHash ${hash}`,
+    tx_has_been_completed: ([
+        amount,
+        currencyName,
+        toAddress,
+        hash,
+    ]: string[]) =>
+        `Transaction is completed successfully. ${amount} ${currencyName} has been sent to the address ${toAddress}. TxHash ${hash}.`,
+    tx_has_been_failed: ([toAddress, hash]: string[]) =>
+        `Transaction to the address ${toAddress} was failed. TxHash ${hash ||
+            undefined}.`,
+    destination_must_be_differ:
+        'The destination address must differ the sender address',
+    too_many_decimal_digits: ([decimalPointOffset]: string[]) =>
+        `Too many decimal digits. Maximum: ${decimalPointOffset}`,
+    maximum_value_is_undetermined: 'Maximum values is undetermined',
+    value_is_greater_than_max: 'Value is greater than maximum',
+    create_wallet: 'CREATE WALLET',
+    import_wallet: 'IMPORT WALLET',
+    ethereum_network: 'Ethereum network',
+    confirm_password: 'Confirm password',
+    password: 'Password',
+    wallet_name: 'Wallet name',
+    new_wallet: 'New wallet',
+    enter_password: 'Enter password',
+    login: 'Login',
 };
 
 export default en;

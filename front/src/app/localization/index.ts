@@ -27,13 +27,13 @@ export function getMessageTextFrom(
     let args: any[] = [];
 
     if (Array.isArray(code)) {
-        [code, ...args] = code;
+        [code, args] = code;
     }
 
     const pattern = dictionary[code] || code;
 
     if (typeof pattern === 'function') {
-        result = pattern(code, args);
+        result = pattern(args);
     } else {
         result = pattern;
     }
