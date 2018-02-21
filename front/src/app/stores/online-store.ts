@@ -3,23 +3,38 @@ import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api';
 import { WalletApiError } from './types';
-import { getMessageText } from 'app/api/error-messages';
 
-type FuncProcessError = (err: Error) => void;
 interface IErrorProcessor {
-    processError: FuncProcessError;
+    processError: (err: Error) => void;
 }
 
-interface IOnlineStoreCtrArgs {
-    errorProcessor: IErrorProcessor;
+interface ILocalizator {
+    getMessageText: (code: string) => string;
 }
 
+interface IOnlineStore {
+    errorProcessor?: IErrorProcessor;
+    localizator?: ILocalizator;
+}
+
+// TODO use delegating instead inherit
 export class OnlineStore {
-    constructor(args: IOnlineStoreCtrArgs) {
-        this.errorProcessor = args.errorProcessor;
+    constructor(args: IOnlineStore) {
+        if (args.errorProcessor) {
+            this._errorProcessor = args.errorProcessor;
+        }
+        if (args.localizator) {
+            this._localizator = args.localizator;
+        }
     }
 
-    protected errorProcessor: IErrorProcessor;
+    public readonly _errorProcessor: IErrorProcessor = {
+        processError: (e: Error) => console.error(e),
+    };
+
+    public readonly _localizator: ILocalizator = {
+        getMessageText: (x: string) => x,
+    };
 
     @asyncAction
     protected *goOffline() {
@@ -80,7 +95,7 @@ export class OnlineStore {
                 },
             );
         } else {
-            this.errorProcessor.processError(e);
+            this._errorProcessor.processError(e);
         }
     }
 
@@ -126,7 +141,7 @@ export class OnlineStore {
                 store.handleError(
                     new WalletApiError(
                         errorStringCode,
-                        getMessageText(errorStringCode),
+                        store._localizator.getMessageText(errorStringCode),
                         store,
                         descriptor.value,
                         args,

@@ -1,20 +1,18 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { inject, observer } from 'mobx-react';
-import { RootStore } from 'app/stores/';
+import { observer } from 'mobx-react';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { Header } from 'app/components/common/header';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { navigate } from 'app/router';
 import { Button } from 'app/components/common/button';
-import { getMessageText } from 'app/api/error-messages';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
 import { Balance } from 'app/components/common/balance-view';
+import { rootStore } from 'app/stores';
 
 interface IProps {
     className?: string;
-    rootStore: RootStore;
     initialAddress: string;
 }
 
@@ -23,7 +21,6 @@ enum Dialogs {
     none = '',
 }
 
-@inject('rootStore')
 @observer
 export class Account extends React.Component<IProps, any> {
     public state = {
@@ -32,14 +29,14 @@ export class Account extends React.Component<IProps, any> {
 
     public componentWillMount() {
         if (this.props.initialAddress) {
-            this.props.rootStore.sendStore.setUserInput({
+            rootStore.sendStore.setUserInput({
                 fromAddress: this.props.initialAddress,
             });
         }
     }
 
     protected handleChangeAccount = (accountAddres: any) => {
-        this.props.rootStore.sendStore.setUserInput({
+        rootStore.sendStore.setUserInput({
             fromAddress: accountAddres,
         });
     };
@@ -48,7 +45,7 @@ export class Account extends React.Component<IProps, any> {
         navigate({
             path: '/history',
             query: {
-                address: this.props.rootStore.sendStore.fromAddress,
+                address: rootStore.sendStore.fromAddress,
             },
         });
     };
@@ -67,18 +64,18 @@ export class Account extends React.Component<IProps, any> {
     protected handleGiveMeMore = async (event: any) => {
         event.preventDefault();
 
-        await this.props.rootStore.mainStore.giveMeMore(
+        await rootStore.mainStore.giveMeMore(
             event.target.password.value,
-            this.props.rootStore.sendStore.fromAddress,
+            rootStore.sendStore.fromAddress,
         );
 
-        await this.props.rootStore.mainStore.update();
+        await rootStore.mainStore.update();
     };
 
     public render() {
         const { className } = this.props;
 
-        const getTestEtherUrl = 'https://faucet.rinkeby.io/';
+        const testEtherUrl = 'https://faucet.rinkeby.io/';
 
         return [
             <Header className="sonm-account__header" key="header">
@@ -88,9 +85,9 @@ export class Account extends React.Component<IProps, any> {
                 <AccountBigSelect
                     className="sonm-account__account-select"
                     returnPrimitive
-                    accounts={this.props.rootStore.mainStore.accountList}
+                    accounts={rootStore.mainStore.accountList}
                     onChange={this.handleChangeAccount}
-                    value={this.props.rootStore.sendStore.fromAddress}
+                    value={rootStore.sendStore.fromAddress}
                 />
 
                 <button
@@ -100,13 +97,12 @@ export class Account extends React.Component<IProps, any> {
                     View operation history
                 </button>
 
-                {this.props.rootStore.sendStore.currentBalanceList.length ===
-                0 ? null : (
+                {rootStore.sendStore.currentBalanceList.length === 0 ? null : (
                     <ul className="sonm-account__tokens">
                         <Header className="sonm-account__header">
                             Coins and tokens
                         </Header>
-                        {this.props.rootStore.sendStore.currentBalanceList.map(
+                        {rootStore.sendStore.currentBalanceList.map(
                             ({
                                 symbol,
                                 address,
@@ -140,7 +136,9 @@ export class Account extends React.Component<IProps, any> {
                                             className="sonm-account-token-list__currency-button"
                                             onClick={this.handleSendClick}
                                         >
-                                            Send
+                                            {rootStore.localizator.getMessageText(
+                                                'send',
+                                            )}
                                         </button>
                                     </li>
                                 );
@@ -149,19 +147,22 @@ export class Account extends React.Component<IProps, any> {
                     </ul>
                 )}
 
-                {this.props.rootStore.mainStore.networkName === 'rinkeby' ? (
+                {rootStore.mainStore.networkName === 'rinkeby' ? (
                     <form
                         onSubmit={this.handleGiveMeMore}
                         className="sonm-account__give-me"
                     >
                         <Header className="sonm-account__header">
-                            SONM test tokens request
+                            {rootStore.localizator.getMessageText(
+                                'test_token_request',
+                            )}
                         </Header>
                         <div className="sonm-account__warning">
-                            You need test Ether for token request. Get some here
-                            -
-                            <a href={getTestEtherUrl} target="_blank">
-                                {getTestEtherUrl}
+                            {rootStore.localizator.getMessageText(
+                                'you_need_test_ether',
+                            )}
+                            <a href={testEtherUrl} target="_blank">
+                                {testEtherUrl}
                             </a>
                         </div>
                         <div className="sonm-account__give-me-ct">
@@ -184,7 +185,9 @@ export class Account extends React.Component<IProps, any> {
                                 square
                                 transparent
                             >
-                                {getMessageText('give_me_more')}
+                                {rootStore.localizator.getMessageText(
+                                    'give_me_more',
+                                )}
                             </Button>
                         </div>
                     </form>

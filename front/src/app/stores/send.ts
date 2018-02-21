@@ -27,6 +27,7 @@ import {
     ZERO,
 } from 'app/utils/create-big-number';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
+import { ILocalizator, IValidation, IHasLocalizator } from 'app/localization';
 
 const emptyForm: ISendFormValues = {
     fromAddress: '',
@@ -40,13 +41,17 @@ const emptyForm: ISendFormValues = {
 Object.freeze(emptyForm);
 // const allFormKeys = Object.keys(emptyForm) as Array<keyof ISendFormValues>;
 
-export class SendStore extends OnlineStore {
+export class SendStore extends OnlineStore implements IHasLocalizator {
     protected rootStore: RootStore;
 
-    constructor(rootStore: RootStore) {
-        super({ errorProcessor: rootStore.uiStore });
+    constructor(rootStore: RootStore, localizator: ILocalizator) {
+        super({
+            errorProcessor: rootStore.uiStore,
+            localizator,
+        });
 
         this.rootStore = rootStore;
+        this.localizator = localizator;
     }
 
     @computed
@@ -97,10 +102,16 @@ export class SendStore extends OnlineStore {
                 result.push('Required field');
             } else if (toAddress === this.fromAddress) {
                 result.push(
-                    'The destination address must differ the sender address',
+                    this.localizator.getMessageText(
+                        'destination_must_be_differ',
+                    ),
                 );
             } else {
-                result.push(...validateEtherAddress(toAddress));
+                result.push(
+                    ...validateEtherAddress(toAddress).map(
+                        this.localizator.getMessageText,
+                    ),
+                );
             }
         }
 
@@ -114,9 +125,13 @@ export class SendStore extends OnlineStore {
 
         if (this.isFieldTouched('gasPriceGwei')) {
             if (gasPrice === '') {
-                result.push('Required field');
+                result.push(this.localizator.getMessageText('required_value'));
             } else {
-                result.push(...validatePositiveNumber(gasPrice));
+                result.push(
+                    ...validatePositiveNumber(gasPrice).map(
+                        this.localizator.getMessageText,
+                    ),
+                );
             }
         }
 
@@ -130,9 +145,13 @@ export class SendStore extends OnlineStore {
 
         if (this.isFieldTouched('amountEther')) {
             if (amount === '') {
-                result.push('Required field');
+                result.push(this.localizator.getMessageText('required_value'));
             } else {
-                result.push(...validatePositiveNumber(amount));
+                result.push(
+                    ...validatePositiveNumber(amount).map(
+                        this.localizator.getMessageText,
+                    ),
+                );
 
                 if (result.length === 0) {
                     const decimalDigits = amount.split('.')[1];
@@ -145,7 +164,10 @@ export class SendStore extends OnlineStore {
                         decimalDigits.length > decimalPointOffset
                     ) {
                         result.push(
-                            `Too many decimal digits. Maximum: ${decimalPointOffset}`,
+                            this.localizator.getMessageText([
+                                'too_many_decimal_digits',
+                                [decimalPointOffset],
+                            ]),
                         );
                     }
                 }
@@ -156,9 +178,17 @@ export class SendStore extends OnlineStore {
                     );
 
                     if (currentMax === undefined) {
-                        result.push('Maximum values is undetermined');
+                        result.push(
+                            this.localizator.getMessageText(
+                                'maximum_value_is_undetermined',
+                            ),
+                        );
                     } else if (currentMax.lt(createBigNumberAlways(amount))) {
-                        result.push('Value is greater than maximum');
+                        result.push(
+                            this.localizator.getMessageText(
+                                'value_is_greater_than_max',
+                            ),
+                        );
                     }
                 }
             }
@@ -176,7 +206,9 @@ export class SendStore extends OnlineStore {
     public get validationGasLimit() {
         return this.userInput.gasLimit === ''
             ? []
-            : validatePositiveInteger(this.userInput.gasLimit);
+            : validatePositiveInteger(this.userInput.gasLimit).map(
+                  this.localizator.getMessageText,
+              );
     }
 
     /**
@@ -321,7 +353,12 @@ export class SendStore extends OnlineStore {
 
     @action.bound
     protected setServerValidation(validation: Partial<ISendFormValues>) {
-        this.serverValidation = { ...emptyForm, ...validation };
+        this.serverValidation = {
+            ...emptyForm,
+            ...this.localizator.localizeValidationMessages(
+                validation as IValidation,
+            ),
+        };
     }
 
     @action.bound
@@ -367,7 +404,9 @@ export class SendStore extends OnlineStore {
             }
         }
 
-        this.serverValidation.password = validationMessage;
+        this.serverValidation.password = this.localizator.getMessageText(
+            validationMessage,
+        );
 
         return validationMessage === '';
     }
@@ -394,24 +433,28 @@ export class SendStore extends OnlineStore {
 
         let alert;
         if (result.status === TransactionStatus.success) {
-            const currency = this.rootStore.mainStore.currencyMap.get(
-                result.currencyAddress,
-            );
-            const currencyName = currency ? currency.symbol : '';
-
             alert = {
                 type: AlertType.success,
-                message: `Transaction is completed successfully. \
-${result.amount} ${currencyName} has been sent to the address ${
-                    result.toAddress
-                }. TxHash ${result.hash}`,
+                message: this.localizator.getMessageText([
+                    'tx_has_been_completed',
+                    [
+                        moveDecimalPoint(
+                            result.amount,
+                            -result.decimalPointOffset,
+                        ),
+                        result.currencySymbol || '',
+                        result.toAddress,
+                        result.hash,
+                    ],
+                ]),
             };
         } else if (result.status === TransactionStatus.failed) {
             alert = {
                 type: AlertType.error,
-                message: `Transaction to the address ${
-                    result.toAddress
-                } was failed. TxHash ${result.hash}`,
+                message: this.localizator.getMessageText([
+                    'tx_has_been_failed',
+                    [result.toAddress, result.hash],
+                ]),
             };
         } else {
             alert = {
@@ -424,6 +467,8 @@ ${result.amount} ${currencyName} has been sent to the address ${
 
         return result;
     }
+
+    public readonly localizator: ILocalizator;
 }
 
 export default SendStore;

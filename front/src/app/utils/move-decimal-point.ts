@@ -9,7 +9,7 @@ export function moveDecimalPoint(
 ): string {
     let result = num;
 
-    if (typeof offs === 'number') {
+    if (typeof offs === 'number' && offs !== 0) {
         const [a, b = ''] = num.split(dotSymbol);
         const dotIndex = a.length;
         const len = a.length + b.length;
