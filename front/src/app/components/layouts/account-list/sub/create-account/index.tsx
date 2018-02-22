@@ -10,7 +10,6 @@ import {
 import { Input } from 'app/components/common/input';
 import { IValidation } from 'ipc/types';
 import { rootStore } from 'app/stores';
-import { validateEtherAddress } from 'app/utils/validation/validate-ether-address';
 
 export interface ICreateAccountForm {
     password: string;

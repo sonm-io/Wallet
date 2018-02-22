@@ -307,11 +307,19 @@ class Api {
         data: IPayload,
     ): Promise<IResponse> => {
         if (data.passphase && data.privateKey) {
-            return {
-                data: JSON.stringify(
-                    utils.newAccount(data.passphase, data.privateKey),
-                ),
-            };
+            try {
+                return {
+                    data: JSON.stringify(
+                        utils.newAccount(data.passphase, data.privateKey),
+                    ),
+                };
+            } catch (err) {
+                return {
+                    validation: {
+                        privateKey: 'privatekey_not_valid',
+                    },
+                };
+            }
         } else {
             throw new Error('required_params_missed');
         }

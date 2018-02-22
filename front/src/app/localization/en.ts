@@ -63,6 +63,7 @@ export const en: ILocalizationDictionary = {
     new_wallet: 'New wallet',
     enter_password: 'Enter password',
     login: 'Login',
+    privatekey_not_valid: 'Private key not valid',
 };
 
 export default en;
