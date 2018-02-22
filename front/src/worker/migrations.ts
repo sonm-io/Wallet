@@ -1,4 +1,5 @@
 import { IWalletList } from '../app/api/types';
+import moveDecimalPoint from 'app/utils/move-decimal-point';
 
 const migrations = {
     wallet_list: {
@@ -30,6 +31,22 @@ const migrations = {
             };
 
             data.tokens = [];
+
+            return data;
+        },
+        1: (data: any) => {
+            data.version = 2;
+
+            for (const transaction of data.transactions) {
+                transaction.decimalPointOffset = 18;
+                transaction.fee = moveDecimalPoint(transaction.fee, 18);
+                if (transaction.currencySymbol === 'Ether') {
+                    transaction.amount = moveDecimalPoint(
+                        transaction.amount,
+                        18,
+                    );
+                }
+            }
 
             return data;
         },
