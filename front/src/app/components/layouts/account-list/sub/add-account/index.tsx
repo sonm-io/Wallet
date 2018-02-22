@@ -6,7 +6,6 @@ import { Hash } from 'app/components/common/hash-view';
 import { IValidation } from 'ipc/types';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Input } from 'app/components/common/input/index';
-import { getMessageText } from 'app/api/error-messages'; // TODO move to context
 import {
     FormField,
     FormRow,
@@ -14,6 +13,7 @@ import {
     FormButtons,
 } from 'app/components/common/form';
 import { shortString } from 'app/utils/short-string';
+import { rootStore } from 'app/stores';
 
 // import { setFocus } from 'app/components/common/utils/setFocus';
 
@@ -55,19 +55,27 @@ export class AddAccount extends React.Component<IProps, any> {
         const validation = { ...this.state.validation };
 
         if (!this.state.password) {
-            validation.password = getMessageText('password_required');
+            validation.password = rootStore.localizator.getMessageText(
+                'password_required',
+            );
         }
 
         if (!this.state.name) {
-            validation.name = getMessageText('name_required');
+            validation.name = rootStore.localizator.getMessageText(
+                'name_required',
+            );
         }
 
         if (!this.state.json) {
-            validation.json = getMessageText('select_file');
+            validation.json = rootStore.localizator.getMessageText(
+                'select_file',
+            );
         } else if (
             this.props.existingAccounts.indexOf(this.state.address) !== -1
         ) {
-            validation.json = getMessageText('account_already_exists');
+            validation.json = rootStore.localizator.getMessageText(
+                'account_already_exists',
+            );
         }
 
         if (Object.keys(validation).every(x => !validation[x])) {
@@ -126,7 +134,7 @@ export class AddAccount extends React.Component<IProps, any> {
             const address = json.address;
 
             if (!address) {
-                throw new Error('Incorrect file: no address');
+                throw new Error('no_addres_in_account_file');
             }
 
             update.address = address.startsWith('0x')
@@ -145,7 +153,7 @@ export class AddAccount extends React.Component<IProps, any> {
             update.address = '';
             update.validation = {
                 ...this.state.validation,
-                json: e.message || 'Incorrect file',
+                json: e.message || 'incorrect_file',
             };
         }
 

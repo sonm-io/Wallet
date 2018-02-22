@@ -3,23 +3,38 @@ import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api';
 import { WalletApiError } from './types';
-import { getMessageText } from 'app/api/error-messages';
 
-type FuncProcessError = (err: Error) => void;
 interface IErrorProcessor {
-    processError: FuncProcessError;
+    processError: (err: Error) => void;
 }
 
-interface IAbstractStoreCtrArgs {
-    errorProcessor: IErrorProcessor;
+interface ILocalizator {
+    getMessageText: (code: string) => string;
 }
 
-export class AbstractStore {
-    constructor(args: IAbstractStoreCtrArgs) {
-        this.errorProcessor = args.errorProcessor;
+interface IOnlineStore {
+    errorProcessor?: IErrorProcessor;
+    localizator?: ILocalizator;
+}
+
+// TODO use delegating instead inherit
+export class OnlineStore {
+    constructor(args: IOnlineStore) {
+        if (args.errorProcessor) {
+            this._errorProcessor = args.errorProcessor;
+        }
+        if (args.localizator) {
+            this._localizator = args.localizator;
+        }
     }
 
-    protected errorProcessor: IErrorProcessor;
+    public readonly _errorProcessor: IErrorProcessor = {
+        processError: (e: Error) => console.error(e),
+    };
+
+    public readonly _localizator: ILocalizator = {
+        getMessageText: (x: string) => x,
+    };
 
     @asyncAction
     protected *goOffline() {
@@ -80,19 +95,19 @@ export class AbstractStore {
                 },
             );
         } else {
-            this.errorProcessor.processError(e);
+            this._errorProcessor.processError(e);
         }
     }
 
     public static pending(
-        target: AbstractStore,
+        target: OnlineStore,
         propertyKey: string,
         descriptor: PropertyDescriptor,
     ) {
         const method = descriptor.value;
 
         descriptor.value = async function() {
-            const me = this as AbstractStore;
+            const me = this as OnlineStore;
 
             const pendingId = me.startPending(propertyKey);
 
@@ -105,14 +120,14 @@ export class AbstractStore {
     }
 
     public static catchErrors = ({ restart = false }) => (
-        target: AbstractStore,
+        target: OnlineStore,
         propertyKey: string,
         descriptor: PropertyDescriptor,
     ) => {
         const method = descriptor.value;
 
         descriptor.value = async function(...args: any[]) {
-            const store = this as AbstractStore;
+            const store = this as OnlineStore;
 
             try {
                 return await method.apply(store, args);
@@ -126,7 +141,7 @@ export class AbstractStore {
                 store.handleError(
                     new WalletApiError(
                         errorStringCode,
-                        getMessageText(errorStringCode),
+                        store._localizator.getMessageText(errorStringCode),
                         store,
                         descriptor.value,
                         args,
@@ -138,14 +153,14 @@ export class AbstractStore {
     };
 
     public static getAccumulatedFlag(
-        p: keyof AbstractStore,
-        ...stores: AbstractStore[]
+        p: keyof OnlineStore,
+        ...stores: OnlineStore[]
     ): boolean {
         return stores.reduce(
-            (b: boolean, store: AbstractStore) => b || Boolean(store[p]),
+            (b: boolean, store: OnlineStore) => b || Boolean(store[p]),
             false,
         );
     }
 }
 
-export default AbstractStore;
+export default OnlineStore;

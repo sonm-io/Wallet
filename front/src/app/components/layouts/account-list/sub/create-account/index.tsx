@@ -9,7 +9,7 @@ import {
 } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
 import { IValidation } from 'ipc/types';
-import { getMessageText } from 'app/api/error-messages';
+import { rootStore } from 'app/stores';
 
 export interface ICreateAccountForm {
     password: string;
@@ -36,17 +36,25 @@ export class CreateAccount extends React.Component<IProps, any> {
         const validation = { ...this.state.validation };
 
         if (!this.state.name) {
-            validation.name = getMessageText('name_required');
+            validation.name = rootStore.localizator.getMessageText(
+                'name_required',
+            );
         }
 
         if (!this.state.password) {
-            validation.password = getMessageText('password_required');
+            validation.password = rootStore.localizator.getMessageText(
+                'password_required',
+            );
         } else if (this.state.password.length < 8) {
-            validation.password = getMessageText('password_length');
+            validation.password = rootStore.localizator.getMessageText(
+                'password_length',
+            );
         }
 
         if (this.state.password !== this.state.confirmation) {
-            validation.confirmation = getMessageText('password_not_match');
+            validation.confirmation = rootStore.localizator.getMessageText(
+                'password_not_match',
+            );
         }
 
         if (Object.keys(validation).every(x => !validation[x])) {

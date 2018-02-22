@@ -5,6 +5,7 @@ import { Icon } from '../icon';
 import { Balance } from '../balance-view';
 import { Hash } from '../hash-view';
 import { DownloadFile } from '../download-file';
+import { ICurrencyInfo } from 'app/api/types';
 
 export interface IAccountItemProps {
     className?: string;
@@ -17,6 +18,7 @@ export interface IAccountItemProps {
     onClickIcon?: (address: string) => void;
     onClickShowPrivateKey?: (address: string) => void;
     hasButtons?: boolean;
+    primaryTokenInfo: ICurrencyInfo;
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {
@@ -50,6 +52,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             address,
             etherBalance,
             primaryTokenBalance,
+            primaryTokenInfo,
             onClickIcon,
             json,
             hasButtons,
@@ -73,7 +76,9 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                 </span>
                 <Balance
                     className="sonm-account-item__sonm"
-                    fullString={etherBalance}
+                    balance={etherBalance}
+                    symbol="Ether"
+                    decimalPointOffset={18}
                     fontSizePx={16}
                 />
                 <Hash
@@ -84,7 +89,9 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                 />
                 <Balance
                     className="sonm-account-item__ether"
-                    fullString={primaryTokenBalance}
+                    balance={primaryTokenBalance}
+                    symbol={primaryTokenInfo.symbol}
+                    decimalPointOffset={primaryTokenInfo.decimalPointOffset}
                     fontSizePx={16}
                 />
                 {hasButtons && json ? (
@@ -188,16 +195,13 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
 
             if (onRename) {
                 result.push(
-                    <button
+                    <Icon
+                        tag="button"
                         key="b"
-                        className="sonm-account-item__edit-button"
+                        i="Pencil"
                         onClick={this.startEdit}
-                    >
-                        <Icon
-                            i="Pencil"
-                            className="sonm-account-item__edit-icon"
-                        />
-                    </button>,
+                        className="sonm-account-item__edit-button"
+                    />,
                 );
             }
         }

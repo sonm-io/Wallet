@@ -1,6 +1,6 @@
-import { AbstractStore } from './abstract-store';
+import { OnlineStore } from './online-store';
 
-export { AbstractStore } from './abstract-store';
+export { OnlineStore } from './online-store';
 
 import { IValidation } from 'app/api';
 
@@ -13,8 +13,8 @@ export interface IAddressMap<T extends IHasAddress> {
 }
 
 export interface ISendFormValues {
-    amount: string;
-    gasPrice: string;
+    amountEther: string;
+    gasPriceGwei: string;
     gasLimit: string;
     toAddress: string;
     fromAddress: string;
@@ -35,13 +35,13 @@ export type TGasPricePriority = 'low' | 'normal' | 'high';
 export class WalletApiError extends Error {
     public method: Function;
     public code: string;
-    public scope: AbstractStore;
+    public scope: OnlineStore;
     public args: any[];
 
     constructor(
         code: string,
         msg: string,
-        scope: AbstractStore,
+        scope: OnlineStore,
         method: Function,
         args: any[],
     ) {
