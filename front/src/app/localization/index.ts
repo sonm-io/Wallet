@@ -30,12 +30,16 @@ export function getMessageTextFrom(
         [code, args] = code;
     }
 
-    const pattern = dictionary[code] || code;
+    const pattern = dictionary[code];
 
-    if (typeof pattern === 'function') {
-        result = pattern(args);
+    if (pattern) {
+        if (typeof pattern === 'function') {
+            result = pattern(args);
+        } else {
+            result = pattern;
+        }
     } else {
-        result = pattern;
+        result = [code, ...args].join(' ');
     }
 
     return result;

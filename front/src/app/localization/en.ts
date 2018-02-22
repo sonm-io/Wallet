@@ -63,6 +63,8 @@ export const en: ILocalizationDictionary = {
     new_wallet: 'New wallet',
     enter_password: 'Enter password',
     login: 'Login',
+    should_be_hex: ([length]: any[]) =>
+        `Should be hex string with length ${length}`,
     privatekey_not_valid: 'Private key not valid',
 };
 

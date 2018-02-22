@@ -29,12 +29,14 @@ interface IMainFormValues {
     password: string;
     passwordConfirmation: string;
     accountName: string;
+    privateKey: string;
 }
 
 const emptyForm: IMainFormValues = {
     password: '',
     passwordConfirmation: '',
     accountName: '',
+    privateKey: '',
 };
 
 Object.freeze(emptyForm);
@@ -47,6 +49,7 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
         });
 
         this.rootStore = rootStore;
+        this.localizator = localizator;
 
         autorun(() => {
             if (Array.from(this.currencyMap.keys()).length > 0) {
@@ -76,7 +79,12 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
         return this.walletInfo ? this.walletInfo.nodeUrl : '';
     }
 
-    @observable public serverValidation = { ...emptyForm };
+    @computed
+    public get noValidationMessages(): boolean {
+        return Object.keys(this.serverValidation).every(x => !x);
+    }
+
+    @observable.ref public serverValidation = { ...emptyForm };
 
     @observable public averageGasPrice = '';
 
@@ -324,6 +332,8 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     public *addAccount(json: string, password: string, name: string) {
         const { data, validation } = yield Api.addAccount(json, password, name);
 
+        let result;
+
         if (validation) {
             this.serverValidation = {
                 ...emptyForm,
@@ -333,18 +343,35 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
             };
         } else {
             this.serverValidation = { ...emptyForm };
-            this.accountMap.set(data.address, data);
+            result = this.accountMap.set(data.address, data);
         }
 
-        return this.serverValidation;
+        return result;
     }
 
     @pending
     @catchErrors({ restart: false })
     @asyncAction
     public *createAccount(password: string, name: string, privateKey: string) {
-        const { data } = yield Api.createAccount(password, privateKey);
-        yield this.addAccount(data, password, name);
+        const { data, validation } = yield Api.createAccount(
+            password,
+            privateKey,
+        );
+
+        let result;
+
+        if (validation) {
+            this.serverValidation = {
+                ...emptyForm,
+                ...this.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
+        } else {
+            result = yield this.addAccount(data, password, name);
+        }
+
+        return result;
     }
 
     @pending
@@ -412,6 +439,11 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
 
         return String(text);
     };
+
+    @action.bound
+    public resetServerValidation() {
+        this.serverValidation = emptyForm;
+    }
 
     public readonly localizator: ILocalizator;
 }

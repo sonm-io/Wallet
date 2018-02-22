@@ -15,7 +15,6 @@ import { CreateAccount, ICreateAccountForm } from './sub/create-account';
 import { EmptyAccountList } from './sub/empty-account-list';
 import { AddToken } from './sub/add-token';
 import { navigate } from 'app/router/navigate';
-import { IValidation } from 'app/api/types';
 import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
 import { DownloadFile } from 'app/components/common/download-file';
 import { Icon } from 'app/components/common/icon';
@@ -34,23 +33,17 @@ interface IProps {
 }
 
 interface IState {
-    deleteAddress: string;
     visibleDialog: WalletDialogs;
     visibleDialogProps: any[];
-    validation?: IValidation;
 }
-
-const emptyValidation: IValidation = {};
 
 class DeletableItem extends DeletableItemWithConfirmation<IAccountItemProps> {}
 
 @observer
 export class Wallets extends React.Component<IProps, IState> {
     public state = {
-        deleteAddress: '',
         visibleDialog: WalletDialogs.none,
         visibleDialogProps: [] as any[],
-        validation: emptyValidation,
     };
 
     protected handleClickAccount(address: string) {
@@ -61,20 +54,14 @@ export class Wallets extends React.Component<IProps, IState> {
         rootStore.mainStore.deleteAccount(deleteAddress);
     };
 
-    protected isValidationEmpty(validation: IValidation) {
-        return Object.keys(validation).every(x => validation[x] === '');
-    }
-
     protected handleAddAccount = async (data: IAddAccountForm) => {
-        const validation: IValidation = (await rootStore.mainStore.addAccount(
+        await rootStore.mainStore.addAccount(
             data.json,
             data.password,
             data.name,
-        )) as any; // ;(
+        );
 
-        this.setState({ validation });
-
-        if (this.isValidationEmpty(validation)) {
+        if (rootStore.mainStore.noValidationMessages) {
             this.closeDialog();
         }
     };
@@ -86,7 +73,9 @@ export class Wallets extends React.Component<IProps, IState> {
             data.privateKey,
         );
 
-        this.closeDialog();
+        if (rootStore.mainStore.noValidationMessages) {
+            this.closeDialog();
+        }
     };
 
     protected switchDialog(name: WalletDialogs, ...args: any[]) {
@@ -97,7 +86,7 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     protected closeDialog = () => {
-        this.setState({ validation: emptyValidation });
+        rootStore.mainStore.resetServerValidation();
         this.switchDialog(WalletDialogs.none);
     };
     protected openNewWalletDialog = this.switchDialog.bind(
@@ -211,7 +200,9 @@ export class Wallets extends React.Component<IProps, IState> {
                     </Button>
                     {this.state.visibleDialog === WalletDialogs.new ? (
                         <CreateAccount
-                            validation={this.state.validation}
+                            serverValidation={
+                                rootStore.mainStore.serverValidation
+                            }
                             onSubmit={this.handleCreateAccount}
                             onClickCross={this.closeDialog}
                         />
@@ -221,7 +212,9 @@ export class Wallets extends React.Component<IProps, IState> {
                             existingAccounts={
                                 rootStore.mainStore.accountAddressList
                             }
-                            validation={this.state.validation}
+                            serverValidation={
+                                rootStore.mainStore.serverValidation
+                            }
                             onSubmit={this.handleAddAccount}
                             onClickCross={this.closeDialog}
                         />

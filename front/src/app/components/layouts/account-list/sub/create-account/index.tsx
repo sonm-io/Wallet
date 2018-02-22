@@ -10,6 +10,7 @@ import {
 import { Input } from 'app/components/common/input';
 import { IValidation } from 'ipc/types';
 import { rootStore } from 'app/stores';
+import { validateHex } from 'app/utils/validation/validate-ether-address';
 
 export interface ICreateAccountForm {
     password: string;
@@ -18,7 +19,7 @@ export interface ICreateAccountForm {
 }
 
 export interface IProps {
-    validation?: IValidation;
+    serverValidation: IValidation;
     onSubmit: (data: ICreateAccountForm) => void;
     onClickCross: () => void;
 }
@@ -52,6 +53,11 @@ export class CreateAccount extends React.Component<IProps, any> {
             validation.confirmation = l('password_not_match');
         }
 
+        const validationPrivateKey = validateHex(64, this.state.privateKey);
+        if (validationPrivateKey.length) {
+            validation.privateKey = validationPrivateKey.map(l).join(' ');
+        }
+
         if (Object.keys(validation).every(x => !validation[x])) {
             this.setState({ validation: {} });
 
@@ -66,7 +72,16 @@ export class CreateAccount extends React.Component<IProps, any> {
     };
 
     public componentWillReceiveProps(next: IProps) {
-        const validation = { ...next.validation, ...this.state.validation };
+        const validation = { ...this.state.validation };
+
+        const sv = next.serverValidation;
+        Object.keys(sv).reduce((key: string, acc: any) => {
+            if (sv[key]) {
+                acc[key] = sv[key];
+            }
+
+            return acc;
+        }, validation);
 
         this.setState({ validation });
     }
