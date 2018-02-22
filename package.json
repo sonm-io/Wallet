@@ -1,7 +1,7 @@
 {
     "private": false,
     "name": "sonm-wallet",
-    "version": "1.0.5",
+    "version": "1.0.2",
     "description": "SONM Wallet",
     "main": "main.js",
     "directories": {},
@@ -98,7 +98,7 @@
         "react": "^16.1.0",
         "react-addons-transition-group": "^15.6.2",
         "react-dom": "^16.1.0",
-        "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v1.0.11",
+        "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#feature/removing-web3",
         "universal-router": "^4.3.0"
     },
     "scripts": {
@@ -112,7 +112,7 @@
         "webpack-without-browser-check": "cross-env PLATFORM=skipBrowserCheck NODE_ENV=development webpack --config ./front/config/webpack.config.js",
         "webpack:one": "cross-env NODE_ENV=production BUILD_TYPE=singleFile webpack --config ./front/config/webpack.config.js",
         "webpack:web": "cross-env SOURCE_MAP=1 NODE_ENV=production BUILD_TYPE=web webpack --config ./front/config/webpack.config.js",
-        "pretty": "prettier --write --config .prettierrc ./test/**/* ./front/**/*.js ./front/**/*.ts ./front/**/*.tsx ./*.js ./*.json ./front/**/*.less",
+        "pretty": "prettier --config .prettierrc --write ./test/**/* ./front/**/*.js ./front/**/*.ts ./front/**/*.tsx ./*.js ./*.json",
         "sg": "styleguidist server",
         "karma": "cross-env NODE_ENV=production BUILD_TYPE=singleFile ./node_modules/karma/bin/karma start --browsers Chrome",
         "karma:headless": "cross-env NODE_ENV=production BUILD_TYPE=singleFile ./node_modules/karma/bin/karma start --browsers ChromeHeadless --single-un --reporters teamcity --colors false",
@@ -120,7 +120,8 @@
         "electron:macos": "cross-env PLATFORM=darwin npm run electron",
         "electron:windows": "cross-env PLATFORM=win32 npm run electron",
         "electron:linux": "cross-env PLATFORM=linux npm run electron",
-        "precommit": "pretty-quick --staged"
+        "precommit": "pretty-quick --staged",
+        "server": "lite-server --baseDir dist"
     },
     "repository": {
         "type": "git",

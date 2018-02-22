@@ -4,7 +4,7 @@ export function validateEtherAddress(value: string): string[] {
     const result = [];
 
     if (!ADDRESS_REGEX.test(value)) {
-        result.push('Please input correct address');
+        result.push('should_be_ether_address');
     }
 
     return result;

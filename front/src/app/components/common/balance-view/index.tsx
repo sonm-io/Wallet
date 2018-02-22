@@ -4,49 +4,50 @@ interface IBalanceViewProps {
     className?: string;
     balance?: string;
     symbol?: string;
-    fullString?: string;
     fontSizePx?: number;
-    decimals?: number;
+    decimalDigitAmount?: number;
     prefix?: string;
+    decimalPointOffset: number;
 }
 
 import * as cn from 'classnames';
-import trimZeros from 'app/utils/trim-zeros';
+import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 
 export class Balance extends React.PureComponent<IBalanceViewProps, any> {
-    public static defaultProps: Partial<IBalanceViewProps> = {
-        decimals: 4,
-    };
+    protected static limitDecimalDigitAmount(
+        num: string,
+        decimalDigitAmount: number,
+    ) {
+        const dotIdx = num.indexOf('.');
+
+        return dotIdx !== -1
+            ? num.slice(0, dotIdx + 1 + decimalDigitAmount)
+            : num;
+    }
 
     public render() {
-        const { className, fontSizePx, fullString, prefix } = this.props;
-        let { balance, symbol } = this.props;
+        const {
+            className,
+            fontSizePx,
+            prefix,
+            decimalPointOffset,
+            decimalDigitAmount = 4,
+        } = this.props;
+        const { balance, symbol } = this.props;
+        let num;
 
-        if (fullString) {
-            [balance, symbol] = fullString.split(' ');
-        }
-
-        let out = '';
         if (balance) {
-            const dotIdx = balance.indexOf('.');
+            num = moveDecimalPoint(balance, -decimalPointOffset);
 
-            out =
-                dotIdx !== -1
-                    ? balance.slice(
-                          0,
-                          dotIdx + 1 + (this.props.decimals as number),
-                      )
-                    : balance;
+            num = Balance.limitDecimalDigitAmount(num, decimalDigitAmount);
         }
-
-        out = trimZeros(out);
 
         const style = fontSizePx ? { fontSize: `${fontSizePx}px` } : undefined;
 
         return (
             <div className={cn('sonm-balance', className)} style={style}>
                 <span className="sonm-balance__number">
-                    {prefix} {out}
+                    {prefix} {num}
                 </span>
                 <span className="sonm-balance__symbol">{symbol}</span>
             </div>

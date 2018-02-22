@@ -5,29 +5,36 @@ import { MainStore } from './main';
 import { SendStore } from './send';
 import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
-import { AbstractStore } from './abstract-store';
+import { OnlineStore } from './online-store';
+import {
+    localizator as en,
+    ILocalizator,
+    IHasLocalizator,
+} from 'app/localization';
 
 useStrict(true);
 
-export class RootStore {
-    public historyStore: HistoryStore;
-    public mainStore: MainStore;
-    public sendStore: SendStore;
-    public uiStore: UiStore;
-    public addTokenStore: AddTokenStore;
+export class RootStore implements IHasLocalizator {
+    public readonly historyStore: HistoryStore;
+    public readonly mainStore: MainStore;
+    public readonly sendStore: SendStore;
+    public readonly uiStore: UiStore;
+    public readonly addTokenStore: AddTokenStore;
 
-    constructor() {
+    constructor(localizator: ILocalizator) {
+        this.localizator = localizator;
+
         // should be first cause used in all stores;
         this.uiStore = new UiStore();
 
-        this.historyStore = new HistoryStore(this);
-        this.mainStore = new MainStore(this);
-        this.sendStore = new SendStore(this);
-        this.addTokenStore = new AddTokenStore(this);
+        this.historyStore = new HistoryStore(this, this.localizator);
+        this.mainStore = new MainStore(this, this.localizator);
+        this.sendStore = new SendStore(this, this.localizator);
+        this.addTokenStore = new AddTokenStore(this, this.localizator);
     }
 
     public get isPending() {
-        return AbstractStore.getAccumulatedFlag(
+        return OnlineStore.getAccumulatedFlag(
             'isPending',
             this.historyStore,
             this.mainStore,
@@ -37,7 +44,7 @@ export class RootStore {
     }
 
     public get isOffline() {
-        return AbstractStore.getAccumulatedFlag(
+        return OnlineStore.getAccumulatedFlag(
             'isOffline',
             this.historyStore,
             this.mainStore,
@@ -45,9 +52,11 @@ export class RootStore {
             this.addTokenStore,
         );
     }
+
+    public readonly localizator: ILocalizator;
 }
 
-export const rootStore = new RootStore();
+export const rootStore = new RootStore(en);
 
 (window as any).__rootStore = rootStore;
 

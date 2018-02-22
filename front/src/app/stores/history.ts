@@ -8,9 +8,10 @@ import {
 import { asyncAction } from 'mobx-utils';
 import * as api from 'app/api';
 import * as moment from 'moment';
-import { AbstractStore } from './abstract-store';
+import { OnlineStore } from './online-store';
 import { RootStore } from './';
-const { pending } = AbstractStore;
+import { IHasLocalizator, ILocalizator } from 'app/localization';
+const { pending } = OnlineStore;
 
 const Api = api.Api;
 
@@ -25,7 +26,7 @@ export interface ISendForm {
 
 const ITEMS_PER_PAGE = 10;
 
-export class HistoryStore extends AbstractStore {
+export class HistoryStore extends OnlineStore implements IHasLocalizator {
     @observable public errors: any[] = [];
 
     @observable.ref public currentPageTxHashList: string[] = [];
@@ -61,10 +62,14 @@ export class HistoryStore extends AbstractStore {
 
     protected rootStore: RootStore;
 
-    public constructor(rootStore: RootStore) {
-        super({ errorProcessor: rootStore.uiStore });
+    public constructor(rootStore: RootStore, localizator: ILocalizator) {
+        super({
+            errorProcessor: rootStore.uiStore,
+            localizator,
+        });
 
         this.rootStore = rootStore;
+        this.localizator = localizator;
     }
 
     @pending
@@ -163,6 +168,8 @@ export class HistoryStore extends AbstractStore {
         this.timeStart = start;
         this.timeEnd = end;
     };
+
+    public readonly localizator: ILocalizator;
 }
 
 export default HistoryStore;

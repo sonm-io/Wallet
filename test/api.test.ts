@@ -173,7 +173,7 @@ describe('Api', async function() {
     });
 
     it('should send ether and snm', async function() {
-        const amount = '0.000000000000000002';
+        const amount = '2';
         const to = 'fd0c80ba15cbf19770319e5e76ae05012314608f';
         const tx = {
             timestamp: new Date().valueOf(),
@@ -182,7 +182,7 @@ describe('Api', async function() {
             amount,
             currencyAddress: '0x',
             gasLimit: '50000',
-            gasPrice: '0.00000005',
+            gasPrice: '100000000000',
         };
 
         // error transaction

@@ -7,7 +7,6 @@ import { BlackSelect } from 'app/components/common/black-select';
 import { Dialog } from 'app/components/common/dialog';
 import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
-import { getMessageText } from 'app/api/error-messages';
 import { IWalletListItem } from 'app/api/types';
 import { IFileOpenResult, Upload } from 'app/components/common/upload';
 import { Icon } from 'app/components/common/icon';
@@ -21,6 +20,7 @@ import {
 } from 'app/components/common/form';
 import shortString from 'app/utils/short-string';
 import { Disclaimer } from './sub/disclaimer/index';
+import { localizator } from 'app/localization';
 
 interface IProps {
     className?: string;
@@ -60,7 +60,7 @@ interface IState {
     pending: boolean;
     error: string;
     network: NetworkEnum;
-    validation: IValidation;
+    serverValidation: IValidation;
 }
 
 const emptyForm: Pick<IState, any> = {
@@ -91,7 +91,7 @@ export class Login extends React.Component<IProps, IState> {
         pending: false,
         error: '',
         network: NetworkEnum.live,
-        validation: emptyValidation,
+        serverValidation: emptyValidation,
     };
 
     protected noTimer = false;
@@ -207,7 +207,7 @@ export class Login extends React.Component<IProps, IState> {
         );
 
         if (wallet === undefined) {
-            throw new Error('Wallet not found');
+            throw new Error('wallet_not_found');
         }
 
         return wallet;
@@ -225,7 +225,11 @@ export class Login extends React.Component<IProps, IState> {
             );
 
             if (validation) {
-                this.setState({ validation });
+                this.setState({
+                    serverValidation: localizator.localizeValidationMessages(
+                        validation,
+                    ),
+                });
             }
 
             const wallet = this.findWalletByName(this.state.name);
@@ -264,7 +268,9 @@ export class Login extends React.Component<IProps, IState> {
                 if (validation) {
                     this.setState({
                         pending: false,
-                        validation,
+                        serverValidation: localizator.localizeValidationMessages(
+                            validation,
+                        ),
                     });
                 } else if (walletListItem) {
                     window.localStorage.setItem(
@@ -306,7 +312,9 @@ export class Login extends React.Component<IProps, IState> {
 
             if (validation) {
                 this.setState({
-                    validation,
+                    serverValidation: localizator.localizeValidationMessages(
+                        validation,
+                    ),
                     pending: false,
                 });
             } else if (walletInfo) {
@@ -321,7 +329,9 @@ export class Login extends React.Component<IProps, IState> {
 
         if (this.state.newName.length < 1 || this.state.newName.length > 20) {
             this.setState({
-                validation: { newName: getMessageText('wallet_name_length') },
+                serverValidation: {
+                    newName: localizator.getMessageText('wallet_name_length'),
+                },
             });
             valid = false;
         } else {
@@ -330,8 +340,10 @@ export class Login extends React.Component<IProps, IState> {
             );
             if (foundByName) {
                 this.setState({
-                    validation: {
-                        newName: getMessageText('wallet_allready_exists'),
+                    serverValidation: {
+                        newName: localizator.getMessageText(
+                            'wallet_allready_exists',
+                        ),
                     },
                 });
                 valid = false;
@@ -346,8 +358,10 @@ export class Login extends React.Component<IProps, IState> {
 
         if (this.state.newPassword.length < 1) {
             this.setState({
-                validation: {
-                    newPassword: getMessageText('password_required'),
+                serverValidation: {
+                    newPassword: localizator.getMessageText(
+                        'password_required',
+                    ),
                 },
             });
             valid = false;
@@ -355,8 +369,8 @@ export class Login extends React.Component<IProps, IState> {
 
         if (this.state.newPassword !== this.state.newPasswordConfirmation) {
             this.setState({
-                validation: {
-                    newPasswordConfirmation: getMessageText(
+                serverValidation: {
+                    newPasswordConfirmation: localizator.getMessageText(
                         'password_not_match',
                     ),
                 },
@@ -391,7 +405,7 @@ export class Login extends React.Component<IProps, IState> {
     protected handleReturn = () => {
         this.setState({
             currentAction: EnumAction.selectWallet,
-            validation: {},
+            serverValidation: {},
         });
     };
 
@@ -443,7 +457,7 @@ export class Login extends React.Component<IProps, IState> {
                     ref={this.saveLoginBtnRef}
                     disabled={this.state.listOfWallets.length === 0}
                 >
-                    Login
+                    {localizator.getMessageText('login')}
                 </Button>
             </form>
         );
@@ -452,12 +466,12 @@ export class Login extends React.Component<IProps, IState> {
     protected handleOpenTextFile = (params: IFileOpenResult) => {
         if (params.error) {
             this.setState({
-                validation: { encodedWallet: params.error },
+                serverValidation: { encodedWallet: params.error },
                 encodedWallet: '',
             });
         } else {
             this.setState({
-                validation: {},
+                serverValidation: {},
                 encodedWallet: params.text,
                 encodedWalletFileName: params.fileName,
             });
@@ -481,7 +495,7 @@ export class Login extends React.Component<IProps, IState> {
                         <FormField
                             fullWidth
                             label="Wallet file"
-                            error={this.state.validation.encodedWallet}
+                            error={this.state.serverValidation.encodedWallet}
                             success={
                                 this.state.encodedWalletFileName
                                     ? shortString(
@@ -507,7 +521,7 @@ export class Login extends React.Component<IProps, IState> {
                         <FormField
                             fullWidth
                             label="Wallet name"
-                            error={this.state.validation.newName}
+                            error={this.state.serverValidation.newName}
                         >
                             <Input
                                 autoComplete="off"
@@ -522,7 +536,7 @@ export class Login extends React.Component<IProps, IState> {
                         <FormField
                             fullWidth
                             label="Password for file"
-                            error={this.state.validation.password}
+                            error={this.state.serverValidation.password}
                         >
                             <Input
                                 autoComplete="off"
@@ -554,11 +568,15 @@ export class Login extends React.Component<IProps, IState> {
                     className="sonm-login__popup-content"
                     onSubmit={this.handleSubmitLogin}
                 >
-                    <h3 className="sonm-login__popup-header">Enter password</h3>
+                    <h3 className="sonm-login__popup-header">
+                        {localizator.getMessageText('enter_password')}
+                    </h3>
                     <div className="sonm-login__label">
-                        <span className="sonm-login__label-text">Password</span>
+                        <span className="sonm-login__label-text">
+                            {localizator.getMessageText('password')}
+                        </span>
                         <span className="sonm-login__label-error">
-                            {this.state.validation.password}
+                            {this.state.serverValidation.password}
                         </span>
                         <input
                             autoComplete="off"
@@ -570,7 +588,7 @@ export class Login extends React.Component<IProps, IState> {
                         />
                     </div>
                     <Button className="sonm-login__create" type="submit">
-                        Login
+                        {localizator.getMessageText('login')}
                     </Button>
                 </form>
             </Dialog>
@@ -588,13 +606,15 @@ export class Login extends React.Component<IProps, IState> {
                     className="sonm-login__popup-content"
                     onSubmit={this.handleSubmitCreate}
                 >
-                    <h3 className="sonm-login__popup-header">New wallet</h3>
+                    <h3 className="sonm-login__popup-header">
+                        {localizator.getMessageText('new_wallet')}
+                    </h3>
                     <div className="sonm-login__label">
                         <span className="sonm-login__label-text">
-                            Wallet name
+                            {localizator.getMessageText('wallet_name')}
                         </span>
                         <span className="sonm-login__label-error">
-                            {this.state.validation.newName}
+                            {this.state.serverValidation.newName}
                         </span>
                         <input
                             autoComplete="off"
@@ -606,9 +626,11 @@ export class Login extends React.Component<IProps, IState> {
                         />
                     </div>
                     <div className="sonm-login__label">
-                        <span className="sonm-login__label-text">Password</span>
+                        <span className="sonm-login__label-text">
+                            {localizator.getMessageText('password')}
+                        </span>
                         <span className="sonm-login__label-error">
-                            {this.state.validation.newPassword}
+                            {this.state.serverValidation.newPassword}
                         </span>
                         <input
                             autoComplete="off"
@@ -620,10 +642,13 @@ export class Login extends React.Component<IProps, IState> {
                     </div>
                     <div className="sonm-login__label">
                         <span className="sonm-login__label-text">
-                            Confirm password
+                            {localizator.getMessageText('confirm_password')}
                         </span>
                         <span className="sonm-login__label-error">
-                            {this.state.validation.newPasswordConfirmation}
+                            {
+                                this.state.serverValidation
+                                    .newPasswordConfirmation
+                            }
                         </span>
                         <input
                             autoComplete="off"
@@ -635,7 +660,7 @@ export class Login extends React.Component<IProps, IState> {
                     </div>
                     <div className="sonm-login__label">
                         <span className="sonm-login__label-text">
-                            Ethereum network
+                            {localizator.getMessageText('ethereum_network')}
                         </span>
                         <BlackSelect
                             value={String(this.state.network)}
@@ -646,7 +671,7 @@ export class Login extends React.Component<IProps, IState> {
                         />
                     </div>
                     <Button className="sonm-login__create" type="submit">
-                        Create wallet
+                        {localizator.getMessageText('create_wallet')}
                     </Button>
                 </form>
             </Dialog>
@@ -705,14 +730,15 @@ export class Login extends React.Component<IProps, IState> {
                                 className="sonm-login__action-button sonm-login__create-button"
                                 onClick={this.handleStartCreateNew}
                             >
-                                CREATE WALLET
+                                {localizator.getMessageText('create_wallet')}
                             </a>
                             <a
                                 href="#import"
                                 className="sonm-login__action-button sonm-login__import-button"
                                 onClick={this.handleStartImport}
                             >
-                                <Icon i="Export" />IMPORT WALLET
+                                <Icon i="Export" />
+                                {localizator.getMessageText('import_wallet')}
                             </a>
                             <Icon
                                 tag="a"
