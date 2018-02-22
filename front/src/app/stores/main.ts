@@ -81,10 +81,10 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     public get noValidationMessages(): boolean {
-        return Object.keys(this.serverValidation).every(x => !x);
+        return Object.keys(this.serverValidation).length === 0;
     }
 
-    @observable.ref public serverValidation = { ...emptyForm };
+    @observable.ref public serverValidation: Partial<IMainFormValues> = {};
 
     @observable public averageGasPrice = '';
 
@@ -336,13 +336,12 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
 
         if (validation) {
             this.serverValidation = {
-                ...emptyForm,
                 ...this.localizator.localizeValidationMessages(
                     validation as IValidation,
                 ),
             };
         } else {
-            this.serverValidation = { ...emptyForm };
+            this.serverValidation = {};
             result = this.accountMap.set(data.address, data);
         }
 
@@ -362,7 +361,6 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
 
         if (validation) {
             this.serverValidation = {
-                ...emptyForm,
                 ...this.localizator.localizeValidationMessages(
                     validation as IValidation,
                 ),
@@ -442,7 +440,7 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
 
     @action.bound
     public resetServerValidation() {
-        this.serverValidation = emptyForm;
+        this.serverValidation = {};
     }
 
     public readonly localizator: ILocalizator;

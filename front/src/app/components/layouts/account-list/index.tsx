@@ -19,6 +19,7 @@ import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
 import { DownloadFile } from 'app/components/common/download-file';
 import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
+import { IValidation } from 'app/api/types';
 
 enum WalletDialogs {
     new,
@@ -201,7 +202,8 @@ export class Wallets extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.new ? (
                         <CreateAccount
                             serverValidation={
-                                rootStore.mainStore.serverValidation
+                                rootStore.mainStore
+                                    .serverValidation as IValidation
                             }
                             onSubmit={this.handleCreateAccount}
                             onClickCross={this.closeDialog}
@@ -213,7 +215,8 @@ export class Wallets extends React.Component<IProps, IState> {
                                 rootStore.mainStore.accountAddressList
                             }
                             serverValidation={
-                                rootStore.mainStore.serverValidation
+                                rootStore.mainStore
+                                    .serverValidation as IValidation
                             }
                             onSubmit={this.handleAddAccount}
                             onClickCross={this.closeDialog}

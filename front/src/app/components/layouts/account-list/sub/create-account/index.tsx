@@ -72,16 +72,10 @@ export class CreateAccount extends React.Component<IProps, any> {
     };
 
     public componentWillReceiveProps(next: IProps) {
-        const validation = { ...this.state.validation };
-
-        const sv = next.serverValidation;
-        Object.keys(sv).reduce((key: string, acc: any) => {
-            if (sv[key]) {
-                acc[key] = sv[key];
-            }
-
-            return acc;
-        }, validation);
+        const validation = {
+            ...this.state.validation,
+            ...next.serverValidation,
+        };
 
         this.setState({ validation });
     }
