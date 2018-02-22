@@ -53,9 +53,11 @@ export class CreateAccount extends React.Component<IProps, any> {
             validation.confirmation = l('password_not_match');
         }
 
-        const validationPrivateKey = validateHex(64, this.state.privateKey);
-        if (validationPrivateKey.length) {
-            validation.privateKey = validationPrivateKey.map(l).join(' ');
+        if (this.state.privateKey !== '') {
+            const validationPrivateKey = validateHex(64, this.state.privateKey);
+            if (validationPrivateKey.length) {
+                validation.privateKey = validationPrivateKey.map(l).join(' ');
+            }
         }
 
         if (Object.keys(validation).every(x => !validation[x])) {
