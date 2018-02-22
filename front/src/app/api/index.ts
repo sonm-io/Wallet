@@ -91,18 +91,16 @@ export class Api {
 
     public static async createAccount(
         passphase: string,
+        privateKey?: string,
     ): Promise<IResult<string>> {
-        return createPromise('account.create', { passphase });
-    }
-
-    public static async createAccountFromPrivateKey(
-        privateKey: string,
-        passphase: string,
-    ): Promise<IResult<string>> {
-        return createPromise('account.createFromPrivateKey', {
-            privateKey,
-            passphase,
-        });
+        if (privateKey) {
+            return createPromise('account.createFromPrivateKey', {
+                privateKey,
+                passphase,
+            });
+        } else {
+            return createPromise('account.create', { passphase });
+        }
     }
 
     public static async getWalletList(): Promise<IResult<IWalletListItem[]>> {

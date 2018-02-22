@@ -280,10 +280,7 @@ describe('Api', async function() {
         const privateKey =
             '69deaef1da6fd4d01489d7b46e8e3aab587d9fcd49de2080d367c3ef120689ee';
 
-        const response = await Api.createAccountFromPrivateKey(
-            privateKey,
-            password,
-        );
+        const response = await Api.createAccount(password, privateKey);
         expect(response.data).to.be.a('string');
 
         if (response.data) {
