@@ -11,7 +11,7 @@ import { migrate } from '../migrations';
 
 const { createSonmFactory, utils } = sonmApi;
 
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;
 const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
 
@@ -363,9 +363,17 @@ class Api {
                     this.setWalletHash(data.walletName);
                     this.secretKey = data.password;
 
-                    const storage = this.decrypt(data.file.substr(4));
+                    const storage = await this.checkStorageVersion(
+                        'wallet',
+                        this.decrypt(data.file.substr(4)),
+                    );
                     this.storage = storage;
                     await this.saveData();
+
+                    this.storage = await this.getDataFromStorage(
+                        this.hash,
+                        true,
+                    );
 
                     // add wallet to list
                     const walletList = await this.getWallets();
@@ -554,38 +562,38 @@ class Api {
 
         if (dataFromStorage) {
             try {
-                let data = decrypt
+                const data = decrypt
                     ? this.decrypt(dataFromStorage)
                     : JSON.parse(dataFromStorage);
 
-                if (!data.version || data.version !== STORAGE_VERSION) {
-                    try {
-                        data = migrate(
-                            key === KEY_WALLETS_LIST ? 'wallet_list' : 'wallet',
-                            data,
-                        );
-
-                        if (key === KEY_WALLETS_LIST) {
-                            await this.saveDataToStorage(
-                                KEY_WALLETS_LIST,
-                                data,
-                                false,
-                            );
-                        } else {
-                            await this.saveData();
-                        }
-                    } catch (err) {
-                        console.log(err.stack);
-                    }
-                }
-
-                return data;
+                return await this.checkStorageVersion(key, data);
             } catch (err) {
                 return false;
             }
         } else {
             return false;
         }
+    };
+
+    private checkStorageVersion = async (key: string, data: any) => {
+        if (!data.version || data.version !== STORAGE_VERSION) {
+            try {
+                data = migrate(
+                    key === KEY_WALLETS_LIST ? 'wallet_list' : 'wallet',
+                    data,
+                );
+
+                if (key === KEY_WALLETS_LIST) {
+                    await this.saveDataToStorage(KEY_WALLETS_LIST, data, false);
+                } else {
+                    await this.saveData();
+                }
+            } catch (err) {
+                console.log(err.stack);
+            }
+        }
+
+        return data;
     };
 
     private getAccounts = async (): Promise<IAccounts | null> => {
