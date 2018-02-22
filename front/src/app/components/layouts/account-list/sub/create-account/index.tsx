@@ -10,10 +10,12 @@ import {
 import { Input } from 'app/components/common/input';
 import { IValidation } from 'ipc/types';
 import { rootStore } from 'app/stores';
+import { validateEtherAddress } from 'app/utils/validation/validate-ether-address';
 
 export interface ICreateAccountForm {
     password: string;
     name: string;
+    privateKey: string;
 }
 
 export interface IProps {
@@ -27,34 +29,28 @@ export class CreateAccount extends React.Component<IProps, any> {
         name: '',
         password: '',
         confirmation: '',
+        privateKey: '',
         validation: {} as IValidation,
     };
 
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
+        const l = rootStore.localizator.getMessageText;
         const validation = { ...this.state.validation };
 
         if (!this.state.name) {
-            validation.name = rootStore.localizator.getMessageText(
-                'name_required',
-            );
+            validation.name = l('name_required');
         }
 
         if (!this.state.password) {
-            validation.password = rootStore.localizator.getMessageText(
-                'password_required',
-            );
+            validation.password = l('password_required');
         } else if (this.state.password.length < 8) {
-            validation.password = rootStore.localizator.getMessageText(
-                'password_length',
-            );
+            validation.password = l('password_length');
         }
 
         if (this.state.password !== this.state.confirmation) {
-            validation.confirmation = rootStore.localizator.getMessageText(
-                'password_not_match',
-            );
+            validation.confirmation = l('password_not_match');
         }
 
         if (Object.keys(validation).every(x => !validation[x])) {
@@ -63,6 +59,7 @@ export class CreateAccount extends React.Component<IProps, any> {
             this.props.onSubmit({
                 password: this.state.password,
                 name: this.state.name,
+                privateKey: this.state.privateKey,
             });
         } else {
             this.setState({ validation });
@@ -90,6 +87,8 @@ export class CreateAccount extends React.Component<IProps, any> {
     };
 
     public render() {
+        const l = rootStore.localizator.getMessageText;
+
         return (
             <Dialog onClickCross={this.handleClickCross}>
                 <Form
@@ -100,7 +99,20 @@ export class CreateAccount extends React.Component<IProps, any> {
                     <FormRow>
                         <FormField
                             fullWidth
-                            label="Password"
+                            label={l('Account name')}
+                            error={this.state.validation.name}
+                        >
+                            <Input
+                                type="text"
+                                name="name"
+                                onChange={this.handleChangeInput}
+                            />
+                        </FormField>
+                    </FormRow>
+                    <FormRow>
+                        <FormField
+                            fullWidth
+                            label={l('Password')}
                             error={this.state.validation.password}
                         >
                             <Input
@@ -113,7 +125,7 @@ export class CreateAccount extends React.Component<IProps, any> {
                     <FormRow>
                         <FormField
                             fullWidth
-                            label="Password confirmation"
+                            label={l('Password confirmation')}
                             error={this.state.validation.confirmation}
                         >
                             <Input
@@ -126,18 +138,18 @@ export class CreateAccount extends React.Component<IProps, any> {
                     <FormRow>
                         <FormField
                             fullWidth
-                            label="Account name"
-                            error={this.state.validation.name}
+                            label={l('Private key (optional)')}
+                            error={this.state.validation.privateKey}
                         >
                             <Input
                                 type="text"
-                                name="name"
+                                name="privateKey"
                                 onChange={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>
                     <FormButtons>
-                        <Button type="submit">Create</Button>
+                        <Button type="submit">{l('Create')}</Button>
                     </FormButtons>
                 </Form>
             </Dialog>

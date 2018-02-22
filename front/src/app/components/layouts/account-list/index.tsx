@@ -80,7 +80,11 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleCreateAccount = async (data: ICreateAccountForm) => {
-        await rootStore.mainStore.createAccount(data.password, data.name);
+        await rootStore.mainStore.createAccount(
+            data.password,
+            data.name,
+            data.privateKey,
+        );
 
         this.closeDialog();
     };

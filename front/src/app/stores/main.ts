@@ -342,8 +342,8 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     @pending
     @catchErrors({ restart: false })
     @asyncAction
-    public *createAccount(password: string, name: string) {
-        const { data } = yield Api.createAccount(password);
+    public *createAccount(password: string, name: string, privateKey: string) {
+        const { data } = yield Api.createAccount(password, privateKey);
         yield this.addAccount(data, password, name);
     }
 
