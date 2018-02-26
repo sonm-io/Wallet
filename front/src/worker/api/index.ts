@@ -645,9 +645,9 @@ class Api {
             // remove pending
             if (transaction.hash !== PENDING_HASH) {
                 if (transaction.status === 'pending') {
-                    const checkTransaction = await factory.gethClient.method(
-                        'getTransaction',
-                    )(transaction.hash);
+                    const checkTransaction = await factory.gethClient.getTransaction(
+                        transaction.hash,
+                    );
                     if (checkTransaction) {
                         transactions.push(transaction);
 
@@ -968,7 +968,7 @@ class Api {
             amount,
             currencyAddress,
             currencySymbol: token.symbol,
-            decimalPointOffset: token.decimalPointOffset,
+            decimalPointOffset: token.decimals,
             hash: PENDING_HASH,
             fee: null,
             status: 'pending',
