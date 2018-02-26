@@ -98,7 +98,7 @@
         "react": "^16.1.0",
         "react-addons-transition-group": "^15.6.2",
         "react-dom": "^16.1.0",
-        "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#feature/removing-web3",
+        "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v1.0.14",
         "universal-router": "^4.3.0"
     },
     "scripts": {
