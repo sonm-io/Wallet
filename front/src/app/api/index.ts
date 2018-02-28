@@ -1,6 +1,3 @@
-// import { createPromise } from './ipc';
-
-import { messages } from './error-messages';
 import * as ipc from './ipc';
 import {
     ISendTransactionResult,
@@ -9,7 +6,6 @@ import {
     ISendTransaction,
     IResult,
     IResponse,
-    IValidation,
     ITxListFilter,
     ISettings,
     IWalletListItem,
@@ -33,10 +29,6 @@ function createPromise(
         const requestId = nextRequestId();
 
         const callback = (event: any, response: IResponse<any>) => {
-            if (response.validation) {
-                response.validation = processValidation(response.validation);
-            }
-
             if (response.success) {
                 if (IS_DEV) {
                     console.log(type, response, payload);
@@ -56,13 +48,6 @@ function createPromise(
             payload,
         });
     });
-}
-
-function processValidation(obj: any): IValidation {
-    return Object.keys(obj).reduce((acc: IValidation, key: string) => {
-        acc[key] = messages[obj[key]] || obj[key];
-        return acc;
-    }, {});
 }
 
 export class Api {
@@ -106,8 +91,16 @@ export class Api {
 
     public static async createAccount(
         passphase: string,
-    ): Promise<IResult<boolean>> {
-        return createPromise('account.create', { passphase });
+        privateKey?: string,
+    ): Promise<IResult<string>> {
+        if (privateKey) {
+            return createPromise('account.createFromPrivateKey', {
+                privateKey,
+                passphase,
+            });
+        } else {
+            return createPromise('account.create', { passphase });
+        }
     }
 
     public static async getWalletList(): Promise<IResult<IWalletListItem[]>> {
@@ -208,7 +201,9 @@ export class Api {
         return createPromise('getTokenInfo', { address });
     }
 
-    public static async getPresetTokenList(): Promise<IResult<ICurrencyInfo[]>>  {
+    public static async getPresetTokenList(): Promise<
+        IResult<ICurrencyInfo[]>
+    > {
         return createPromise('getPresetTokenList');
     }
 }

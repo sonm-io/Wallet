@@ -1,11 +1,12 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Api, ICurrencyInfo } from 'app/api';
-import { AbstractStore } from './abstract-store';
-const { pending, catchErrors } = AbstractStore;
-import { getMessageText } from 'app/api/error-messages';
+import { OnlineStore } from './online-store';
+const { pending, catchErrors } = OnlineStore;
 import { RootStore } from './';
 import { validateEtherAddress } from '../utils/validation/validate-ether-address';
+import { normalizeCurrencyInfo } from './utils/normalize-currency-info';
+import { ILocalizator, IHasLocalizator } from 'app/localization';
 
 interface IFormValues {
     tokenAddress: string;
@@ -17,15 +18,19 @@ const emptyForm: IFormValues = {
 
 Object.freeze(emptyForm);
 
-export class AddTokenStore extends AbstractStore {
+export class AddTokenStore extends OnlineStore implements IHasLocalizator {
     protected rootStore: RootStore;
 
     @observable public validation = { ...emptyForm };
 
-    constructor(rootStore: RootStore) {
-        super({ errorProcessor: rootStore.uiStore });
+    constructor(rootStore: RootStore, localizator: ILocalizator) {
+        super({
+            errorProcessor: rootStore.uiStore,
+            localizator: rootStore.localizator,
+        });
 
         this.rootStore = rootStore;
+        this.localizator = localizator;
     }
 
     @observable public candidateTokenAddress: string = '';
@@ -35,13 +40,17 @@ export class AddTokenStore extends AbstractStore {
     @computed
     get validationCandidateToken(): string {
         const tokenAddress = this.candidateTokenAddress;
-        const etherAddressValidation = validateEtherAddress(tokenAddress);
+        const etherAddressValidation = validateEtherAddress(tokenAddress).map(
+            this.localizator.getMessageText,
+        );
         let result: string;
 
         if (etherAddressValidation.length) {
             result = etherAddressValidation.join(' ;');
         } else if (this.rootStore.mainStore.currencyMap.has(tokenAddress)) {
-            result = getMessageText('token_already_exists');
+            result = this.rootStore.localizator.getMessageText(
+                'token_already_exists',
+            );
         } else {
             result = this.validation.tokenAddress;
         }
@@ -96,10 +105,11 @@ export class AddTokenStore extends AbstractStore {
         const { data: currencyInfo } = yield Api.addToken(
             candidateTokenAddress,
         );
+
         if (currencyInfo) {
             this.rootStore.mainStore.currencyMap.set(
                 currencyInfo.address,
-                currencyInfo,
+                normalizeCurrencyInfo(currencyInfo),
             );
         }
     }
@@ -110,6 +120,8 @@ export class AddTokenStore extends AbstractStore {
         this.candidateTokenInfo = undefined;
         this.validation.tokenAddress = '';
     }
+
+    public readonly localizator: ILocalizator;
 }
 
 export default AddTokenStore;

@@ -19,7 +19,8 @@
         "outDir": "dist",
         "baseUrl": "./front/src",
         "strict": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "charset": "utf8"
     },
     "include": ["front/typings/**/*.d.ts", "front/src/**/*.ts", "front/src/**/*.tsx", "node_modules/@types/**/*.d.ts"],
     "exclude": ["front/dist", "front/bundle", "node_modules/"],

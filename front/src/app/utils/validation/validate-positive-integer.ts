@@ -1,14 +1,14 @@
-import { validatePositiveNumber } from './validate-positive-number';
+const digitsRegex = /^\d+$/;
 
 export function validatePositiveInteger(value: string): string[] {
     const result = [];
 
-    const num = Number(value);
-
-    if (num % 1 !== 0) {
-        result.push('Value should be positive integer');
+    if (value === '') {
+        result.push('required_value');
     } else {
-        result.push(...validatePositiveNumber(value));
+        if (!digitsRegex.test(value)) {
+            result.push('should_be_positive_integer');
+        }
     }
 
     return result;

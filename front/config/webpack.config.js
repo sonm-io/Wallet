@@ -47,6 +47,7 @@ module.exports = {
         modules: ['node_modules'],
         extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
         alias: {
+            'bn.js': 'node_modules/bn.js/lib/bn.js',
             './guide.less$': getFullPath('src/app/less/guide.less'),
             app: getFullPath('src/app'),
             worker: getFullPath('src/worker'),
@@ -85,7 +86,8 @@ module.exports = {
                     }),
                 },
                 needsAnalyze
-                    ? {
+                    ? null
+                    : {
                           test: /\.worker\.ts$/,
                           use: [
                               {
@@ -101,8 +103,7 @@ module.exports = {
                                   loader: 'ts-loader',
                               },
                           ],
-                      }
-                    : null,
+                      },
                 {
                     issuer: /\.tsx/,
                     test: /\.svg$/,
