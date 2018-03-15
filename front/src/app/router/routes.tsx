@@ -6,7 +6,6 @@ import { SendSuccess } from 'app/components/layouts/send/sub/success';
 import { SendConfirm } from 'app/components/layouts/send/sub/confirm';
 import { Account } from 'app/components/layouts/account';
 import * as React from 'react';
-import { rootStore } from 'app/stores';
 
 import { navigate } from './navigate';
 
@@ -46,7 +45,6 @@ const routes = [
             return {
                 content: (
                     <App
-                        rootStore={rootStore}
                         onNavigate={navigateTo}
                         onExit={reload}
                         selectedNavMenuItem={inner.pathKey}
@@ -73,7 +71,6 @@ const routes = [
                         ) : (
                             <Send
                                 onNotAvailable={navigateToMain}
-                                rootStore={rootStore}
                                 initialAddress={initialAddress}
                                 initialCurrency={initialCurrency}
                                 onRequireConfirmation={navigateToConfirmation}
@@ -97,7 +94,6 @@ const routes = [
                             title: 'Confirmation',
                             content: (
                                 <SendConfirm
-                                    rootStore={rootStore}
                                     onBack={navigateToSend}
                                     onSuccess={navigateToSuccess}
                                 />
@@ -129,7 +125,6 @@ const routes = [
                         title: 'History',
                         content: (
                             <History
-                                rootStore={rootStore}
                                 initialAddress={initialAddress}
                                 initialCurrency={initialCurrency}
                             />
@@ -143,11 +138,7 @@ const routes = [
                     const next = await ctx.next();
 
                     const content =
-                        next && next.content ? (
-                            next.content
-                        ) : (
-                            <Wallets rootStore={rootStore} />
-                        );
+                        next && next.content ? next.content : <Wallets />;
 
                     if (next && next.popup) {
                         content.push(next.popup);
@@ -167,10 +158,7 @@ const routes = [
 
                             return {
                                 content: (
-                                    <Account
-                                        initialAddress={initialAddress}
-                                        rootStore={rootStore}
-                                    />
+                                    <Account initialAddress={initialAddress} />
                                 ),
                             };
                         },

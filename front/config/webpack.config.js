@@ -5,12 +5,15 @@ const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin
 const CssoWebpackPlugin = require('csso-webpack-plugin').default;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
     .BundleAnalyzerPlugin;
-const { getFullPath, readJson, getPackageJson } = require('./utils');
-
 const MinifyPlugin = require('babel-minify-webpack-plugin');
+const WebpackMonitor = require('webpack-monitor');
+
+const { getFullPath, readJson, getPackageJson } = require('./utils');
 
 const buildType = process.env.BUILD_TYPE || '';
 const isDev = process.env.NODE_ENV !== 'production';
+const needsAnalyze = process.env.WEBPACK_ANALYZE || process.env.WEBPACK_STATS;
+const needsStats = process.env.WEBPACK_STATS;
 const sourceMap = false; // process.env.SOURCE_MAP ? 'source-map' : undefined;
 
 const extractLess = new ExtractTextPlugin({
@@ -19,10 +22,18 @@ const extractLess = new ExtractTextPlugin({
 });
 
 module.exports = {
-    entry: {
-        app: getFullPath('./src/entry.ts'),
-        style: getFullPath('./src/app/less/entry.less'),
-    },
+    entry: (() => {
+        const result = {
+            app: getFullPath('./src/entry.ts'),
+            style: getFullPath('./src/app/less/entry.less'),
+        };
+
+        if (needsAnalyze) {
+            result.worker = getFullPath('./src/worker/back.worker.ts');
+        }
+
+        return result;
+    })(),
 
     output: {
         filename: isDev ? '[name].js' : '[name].[hash].js',
@@ -36,6 +47,7 @@ module.exports = {
         modules: ['node_modules'],
         extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
         alias: {
+            'bn.js': 'node_modules/bn.js/lib/bn.js',
             './guide.less$': getFullPath('src/app/less/guide.less'),
             app: getFullPath('src/app'),
             worker: getFullPath('src/worker'),
@@ -73,21 +85,25 @@ module.exports = {
                         use: ['css-loader', 'less-loader'],
                     }),
                 },
-                {
-                    test: /\.worker\.ts$/,
-                    use: [
-                        {
-                            loader: 'worker-loader',
-                            options: {
-                                name: isDev ? '[name].js' : '[name].[hash].js',
-                                inline: buildType === 'singleFile',
-                            },
-                        },
-                        {
-                            loader: 'ts-loader',
-                        },
-                    ],
-                },
+                needsAnalyze
+                    ? null
+                    : {
+                          test: /\.worker\.ts$/,
+                          use: [
+                              {
+                                  loader: 'worker-loader',
+                                  options: {
+                                      name: isDev
+                                          ? '[name].js'
+                                          : '[name].[hash].js',
+                                      inline: buildType === 'singleFile',
+                                  },
+                              },
+                              {
+                                  loader: 'ts-loader',
+                              },
+                          ],
+                      },
                 {
                     issuer: /\.tsx/,
                     test: /\.svg$/,
@@ -116,7 +132,19 @@ module.exports = {
 
     plugins: (() => {
         const plugins = [
-            process.env.WEBPACK_ANALYZE ? new BundleAnalyzerPlugin() : false,
+            needsStats
+                ? new WebpackMonitor({
+                      capture: true,
+                      target: getFullPath(
+                          './config/webpack-monitor/stats.json',
+                      ),
+                      launch: true,
+                      port: 3030,
+                      excludeSourceMaps: true,
+                  })
+                : false,
+
+            needsAnalyze && !needsStats ? new BundleAnalyzerPlugin() : false,
 
             new HtmlWebpackPlugin({
                 inject: true,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert } from 'app/components/common/alert';
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
-import { RootStore } from 'app/stores';
+import { rootStore } from 'app/stores';
 import { Balance } from 'app/components/common/balance-view';
 import { LoadMask } from 'app/components/common/load-mask';
 import { AlertList } from './sub/alerts';
@@ -14,7 +14,6 @@ interface IProps {
     children: any;
     error: string;
     selectedNavMenuItem: string;
-    rootStore: RootStore;
     onNavigate: (url: string) => void;
     onExit: () => void;
 }
@@ -22,9 +21,15 @@ interface IProps {
 @observer
 export class App extends React.Component<IProps, any> {
     protected static menuConfig = [
-        { title: 'Accounts', url: '/accounts' },
-        { title: 'Send', url: '/send' },
-        { title: 'History', url: '/history' },
+        {
+            title: rootStore.localizator.getMessageText('accounts'),
+            url: '/accounts',
+        },
+        { title: rootStore.localizator.getMessageText('send'), url: '/send' },
+        {
+            title: rootStore.localizator.getMessageText('history'),
+            url: '/history',
+        },
     ];
 
     protected handleExit = (event: any) => {
@@ -34,12 +39,16 @@ export class App extends React.Component<IProps, any> {
     };
 
     public render() {
-        const rootStore = this.props.rootStore;
         const mainStore = rootStore.mainStore;
 
         const { className, selectedNavMenuItem, children } = this.props;
 
-        const { etherBalance, primaryTokenBalance, accountMap } = mainStore;
+        const {
+            etherBalance,
+            primaryTokenBalance,
+            primaryTokenInfo,
+            accountMap,
+        } = mainStore;
 
         const disabledMenu =
             rootStore.isOffline || accountMap.size === 0 ? '/send' : '';
@@ -64,22 +73,32 @@ export class App extends React.Component<IProps, any> {
                                 <div className="sonm-nav__total">
                                     <Balance
                                         className="sonm-nav__total-item"
-                                        fullString={etherBalance}
+                                        balance={etherBalance}
+                                        symbol="Ether"
                                         fontSizePx={18}
-                                        decimals={2}
+                                        decimalPointOffset={18}
+                                        decimalDigitAmount={2}
                                     />
                                     <Balance
                                         className="sonm-nav__total-item"
-                                        fullString={primaryTokenBalance}
+                                        balance={primaryTokenBalance}
+                                        symbol={primaryTokenInfo.symbol}
                                         fontSizePx={18}
-                                        decimals={2}
+                                        decimalPointOffset={
+                                            primaryTokenInfo.decimalPointOffset
+                                        }
+                                        decimalDigitAmount={2}
                                     />
                                 </div>
                                 <div className="sonm-nav__network">
                                     <div className="sonm-nav__network-type">
                                         {mainStore.networkName === 'livenet'
-                                            ? 'LIVENET'
-                                            : 'TESTNET'}
+                                            ? rootStore.localizator.getMessageText(
+                                                  'livenet',
+                                              )
+                                            : rootStore.localizator.getMessageText(
+                                                  'testnet',
+                                              )}
                                     </div>
                                     <div className="sonm-nav__network-url">
                                         {mainStore.nodeUrl.replace(
@@ -102,7 +121,9 @@ export class App extends React.Component<IProps, any> {
                     <div className="sonm-app__alert-group">
                         {rootStore.isOffline ? (
                             <Alert type="error" id="no-connect">
-                                No blockchain node connection
+                                {rootStore.localizator.getMessageText(
+                                    'no_blockchain_conection',
+                                )}
                             </Alert>
                         ) : null}
                         <AlertList

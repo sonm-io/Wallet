@@ -23,6 +23,7 @@ export interface ISendTransaction {
 
 export interface ISendTransactionResult extends ISendTransaction {
     currencySymbol: string;
+    decimalPointOffset: number;
     fee?: string;
     confirmCount: number;
     status: TransactionStatus;
@@ -43,7 +44,7 @@ export interface ICurrencyBalanceMap {
 
 export interface ICurrencyInfo {
     symbol: string;
-    decimals: number;
+    decimalPointOffset: number;
     name: string;
     address: string;
 }

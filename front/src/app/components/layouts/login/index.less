@@ -1,207 +1,206 @@
-@import "./sub/disclaimer/index";
+@import './sub/disclaimer/index';
 
 .sonm-login {
-  --color-form-header: @color-font-gray;
-  --color-form-field-text: @color-font-gray;
+    --color-form-header: @color-font-gray;
+    --color-form-field-text: @color-font-gray;
 
-  background-color: @color-brand-bg;
-  min-height: 600px;
+    background-color: @color-brand-bg;
+    min-height: 600px;
 
-  color: @color-white;
-  padding: 0;
-  margin: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  transition: filter 0.25s;
-
-  &__spin {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
-
-  &__version {
-    position: fixed;
-    right: 5px;
-    bottom: 5px;
     color: @color-white;
-    z-index: @z-everest + 100;
-    font-size: 10px;
-  }
-
-  &__center {
-    margin: 50px auto;
-
-    &--blurred {
-      filter: blur(10px);
-    }
-  }
-
-  &__wallet-form {
-    display: flex;
-    align-items: flex-start;
-  }
-
-  &__wallet-select {
-    width: 280px;
-    margin-right: 10px;
-  }
-
-  &__input {
-    font-size: 16px;
-    color: @color-white;
-    font-weight: 400;
-    line-height: 36px;
-    height: 36px;
-    box-sizing: padding-box;
-    background-color: transparent;
-    border: solid 0 @color-blue;
-    border-bottom-width: 1px;
-    width: 100%;
-    transition: border-bottom-width;
     padding: 0;
-    margin: 5px 0;
-
-    &:focus {
-      outline: none;
-      border-bottom-width: 2px;
-    }
-  }
-
-  &__label-error:not(:empty) + &__input {
-    border-color: @color-pink;
-    border-bottom-width: 2px;
-  }
-
-  &__label {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 0;
-    width: 330px;
+    transition: filter 0.25s;
 
-    &-text {
-      color: @color-light-font;
-      font-size: 13px;
+    &__spin {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
     }
 
-    &-error {
-      display: inline-block;
-      width: 100%;
-      color: @color-pink;
-      order: 3;
-      font-size: 12px;
-      line-height: 20px;
-      height: 20px;
-    }
-  }
-
-  &__create {
-    margin: 30px 0 0;
-    width: 200px;
-  }
-
-  &__form {
-    min-width: 330px;
-  }
-
-  &__popup {
-    &-header {
-      color: @color-font-gray;
-      font-weight: 500;
-      text-align: center;
-      font-size: 18px;
-      margin: 0 0 20px;
+    &__version {
+        position: fixed;
+        right: 5px;
+        bottom: 5px;
+        color: @color-white;
+        z-index: @z-everest + 100;
+        font-size: 10px;
     }
 
-    &-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-  }
+    &__center {
+        margin: 50px auto;
 
-  &__logo {
-    margin: 100px 0;
-    height: 30vh;
-    width: 100%;
-    background: url('./logo.svg') no-repeat center;
-  }
-
-  &__actions {
-    margin: 30px 0 0 0;
-  }
-
-  &__action-button {
-    font-size: 18px;
-
-    cursor: pointer;
-    opacity: 0.5;
-    margin: 0 10px 0 0;
-    padding: 5px 0;
-
-    text-decoration: none;
-    &:focus,
-    &:hover,
-    &:active,
-    &:visited {
-      text-decoration: none;
+        &--blurred {
+            filter: blur(10px);
+        }
     }
 
-    &:focus,
-    &:active {
-      outline: @outline;
-      outline-offset: 3px;
+    &__wallet-form {
+        display: flex;
+        align-items: flex-start;
     }
 
-    &:hover {
-      opacity: 1;
+    &__wallet-select {
+        width: 280px;
+        margin-right: 10px;
     }
-  }
 
-  & &__info-button {
-    color: @color-blue;
-    margin: 0 0 0 10px;
-    font-size: 30px;
-    vertical-align: middle;
-  }
+    &__input {
+        font-size: 16px;
+        color: @color-white;
+        font-weight: 400;
+        line-height: 36px;
+        height: 36px;
+        box-sizing: padding-box;
+        background-color: transparent;
+        border: solid 0 @color-blue;
+        border-bottom-width: 1px;
+        width: 100%;
+        transition: border-bottom-width;
+        padding: 0;
+        margin: 5px 0;
 
-  & &__import-button {
-    color: @color-font-gray;
-    margin: 0 0 0 10px;
-  }
+        &:focus {
+            outline: none;
+            border-bottom-width: 2px;
+        }
+    }
 
-  & &__create-button {
-    color: @color-blue;
-    margin: 0;
-  }
+    &__label-error:not(:empty) + &__input {
+        border-color: @color-pink;
+        border-bottom-width: 2px;
+    }
 
-  & &__network-type {
-    margin-top: 7px;
-    z-index: @z-everest + 1;
-  }
+    &__label {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        width: 330px;
 
-  &__wallet-option {
-    max-width: 230px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
+        &-text {
+            color: @color-light-font;
+            font-size: 13px;
+        }
 
-    &--rinkeby {
-      &:before {
-        content: '{testnet} ';
+        &-error {
+            display: inline-block;
+            width: 100%;
+            color: @color-pink;
+            order: 3;
+            font-size: 12px;
+            line-height: 20px;
+            height: 20px;
+        }
+    }
+
+    &__create {
+        margin: 30px 0 0;
+        width: 200px;
+    }
+
+    &__form {
+        min-width: 330px;
+    }
+
+    &__popup {
+        &-header {
+            color: @color-font-gray;
+            font-weight: 500;
+            text-align: center;
+            font-size: 18px;
+            margin: 0 0 20px;
+        }
+
+        &-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    &__logo {
+        margin: 100px 0;
+        height: 30vh;
+        width: 100%;
+        background: url('./logo.svg') no-repeat center;
+    }
+
+    &__actions {
+        margin: 30px 0 0 0;
+    }
+
+    &__action-button {
+        font-size: 18px;
+
+        cursor: pointer;
         opacity: 0.5;
-      }
+        margin: 0 10px 0 0;
+        padding: 5px 0;
+
+        text-decoration: none;
+        &:focus,
+        &:hover,
+        &:active,
+        &:visited {
+            text-decoration: none;
+        }
+
+        &:focus,
+        &:active {
+            outline: @outline;
+            outline-offset: 3px;
+        }
+
+        &:hover {
+            opacity: 1;
+        }
     }
-    &--livenet {
-      &:before {
-        content: '{livenet} ';
-        opacity: 0.5;
-      }
+
+    & &__info-button {
+        color: @color-blue;
+        margin: 0 0 0 10px;
+        font-size: 30px;
+        vertical-align: middle;
     }
-  }
+
+    & &__import-button {
+        color: @color-font-gray;
+        margin: 0 0 0 10px;
+    }
+
+    & &__create-button {
+        color: @color-blue;
+        margin: 0;
+    }
+
+    & &__network-type {
+        margin-top: 7px;
+        z-index: @z-everest + 1;
+    }
+
+    &__wallet-option {
+        max-width: 230px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+
+        &--rinkeby {
+            &:before {
+                content: '{testnet} ';
+                opacity: 0.5;
+            }
+        }
+        &--livenet {
+            &:before {
+                content: '{livenet} ';
+                opacity: 0.5;
+            }
+        }
+    }
 }
-
