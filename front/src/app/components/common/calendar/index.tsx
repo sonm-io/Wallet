@@ -222,8 +222,6 @@ export class Calendar extends React.PureComponent<
         } else if (this.state.mode === 'year') {
             delete update.visibleYear;
         }
-
-        this.setState(update);
     }
 
     public static getDateInfo(v: TDate): IDateInfo {
@@ -276,7 +274,11 @@ export class Calendar extends React.PureComponent<
     protected stopInputYear() {
         const visibleYear = Number(this.state.inputYear);
 
-        if (String(visibleYear) === this.state.inputYear) {
+        if (
+            String(visibleYear) === this.state.inputYear &&
+            visibleYear >= 0 &&
+            visibleYear < 9999
+        ) {
             this.setState({
                 visibleYear: visibleYear,
             });
@@ -372,6 +374,12 @@ export class Calendar extends React.PureComponent<
 
     protected handlePrevMonth = this.handleSwitchMonth.bind(this, -1);
 
+    protected setFocus(ref: any) {
+        if (ref && ref.focus) {
+            ref.focus();
+        }
+    }
+
     public render() {
         const props = this.getProps();
         const cssClasses = props.cssClasses;
@@ -397,6 +405,7 @@ export class Calendar extends React.PureComponent<
                     </button>
                     {this.state.mode === 'year' ? (
                         <input
+                            ref={this.setFocus}
                             className={cssClasses.yearInput}
                             type="text"
                             value={this.state.inputYear}

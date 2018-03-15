@@ -45,6 +45,7 @@
         border: solid 0 @calendarCellBorderColor;
         padding: 3px 5px;
         text-align: center;
+        background: none transparent;
     }
 
     &__dummy {
@@ -65,6 +66,8 @@
     }
 
     .calendar-hover-cell {
+        background: none transparent;
+
         &:focus {
             outline: none;
             box-shadow: none;
@@ -176,6 +179,7 @@
         width: 60px;
         border-color: @calendarInputColor;
         border-width: 1px;
+        cursor: text !important;
     }
 
     &__year-button {
@@ -187,7 +191,6 @@
         border-color: @calendarCellBorderColor;
 
         &:active {
-            border-color: @calendarInputColor;
             transform: none;
         }
     }

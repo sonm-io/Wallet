@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as cn from 'classnames';
 import { Icon } from '../icon';
 
@@ -22,7 +23,7 @@ export class Dialog extends React.PureComponent<IDialogProps> {
 
         const style = height ? { height: `${height}px` } : undefined;
 
-        return (
+        return ReactDOM.createPortal(
             <div
                 className={cn('sonm-popup', {
                     'sonm-popup--dark': color === 'dark',
@@ -31,6 +32,8 @@ export class Dialog extends React.PureComponent<IDialogProps> {
                 <div className="sonm-popup__pale" />
                 <div className="sonm-popup__outer">
                     <div
+                        tabIndex={0}
+                        role="dialog"
                         className={cn('sonm-popup__inner', className)}
                         style={style}
                     >
@@ -46,7 +49,8 @@ export class Dialog extends React.PureComponent<IDialogProps> {
                         {children}
                     </div>
                 </div>
-            </div>
+            </div>,
+            window.document.body,
         );
     }
 }
