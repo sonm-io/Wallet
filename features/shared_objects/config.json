@@ -1,6 +1,6 @@
 {
     "defaultNet": "rinkeby",
-    "defaultGasLimit": "250000",
+    "defaultGasLimit": "1000000",
     "DEBUG": true,
     "browser": {
         "width": 1280,

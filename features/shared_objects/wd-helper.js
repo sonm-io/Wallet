@@ -1,28 +1,15 @@
 function loadWalletContent(wallet) {
     //shared.config.DEBUG && console.log("window.localStorage.setItem('" + wallet.key + "','" + wallet.value + "')");
-    return driver.executeScript(
-        "window.localStorage.setItem('" +
-            wallet.key +
-            "','" +
-            wallet.value +
-            "')",
-    );
+    return driver.executeScript("window.localStorage.setItem('" + wallet.key + "','" + wallet.value + "')");
 }
 
 function loadWalletName(wallet) {
-    return driver.executeScript(
-        "window.localStorage.setItem('sonm_wallets','" +
-            JSON.stringify(wallet.name) +
-            "')",
-    );
+    return driver.executeScript("window.localStorage.setItem('sonm_wallets','" + JSON.stringify(wallet.name) + "')");
 }
 
 module.exports = {
     findVisibleElement: function(locator, timeout = 20) {
-        let element = driver.wait(
-            until.elementLocated(locator),
-            timeout * 1000,
-        );
+        let element = driver.wait(until.elementLocated(locator), timeout * 1000);
         driver.wait(until.elementIsVisible(element));
         return element;
     },
@@ -32,10 +19,7 @@ module.exports = {
     },
 
     waitElementNotVisible: function(locator, timeout = 20) {
-        let element = driver.wait(
-            until.elementLocated(locator),
-            timeout * 1000,
-        );
+        let element = driver.wait(until.elementLocated(locator), timeout * 1000);
         return driver.wait(until.stalenessOf(element), timeout * 1000);
     },
 

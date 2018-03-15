@@ -44,7 +44,7 @@ module.exports = function () {
     });
 
     this.Then(/^Gas limit is equal to "([^"]*)"$/, function (gasLimit) {
-        let gasL = shared.wdHelper.resolve(shared.wallets, gasLimit);
+        let gasL = shared.wdHelper.resolve(shared.config, gasLimit);
         return page.transferConfirmation.checkGasLimit(gasL);
     });
 

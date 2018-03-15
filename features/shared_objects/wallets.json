@@ -14,7 +14,16 @@
         "value": "U2FsdGVkX1+6JTwfyS9PNapszj530kX2ts/47PRnHbrODCmRJk/osWqAuWuBXWlTv76YEiVgGrrf4h6GpQCPQA=="
     },
     "oneAccount": {
-        "name": "one-account",
+        "name": {
+            "version": 2,
+            "data": [
+                {
+                    "name": "one-account",
+                    "chainId": "rinkeby",
+                    "nodeUrl": "http://localhost:8545"
+                }
+            ]
+        },
         "key": "sonm_4aee69735324ccd9717bad3581e7194184b658d1987743b82a99c409f463d4ab",
         "value": "U2FsdGVkX1+26+cpOS6FJJZd0jNLx7sFOD/1DcaJU9fC5PwgoCSPpiyEufFfsHP13xPs/djlCjOh0hvb3XDfxrSvUp5cP+/kKClgnlNstZIknxiUDZI1Y8NdZK7hYDp7K+kHQ13/Pu0yXKOSVLFJ7h3ckQ0dzkBsyoY/dUkVkxwqahQYKGd6kneRfCwvKxCAQuizUo5fZRLFyuJzrrnaiWwUXTfGFVbrQXzKVEdg20moeXfvLpiO2ZI8zYv8iPv8LTIAFw5Y/Rw8nA6oZkjfIQUkaGGOtiX6iQ+kiaZsJ2Rz8k/qfAJlFa0IvJRz1+uc21C2zZnFyHslbkcu3rs3AcB+bO/GaHlAiOSa/5kGGBTX3FvfLkWXBYvZPV2llC7dbipvnnkdePbZW1qyOE1eSsPpMGfiTX4q34f/oXVkraJZ+eNNSCNRrl/fu/lFzFIam1CFgD8OOhNXeJdiwPOKjRPcNlXCk/DKLH8eY2PmmM2wz3M9tUBGx4CtaLw98/4HWay6UOjqwbjt5rPxN5xgeKSnD7d9PLie4xGIKtqFXEmkhBn/PW2VPKfcA45PvOEmgBq1iz6kBS/Gy8zFxIaasoZOzWk65d0vzp21WtkQNDja8jWtytoQ6cuWo72gd9poXTQgWOlTlOVG8Fdhr9iMJMGuSTMe6iBr5Uze0JM0Ec/3eGUmsTRPs92HptfT515mg76Vg1w43Xv4pEa3iSRTMtt4Zo4ZcBrrdJED73mlMP6wmIpDHhfOKhcdQr6t/DxD0Bmb1Evke6U8y7MGI7hTkc71T1+cFvu4Dcfc4RWieYDDoxswg72E5gUp9PT0MQ2S+7r4hUF9+gNVpBTKN99HfozKPVFx3it2KKLoTJff3NHvPXtGTjSOcw5nSis7RAci"
     },

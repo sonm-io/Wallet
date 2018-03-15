@@ -8,12 +8,12 @@ Feature: Send
     When I select account from by name "1"
     And I type into send to field address "233a526fb4b4b96809432b17d39309bae0a1513d"
     And I set amount "0.01"
-    And I select currency "SONM test token"
+    And I select currency "SONM"
     And I click Next
     Then I should see Transfer confirmation page
     And Account from name is "1" and address is "0xc5ae7e1696b55ff6ee952fb1e1cc1a3df8acde5a"
     And Account to is equal to "233a526fb4b4b96809432b17d39309bae0a1513d"
-    And Amount is equal to "0.01 SNMT"
+    And Amount is equal to "0.01 SNM"
     And Gas limit is equal to "defaultGasLimit"
     When I type password "11111111" into confirmation section
     And I click send button
@@ -76,14 +76,14 @@ Feature: Send
     When I open account "1" details
     And I click on send sonm button
     Then I should see send page
-    And I should see selected currency is "SONM test token"
+    And I should see selected currency is "SONM"
     When I type into send to field address "0x233a526fb4b4b96809432b17d39309bae0a1513d"
     And I set amount "0.01"
     And I click Next
     Then I should see Transfer confirmation page
     And Account from name is "1" and address is "0xc5ae7e1696b55ff6ee952fb1e1cc1a3df8acde5a"
     And Account to is equal to "0x233a526fb4b4b96809432b17d39309bae0a1513d"
-    And Amount is equal to "0.01 SNMT"
+    And Amount is equal to "0.01 SNM"
     And Gas limit is equal to "defaultGasLimit"
     When I type password "11111111" into confirmation section
     And I click send button

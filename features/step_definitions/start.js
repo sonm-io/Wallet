@@ -11,8 +11,7 @@ function closeDisclaimer() {
 module.exports = function () {
     this.Given(/^I open wallet with one existing wallet$/, function () {
         loadMainPage();
-        shared.wdHelper.loadWalletToStorage(shared.wallets.emptyWallet);
-        return closeDisclaimer();
+        return shared.wdHelper.loadWalletToStorage(shared.wallets.emptyWallet);
     });
 
     this.When(/^I click on dont show disclaimer again button$/, function () {

@@ -1,7 +1,7 @@
 module.exports = {
     elements: {
         header: by.xpath('//h1[.="Send"]'),
-        sendTo: by.id('toAddress'),
+        sendTo: by.xpath('//input[@placeholder="Address"]'),
         amount: by.xpath('//input[@placeholder="Amount"]'),
         amountAddMaximumBtn: by.xpath('//button[.="Add maximum"]'),
         gasLimit: by.id('gasLimit'),
@@ -59,9 +59,9 @@ module.exports = {
 
     //select currency from dropdown
 
-    selectCurrency: function (currency) {
-        shared.wdHelper.findVisibleElement(this.elements.currencySelect).click();
-        shared.wdHelper.findVisibleElement(by.xpath('//li[@title="' + currency + '"]')).click();
+    selectCurrency: async function (currency) {
+        await shared.wdHelper.findVisibleElement(this.elements.currencySelect).click();
+        await shared.wdHelper.findVisibleElement(by.xpath('//li[@title="' + currency + '"]')).click();
         return this.checkSelectedCurrency(currency);
     },
 };
