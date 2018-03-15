@@ -29,8 +29,7 @@ module.exports = function () {
     });
 
     this.Given(/^I open wallet with empty storage$/, function () {
-        loadMainPage();
-        return closeDisclaimer();
+        return loadMainPage();
     });
 
     this.Given(/^I have three wallet accounts$/, function () {
@@ -71,7 +70,7 @@ module.exports = function () {
         return closeDisclaimer();
     });
 
-    this.When(/^Click Import Wallet button$/, function () {
+    this.When(/^I click Import Wallet button$/, function () {
         return page.startPage.clickImportWalletButton();
     });
 

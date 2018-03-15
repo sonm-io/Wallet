@@ -15,8 +15,8 @@ module.exports = {
 
     //select wallet file for further import
 
-    selectWalletFileForImport: function () {
-        let targetFile = process.cwd() + '/features/shared_objects/sonm-wallet-45te.json';
+    selectWalletFileForImport: function (walletName) {
+        let targetFile = process.cwd() + '/features/shared_objects/' + walletName;
         return driver.wait(until.elementLocated(this.elements.selectWalletImportField)).sendKeys(targetFile);
     },
 
@@ -35,7 +35,7 @@ module.exports = {
     },
 
     validateField: function (errorMessage) {
-        return page.common.verifyValidationErrorMessage(this.elements.passwordFieldValidMessage, errorMessage);
+        return page.common.verifyValidationErrorMessage(this.elements.validationMessage, errorMessage);
     },
 
     //import wallet

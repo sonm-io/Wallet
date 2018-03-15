@@ -22,7 +22,7 @@ module.exports = {
     },
 
     closeCreateNewWalletDialogue: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.closeDialogue).click();
+        shared.wdHelper.findVisibleElement(this.elements.closeDialogue).click();
     },
 
     //click on wallet dropdown
