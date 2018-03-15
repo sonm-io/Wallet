@@ -71,12 +71,8 @@ module.exports = {
     //verify that validation error message is displayed
 
     verifyValidationErrorMessage: async function (element, messageText) {
-        return await shared.wdHelper
-            .findVisibleElement(element)
-            .getText()
-            .then(validMessageText =>
-                expect(validMessageText).to.equal(messageText),
-            );
+        return await shared.wdHelper.findVisibleElement(element).getText()
+            .then(validMessageText => expect(validMessageText).to.equal(messageText));
     },
 
     //clear input field
@@ -86,9 +82,7 @@ module.exports = {
     },
 
     test: async function () {
-        const webElement = await shared.wdHelper.findVisibleElement(
-            by.css('.sonm-spinner__svg.sonm-load-mask__spinner'),
-        );
+        const webElement = await shared.wdHelper.findVisibleElement(by.css('.sonm-spinner__svg.sonm-load-mask__spinner'));
         const actualCssValue = await webElement.getCssValue('overflow');
         console.log(actualCssValue);
         driver.wait(until.equals(expect(actualCssValue).to.equal('hidden')));

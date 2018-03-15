@@ -12,9 +12,7 @@ module.exports = {
     //wait for page loading according to displayed add account header
 
     waitDialogue: function() {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.header)
-            .getText()
+        return shared.wdHelper.findVisibleElement(this.elements.header).getText()
             .then(text => expect(text).to.equal('Add account'));
     },
 
@@ -22,9 +20,7 @@ module.exports = {
 
     uploadAccountFile: function(filename = 'for_upload.json') {
         let targetFile = process.cwd() + '/features/shared_objects/' + filename;
-        return driver
-            .wait(until.elementLocated(this.elements.fileField))
-            .sendKeys(targetFile);
+        return driver.wait(until.elementLocated(this.elements.fileField)).sendKeys(targetFile);
     },
 
     findPreview: function() {
@@ -34,24 +30,18 @@ module.exports = {
     //enter account name
 
     fillAccountName: function(name) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.accountName)
-            .sendKeys(name);
+        return shared.wdHelper.findVisibleElement(this.elements.accountName).sendKeys(name);
     },
 
     //enter account password
 
     fillPassword: function(password) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.accountPassword)
-            .sendKeys(password);
+        return shared.wdHelper.findVisibleElement(this.elements.accountPassword).sendKeys(password);
     },
 
     //click add account button
 
     clickAddButton: function() {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.addButton)
-            .click();
+        return shared.wdHelper.findVisibleElement(this.elements.addButton).click();
     },
 };

@@ -10,49 +10,37 @@ module.exports = {
 
     //wait for page loading according to displayed add account header
 
-    waitForCreateNewAccountDialogue: function () {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.newAccountPopupHeader)
-            .getText()
+    waitForCreateNewAccountDialogue: function() {
+        return shared.wdHelper.findVisibleElement(this.elements.newAccountPopupHeader).getText()
             .then(text => expect(text).to.equal('New account'));
     },
 
     //fill account name field
 
-    fillNewAccountNameField: function (accountName) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.newAccountNameField)
-            .sendKeys(accountName);
+    fillNewAccountNameField: function(accountName) {
+        return shared.wdHelper.findVisibleElement(this.elements.newAccountNameField).sendKeys(accountName);
     },
 
     //fill account password field
 
-    fillNewAccountPasswordField: function (password) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.newAccountPasswordField)
-            .sendKeys(password);
+    fillNewAccountPasswordField: function(password) {
+        return shared.wdHelper.findVisibleElement(this.elements.newAccountPasswordField).sendKeys(password);
     },
 
     //fill account confirm password field
 
-    fillNewAccountConfirmPasswordField: function (confirmPassword) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.newAccountConfirmPasswordField)
-            .sendKeys(confirmPassword);
+    fillNewAccountConfirmPasswordField: function(confirmPassword) {
+        return shared.wdHelper.findVisibleElement(this.elements.newAccountConfirmPasswordField).sendKeys(confirmPassword);
     },
 
     //fill private key field
 
-    fillPrivateKeyField: function (privateKey) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.newAccountPrivateKeyField)
-            .sendKeys(privateKey);
+    fillPrivateKeyField: function(privateKey) {
+        return shared.wdHelper.findVisibleElement(this.elements.newAccountPrivateKeyField).sendKeys(privateKey);
     },
 
     //create new account
-    createNewAccout: function () {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.createNewAccountButton)
-            .click();
+    createNewAccout: function() {
+        return shared.wdHelper.findVisibleElement(this.elements.createNewAccountButton).click();
     },
 };

@@ -11,42 +11,31 @@ module.exports = {
     //wait for page loading according to displayed add account header
 
     waitForPasswordPopup: async function () {
-        return await shared.wdHelper
-            .findVisibleElement(this.elements.passwordPopupHeader)
-            .getText()
+        return await shared.wdHelper.findVisibleElement(this.elements.passwordPopupHeader).getText()
             .then(text => expect(text).to.equal('Enter password'));
     },
 
     //fill password field
 
     enterPassword: async function (password) {
-        return await shared.wdHelper
-            .findVisibleElement(this.elements.password)
-            .sendKeys(password);
+        return await shared.wdHelper.findVisibleElement(this.elements.password).sendKeys(password);
     },
 
     //validation of password field
 
     validatePasswordField: function () {
-        return page.common.verifyValidationErrorMessage(
-            this.elements.passwordFieldValidMessage,
-            shared.messages.wallet.passwordPopUpMessage,
-        );
+        return page.common.verifyValidationErrorMessage(this.elements.passwordFieldValidMessage, shared.messages.wallet.passwordPopUpMessage,);
     },
 
     //click login button
 
     loginToWallet: async function () {
-        await shared.wdHelper
-            .findVisibleElement(this.elements.loginToWalletButton)
-            .click();
+        await shared.wdHelper.findVisibleElement(this.elements.loginToWalletButton).click();
     },
 
     //close password dialogue
 
     closeDialogue: function () {
-        shared.wdHelper
-            .findVisibleElement(this.elements.closeDialogueButton)
-            .click();
+        return shared.wdHelper.findVisibleElement(this.elements.closeDialogueButton).click();
     },
 };
