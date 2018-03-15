@@ -13,17 +13,17 @@
                 {
                     "name": "test",
                     "chainId": "rinkeby",
-                    "nodeUrl": "https://rinkeby.infura.io"
+                    "nodeUrl": "http://localhost:8545"
                 },
                 {
                     "name": "tAlex",
                     "chainId": "rinkeby",
-                    "nodeUrl": "https://rinkeby.infura.io"
+                    "nodeUrl": "http://localhost:8545"
                 },
                 {
                     "name": "45te",
                     "chainId": "rinkeby",
-                    "nodeUrl": "https://rinkeby.infura.io"
+                    "nodeUrl": "http://localhost:8545"
                 }
             ]
         },

@@ -6,7 +6,7 @@
                 {
                     "name": "empty",
                     "chainId": "rinkeby",
-                    "nodeUrl": "https://rinkeby.infura.io"
+                    "nodeUrl": "http://localhost:8545"
                 }
             ]
         },

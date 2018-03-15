@@ -1,4 +1,5 @@
 
+@send
 Feature: Send
 
   Scenario: Send snm to address without 0x

@@ -10,9 +10,7 @@ module.exports = {
         balanceHeader: by.className('sonm-currency-balance-list__header'),
         accountNames: by.className('sonm-account-item__name-text'),
         myFundsList: by.css('.sonm-currency-balance-list__list'),
-        fundItem: by.css(
-            '.sonm-currency-balance-list__list .sonm-balance__symbol',
-        ),
+        fundItem: by.css('.sonm-currency-balance-list__list .sonm-balance__symbol'),
     },
 
     //TODO add copy, download, show private key functions

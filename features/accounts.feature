@@ -1,10 +1,11 @@
 
+@account
 Feature: Account
 
   Scenario: Add first account from file
     Given Login to wallet "emptyWallet" with password "11111111"
     Then I should see accounts page
-    When I press Add account
+    When I press import account
     Then I should see add account dialogue
     When I select keystore file "for_upload.json"
     Then I see preview
@@ -17,7 +18,7 @@ Feature: Account
   Scenario: Add new account
     Given Login to wallet "emptyWallet" with password "11111111"
     Then I should see accounts page
-    When I press New account
+    When I press create new account
     Then I should see new account dialogue
     When I type new account password "asdaasda"
     And I type new account password confirmation "asdaasda"

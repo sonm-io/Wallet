@@ -1,20 +1,16 @@
 module.exports = {
     elements: {
-        newAccountPopupHeader: by.className(
-            'sonm-form sonm-accounts-create-account__form',
-        ),
+        newAccountPopupHeader: by.className('sonm-form sonm-accounts-create-account__form'),
         newAccountNameField: by.xpath('//input[@name="name"]'),
         newAccountPasswordField: by.xpath('//input[@name="password"]'),
-        newAccountConfirmPasswordField: by.xpath(
-            '//input[@name="confirmation"]',
-        ),
+        newAccountConfirmPasswordField: by.xpath('//input[@name="confirmation"]'),
         newAccountPrivateKeyField: by.xpath('//input[@name="privateKey"]'),
         createNewAccountButton: by.xpath('//button[.="Create"]'),
     },
 
     //wait for page loading according to displayed add account header
 
-    waitForCreateNewAccountDialogue: function() {
+    waitForCreateNewAccountDialogue: function () {
         return shared.wdHelper
             .findVisibleElement(this.elements.newAccountPopupHeader)
             .getText()
@@ -23,7 +19,7 @@ module.exports = {
 
     //fill account name field
 
-    fillNewAccountNameField: function(accountName) {
+    fillNewAccountNameField: function (accountName) {
         return shared.wdHelper
             .findVisibleElement(this.elements.newAccountNameField)
             .sendKeys(accountName);
@@ -31,7 +27,7 @@ module.exports = {
 
     //fill account password field
 
-    fillNewAccountPasswordField: function(password) {
+    fillNewAccountPasswordField: function (password) {
         return shared.wdHelper
             .findVisibleElement(this.elements.newAccountPasswordField)
             .sendKeys(password);
@@ -39,7 +35,7 @@ module.exports = {
 
     //fill account confirm password field
 
-    fillNewAccountConfirmPasswordField: function(confirmPassword) {
+    fillNewAccountConfirmPasswordField: function (confirmPassword) {
         return shared.wdHelper
             .findVisibleElement(this.elements.newAccountConfirmPasswordField)
             .sendKeys(confirmPassword);
@@ -47,14 +43,14 @@ module.exports = {
 
     //fill private key field
 
-    fillPrivateKeyField: function(privateKey) {
+    fillPrivateKeyField: function (privateKey) {
         return shared.wdHelper
             .findVisibleElement(this.elements.newAccountPrivateKeyField)
             .sendKeys(privateKey);
     },
 
     //create new account
-    createNewAccout: function() {
+    createNewAccout: function () {
         return shared.wdHelper
             .findVisibleElement(this.elements.createNewAccountButton)
             .click();

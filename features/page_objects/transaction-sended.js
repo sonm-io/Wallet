@@ -3,19 +3,15 @@ module.exports = {
         header: by.xpath('//h1[.="Transaction has been sent"]'),
     },
 
-    waitForAccountDetailPageLoading: function() {
+    waitForAccountDetailPageLoading: function () {
         return shared.wdHelper.findVisibleElement(this.elements.header);
     },
 
-    clickOpenHistory: function() {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.createNewAccountButton)
-            .click();
+    clickOpenHistory: function () {
+        return shared.wdHelper.findVisibleElement(this.elements.createNewAccountButton).click();
     },
 
-    clickSendTransaction: function() {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.importAccountButton)
-            .click();
+    clickSendTransaction: function () {
+        return shared.wdHelper.findVisibleElement(this.elements.importAccountButton).click();
     },
 };
