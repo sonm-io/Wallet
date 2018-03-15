@@ -18,4 +18,8 @@ module.exports = function () {
     this.When(/^I press button Create$/, function () {
         return page.dialogueNewAccount.clickCreateButton();
     });
+
+    this.When(/^I type private key "([^"]*)"$/, function (privateKey) {
+        return page.dialogueNewAccount.fillPrivateKey(privateKey);
+    });
 };

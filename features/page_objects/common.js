@@ -63,9 +63,7 @@ module.exports = {
     //enter value into dropdown for search
 
     enterValueForSearch: async function (dropdownSearchField, searchValue) {
-        await shared.wdHelper
-            .findVisibleElement(dropdownSearchField)
-            .sendKeys(searchValue);
+        await shared.wdHelper.findVisibleElement(dropdownSearchField).sendKeys(searchValue);
     },
 
     //verify that validation error message is displayed

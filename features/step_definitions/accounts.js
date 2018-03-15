@@ -15,6 +15,10 @@ module.exports = function() {
         return page.accountsPage.findAccountInList(name);
     });
 
+    this.Then(/^I should see account "([^"]*)" in accounts list with hash "([^"]*)"$/, function(name, hash) {
+        return page.accountsPage.findAccountInListWithHash(name, hash);
+    });
+
     this.When(/^I open account "([^"]*)" details$/, function(name) {
         return page.accountsPage.clickOnAccountInList(name);
     });

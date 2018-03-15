@@ -5,6 +5,7 @@ module.exports = {
         password: by.xpath('//input[@name="password"]'),
         confirmation: by.xpath('//input[@name="confirmation"]'),
         name: by.xpath('//input[@name="name"]'),
+        privateKey: by.xpath('//input[@name="privateKey"]'),
         createButton: by.xpath('//button[.="Create"]')
     },
 
@@ -23,6 +24,10 @@ module.exports = {
 
     fillAccountName: function (name) {
         return shared.wdHelper.findVisibleElement(this.elements.name).sendKeys(name);
+    },
+
+    fillPrivateKey: function (privateKey) {
+        return shared.wdHelper.findVisibleElement(this.elements.privateKey).sendKeys(privateKey);
     },
 
     clickCreateButton: function () {
