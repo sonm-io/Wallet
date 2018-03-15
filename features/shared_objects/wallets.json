@@ -1,63 +1,67 @@
 {
-  "browser": {
-    "width": 1280,
-    "height": 1024
-  },
-  "defaultGasLimit":"250000",
-  "emptyWallet": {
-    "name": "empty",
-    "key": "sonm_2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d",
-    "value": "U2FsdGVkX1+6JTwfyS9PNapszj530kX2ts/47PRnHbrODCmRJk/osWqAuWuBXWlTv76YEiVgGrrf4h6GpQCPQA=="
-  },
-  "oneAccount": {
-    "name": "one-account",
-    "key": "sonm_4aee69735324ccd9717bad3581e7194184b658d1987743b82a99c409f463d4ab",
-    "value": "U2FsdGVkX1+26+cpOS6FJJZd0jNLx7sFOD/1DcaJU9fC5PwgoCSPpiyEufFfsHP13xPs/djlCjOh0hvb3XDfxrSvUp5cP+/kKClgnlNstZIknxiUDZI1Y8NdZK7hYDp7K+kHQ13/Pu0yXKOSVLFJ7h3ckQ0dzkBsyoY/dUkVkxwqahQYKGd6kneRfCwvKxCAQuizUo5fZRLFyuJzrrnaiWwUXTfGFVbrQXzKVEdg20moeXfvLpiO2ZI8zYv8iPv8LTIAFw5Y/Rw8nA6oZkjfIQUkaGGOtiX6iQ+kiaZsJ2Rz8k/qfAJlFa0IvJRz1+uc21C2zZnFyHslbkcu3rs3AcB+bO/GaHlAiOSa/5kGGBTX3FvfLkWXBYvZPV2llC7dbipvnnkdePbZW1qyOE1eSsPpMGfiTX4q34f/oXVkraJZ+eNNSCNRrl/fu/lFzFIam1CFgD8OOhNXeJdiwPOKjRPcNlXCk/DKLH8eY2PmmM2wz3M9tUBGx4CtaLw98/4HWay6UOjqwbjt5rPxN5xgeKSnD7d9PLie4xGIKtqFXEmkhBn/PW2VPKfcA45PvOEmgBq1iz6kBS/Gy8zFxIaasoZOzWk65d0vzp21WtkQNDja8jWtytoQ6cuWo72gd9poXTQgWOlTlOVG8Fdhr9iMJMGuSTMe6iBr5Uze0JM0Ec/3eGUmsTRPs92HptfT515mg76Vg1w43Xv4pEa3iSRTMtt4Zo4ZcBrrdJED73mlMP6wmIpDHhfOKhcdQr6t/DxD0Bmb1Evke6U8y7MGI7hTkc71T1+cFvu4Dcfc4RWieYDDoxswg72E5gUp9PT0MQ2S+7r4hUF9+gNVpBTKN99HfozKPVFx3it2KKLoTJff3NHvPXtGTjSOcw5nSis7RAci"
-  },
-  "accounts": [
-    {
-      "vasya": {
-        "address": "88057f14236687831e1fd205e8efb9e45166fe72",
-        "crypto": {
-          "cipher": "aes-128-ctr",
-          "ciphertext": "c5ba5234a2ee63ba3d6227ec76badc1c1b90d3cb89c67e6b3838b5ea151a871f",
-          "cipherparams": {
-            "iv": "c0bba37aabca014fb2e167d950dda52e"
-          },
-          "kdf": "scrypt",
-          "kdfparams": {
-            "dklen": 32,
-            "n": 262144,
-            "p": 1,
-            "r": 8,
-            "salt": "4774e694dc2f374e5a1e78dba432a6af172f3cc58cf4283fa3e6b1d70a1ec1d5"
-          },
-          "mac": "7e91f97c19321c996c3fab95f52e35cd56172ac1de224bc224446ea0a8e33179"
+    "emptyWallet": {
+        "name": {
+            "version": 2,
+            "data": [
+                {
+                    "name": "empty",
+                    "chainId": "rinkeby",
+                    "nodeUrl": "https://rinkeby.infura.io"
+                }
+            ]
         },
-        "id": "c9356318-8835-413c-932e-4f9e3ad472f2",
-        "version": 3
-      },
-      "forUpload": {
-        "address": "233a526fb4b4b96809432b17d39309bae0a1513d",
-        "crypto": {
-          "cipher": "aes-128-ctr",
-          "ciphertext": "8aabc368750c06d98f935f148e29c5e2eea44515c5aa00caf39c66b1215123ce",
-          "cipherparams": {
-            "iv": "393453399646ca2bbd4a7ffbf93f16cc"
-          },
-          "kdf": "scrypt",
-          "kdfparams": {
-            "dklen": 32,
-            "n": 262144,
-            "p": 1,
-            "r": 8,
-            "salt": "aeb86f0c8ac6248e5efc7b61411d7a6886737ad5dbc8d7749d81866e54cd9057"
-          },
-          "mac": "482545e125c87ef8ce1196caa163d21020faaaceda8b43ca450d1e8bc1b5eba2"
-        },
-        "id": "78f35cff-43e9-4da2-896a-6bbbfc18edaf",
-        "version": 3
-      }
-    }
-  ]
+        "key": "sonm_2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d",
+        "value": "U2FsdGVkX1+6JTwfyS9PNapszj530kX2ts/47PRnHbrODCmRJk/osWqAuWuBXWlTv76YEiVgGrrf4h6GpQCPQA=="
+    },
+    "oneAccount": {
+        "name": "one-account",
+        "key": "sonm_4aee69735324ccd9717bad3581e7194184b658d1987743b82a99c409f463d4ab",
+        "value": "U2FsdGVkX1+26+cpOS6FJJZd0jNLx7sFOD/1DcaJU9fC5PwgoCSPpiyEufFfsHP13xPs/djlCjOh0hvb3XDfxrSvUp5cP+/kKClgnlNstZIknxiUDZI1Y8NdZK7hYDp7K+kHQ13/Pu0yXKOSVLFJ7h3ckQ0dzkBsyoY/dUkVkxwqahQYKGd6kneRfCwvKxCAQuizUo5fZRLFyuJzrrnaiWwUXTfGFVbrQXzKVEdg20moeXfvLpiO2ZI8zYv8iPv8LTIAFw5Y/Rw8nA6oZkjfIQUkaGGOtiX6iQ+kiaZsJ2Rz8k/qfAJlFa0IvJRz1+uc21C2zZnFyHslbkcu3rs3AcB+bO/GaHlAiOSa/5kGGBTX3FvfLkWXBYvZPV2llC7dbipvnnkdePbZW1qyOE1eSsPpMGfiTX4q34f/oXVkraJZ+eNNSCNRrl/fu/lFzFIam1CFgD8OOhNXeJdiwPOKjRPcNlXCk/DKLH8eY2PmmM2wz3M9tUBGx4CtaLw98/4HWay6UOjqwbjt5rPxN5xgeKSnD7d9PLie4xGIKtqFXEmkhBn/PW2VPKfcA45PvOEmgBq1iz6kBS/Gy8zFxIaasoZOzWk65d0vzp21WtkQNDja8jWtytoQ6cuWo72gd9poXTQgWOlTlOVG8Fdhr9iMJMGuSTMe6iBr5Uze0JM0Ec/3eGUmsTRPs92HptfT515mg76Vg1w43Xv4pEa3iSRTMtt4Zo4ZcBrrdJED73mlMP6wmIpDHhfOKhcdQr6t/DxD0Bmb1Evke6U8y7MGI7hTkc71T1+cFvu4Dcfc4RWieYDDoxswg72E5gUp9PT0MQ2S+7r4hUF9+gNVpBTKN99HfozKPVFx3it2KKLoTJff3NHvPXtGTjSOcw5nSis7RAci"
+    },
+    "accounts": [
+        {
+            "vasya": {
+                "address": "88057f14236687831e1fd205e8efb9e45166fe72",
+                "crypto": {
+                    "cipher": "aes-128-ctr",
+                    "ciphertext": "c5ba5234a2ee63ba3d6227ec76badc1c1b90d3cb89c67e6b3838b5ea151a871f",
+                    "cipherparams": {
+                        "iv": "c0bba37aabca014fb2e167d950dda52e"
+                    },
+                    "kdf": "scrypt",
+                    "kdfparams": {
+                        "dklen": 32,
+                        "n": 262144,
+                        "p": 1,
+                        "r": 8,
+                        "salt": "4774e694dc2f374e5a1e78dba432a6af172f3cc58cf4283fa3e6b1d70a1ec1d5"
+                    },
+                    "mac": "7e91f97c19321c996c3fab95f52e35cd56172ac1de224bc224446ea0a8e33179"
+                },
+                "id": "c9356318-8835-413c-932e-4f9e3ad472f2",
+                "version": 3
+            },
+            "forUpload": {
+                "address": "233a526fb4b4b96809432b17d39309bae0a1513d",
+                "crypto": {
+                    "cipher": "aes-128-ctr",
+                    "ciphertext": "8aabc368750c06d98f935f148e29c5e2eea44515c5aa00caf39c66b1215123ce",
+                    "cipherparams": {
+                        "iv": "393453399646ca2bbd4a7ffbf93f16cc"
+                    },
+                    "kdf": "scrypt",
+                    "kdfparams": {
+                        "dklen": 32,
+                        "n": 262144,
+                        "p": 1,
+                        "r": 8,
+                        "salt": "aeb86f0c8ac6248e5efc7b61411d7a6886737ad5dbc8d7749d81866e54cd9057"
+                    },
+                    "mac": "482545e125c87ef8ce1196caa163d21020faaaceda8b43ca450d1e8bc1b5eba2"
+                },
+                "id": "78f35cff-43e9-4da2-896a-6bbbfc18edaf",
+                "version": 3
+            }
+        }
+    ]
 }

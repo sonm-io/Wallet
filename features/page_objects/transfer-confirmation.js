@@ -1,5 +1,4 @@
 module.exports = {
-
     elements: {
         header: by.xpath('//h1[.="Transfer confirmation"]'),
         addrFromName: by.className('sonm-send-confirm__account-name'),
@@ -12,41 +11,73 @@ module.exports = {
         backBtn: by.xpath('//button[.="Back"]'),
     },
 
-    waitPageLoaded: function () {
+    //wait for load account page according to displayed header
+
+    waitForAccountDetailPageLoading: function() {
         return shared.wdHelper.findVisibleElement(this.elements.header);
     },
 
-    checkAccountFrom: function (name, hex) {
-        shared.wdHelper.findVisibleElement(this.elements.addrFromName).getText()
-            .then((text) => expect(text).to.equal(name));
-        return shared.wdHelper.findVisibleElement(this.elements.addrFromHex).getText()
-            .then((text) => expect(text).to.equal(hex));
+    //verify account form
+
+    checkAccountFrom: function(name, hex) {
+        shared.wdHelper
+            .findVisibleElement(this.elements.addrFromName)
+            .getText()
+            .then(text => expect(text).to.equal(name));
+        return shared.wdHelper
+            .findVisibleElement(this.elements.addrFromHex)
+            .getText()
+            .then(text => expect(text).to.equal(hex));
     },
 
-    checkAccountTo: function (address) {
-        return shared.wdHelper.findVisibleElement(this.elements.addrTo).getText()
-            .then((text) => expect(text).to.equal(address));
+    //verify send account to
+
+    checkAccountTo: function(address) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.addrTo)
+            .getText()
+            .then(text => expect(text).to.equal(address));
     },
 
-    checkAmount: function (amount) {
-        return shared.wdHelper.findVisibleElement(this.elements.amount).getText()
-            .then((text) => expect(text).to.equal(amount));
+    //verify amount
+
+    checkAmount: function(amount) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.amount)
+            .getText()
+            .then(text => expect(text).to.equal(amount));
     },
 
-    checkGasLimit: function (gasLimit) {
-        return shared.wdHelper.findVisibleElement(this.elements.gasLimit).getText()
-            .then((text) => expect(text).to.equal(gasLimit));
+    //verify gas limit amount
+
+    checkGasLimit: function(gasLimit) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.gasLimit)
+            .getText()
+            .then(text => expect(text).to.equal(gasLimit));
     },
 
-    fillPassword: function (password) {
-        return shared.wdHelper.findVisibleElement(this.elements.password).sendKeys(password);
+    //fill account password field
+
+    fillPassword: function(password) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.password)
+            .sendKeys(password);
     },
 
-    clickSend: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.sendBtn).click();
+    //click send button
+
+    clickSend: function() {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.sendBtn)
+            .click();
     },
 
-    clickBack: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.backBtn).click();
-    }
+    //go to previous page
+
+    clickBack: function() {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.backBtn)
+            .click();
+    },
 };

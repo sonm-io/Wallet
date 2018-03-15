@@ -1,5 +1,4 @@
 module.exports = {
-
     elements: {
         header: by.xpath('//h1[.="Send"]'),
         sendTo: by.id('toAddress'),
@@ -13,37 +12,72 @@ module.exports = {
         NextBtn: by.xpath('//button[.="NEXT"]'),
         currencySelect: by.className('sonm-currency-big-select__option'),
         selectedCurrency: by.className('sonm-currency-item__name'),
+        sendTab: by.xpath('//li[.="Send"]'),
+        select: by.className('sonm-account-big-select'),
+        selectedAccount: by.className('sonm-account-item__name-text'),
     },
 
-    waitPageLoaded: function () {
+    //wait for loading account page according to displayed header
+
+    waitForAccountDetailPageLoading: function() {
         return shared.wdHelper.findVisibleElement(this.elements.header);
     },
 
-    selectAddressFromByName: function (accName) {
-        return page.common.selectAccountFromDropdown(accName);
+    //select address from dropdown
+
+    selectAddressFromByName: function(accName) {
+        //return page.common.selectAccountFromDropdown(accName);
+
+        return page.common.selectFromStandardDropdown(
+            this.elements.select,
+            by.xpath('//li[@title="' + accName + '"]'),
+            this.elements.selectedAccount,
+            accName,
+        );
     },
 
-    fillAddressTo: function (address) {
-        return shared.wdHelper.findVisibleElement(this.elements.sendTo).sendKeys(address);
+    //fill field send address to
+
+    fillAddressTo: function(address) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.sendTo)
+            .sendKeys(address);
     },
 
-    setAmountField: function (amount) {
-        return shared.wdHelper.findVisibleElement(this.elements.amount).sendKeys(amount);
+    //fill amount field
+
+    setAmountField: function(amount) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.amount)
+            .sendKeys(amount);
     },
 
-    clickNext: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.NextBtn).click();
+    // click next button
+
+    clickNext: function() {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.NextBtn)
+            .click();
     },
 
-    checkSelectedCurrency: function (currency) {
-        return shared.wdHelper.findVisibleElement(this.elements.selectedCurrency).getText()
-            .then((text) => expect(text).to.equal(currency));
+    //verify selected currency
+
+    checkSelectedCurrency: function(currency) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.selectedCurrency)
+            .getText()
+            .then(text => expect(text).to.equal(currency));
     },
 
-    selectCurrency: function (currency) {
-        shared.wdHelper.findVisibleElement(this.elements.currencySelect).click();
-        shared.wdHelper.findVisibleElement(by.xpath('//li[@title="' + currency + '"]')).click();
+    //select currency from dropdown
+
+    selectCurrency: function(currency) {
+        shared.wdHelper
+            .findVisibleElement(this.elements.currencySelect)
+            .click();
+        shared.wdHelper
+            .findVisibleElement(by.xpath('//li[@title="' + currency + '"]'))
+            .click();
         return this.checkSelectedCurrency(currency);
-    }
-
+    },
 };

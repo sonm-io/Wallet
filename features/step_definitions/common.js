@@ -1,10 +1,11 @@
-module.exports = function () {
-
-    this.Given(/^Navigate to send page$/, function () {
+module.exports = function() {
+    this.Given(/^Navigate to send page$/, function() {
         return page.common.navigateToSend();
     });
 
-    this.Then(/^Send link is disabled$/, function () {
-        return page.common.checkSendTabDisabled()
+    //TODO refactor after adding attributes to send tab
+
+    this.Then(/^Send link tab is disabled$/, function() {
+        return page.accountsPage.checkSendTabIsDisabled();
     });
 };
