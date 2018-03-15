@@ -1,36 +1,35 @@
 .sonm-show-key {
-  &__key {
-    padding: 0;
-    margin: 10px 0;
-    font-size: 12px;
-    font-weight: bold;
-  }
-
-  &__form {
-
-  }
-
-  &__dialog {
-    transition: all .25s;
-
-    &--before {
-      width: 280px;
-      height: 250px;
+    &__key {
+        padding: 0;
+        margin: 10px 0;
+        font-size: 12px;
+        font-weight: bold;
     }
 
-    &--after {
-      width: 580px;
-      height: 220px;
+    &__form {
     }
-  }
 
-  &__hash {
-    transition: all .25s .25s;
-    opacity: 0;
-    margin: 0 0 20px 0;
+    &__dialog {
+        transition: all 0.25s;
 
-    &--visible {
-      opacity: 1;
+        &--before {
+            width: 280px;
+            height: 250px;
+        }
+
+        &--after {
+            width: 580px;
+            height: 220px;
+        }
     }
-  }
+
+    &__hash {
+        transition: all 0.25s 0.25s;
+        opacity: 0;
+        margin: 0 0 20px 0;
+
+        &--visible {
+            opacity: 1;
+        }
+    }
 }

@@ -6,6 +6,7 @@ export interface ITokenItemProps {
     address: string;
     balance: string;
     symbol: string;
+    decimalPointOffset: number;
 }
 
 export function TokenDeleteConfirmation(props: ITokenItemProps) {

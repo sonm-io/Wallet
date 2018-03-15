@@ -16,6 +16,7 @@ export function DeleteAccountConfirmation(props: IAccountItemProps) {
                 name={props.name}
                 etherBalance={props.etherBalance}
                 primaryTokenBalance={props.primaryTokenBalance}
+                primaryTokenInfo={props.primaryTokenInfo}
             />
         </div>
     );

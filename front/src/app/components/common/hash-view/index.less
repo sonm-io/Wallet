@@ -1,51 +1,51 @@
 .sonm-hash {
-  display: inline-flex;
-  overflow: hidden;
-  white-space: nowrap;
-  text-decoration: none !important;
-  color: inherit;
-  max-width: 100%;
-  padding: 0;
-  align-items: flex-end;
-
-  &:hover,
-  &:active,
-  &:visited {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  &__start {
+    display: inline-flex;
     overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: inherit;
-    display: block;
-    margin: 0;
-    padding: 0;
-    flex: 1 1 0;
-  }
-
-  &__end {
-    font-size: inherit;
-    margin: 0;
-    padding: 0;
-  }
-
-  &__copy {
-    outline: none;
-    outline-offset: 0;
-    display: inline-block;
-    border: 0 solid transparent;
-    margin: 1px 2px;
-    padding: 0;
-    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none !important;
     color: inherit;
-    background: transparent none;
-    appearance: none;
+    max-width: 100%;
+    padding: 0;
+    align-items: flex-end;
 
-    &:focus,
-    &:active {
-      outline: @outline;
+    &:hover,
+    &:active,
+    &:visited {
+        text-decoration: none;
+        color: inherit;
     }
-  }
+
+    &__start {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: inherit;
+        display: block;
+        margin: 0;
+        padding: 0;
+        flex: 1 1 0;
+    }
+
+    &__end {
+        font-size: inherit;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__copy {
+        outline: none;
+        outline-offset: 0;
+        display: inline-block;
+        border: 0 solid transparent;
+        margin: 1px 2px;
+        padding: 0;
+        cursor: pointer;
+        color: inherit;
+        background: transparent none;
+        appearance: none;
+
+        &:focus,
+        &:active {
+            outline: @outline;
+        }
+    }
 }

@@ -3,51 +3,57 @@
 @load-mask-transition: opacity 0.15s ease-in 0.2s;
 
 .sonm-load-mask {
-  visibility: hidden;
+    visibility: hidden;
 
-  &__pale {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: @color-brand-bg;
-    opacity: 0;
-    z-index: @z-everest;
-    transition: @load-mask-transition;
-    cursor: progress;
-  }
+    &__pale {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: @color-brand-bg;
+        opacity: 0;
+        z-index: @z-everest;
+        transition: @load-mask-transition;
+        cursor: progress;
+    }
 
-  &__spinner {
-    opacity: 0;
-    z-index: @z-everest + 1;
-    transition: @load-mask-transition;
-    cursor: progress;
-  }
+    &__spinner {
+        opacity: 0;
+        z-index: @z-everest + 1;
+        transition: @load-mask-transition;
+        cursor: progress;
+    }
 
-  &--visible {
-    visibility: visible;
-  }
+    &--visible {
+        visibility: visible;
+    }
 
-  &--white &__pale {
-    background-color: @color-white;
-  }
+    &--white &__pale {
+        background-color: @color-white;
+    }
 
-  &--visible&--white &__pale {
-    opacity: 0.4;
-  }
+    &--visible&--white &__pale {
+        opacity: 0.4;
+    }
 
-  &--visible &__pale {
-    opacity: 0.8;
-  }
+    &--visible &__pale {
+        opacity: 0.8;
+    }
 
-  &--visible &__spinner {
-    opacity: 1;
-  }
+    &--visible &__spinner {
+        opacity: 1;
+    }
 }
 
 @keyframes spinner-rotate {
-  0% { transform: rotate(0deg) }
-  50% { transform: rotate(180deg) }
-  99% { transform: rotate(360deg) }
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    99% {
+        transform: rotate(360deg);
+    }
 }

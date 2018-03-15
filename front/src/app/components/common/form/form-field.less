@@ -1,63 +1,64 @@
-@import "guide.less";
+@import 'guide.less';
 
 @sonm-form-field-gap-width: 6px;
 @sonm-form-field-gap-width-half: 6px / 2;
 @sonm-form-field-font-size: 14px;
 
 :root {
-  --color-form-field-text: @color-font-gray;
-  --color-input-border: @color-border;
+    --color-form-field-text: @color-font-gray;
+    --color-input-border: @color-border;
 }
 
 .sonm-form-field {
-  display: block;
-
-  &--error {
-    color: @color-pink;
-    --color-input-underline: @color-pink;
-    --color-input-border: @color-pink;
-  }
-
-  &--success {
-    color: @color-green;
-    --color-input-underline: @color-green;
-    --color-input-border: @color-green;
-  }
-
-  &--warning {
-    color: @color-orange;
-    --color-input-underline: @color-orange;
-    --color-input-border: @color-orange;
-  }
-
-  &--info {
-    color: @color-blue;
-    --color-input-underline:  @color-blue;
-  }
-
-  &--full-width {
-    width: 100%;
     display: block;
-  }
 
-  &__help,
-  &__label {
-    line-height: 100%;
-    height: @sonm-form-field-font-size;
-  }
+    &--error {
+        color: @color-pink;
+        --color-input-underline: @color-pink;
+        --color-input-border: @color-pink;
+    }
 
-  & &__input > input {
-    border-color: var(--color-input-border)
-  }
+    &--success {
+        color: @color-green;
+        --color-input-underline: @color-green;
+        --color-input-border: @color-green;
+    }
 
-  &__label {
-    margin: 0 0 @sonm-form-field-gap-width 0;
-    font-size: @sonm-form-field-font-size;
-    color: var(--color-form-field-text);
-  }
+    &--warning {
+        color: @color-orange;
+        --color-input-underline: @color-orange;
+        --color-input-border: @color-orange;
+    }
 
-  &__help {
-    margin: @sonm-form-field-gap-width-half 0 @sonm-form-field-gap-width-half 0;
-    font-size: @sonm-form-field-font-size - 2px;
-  }
+    &--info {
+        color: @color-blue;
+        --color-input-underline: @color-blue;
+    }
+
+    &--full-width {
+        width: 100%;
+        display: block;
+    }
+
+    &__help,
+    &__label {
+        line-height: 100%;
+        height: @sonm-form-field-font-size;
+    }
+
+    & &__input > input {
+        border-color: var(--color-input-border);
+    }
+
+    &__label {
+        margin: 0 0 @sonm-form-field-gap-width 0;
+        font-size: @sonm-form-field-font-size;
+        color: var(--color-form-field-text);
+    }
+
+    &__help {
+        margin: @sonm-form-field-gap-width-half 0
+            @sonm-form-field-gap-width-half 0;
+        font-size: @sonm-form-field-font-size - 2px;
+    }
 }
