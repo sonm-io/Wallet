@@ -73,6 +73,7 @@ const DEFAULT_NODES: INodes = {
     default: 'https://mainnet.infura.io',
     livenet: 'https://mainnet.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
+    testrpc: 'http://localhost',
 };
 
 const DEFAULT_TOKENS: ITokens = {
@@ -85,6 +86,14 @@ const DEFAULT_TOKENS: ITokens = {
         },
     ],
     rinkeby: [
+        {
+            name: 'PIG',
+            decimalPointOffset: 18,
+            symbol: 'PIG',
+            address: '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
+        },
+    ],
+    testrpc: [
         {
             name: 'PIG',
             decimalPointOffset: 18,

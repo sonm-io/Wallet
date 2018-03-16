@@ -33,7 +33,7 @@ describe('Api', async function() {
         const response = await Api.createWallet(
             walletPassword,
             walletName,
-            'rinkeby',
+            'testrpc',
         );
         expect(response.data).to.be.a('object');
 
