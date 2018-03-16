@@ -3,7 +3,7 @@ function loadMainPage() {
     return helpers.loadPage(page.startPage.url, 5);
 }
 
-function closeDisclaimer() {
+function  closeDisclaimer() {
     page.dialogueStartDisclaimer.waitForDisclaimerLoad();
     return page.dialogueStartDisclaimer.clickUnderstandButton();
 }
@@ -34,11 +34,11 @@ module.exports = function () {
 
     this.Given(/^I have three wallet accounts$/, function () {
         loadMainPage();
-        shared.wdHelper.loadWalletsToStorage(shared.config.accounts);
-        return closeDisclaimer();
+        return shared.wdHelper.loadWalletsToStorage(shared.config.accounts);
     });
 
-    this.When(/^I type password "([^"]*)"$/, function (password) {
+    this.When(/^I type password "([^"]*)"$/, async function (password) {
+        await page.dialogueEnterPassword.waitForPasswordPopup();
         page.dialogueEnterPassword.enterPassword(password);
         return page.dialogueEnterPassword.loginToWallet();
     });

@@ -4,17 +4,18 @@ module.exports = function () {
     });
 
     this.When(/^I click add new wallet button$/, function () {
+        page.dialogueNewWallet.waitNewWalletDialogue();
         return page.dialogueNewWallet.createNewWalletButton();
     });
 
-    this.When(/^I close password dialogue$/, function () {
-        page.dialogueEnterPassword.waitForPasswordPopup();
+    this.When(/^I close password dialogue$/, async function () {
+        await page.dialogueEnterPassword.waitForPasswordPopup();
         return page.dialogueEnterPassword.closeDialogue();
     });
 
-    this.When(/^I press Create wallet$/, function () {
-        page.startPage.waitForAccountsPage();
-        return page.startPage.createWalletFromStartPage();
+    this.When(/^I press Create wallet$/, async function () {
+        await page.startPage.waitForAccountsPage();
+        return await page.startPage.createWalletFromStartPage();
     });
 
     this.Then(/^I fill wallet name field "([^"]*)"$/, function (walletName) {
@@ -25,8 +26,8 @@ module.exports = function () {
         return page.dialogueStartDisclaimer.waitForDisclaimerLoad();
     });
 
-    this.Then(/^I log out from wallet and see enter password popup$/, function () {
-        return page.dialogueEnterPassword.waitForPasswordPopup();
+    this.Then(/^I log out from wallet and see enter password popup$/, async function () {
+        return await page.dialogueEnterPassword.waitForPasswordPopup();
     });
 
     this.Then(/^I should see password field validation error$/, function () {

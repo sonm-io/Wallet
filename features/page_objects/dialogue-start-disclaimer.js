@@ -7,8 +7,8 @@ module.exports = {
 
     //wait for load account page according to displayed understand button
 
-    waitForDisclaimerLoad: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.disclaimer);
+    waitForDisclaimerLoad: async function () {
+        return await driver.wait(until.elementLocated(this.elements.disclaimer));
     },
 
     //click understand button for further navigation to accounts

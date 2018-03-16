@@ -1,6 +1,6 @@
 module.exports = {
     elements: {
-        header: by.className('sonm-login__popup-header'),
+        header: by.xpath('//div/form/h3'),
         nwName: by.xpath('//input[@name="newName"]'),
         nwPass: by.xpath('//input[@name="newPassword"]'),
         nwPassConfirm: by.xpath('//input[@name="newPasswordConfirmation"]'),
@@ -9,8 +9,8 @@ module.exports = {
         selectedNetwork: by.css('div.sonm-login__network-type div > div > div.sonm-select-selection-selected-value'),
     },
 
-    waitNewWalletDialogue: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.header).getText()
+    waitNewWalletDialogue: async function () {
+        return await driver.wait(until.elementLocated(this.elements.header)).getText()
             .then(text => expect(text).to.equal('New wallet'));
     },
 
@@ -64,22 +64,22 @@ module.exports = {
 
     //validate correct wallet name
 
-    validateCreateWalletNameField: function (errorMessage) {
-        return page.common.verifyValidationErrorMessage(by.css('.sonm-login__label:nth-of-type(1) > .sonm-login__label-error'),
+    validateCreateWalletNameField: async function (errorMessage) {
+        return await page.common.verifyValidationErrorMessage(by.css('.sonm-login__label:nth-of-type(1) > .sonm-login__label-error'),
             errorMessage);
     },
 
     //validate correct wallet password
 
-    validateCreateWalletPasswordField: function () {
-        return page.common.verifyValidationErrorMessage(by.css('.sonm-login__label:nth-of-type(2) > .sonm-login__label-error'),
+    validateCreateWalletPasswordField: async function () {
+        return await page.common.verifyValidationErrorMessage(by.css('.sonm-login__label:nth-of-type(2) > .sonm-login__label-error'),
             shared.messages.wallet.walletPasswordValidationMessage);
     },
 
     //validate correct wallet confirm password
 
-    validateCreateWalletConfirmPasswordField: function () {
-        return page.common.verifyValidationErrorMessage(by.css('.sonm-login__label:nth-of-type(3) > .sonm-login__label-error'),
+    validateCreateWalletConfirmPasswordField: async function () {
+        return await page.common.verifyValidationErrorMessage(by.css('.sonm-login__label:nth-of-type(3) > .sonm-login__label-error'),
             shared.messages.wallet.walletConfirmPasswordValidationMessage);
     },
 };

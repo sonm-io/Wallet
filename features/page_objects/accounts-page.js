@@ -23,8 +23,8 @@ module.exports = {
 
     //verify that send tab is disabled
 
-    checkSendTabIsDisabled: function () {
-        return page.common.checkElementIsDisabled(this.elements.sendTab, 'cursor', 'not-allowed');
+    checkSendTabIsDisabled: async function () {
+        return await page.common.checkElementIsDisabled(this.elements.sendTab, 'cursor', 'not-allowed');
     },
 
     //logout from wallet

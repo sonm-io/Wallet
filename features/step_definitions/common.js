@@ -5,7 +5,7 @@ module.exports = function() {
 
     //TODO refactor after adding attributes to send tab
 
-    this.Then(/^Send link tab is disabled$/, function() {
-        return page.accountsPage.checkSendTabIsDisabled();
+    this.Then(/^Send link tab is disabled$/, async function() {
+        return await page.accountsPage.checkSendTabIsDisabled();
     });
 };

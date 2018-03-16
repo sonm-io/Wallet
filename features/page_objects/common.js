@@ -22,9 +22,12 @@ module.exports = {
     //verify that element is displayed on page
 
     checkElementIsDisabled: async function (el, cssValue, expectedCssValue) {
-        const webElement = await shared.wdHelper.findVisibleElement(el);
+        const webElement = await driver.wait(until.elementLocated(el));
+        // console.log(el);
+        // console.log(webElement);
         const actualCssValue = await webElement.getCssValue(cssValue);
-        return await expect(actualCssValue).to.equal(expectedCssValue);
+        //console.log(actualCssValue);
+        return expect(actualCssValue).to.equal(expectedCssValue);
     },
 
     //select value from dropdown
