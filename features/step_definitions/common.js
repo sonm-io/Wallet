@@ -8,4 +8,14 @@ module.exports = function() {
     this.Then(/^Send link tab is disabled$/, async function() {
         return await page.accountsPage.checkSendTabIsDisabled();
     });
+
+    this.Then(/^I should see notification contained text "([^"]*)"$/, function(
+        text,
+    ) {
+        return page.common.verifyNotificationText(text);
+    });
+
+    this.Then(/^I close notification$/, function() {
+        return page.common.closeNotification();
+    });
 };

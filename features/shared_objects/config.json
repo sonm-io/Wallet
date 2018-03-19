@@ -1,5 +1,5 @@
 {
-    "defaultNet": "rinkeby",
+    "defaultNet": "testrpc",
     "defaultGasLimit": "1000000",
     "DEBUG": true,
     "browser": {
@@ -12,17 +12,17 @@
             "data": [
                 {
                     "name": "test",
-                    "chainId": "rinkeby",
+                    "chainId": "testrpc",
                     "nodeUrl": "http://localhost:8545"
                 },
                 {
                     "name": "tAlex",
-                    "chainId": "rinkeby",
+                    "chainId": "testrpc",
                     "nodeUrl": "http://localhost:8545"
                 },
                 {
                     "name": "45te",
-                    "chainId": "rinkeby",
+                    "chainId": "testrpc",
                     "nodeUrl": "http://localhost:8545"
                 }
             ]

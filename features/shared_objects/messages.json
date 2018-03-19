@@ -13,5 +13,8 @@
         "importWalletIncorrectPasswordValidationMessage": "Password is not valid",
         "importWalletSelectFileValidationMessage": "Select SONM wallet export file",
         "importWalletIncorrectFileValidationMessage": "This is not SONM wallet export file"
+    },
+    "tx": {
+        "successtx": "Transaction is completed successfully"
     }
 }
