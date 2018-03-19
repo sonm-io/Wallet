@@ -1,5 +1,4 @@
 module.exports = function() {
-
     this.When(/^I click on send ethereum button$/, function() {
         return page.accountDetailPage.clickSendEthereum();
     });

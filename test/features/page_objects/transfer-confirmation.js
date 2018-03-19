@@ -13,55 +13,71 @@ module.exports = {
 
     //wait for load account page according to displayed header
 
-    waitForAccountDetailPageLoading: function () {
+    waitForAccountDetailPageLoading: function() {
         return shared.wdHelper.findVisibleElement(this.elements.header);
     },
 
     //verify account form
 
-    checkAccountFrom: function (name, hex) {
-        shared.wdHelper.findVisibleElement(this.elements.addrFromName).getText()
+    checkAccountFrom: function(name, hex) {
+        shared.wdHelper
+            .findVisibleElement(this.elements.addrFromName)
+            .getText()
             .then(text => expect(text).to.equal(name));
-        return shared.wdHelper.findVisibleElement(this.elements.addrFromHex).getText()
+        return shared.wdHelper
+            .findVisibleElement(this.elements.addrFromHex)
+            .getText()
             .then(text => expect(text).to.equal(hex));
     },
 
     //verify send account to
 
-    checkAccountTo: function (address) {
-        return shared.wdHelper.findVisibleElement(this.elements.addrTo).getText()
+    checkAccountTo: function(address) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.addrTo)
+            .getText()
             .then(text => expect(text).to.equal(address));
     },
 
     //verify amount
 
-    checkAmount: function (amount) {
-        return shared.wdHelper.findVisibleElement(this.elements.amount).getText()
+    checkAmount: function(amount) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.amount)
+            .getText()
             .then(text => expect(text).to.equal(amount));
     },
 
     //verify gas limit amount
 
-    checkGasLimit: function (gasLimit) {
-        return shared.wdHelper.findVisibleElement(this.elements.gasLimit).getText()
+    checkGasLimit: function(gasLimit) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.gasLimit)
+            .getText()
             .then(text => expect(text).to.equal(gasLimit));
     },
 
     //fill account password field
 
-    fillPassword: function (password) {
-        return shared.wdHelper.findVisibleElement(this.elements.password).sendKeys(password);
+    fillPassword: function(password) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.password)
+            .sendKeys(password);
     },
 
     //click send button
 
-    clickSend: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.sendBtn).click();
+    clickSend: function() {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.sendBtn)
+            .click();
     },
 
     //go to previous page
 
-    clickBack: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.backBtn).click();
+    clickBack: function() {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.backBtn)
+            .click();
     },
 };

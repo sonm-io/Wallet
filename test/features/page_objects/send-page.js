@@ -19,49 +19,65 @@ module.exports = {
 
     //wait for loading account page according to displayed header
 
-    waitForAccountDetailPageLoading: function () {
+    waitForAccountDetailPageLoading: function() {
         return shared.wdHelper.findVisibleElement(this.elements.header);
     },
 
     //select address from dropdown
 
-    selectAddressFromByName: function (accName) {
+    selectAddressFromByName: function(accName) {
         //return page.common.selectAccountFromDropdown(accName);
 
-        return page.common.selectFromStandardDropdown(this.elements.select, by.xpath('//li[@title="' + accName + '"]'),
-            this.elements.selectedAccount, accName);
+        return page.common.selectFromStandardDropdown(
+            this.elements.select,
+            by.xpath('//li[@title="' + accName + '"]'),
+            this.elements.selectedAccount,
+            accName,
+        );
     },
 
     //fill field send address to
 
-    fillAddressTo: function (address) {
-        return shared.wdHelper.findVisibleElement(this.elements.sendTo).sendKeys(address);
+    fillAddressTo: function(address) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.sendTo)
+            .sendKeys(address);
     },
 
     //fill amount field
 
-    setAmountField: function (amount) {
-        return shared.wdHelper.findVisibleElement(this.elements.amount).sendKeys(amount);
+    setAmountField: function(amount) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.amount)
+            .sendKeys(amount);
     },
 
     // click next button
 
-    clickNext: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.NextBtn).click();
+    clickNext: function() {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.NextBtn)
+            .click();
     },
 
     //verify selected currency
 
-    checkSelectedCurrency: function (currency) {
-        return shared.wdHelper.findVisibleElement(this.elements.selectedCurrency).getText()
+    checkSelectedCurrency: function(currency) {
+        return shared.wdHelper
+            .findVisibleElement(this.elements.selectedCurrency)
+            .getText()
             .then(text => expect(text).to.equal(currency));
     },
 
     //select currency from dropdown
 
-    selectCurrency: async function (currency) {
-        await shared.wdHelper.findVisibleElement(this.elements.currencySelect).click();
-        await shared.wdHelper.findVisibleElement(by.xpath('//li[@title="' + currency + '"]')).click();
+    selectCurrency: async function(currency) {
+        await shared.wdHelper
+            .findVisibleElement(this.elements.currencySelect)
+            .click();
+        await shared.wdHelper
+            .findVisibleElement(by.xpath('//li[@title="' + currency + '"]'))
+            .click();
         return this.checkSelectedCurrency(currency);
     },
 };
