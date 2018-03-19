@@ -1,10 +1,10 @@
 module.exports = function() {
-    this.Then(/^I should see accounts page$/, function() {
-        return page.accountsPage.waitForAccountPageLoading();
+    this.Then(/^I should see accounts page$/, async function() {
+        return await page.accountsPage.waitForAccountPageLoading();
     });
 
-    this.When(/^I press import account$/, function() {
-        return page.accountsPage.importAccount();
+    this.When(/^I press import account$/, async function() {
+        return await page.accountsPage.importAccount();
     });
 
     this.When(/^I press create new account$/, function() {
@@ -23,7 +23,7 @@ module.exports = function() {
         return page.accountsPage.clickOnAccountInList(name);
     });
 
-    this.When(/^I press logout button$/, function() {
-        return page.accountsPage.logoutFromWallet();
+    this.When(/^I press logout button$/, async function() {
+        return await page.accountsPage.logoutFromWallet();
     });
 };

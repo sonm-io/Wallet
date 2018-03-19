@@ -10,16 +10,16 @@ module.exports = {
     },
 
     waitNewWalletDialogue: async function () {
-        return await driver.wait(until.elementLocated(this.elements.header)).getText()
+        return (await shared.wdHelper.findVisibleElement(this.elements.header)).getText()
             .then(text => expect(text).to.equal('New wallet'));
     },
 
     //fill all fields in new wallet dialogue and create wallet
 
     fillNewWalletDialogue: async function (walletName, pass, confirm, chainname) {
-        await shared.wdHelper.findVisibleElement(this.elements.nwName).sendKeys(walletName);
-        await shared.wdHelper.findVisibleElement(this.elements.nwPass).sendKeys(pass);
-        await shared.wdHelper.findVisibleElement(this.elements.nwPassConfirm).sendKeys(confirm);
+        (await shared.wdHelper.findVisibleElement(this.elements.nwName)).sendKeys(walletName);
+        (await shared.wdHelper.findVisibleElement(this.elements.nwPass)).sendKeys(pass);
+        (await shared.wdHelper.findVisibleElement(this.elements.nwPassConfirm)).sendKeys(confirm);
         return await page.common.selectFromStandardDropdown(this.elements.networkField,
             by.xpath('//li[.="' + chainname + '"]'),
             this.elements.selectedNetwork, chainname);
@@ -27,20 +27,20 @@ module.exports = {
 
     //fill wallet name field
 
-    fillWalletNameField: function (walletName) {
-        return shared.wdHelper.findVisibleElement(this.elements.nwName).sendKeys(walletName);
+    fillWalletNameField: async function (walletName) {
+        return (await shared.wdHelper.findVisibleElement(this.elements.nwName)).sendKeys(walletName);
     },
 
     //fill password wallet field
 
-    fillWalletPasswordField: function (password) {
-        return shared.wdHelper.findVisibleElement(this.elements.nwPass).sendKeys(password);
+    fillWalletPasswordField: async function (password) {
+        return (await shared.wdHelper.findVisibleElement(this.elements.nwPass)).sendKeys(password);
     },
 
     //fill confirm password wallet field
 
-    fillWalletConfirmPasswordField: function (confirmPassword) {
-        return shared.wdHelper.findVisibleElement(this.elements.nwPassConfirm).sendKeys(confirmPassword);
+    fillWalletConfirmPasswordField: async function (confirmPassword) {
+        return (await shared.wdHelper.findVisibleElement(this.elements.nwPassConfirm)).sendKeys(confirmPassword);
     },
 
     selectNetworkValue: function (chainname) {
@@ -57,7 +57,7 @@ module.exports = {
     //click create wallet button for further creating wallet
 
     createNewWalletButton: async function () {
-        await shared.wdHelper.findVisibleElement(this.elements.createNewWallet).click();
+        return (await shared.wdHelper.findVisibleElement(this.elements.createNewWallet)).click();
     },
 
     //TODO refactor

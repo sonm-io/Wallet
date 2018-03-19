@@ -3,15 +3,15 @@ function loadMainPage() {
     return helpers.loadPage(page.startPage.url, 5);
 }
 
-function  closeDisclaimer() {
-    page.dialogueStartDisclaimer.waitForDisclaimerLoad();
-    return page.dialogueStartDisclaimer.clickUnderstandButton();
-}
+const closeDisclaimer = async function () {
+    await page.dialogueStartDisclaimer.waitForDisclaimerLoad();
+    return await page.dialogueStartDisclaimer.clickUnderstandButton();
+};
 
 module.exports = function () {
     this.Given(/^I open wallet with one existing wallet$/, function () {
         loadMainPage();
-        return shared.wdHelper.loadWalletToStorage(shared.wallets.emptyWallet);
+        shared.wdHelper.loadWalletToStorage(shared.wallets.emptyWallet);
     });
 
     this.When(/^I click on dont show disclaimer again button$/, function () {
@@ -19,13 +19,13 @@ module.exports = function () {
         return page.dialogueStartDisclaimer.clickDontShowDisclaimerButton();
     });
 
-    this.Given(/^Login to wallet "([^"]*)" with password "([^"]*)"$/, function (walletName, password,) {
-        loadMainPage();
+    this.Given(/^Login to wallet "([^"]*)" with password "([^"]*)"$/, async function (walletName, password,) {
+        await loadMainPage();
         let wallet = shared.wdHelper.resolve(shared.wallets, walletName);
         shared.wdHelper.loadWalletToStorage(wallet);
-        closeDisclaimer();
-        page.dialogueEnterPassword.enterPassword(password);
-        return page.dialogueEnterPassword.loginToWallet();
+        await closeDisclaimer();
+        await page.dialogueEnterPassword.enterPassword(password);
+        return await page.dialogueEnterPassword.loginToWallet();
     });
 
     this.Given(/^I open wallet with empty storage$/, function () {
@@ -34,27 +34,22 @@ module.exports = function () {
 
     this.Given(/^I have three wallet accounts$/, function () {
         loadMainPage();
-        return shared.wdHelper.loadWalletsToStorage(shared.config.accounts);
+        shared.wdHelper.loadWalletsToStorage(shared.config.accounts);
     });
 
     this.When(/^I type password "([^"]*)"$/, async function (password) {
         await page.dialogueEnterPassword.waitForPasswordPopup();
-        page.dialogueEnterPassword.enterPassword(password);
-        return page.dialogueEnterPassword.loginToWallet();
+        await page.dialogueEnterPassword.enterPassword(password);
+        return await page.dialogueEnterPassword.loginToWallet();
     });
 
-    this.When(/^I enter value "([^"]*)" into account search field for search accounts$/,
-        function (valueForSearch) {
-            page.startPage.clickWalletsDropdown();
-            return page.startPage.searchFromWalletDropdown(valueForSearch);
-        },
-    );
+    this.When(/^I enter value "([^"]*)" into account search field for search accounts$/, async function (valueForSearch) {
+        await page.startPage.clickWalletsDropdown();
+        return await page.startPage.searchFromWalletDropdown(valueForSearch);
+    });
 
     this.Then(/^I get wallets search results "([^"]*)"$/, async function (searchResults,) {
-        page.common.assertDropdownValues(
-            await page.startPage.getValuesFromWalletDropdown(),
-            searchResults.replace(/'/g, '"'),
-        );
+        page.common.assertDropdownValues(await page.startPage.getValuesFromWalletDropdown(), searchResults.replace(/'/g, '"'));
         return page.startPage.clearSearchWalletField();
     });
 
@@ -66,16 +61,16 @@ module.exports = function () {
         return page.startPage.clickLoginButton();
     });
 
-    this.When(/^I click I Understand button$/, function () {
-        return closeDisclaimer();
+    this.When(/^I click I Understand button$/, async function () {
+        return await closeDisclaimer();
     });
 
-    this.When(/^I click Import Wallet button$/, function () {
-        return page.startPage.clickImportWalletButton();
+    this.When(/^I click Import Wallet button$/, async function () {
+        return await page.startPage.clickImportWalletButton();
     });
 
-    this.When(/^Close Create New Wallet dialogue$/, function () {
-        page.dialogueNewWallet.waitNewWalletDialogue();
-        return page.startPage.closeCreateNewWalletDialogue();
+    this.When(/^Close Create New Wallet dialogue$/, async function () {
+        await page.dialogueNewWallet.waitNewWalletDialogue();
+        return await page.startPage.closeCreateNewWalletDialogue();
     });
 };

@@ -17,8 +17,8 @@ module.exports = {
 
     //wait for load accounts page according to displayed import account button
 
-    waitForAccountPageLoading: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.importAccountButton);
+    waitForAccountPageLoading: async function () {
+        return await shared.wdHelper.findVisibleElement(this.elements.importAccountButton);
     },
 
     //verify that send tab is disabled
@@ -30,25 +30,25 @@ module.exports = {
     //logout from wallet
 
     logoutFromWallet: async function () {
-        return await shared.wdHelper.findVisibleElement(this.elements.logoutButton).click();
+        return (await shared.wdHelper.findVisibleElement(this.elements.logoutButton)).click();
     },
 
     //click on import account button for further account import
 
-    importAccount: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.importAccountButton).click();
+    importAccount: async function () {
+        return (await shared.wdHelper.findVisibleElement(this.elements.importAccountButton)).click();
     },
 
     //click on create account button for further account creating
 
-    createNewAccount: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.createNewAccountButton).click();
+    createNewAccount: async function () {
+        return (await shared.wdHelper.findVisibleElement(this.elements.createNewAccountButton)).click();
     },
 
     //click on add token button for further new token creating
 
-    addToken: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.addTokenButton).click();
+    addToken: async function () {
+        return (await shared.wdHelper.findVisibleElement(this.elements.addTokenButton)).click();
     },
 
     //verify that created token is displayed in the token list

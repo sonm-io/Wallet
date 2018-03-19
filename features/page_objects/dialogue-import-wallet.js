@@ -8,8 +8,8 @@ module.exports = {
         validationMessage: by.css('.sonm-form__row *> .sonm-form-field__help'),
     },
 
-    waitDialogue: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.header).getText()
+    waitImportWalletDialogue: async function () {
+        return (await shared.wdHelper.findVisibleElement(this.elements.header)).getText()
             .then(text => expect(text).to.equal('Import wallet'));
     },
 
@@ -22,25 +22,24 @@ module.exports = {
 
     //fill name field for wallet file
 
-    fillImportWalletNameField: function (walletName) {
-        shared.wdHelper.findVisibleElement(this.elements.walletPassword).click();
-        return shared.wdHelper.findVisibleElement(this.elements.walletNameField).sendKeys(walletName);
+    fillImportWalletNameField: async function (walletName) {
+        (await shared.wdHelper.findVisibleElement(this.elements.walletPassword)).click();
+        return (await shared.wdHelper.findVisibleElement(this.elements.walletNameField)).sendKeys(walletName);
     },
 
     //fill password field for wallet file
 
-    fillImportWalletPasswordField: function (password) {
-        shared.wdHelper.findVisibleElement(this.elements.walletPassword).click();
-        return shared.wdHelper.findVisibleElement(this.elements.walletPassword).sendKeys(password);
+    fillImportWalletPasswordField: async function (password) {
+        return (await shared.wdHelper.findVisibleElement(this.elements.walletPassword)).sendKeys(password);
     },
 
-    validateField: function (errorMessage) {
-        return page.common.verifyValidationErrorMessage(this.elements.validationMessage, errorMessage);
+    validateField: async function (errorMessage) {
+        return await page.common.verifyValidationErrorMessage(this.elements.validationMessage, errorMessage);
     },
 
     //import wallet
 
-    importWallet: function () {
-        shared.wdHelper.findVisibleElement(this.elements.importWalletButton).click();
+    importWallet: async function () {
+        return (await shared.wdHelper.findVisibleElement(this.elements.importWalletButton)).click();
     },
 };

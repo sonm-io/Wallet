@@ -1,6 +1,6 @@
 module.exports = {
     elements: {
-        passwordPopupHeader: by.xpath('//div/form/h3'),
+        passwordPopupHeader: by.css('.sonm-popup__outer .sonm-popup__inner .sonm-login__popup-header'),
         password: by.css('input[type=password]'),
         passwordFieldValidMessage: by.className('sonm-login__label-error'),
         loginToWalletButton: by.className('sonm-login__create'),
@@ -11,6 +11,7 @@ module.exports = {
     //wait for page loading according to displayed add account header
 
     waitForPasswordPopup: async function () {
+        console.log(await shared.wdHelper.findVisibleElement(this.elements.passwordPopupHeader));
         return await driver.wait(until.elementLocated(this.elements.passwordPopupHeader)).getText()
             .then(text => expect(text).to.equal('Enter password'));
     },
@@ -18,24 +19,24 @@ module.exports = {
     //fill password field
 
     enterPassword: async function (password) {
-        return await shared.wdHelper.findVisibleElement(this.elements.password).sendKeys(password);
+        return (await shared.wdHelper.findVisibleElement(this.elements.password)).sendKeys(password);
     },
 
     //validation of password field
 
-    validatePasswordField: function () {
-        return page.common.verifyValidationErrorMessage(this.elements.passwordFieldValidMessage, shared.messages.wallet.passwordPopUpMessage,);
+    validatePasswordField: async function () {
+        return await page.common.verifyValidationErrorMessage(this.elements.passwordFieldValidMessage, shared.messages.wallet.passwordPopUpMessage);
     },
 
     //click login button
 
     loginToWallet: async function () {
-        await shared.wdHelper.findVisibleElement(this.elements.loginToWalletButton).click();
+        return (await shared.wdHelper.findVisibleElement(this.elements.loginToWalletButton)).click();
     },
 
     //close password dialogue
 
-    closeDialogue: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.closeDialogueButton).click();
+    closeDialogue: async function () {
+        return (await shared.wdHelper.findVisibleElement(this.elements.closeDialogueButton)).click();
     },
 };

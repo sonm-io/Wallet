@@ -7,8 +7,8 @@ module.exports = {
 
     //navigate to send tab
 
-    navigateToSend: function () {
-        return shared.wdHelper.findVisibleElement(this.elements.sendTab).click();
+    navigateToSendTab: async function () {
+        return (await shared.wdHelper.findVisibleElement(this.elements.sendTab)).click();
     },
 
     //delay for functions
@@ -32,17 +32,17 @@ module.exports = {
 
     //select value from dropdown
 
-    selectFromStandardDropdown: function (element, dropdownItem, selectedItem, name) {
-        shared.wdHelper.findVisibleElement(element).click();
-        shared.wdHelper.findVisibleElement(dropdownItem).click();
-        return shared.wdHelper.findVisibleElement(selectedItem).getText()
+    selectFromStandardDropdown: async function (element, dropdownItem, selectedItem, name) {
+        (await shared.wdHelper.findVisibleElement(element)).click();
+        (await shared.wdHelper.findVisibleElement(dropdownItem)).click();
+        return (await shared.wdHelper.findVisibleElement(selectedItem)).getText()
             .then(text => expect(text).to.equal(name));
     },
 
     //get all values from dropdown
 
     getValuesFromDropdown: async function (dropdown, dropdownValue) {
-        await shared.wdHelper.findVisibleElement(dropdown).click();
+        (await shared.wdHelper.findVisibleElement(dropdown)).click();
         let values = await shared.wdHelper.findVisibleElements(dropdownValue);
         let valuesText = [];
         for (let i = 0; i < values.length; i++) {
@@ -54,7 +54,7 @@ module.exports = {
     //click on dropdown
 
     clickDropdown: async function (element) {
-        await shared.wdHelper.findVisibleElement(element).click();
+       return (await shared.wdHelper.findVisibleElement(element)).click();
     },
 
     //assert array to string
@@ -66,20 +66,20 @@ module.exports = {
     //enter value into dropdown for search
 
     enterValueForSearch: async function (dropdownSearchField, searchValue) {
-        await shared.wdHelper.findVisibleElement(dropdownSearchField).sendKeys(searchValue);
+        return (await shared.wdHelper.findVisibleElement(dropdownSearchField)).sendKeys(searchValue);
     },
 
     //verify that validation error message is displayed
 
     verifyValidationErrorMessage: async function (element, messageText) {
-        return await shared.wdHelper.findVisibleElement(element).getText()
+        return (await shared.wdHelper.findVisibleElement(element)).getText()
             .then(validMessageText => expect(validMessageText).to.equal(messageText));
     },
 
     //clear input field
 
     clearInputField: async function (field) {
-        return await shared.wdHelper.findVisibleElement(field).clear();
+        return (await shared.wdHelper.findVisibleElement(field)).clear();
     },
 
     test: async function () {

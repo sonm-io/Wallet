@@ -41,7 +41,7 @@ Feature: Import Wallet
     Given I open wallet with empty storage
     When I click I Understand button
     And Close Create New Wallet dialogue
-    And I сlick Import Wallet button
+    And I click Import Wallet button
     And I Select wallet file for import "incorrect_wallet.json"
     And I fill wallet name field "Wallet Import" for Import Wallet
     And I fill password field "1" for Import Wallet

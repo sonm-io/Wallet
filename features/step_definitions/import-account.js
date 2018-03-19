@@ -3,23 +3,23 @@ module.exports = function () {
         return page.dialogueImportAccount.uploadAccountFile(filename);
     });
 
-    this.Then(/^I see preview$/, function () {
-        return page.dialogueImportAccount.findPreview();
+    this.Then(/^I see preview$/, async function () {
+        return await page.dialogueImportAccount.findPreview();
     });
 
-    this.When(/^I type account password "([^"]*)"$/, function (password) {
-        return page.dialogueImportAccount.fillPassword(password);
+    this.When(/^I type account password "([^"]*)"$/, async function (password) {
+        return await page.dialogueImportAccount.fillImportAccountPassword(password);
     });
 
-    this.When(/^I type account name "([^"]*)"$/, function (name) {
-        return page.dialogueImportAccount.fillAccountName(name);
+    this.When(/^I type account name "([^"]*)"$/, async function (name) {
+        return await page.dialogueImportAccount.fillImportAccountName(name);
     });
 
-    this.When(/^I press button Add$/, function () {
-        return page.dialogueImportAccount.clickAddButton();
+    this.When(/^I press button Add$/, async function () {
+        return await page.dialogueImportAccount.clickAddImportAccountButton();
     });
 
-    this.Then(/^I should see add account dialogue$/, function () {
-        return page.dialogueImportAccount.waitDialogue();
+    this.Then(/^I should see add account dialogue$/, async function () {
+        return await page.dialogueImportAccount.waitImportAccountDialogue();
     });
 };

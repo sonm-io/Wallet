@@ -1,6 +1,6 @@
 module.exports = function() {
-    this.Given(/^Navigate to send page$/, function() {
-        return page.common.navigateToSend();
+    this.Given(/^Navigate to send page$/, async function() {
+        return await page.common.navigateToSendTab();
     });
 
     //TODO refactor after adding attributes to send tab

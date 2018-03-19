@@ -1,25 +1,25 @@
 module.exports = function () {
-    this.Then(/^I should see new account dialogue$/, function () {
-        return page.dialogueNewAccount.waitDialogue();
+    this.Then(/^I should see new account dialogue$/, async function () {
+        return await page.dialogueNewAccount.waitNewAccountDialogue();
     });
 
-    this.When(/^I type new account password "([^"]*)"$/, function (password) {
-        return page.dialogueNewAccount.fillPassword(password);
+    this.When(/^I type new account password "([^"]*)"$/, async function (password) {
+        return await page.dialogueNewAccount.fillPassword(password);
     });
 
-    this.When(/^I type new account password confirmation "([^"]*)"$/, function (password) {
-        return page.dialogueNewAccount.fillPasswordConfirmation(password);
+    this.When(/^I type new account password confirmation "([^"]*)"$/, async function (password) {
+        return await page.dialogueNewAccount.fillPasswordConfirmation(password);
     });
 
-    this.When(/^I type new account name "([^"]*)"$/, function (name) {
-        return page.dialogueNewAccount.fillAccountName(name);
+    this.When(/^I type new account name "([^"]*)"$/, async function (name) {
+        return await page.dialogueNewAccount.fillAccountName(name);
     });
 
-    this.When(/^I press button Create$/, function () {
-        return page.dialogueNewAccount.clickCreateButton();
+    this.When(/^I press button Create$/, async function () {
+        return await page.dialogueNewAccount.clickCreateButton();
     });
 
-    this.When(/^I type private key "([^"]*)"$/, function (privateKey) {
-        return page.dialogueNewAccount.fillPrivateKey(privateKey);
+    this.When(/^I type private key "([^"]*)"$/, async function (privateKey) {
+        return await page.dialogueNewAccount.fillPrivateKey(privateKey);
     });
 };

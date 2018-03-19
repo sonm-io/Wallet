@@ -8,19 +8,20 @@ module.exports = {
     //wait for load account page according to displayed understand button
 
     waitForDisclaimerLoad: async function () {
-        return await driver.wait(until.elementLocated(this.elements.disclaimer));
+        return await shared.wdHelper.findVisibleElement(this.elements.disclaimer);
     },
 
     //click understand button for further navigation to accounts
 
     clickUnderstandButton: async function () {
-        await shared.wdHelper.findVisibleElement(this.elements.disUnderstandButton).click();
+        console.log(await shared.wdHelper.findVisibleElement(this.elements.disUnderstandButton));
+        return (await shared.wdHelper.findVisibleElement(this.elements.disUnderstandButton)).click();
     },
 
     //click dont show button for further navigation to accounts
 
-    clickDontShowDisclaimerButton: function () {
+    clickDontShowDisclaimerButton: async function () {
         page.common.delay(10000);
-        shared.wdHelper.findVisibleElement(this.elements.disDontShowAgainButton).click();
+        return (await shared.wdHelper.findVisibleElement(this.elements.disDontShowAgainButton)).click();
     },
 };

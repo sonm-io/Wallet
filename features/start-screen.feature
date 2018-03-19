@@ -16,7 +16,7 @@ Feature: Start screen
     Given I open wallet with empty storage
     When I click I Understand button
     When I create wallet with name "test" and password "11111111" and password confirmation "11111111"
-    And I click add new wallet button
+    And I click Create New Wallet button
     Then I should see accounts page
     When I press logout button
     Then I log out from wallet
@@ -27,7 +27,7 @@ Feature: Start screen
     When I close password dialogue
     And I press Create wallet
     And I create wallet with name "test2" and password "11111111" and password confirmation "11111111"
-    And I click add new wallet button
+    And I click Create New Wallet button
     Then I should see accounts page
     When I press logout button
     Then I log out from wallet
@@ -38,7 +38,7 @@ Feature: Start screen
     And I close password dialogue
     When I press Create wallet
     Then I fill wallet name field "empty"
-    When I click add new wallet button
+    When I click Create New Wallet button
     Then I see wallet name validation error message "Already exist"
 
   Scenario: Login with existing wallet without displaying disclaimer in future
@@ -59,21 +59,21 @@ Feature: Start screen
   Scenario: Creating wallet - fields validation
     Given I open wallet with empty storage
     When I click I Understand button
-    When I click add new wallet button
+    When I click Create New Wallet button
     Then I see wallet name validation error message "Name length must be in range 1..20"
     And I fill wallet name field "autotest"
-    When I click add new wallet button
+    When I click Create New Wallet button
     Then I see wallet password validation error message
     And I fill password field "122"
-    When I click add new wallet button
+    When I click Create New Wallet button
     Then I see wallet confirm password validation error message
     And I fill confirm password name field "22"
-    And I click add new wallet button
+    And I click Create New Wallet button
     Then I see wallet confirm password validation error message
     And I clear confirm password field
     And I fill confirm password name field "122"
     And Select network for wallet "rinkeby"
-    And I click add new wallet button
+    And I click Create New Wallet button
     Then I should see accounts page
     When I press logout button
     Then I log out from wallet
