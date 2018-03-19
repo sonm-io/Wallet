@@ -73,7 +73,7 @@ const DEFAULT_NODES: INodes = {
     default: 'https://mainnet.infura.io',
     livenet: 'https://mainnet.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
-    testrpc: 'http://localhost',
+    testrpc: 'http://localhost:8545',
 };
 
 const DEFAULT_TOKENS: ITokens = {
