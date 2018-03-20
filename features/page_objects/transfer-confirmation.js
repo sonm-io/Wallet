@@ -19,65 +19,64 @@ module.exports = {
 
     //verify account form
 
-    checkAccountFrom: function(name, hex) {
-        shared.wdHelper
-            .findVisibleElement(this.elements.addrFromName)
+    checkAccountFrom: async function(name, hex) {
+        (await shared.wdHelper.findVisibleElement(this.elements.addrFromName))
             .getText()
             .then(text => expect(text).to.equal(name));
-        return shared.wdHelper
-            .findVisibleElement(this.elements.addrFromHex)
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.addrFromHex,
+        ))
             .getText()
             .then(text => expect(text).to.equal(hex));
     },
 
     //verify send account to
 
-    checkAccountTo: function(address) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.addrTo)
+    checkAccountTo: async function(address) {
+        return (await shared.wdHelper.findVisibleElement(this.elements.addrTo))
             .getText()
             .then(text => expect(text).to.equal(address));
     },
 
     //verify amount
 
-    checkAmount: function(amount) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.amount)
+    checkAmount: async function(amount) {
+        return (await shared.wdHelper.findVisibleElement(this.elements.amount))
             .getText()
             .then(text => expect(text).to.equal(amount));
     },
 
     //verify gas limit amount
 
-    checkGasLimit: function(gasLimit) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.gasLimit)
+    checkGasLimit: async function(gasLimit) {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.gasLimit,
+        ))
             .getText()
             .then(text => expect(text).to.equal(gasLimit));
     },
 
     //fill account password field
 
-    fillPassword: function(password) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.password)
-            .sendKeys(password);
+    fillPassword: async function(password) {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.password,
+        )).sendKeys(password);
     },
 
     //click send button
 
-    clickSend: function() {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.sendBtn)
-            .click();
+    clickSend: async function() {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.sendBtn,
+        )).click();
     },
 
     //go to previous page
 
-    clickBack: function() {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.backBtn)
-            .click();
+    clickBack: async function() {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.backBtn,
+        )).click();
     },
 };

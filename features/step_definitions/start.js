@@ -3,6 +3,7 @@ function loadMainPage() {
         .manage()
         .window()
         .setSize(shared.config.browser.width, shared.config.browser.height);
+
     return helpers.loadPage(page.startPage.url, 5);
 }
 
@@ -27,7 +28,7 @@ module.exports = function() {
         async function(walletName, password) {
             await loadMainPage();
             let wallet = shared.wdHelper.resolve(shared.wallets, walletName);
-            shared.wdHelper.loadWalletToStorage(wallet);
+            await shared.wdHelper.loadWalletToStorage(wallet);
             await closeDisclaimer();
             await page.dialogueEnterPassword.enterPassword(password);
             return await page.dialogueEnterPassword.loginToWallet();

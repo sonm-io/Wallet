@@ -1,5 +1,6 @@
 module.exports = function() {
     this.Given(/^Navigate to send page$/, async function() {
+        debugger;
         return await page.common.navigateToSendTab();
     });
 

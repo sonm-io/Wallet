@@ -29,9 +29,10 @@ module.exports = {
 
     // verify part of notification
 
-    verifyNotificationText: function(text) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.successNotification)
+    verifyNotificationText: async function(text) {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.successNotification,
+        ))
             .getText()
             .then(validMessageText => {
                 expect(validMessageText).to.contain(
@@ -43,10 +44,10 @@ module.exports = {
 
     // close notification
 
-    closeNotification: function() {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.successNotificationCross)
-            .click();
+    closeNotification: async function() {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.successNotificationCross,
+        )).click();
     },
 
     //verify that element is displayed on page

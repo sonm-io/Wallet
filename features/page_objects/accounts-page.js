@@ -69,74 +69,64 @@ module.exports = {
 
     //verify that created token is displayed in the token list
 
-    findTokenInList: function(createdToken) {
-        return shared.wdHelper
-            .findVisibleElements(this.elements.fundItem)
-            .then(elements =>
-                expect(elements.getText().to.equal(createdToken)),
-            );
+    findTokenInList: async function(createdToken) {
+        return (await shared.wdHelper.findVisibleElements(
+            this.elements.fundItem,
+        )).then(elements => expect(elements.getText().to.equal(createdToken)));
     },
 
     //find account by name in the list
 
-    findAccountInList: function(name) {
-        return shared.wdHelper
-            .findVisibleElements(
-                by.xpath(
-                    '//span[@class="sonm-account-item__name-text"][.="' +
-                        name +
-                        '"]',
-                ),
-            )
-            .then(elements => expect(elements.length).to.equal(1));
+    findAccountInList: async function(name) {
+        return (await shared.wdHelper.findVisibleElements(
+            by.xpath(
+                '//span[@class="sonm-account-item__name-text"][.="' +
+                    name +
+                    '"]',
+            ),
+        )).then(elements => expect(elements.length).to.equal(1));
     },
 
     //find account by name and hash in the list
 
-    findAccountInListWithHash: function(name, hash) {
-        return shared.wdHelper
-            .findVisibleElements(
-                by.xpath(
-                    '//span[@class="sonm-account-item__name-text"][.="' +
-                        name +
-                        '"]/../../' +
-                        'a[@href="#' +
-                        hash +
-                        '"]',
-                ),
-            )
-            .then(elements => expect(elements.length).to.equal(1));
+    findAccountInListWithHash: async function(name, hash) {
+        return (await shared.wdHelper.findVisibleElements(
+            by.xpath(
+                '//span[@class="sonm-account-item__name-text"][.="' +
+                    name +
+                    '"]/../../' +
+                    'a[@href="#' +
+                    hash +
+                    '"]',
+            ),
+        )).then(elements => expect(elements.length).to.equal(1));
     },
 
     //click on account from the list
 
-    clickOnAccountInList: function(accountName) {
-        return shared.wdHelper
-            .findVisibleElement(
-                by.xpath(
-                    '//div[@class="sonm-deletable-item__children"][.//span[contains(text(), "' +
-                        accountName +
-                        '")]]//a[@href="#"]',
-                ),
-            )
-            .click();
+    clickOnAccountInList: async function(accountName) {
+        return (await shared.wdHelper.findVisibleElement(
+            by.xpath(
+                '//div[@class="sonm-deletable-item__children"][.//span[contains(text(), "' +
+                    accountName +
+                    '")]]//a[@href="#"]',
+            ),
+        )).click();
     },
 
     //click on edit account name button
 
-    clickOnEditCreatedAccountNameButton: function(accountName) {
-        return shared.wdHelper
-            .findVisibleElement(
-                by.xpath('//span[.=' + accountName + ']/button'),
-            )
-            .click();
+    clickOnEditCreatedAccountNameButton: async function(accountName) {
+        return (await shared.wdHelper.findVisibleElement(
+            by.xpath('//span[.=' + accountName + ']/button'),
+        )).click();
     },
 
     //edit account name
 
-    editCreatedAccountName: function(accountName, newAccountName) {
-        return shared.wdHelper
-            .findVisibleElement(by.xpath('//span[.=' + accountName + ']/input'))
-            .sendKeys(newAccountName);
+    editCreatedAccountName: async function(accountName, newAccountName) {
+        return (await shared.wdHelper.findVisibleElement(
+            by.xpath('//span[.=' + accountName + ']/input'),
+        )).sendKeys(newAccountName);
     },
 };
