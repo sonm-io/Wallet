@@ -18,11 +18,6 @@ module.exports = {
     //click understand button for further navigation to accounts
 
     clickUnderstandButton: async function() {
-        console.log(
-            await shared.wdHelper.findVisibleElement(
-                this.elements.disUnderstandButton,
-            ),
-        );
         return (await shared.wdHelper.findVisibleElement(
             this.elements.disUnderstandButton,
         )).click();

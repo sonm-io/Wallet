@@ -29,7 +29,7 @@ module.exports = function() {
     this.Then(
         /^I see import wallet validation error message$/,
         async function() {
-            return await page.dialogueImportWallet.validateImportWalletField(
+            return await page.dialogueImportWallet.validateImportWalletFileField(
                 shared.messages.importWallet
                     .importWalletIncorrectFileValidationMessage,
             );
@@ -38,9 +38,7 @@ module.exports = function() {
 
     this.Then(
         /^I see import wallet name validation error message$/, async function() {
-            return await page.dialogueImportWallet.validateImportWalletNameField(
-                shared.messages.importWallet
-                    .importWalletSameNameValidationMessage,
+            return await page.dialogueImportWallet.validateImportWalletNameField(shared.messages.importWallet.importWalletSameNameValidationMessage,
             );
         },
     );
@@ -54,4 +52,12 @@ module.exports = function() {
             );
         },
     );
+
+    this.Then(/^I clear import wallet name field$/, function () {
+        return page.dialogueImportWallet.clearImportWalletNameField();
+    });
+
+    this.Then(/^I clear import wallet password field$/, function () {
+        return page.dialogueImportWallet.clearImportWalletPasswordField();
+    });
 };

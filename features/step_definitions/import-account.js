@@ -21,7 +21,7 @@ module.exports = function() {
         return await page.dialogueImportAccount.clickAddImportAccountButton();
     });
 
-    this.Then(/^I should see add account dialogue$/, async function() {
+    this.Then(/^I See add account dialogue$/, async function() {
         return await page.dialogueImportAccount.waitImportAccountDialogue();
     });
 };

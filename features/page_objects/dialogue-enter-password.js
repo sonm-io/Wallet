@@ -15,11 +15,6 @@ module.exports = {
     //wait for page loading according to displayed add account header
 
     waitForPasswordPopup: async function() {
-        console.log(
-            await shared.wdHelper.findVisibleElement(
-                this.elements.passwordPopupHeader,
-            ),
-        );
         return await driver
             .wait(until.elementLocated(this.elements.passwordPopupHeader))
             .getText()

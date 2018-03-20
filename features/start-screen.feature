@@ -7,7 +7,7 @@ Feature: Start screen
     Given I open wallet with one existing wallet
     When I click I Understand button
     And I type password "11111111"
-    Then I should see accounts page
+    Then I see accounts page
     And Send link tab is disabled
     When I press logout button
     Then I log out from wallet
@@ -17,7 +17,7 @@ Feature: Start screen
     When I click I Understand button
     When I create wallet with name "test" and password "11111111" and password confirmation "11111111"
     And I click Create New Wallet button
-    Then I should see accounts page
+    Then I see accounts page
     When I press logout button
     Then I log out from wallet
 
@@ -28,7 +28,7 @@ Feature: Start screen
     And I press Create wallet
     And I create wallet with name "test2" and password "11111111" and password confirmation "11111111"
     And I click Create New Wallet button
-    Then I should see accounts page
+    Then I see accounts page
     When I press logout button
     Then I log out from wallet
 
@@ -45,7 +45,7 @@ Feature: Start screen
     Given I open wallet with one existing wallet
     When I click on dont show disclaimer again button
     When I type password "11111111"
-    Then I should see accounts page
+    Then I see accounts page
     And Send link tab is disabled
     When I press logout button
     Then I log out from wallet and see enter password popup
@@ -74,7 +74,7 @@ Feature: Start screen
     And I fill confirm password name field "122"
     And Select network for wallet "rinkeby"
     And I click Create New Wallet button
-    Then I should see accounts page
+    Then I see accounts page
     When I press logout button
     Then I log out from wallet
 
@@ -88,7 +88,7 @@ Feature: Start screen
     When I select wallet name "45te" from dropdown
     And I click login button
     And I type password "1"
-    Then I should see accounts page
+    Then I see accounts page
     And Send link tab is disabled
     When I press logout button
     Then I log out from wallet

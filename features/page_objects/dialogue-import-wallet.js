@@ -3,7 +3,7 @@ module.exports = {
         header: by.className('sonm-form__header'),
         selectWalletImportField: by.xpath('//input[@type="file"]'),
         walletNameField: by.xpath('//input[@name="newName"]'),
-        walletPassword: by.xpath('//input[@name="password"]'),
+        walletPasswordField: by.xpath('//input[@name="password"]'),
         importWalletButton: by.xpath("//button[.='Import']"),
         validationMessage: by.css('.sonm-form__row *> .sonm-form-field__help'),
     },
@@ -27,9 +27,6 @@ module.exports = {
     //fill name field for wallet file
 
     fillImportWalletNameField: async function(walletName) {
-        (await shared.wdHelper.findVisibleElement(
-            this.elements.walletPassword,
-        )).click();
         return (await shared.wdHelper.findVisibleElement(
             this.elements.walletNameField,
         )).sendKeys(walletName);
@@ -39,20 +36,29 @@ module.exports = {
 
     fillImportWalletPasswordField: async function(password) {
         return (await shared.wdHelper.findVisibleElement(
-            this.elements.walletPassword,
+            this.elements.walletPasswordField,
         )).sendKeys(password);
     },
 
+    clearImportWalletNameField: function() {
+        return page.common.clearInputField(this.elements.walletNameField);
+    },
+
+    clearImportWalletPasswordField: function() {
+        return page.common.clearInputField(this.elements.walletPasswordField);
+    },
+
+
     validateImportWalletFileField: async function(errorMessage) {
-        return await page.common.verifyValidationErrorMessage(by.css('.sonm-form__row:nth-of-type(2) *> .sonm-form-field__help'), errorMessage);
+        return await page.common.verifyValidationErrorMessage(by.css('.sonm-form__row:nth-of-type(1) *> .sonm-form-field__help'), errorMessage);
     },
 
     validateImportWalletNameField: async function(errorMessage) {
-        return await page.common.verifyValidationErrorMessage(by.css('.sonm-form__row:nth-of-type(3) *> .sonm-form-field__help'), errorMessage);
+        return await page.common.verifyValidationErrorMessage(by.css('.sonm-form__row:nth-of-type(2) *> .sonm-form-field__help'), errorMessage);
     },
 
     validateImportWalletPasswordField: async function(errorMessage) {
-        return await page.common.verifyValidationErrorMessage(by.css('.sonm-form__row:nth-of-type(1) *> .sonm-form-field__help'), errorMessage);
+        return await page.common.verifyValidationErrorMessage(by.css('.sonm-form__row:nth-of-type(3) *> .sonm-form-field__help'), errorMessage);
     },
 
     //import wallet

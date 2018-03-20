@@ -1,4 +1,4 @@
-module.exports = function() {
+modxports = function() {
     this.When(
         /^I create wallet with name "([^"]*)" and password "([^"]*)" and password confirmation "([^"]*)"$/,
         async function(name, password, confirm) {

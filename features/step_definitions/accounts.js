@@ -1,5 +1,5 @@
 module.exports = function() {
-    this.Then(/^I should see accounts page$/, async function() {
+    this.Then(/^I see accounts page$/, async function() {
         return await page.accountsPage.waitForAccountPageLoading();
     });
 
@@ -11,7 +11,7 @@ module.exports = function() {
         return page.accountsPage.createNewAccount();
     });
 
-    this.Then(/^I should see account "([^"]*)" in accounts list$/, function(
+    this.Then(/^I see account "([^"]*)" in accounts list$/, function(
         name,
     ) {
         return page.accountsPage.findAccountInList(name);
