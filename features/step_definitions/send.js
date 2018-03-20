@@ -1,6 +1,6 @@
 module.exports = function() {
-    this.When(/^I select account from by name "([^"]*)"$/, function(accName) {
-        return page.sendPage.selectAddressFromByName(accName);
+    this.When(/^I select account from by name "([^"]*)"$/, async function(accName) {
+        return await page.sendPage.selectAddressFromByName(accName);
     });
 
     this.When(/^I type into send to field address "([^"]*)"$/, function(

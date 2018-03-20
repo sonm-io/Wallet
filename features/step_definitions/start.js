@@ -12,8 +12,8 @@ const closeDisclaimer = async function() {
 };
 
 module.exports = function() {
-    this.Given(/^I open wallet with one existing wallet$/, function() {
-        loadMainPage();
+    this.Given(/^I open wallet with one existing wallet$/, async function() {
+        await loadMainPage();
         shared.wdHelper.loadWalletToStorage(shared.wallets.emptyWallet);
     });
 
@@ -84,7 +84,8 @@ module.exports = function() {
     });
 
     this.When(/^I click Import Wallet button$/, async function() {
-        return await page.startPage.clickImportWalletButton();
+        await page.startPage.clickImportWalletButton();
+        return page.dialogueImportWallet.waitImportWalletDialogue();
     });
 
     this.When(/^Close Create New Wallet dialogue$/, async function() {

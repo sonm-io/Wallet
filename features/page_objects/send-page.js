@@ -38,33 +38,33 @@ module.exports = {
 
     //fill field send address to
 
-    fillAddressTo: function(address) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.sendTo)
+    fillAddressTo: async function(address) {
+        return (await shared.wdHelper
+            .findVisibleElement(this.elements.sendTo))
             .sendKeys(address);
     },
 
     //fill amount field
 
-    setAmountField: function(amount) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.amount)
+    setAmountField: async function(amount) {
+        return (await shared.wdHelper
+            .findVisibleElement(this.elements.amount))
             .sendKeys(amount);
     },
 
     // click next button
 
-    clickNext: function() {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.NextBtn)
+    clickNext: async function() {
+        return (await shared.wdHelper
+            .findVisibleElement(this.elements.NextBtn))
             .click();
     },
 
     //verify selected currency
 
-    checkSelectedCurrency: function(currency) {
-        return shared.wdHelper
-            .findVisibleElement(this.elements.selectedCurrency)
+    checkSelectedCurrency: async function(currency) {
+        return (await shared.wdHelper
+            .findVisibleElement(this.elements.selectedCurrency))
             .getText()
             .then(text => expect(text).to.equal(currency));
     },
@@ -72,12 +72,10 @@ module.exports = {
     //select currency from dropdown
 
     selectCurrency: async function(currency) {
-        await shared.wdHelper
-            .findVisibleElement(this.elements.currencySelect)
+        (await shared.wdHelper
+            .findVisibleElement(this.elements.currencySelect))
             .click();
-        await shared.wdHelper
-            .findVisibleElement(by.xpath('//li[@title="' + currency + '"]'))
-            .click();
+        (await shared.wdHelper.findVisibleElement(by.xpath('//li[@title="' + currency + '"]'))).click();
         return this.checkSelectedCurrency(currency);
     },
 };

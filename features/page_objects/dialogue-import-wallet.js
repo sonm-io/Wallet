@@ -17,8 +17,8 @@ module.exports = {
     //select wallet file for further import
 
     selectWalletFileForImport: function(walletName) {
-        let targetFile =
-            process.cwd() + '/features/shared_objects/' + walletName;
+        let targetFile = process.cwd() + '/features/shared_objects/' + walletName;
+        console.log(targetFile);
         return driver
             .wait(until.elementLocated(this.elements.selectWalletImportField))
             .sendKeys(targetFile);
@@ -43,11 +43,16 @@ module.exports = {
         )).sendKeys(password);
     },
 
-    validateField: async function(errorMessage) {
-        return await page.common.verifyValidationErrorMessage(
-            this.elements.validationMessage,
-            errorMessage,
-        );
+    validateImportWalletFileField: async function(errorMessage) {
+        return await page.common.verifyValidationErrorMessage(by.css('.sonm-form__row:nth-of-type(2) *> .sonm-form-field__help'), errorMessage);
+    },
+
+    validateImportWalletNameField: async function(errorMessage) {
+        return await page.common.verifyValidationErrorMessage(by.css('.sonm-form__row:nth-of-type(3) *> .sonm-form-field__help'), errorMessage);
+    },
+
+    validateImportWalletPasswordField: async function(errorMessage) {
+        return await page.common.verifyValidationErrorMessage(by.css('.sonm-form__row:nth-of-type(1) *> .sonm-form-field__help'), errorMessage);
     },
 
     //import wallet

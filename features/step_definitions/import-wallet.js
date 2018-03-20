@@ -1,9 +1,6 @@
 module.exports = function() {
-    this.When(/^I Select wallet file for import "([^"]*)"$/, async function(
-        walletName,
-    ) {
-        return await page.dialogueImportWallet.selectWalletFileForImport(
-            walletName,
+    this.When(/^I Select wallet file for import "([^"]*)"$/, function(walletName,) {
+        return page.dialogueImportWallet.selectWalletFileForImport(walletName,
         );
     });
 
@@ -32,7 +29,7 @@ module.exports = function() {
     this.Then(
         /^I see import wallet validation error message$/,
         async function() {
-            return await page.dialogueImportWallet.validateField(
+            return await page.dialogueImportWallet.validateImportWalletField(
                 shared.messages.importWallet
                     .importWalletIncorrectFileValidationMessage,
             );
@@ -40,9 +37,8 @@ module.exports = function() {
     );
 
     this.Then(
-        /^I see import wallet name validation error message$/,
-        async function() {
-            return await page.dialogueImportWallet.validateField(
+        /^I see import wallet name validation error message$/, async function() {
+            return await page.dialogueImportWallet.validateImportWalletNameField(
                 shared.messages.importWallet
                     .importWalletSameNameValidationMessage,
             );
@@ -52,7 +48,7 @@ module.exports = function() {
     this.Then(
         /^I see import wallet password validation error message$/,
         async function() {
-            return await page.dialogueImportWallet.validateField(
+            return await page.dialogueImportWallet.validateImportWalletPasswordField(
                 shared.messages.importWallet
                     .importWalletIncorrectPasswordValidationMessage,
             );
