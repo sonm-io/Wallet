@@ -20,6 +20,8 @@ export interface ICalendarOptionalProps {
     calendarCssClasses: ICalendarCssClasses;
     className: string;
     targetDate: Date | undefined;
+    disableAfter: Date | undefined;
+    disableBefore: Date | undefined;
     visibleMonth: number | undefined;
     visibleYear: number | undefined;
     valueToString: (value: ICalendarProps['value']) => string;
@@ -39,7 +41,8 @@ export interface ICalendarCssClasses {
     tableOfDays: string;
     dayName: string;
     selectedDay: string;
-    targetDate: string;
+    targetDay: string;
+    disabledDay: string;
 }
 
 export interface IDateInfo {

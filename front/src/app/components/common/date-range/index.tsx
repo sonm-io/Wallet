@@ -42,6 +42,7 @@ export class DateRange extends React.Component<IDateRangeProps, any> {
             this.props.value[0],
             this.props.value[1],
         ] as TDateRangeValue;
+        debugger;
         const idx = params.name === 'from' ? 0 : 1;
         value[idx] = params.value;
         const valueString = this.getProps().valueToString(value);
@@ -70,7 +71,9 @@ export class DateRange extends React.Component<IDateRangeProps, any> {
     }
 
     public render() {
-        const { value, className } = this.props;
+        const { value: fromTo, className } = this.props;
+        const from = fromTo[0];
+        const to = fromTo[1];
 
         return (
             <div className={cn('date-range', className)}>
@@ -78,15 +81,17 @@ export class DateRange extends React.Component<IDateRangeProps, any> {
                     className="date-range__picker"
                     name="from"
                     onChange={this.onChange}
-                    value={value[0]}
-                    targetDate={value[1]}
+                    value={from}
+                    targetDate={to}
+                    disableAfter={to}
                 />
                 <DatePicker
                     className="date-range__picker"
                     name="to"
                     onChange={this.onChange}
-                    value={value[1]}
-                    targetDate={value[0]}
+                    value={to}
+                    targetDate={from}
+                    disableBefore={from}
                 />
             </div>
         );

@@ -77,7 +77,8 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
         tableOfDays: `${rootClassName}__table-of-days`,
         dayName: `${rootClassName}__day-name`,
         selectedDay: `${rootClassName}__day--selected`,
-        targetDate: `${rootClassName}__day--target`,
+        targetDay: `${rootClassName}__day--target`,
+        disabledDay: `${rootClassName}__day--disabled`,
     });
 
     public static readonly format = (value: Date) => {
@@ -119,6 +120,8 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
         targetDate: undefined,
         visibleMonth: undefined,
         visibleYear: undefined,
+        disableAfter: undefined,
+        disableBefore: undefined,
     };
 
     public static propTypes: TJsPropTypes<ICalendarAllProps> = {
@@ -147,6 +150,8 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
         visibleMonth: propTypes.number,
         visibleYear: propTypes.number,
         valueToString: propTypes.func,
+        disableAfter: valuePropType,
+        disableBefore: valuePropType,
     };
 
     public static getDateInfo(v: Date): IDateInfo {
@@ -245,6 +250,12 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
         const valueTimestamp = Calendar.getDateValue(props.value);
         const selectionRange = [targetTimestamp, valueTimestamp].sort();
         const todayTimestamp = Calendar.getDateValue(new Date());
+        const disableAfter = props.disableAfter
+            ? Calendar.getDateValue(props.disableAfter)
+            : 0;
+        const disableBefore = props.disableBefore
+            ? Calendar.getDateValue(props.disableBefore)
+            : 0;
 
         while (monthDate <= monthLength) {
             if (monthDate <= 0) {
@@ -267,13 +278,16 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
                 const week = Math.floor(datePos / 7);
                 const dayIdx = datePos % 7;
                 const day = String(Calendar.dayNames[dayIdx]).toLowerCase();
+                const disabled =
+                    (disableAfter !== 0 && dayTimestamp > disableAfter) ||
+                    (disableBefore !== 0 && dayTimestamp < disableBefore);
 
                 arrayOfDayElement.push(
                     <button
                         type="button"
                         key={monthDate}
                         value={monthDate}
-                        onClick={this.handleClickDay}
+                        onClick={disabled ? undefined : this.handleClickDay}
                         className={cn(
                             cssClasses.day,
                             day,
@@ -288,8 +302,9 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
                                 // 'day-target': dayTimestamp === valueTimestamp,
                                 // 'day-after-target': targetTimestamp && (targetTimestamp <= dayTimestamp),
                                 // 'day-before-target': targetTimestamp && (targetTimestamp > dayTimestamp),
-                                [cssClasses.targetDate]:
+                                [cssClasses.targetDay]:
                                     dayTimestamp === targetTimestamp,
+                                [cssClasses.disabledDay]: disabled,
                             },
                         )}
                     >
