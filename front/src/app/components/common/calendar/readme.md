@@ -4,4 +4,4 @@ calendar:
 
 calendar:
 
-    <Calendar value={new Date(2020, 0, 20)} targetDate={new Date(2020, 0, 2)} name="1" onChange={e => console.log(JSON.stringify(e))}/>
+    <Calendar value={new Date(2020, 0, 20)} targetDate={new Date(2020, 0, 7)} name="1" onChange={e => console.log(JSON.stringify(e))}/>

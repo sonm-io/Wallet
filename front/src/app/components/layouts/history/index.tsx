@@ -1,6 +1,9 @@
 import * as React from 'react';
 import Table from 'antd/es/table';
-import DatePicker from 'antd/es/date-picker';
+import {
+    DateRangeDropdown,
+    IDateRangeChangeParams,
+} from 'app/components/common/date-range-dropdown';
 import Select from 'antd/es/select';
 import Input from 'antd/es/input';
 import * as cn from 'classnames';
@@ -15,7 +18,6 @@ import { IdentIcon } from 'app/components/common/ident-icon';
 import { Balance } from 'app/components/common/balance-view';
 import { Hash } from 'app/components/common/hash-view';
 
-const RangePicker = DatePicker.RangePicker;
 const Option = Select.Option;
 
 const debounce500 = debounce(500);
@@ -200,10 +202,10 @@ export class History extends React.Component<IProps, any> {
         }
     }
 
-    protected handleChangeTime = (dates: moment.Moment[]) => {
+    protected handleChangeTime = (params: IDateRangeChangeParams) => {
         rootStore.historyStore.setFilterTime(
-            dates[0].valueOf(),
-            dates[1].valueOf(),
+            params.value[0].valueOf(),
+            params.value[1].valueOf(),
         );
     };
 
@@ -248,13 +250,13 @@ export class History extends React.Component<IProps, any> {
                     value={rootStore.historyStore.fromAddress}
                     hasEmptyOption
                 />
-                <RangePicker
-                    allowClear={false}
+                <DateRangeDropdown
                     className="sonm-history__date-range"
                     value={[
-                        moment(rootStore.historyStore.timeStart),
-                        moment(rootStore.historyStore.timeEnd),
+                        new Date(rootStore.historyStore.timeStart),
+                        new Date(rootStore.historyStore.timeEnd),
                     ]}
+                    name="date-range-history"
                     onChange={this.handleChangeTime}
                 />
                 <Select

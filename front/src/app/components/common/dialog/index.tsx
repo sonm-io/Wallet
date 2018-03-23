@@ -32,7 +32,6 @@ export class Dialog extends React.PureComponent<IDialogProps> {
                 <div className="sonm-popup__pale" />
                 <div className="sonm-popup__outer">
                     <div
-                        tabIndex={0}
                         role="dialog"
                         className={cn('sonm-popup__inner', className)}
                         style={style}
