@@ -44,6 +44,7 @@ export class DatePicker extends React.PureComponent<
             nextMonthButton: propTypes.string,
             title: propTypes.string,
             valueDay: propTypes.string,
+            disabledDay: propTypes.string,
         }),
     };
 
@@ -265,8 +266,10 @@ export class DatePicker extends React.PureComponent<
                         visibleMonth={state.visibleMonth}
                         visibleYear={state.visibleYear}
                         targetDate={props.targetDate}
+                        disableAfter={props.disableAfter}
+                        disableBefore={props.disableBefore}
                         value={props.value}
-                        name="calendar"
+                        name={props.name}
                     />
                 )}
                 <a
