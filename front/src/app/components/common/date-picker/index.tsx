@@ -8,6 +8,7 @@ import {
     IDatePickerCssClasses,
     IDatePickerOptionalProps,
     IDatePickerAllProps,
+    IClickable,
 } from './types';
 
 export class DatePicker extends React.PureComponent<
@@ -256,9 +257,10 @@ export class DatePicker extends React.PureComponent<
                 />
 
                 {state.mode === 'month' ? (
-                    <div className={cssClasses.tableOfMonths}>
-                        {this.renderMonths(props)}
-                    </div>
+                    <DatePicker.renderMonths
+                        {...props}
+                        onClick={this.handleChangeMonth}
+                    />
                 ) : (
                     <Calendar
                         calendarCssClasses={props.calendarCssClasses}
@@ -283,20 +285,22 @@ export class DatePicker extends React.PureComponent<
         );
     }
 
-    protected renderMonths(props: IDatePickerAllProps) {
-        return props.monthNames.map((name: string, idx: number) => {
-            return (
-                <button
-                    type="button"
-                    className={props.datePickerCssClasses.month}
-                    key={idx}
-                    value={idx}
-                    onClick={this.handleChangeMonth}
-                >
-                    {name}
-                </button>
-            );
-        });
+    protected static renderMonths(props: IDatePickerAllProps & IClickable) {
+        return (
+            <div className={props.datePickerCssClasses.tableOfMonths}>
+                {props.monthNames.map((name: string, idx: number) => (
+                    <button
+                        type="button"
+                        className={props.datePickerCssClasses.month}
+                        key={idx}
+                        value={idx}
+                        onClick={props.onClick}
+                    >
+                        {name}
+                    </button>
+                ))}
+            </div>
+        );
     }
 }
 

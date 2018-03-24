@@ -42,3 +42,7 @@ export interface IDatePickerState {
     visibleMonth: number;
     visibleYear: number;
 }
+
+export interface IClickable {
+    onClick: (event: any) => void;
+}
