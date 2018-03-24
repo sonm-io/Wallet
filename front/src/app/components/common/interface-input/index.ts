@@ -1,12 +1,12 @@
-export interface IInputChangeParams {
+export interface IInputChangeParams<TValue> {
     name: string;
-    value: any;
+    value: TValue;
     valueString: string;
 }
 
 export interface IInputComponent<TValue> {
     props: {
-        onChange: (params: IInputChangeParams) => void;
+        onChange: (params: IInputChangeParams<TValue>) => void;
         name: TValue;
         value: TValue;
     };
