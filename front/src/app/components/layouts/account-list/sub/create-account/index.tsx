@@ -1,19 +1,12 @@
 import * as React from 'react';
-import { Dialog } from 'app/components/common/dialog';
-import { Button } from 'app/components/common/button';
-import {
-    FormField,
-    FormRow,
-    Form,
-    FormButtons,
-} from 'app/components/common/form';
-import { Input } from 'app/components/common/input';
 import { IValidation } from 'ipc/types';
 import { rootStore } from 'app/stores';
 import { validateHex } from 'app/utils/validation/validate-ether-address';
+import { CreateAccountView } from './view';
 
 export interface ICreateAccountForm {
     password: string;
+    confirmation: string;
     name: string;
     privateKey: string;
 }
@@ -24,145 +17,102 @@ export interface IProps {
     onClickCross: () => void;
 }
 
+const emptyForm: ICreateAccountForm = {
+    password: '',
+    confirmation: '',
+    name: '',
+    privateKey: '',
+};
+
 export class CreateAccount extends React.Component<IProps, any> {
     public state = {
-        name: '',
-        password: '',
-        confirmation: '',
-        privateKey: '',
-        validation: {} as IValidation,
+        form: emptyForm,
+        validation: emptyForm,
+        dirty: {},
     };
 
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
         const l = rootStore.localizator.getMessageText;
-        const validation = { ...this.state.validation };
+        const validation = {} as any;
+        const form = this.state.form;
 
-        if (!this.state.name) {
+        if (!form.name) {
             validation.name = l('name_required');
         }
 
-        if (!this.state.password) {
+        if (!form.password) {
             validation.password = l('password_required');
-        } else if (this.state.password.length < 8) {
+        } else if (form.password.length < 8) {
             validation.password = l('password_length');
         }
 
-        if (this.state.password !== this.state.confirmation) {
+        if (form.password !== form.confirmation) {
             validation.confirmation = l('password_not_match');
         }
 
-        if (this.state.privateKey !== '') {
-            const validationPrivateKey = validateHex(64, this.state.privateKey);
+        if (form.privateKey !== '') {
+            const validationPrivateKey = validateHex(64, form.privateKey);
             if (validationPrivateKey.length) {
                 validation.privateKey = validationPrivateKey.map(l).join(' ');
             }
         }
 
-        if (Object.keys(validation).every(x => !validation[x])) {
-            this.setState({ validation: {} });
-
-            this.props.onSubmit({
-                password: this.state.password,
-                name: this.state.name,
-                privateKey: this.state.privateKey,
+        if (Object.keys(validation).every(x => '' === validation[x])) {
+            this.setState({
+                dirty: {},
+                validation: emptyForm,
             });
+
+            this.props.onSubmit(form);
         } else {
             this.setState({ validation });
         }
     };
-
-    public componentWillReceiveProps(next: IProps) {
-        const validation = {
-            ...this.state.validation,
-            ...next.serverValidation,
-        };
-
-        this.setState({ validation });
-    }
 
     protected handleClickCross = () => {
         this.props.onClickCross();
     };
 
     protected handleChangeInput = (event: any) => {
+        const name = event.target.name;
+        const value = event.target.value;
+
         this.setState({
-            [event.target.name]: event.target.value,
+            form: {
+                ...this.state.form,
+                [name]: value,
+            },
             validation: {
                 ...this.state.validation,
-                [event.target.name]: '',
+                [name]: '',
+            },
+            dirty: {
+                ...this.state.dirty,
+                [name]: true,
             },
         });
     };
 
-    public render() {
-        const l = rootStore.localizator.getMessageText;
+    protected getValidation(fieldName: keyof ICreateAccountForm) {
+        return Boolean((this.state.dirty as any)[fieldName])
+            ? this.state.validation[fieldName]
+            : this.props.serverValidation[fieldName];
+    }
 
+    public render() {
         return (
-            <Dialog onClickCross={this.handleClickCross}>
-                <Form
-                    className="sonm-accounts-create-account__form"
-                    onSubmit={this.handleSubmit}
-                >
-                    <h3>New account</h3>
-                    <FormRow>
-                        <FormField
-                            fullWidth
-                            label={l('Account name')}
-                            error={this.state.validation.name}
-                        >
-                            <Input
-                                type="text"
-                                name="name"
-                                onChange={this.handleChangeInput}
-                            />
-                        </FormField>
-                    </FormRow>
-                    <FormRow>
-                        <FormField
-                            fullWidth
-                            label={l('Password')}
-                            error={this.state.validation.password}
-                        >
-                            <Input
-                                type="password"
-                                name="password"
-                                onChange={this.handleChangeInput}
-                            />
-                        </FormField>
-                    </FormRow>
-                    <FormRow>
-                        <FormField
-                            fullWidth
-                            label={l('Password confirmation')}
-                            error={this.state.validation.confirmation}
-                        >
-                            <Input
-                                type="password"
-                                name="confirmation"
-                                onChange={this.handleChangeInput}
-                            />
-                        </FormField>
-                    </FormRow>
-                    <FormRow>
-                        <FormField
-                            fullWidth
-                            label={l('Private key (optional)')}
-                            error={this.state.validation.privateKey}
-                        >
-                            <Input
-                                type="text"
-                                name="privateKey"
-                                onChange={this.handleChangeInput}
-                            />
-                        </FormField>
-                    </FormRow>
-                    <FormButtons>
-                        <Button type="submit">{l('Create')}</Button>
-                    </FormButtons>
-                </Form>
-            </Dialog>
+            <CreateAccountView
+                onClickCross={this.handleClickCross}
+                onSubmit={this.handleSubmit}
+                onChangeInput={this.handleChangeInput}
+                validationConfirmation={this.getValidation('confirmation')}
+                validationName={this.getValidation('name')}
+                validationPassword={this.getValidation('password')}
+                validationPrivateKey={this.getValidation('privateKey')}
+                getMessageText={rootStore.localizator.getMessageText}
+            />
         );
     }
 }

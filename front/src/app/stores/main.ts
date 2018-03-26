@@ -30,6 +30,7 @@ interface IMainFormValues {
     passwordConfirmation: string;
     accountName: string;
     privateKey: string;
+    json: string;
 }
 
 const emptyForm: IMainFormValues = {
@@ -37,6 +38,7 @@ const emptyForm: IMainFormValues = {
     passwordConfirmation: '',
     accountName: '',
     privateKey: '',
+    json: '',
 };
 
 Object.freeze(emptyForm);
@@ -329,19 +331,32 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     @pending
     @catchErrors({ restart: false })
     @asyncAction
-    public *addAccount(json: string, password: string, name: string) {
+    public *addAccount(
+        json: string,
+        password: string,
+        name: string,
+        privateKey?: string,
+    ) {
+        this.serverValidation = {};
+
         const { data, validation } = yield Api.addAccount(json, password, name);
 
         let result;
 
         if (validation) {
-            this.serverValidation = {
+            const serverValidation = {
                 ...this.localizator.localizeValidationMessages(
                     validation as IValidation,
                 ),
             };
+
+            if (privateKey) {
+                serverValidation.privateKey = serverValidation.json;
+                delete serverValidation.json;
+            }
+
+            this.serverValidation = serverValidation;
         } else {
-            this.serverValidation = {};
             result = this.accountMap.set(data.address, data);
         }
 
@@ -352,6 +367,8 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     @catchErrors({ restart: false })
     @asyncAction
     public *createAccount(password: string, name: string, privateKey: string) {
+        this.serverValidation = {};
+
         const { data, validation } = yield Api.createAccount(
             password,
             privateKey,
@@ -366,7 +383,7 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
                 ),
             };
         } else {
-            result = yield this.addAccount(data, password, name);
+            result = yield this.addAccount(data, password, name, privateKey);
         }
 
         return result;
