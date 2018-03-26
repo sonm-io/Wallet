@@ -97,8 +97,9 @@ export class CreateAccount extends React.Component<IProps, any> {
 
     protected getValidation(fieldName: keyof ICreateAccountForm) {
         return Boolean((this.state.dirty as any)[fieldName])
-            ? this.state.validation[fieldName]
-            : this.props.serverValidation[fieldName];
+            ? ''
+            : this.props.serverValidation[fieldName] ||
+                  this.state.validation[fieldName];
     }
 
     public render() {
