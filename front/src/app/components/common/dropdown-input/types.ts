@@ -2,6 +2,7 @@ export interface IDropdownCssClasses {
     root: string;
     button: string;
     popup: string;
+    expanded: string;
 }
 
 export interface IDropdownRequredInputProps {

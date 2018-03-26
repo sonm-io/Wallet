@@ -88,7 +88,7 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
             '' +
             d.date +
             ' ' +
-            String(Calendar.monthNames[d.month]).toLocaleLowerCase() +
+            String(Calendar.monthNames[d.month]) +
             ' ' +
             d.year
         );

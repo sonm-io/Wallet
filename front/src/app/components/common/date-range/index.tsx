@@ -42,10 +42,18 @@ export class DateRange extends React.Component<IDateRangeProps, any> {
             this.props.value[0],
             this.props.value[1],
         ] as TDateRangeValue;
-        debugger;
-        const idx = params.name === 'from' ? 0 : 1;
+
+        const isRangeEnd = params.name === 'to';
+        const idx = isRangeEnd ? 1 : 0;
         value[idx] = params.value;
         const valueString = this.getProps().valueToString(value);
+
+        if (isRangeEnd) {
+            value[idx].setHours(23);
+            value[idx].setMinutes(59);
+            value[idx].setSeconds(59);
+            value[idx].setMilliseconds(999);
+        }
 
         this.props.onChange({
             value,

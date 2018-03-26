@@ -15,7 +15,9 @@ export interface IDialogProps extends React.ButtonHTMLAttributes<any> {
 
 export class Dialog extends React.PureComponent<IDialogProps> {
     protected handleClickCross = () => {
-        this.props.onClickCross && this.props.onClickCross();
+        if (this.props.onClickCross) {
+            this.props.onClickCross();
+        }
     };
 
     public render() {

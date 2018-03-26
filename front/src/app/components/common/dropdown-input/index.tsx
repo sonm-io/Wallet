@@ -14,6 +14,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
         rootClassName: string,
     ): IDropdownCssClasses => ({
         root: `${rootClassName}-input`,
+        expanded: `${rootClassName}-input--expanded`,
         button: `${rootClassName}-input__button`,
         popup: `${rootClassName}-input__popup`,
     });
@@ -86,7 +87,9 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
 
         return (
             <div
-                className={cn(s.root, this.props.className)}
+                className={cn(this.props.className, s.root, {
+                    [s.expanded]: this.props.isExpanded,
+                })}
                 ref={this.saveRef}
             >
                 <button
