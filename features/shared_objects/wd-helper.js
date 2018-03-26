@@ -32,12 +32,16 @@ module.exports = {
         return driver.wait(until.elementsLocated(locator), timeout * 1000);
     },
 
-    waitElementNotVisible: function(locator, timeout = 20) {
-        let element = driver.wait(
-            until.elementLocated(locator),
-            timeout * 1000,
-        );
-        return driver.wait(until.stalenessOf(element), timeout * 1000);
+    waitElementNotVisible: function(locator, timeout = 30) {
+        driver.findElements(locator).then(function(elements) {
+            if (elements.length > 0) {
+                let element = driver.wait(
+                    until.elementLocated(locator),
+                    timeout * 1000,
+                );
+                return driver.wait(until.stalenessOf(element), timeout * 1000);
+            }
+        });
     },
 
     loadWalletToStorage: function(wallet) {
