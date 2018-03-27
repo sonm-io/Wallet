@@ -19,14 +19,6 @@ module.exports = {
         )).click();
     },
 
-    //delay for functions
-
-    delay: function(ms) {
-        return function(x) {
-            return new Promise(resolve => setTimeout(() => resolve(x), ms));
-        };
-    },
-
     // verify part of notification
 
     verifyNotificationText: async function(text) {
@@ -122,15 +114,5 @@ module.exports = {
 
     clearInputField: async function(field) {
         return (await shared.wdHelper.findVisibleElement(field)).clear();
-    },
-
-    test: async function() {
-        const webElement = await shared.wdHelper.findVisibleElement(
-            by.css('.sonm-spinner__svg.sonm-load-mask__spinner'),
-        );
-        const actualCssValue = await webElement.getCssValue('overflow');
-        console.log(actualCssValue);
-        driver.wait(until.equals(expect(actualCssValue).to.equal('hidden')));
-        console.log(await expect(actualCssValue).to.equal('hidden'));
     },
 };

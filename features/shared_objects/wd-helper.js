@@ -18,7 +18,7 @@ function loadWalletName(wallet) {
 }
 
 module.exports = {
-    findVisibleElement: async function(locator, timeout = 10) {
+    findVisibleElement: async function(locator, timeout = 30) {
         let element = await driver.wait(
             until.elementLocated(locator),
             timeout * 1000,
@@ -28,20 +28,13 @@ module.exports = {
         return await element;
     },
 
-    findVisibleElements: function(locator, timeout = 10) {
+    findVisibleElements: function(locator, timeout = 20) {
         return driver.wait(until.elementsLocated(locator), timeout * 1000);
     },
 
-    waitElementNotVisible: function(locator, timeout = 30) {
-        driver.findElements(locator).then(function(elements) {
-            if (elements.length > 0) {
-                let element = driver.wait(
-                    until.elementLocated(locator),
-                    timeout * 1000,
-                );
-                return driver.wait(until.stalenessOf(element), timeout * 1000);
-            }
-        });
+    waitElementIsNotVisible: async function(locator) {
+        let el = await driver.findElement(locator);
+        return await driver.wait(until.elementIsNotVisible(el));
     },
 
     loadWalletToStorage: function(wallet) {

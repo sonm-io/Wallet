@@ -11,14 +11,12 @@ module.exports = function() {
         return page.accountsPage.createNewAccount();
     });
 
-    this.Then(/^I see account "([^"]*)" in accounts list$/, function(
-        name,
-    ) {
+    this.Then(/^I see account "([^"]*)" in accounts list$/, function(name) {
         return page.accountsPage.findAccountInList(name);
     });
 
     this.Then(
-        /^I should see account "([^"]*)" in accounts list with hash "([^"]*)"$/,
+        /^I see account "([^"]*)" in accounts list with hash "([^"]*)"$/,
         function(name, hash) {
             return page.accountsPage.findAccountInListWithHash(name, hash);
         },

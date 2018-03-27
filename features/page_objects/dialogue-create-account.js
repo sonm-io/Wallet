@@ -54,6 +54,7 @@ module.exports = {
     },
 
     //create new account
+
     createNewAccout: function() {
         return shared.wdHelper
             .findVisibleElement(this.elements.createNewAccountButton)

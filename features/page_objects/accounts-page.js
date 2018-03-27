@@ -78,28 +78,32 @@ module.exports = {
     //find account by name in the list
 
     findAccountInList: async function(name) {
-        return (await shared.wdHelper.findVisibleElements(
-            by.xpath(
-                '//span[@class="sonm-account-item__name-text"][.="' +
-                    name +
-                    '"]',
-            ),
-        )).then(elements => expect(elements.length).to.equal(1));
+        return shared.wdHelper
+            .findVisibleElements(
+                by.xpath(
+                    '//span[@class="sonm-account-item__name-text"][.="' +
+                        name +
+                        '"]',
+                ),
+            )
+            .then(elements => expect(elements.length).to.equal(1));
     },
 
     //find account by name and hash in the list
 
     findAccountInListWithHash: async function(name, hash) {
-        return (await shared.wdHelper.findVisibleElements(
-            by.xpath(
-                '//span[@class="sonm-account-item__name-text"][.="' +
-                    name +
-                    '"]/../../' +
-                    'a[@href="#' +
-                    hash +
-                    '"]',
-            ),
-        )).then(elements => expect(elements.length).to.equal(1));
+        return shared.wdHelper
+            .findVisibleElements(
+                by.xpath(
+                    '//span[@class="sonm-account-item__name-text"][.="' +
+                        name +
+                        '"]/../../' +
+                        'a[@href="#' +
+                        hash +
+                        '"]',
+                ),
+            )
+            .then(elements => expect(elements.length).to.equal(1));
     },
 
     //click on account from the list

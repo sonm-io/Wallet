@@ -18,10 +18,38 @@ module.exports = function() {
     });
 
     this.When(/^I press button Add$/, async function() {
-        return await page.dialogueImportAccount.clickAddImportAccountButton();
+        await page.dialogueImportAccount.clickAddImportAccountButton();
+        return await page.dialogueImportAccount.verifySpinnerIsNotVisible();
     });
 
-    this.Then(/^I See add account dialogue$/, async function() {
+    this.Then(/^I see add account dialogue$/, async function() {
         return await page.dialogueImportAccount.waitImportAccountDialogue();
+    });
+
+    this.Then(
+        /^I see import account file validation error message$/,
+        function() {
+            return page.dialogueImportAccount.validateImportAccountFileField();
+        },
+    );
+
+    this.Then(
+        /^I see import account name validation error message$/,
+        function() {
+            return page.dialogueImportAccount.validateImportAccountNameField();
+        },
+    );
+
+    this.Then(
+        /^I see import account password validation error message "([^"]*)"$/,
+        function(errorMessage) {
+            return page.dialogueImportAccount.validateImportAccountPasswordField(
+                errorMessage,
+            );
+        },
+    );
+
+    this.Then(/^I clear import account password field$/, function() {
+        return page.dialogueImportAccount.clearImportAccountPasswordField();
     });
 };

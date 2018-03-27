@@ -14,7 +14,19 @@
         "importWalletSelectFileValidationMessage": "Select SONM wallet export file",
         "importWalletIncorrectFileValidationMessage": "This is not SONM wallet export file"
     },
+    "importAccount": {
+        "importAccountIncorrectFileValidationMessage": "no_addres_in_account_file",
+        "importAccountNameValidationMessage": "Name is required",
+        "importAccountPasswordValidationMessage": "Password is required",
+        "importAccountIncorrectPasswordValidationMessage": "Password is not valid"
+    },
     "tx": {
         "successtx": "Transaction is completed successfully"
+    },
+    "createAccount": {
+        "createAccountNameValidationMessage": "Name is required",
+        "createAccountPasswordValidationMessage": "Password is required",
+        "createAccountIncorrectPasswordValidationMessage": "Password must be at least 8 character",
+        "createAccountConfirmPasswordValidationMessage": "Password does not match"
     }
 }

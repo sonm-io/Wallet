@@ -22,11 +22,6 @@ module.exports = {
     //wait for loading start page
 
     waitForAccountsPage: async function() {
-        console.log(
-            await shared.wdHelper.findVisibleElement(
-                this.elements.accountsForm,
-            ),
-        );
         return await shared.wdHelper.findVisibleElement(
             this.elements.accountsForm,
         );
@@ -92,16 +87,9 @@ module.exports = {
     //create new wallet from start page
 
     createWalletFromStartPage: async function() {
-        console.log(
-            await shared.wdHelper.findVisibleElement(
-                this.elements.createWallet,
-            ),
-        );
         return (await shared.wdHelper.findVisibleElement(
             this.elements.createWallet,
         )).click();
-        // console.log(el);
-        // return await el.click();
     },
 
     //import wallet

@@ -2,8 +2,8 @@ module.exports = {
     elements: {
         header: by.xpath('//form/h3'),
         selectKeystore: by.xpath('//input[@type="file"]'),
-        accountName: by.xpath('//input[@name="name"]'),
-        accountPassword: by.xpath('//input[@name="password"]'),
+        accountNameField: by.xpath('//input[@name="name"]'),
+        accountPasswordField: by.xpath('//input[@name="password"]'),
         addButton: by.xpath('//button[.="Add"]'),
         preview: by.className('sonm-accounts-add-account__preview-ct'),
         fileField: by.xpath('//input[@type="file"]'),
@@ -17,6 +17,14 @@ module.exports = {
             .then(text => expect(text).to.equal('Add account'));
     },
 
+    verifySpinnerIsNotVisible: async function() {
+        // let el = await driver.findElement(by.css('.sonm-app > .sonm-load-mask'));
+        // return await driver.wait(until.elementIsNotVisible(el));
+        await shared.wdHelper.waitElementIsNotVisible(
+            by.css('.sonm-app > .sonm-load-mask'),
+        );
+    },
+
     //upload account file
 
     uploadAccountFile: function(filename = 'for_upload.json') {
@@ -26,6 +34,8 @@ module.exports = {
             .sendKeys(targetFile);
     },
 
+    //import account preview
+
     findPreview: async function() {
         return await shared.wdHelper.findVisibleElement(this.elements.preview);
     },
@@ -34,7 +44,7 @@ module.exports = {
 
     fillImportAccountName: async function(name) {
         return (await shared.wdHelper.findVisibleElement(
-            this.elements.accountName,
+            this.elements.accountNameField,
         )).sendKeys(name);
     },
 
@@ -42,8 +52,42 @@ module.exports = {
 
     fillImportAccountPassword: async function(password) {
         return (await shared.wdHelper.findVisibleElement(
-            this.elements.accountPassword,
+            this.elements.accountPasswordField,
         )).sendKeys(password);
+    },
+
+    //validation of account file
+
+    validateImportAccountFileField: async function() {
+        return await page.common.verifyValidationErrorMessage(
+            by.css('.sonm-form__row:nth-of-type(1) * > .sonm-form-field__help'),
+            shared.messages.importAccount
+                .importAccountIncorrectFileValidationMessage,
+        );
+    },
+
+    //validation of account name field
+
+    validateImportAccountNameField: async function() {
+        return await page.common.verifyValidationErrorMessage(
+            by.css('.sonm-form__row:nth-of-type(2) * > .sonm-form-field__help'),
+            shared.messages.importAccount.importAccountNameValidationMessage,
+        );
+    },
+
+    //validation of account password field
+
+    validateImportAccountPasswordField: async function(errorMessage) {
+        return await page.common.verifyValidationErrorMessage(
+            by.css('.sonm-form__row:nth-of-type(3) * > .sonm-form-field__help'),
+            errorMessage,
+        );
+    },
+
+    clearImportAccountPasswordField: async function() {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.accountPasswordField,
+        )).clear();
     },
 
     //click add account button

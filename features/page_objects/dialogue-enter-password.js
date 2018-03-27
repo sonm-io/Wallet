@@ -1,22 +1,22 @@
 module.exports = {
     elements: {
-        passwordPopupHeader: by.css(
-            '.sonm-popup__outer .sonm-popup__inner .sonm-login__popup-header',
+        passwordPopupHeader: by.xpath(
+            '//form[@class="sonm-login__popup-content"]/h3',
         ),
-        password: by.css('input[type=password]'),
+        password: by.xpath('//div[@class="sonm-login__label"]/input'),
         passwordFieldValidMessage: by.className('sonm-login__label-error'),
         loginToWalletButton: by.className('sonm-login__create'),
         closeDialogueButton: by.xpath(
-            "//div/button[@class='sonm-icon sonm-popup__cross']",
+            '//div[@class="sonm-popup__inner"]/button[@class="sonm-icon sonm-popup__cross"]',
         ),
-        //closeDialogueButton: by.css(".sonm-popup.sonm-popup--dark *> .sonm-popup__inner > .sonm-popup__cross")
     },
 
     //wait for page loading according to displayed add account header
 
     waitForPasswordPopup: async function() {
-        return await driver
-            .wait(until.elementLocated(this.elements.passwordPopupHeader))
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.passwordPopupHeader,
+        ))
             .getText()
             .then(text => expect(text).to.equal('Enter password'));
     },

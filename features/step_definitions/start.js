@@ -30,6 +30,7 @@ module.exports = function() {
             let wallet = shared.wdHelper.resolve(shared.wallets, walletName);
             await shared.wdHelper.loadWalletToStorage(wallet);
             await closeDisclaimer();
+            await page.dialogueEnterPassword.waitForPasswordPopup();
             await page.dialogueEnterPassword.enterPassword(password);
             return await page.dialogueEnterPassword.loginToWallet();
         },
@@ -85,6 +86,7 @@ module.exports = function() {
     });
 
     this.When(/^I click Import Wallet button$/, async function() {
+        await page.startPage.waitForAccountsPage();
         await page.startPage.clickImportWalletButton();
         return page.dialogueImportWallet.waitImportWalletDialogue();
     });
@@ -92,5 +94,9 @@ module.exports = function() {
     this.When(/^Close Create New Wallet dialogue$/, async function() {
         await page.dialogueNewWallet.waitNewWalletDialogue();
         return await page.startPage.closeCreateNewWalletDialogue();
+    });
+
+    this.Then(/^I log out from wallet$/, async function() {
+        return await page.dialogueStartDisclaimer.waitForDisclaimerLoad();
     });
 };

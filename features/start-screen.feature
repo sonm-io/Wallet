@@ -87,7 +87,7 @@ Feature: Start screen
     Then I get wallets search results "['45te']"
     When I select wallet name "45te" from dropdown
     And I click login button
-    And I type password "1"
+    And I type password "11111111"
     Then I see accounts page
     And Send link tab is disabled
     When I press logout button

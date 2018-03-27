@@ -5,7 +5,7 @@
             "data": [
                 {
                     "name": "empty",
-                    "chainId": "testrpc",
+                    "chainId": "rinkeby",
                     "nodeUrl": "http://localhost:8545"
                 }
             ]
@@ -19,7 +19,7 @@
             "data": [
                 {
                     "name": "one-account",
-                    "chainId": "testrpc",
+                    "chainId": "rinkeby",
                     "nodeUrl": "http://localhost:8545"
                 }
             ]

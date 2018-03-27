@@ -16,11 +16,6 @@ module.exports = function() {
         return await page.dialogueNewWallet.createNewWalletButton();
     });
 
-    this.When(/^I close password dialogue$/, async function() {
-        await page.dialogueEnterPassword.waitForPasswordPopup();
-        return await page.dialogueEnterPassword.closeDialogue();
-    });
-
     this.When(/^I press Create wallet$/, async function() {
         await page.startPage.waitForAccountsPage();
         return await page.startPage.createWalletFromStartPage();
@@ -30,10 +25,6 @@ module.exports = function() {
         walletName,
     ) {
         return await page.dialogueNewWallet.fillWalletNameField(walletName);
-    });
-
-    this.Then(/^I log out from wallet$/, async function() {
-        return await page.dialogueStartDisclaimer.waitForDisclaimerLoad();
     });
 
     this.Then(
@@ -89,5 +80,10 @@ module.exports = function() {
 
     this.Then(/^Select network for wallet "([^"]*)"$/, function(networkName) {
         return page.dialogueNewWallet.selectNetworkValue(networkName);
+    });
+
+    this.When(/^I close password dialogue$/, async function() {
+        await page.dialogueEnterPassword.waitForPasswordPopup();
+        return await page.dialogueEnterPassword.closeDialogue();
     });
 };
