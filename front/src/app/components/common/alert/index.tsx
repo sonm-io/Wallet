@@ -22,7 +22,9 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
     }
 
     private handleClickCross = (event: any) => {
-        this.props.onClosed && this.props.onClosed(this.props.id);
+        if (this.props.onClosed) {
+            this.props.onClosed(this.props.id);
+        }
     };
 
     public render() {

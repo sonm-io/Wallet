@@ -1,1 +1,3 @@
-alert: <Alert message="lololo" type="success" id="1" />;
+alert:
+
+    <Alert type="success" id="1">lololo</Alert>
