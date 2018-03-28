@@ -24,13 +24,15 @@ const emptyForm: IImportAccountForm = {
     name: '',
 };
 
+const emptyObject: any = {};
+
 export class ImportAccount extends React.Component<IProps, any> {
     public state = {
         fileSuccess: '',
         address: '',
         form: emptyForm,
-        validation: emptyForm,
-        dirty: {} as any,
+        validation: emptyObject,
+        dirty: emptyObject,
     };
 
     protected handleSubmit = (event: any) => {
@@ -38,46 +40,34 @@ export class ImportAccount extends React.Component<IProps, any> {
 
         const validation = {} as any;
         const form = this.state.form;
+        const l = rootStore.localizator.getMessageText;
 
         if (!form.password) {
-            validation.password = rootStore.localizator.getMessageText(
-                'password_required',
-            );
+            validation.password = l('password_required');
         }
 
         if (!form.name) {
-            validation.name = rootStore.localizator.getMessageText(
-                'name_required',
-            );
+            validation.name = l('name_required');
         }
 
         if (!form.json) {
-            validation.json = rootStore.localizator.getMessageText(
-                'select_file',
-            );
+            validation.json = l('select_file');
         } else if (
             this.props.existingAccounts.indexOf(this.state.address) !== -1
         ) {
-            validation.json = rootStore.localizator.getMessageText(
-                'account_already_exists',
-            );
+            validation.json = l('account_already_exists');
         }
 
-        if (Object.keys(validation).length === 0) {
-            this.setState({
-                validation: emptyForm,
-                dirty: {},
-            });
+        this.setState({
+            dirty: emptyObject,
+            validation,
+        });
 
+        if (Object.keys(validation).length === 0) {
             this.props.onSubmit({
                 json: form.json,
                 password: form.password,
                 name: form.name,
-            });
-        } else {
-            this.setState({
-                validation: { ...emptyForm, ...validation },
-                dirty: {},
             });
         }
     };
@@ -174,11 +164,16 @@ export class ImportAccount extends React.Component<IProps, any> {
         });
     };
 
-    protected getValidation(fieldName: keyof IImportAccountForm) {
-        return this.state.dirty[fieldName]
+    protected getValidation(fieldName: keyof IImportAccountForm): string {
+        const hasLocalValidation =
+            Object.keys(this.state.validation).length !== 0;
+        const hasBeenChanged = (this.state.dirty as any)[fieldName];
+
+        return hasBeenChanged
             ? ''
-            : this.state.validation[fieldName] ||
-                  this.props.serverValidation[fieldName];
+            : (hasLocalValidation
+                  ? this.state.validation[fieldName]
+                  : this.props.serverValidation[fieldName]) || '';
     }
 
     public render() {
