@@ -24,11 +24,13 @@ const emptyForm: ICreateAccountForm = {
     privateKey: '',
 };
 
+const emptyObject = {};
+
 export class CreateAccount extends React.Component<IProps, any> {
     public state = {
         form: emptyForm,
-        validation: emptyForm,
-        dirty: {},
+        validation: emptyObject as any,
+        dirty: emptyObject as any,
     };
 
     protected handleSubmit = (event: any) => {
@@ -59,11 +61,10 @@ export class CreateAccount extends React.Component<IProps, any> {
             }
         }
 
-        if (Object.keys(validation).every(x => '' === validation[x])) {
-            this.setState({
-                dirty: {},
-                validation: emptyForm,
-            });
+        this.setState({ dirty: emptyObject });
+
+        if (Object.keys(validation).length === 0) {
+            this.setState({ validation });
 
             this.props.onSubmit(form);
         } else {
@@ -95,11 +96,16 @@ export class CreateAccount extends React.Component<IProps, any> {
         });
     };
 
-    protected getValidation(fieldName: keyof ICreateAccountForm) {
-        return Boolean((this.state.dirty as any)[fieldName])
+    protected getValidation(fieldName: keyof ICreateAccountForm): string {
+        const hasLocalValidation =
+            Object.keys(this.state.validation).length !== 0;
+        const hasBeenChanged = (this.state.dirty as any)[fieldName];
+
+        return hasBeenChanged
             ? ''
-            : this.props.serverValidation[fieldName] ||
-                  this.state.validation[fieldName];
+            : (hasLocalValidation
+                  ? this.state.validation[fieldName]
+                  : this.props.serverValidation[fieldName]) || '';
     }
 
     public render() {
