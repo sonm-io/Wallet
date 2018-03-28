@@ -24,6 +24,16 @@ module.exports = {
         )).sendKeys(name);
     },
 
+    //validate account name field
+
+    validateNewAccountNameField: async function() {
+        return await page.common.verifyValidationErrorMessage(
+            by.css('.sonm-form__row:nth-of-type(1) * > .sonm-form-field__help'),
+            shared.messages.importAccount
+                .importAccountIncorrectFileValidationMessage,
+        );
+    },
+
     //fill account password field
 
     fillNewAccountPassword: async function(password) {
@@ -32,12 +42,32 @@ module.exports = {
         )).sendKeys(password);
     },
 
+    //validate account password field
+
+    validateNewAccountPasswordField: async function() {
+        return await page.common.verifyValidationErrorMessage(
+            by.css('.sonm-form__row:nth-of-type(2) * > .sonm-form-field__help'),
+            shared.messages.importAccount
+                .importAccountIncorrectFileValidationMessage,
+        );
+    },
+
     //fill account password confirm field
 
     fillNewAccountPasswordConfirmation: async function(password) {
         return (await shared.wdHelper.findVisibleElement(
             this.elements.confirmation,
         )).sendKeys(password);
+    },
+
+    //validate account confirm password field
+
+    validateNewAccountConfirmPasswordField: async function() {
+        return await page.common.verifyValidationErrorMessage(
+            by.css('.sonm-form__row:nth-of-type(3) * > .sonm-form-field__help'),
+            shared.messages.importAccount
+                .importAccountIncorrectFileValidationMessage,
+        );
     },
 
     //fill account private key field

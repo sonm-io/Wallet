@@ -1,33 +1,32 @@
 module.exports = function() {
-    this.When(/^I Select wallet file for import "([^"]*)"$/, function(walletName,) {
-        return page.dialogueImportWallet.selectWalletFileForImport(walletName,
+    this.When(/^Wallet file for import "([^"]*)" is selected$/, function(
+        walletName,
+    ) {
+        return page.dialogueImportWallet.selectWalletFileForImport(walletName);
+    });
+
+    this.When(/^Fill Import Wallet Name field "([^"]*)"$/, async function(
+        importWalletName,
+    ) {
+        return await page.dialogueImportWallet.fillImportWalletNameField(
+            importWalletName,
         );
     });
 
-    this.When(
-        /^I fill wallet name field "([^"]*)" for Import Wallet$/,
-        async function(importWalletName) {
-            return await page.dialogueImportWallet.fillImportWalletNameField(
-                importWalletName,
-            );
-        },
-    );
+    this.When(/^Fill Import Wallet Password field "([^"]*)"$/, async function(
+        importWalletPassword,
+    ) {
+        return await page.dialogueImportWallet.fillImportWalletPasswordField(
+            importWalletPassword,
+        );
+    });
 
-    this.When(
-        /^I fill password field "([^"]*)" for Import Wallet$/,
-        async function(importWalletPassword) {
-            return await page.dialogueImportWallet.fillImportWalletPasswordField(
-                importWalletPassword,
-            );
-        },
-    );
-
-    this.When(/^I click Import Wallet$/, async function() {
+    this.When(/^Click the Import button$/, async function() {
         return await page.dialogueImportWallet.importWallet();
     });
 
     this.Then(
-        /^I see import wallet validation error message$/,
+        /^Import Wallet File field validation error message is displayed$/,
         async function() {
             return await page.dialogueImportWallet.validateImportWalletFileField(
                 shared.messages.importWallet
@@ -37,14 +36,17 @@ module.exports = function() {
     );
 
     this.Then(
-        /^I see import wallet name validation error message$/, async function() {
-            return await page.dialogueImportWallet.validateImportWalletNameField(shared.messages.importWallet.importWalletSameNameValidationMessage,
+        /^Import Wallet Name field validation error message is displayed$/,
+        async function() {
+            return await page.dialogueImportWallet.validateImportWalletNameField(
+                shared.messages.importWallet
+                    .importWalletSameNameValidationMessage,
             );
         },
     );
 
     this.Then(
-        /^I see import wallet password validation error message$/,
+        /^Import Wallet Password field validation error message is displayed$/,
         async function() {
             return await page.dialogueImportWallet.validateImportWalletPasswordField(
                 shared.messages.importWallet
@@ -53,11 +55,15 @@ module.exports = function() {
         },
     );
 
-    this.Then(/^I clear import wallet name field$/, function () {
+    this.Then(/^Clear Import Wallet Name field$/, function() {
         return page.dialogueImportWallet.clearImportWalletNameField();
     });
 
-    this.Then(/^I clear import wallet password field$/, function () {
+    this.Then(/^Clear Import Wallet Password field$/, function() {
         return page.dialogueImportWallet.clearImportWalletPasswordField();
+    });
+
+    this.Then(/^Import Wallet dialogue is displayed$/, async function() {
+        return await page.dialogueImportWallet.waitImportWalletDialogue();
     });
 };

@@ -1,6 +1,5 @@
 module.exports = function() {
-    this.Given(/^Navigate to send page$/, async function() {
-        debugger;
+    this.Given(/^Navigate to Send page$/, async function() {
         return await page.common.navigateToSendTab();
     });
 
@@ -10,13 +9,13 @@ module.exports = function() {
         return await page.accountsPage.checkSendTabIsDisabled();
     });
 
-    this.Then(/^I should see notification contained text "([^"]*)"$/, function(
+    this.Then(/^Notification contained text "([^"]*)" is displayed$/, function(
         text,
     ) {
         return page.common.verifyNotificationText(text);
     });
 
-    this.Then(/^I close notification$/, function() {
+    this.Then(/^Close Notification$/, function() {
         return page.common.closeNotification();
     });
 };

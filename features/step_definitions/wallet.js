@@ -1,6 +1,6 @@
 module.exports = function() {
     this.When(
-        /^I create wallet with name "([^"]*)" and password "([^"]*)" and password confirmation "([^"]*)"$/,
+        /^Wallet dialogue with Name "([^"]*)" and Password "([^"]*)" and Password Confirmation "([^"]*)" is filled$/,
         async function(name, password, confirm) {
             return await page.dialogueNewWallet.fillNewWalletDialogue(
                 name,
@@ -11,38 +11,38 @@ module.exports = function() {
         },
     );
 
-    this.When(/^I click Create New Wallet button$/, async function() {
+    this.When(/^Click the Create Wallet button$/, async function() {
         await page.dialogueNewWallet.waitNewWalletDialogue();
         return await page.dialogueNewWallet.createNewWalletButton();
     });
 
-    this.When(/^I press Create wallet$/, async function() {
+    this.When(/^Click the CREATE WALLET button$/, async function() {
         await page.startPage.waitForAccountsPage();
         return await page.startPage.createWalletFromStartPage();
     });
 
-    this.Then(/^I fill wallet name field "([^"]*)"$/, async function(
+    this.Then(/^Fill Create New Wallet Name field "([^"]*)"$/, async function(
         walletName,
     ) {
         return await page.dialogueNewWallet.fillWalletNameField(walletName);
     });
 
     this.Then(
-        /^I log out from wallet and see enter password popup$/,
+        /^Logged out from wallet and Enter Password popup is displayed$/,
         async function() {
             return await page.dialogueEnterPassword.waitForPasswordPopup();
         },
     );
 
     this.Then(
-        /^I should see password field validation error$/,
+        /^Enter Password popup Password field validation error message is displayed$/,
         async function() {
             return await page.dialogueEnterPassword.validatePasswordField();
         },
     );
 
     this.Then(
-        /^I see wallet name validation error message "([^"]*)"$/,
+        /^Create New Wallet Name validation error message "([^"]*)" is displayed$/,
         async function(errorMessage) {
             await page.dialogueNewWallet.waitNewWalletDialogue();
             return await page.dialogueNewWallet.validateCreateWalletNameField(
@@ -51,39 +51,52 @@ module.exports = function() {
         },
     );
 
-    this.Then(/^I see wallet password validation error message$/, function() {
-        return page.dialogueNewWallet.validateCreateWalletPasswordField();
-    });
+    this.Then(
+        /^Create New Wallet Password validation error message is displayed$/,
+        function() {
+            return page.dialogueNewWallet.validateCreateWalletPasswordField();
+        },
+    );
 
-    this.Then(/^I fill password field "([^"]*)"$/, function(walletPassword) {
+    this.Then(/^Fill Create New Wallet Password field "([^"]*)"$/, function(
+        walletPassword,
+    ) {
         return page.dialogueNewWallet.fillWalletPasswordField(walletPassword);
     });
 
     this.Then(
-        /^I see wallet confirm password validation error message$/,
+        /^Create New Wallet Confirmation Password validation error message is displayed$/,
         function() {
             return page.dialogueNewWallet.validateCreateWalletConfirmPasswordField();
         },
     );
 
-    this.Then(/^I fill confirm password name field "([^"]*)"$/, function(
-        walletConfirmPassword,
-    ) {
-        return page.dialogueNewWallet.fillWalletConfirmPasswordField(
-            walletConfirmPassword,
-        );
-    });
+    this.Then(
+        /^Fill Create New Wallet Confirmation Password field "([^"]*)"$/,
+        function(walletConfirmPassword) {
+            return page.dialogueNewWallet.fillWalletConfirmPasswordField(
+                walletConfirmPassword,
+            );
+        },
+    );
 
-    this.Then(/^I clear confirm password field$/, function() {
-        return page.dialogueNewWallet.clearWalletConfirmPasswordField();
-    });
+    this.Then(
+        /^Clear Create New Wallet Confirmation Password field$/,
+        function() {
+            return page.dialogueNewWallet.clearWalletConfirmPasswordField();
+        },
+    );
 
-    this.Then(/^Select network for wallet "([^"]*)"$/, function(networkName) {
+    this.Then(/^Select Network for wallet "([^"]*)"$/, function(networkName) {
         return page.dialogueNewWallet.selectNetworkValue(networkName);
     });
 
-    this.When(/^I close password dialogue$/, async function() {
+    this.When(/^Close Password dialogue$/, async function() {
         await page.dialogueEnterPassword.waitForPasswordPopup();
         return await page.dialogueEnterPassword.closeDialogue();
+    });
+
+    this.When(/^Create New Wallet dialogue is displayed$/, async function() {
+        return await page.dialogueNewWallet.waitNewWalletDialogue();
     });
 };

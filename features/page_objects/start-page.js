@@ -3,9 +3,9 @@ module.exports = {
     //url: 'https://sonm-io.github.io/wallet-web/',
 
     elements: {
-        accountsForm: by.css('.sonm-login__center .sonm-login__logo'),
+        accountsForm: by.className('sonm-login__center'),
         loginToWalletButton: by.className('sonm-login__wallet-login'),
-        closeDialogue: by.css('.sonm-popup__inner>.sonm-popup__cross'),
+        closeDialogue: by.xpath('//div[@class="sonm-popup__inner"]/button'),
         createWallet: by.xpath('//div/a[@href="#create"]'),
         importWallet: by.xpath("//a[.='IMPORT WALLET']"),
         walletField: by.css('.sonm-login__wallet-select > div'),
@@ -31,6 +31,7 @@ module.exports = {
         return (await shared.wdHelper.findVisibleElement(
             this.elements.closeDialogue,
         )).click();
+        //return await driver.wait(until.stalenessOf(this.elements.closeDialogue));
     },
 
     //click on wallet dropdown

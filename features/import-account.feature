@@ -4,44 +4,44 @@ Feature: Start screen
 
   Scenario: Import Account - invalid file
     Given Login to wallet "emptyWallet" with password "11111111"
-    Then I see accounts page
-    When I press import account
-    Then I see add account dialogue
-    When I select keystore file "incorrect_file.json"
-    Then I see import account file validation error message
-    When I select keystore file "for_upload.json"
-    Then I see preview
-    And I type account name "import acc"
-    And I type account password "11111111"
-    When I press button Add
-    Then I see account "import acc" in accounts list
+    Then Accounts page is displayed
+    When Click the Import Account button
+    Then Add Account dialogue is displayed
+    When Keystore file "incorrect_file.json" is selected for upload
+    Then Import Account File field validation error message is displayed
+    When Keystore file "for_upload.json" is selected for upload
+    Then Account Preview is displayed
+    When Fill Import Account Name field "import acc"
+    When Fill Import Account Password field "11111111"
+    And Click the Add button
+    Then Account "import acc" is present in Accounts list
 
   Scenario: Import Account - Add first account from file
     Given Login to wallet "emptyWallet" with password "11111111"
-    Then I see accounts page
-    When I press import account
-    Then I see add account dialogue
-    When I select keystore file "for_upload.json"
-    Then I see preview
-    When I type account password "11111111"
-    And I type account name "acc name"
-    And I press button Add
-    Then I see account "acc name" in accounts list
+    Then Accounts page is displayed
+    When Click the Import Account button
+    Then Add Account dialogue is displayed
+    When Keystore file "for_upload.json" is selected for upload
+    Then Account Preview is displayed
+    When Fill Import Account Name field "acc name"
+    When Fill Import Account Password field "11111111"
+    And Click the Add button
+    Then Account "acc name" is present in Accounts list
 
   Scenario: Import Account - fields validation
     Given Login to wallet "emptyWallet" with password "11111111"
-    Then I see accounts page
-    When I press import account
-    Then I see add account dialogue
-    When I select keystore file "for_upload.json"
-    When I press button Add
-    Then I see import account name validation error message
-    Then I see import account password validation error message "Password is required"
-    And I type account name "import acc test"
-    And I type account password "2"
-    When I press button Add
-    Then I see import account password validation error message "Password is not valid"
-    And I clear import account password field
-    And I type account password "11111111"
-    When I press button Add
-    Then I see account "import acc test" in accounts list
+    Then Accounts page is displayed
+    When Click the Import Account button
+    Then Add Account dialogue is displayed
+    When Keystore file "for_upload.json" is selected for upload
+    And Click the Add button
+    Then Import Account Name field validation error message is displayed
+    Then Import Account Password validation error message "Password is required" is displayed
+    And Fill Import Account Name field "import acc test"
+    And Fill Import Account Password field "2"
+    And Click the Add button
+    Then Import Account Password validation error message "Password is not valid" is displayed
+    And Clear Import Account Password Field
+    And Fill Import Account Password field "11111111"
+    And Click the Add button
+    Then Account "import acc test" is present in Accounts list

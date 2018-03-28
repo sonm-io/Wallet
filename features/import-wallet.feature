@@ -3,67 +3,71 @@
 Feature: Import Wallet
 
   Scenario: Import wallet - correct password
-    Given I open wallet with empty storage
-    When I click I Understand button
+    Given Wallet with empty storage is opened
+    When Click the I Understand button
     And Close Create New Wallet dialogue
-    And I click Import Wallet button
-    And I Select wallet file for import "correct_wallet.txt"
-    And I fill wallet name field "Wallet Import" for Import Wallet
-    And I fill password field "1" for Import Wallet
-    When I click Import Wallet
-    Then I see accounts page
+    When Click the IMPORT WALLET button
+    Then Import Wallet dialogue is displayed
+    And Wallet file for import "correct_wallet.txt" is selected
+    And Fill Import Wallet Name field "Wallet Import"
+    And Fill Import Wallet Password field "1"
+    When Click the Import button
+    Then Accounts page is displayed
     And Send link tab is disabled
-    When I press logout button
-    Then I log out from wallet
+    When Click the Logout button
+    Then Logged out from wallet
 
   Scenario: Import wallet - fields validation
-    Given I open wallet with one existing wallet
-    When I click I Understand button
-    And I close password dialogue
-    And I click Import Wallet button
-    And I Select wallet file for import "correct_wallet.txt"
-    And I fill wallet name field "empty" for Import Wallet
-    When I click Import Wallet
-    Then I see import wallet name validation error message
-    And I clear import wallet name field
-    And I fill wallet name field "empty1" for Import Wallet
-    And I fill password field "2" for Import Wallet
-    When I click Import Wallet
-    Then I see import wallet password validation error message
-    And I clear import wallet password field
-    And I fill password field "1" for Import Wallet
-    When I click Import Wallet
-    Then I see accounts page
+    Given Wallet with one existing wallet is opened
+    When Click the I Understand button
+    And Close Password dialogue
+    When Click the IMPORT WALLET button
+    Then Import Wallet dialogue is displayed
+    And Wallet file for import "correct_wallet.txt" is selected
+    And Fill Import Wallet Name field "empty"
+    When Click the Import button
+    Then Import Wallet Name field validation error message is displayed
+    And Clear Import Wallet Name field
+    And Fill Import Wallet Name field "empty1"
+    And Fill Import Wallet Password field "2"
+    When Click the Import button
+    Then Import Wallet Password field validation error message is displayed
+    And Clear Import Wallet Password field
+    And Fill Import Wallet Password field "1"
+    When Click the Import button
+    Then Accounts page is displayed
     And Send link tab is disabled
-    When I press logout button
-    Then I log out from wallet
+    When Click the Logout button
+    Then Logged out from wallet
 
   Scenario: Import wallet - invalid file
-    Given I open wallet with empty storage
-    When I click I Understand button
+    Given Wallet with empty storage is opened
+    When Click the I Understand button
     And Close Create New Wallet dialogue
-    And I click Import Wallet button
-    And I Select wallet file for import "incorrect_wallet.json"
-    And I fill wallet name field "Wallet Import" for Import Wallet
-    And I fill password field "1" for Import Wallet
-    When I click Import Wallet
-    Then I see import wallet validation error message
-    And I Select wallet file for import "correct_wallet.txt"
-    When I click Import Wallet
-    Then I see accounts page
+    When Click the IMPORT WALLET button
+    Then Import Wallet dialogue is displayed
+    And Wallet file for import "incorrect_wallet.json" is selected
+    And Fill Import Wallet Name field "Wallet Import"
+    And Fill Import Wallet Password field "1"
+    When Click the Import button
+    Then Import Wallet File field validation error message is displayed
+    And Wallet file for import "correct_wallet.txt" is selected
+    When Click the Import button
+    Then Accounts page is displayed
     And Send link tab is disabled
-    When I press logout button
-    Then I log out from wallet
+    When Click the Logout button
+    Then Logged out from wallet
 
   Scenario: Import wallet - with accounts
-    Given I open wallet with empty storage
-    When I click I Understand button
+    Given Wallet with empty storage is opened
+    When Click the I Understand button
     And Close Create New Wallet dialogue
-    And I click Import Wallet button
-    And I Select wallet file for import "correct_wallet_with_acc.txt"
-    And I fill wallet name field "Wallet Import" for Import Wallet
-    And I fill password field "1" for Import Wallet
-    When I click Import Wallet
-    Then I see account "Test" in accounts list
-    When I press logout button
-    Then I log out from wallet
+    When Click the IMPORT WALLET button
+    Then Import Wallet dialogue is displayed
+    And Wallet file for import "correct_wallet_with_acc.txt" is selected
+    And Fill Import Wallet Name field "Wallet Import"
+    And Fill Import Wallet Password field "1"
+    When Click the Import button
+    Then Account "Test" is present in Accounts list
+    When Click the Logout button
+    Then Logged out from wallet

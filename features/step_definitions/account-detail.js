@@ -1,9 +1,9 @@
 module.exports = function() {
-    this.When(/^I click on send ethereum button$/, function() {
+    this.When(/^Click the Send Ethereum button$/, function() {
         return page.accountDetailPage.clickSendEthereum();
     });
 
-    this.When(/^I click on send sonm button$/, function() {
+    this.When(/^Click the Send Sonm button$/, function() {
         return page.accountDetailPage.clickSendSnm();
     });
 };

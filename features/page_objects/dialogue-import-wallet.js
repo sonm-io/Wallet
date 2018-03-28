@@ -1,6 +1,6 @@
 module.exports = {
     elements: {
-        header: by.className('sonm-form__header'),
+        header: by.xpath('//form/h3'),
         selectWalletImportField: by.xpath('//input[@type="file"]'),
         walletNameField: by.xpath('//input[@name="newName"]'),
         walletPasswordField: by.xpath('//input[@name="password"]'),

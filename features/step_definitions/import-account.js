@@ -1,47 +1,53 @@
 module.exports = function() {
-    this.When(/^I select keystore file "([^"]*)"$/, function(filename) {
+    this.When(/^Keystore file "([^"]*)" is selected for upload$/, function(
+        filename,
+    ) {
         return page.dialogueImportAccount.uploadAccountFile(filename);
     });
 
-    this.Then(/^I see preview$/, async function() {
+    this.Then(/^Account Preview is displayed$/, async function() {
         return await page.dialogueImportAccount.findPreview();
     });
 
-    this.When(/^I type account password "([^"]*)"$/, async function(password) {
+    this.When(/^Fill Import Account Password field "([^"]*)"$/, async function(
+        password,
+    ) {
         return await page.dialogueImportAccount.fillImportAccountPassword(
             password,
         );
     });
 
-    this.When(/^I type account name "([^"]*)"$/, async function(name) {
+    this.When(/^Fill Import Account Name field "([^"]*)"$/, async function(
+        name,
+    ) {
         return await page.dialogueImportAccount.fillImportAccountName(name);
     });
 
-    this.When(/^I press button Add$/, async function() {
+    this.When(/^Click the Add button$/, async function() {
         await page.dialogueImportAccount.clickAddImportAccountButton();
         return await page.dialogueImportAccount.verifySpinnerIsNotVisible();
     });
 
-    this.Then(/^I see add account dialogue$/, async function() {
+    this.Then(/^Add Account dialogue is displayed$/, async function() {
         return await page.dialogueImportAccount.waitImportAccountDialogue();
     });
 
     this.Then(
-        /^I see import account file validation error message$/,
+        /^Import Account File field validation error message is displayed$/,
         function() {
             return page.dialogueImportAccount.validateImportAccountFileField();
         },
     );
 
     this.Then(
-        /^I see import account name validation error message$/,
+        /^Import Account Name field validation error message is displayed$/,
         function() {
             return page.dialogueImportAccount.validateImportAccountNameField();
         },
     );
 
     this.Then(
-        /^I see import account password validation error message "([^"]*)"$/,
+        /^Import Account Password validation error message "([^"]*)" is displayed$/,
         function(errorMessage) {
             return page.dialogueImportAccount.validateImportAccountPasswordField(
                 errorMessage,
@@ -49,7 +55,7 @@ module.exports = function() {
         },
     );
 
-    this.Then(/^I clear import account password field$/, function() {
+    this.Then(/^Clear Import Account Password Field$/, function() {
         return page.dialogueImportAccount.clearImportAccountPasswordField();
     });
 };

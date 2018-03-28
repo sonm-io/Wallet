@@ -1,19 +1,20 @@
 module.exports = {
     elements: {
-        //disclaimer: by.xpath("//div[@class='sonm-login__spin sonm-load-mask']"),
-        disclaimer: by.css('.sonm-login__spin.sonm-load-mask'),
-        disDontShowAgainButton: by.xpath(
-            '//div[@class="sonm-disclaimer__buttons"]/button[.="I understand, don\'t show again"]',
-        ),
+        disclaimer: by.className('sonm-login__spin'),
         disUnderstandButton: by.xpath(
             '//div[@class="sonm-disclaimer__buttons"]/button[.="I UNDERSTAND"]',
+        ),
+        disDontShowAgainButton: by.xpath(
+            '//div[@class="sonm-disclaimer__buttons"]/button[.="I understand, don\'t show again"]',
         ),
     },
 
     //wait for load account page according to displayed understand button
 
     waitForDisclaimerLoad: async function() {
-        await shared.wdHelper.waitElementIsNotVisible(this.elements.disclaimer);
+        return await shared.wdHelper.waitElementIsNotVisible(
+            this.elements.disclaimer,
+        );
     },
 
     //click understand button for further navigation to accounts
