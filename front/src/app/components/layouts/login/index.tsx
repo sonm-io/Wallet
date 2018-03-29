@@ -382,8 +382,14 @@ export class Login extends React.Component<IProps, IState> {
     }
 
     protected handleChangeInput = (event: any) => {
+        const name = event.target.name;
+
         this.setState({
-            [event.target.name]: event.target.value,
+            serverValidation: {
+                ...(this.state.serverValidation as any),
+                [name]: '',
+            },
+            [name]: event.target.value,
         });
     };
 
@@ -710,6 +716,7 @@ export class Login extends React.Component<IProps, IState> {
 
     public render() {
         const { className } = this.props;
+        const l = localizator.getMessageText;
 
         return (
             <LoadMask visible={this.state.pending} className="sonm-login__spin">
@@ -730,7 +737,7 @@ export class Login extends React.Component<IProps, IState> {
                                 className="sonm-login__action-button sonm-login__create-button"
                                 onClick={this.handleStartCreateNew}
                             >
-                                {localizator.getMessageText('create_wallet')}
+                                {l('create_wallet')}
                             </a>
                             <a
                                 href="#import"
@@ -738,7 +745,7 @@ export class Login extends React.Component<IProps, IState> {
                                 onClick={this.handleStartImport}
                             >
                                 <Icon i="Export" />
-                                {localizator.getMessageText('import_wallet')}
+                                {l('import_wallet')}
                             </a>
                             <Icon
                                 tag="a"

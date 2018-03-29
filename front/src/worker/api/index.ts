@@ -303,9 +303,9 @@ class Api {
     }
 
     private createAccount = async (data: IPayload): Promise<IResponse> => {
-        if (data.passphase) {
+        if (data.password) {
             return {
-                data: JSON.stringify(utils.newAccount(data.passphase)),
+                data: JSON.stringify(utils.newAccount(data.password)),
             };
         } else {
             throw new Error('required_params_missed');
@@ -315,11 +315,11 @@ class Api {
     private createAccountFromPrivateKey = async (
         data: IPayload,
     ): Promise<IResponse> => {
-        if (data.passphase && data.privateKey) {
+        if (data.password && data.privateKey) {
             try {
                 return {
                     data: JSON.stringify(
-                        utils.newAccount(data.passphase, data.privateKey),
+                        utils.newAccount(data.password, data.privateKey),
                     ),
                 };
             } catch (err) {
@@ -814,7 +814,7 @@ class Api {
     };
 
     public addAccount = async (data: IPayload): Promise<IResponse> => {
-        if (data.json && data.password) {
+        if (data.json && data.password && data.name) {
             try {
                 const json = JSON.parse(data.json.toLowerCase());
 
@@ -850,7 +850,7 @@ class Api {
                 } else {
                     return {
                         validation: {
-                            password: 'account_already_exists',
+                            json: 'account_already_exists',
                         },
                     };
                 }

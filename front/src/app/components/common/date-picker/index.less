@@ -1,0 +1,158 @@
+@import '../calendar/index';
+
+@datePickerActiveControlShadow: 0px 2px 2px 0px rgba(51, 51, 51, 0.1);
+@datePickerInputBorderColor: rgb(73, 73, 255);
+
+.date-picker-control {
+    background: transparent none;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    border: solid 0;
+    outline: none !important;
+    box-shadow: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 3px 5px;
+    margin: 0;
+    text-align: center;
+}
+
+.date-picker-button {
+    border-width: 1px;
+    cursor: pointer;
+    box-shadow: none;
+
+    &:hover {
+        box-shadow: @datePickerActiveControlShadow;
+    }
+
+    &:active {
+        box-shadow: none;
+        transform: translate(2px, 2px);
+    }
+}
+
+.date-picker {
+    font-family: @calendarFontFamily;
+    font-size: 12px;
+    padding: 0;
+    border: 0;
+    position: relative;
+    width: 240px;
+    height: 230px;
+    white-space: normal;
+
+    &__table-of-months {
+        padding: 0;
+        border: solid 0 @calendarCellBorderColor;
+        border-top-width: 1px;
+        border-right-width: 1px;
+        align-content: stretch;
+        margin: 10px 0 0;
+    }
+
+    &__month {
+        .calendar-hover-cell;
+
+        margin: 0;
+        display: inline-block;
+        vertical-align: top;
+        width: @calendarMonthCellWidth;
+        height: 40px;
+        box-sizing: border-box;
+        border: solid 0 @calendarCellBorderColor;
+        border-left-width: 1px;
+        border-bottom-width: 1px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    &__value-day {
+        margin: 10px 0 0 0;
+        text-decoration: none;
+        color: @calendarCellSelectedColor;
+
+        &:hover,
+        &:active,
+        &:visited {
+            color: @calendarCellSelectedColor;
+            text-decoration: underline;
+        }
+    }
+
+    &__year-input {
+        .date-picker-control;
+
+        float: right;
+        width: 60px;
+        border-color: @datePickerInputBorderColor;
+        border-width: 1px;
+        cursor: text !important;
+    }
+
+    &__year-button {
+        .date-picker-control;
+        .date-picker-button;
+
+        float: right;
+        width: 60px;
+        border-color: @calendarCellBorderColor;
+
+        &:active {
+            transform: none;
+        }
+    }
+
+    &__month-button {
+        .date-picker-control;
+        .date-picker-button;
+
+        width: 110px;
+        border-color: @calendarCellBorderColor;
+    }
+
+    &__prev-month-button {
+        .date-picker-control;
+        .date-picker-button;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 25px;
+        border-color: @calendarCellBorderColor;
+
+        &:before {
+            content: '<';
+        }
+    }
+
+    &__next-month-button {
+        .date-picker-control;
+        .date-picker-button;
+
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 25px;
+        border-color: @calendarCellBorderColor;
+
+        &:after {
+            content: '>';
+        }
+    }
+
+    &__title {
+        width: 175px;
+        margin: 0 auto;
+    }
+
+    &__value-day {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 3px;
+        margin: 0;
+        text-align: center;
+    }
+}
