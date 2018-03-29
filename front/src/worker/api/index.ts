@@ -1,10 +1,8 @@
-import { Request } from '../ipc/messages';
 import * as sonmApi from 'sonm-api';
 import * as AES from 'crypto-js/aes';
 import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
-import * as ipc from '../ipc/ipc';
 import * as t from 'app/api/types';
 
 import { migrate } from '../migrations';
@@ -14,6 +12,8 @@ const { createSonmFactory, utils } = sonmApi;
 const STORAGE_VERSION = 2;
 const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
+
+import ipc from '../ipc';
 
 interface INodes {
     [index: string]: string;
@@ -45,28 +45,9 @@ interface IResponse {
     validation?: object;
 }
 
-let count = 0;
-function nextRequestId(): string {
-    return 'request' + count++;
-}
-
-function createPromise(action: string, payload?: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-        const reqId = nextRequestId();
-
-        (ipc as any).send({
-            reqId,
-            type: 'storage',
-            action,
-            payload,
-        });
-
-        (ipc as any).listen((response: any) => {
-            if (reqId === response.reqId) {
-                resolve(response.data);
-            }
-        });
-    });
+async function ipcSend(type: string, payload?: any): Promise<any> {
+    const res = await ipc.send(type, payload);
+    return res.data || null;
 }
 
 const DEFAULT_NODES: INodes = {
@@ -582,7 +563,7 @@ class Api {
         data: any,
         encrypt: boolean,
     ): Promise<void> => {
-        await createPromise('set', {
+        await ipcSend('set', {
             key,
             value: encrypt ? this.encrypt(data) : JSON.stringify(data),
         });
@@ -592,7 +573,7 @@ class Api {
         key: string,
         decrypt: boolean,
     ): Promise<any> => {
-        const dataFromStorage = await createPromise('get', { key });
+        const dataFromStorage = await ipcSend('get', { key });
 
         if (dataFromStorage) {
             try {
@@ -602,6 +583,7 @@ class Api {
 
                 return await this.checkStorageVersion(key, data);
             } catch (err) {
+                // console.log(err);
                 return false;
             }
         } else {
@@ -928,7 +910,7 @@ class Api {
     };
 
     public getTransactions = async () => {
-        const data = await createPromise('get', { key: 'transactions' });
+        const data = await ipcSend('get', { key: 'transactions' });
 
         if (data) {
             return this.decrypt(data) || [];
@@ -1074,10 +1056,10 @@ class Api {
         };
     };
 
-    public async resolve(request: Request): Promise<IResponse> {
-        if (this.routes[request.type]) {
+    public async resolve(type: string, payload: any): Promise<IResponse> {
+        if (this.routes[type]) {
             try {
-                return await this.routes[request.type](request.payload);
+                return await this.routes[type](payload);
             } catch (err) {
                 throw new Error(err);
             }

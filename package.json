@@ -101,7 +101,7 @@
         "react": "^16.1.0",
         "react-addons-transition-group": "^15.6.2",
         "react-dom": "^16.1.0",
-        "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v1.0.16",
+        "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v1.0.17",
         "universal-router": "^4.3.0"
     },
     "scripts": {

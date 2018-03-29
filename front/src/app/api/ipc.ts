@@ -1,56 +1,29 @@
-const createWorker = require('worker/back.worker.ts');
-const init = require('worker/helpers.ts');
+import { TResultPromise } from '../../ipc/types';
+import lStorage from '../utils/local-storage';
 
-type messageHandler = (...args: any[]) => void;
+const { IPC } = require('../../ipc/index');
 
-const worker = createWorker();
+const ApiWorker = require('worker/back.worker.ts');
+const worker = ApiWorker();
 
-init(worker);
+const ipc = new IPC({
+    worker,
+});
 
-worker.onmessage = onMessage;
+ipc.setRequestProcessor(async (type: string, payload: any): TResultPromise<
+    any
+> => {
+    let result;
 
-const allListeners = new Map<string, Set<messageHandler>>();
+    if (type === 'get') {
+        result = lStorage.get(payload.key);
+    } else if (type === 'set') {
+        result = lStorage.set(payload.key, payload.value);
+    }
 
-export async function on(requestId: string, handler: messageHandler) {
-    const listeners = getListeners(requestId);
-
-    listeners.add(handler);
-}
-
-export async function once(requestId: string, handler: messageHandler) {
-    const listeners = getListeners(requestId);
-
-    const onceHandler = (...args: any[]) => {
-        handler(...args);
-        listeners.delete(onceHandler);
+    return {
+        data: result,
     };
-    listeners.add(handler);
-}
+});
 
-export function send(message: any) {
-    worker.postMessage(message);
-}
-
-function getListeners(requestId: string) {
-    let listeners = allListeners.get(requestId);
-
-    if (!listeners) {
-        listeners = new Set();
-        allListeners.set(requestId, listeners);
-    }
-
-    return listeners;
-}
-
-function onMessage(e: MessageEvent) {
-    const message = e.data;
-
-    if (message.type && message.type === 'api') {
-        const requestId = message.requestId as string;
-
-        const listeners = getListeners(requestId);
-        listeners.forEach(handler => {
-            handler(requestId, message);
-        });
-    }
-}
+export default ipc;
