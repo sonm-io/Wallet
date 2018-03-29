@@ -28,9 +28,11 @@ export class IPC implements InterfaceIPC {
     constructor(params: IIpcCtrArguments = {}) {
         const { worker = self, errorMessageMap = {} } = params;
 
-        // if (!(worker instanceof Worker)) {
-        //     throw new Error('worker is not IWebWorker implementation');
-        // }
+        if (typeof Worker === 'function' && !(worker instanceof Worker)) {
+            throw new Error('worker is not IWorker implementation');
+        } else if (!worker.postMessage) {
+            throw new Error('worker is not IWorker implementation');
+        }
 
         this.worker = worker;
         this.worker.addEventListener('message', this.onMessage);
@@ -102,7 +104,7 @@ export class IPC implements InterfaceIPC {
                     response.error = String(event);
                 }
 
-                this.worker.postMessage(response);
+                this.postMessage(response);
             };
 
             processRequest(event.data.method, event.data.payload)
@@ -173,8 +175,18 @@ export class IPC implements InterfaceIPC {
                 sign: this.sign,
             };
 
-            this.worker.postMessage(request);
+            this.postMessage(request);
         });
+    }
+
+    private postMessage(request: any) {
+        // if (Worker !== undefined && (this.worker instanceof Worker)) {
+        //     //this.worker.postMessage(request);
+        // } else {
+        //     //this.worker.postMessage(request, '*');
+        // }
+
+        this.worker.postMessage(request);
     }
 
     public setRequestProcessor(
