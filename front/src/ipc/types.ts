@@ -33,6 +33,7 @@ export type TResultPromise<T> = Promise<IResult<T>>;
 
 export interface IResult<T> {
     data?: T;
+    error?: any;
     validation?: IValidation;
     continuation?: TResultPromise<T>;
 }
@@ -49,7 +50,7 @@ export interface IWebWorker {
     ) => void;
     postMessage: (
         message: IRequest<any> | IResponse<any>,
-        origin: string,
         transfer?: any[],
     ) => void;
+    processRequest?: TRequestProcessor<string, any>;
 }

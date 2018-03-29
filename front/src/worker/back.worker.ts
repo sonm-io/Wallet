@@ -1,23 +1,20 @@
-import { Response, Request } from './ipc/messages';
-import * as ipc from './ipc/ipc';
+import ipc from './ipc';
 import { api } from './api';
+import { TResultPromise, IValidation } from '../ipc/types';
 
-ipc.on(async (request: Request) => {
-    let response;
-
+ipc.setRequestProcessor(async (type: string, payload: any): TResultPromise<
+    any
+> => {
     try {
-        const { data, validation } = await api.resolve(request);
+        const { data, validation } = await api.resolve(type, payload);
 
-        response = new Response(
-            'api',
-            request.requestId,
+        return {
             data,
-            validation,
-            null,
-        );
+            validation: validation as IValidation,
+        };
     } catch (err) {
         if (IS_DEV) {
-            console.log(request);
+            console.log(type, payload);
             console.log(err);
         }
 
@@ -31,14 +28,8 @@ ipc.on(async (request: Request) => {
             err.message = 'insufficient_funds';
         }
 
-        response = new Response(
-            'api',
-            request.requestId,
-            null,
-            null,
-            err.message.replace('Error: ', ''),
-        );
+        return {
+            error: err.message.replace('Error: ', ''),
+        };
     }
-
-    ipc.send(response.toJS());
 });

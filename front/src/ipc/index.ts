@@ -6,12 +6,12 @@ export interface InterfaceIPC {
     send<TParams, TResult>(
         method: string,
         payload: TParams,
-    ): Promise<[TResult, t.IValidation | undefined]>;
+    ): t.TResultPromise<TResult>;
     setRequestProcessor(processRequest: t.TRequestProcessor<any, any>): void;
 }
 
 export interface IIpcCtrArguments {
-    worker?: t.IWebWorker;
+    worker?: any;
     errorMessageMap?: t.IValidation;
 }
 
@@ -28,13 +28,14 @@ export class IPC implements InterfaceIPC {
     constructor(params: IIpcCtrArguments = {}) {
         const { worker = self, errorMessageMap = {} } = params;
 
-        if (!(worker instanceof Worker)) {
-            throw new Error('worker is not IWebWorker implementation');
-        }
+        // if (!(worker instanceof Worker)) {
+        //     throw new Error('worker is not IWebWorker implementation');
+        // }
 
         this.worker = worker;
         this.worker.addEventListener('message', this.onMessage);
         this.errorMessageMap = errorMessageMap;
+        this.requestIdToListener = new Map<string, t.TListener<any>>();
     }
 
     private static generateSign(): string {
@@ -64,7 +65,6 @@ export class IPC implements InterfaceIPC {
             processRequest !== undefined &&
             event.data &&
             event.data.method &&
-            event.data.payload &&
             event.data.sign &&
             event.data.requestId
         ) {
@@ -102,7 +102,7 @@ export class IPC implements InterfaceIPC {
                     response.error = String(event);
                 }
 
-                this.worker.postMessage(response, '*');
+                this.worker.postMessage(response);
             };
 
             processRequest(event.data.method, event.data.payload)
@@ -131,7 +131,7 @@ export class IPC implements InterfaceIPC {
     public send<TParams, TResult>(
         method: string,
         payload: TParams,
-    ): Promise<[TResult, t.IValidation | undefined]> {
+    ): t.TResultPromise<any> {
         return new Promise((done, reject) => {
             const requestId = this.getNextRequestId();
 
@@ -151,7 +151,10 @@ export class IPC implements InterfaceIPC {
                 }
 
                 if (response.success) {
-                    done([response.data, formResponse.validation]);
+                    done({
+                        data: response.data,
+                        validation: response.validation,
+                    });
                 } else {
                     /* tslint:disable */
                     console.error(`method ${method} error: ${response.error}`);
@@ -170,7 +173,7 @@ export class IPC implements InterfaceIPC {
                 sign: this.sign,
             };
 
-            this.worker.postMessage(request, '*');
+            this.worker.postMessage(request);
         });
     }
 

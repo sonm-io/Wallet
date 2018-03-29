@@ -1,11 +1,11 @@
-import * as ipc from './ipc';
+import ipc from './ipc';
+import { TResultPromise } from '../../ipc/types';
 import {
     ISendTransactionResult,
     IAccountInfo,
     ICurrencyInfo,
     ISendTransaction,
     IResult,
-    IResponse,
     ITxListFilter,
     ISettings,
     IWalletListItem,
@@ -13,41 +13,8 @@ import {
 
 export * from './types';
 
-const MAX_DELAY_DEFAULT = 10000;
-
-let count = 0;
-function nextRequestId(): string {
-    return 'request' + count++;
-}
-
-function createPromise(
-    type: string,
-    payload?: any,
-    maxDelay: number = MAX_DELAY_DEFAULT,
-): Promise<IResult<any>> {
-    return new Promise((done, reject) => {
-        const requestId = nextRequestId();
-
-        const callback = (event: any, response: IResponse<any>) => {
-            if (response.success) {
-                if (IS_DEV) {
-                    console.log(type, response, payload);
-                }
-                //
-                done(response);
-            } else {
-                reject(response.error);
-            }
-        };
-
-        ipc.once(requestId, callback);
-
-        (ipc as any).send({
-            requestId,
-            type,
-            payload,
-        });
-    });
+async function ipcSend(type: string, payload?: any): TResultPromise<any> {
+    return ipc.send(type, payload);
 }
 
 export class Api {
@@ -56,14 +23,14 @@ export class Api {
         walletName: string,
         chainId: string,
     ): Promise<IResult<IWalletListItem>> {
-        return createPromise('createWallet', { password, walletName, chainId });
+        return ipcSend('createWallet', { password, walletName, chainId });
     }
 
     public static async unlockWallet(
         password: string,
         walletName: string,
     ): Promise<IResult<boolean>> {
-        return createPromise('unlockWallet', { password, walletName });
+        return ipcSend('unlockWallet', { password, walletName });
     }
 
     public static async importWallet(
@@ -71,22 +38,22 @@ export class Api {
         walletName: string,
         file: string,
     ): Promise<IResult<IWalletListItem>> {
-        return createPromise('importWallet', { password, walletName, file });
+        return ipcSend('importWallet', { password, walletName, file });
     }
 
     public static async exportWallet(): Promise<IResult<string>> {
-        return createPromise('exportWallet');
+        return ipcSend('exportWallet');
     }
 
     public static async checkConnection(): Promise<IResult<boolean>> {
-        return createPromise('checkConnection');
+        return ipcSend('checkConnection');
     }
 
     public static async getPrivateKey(
         password: string,
         address: string,
     ): Promise<IResult<string>> {
-        return createPromise('account.getPrivateKey', { address, password });
+        return ipcSend('account.getPrivateKey', { address, password });
     }
 
     public static async createAccount(
@@ -94,27 +61,27 @@ export class Api {
         privateKey?: string,
     ): Promise<IResult<string>> {
         if (privateKey) {
-            return createPromise('account.createFromPrivateKey', {
+            return ipcSend('account.createFromPrivateKey', {
                 privateKey,
                 passphase,
             });
         } else {
-            return createPromise('account.create', { passphase });
+            return ipcSend('account.create', { passphase });
         }
     }
 
     public static async getWalletList(): Promise<IResult<IWalletListItem[]>> {
-        return createPromise('getWalletList');
+        return ipcSend('getWalletList');
     }
 
     public static async getSettings(): Promise<IResult<string[]>> {
-        return createPromise('getSettings');
+        return ipcSend('getSettings');
     }
 
     public static async setSettings(
         settings: ISettings,
     ): Promise<IResult<string[]>> {
-        return createPromise('setSettings', { settings });
+        return ipcSend('setSettings', { settings });
     }
 
     public static async addAccount(
@@ -122,20 +89,20 @@ export class Api {
         password: string,
         name: string,
     ): Promise<IResult<IAccountInfo>> {
-        return createPromise('account.add', { json: jsonRaw, password, name });
+        return ipcSend('account.add', { json: jsonRaw, password, name });
     }
 
     public static async removeAccount(
         address: string,
     ): Promise<IResult<boolean>> {
-        return createPromise('account.remove', { address });
+        return ipcSend('account.remove', { address });
     }
 
     public static async requestTestTokens(
         password: string,
         address: string,
     ): Promise<IResult<boolean>> {
-        return createPromise('account.requestTestTokens', {
+        return ipcSend('account.requestTestTokens', {
             address,
             password,
         });
@@ -145,26 +112,26 @@ export class Api {
         address: string,
         name: string,
     ): Promise<IResult<boolean>> {
-        return createPromise('account.rename', { address, name });
+        return ipcSend('account.rename', { address, name });
     }
 
     public static async getAccountList(): Promise<IResult<IAccountInfo[]>> {
-        return createPromise('account.list');
+        return ipcSend('account.list');
     }
 
     public static async ping(): Promise<IResult<object>> {
-        return createPromise('ping', { ping: true });
+        return ipcSend('ping', { ping: true });
     }
 
     public static async getCurrencyList(): Promise<IResult<ICurrencyInfo[]>> {
-        return createPromise('account.getCurrencies');
+        return ipcSend('account.getCurrencies');
     }
 
     public static async send(
         tx: ISendTransaction,
         password: string,
     ): Promise<IResult<ISendTransactionResult>> {
-        return createPromise('account.send', { ...tx, password });
+        return ipcSend('account.send', { ...tx, password });
     }
 
     public static async getSendTransactionList(
@@ -172,39 +139,39 @@ export class Api {
         limit?: number,
         offset?: number,
     ): Promise<IResult<[ISendTransactionResult[], number]>> {
-        return createPromise('transaction.list', { filters, limit, offset });
+        return ipcSend('transaction.list', { filters, limit, offset });
     }
 
     public static async getGasPrice(): Promise<IResult<string>> {
-        return createPromise('account.getGasPrice');
+        return ipcSend('account.getGasPrice');
     }
 
     public static async getSonmTokenAddress(): Promise<IResult<string>> {
-        return createPromise('getSonmTokenAddress');
+        return ipcSend('getSonmTokenAddress');
     }
 
     public static async addToken(
         address: string,
     ): Promise<IResult<ICurrencyInfo>> {
-        return createPromise('addToken', { address });
+        return ipcSend('addToken', { address });
     }
 
     public static async removeToken(
         address: string,
     ): Promise<IResult<boolean>> {
-        return createPromise('removeToken', { address });
+        return ipcSend('removeToken', { address });
     }
 
     public static async getTokenInfo(
         address: string,
     ): Promise<IResult<ICurrencyInfo>> {
-        return createPromise('getTokenInfo', { address });
+        return ipcSend('getTokenInfo', { address });
     }
 
     public static async getPresetTokenList(): Promise<
         IResult<ICurrencyInfo[]>
     > {
-        return createPromise('getPresetTokenList');
+        return ipcSend('getPresetTokenList');
     }
 }
 
