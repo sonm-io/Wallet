@@ -43,7 +43,7 @@ export type TRequestProcessor<TPayload, TResult> = (
     payload: TPayload,
 ) => TResultPromise<TResult>;
 
-export interface IWebWorker {
+export interface IWorker {
     addEventListener: (
         name: TMessageEventName,
         callback: TMessageHandler,

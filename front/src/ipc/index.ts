@@ -18,7 +18,7 @@ export interface IIpcCtrArguments {
 const noop = (x: any) => undefined;
 
 export class IPC implements InterfaceIPC {
-    private worker: t.IWebWorker;
+    private worker: any;
     private requestIdToListener: Map<string, t.TListener<any>>;
     private requestIdCount = 0;
     private processRequest?: t.TRequestProcessor<any, any>;
