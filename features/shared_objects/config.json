@@ -1,0 +1,45 @@
+{
+    "defaultNet": "testrpc",
+    "defaultGasLimit": "1000000",
+    "DEBUG": true,
+    "browser": {
+        "width": 1280,
+        "height": 1024
+    },
+    "accounts": {
+        "names": {
+            "version": 2,
+            "data": [
+                {
+                    "name": "test",
+                    "chainId": "testrpc",
+                    "nodeUrl": "http://localhost:8545"
+                },
+                {
+                    "name": "tAlex",
+                    "chainId": "testrpc",
+                    "nodeUrl": "http://localhost:8545"
+                },
+                {
+                    "name": "45te",
+                    "chainId": "testrpc",
+                    "nodeUrl": "http://localhost:8545"
+                }
+            ]
+        },
+        "content": [
+            {
+                "key": "sonm_79467cfca75e9932635821b1f7539c1d071f4d8b9c952862a93d2c91d2414e94",
+                "value": "U2FsdGVkX1+Ug099pmYqSlIzBe/ZMS/7RRGKuMcJjcSZQsztsuXNZjYKKVfyXBu/QuHeWsaMQpyzgNukkphUYjbbUHy/momIlJWYhrTL6wakq2E4Gy+7WDLbdD1CIro0G520EJ6Xkm8CXesfc/317rgoz44bbrxdoIRLyG1IBSD325vsP4uuECgXJ3y8oX19"
+            },
+            {
+                "key": "sonm_9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+                "value": "U2FsdGVkX19n3meyV8SWdOiWRkv7ob0PM0PzSDZzTxNXvNRc07qgYj+vQJGDl85LJ3j23jCdhhrjV1zyQndnM0chtbPlaHOytby87FIlUDfuTeqrtCBj3N8oDzdo4P3PbQ74Tc/qpskNL8SyZbnNe4E3pk2I1M9w9RrvB96LzanDS9UjbTddh3xfBVkxMVoH"
+            },
+            {
+                "key": "sonm_e4b22be433b2714ca37ded6b30314fdeccf51937583f01c6b6d98980c3173b46",
+                "value": "U2FsdGVkX1+vt0HZa3Uo/YOE3qMM/34zJRzLbiQvJQE7PmBvx3H8PARxtGUZQTRY1YsLF6Mr220/xN1OEaK3aKss3w1iXxj7R5sYNZ93YyE3YQrSUzWVioaZo1pnOlFmJh2yilrlaNWBMSl30WEQXd5sbXCfLOViyQ3fbHMosIIpqrH/KHvrmraeviyTALZp"
+            }
+        ]
+    }
+}
