@@ -54,3 +54,16 @@ export interface IWorker {
     ) => void;
     processRequest?: TRequestProcessor<string, any>;
 }
+
+export interface IWindowWorker {
+    addEventListener: (
+        name: TMessageEventName,
+        callback: TMessageHandler,
+    ) => void;
+    postMessage: (
+        message: IRequest<any> | IResponse<any>,
+        targetOrigin: string,
+        transfer?: any[],
+    ) => void;
+    processRequest?: TRequestProcessor<string, any>;
+}

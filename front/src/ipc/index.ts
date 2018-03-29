@@ -11,14 +11,14 @@ export interface InterfaceIPC {
 }
 
 export interface IIpcCtrArguments {
-    worker?: any;
+    worker?: t.IWorker | t.IWindowWorker;
     errorMessageMap?: t.IValidation;
 }
 
 const noop = (x: any) => undefined;
 
 export class IPC implements InterfaceIPC {
-    private worker: any;
+    private worker: t.IWorker | t.IWindowWorker;
     private requestIdToListener: Map<string, t.TListener<any>>;
     private requestIdCount = 0;
     private processRequest?: t.TRequestProcessor<any, any>;
@@ -180,13 +180,7 @@ export class IPC implements InterfaceIPC {
     }
 
     private postMessage(request: any) {
-        // if (Worker !== undefined && (this.worker instanceof Worker)) {
-        //     //this.worker.postMessage(request);
-        // } else {
-        //     //this.worker.postMessage(request, '*');
-        // }
-
-        this.worker.postMessage(request);
+        (this.worker as any).postMessage(request);
     }
 
     public setRequestProcessor(
