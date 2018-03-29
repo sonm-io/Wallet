@@ -66,7 +66,7 @@ export class Api {
                 password,
             });
         } else {
-            return createPromise('account.create', { passphase });
+            return ipcSend('account.create', { password });
         }
     }
 
