@@ -57,16 +57,16 @@ export class Api {
     }
 
     public static async createAccount(
-        passphase: string,
+        password: string,
         privateKey?: string,
     ): Promise<IResult<string>> {
         if (privateKey) {
             return ipcSend('account.createFromPrivateKey', {
                 privateKey,
-                passphase,
+                password,
             });
         } else {
-            return ipcSend('account.create', { passphase });
+            return createPromise('account.create', { passphase });
         }
     }
 
