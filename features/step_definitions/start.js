@@ -15,13 +15,16 @@ const closeDisclaimer = async function() {
 module.exports = function() {
     this.Given(/^Wallet with one existing wallet is opened$/, async function() {
         await loadMainPage();
-        shared.wdHelper.loadWalletToStorage(shared.wallets.emptyWallet);
+        await shared.wdHelper.loadWalletToStorage(shared.wallets.emptyWallet);
     });
 
-    this.When(/^Click the Dont Show Disclaimer Again button$/, function() {
-        page.dialogueStartDisclaimer.waitForDisclaimerLoad();
-        return page.dialogueStartDisclaimer.clickDontShowDisclaimerButton();
-    });
+    this.When(
+        /^Click the Dont Show Disclaimer Again button$/,
+        async function() {
+            await page.dialogueStartDisclaimer.waitForDisclaimerLoad();
+            return await page.dialogueStartDisclaimer.clickDontShowDisclaimerButton();
+        },
+    );
 
     this.Given(
         /^Login to wallet "([^"]*)" with password "([^"]*)"$/,
@@ -40,9 +43,11 @@ module.exports = function() {
         return loadMainPage();
     });
 
-    this.Given(/^Three wallet accounts are created$/, function() {
-        loadMainPage();
-        shared.wdHelper.loadWalletsToStorage(shared.config.accounts);
+    this.Given(/^Three wallet accounts are created$/, async function() {
+        await loadMainPage();
+        return await shared.wdHelper.loadWalletsToStorage(
+            shared.config.accounts,
+        );
     });
 
     this.When(/^Fill Wallet Popup Password field "([^"]*)"/, async function(
@@ -95,7 +100,7 @@ module.exports = function() {
 
     this.When(/^Close Create New Wallet dialogue$/, async function() {
         await page.dialogueNewWallet.waitNewWalletDialogue();
-        return await page.startPage.closeCreateNewWalletDialogue();
+        return await page.dialogueNewWallet.closeCreateNewWalletDialogue();
     });
 
     this.Then(/^Logged out from wallet$/, async function() {

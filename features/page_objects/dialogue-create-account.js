@@ -14,11 +14,12 @@ module.exports = {
 
     //wait for page loading according to displayed add account header
 
-    waitForCreateNewAccountDialogue: function() {
+    waitForCreateNewAccountDialogue: async function() {
         return shared.wdHelper
             .findVisibleElement(this.elements.newAccountPopupHeader)
             .getText()
             .then(text => expect(text).to.equal('New account'));
+        //return await driver.wait(until.elementTextIs(driver.wait(until.elementLocated(this.elements.newAccountPopupHeader)), 'New account'), 80000);
     },
 
     //fill account name field

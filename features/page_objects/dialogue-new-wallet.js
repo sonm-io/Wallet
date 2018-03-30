@@ -1,10 +1,17 @@
 module.exports = {
     elements: {
-        header: by.xpath('//div/form/h3'),
+        newWalletPopuoHeader: by.xpath(
+            '//form[@class="sonm-login__popup-content"]/h3',
+        ),
         nwName: by.xpath('//input[@name="newName"]'),
         nwPass: by.xpath('//input[@name="newPassword"]'),
         nwPassConfirm: by.xpath('//input[@name="newPasswordConfirmation"]'),
-        createNewWallet: by.className('sonm-login__create'),
+        closeNewWalletDialogue: by.xpath(
+            '//div[@class="sonm-popup__inner"]/button',
+        ),
+        createNewWallet: by.xpath(
+            '//div[@class="sonm-popup__inner"]//button[.="CREATE WALLET"]',
+        ),
         networkField: by.css('div.sonm-login__network-type > div'),
         selectedNetwork: by.css(
             'div.sonm-login__network-type div > div > div.sonm-select-selection-selected-value',
@@ -12,9 +19,20 @@ module.exports = {
     },
 
     waitNewWalletDialogue: async function() {
-        return (await shared.wdHelper.findVisibleElement(this.elements.header))
+        (await shared.wdHelper.findVisibleElement(
+            this.elements.newWalletPopuoHeader,
+        ))
             .getText()
             .then(text => expect(text).to.equal('New wallet'));
+        return await shared.wdHelper.findVisibleElement(
+            this.elements.createNewWallet,
+        );
+    },
+
+    closeCreateNewWalletDialogue: async function() {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.closeNewWalletDialogue,
+        )).click();
     },
 
     //fill all fields in new wallet dialogue and create wallet

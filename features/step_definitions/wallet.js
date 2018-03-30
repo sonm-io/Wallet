@@ -93,10 +93,11 @@ module.exports = function() {
 
     this.When(/^Close Password dialogue$/, async function() {
         await page.dialogueEnterPassword.waitForPasswordPopup();
-        return await page.dialogueEnterPassword.closeDialogue();
+        return await page.dialogueEnterPassword.closePasswordDialogue();
     });
 
     this.When(/^Create New Wallet dialogue is displayed$/, async function() {
         return await page.dialogueNewWallet.waitNewWalletDialogue();
+        x;
     });
 };

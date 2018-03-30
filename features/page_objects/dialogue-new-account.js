@@ -1,6 +1,6 @@
 module.exports = {
     elements: {
-        header: by.xpath('//div/form/h3'),
+        newAccountPopupHeader: by.xpath('//form/h3'),
         password: by.xpath('//input[@name="password"]'),
         confirmation: by.xpath('//input[@name="confirmation"]'),
         name: by.xpath('//input[@name="name"]'),
@@ -11,7 +11,9 @@ module.exports = {
     //wait for page loading according to displayed new account header
 
     waitNewAccountDialogue: async function() {
-        return (await shared.wdHelper.findVisibleElement(this.elements.header))
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.newAccountPopupHeader,
+        ))
             .getText()
             .then(text => expect(text).to.equal('New account'));
     },

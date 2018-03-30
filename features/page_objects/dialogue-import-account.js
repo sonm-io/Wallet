@@ -1,6 +1,6 @@
 module.exports = {
     elements: {
-        header: by.xpath('//form/h3'),
+        importAccountPopupHeader: by.xpath('//form/h3'),
         selectKeystore: by.xpath('//input[@type="file"]'),
         accountNameField: by.xpath('//input[@name="name"]'),
         accountPasswordField: by.xpath('//input[@name="password"]'),
@@ -12,7 +12,9 @@ module.exports = {
     //wait for page loading according to displayed add account header
 
     waitImportAccountDialogue: async function() {
-        return (await shared.wdHelper.findVisibleElement(this.elements.header))
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.importAccountPopupHeader,
+        ))
             .getText()
             .then(text => expect(text).to.equal('Add account'));
     },
