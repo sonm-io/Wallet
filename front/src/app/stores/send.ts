@@ -176,7 +176,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
                 if (result.length === 0) {
                     const currentMax = createBigNumber(
-                        this.currentBalanceMaximum,
+                        this.currentBalanceMaximumWei,
                     );
 
                     if (currentMax === undefined) {
@@ -287,7 +287,27 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     }
 
     @computed
-    get currentBalanceMaximum() {
+    get currentBalanceMaximum(): string {
+        const amountWei = this.currentBalanceMaximumWei;
+        let result = '';
+
+        const currencyInfo = this.rootStore.mainStore.currencyMap.get(
+            this.currencyAddress,
+        );
+
+        if (currencyInfo !== undefined && amountWei !== undefined) {
+            result = moveDecimalPoint(
+                amountWei,
+                -currencyInfo.decimalPointOffset,
+                4,
+            );
+        }
+
+        return result;
+    }
+
+    @computed
+    get currentBalanceMaximumWei() {
         const account = this.rootStore.mainStore.accountMap.get(
             this.fromAddress,
         ) as IAccountInfo;
