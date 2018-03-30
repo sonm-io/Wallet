@@ -14,8 +14,8 @@ ipc.setRequestProcessor(async (type: string, payload: any): TResultPromise<
         };
     } catch (err) {
         if (IS_DEV) {
-            console.log(type, payload);
-            console.log(err);
+            console.error(type, payload);
+            console.error(err);
         }
 
         if (err.message.includes('Invalid JSON RPC response from provider')) {
@@ -28,8 +28,10 @@ ipc.setRequestProcessor(async (type: string, payload: any): TResultPromise<
             err.message = 'insufficient_funds';
         }
 
-        return {
-            error: err.message.replace('Error: ', ''),
-        };
+        // return {
+        //     error: err.message.replace('Error: ', ''),
+        // };
+
+        throw Error(err.message.replace('Error: ', ''));
     }
 });

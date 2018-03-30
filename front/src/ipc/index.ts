@@ -75,7 +75,7 @@ export class IPC implements InterfaceIPC {
 
             const sendResponse = async (
                 result?: t.IResult<any>,
-                error?: Error,
+                err?: Error,
             ) => {
                 const success = result !== undefined;
 
@@ -101,7 +101,8 @@ export class IPC implements InterfaceIPC {
                     (response as t.IFormResponse<any>).validation = validation;
                 } else {
                     response.success = false;
-                    response.error = String(event);
+                    response.error =
+                        err && err.message ? err.message : String(err);
                 }
 
                 this.postMessage(response);
@@ -159,6 +160,7 @@ export class IPC implements InterfaceIPC {
                     });
                 } else {
                     /* tslint:disable */
+                    console.error(response);
                     console.error(`method ${method} error: ${response.error}`);
                     /* tslint:enable */
 

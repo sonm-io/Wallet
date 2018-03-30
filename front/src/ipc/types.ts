@@ -33,7 +33,7 @@ export type TResultPromise<T> = Promise<IResult<T>>;
 
 export interface IResult<T> {
     data?: T;
-    error?: any;
+    error?: string;
     validation?: IValidation;
     continuation?: TResultPromise<T>;
 }
