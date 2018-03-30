@@ -1058,15 +1058,9 @@ class Api {
 
     public async resolve(type: string, payload: any): Promise<IResponse> {
         if (this.routes[type]) {
-            try {
-                return await this.routes[type](payload);
-            } catch (err) {
-                throw new Error(err);
-            }
+            return this.routes[type](payload);
         } else {
-            return {
-                data: false,
-            };
+            throw new Error('route_not_exists');
         }
     }
 

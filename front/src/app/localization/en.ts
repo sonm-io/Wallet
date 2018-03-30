@@ -16,6 +16,15 @@ export const en: ILocalizationDictionary = {
     wait_your_tokens: 'SNMT has been successfully delivered from Mars',
     give_me_more: 'Give me SONM tokens!',
     insufficient_funds: 'There is not enough Ether for the transaction',
+
+    'Error: insufficient funds for gas * price + value':
+        'There is not enough Ether for the transaction',
+    'Error: Invalid JSON RPC response from provider':
+        'Ethereum node is unavailable',
+    'Error: intrinsic gas too low':
+        'The transaction was rejected because of insufficient gas',
+    'TypeError: Failed to fetch': 'Ethereum node is unavailable',
+
     required_params_missed: 'Required parameter missed',
     not_sonm_wallet_file: 'This is not SONM wallet export file',
     not_erc20_token: 'Token is not ERC20',
