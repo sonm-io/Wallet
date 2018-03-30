@@ -18,6 +18,6 @@ ipc.setRequestProcessor(async (type: string, payload: any): TResultPromise<
             console.error(err);
         }
 
-        throw Error(err);
+        throw Error(err.message.replace('Error: ', ''));
     }
 });
