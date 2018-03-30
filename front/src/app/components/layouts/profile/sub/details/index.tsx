@@ -62,6 +62,10 @@ export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
             : this.props.status === 2 ? 'status_ident' : 'status_anon';
     }
 
+    protected handleClickUrl(event: any) {
+        event.preventDefault();
+    }
+
     public render() {
         const p = this.props;
         const t = p.getUiText;
@@ -118,7 +122,12 @@ export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
                 {definitions.length === 0 && (
                     <span className="sonm-profile-details__certificate">
                         {t('before_certification_link')}
-                        <a>{t('certification_link')}</a>
+                        <a
+                            href="#go-to-kyc-service"
+                            onClick={this.handleClickUrl}
+                        >
+                            {t('certification_link')}
+                        </a>
                         {t('after_certification_link')}
                     </span>
                 )}
