@@ -7,6 +7,7 @@ export const en: ILocalizationDictionary = {
     sonmapi_gas_too_low:
         'The transaction was rejected because of insufficient gas',
     sonmapi_insufficient_funds: 'There is not enough Ether for the transaction',
+    sonmapi_network_connection: 'No blockchain node connection',
 
     password_not_match: 'Password does not match',
     wallet_allready_exists: 'Already exist',
@@ -32,7 +33,6 @@ export const en: ILocalizationDictionary = {
     required_value: 'Required value',
     no_addres_in_account_file: 'Incorrect file: no address field',
     incorrect_file: 'Incorrect file',
-    no_blockchain_connection: 'No blockchain node connection',
     livenet: 'LIVENET',
     testnet: 'TESTNET',
     accounts: 'Accounts',
