@@ -24,6 +24,7 @@ import {
 import {
     createBigNumber,
     createBigNumberAlways,
+    createBigNumberFromFloat,
     ZERO,
 } from 'app/utils/create-big-number';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
@@ -153,11 +154,12 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
                     ),
                 );
 
+                const decimalPointOffset = this.currentCurrency
+                    ? Number(this.currentCurrency.decimalPointOffset)
+                    : 0;
+
                 if (result.length === 0) {
                     const decimalDigits = amount.split('.')[1];
-                    const decimalPointOffset = this.currentCurrency
-                        ? Number(this.currentCurrency.decimalPointOffset)
-                        : 0;
 
                     if (
                         decimalDigits &&
@@ -174,7 +176,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
                 if (result.length === 0) {
                     const currentMax = createBigNumber(
-                        this.currentBalanceMaximum,
+                        this.currentBalanceMaximumWei,
                     );
 
                     if (currentMax === undefined) {
@@ -183,7 +185,14 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
                                 'maximum_value_is_undetermined',
                             ),
                         );
-                    } else if (currentMax.lt(createBigNumberAlways(amount))) {
+                    } else if (
+                        currentMax.lt(
+                            createBigNumberFromFloat(
+                                amount,
+                                decimalPointOffset,
+                            ),
+                        )
+                    ) {
                         result.push(
                             this.localizator.getMessageText(
                                 'value_is_greater_than_max',
@@ -278,7 +287,27 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     }
 
     @computed
-    get currentBalanceMaximum() {
+    get currentBalanceMaximum(): string {
+        const amountWei = this.currentBalanceMaximumWei;
+        let result = '';
+
+        const currencyInfo = this.rootStore.mainStore.currencyMap.get(
+            this.currencyAddress,
+        );
+
+        if (currencyInfo !== undefined && amountWei !== undefined) {
+            result = moveDecimalPoint(
+                amountWei,
+                -currencyInfo.decimalPointOffset,
+                4,
+            );
+        }
+
+        return result;
+    }
+
+    @computed
+    get currentBalanceMaximumWei() {
         const account = this.rootStore.mainStore.accountMap.get(
             this.fromAddress,
         ) as IAccountInfo;
@@ -291,8 +320,9 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
             if (
                 this.rootStore.mainStore.etherAddress === this.currencyAddress
             ) {
-                const gasPriceWei = createBigNumber(
-                    moveDecimalPoint(this.gasPriceGwei, 9),
+                const gasPriceWei = createBigNumberFromFloat(
+                    this.gasPriceGwei,
+                    9,
                 );
                 const gasLimit = createBigNumber(this.gasLimit);
 
@@ -308,19 +338,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
             }
         }
 
-        let result = '';
-
-        const currencyInfo = this.rootStore.mainStore.currencyMap.get(
-            this.currencyAddress,
-        );
-        if (currencyInfo !== undefined && amountWei !== undefined) {
-            result = moveDecimalPoint(
-                amountWei.toString(),
-                -currencyInfo.decimalPointOffset,
-            );
-        }
-
-        return result;
+        return String(amountWei);
     }
 
     /**
