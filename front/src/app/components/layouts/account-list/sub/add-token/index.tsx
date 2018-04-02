@@ -57,7 +57,13 @@ export class AddToken extends React.Component<IProps, {}> {
                         <FormField
                             fullWidth
                             label="Token contract address"
-                            error={tokenAddress.length === 0 ? '' : validation}
+                            error={
+                                tokenAddress.length === 0
+                                    ? ''
+                                    : rootStore.localizator.getMessageText(
+                                          validation,
+                                      )
+                            }
                         >
                             <Input
                                 autoFocus
