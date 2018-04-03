@@ -76,10 +76,10 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
     @catchErrors({ restart: true })
     @asyncAction
     protected *updateCandidateTokenInfo(address: string) {
-        const accounts = this.rootStore.mainStore.accountList
-            ? this.rootStore.mainStore.accountList.map(item => item.address)
-            : [];
-        const { validation, data } = yield Api.getTokenInfo(address, accounts);
+        const { validation, data } = yield Api.getTokenInfo(
+            address,
+            this.rootStore.mainStore.accountAddressList,
+        );
 
         if (validation) {
             this.validation.tokenAddress = validation.address;

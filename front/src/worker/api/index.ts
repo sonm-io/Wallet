@@ -743,7 +743,7 @@ class Api {
                 const tokenList = await this.getTokenList();
                 const token = await tokenList.getTokenInfo(
                     data.address,
-                    data.accounts || null,
+                    data.accounts,
                 );
 
                 return {
