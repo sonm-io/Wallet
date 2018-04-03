@@ -76,7 +76,10 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
     @catchErrors({ restart: true })
     @asyncAction
     protected *updateCandidateTokenInfo(address: string) {
-        const { validation, data } = yield Api.getTokenInfo(address);
+        const accounts = this.rootStore.mainStore.accountList
+            ? this.rootStore.mainStore.accountList.map(item => item.address)
+            : [];
+        const { validation, data } = yield Api.getTokenInfo(address, accounts);
 
         if (validation) {
             this.validation.tokenAddress = validation.address;
@@ -91,7 +94,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
             }
 
             if (address === this.candidateTokenAddress) {
-                this.candidateTokenInfo = data;
+                this.candidateTokenInfo = normalizeCurrencyInfo(data);
             }
         }
     }

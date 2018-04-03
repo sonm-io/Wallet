@@ -53,8 +53,9 @@ describe('Api', async function() {
     });
 
     it('should get token info', async function() {
-        const response = await Api.getTokenInfo(tokenAddress);
-        expect(response.data).to.be.a('object');
+        const response = await Api.getTokenInfo(tokenAddress, [address]);
+        expect(response.data).to.have.property('name');
+        expect(response.data).to.have.property('balance');
 
         const response2 = await Api.getTokenInfo(
             '0x225b929916daadd5044d5934936313001f55d8f1',

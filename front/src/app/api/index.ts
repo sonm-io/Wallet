@@ -164,8 +164,9 @@ export class Api {
 
     public static async getTokenInfo(
         address: string,
+        accounts?: string[],
     ): Promise<IResult<ICurrencyInfo>> {
-        return ipcSend('getTokenInfo', { address });
+        return ipcSend('getTokenInfo', { address, accounts });
     }
 
     public static async getPresetTokenList(): Promise<

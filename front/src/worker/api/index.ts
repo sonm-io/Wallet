@@ -64,6 +64,7 @@ const DEFAULT_TOKENS: ITokens = {
             decimalPointOffset: 18,
             symbol: 'STORJ',
             address: '0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac',
+            balance: '0',
         },
     ],
     rinkeby: [
@@ -72,6 +73,7 @@ const DEFAULT_TOKENS: ITokens = {
             decimalPointOffset: 18,
             symbol: 'PIG',
             address: '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
+            balance: '0',
         },
     ],
     testrpc: [
@@ -80,6 +82,7 @@ const DEFAULT_TOKENS: ITokens = {
             decimalPointOffset: 18,
             symbol: 'PIG',
             address: '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
+            balance: '0',
         },
     ],
 };
@@ -738,9 +741,13 @@ class Api {
         if (data.address) {
             try {
                 const tokenList = await this.getTokenList();
+                const token = await tokenList.getTokenInfo(
+                    data.address,
+                    data.accounts || null,
+                );
 
                 return {
-                    data: await tokenList.getTokenInfo(data.address),
+                    data: token,
                 };
             } catch (err) {
                 return {
