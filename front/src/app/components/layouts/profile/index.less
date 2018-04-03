@@ -1,0 +1,40 @@
+@import 'sub/certificate/index';
+@import 'sub/certificates-panel/index';
+@import 'sub/panel/index';
+@import 'sub/statistic/index';
+@import 'sub/details/index';
+
+@panel-gap: 25px;
+@panel-gap-half: 25px / 2;
+
+.sonm-profile {
+    display: flex;
+    flex-direction: column;
+
+    &__row {
+        display: flex;
+        flex-direction: row;
+        margin: 0;
+
+        &--bottom {
+            flex-basis: 100px;
+            margin-top: @panel-gap;
+        }
+
+        column-gap: 25px;
+    }
+
+    &__panel {
+        flex: 1 0 0;
+        flex-direction: column;
+        margin: 0 @panel-gap-half;
+
+        &:first-of-type {
+            margin-left: 0;
+        }
+
+        &:last-of-type {
+            margin-right: 0;
+        }
+    }
+}

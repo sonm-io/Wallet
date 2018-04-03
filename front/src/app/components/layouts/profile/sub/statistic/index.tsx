@@ -28,10 +28,11 @@ export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
         const t = p.getUiText;
 
         return (
-            <Panel title={t('SONM Statisctic')}>
-                <table
-                    className={cn('sonm-profile-stats', this.props.className)}
-                >
+            <Panel
+                title={t('SONM Statisctic')}
+                className={cn('sonm-profile-stats', this.props.className)}
+            >
+                <table className="sonm-profile-stats__table">
                     <tr>
                         <th className="sonm-profile-stats__header">{}</th>
                         <th className="sonm-profile-stats__header--consumer ">

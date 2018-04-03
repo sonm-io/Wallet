@@ -17,3 +17,5 @@ export class Panel extends React.Component<IProps, any> {
         );
     }
 }
+
+export default Panel;

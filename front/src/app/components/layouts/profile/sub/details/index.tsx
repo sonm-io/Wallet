@@ -1,25 +1,21 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { Panel } from '../panel';
-import {
-    LocalizedPureComponent,
-    TFnGetUiText,
-} from 'app/components/common/localized-pure-component';
+import { TFnGetUiText } from 'app/components/common/localized-pure-component';
 import { IdentIcon } from 'app/components/common/ident-icon';
-import { Hash } from '../../../../common/hash-view';
+import { Hash } from 'app/components/common/hash-view';
 
-interface IProfileDefinition {
-    termin: string;
-    definition: string;
+export interface IProfileDefinition {
+    label: string;
+    value: string;
 }
 
 interface IProps {
     className?: string;
-    title?: string;
-    children: never;
+    children?: never;
     status: 0 | 1 | 2;
     address: string;
-    getUiText: TFnGetUiText<TUiText>;
+    getUiText: TFnGetUiText<string>;
     definitions: IProfileDefinition[];
 }
 
@@ -43,17 +39,18 @@ export type TProfileDefinitionRenders = {
     [k in TProfileDefinitionNames]: (value: any) => React.ReactNode
 };
 
-export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
+export class Details extends React.PureComponent<IProps, TUiText> {
     protected static defaultRender = (value: any) => String(value);
 
     protected static profileDefinitionRenders: Partial<
         TProfileDefinitionRenders
     > = {
-        Website: Statistic.defaultRender,
+        Website: Details.defaultRender,
     };
 
     public static defaultProps = {
         definitions: [],
+        getUiText: (s: string, args: any[]) => s,
     };
 
     protected getStatusText() {
@@ -95,24 +92,24 @@ export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
                 </div>
                 <div className="sonm-profile-details__extra">
                     {
-                        (p.definitions.forEach(({ termin, definition }) => {
+                        (p.definitions.forEach(({ label, value }) => {
                             const render =
-                                (Statistic.profileDefinitionRenders as any)[
-                                    termin
-                                ] || Statistic.defaultRender;
+                                (Details.profileDefinitionRenders as any)[
+                                    label
+                                ] || Details.defaultRender;
 
                             definitions.push(
                                 <dt
-                                    key={termin}
-                                    className="sonm-profile-details__extra-termin"
+                                    key={label}
+                                    className="sonm-profile-details__extra-label"
                                 >
-                                    {t(termin as TUiText)}
+                                    {t(label)}
                                 </dt>,
                                 <dd
-                                    key={`${termin}^*`}
-                                    className="sonm-profile-details__extra-definition"
+                                    key={`${label}^*`}
+                                    className="sonm-profile-details__extra-value"
                                 >
-                                    {render(definition)}
+                                    {render(value)}
                                 </dd>,
                             );
                         }),
@@ -123,7 +120,7 @@ export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
                     <span className="sonm-profile-details__certificate">
                         {t('before_certification_link')}
                         <a
-                            href="#go-to-kyc-service"
+                            href="#go-to-instruction"
                             onClick={this.handleClickUrl}
                         >
                             {t('certification_link')}
@@ -140,3 +137,5 @@ export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
         );
     }
 }
+
+export default Details;
