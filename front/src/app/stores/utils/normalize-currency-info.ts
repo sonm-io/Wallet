@@ -6,6 +6,7 @@ export function normalizeCurrencyInfo(currencyInfo: any): ICurrencyInfo {
         decimalPointOffset: currencyInfo.decimals,
         name: currencyInfo.name,
         address: currencyInfo.address,
+        balance: currencyInfo.balance,
     };
 
     return result;
