@@ -20,6 +20,10 @@ interface IProps {
     supplierAvgTime: string;
     supplierToken: string;
     my: boolean;
+    userName: string;
+    country: string;
+    logoUrl: string;
+    countryFlagUrl: string;
 }
 
 export class ProfileView extends React.PureComponent<IProps, never> {
@@ -30,6 +34,10 @@ export class ProfileView extends React.PureComponent<IProps, never> {
             <div className={cn('sonm-profile', p.className)}>
                 <div className="sonm-profile__row sonm-profile__row--top">
                     <Details
+                        userName={p.userName}
+                        country={p.country}
+                        countryFlagUrl={p.countryFlagUrl}
+                        logoUrl={p.logoUrl}
                         className="sonm-profile__panel"
                         status={0}
                         address={'0x0'}

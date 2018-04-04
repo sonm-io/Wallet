@@ -4,6 +4,11 @@ import { Panel } from '../panel';
 import { TFnGetUiText } from 'app/components/common/localized-pure-component';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
+import * as country from './iso-country-codes';
+
+const mapAbbrToCountry = country.getFullMap();
+
+console.log(mapAbbrToCountry);
 
 export interface IProfileDefinition {
     label: string;
@@ -13,8 +18,12 @@ export interface IProfileDefinition {
 interface IProps {
     className?: string;
     children?: never;
+    userName: string;
     status: 0 | 1 | 2;
+    country: string;
+    countryFlagUrl: string;
     address: string;
+    logoUrl: string;
     getUiText: TFnGetUiText<string>;
     definitions: IProfileDefinition[];
 }
@@ -74,6 +83,8 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                 title={t('Account details')}
             >
                 <dl className="sonm-profile-details__main-info">
+                    <dt>{t('Status')}</dt>
+                    <dd>{t(this.getStatusText())}</dd>
                     <dt>{t('Status')}</dt>
                     <dd>{t(this.getStatusText())}</dd>
                 </dl>

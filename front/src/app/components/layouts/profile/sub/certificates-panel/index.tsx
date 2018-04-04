@@ -21,7 +21,9 @@ export class CertificatesPanel extends React.Component<IProps, any> {
                     'sonm-certificates__empty': p.certificates.length === 0,
                 })}
             >
-                {p.certificates.map(props => <Certificate {...props} />)}
+                {p.certificates.map((props, idx) => (
+                    <Certificate key={idx} {...props} />
+                ))}
                 {p.my && <Button>GET CERTIFICATION</Button>}
                 <a className="sonm-certificates__show-more">Show more</a>
             </Panel>

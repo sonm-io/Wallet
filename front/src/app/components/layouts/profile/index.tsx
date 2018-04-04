@@ -1,12 +1,18 @@
 import * as React from 'react';
 import { ProfileView } from './view';
+import * as country from './country-utils';
 
 interface IProps {
     className?: string;
 }
 
+const mapAbbrToCountry = country.getFullMap();
+
+console.log(mapAbbrToCountry);
+
 const returnFirstArg = (...as: any[]) => String(as[0]);
 const p = {
+    countryAbbr: 'BL',
     getUiText: returnFirstArg,
     definitionList: [
         {
@@ -32,9 +38,19 @@ const p = {
     supplierAvgTime: '12351',
     supplierToken: '329',
     my: true,
+    userName: 'USER NAME',
+    country: 'bl',
+    logoUrl:
+        'http://cdn.thecoolist.com/wp-content/uploads/2016/05/Japanese-Cherry-beautiful-tree-960x540.jpg',
 };
 
+function getCountryFlagUrl(countryAbbr: string) {
+    return `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.1.0/flags/4x3/${countryAbbr}.svg`;
+}
+
 export class Profile extends React.PureComponent<IProps, never> {
+    country = mapAbbrToCountry[p.countryAbbr];
+
     public render() {
         return (
             <ProfileView
@@ -50,6 +66,10 @@ export class Profile extends React.PureComponent<IProps, never> {
                 supplierAvgTime={p.supplierAvgTime}
                 supplierToken={p.supplierToken}
                 my={p.my}
+                userName={p.userName}
+                country={country ? country.name : ''}
+                countryFlagUrl={getCountryFlagUrl(p.countryAbbr)}
+                logoUrl={p.logoUrl}
             />
         );
     }
