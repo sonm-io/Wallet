@@ -111,9 +111,8 @@ export class ShowMorePanel extends React.Component<IProps, any> {
 
         if (innerRect.height > outerRect.height) {
             const step = this.props.contentSizeStepPx || 50;
-            this.nodes.clipper.style.height = `${Math.floor(
-                outerRect.height / step,
-            ) * step}px`;
+            const clipperHeight = Math.floor(outerRect.height / step) * step;
+            this.nodes.clipper.style.height = `${clipperHeight}px`;
             this.nodes.show.style.visibility = 'visible';
         } else {
             this.nodes.show.style.visibility = 'hidden';
