@@ -1,1 +1,3 @@
-spinner: <Spinner />;
+spinner:
+
+    <Spinner />

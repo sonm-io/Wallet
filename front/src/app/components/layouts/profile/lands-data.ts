@@ -1,5 +1,42 @@
-export const countries = {
-    scheme: ['name', 'a2', 'a3', 'number', 'phoneCode'],
+export const lands = {
+    scheme: ['name', 'abCode2', 'abCode3', 'isoNumber', 'phoneCode'],
+    abCode2ToDomainMap: {
+        GB: 'uk',
+    },
+    doesNotHaveDomain: [
+        'AX',
+        'BA',
+        'KY',
+        'CD',
+        'CG',
+        'HR',
+        'HM',
+        'IR',
+        'KP',
+        'KR',
+        'LA',
+        'LY',
+        'MO',
+        'MK',
+        'YT',
+        'FM',
+        'MD',
+        'AN',
+        'PS',
+        'RU',
+        'CS',
+        'SJ',
+        'SY',
+        'TZ',
+        'VA',
+        'VN',
+        'VG',
+        'VI',
+        'WF',
+        'YE',
+        'CW',
+        'XK',
+    ],
     data: [
         ['AALAND ISLANDS', 'AX', 'ALA', '248', 0],
         ['AFGHANISTAN', 'AF', 'AFG', '004', '93'],
@@ -261,4 +298,4 @@ export const countries = {
     ],
 };
 
-export default countries;
+export default lands;

@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { ProfileView } from './view';
-import * as country from './country-utils';
+import * as lands from './lands-utils';
 
 interface IProps {
     className?: string;
 }
 
-const mapAbbrToCountry = country.getFullMap();
-
-console.log(mapAbbrToCountry);
+const mapAbbrToCountry = lands.getMap();
 
 const returnFirstArg = (...as: any[]) => String(as[0]);
 const p = {
@@ -49,9 +47,19 @@ function getCountryFlagUrl(countryAbbr: string) {
 }
 
 export class Profile extends React.PureComponent<IProps, never> {
-    country = mapAbbrToCountry[p.countryAbbr];
+    public static defaultCountry: lands.ILand = {
+        name: 'Democratic Republic of Nowhere',
+        abCode2: 'KZ',
+        abCode3: 'NWE',
+        isoNumber: '777',
+        phoneCode: '+7-777',
+        domain: '.nowhere',
+    };
 
     public render() {
+        const country =
+            mapAbbrToCountry[p.countryAbbr] || Profile.defaultCountry;
+
         return (
             <ProfileView
                 className=""

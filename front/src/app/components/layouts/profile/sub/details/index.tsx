@@ -1,14 +1,9 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { Panel } from '../panel';
+import { ShowMorePanel as Panel } from 'app/components/common/show-more-panel';
 import { TFnGetUiText } from 'app/components/common/localized-pure-component';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
-import * as country from './iso-country-codes';
-
-const mapAbbrToCountry = country.getFullMap();
-
-console.log(mapAbbrToCountry);
 
 export interface IProfileDefinition {
     label: string;

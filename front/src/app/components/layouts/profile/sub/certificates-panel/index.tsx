@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { ICertificateProps, Certificate } from '../certificate';
 import { Button } from 'app/components/common/button';
-import { Panel } from '../panel';
+import { ShowMorePanel as Panel } from 'app/components/common/show-more-panel';
 
 interface IProps {
     className?: string;

@@ -6,12 +6,22 @@
     background-color: @color-white-bg;
     padding: 20px 25px;
     margin: 0;
-    display: block;
+    display: flex;
+    flex-direction: column;
+
+    &__inner {
+        max-width: 100vw;
+        max-height: 100vh;
+        overflow: auto;
+    }
 
     &__title {
         color: @color-font-dark;
         font-size: 18px;
         font-weight: 400;
         line-height: 1;
+        padding: 0;
+        margin: 0;
+        flex: 0 0;
     }
 }

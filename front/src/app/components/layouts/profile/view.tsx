@@ -5,7 +5,7 @@ import { Details, IProfileDefinition } from './sub/details';
 import { Statistic } from './sub/statistic';
 import { ICertificateProps } from './sub/certificate';
 import { CertificatesPanel } from './sub/certificates-panel';
-import { Panel } from './sub/panel';
+import { ShowMorePanel as Panel } from 'app/components/common/show-more-panel';
 
 interface IProps {
     className?: string;

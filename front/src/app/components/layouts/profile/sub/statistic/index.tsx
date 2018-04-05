@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { Panel } from '../panel';
+import { ShowMorePanel as Panel } from 'app/components/common/show-more-panel';
 import { LocalizedPureComponent } from 'app/components/common/localized-pure-component';
 
 export type TUiText =
@@ -33,48 +33,50 @@ export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
                 className={cn('sonm-profile-stats', this.props.className)}
             >
                 <table className="sonm-profile-stats__table">
-                    <tr>
-                        <th className="sonm-profile-stats__header">{}</th>
-                        <th className="sonm-profile-stats__header--consumer ">
-                            {t('As a consumer')}
-                        </th>
-                        <th className="sonm-profile-stats__header--supplier">
-                            {t('As a supplier')}
-                        </th>
-                    </tr>
-                    <tr>
-                        <td className="sonm-profile-stats__cell">
-                            {t('Deals count')}
-                        </td>
-                        <td className="sonm-profile-stats__cell">
-                            {p.consumerDeals}
-                        </td>
-                        <td className="sonm-profile-stats__cell">
-                            {p.supplierDeals}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="sonm-profile-stats__cell">
-                            {t('Deal average time')}
-                        </td>
-                        <td className="sonm-profile-stats__cell">
-                            {p.consumerAvgTime}
-                        </td>
-                        <td className="sonm-profile-stats__cell">
-                            {p.supplierAvgTime}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="sonm-profile-stats__cell">
-                            {t('Tokens overall')}
-                        </td>
-                        <td className="sonm-profile-stats__cell">
-                            {p.consumerToken}
-                        </td>
-                        <td className="sonm-profile-stats__cell">
-                            {p.supplierToken}
-                        </td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <th className="sonm-profile-stats__header">{}</th>
+                            <th className="sonm-profile-stats__header--consumer ">
+                                {t('As a consumer')}
+                            </th>
+                            <th className="sonm-profile-stats__header--supplier">
+                                {t('As a supplier')}
+                            </th>
+                        </tr>
+                        <tr>
+                            <td className="sonm-profile-stats__cell">
+                                {t('Deals count')}
+                            </td>
+                            <td className="sonm-profile-stats__cell">
+                                {p.consumerDeals}
+                            </td>
+                            <td className="sonm-profile-stats__cell">
+                                {p.supplierDeals}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className="sonm-profile-stats__cell">
+                                {t('Deal average time')}
+                            </td>
+                            <td className="sonm-profile-stats__cell">
+                                {p.consumerAvgTime}
+                            </td>
+                            <td className="sonm-profile-stats__cell">
+                                {p.supplierAvgTime}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className="sonm-profile-stats__cell">
+                                {t('Tokens overall')}
+                            </td>
+                            <td className="sonm-profile-stats__cell">
+                                {p.consumerToken}
+                            </td>
+                            <td className="sonm-profile-stats__cell">
+                                {p.supplierToken}
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </Panel>
         );
