@@ -115,4 +115,8 @@ module.exports = {
     clearInputField: async function(field) {
         return (await shared.wdHelper.findVisibleElement(field)).clear();
     },
+
+    verifyFieldLength: async function(field) {
+        return (await driver.findElement(field)).getAttribute('value');
+    },
 };

@@ -39,6 +39,19 @@ module.exports = function() {
         },
     );
 
+    this.Given(
+        /^Login to wallet "([^"]*)" with password "([^"]*)" with Two Accounts$/,
+        async function(walletName, password) {
+            await loadMainPage();
+            let wallet = shared.wdHelper.resolve(shared.wallet, walletName);
+            await shared.wdHelper.loadWalletToStorage(wallet);
+            await closeDisclaimer();
+            await page.dialogueEnterPassword.waitForPasswordPopup();
+            await page.dialogueEnterPassword.enterPassword(password);
+            return await page.dialogueEnterPassword.loginToWallet();
+        },
+    );
+
     this.Given(/^Wallet with empty storage is opened$/, function() {
         return loadMainPage();
     });

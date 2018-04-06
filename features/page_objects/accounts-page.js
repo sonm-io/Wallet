@@ -117,20 +117,4 @@ module.exports = {
             ),
         )).click();
     },
-
-    //click on edit account name button
-
-    clickOnEditCreatedAccountNameButton: async function(accountName) {
-        return (await shared.wdHelper.findVisibleElement(
-            by.xpath('//span[.=' + accountName + ']/button'),
-        )).click();
-    },
-
-    //edit account name
-
-    editCreatedAccountName: async function(accountName, newAccountName) {
-        return (await shared.wdHelper.findVisibleElement(
-            by.xpath('//span[.=' + accountName + ']/input'),
-        )).sendKeys(newAccountName);
-    },
 };

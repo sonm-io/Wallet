@@ -1,11 +1,13 @@
 module.exports = {
     elements: {
         newAccountPopupHeader: by.xpath('//form/h3'),
-        password: by.xpath('//input[@name="password"]'),
-        confirmation: by.xpath('//input[@name="confirmation"]'),
-        name: by.xpath('//input[@name="name"]'),
-        privateKey: by.xpath('//input[@name="privateKey"]'),
-        createButton: by.xpath('//button[.="Create"]'),
+        newAccountNameField: by.xpath('//input[@name="name"]'),
+        newAccountPasswordField: by.xpath('//input[@name="password"]'),
+        newAccountPasswordConfirmationField: by.xpath(
+            '//input[@name="confirmation"]',
+        ),
+        newAccountPrivateKeyField: by.xpath('//input[@name="privateKey"]'),
+        createNewAccountButton: by.xpath('//button[.="Create"]'),
     },
 
     //wait for page loading according to displayed new account header
@@ -22,7 +24,7 @@ module.exports = {
 
     fillNewAccountAccountName: async function(name) {
         return (await shared.wdHelper.findVisibleElement(
-            this.elements.name,
+            this.elements.newAccountNameField,
         )).sendKeys(name);
     },
 
@@ -31,8 +33,7 @@ module.exports = {
     validateNewAccountNameField: async function() {
         return await page.common.verifyValidationErrorMessage(
             by.css('.sonm-form__row:nth-of-type(1) * > .sonm-form-field__help'),
-            shared.messages.importAccount
-                .importAccountIncorrectFileValidationMessage,
+            shared.messages.createAccount.createAccountNameValidationMessage,
         );
     },
 
@@ -40,17 +41,16 @@ module.exports = {
 
     fillNewAccountPassword: async function(password) {
         return (await shared.wdHelper.findVisibleElement(
-            this.elements.password,
+            this.elements.newAccountPasswordField,
         )).sendKeys(password);
     },
 
     //validate account password field
 
-    validateNewAccountPasswordField: async function() {
+    validateNewAccountPasswordField: async function(errorMessage) {
         return await page.common.verifyValidationErrorMessage(
             by.css('.sonm-form__row:nth-of-type(2) * > .sonm-form-field__help'),
-            shared.messages.importAccount
-                .importAccountIncorrectFileValidationMessage,
+            errorMessage,
         );
     },
 
@@ -58,17 +58,25 @@ module.exports = {
 
     fillNewAccountPasswordConfirmation: async function(password) {
         return (await shared.wdHelper.findVisibleElement(
-            this.elements.confirmation,
+            this.elements.newAccountPasswordConfirmationField,
         )).sendKeys(password);
     },
 
     //validate account confirm password field
 
-    validateNewAccountConfirmPasswordField: async function() {
+    validateNewAccountConfirmationPasswordField: async function() {
         return await page.common.verifyValidationErrorMessage(
             by.css('.sonm-form__row:nth-of-type(3) * > .sonm-form-field__help'),
-            shared.messages.importAccount
-                .importAccountIncorrectFileValidationMessage,
+            shared.messages.createAccount
+                .createAccountConfirmPasswordValidationMessage,
+        );
+    },
+
+    //clear New Account Confirmation Password Field
+
+    clearNewAccountPasswordField: async function() {
+        return page.common.clearInputField(
+            this.elements.newAccountPasswordField,
         );
     },
 
@@ -76,7 +84,7 @@ module.exports = {
 
     fillPrivateKey: async function(privateKey) {
         return (await shared.wdHelper.findVisibleElement(
-            this.elements.privateKey,
+            this.elements.newAccountPrivateKeyField,
         )).sendKeys(privateKey);
     },
 
@@ -84,7 +92,7 @@ module.exports = {
 
     clickCreateNewAccountButton: async function() {
         return (await shared.wdHelper.findVisibleElement(
-            this.elements.createButton,
+            this.elements.createNewAccountButton,
         )).click();
     },
 };

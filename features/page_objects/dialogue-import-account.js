@@ -1,12 +1,14 @@
 module.exports = {
     elements: {
         importAccountPopupHeader: by.xpath('//form/h3'),
-        selectKeystore: by.xpath('//input[@type="file"]'),
+        closeImportAccountDialogueButton: by.xpath(
+            '//div[@class="sonm-popup__inner"]/button',
+        ),
+        fileField: by.xpath('//input[@type="file"]'),
         accountNameField: by.xpath('//input[@name="name"]'),
         accountPasswordField: by.xpath('//input[@name="password"]'),
         addButton: by.xpath('//button[.="Add"]'),
         preview: by.className('sonm-accounts-add-account__preview-ct'),
-        fileField: by.xpath('//input[@type="file"]'),
     },
 
     //wait for page loading according to displayed add account header
@@ -19,9 +21,9 @@ module.exports = {
             .then(text => expect(text).to.equal('Add account'));
     },
 
+    //verify that the spinner is not visible in import account form
+
     verifySpinnerIsNotVisible: async function() {
-        // let el = await driver.findElement(by.css('.sonm-app > .sonm-load-mask'));
-        // return await driver.wait(until.elementIsNotVisible(el));
         await shared.wdHelper.waitElementIsNotVisible(
             by.css('.sonm-app > .sonm-load-mask'),
         );
@@ -60,11 +62,10 @@ module.exports = {
 
     //validation of account file
 
-    validateImportAccountFileField: async function() {
+    validateImportAccountFileField: async function(errorMessage) {
         return await page.common.verifyValidationErrorMessage(
             by.css('.sonm-form__row:nth-of-type(1) * > .sonm-form-field__help'),
-            shared.messages.importAccount
-                .importAccountIncorrectFileValidationMessage,
+            errorMessage,
         );
     },
 
@@ -98,5 +99,34 @@ module.exports = {
         return (await shared.wdHelper.findVisibleElement(
             this.elements.addButton,
         )).click();
+    },
+
+    closeImportAccountDialogue: async function() {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.closeImportAccountDialogueButton,
+        )).click();
+    },
+
+    verifyAccountFileFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(
+                this.elements.accountNameField,
+            )).length,
+        ).to.equal(0);
+    },
+
+    verifyAccountNameFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(
+                this.elements.accountPasswordField,
+            )).length,
+        ).to.equal(0);
+    },
+
+    verifyAccountPasswordFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(this.elements.fileField))
+                .length,
+        ).to.equal(0);
     },
 };

@@ -16,6 +16,7 @@
     },
     "importAccount": {
         "importAccountIncorrectFileValidationMessage": "no_addres_in_account_file",
+        "importAccountExistingFileValidationMessage": "Account already exists",
         "importAccountNameValidationMessage": "Name is required",
         "importAccountPasswordValidationMessage": "Password is required",
         "importAccountIncorrectPasswordValidationMessage": "Password is not valid"

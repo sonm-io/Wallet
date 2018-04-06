@@ -33,9 +33,11 @@ module.exports = function() {
     });
 
     this.Then(
-        /^Import Account File field validation error message is displayed$/,
-        function() {
-            return page.dialogueImportAccount.validateImportAccountFileField();
+        /^Import Account File field validation error message "([^"]*)" is displayed$/,
+        function(errorMessage) {
+            return page.dialogueImportAccount.validateImportAccountFileField(
+                errorMessage,
+            );
         },
     );
 
@@ -58,4 +60,17 @@ module.exports = function() {
     this.Then(/^Clear Import Account Password Field$/, function() {
         return page.dialogueImportAccount.clearImportAccountPasswordField();
     });
+
+    this.When(/^Close Import Account dialogue$/, function() {
+        return page.dialogueImportAccount.closeImportAccountDialogue();
+    });
+
+    this.Then(
+        /^All Import Account Dialogue fields are empty$/,
+        async function() {
+            await page.dialogueImportAccount.verifyAccountFileFieldIsEmpty();
+            await page.dialogueImportAccount.verifyAccountNameFieldIsEmpty();
+            return await page.dialogueImportAccount.verifyAccountPasswordFieldIsEmpty();
+        },
+    );
 };

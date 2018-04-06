@@ -31,18 +31,4 @@ module.exports = function() {
     this.When(/^Click the Logout button$/, async function() {
         return await page.accountsPage.logoutFromWallet();
     });
-
-    this.Then(
-        /^Create Account Name field validation error message is displayed$/,
-        function() {
-            callback.pending();
-        },
-    );
-
-    this.Then(
-        /^Create Account Password field validation error message "([^"]*)" is displayed$/,
-        function(errorMessage) {
-            callback.pending();
-        },
-    );
 };
