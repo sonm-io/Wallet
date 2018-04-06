@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { ShowMorePanel as Panel } from 'app/components/common/show-more-panel';
+import { Panel } from 'app/components/common/panel';
 import { LocalizedPureComponent } from 'app/components/common/localized-pure-component';
 
 export type TUiText =
@@ -36,7 +36,7 @@ export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
                     <tbody>
                         <tr>
                             <th className="sonm-profile-stats__header">{}</th>
-                            <th className="sonm-profile-stats__header--consumer ">
+                            <th className="sonm-profile-stats__header--consumer">
                                 {t('As a consumer')}
                             </th>
                             <th className="sonm-profile-stats__header--supplier">

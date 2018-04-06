@@ -5,7 +5,7 @@ import { Details, IProfileDefinition } from './sub/details';
 import { Statistic } from './sub/statistic';
 import { ICertificateProps } from './sub/certificate';
 import { CertificatesPanel } from './sub/certificates-panel';
-import { ShowMorePanel as Panel } from 'app/components/common/show-more-panel';
+import { Panel } from 'app/components/common/panel';
 
 interface IProps {
     className?: string;
@@ -24,6 +24,9 @@ interface IProps {
     country: string;
     logoUrl: string;
     countryFlagUrl: string;
+    userStatus: number;
+    address: string;
+    style?: any;
 }
 
 export class ProfileView extends React.PureComponent<IProps, never> {
@@ -31,7 +34,7 @@ export class ProfileView extends React.PureComponent<IProps, never> {
         const p = this.props;
 
         return (
-            <div className={cn('sonm-profile', p.className)}>
+            <div className={cn('sonm-profile', p.className)} style={p.style}>
                 <div className="sonm-profile__row sonm-profile__row--top">
                     <Details
                         userName={p.userName}
@@ -39,8 +42,8 @@ export class ProfileView extends React.PureComponent<IProps, never> {
                         countryFlagUrl={p.countryFlagUrl}
                         logoUrl={p.logoUrl}
                         className="sonm-profile__panel"
-                        status={0}
-                        address={'0x0'}
+                        status={p.userStatus}
+                        address={p.address}
                         getUiText={p.getUiText}
                         definitions={p.definitionList}
                     />

@@ -66,6 +66,10 @@ export const en: ILocalizationDictionary = {
     should_be_hex: ([length]: any[]) =>
         `Should be hex string with length ${length}`,
     privatekey_not_valid: 'Private key not valid',
+
+    'status-anon': 'ANONIMOUS',
+    'status-reg': 'REGISTERED',
+    'status-ident': 'IDENTIFIED',
 };
 
 export default en;

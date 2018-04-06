@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { ShowMorePanel as Panel } from 'app/components/common/show-more-panel';
+import { ShowMorePanel } from 'app/components/common/show-more-panel';
 import { TFnGetUiText } from 'app/components/common/localized-pure-component';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
@@ -14,7 +14,7 @@ interface IProps {
     className?: string;
     children?: never;
     userName: string;
-    status: 0 | 1 | 2;
+    status: number;
     country: string;
     countryFlagUrl: string;
     address: string;
@@ -28,9 +28,9 @@ export type TProfileDefinitionNames = 'Website' | 'E-mail' | 'Phone number';
 export type TUiText =
     | 'Account details'
     | 'Status'
-    | 'status_anon'
-    | 'status_reg'
-    | 'status_ident'
+    | 'status-anon'
+    | 'status-reg'
+    | 'status-ident'
     | 'Status'
     | 'Account address'
     | 'before_certification_link'
@@ -57,10 +57,10 @@ export class Details extends React.PureComponent<IProps, TUiText> {
         getUiText: (s: string, args: any[]) => s,
     };
 
-    protected getStatusText() {
+    protected getStatusText(): string {
         return this.props.status === 1
-            ? 'status_reg'
-            : this.props.status === 2 ? 'status_ident' : 'status_anon';
+            ? 'REGISTERED'
+            : this.props.status === 2 ? 'IDENTIFIED' : 'ANONIMOUS';
     }
 
     protected handleClickUrl(event: any) {
@@ -71,56 +71,82 @@ export class Details extends React.PureComponent<IProps, TUiText> {
         const p = this.props;
         const t = p.getUiText;
         const definitions: React.ReactNode[] = [];
+        const renders = Details.profileDefinitionRenders as any;
+        const statusText = this.getStatusText();
 
         return (
-            <Panel
+            <ShowMorePanel
                 className={cn(p.className, 'sonm-profile-details')}
                 title={t('Account details')}
+                showMoreContentStepPx={30}
+                showMoreContent={
+                    <div className="sonm-profile-details__extra">
+                        {
+                            (p.definitions.forEach(({ label, value }) => {
+                                const render =
+                                    label in renders
+                                        ? renders[label]
+                                        : Details.defaultRender;
+
+                                definitions.push(
+                                    <dt
+                                        key={label}
+                                        className="sonm-profile-details__extra-label"
+                                    >
+                                        {t(label)}
+                                    </dt>,
+                                    <dd
+                                        key={`${label}^*`}
+                                        className="sonm-profile-details__extra-value"
+                                    >
+                                        {render(value)}
+                                    </dd>,
+                                );
+                            }),
+                            definitions)
+                        }
+                    </div>
+                }
             >
                 <dl className="sonm-profile-details__main-info">
-                    <dt>{t('Status')}</dt>
-                    <dd>{t(this.getStatusText())}</dd>
-                    <dt>{t('Status')}</dt>
-                    <dd>{t(this.getStatusText())}</dd>
+                    {!!p.userName && <dt key="nk">{t('Name')}</dt>}
+                    {!!p.userName && <dd key="nv">{p.userName}</dd>}
+
+                    <dt key="sk">{t('Status')}</dt>
+                    <dd
+                        key="sv"
+                        className={`sonm-profile-details__status sonm-profile-details__status--${
+                            p.status
+                        }`}
+                    >
+                        {t(statusText)}
+                    </dd>
+
+                    {!!p.country && <dt key="ck">{t('Country')}</dt>}
+                    {!!p.country && (
+                        <dd key="cv" className="sonm-profile-details__country">
+                            {t(p.country)}
+                            <img
+                                className="sonm-profile-details__country-flag"
+                                src={p.countryFlagUrl}
+                            />
+                        </dd>
+                    )}
                 </dl>
                 <div className="sonm-profile-details__address-panel">
                     <h4 className="sonm-profile-details__address-title">
                         {t('Account address')}
                     </h4>
                     <IdentIcon
+                        width={50}
                         className="sonm-profile-details__address-icon"
                         address={p.address}
                     />
                     <Hash
+                        hasCopyButton
                         className="sonm-profile-details__address-hash"
                         hash={p.address}
                     />
-                </div>
-                <div className="sonm-profile-details__extra">
-                    {
-                        (p.definitions.forEach(({ label, value }) => {
-                            const render =
-                                (Details.profileDefinitionRenders as any)[
-                                    label
-                                ] || Details.defaultRender;
-
-                            definitions.push(
-                                <dt
-                                    key={label}
-                                    className="sonm-profile-details__extra-label"
-                                >
-                                    {t(label)}
-                                </dt>,
-                                <dd
-                                    key={`${label}^*`}
-                                    className="sonm-profile-details__extra-value"
-                                >
-                                    {render(value)}
-                                </dd>,
-                            );
-                        }),
-                        definitions)
-                    }
                 </div>
                 {definitions.length === 0 && (
                     <span className="sonm-profile-details__certificate">
@@ -134,12 +160,7 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                         {t('after_certification_link')}
                     </span>
                 )}
-                {definitions.length > 3 && (
-                    <span className="sonm-profile-details__show-more">
-                        {t('Show more')}
-                    </span>
-                )}
-            </Panel>
+            </ShowMorePanel>
         );
     }
 }

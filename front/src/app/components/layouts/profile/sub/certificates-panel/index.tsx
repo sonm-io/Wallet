@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { ICertificateProps, Certificate } from '../certificate';
 import { Button } from 'app/components/common/button';
-import { ShowMorePanel as Panel } from 'app/components/common/show-more-panel';
+import { ShowMorePanel } from 'app/components/common/show-more-panel';
 
 interface IProps {
     className?: string;
@@ -15,18 +15,27 @@ export class CertificatesPanel extends React.Component<IProps, any> {
         const p = this.props;
 
         return (
-            <Panel
+            <ShowMorePanel
                 className={cn(p.className, 'sonm-certificates', {
                     'sonm-certificates__my': p.my,
                     'sonm-certificates__empty': p.certificates.length === 0,
                 })}
+                title="Certificates"
+                showMoreContentOnTop={true}
+                showMoreContent={
+                    <div className="sonm-certificates__content">
+                        {p.certificates.map((props, idx) => (
+                            <Certificate key={idx} {...props} />
+                        ))}
+                    </div>
+                }
             >
-                {p.certificates.map((props, idx) => (
-                    <Certificate key={idx} {...props} />
-                ))}
-                {p.my && <Button>GET CERTIFICATION</Button>}
-                <a className="sonm-certificates__show-more">Show more</a>
-            </Panel>
+                {p.my && (
+                    <Button className="sonm-certificates__get-button">
+                        GET CERTIFICATION
+                    </Button>
+                )}
+            </ShowMorePanel>
         );
     }
 }

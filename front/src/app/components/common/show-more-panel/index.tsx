@@ -3,14 +3,18 @@ import * as cn from 'classnames';
 import { Panel } from '../panel';
 import { Dialog } from '../dialog';
 
+const SHOW_MORE_BUTTON_HEIGHT = 30;
+
 interface IProps {
     className?: string;
     title?: string;
     children: any;
-    contentSizeStepPx?: number;
     textShowMore?: string;
     onClickShowMore?: () => void;
     style?: any;
+    showMoreContent: any;
+    showMoreContentOnTop?: boolean;
+    showMoreContentStepPx?: number;
 }
 
 export class ShowMorePanel extends React.Component<IProps, any> {
@@ -38,11 +42,6 @@ export class ShowMorePanel extends React.Component<IProps, any> {
     public render() {
         const s = this.state;
         const p = this.props;
-        const childrenCount = React.Children.count(p.children);
-        const hasTwoParts = childrenCount >= 2;
-        const children = hasTwoParts
-            ? React.Children.toArray(p.children)
-            : p.children;
 
         return (
             <Panel
@@ -50,13 +49,15 @@ export class ShowMorePanel extends React.Component<IProps, any> {
                 title={p.title}
                 style={p.style}
             >
-                {hasTwoParts && (
-                    <div className="sonm-exp-panel__content-top">
-                        {children.slice(0, childrenCount - 1)}
+                {p.children && (
+                    <div className="sonm-exp-panel__content-panel">
+                        {p.children}
                     </div>
                 )}
                 <div
-                    className="sonm-exp-panel__content"
+                    className={cn('sonm-exp-panel__content', {
+                        'sonm-exp-panel__content--top': p.showMoreContentOnTop,
+                    })}
                     ref={this.processOuterRef}
                 >
                     <div
@@ -67,9 +68,7 @@ export class ShowMorePanel extends React.Component<IProps, any> {
                             className="sonm-exp-panel__content-size"
                             ref={this.processInnerRef}
                         >
-                            {hasTwoParts
-                                ? children[childrenCount - 1]
-                                : children}
+                            {p.showMoreContent}
                         </div>
                     </div>
                     <a
@@ -86,7 +85,7 @@ export class ShowMorePanel extends React.Component<IProps, any> {
                         className="sonm-exp-panel__modal"
                         onClickCross={this.handleCloseDialog}
                     >
-                        {hasTwoParts ? children[childrenCount - 1] : children}
+                        {p.showMoreContent}
                     </Dialog>
                 )}
             </Panel>
@@ -108,10 +107,12 @@ export class ShowMorePanel extends React.Component<IProps, any> {
     protected recalcHeight() {
         const outerRect = this.nodes.outer.getBoundingClientRect();
         const innerRect = this.nodes.inner.getBoundingClientRect();
+        const outerHeight = outerRect.height - SHOW_MORE_BUTTON_HEIGHT;
+        const innerHeight = innerRect.height;
 
-        if (innerRect.height > outerRect.height) {
-            const step = this.props.contentSizeStepPx || 50;
-            const clipperHeight = Math.floor(outerRect.height / step) * step;
+        if (innerHeight > outerHeight) {
+            const step = this.props.showMoreContentStepPx || 50;
+            const clipperHeight = Math.floor(outerHeight / step) * step;
             this.nodes.clipper.style.height = `${clipperHeight}px`;
             this.nodes.show.style.visibility = 'visible';
         } else {

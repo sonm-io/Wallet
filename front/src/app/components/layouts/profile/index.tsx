@@ -4,6 +4,7 @@ import * as lands from './lands-utils';
 
 interface IProps {
     className?: string;
+    style?: any;
 }
 
 const mapAbbrToCountry = lands.getMap();
@@ -25,6 +26,22 @@ const p = {
             label: 'Website',
             value: 'qwerfgb.df',
         },
+        {
+            label: 'Olololo',
+            value: 'yo yo man',
+        },
+        {
+            label: 'asdfg',
+            value: 'etrytui',
+        },
+        {
+            label: '776ugh',
+            value: 'liurn',
+        },
+        {
+            label: '90877',
+            value: 'rrdtfygh',
+        },
     ],
     certificates: [],
     description:
@@ -40,10 +57,13 @@ const p = {
     country: 'bl',
     logoUrl:
         'http://cdn.thecoolist.com/wp-content/uploads/2016/05/Japanese-Cherry-beautiful-tree-960x540.jpg',
+    userStatus: 2,
+    address: '0x1234567890123456789012345678901234567890',
 };
 
 function getCountryFlagUrl(countryAbbr: string) {
-    return `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.1.0/flags/4x3/${countryAbbr}.svg`;
+    const abbr = countryAbbr.toLocaleLowerCase();
+    return `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.1.0/flags/4x3/${abbr}.svg`;
 }
 
 export class Profile extends React.PureComponent<IProps, never> {
@@ -78,6 +98,9 @@ export class Profile extends React.PureComponent<IProps, never> {
                 country={country ? country.name : ''}
                 countryFlagUrl={getCountryFlagUrl(p.countryAbbr)}
                 logoUrl={p.logoUrl}
+                userStatus={p.userStatus}
+                address={p.address}
+                style={this.props.style}
             />
         );
     }
