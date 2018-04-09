@@ -68,9 +68,9 @@ module.exports = function() {
     this.Then(
         /^All Import Account Dialogue fields are empty$/,
         async function() {
-            await page.dialogueImportAccount.verifyAccountFileFieldIsEmpty();
-            await page.dialogueImportAccount.verifyAccountNameFieldIsEmpty();
-            return await page.dialogueImportAccount.verifyAccountPasswordFieldIsEmpty();
+            await page.dialogueImportAccount.verifyImportAccountFileFieldIsEmpty();
+            await page.dialogueImportAccount.verifyImportAccountNameFieldIsEmpty();
+            return await page.dialogueImportAccount.verifyImportAccountPasswordFieldIsEmpty();
         },
     );
 };

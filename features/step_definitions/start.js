@@ -119,4 +119,8 @@ module.exports = function() {
     this.Then(/^Logged out from wallet$/, async function() {
         return await page.dialogueStartDisclaimer.waitForDisclaimerLoad();
     });
+
+    this.Then(/^Wallet "([^"]*)" was not created/, async function(walletName) {
+        return await page.startPage.verifyWalletIsNotPresent(walletName);
+    });
 };

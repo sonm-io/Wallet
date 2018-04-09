@@ -71,3 +71,18 @@ Feature: Import Wallet
     Then Account "Test" is present in Accounts list
     When Click the Logout button
     Then Logged out from wallet
+
+  Scenario: Import Wallet - Cancel
+    Given Wallet with empty storage is opened
+    When Click the I Understand button
+    And Close Create New Wallet dialogue
+    When Click the IMPORT WALLET button
+    Then Import Wallet dialogue is displayed
+    And Wallet file for import "correct_wallet.txt" is selected
+    And Fill Import Wallet Name field "Wallet Import"
+    And Fill Import Wallet Password field "1"
+    When Close Import Wallet dialogue
+    Then Wallet "Wallet Import" was not created
+    And Click the IMPORT WALLET button
+    When Import Wallet dialogue is displayed
+    Then All Import Wallet fields are empty

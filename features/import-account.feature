@@ -56,3 +56,18 @@ Feature: Start screen
     And Fill Import Account Password field "11111111"
     When Click the Add button
     Then Import Account File field validation error message "Account already exists" is displayed
+
+  Scenario: Import Account - Cancel
+    Given Login to wallet "with2accounts" with password "1" with Two Accounts
+    Then Accounts page is displayed
+    When Click the Import Account button
+    Then Add Account dialogue is displayed
+    When Keystore file "for_upload.json" is selected for upload
+    Then Account Preview is displayed
+    And Fill Import Account Name field "acc name"
+    And Fill Import Account Password field "11111111"
+    When Close Import Account dialogue
+    Then Account "acc name" was not created
+    When Click the Import Account button
+    Then Accounts page is displayed
+    Then All Import Account Dialogue fields are empty

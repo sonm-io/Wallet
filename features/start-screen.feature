@@ -16,11 +16,22 @@ Feature: Start screen
     Given Wallet with empty storage is opened
     When Click the I Understand button
     Then Create New Wallet dialogue is displayed
-    And Wallet dialogue with Name "test" and Password "11111111" and Password Confirmation "11111111" is filled
+    And Wallet dialogue with Name "test" and Password "11111111" and Password Confirmation "11111111" are filled
     When Click the Create Wallet button
     Then Accounts page is displayed
     When Click the Logout button
     Then Logged out from wallet
+
+  Scenario: Create Wallet - Cancel
+    Given Wallet with empty storage is opened
+    When Click the I Understand button
+    Then Create New Wallet dialogue is displayed
+    And Wallet dialogue with Name "test" and Password "11111111" and Password Confirmation "11111111" are filled
+    When Close Create New Wallet dialogue
+    Then Wallet "test" was not created
+    And Click the CREATE WALLET button
+    When Create New Wallet dialogue is displayed
+    Then All Create New Wallet fields are empty
 
   Scenario: Creating wallet - add second wallet
     Given Wallet with one existing wallet is opened
@@ -28,7 +39,7 @@ Feature: Start screen
     Then Close Password dialogue
     And Click the CREATE WALLET button
     Then Create New Wallet dialogue is displayed
-    And Wallet dialogue with Name "test2" and Password "11111111" and Password Confirmation "11111111" is filled
+    And Wallet dialogue with Name "test2" and Password "11111111" and Password Confirmation "11111111" are filled
     And Click the Create Wallet button
     Then Accounts page is displayed
     When Click the Logout button

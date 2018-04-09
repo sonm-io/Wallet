@@ -1,6 +1,6 @@
 module.exports = function() {
     this.When(
-        /^Wallet dialogue with Name "([^"]*)" and Password "([^"]*)" and Password Confirmation "([^"]*)" is filled$/,
+        /^Wallet dialogue with Name "([^"]*)" and Password "([^"]*)" and Password Confirmation "([^"]*)" are filled$/,
         async function(name, password, confirm) {
             return await page.dialogueNewWallet.fillNewWalletDialogue(
                 name,
@@ -98,6 +98,11 @@ module.exports = function() {
 
     this.When(/^Create New Wallet dialogue is displayed$/, async function() {
         return await page.dialogueNewWallet.waitNewWalletDialogue();
-        x;
+    });
+
+    this.Then(/^All Create New Wallet fields are empty$/, async function() {
+        await page.dialogueNewWallet.verifyCreateNewWalletNameFieldIsEmpty();
+        await page.dialogueNewWallet.verifyCreateNewWalletPasswordFieldIsEmpty();
+        return await page.dialogueNewWallet.verifyCreateNewWalletConfirmationPasswordFieldIsEmpty();
     });
 };

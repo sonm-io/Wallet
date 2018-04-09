@@ -31,9 +31,14 @@ module.exports = function() {
         return await page.dialogueNewAccount.clickCreateNewAccountButton();
     });
 
-    this.When(/^Fill Private Key field "([^"]*)"$/, async function(privateKey) {
-        return await page.dialogueNewAccount.fillPrivateKey(privateKey);
-    });
+    this.When(
+        /^Fill Create New Account Private Key field "([^"]*)"$/,
+        async function(privateKey) {
+            return await page.dialogueNewAccount.fillNewAccountPrivateKeyField(
+                privateKey,
+            );
+        },
+    );
 
     this.Then(
         /^Create New Account Name field validation error message is displayed$/,
@@ -58,7 +63,18 @@ module.exports = function() {
         },
     );
 
-    this.Then(/^Clear Create New Account Password field$/, function() {
-        return page.dialogueNewAccount.clearNewAccountPasswordField();
+    this.Then(/^Clear Create New Account Password field$/, async function() {
+        return await page.dialogueNewAccount.clearNewAccountPasswordField();
+    });
+
+    this.When(/^Close Create New Account dialogue$/, async function() {
+        return await page.dialogueNewAccount.closeCreateNewAccountDialogue();
+    });
+
+    this.Then(/^All Create New Account fields are empty$/, async function() {
+        await page.dialogueNewAccount.verifyCreateNewAccountNameFieldIsEmpty();
+        await page.dialogueNewAccount.verifyCreateNewAccountPasswordFieldIsEmpty();
+        await page.dialogueNewAccount.verifyCreateNewAccountConfirmationPasswordFieldIsEmpty();
+        return await page.dialogueNewAccount.verifyCreateNewAccountPrivateKeyFieldIsEmpty();
     });
 };

@@ -61,6 +61,13 @@ module.exports = {
         );
     },
 
+    verifyWalletIsNotPresent: async function(walletName) {
+        let el = await driver.findElements(
+            by.xpath('//li[.="' + walletName + '"]'),
+        );
+        return await expect(el.length).to.equal(0);
+    },
+
     //clear search wallet field
 
     clearSearchWalletField: async function() {

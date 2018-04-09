@@ -16,6 +16,9 @@ module.exports = {
         selectedNetwork: by.css(
             'div.sonm-login__network-type div > div > div.sonm-select-selection-selected-value',
         ),
+        closeCreateNewWalletDialogueButton: by.xpath(
+            '//div[@class="sonm-popup__inner"]/button',
+        ),
     },
 
     waitNewWalletDialogue: async function() {
@@ -68,6 +71,25 @@ module.exports = {
         )).sendKeys(walletName);
     },
 
+    //validate correct wallet name
+
+    validateCreateWalletNameField: async function(errorMessage) {
+        return await page.common.verifyValidationErrorMessage(
+            by.css(
+                '.sonm-login__label:nth-of-type(1) > .sonm-login__label-error',
+            ),
+            errorMessage,
+        );
+    },
+
+    //verify that import wallet file field is empty or not
+
+    verifyCreateNewWalletNameFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(this.elements.nwName)).length,
+        ).to.equal(0);
+    },
+
     //fill password wallet field
 
     fillWalletPasswordField: async function(password) {
@@ -76,12 +98,51 @@ module.exports = {
         )).sendKeys(password);
     },
 
+    //validate correct wallet password
+
+    validateCreateWalletPasswordField: async function() {
+        return await page.common.verifyValidationErrorMessage(
+            by.css(
+                '.sonm-login__label:nth-of-type(2) > .sonm-login__label-error',
+            ),
+            shared.messages.wallet.walletPasswordValidationMessage,
+        );
+    },
+
+    //verify that import wallet file field is empty or not
+
+    verifyCreateNewWalletPasswordFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(this.elements.nwPass)).length,
+        ).to.equal(0);
+    },
+
     //fill confirm password wallet field
 
     fillWalletConfirmPasswordField: async function(confirmPassword) {
         return (await shared.wdHelper.findVisibleElement(
             this.elements.nwPassConfirm,
         )).sendKeys(confirmPassword);
+    },
+
+    //validate correct wallet confirm password
+
+    validateCreateWalletConfirmPasswordField: async function() {
+        return await page.common.verifyValidationErrorMessage(
+            by.css(
+                '.sonm-login__label:nth-of-type(3) > .sonm-login__label-error',
+            ),
+            shared.messages.wallet.walletConfirmPasswordValidationMessage,
+        );
+    },
+
+    //verify that import wallet file field is empty or not
+
+    verifyCreateNewWalletConfirmationPasswordFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(this.elements.nwPassConfirm))
+                .length,
+        ).to.equal(0);
     },
 
     selectNetworkValue: function(chainname) {
@@ -105,40 +166,5 @@ module.exports = {
         return (await shared.wdHelper.findVisibleElement(
             this.elements.createNewWallet,
         )).click();
-    },
-
-    //TODO refactor
-
-    //validate correct wallet name
-
-    validateCreateWalletNameField: async function(errorMessage) {
-        return await page.common.verifyValidationErrorMessage(
-            by.css(
-                '.sonm-login__label:nth-of-type(1) > .sonm-login__label-error',
-            ),
-            errorMessage,
-        );
-    },
-
-    //validate correct wallet password
-
-    validateCreateWalletPasswordField: async function() {
-        return await page.common.verifyValidationErrorMessage(
-            by.css(
-                '.sonm-login__label:nth-of-type(2) > .sonm-login__label-error',
-            ),
-            shared.messages.wallet.walletPasswordValidationMessage,
-        );
-    },
-
-    //validate correct wallet confirm password
-
-    validateCreateWalletConfirmPasswordField: async function() {
-        return await page.common.verifyValidationErrorMessage(
-            by.css(
-                '.sonm-login__label:nth-of-type(3) > .sonm-login__label-error',
-            ),
-            shared.messages.wallet.walletConfirmPasswordValidationMessage,
-        );
     },
 };

@@ -103,11 +103,15 @@ module.exports = {
     //verify that validation error message is displayed
 
     verifyValidationErrorMessage: async function(element, messageText) {
-        return (await shared.wdHelper.findVisibleElement(element))
-            .getText()
-            .then(validMessageText =>
-                expect(validMessageText).to.equal(messageText),
-            );
+        // return (await shared.wdHelper.findVisibleElement(element))
+        //     .getText()
+        //     .then(validMessageText =>
+        //         expect(validMessageText).to.equal(messageText),
+        //     );
+        let messageElement = await shared.wdHelper.findVisibleElement(element);
+        return await driver.wait(
+            until.elementTextIs(messageElement, messageText),
+        );
     },
 
     //clear input field
@@ -115,6 +119,8 @@ module.exports = {
     clearInputField: async function(field) {
         return (await shared.wdHelper.findVisibleElement(field)).clear();
     },
+
+    //verify that field is empty or not
 
     verifyFieldLength: async function(field) {
         return (await driver.findElement(field)).getAttribute('value');

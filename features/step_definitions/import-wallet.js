@@ -66,4 +66,14 @@ module.exports = function() {
     this.Then(/^Import Wallet dialogue is displayed$/, async function() {
         return await page.dialogueImportWallet.waitImportWalletDialogue();
     });
+
+    this.When(/^Close Import Wallet dialogue$/, async function() {
+        return await page.dialogueImportWallet.closeImportWalletDialogue();
+    });
+
+    this.Then(/^All Import Wallet fields are empty$/, async function() {
+        await page.dialogueImportWallet.verifyImportWalletFileFieldIsEmpty();
+        await page.dialogueImportWallet.verifyImportWalletNameFieldIsEmpty();
+        return await page.dialogueImportWallet.verifyImportWalletPasswordFieldIsEmpty();
+    });
 };

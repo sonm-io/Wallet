@@ -73,9 +73,9 @@ module.exports = function() {
         return await page.dialogueDeleteAccount.cancelDeleteAccountButton();
     });
 
-    this.Then(/^Account was not created$/, async function() {
-        return expect(
-            (await page.accountsPageAccountItem.getAccountsCount()).length,
-        ).to.equal(2);
+    this.Then(/^Account "([^"]*)" was not created$/, async function(accName) {
+        return await page.accountsPageAccountItem.verifyAccountIsNotPresent(
+            accName,
+        );
     });
 };

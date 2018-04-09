@@ -101,13 +101,26 @@ module.exports = {
         )).click();
     },
 
+    //close import account dialogue
+
     closeImportAccountDialogue: async function() {
         return (await shared.wdHelper.findVisibleElement(
             this.elements.closeImportAccountDialogueButton,
         )).click();
     },
 
-    verifyAccountFileFieldIsEmpty: async function() {
+    //verify that import account file field is empty
+
+    verifyImportAccountFileFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(this.elements.fileField))
+                .length,
+        ).to.equal(0);
+    },
+
+    //verify that import account name field is empty
+
+    verifyImportAccountNameFieldIsEmpty: async function() {
         return await expect(
             (await page.common.verifyFieldLength(
                 this.elements.accountNameField,
@@ -115,18 +128,13 @@ module.exports = {
         ).to.equal(0);
     },
 
-    verifyAccountNameFieldIsEmpty: async function() {
+    //verify that import account password field is empty
+
+    verifyImportAccountPasswordFieldIsEmpty: async function() {
         return await expect(
             (await page.common.verifyFieldLength(
                 this.elements.accountPasswordField,
             )).length,
-        ).to.equal(0);
-    },
-
-    verifyAccountPasswordFieldIsEmpty: async function() {
-        return await expect(
-            (await page.common.verifyFieldLength(this.elements.fileField))
-                .length,
         ).to.equal(0);
     },
 };

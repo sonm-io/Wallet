@@ -76,6 +76,8 @@ module.exports = {
         await expect(account).to.equal(true);
     },
 
+    //click on delete button for further account deleting
+
     clickDeleteAccountButton: async function(accForDelete) {
         return (await shared.wdHelper.findVisibleElement(
             by.css(
@@ -86,13 +88,12 @@ module.exports = {
         )).click();
     },
 
-    //TODO refactor
+    //verify that item was not created
 
-    getAccountsCount: async function() {
-        return await shared.wdHelper.findVisibleElements(
-            by.css(
-                '.sonm-accounts__list-item *> .sonm-account-item__name-wrapper',
-            ),
+    verifyAccountIsNotPresent: async function(accName) {
+        let el = await driver.findElements(
+            by.xpath('//span/span[.="' + accName + '"]'),
         );
+        return await expect(el.length).to.equal(0);
     },
 };

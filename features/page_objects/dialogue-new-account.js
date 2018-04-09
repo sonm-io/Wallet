@@ -8,6 +8,9 @@ module.exports = {
         ),
         newAccountPrivateKeyField: by.xpath('//input[@name="privateKey"]'),
         createNewAccountButton: by.xpath('//button[.="Create"]'),
+        closeCreateNewAccountDialogueButton: by.xpath(
+            '//div[@class="sonm-popup__inner"]/button',
+        ),
     },
 
     //wait for page loading according to displayed new account header
@@ -30,6 +33,16 @@ module.exports = {
 
     //validate account name field
 
+    verifyCreateNewAccountNameFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(
+                this.elements.newAccountNameField,
+            )).length,
+        ).to.equal(0);
+    },
+
+    //fill account password field
+
     validateNewAccountNameField: async function() {
         return await page.common.verifyValidationErrorMessage(
             by.css('.sonm-form__row:nth-of-type(1) * > .sonm-form-field__help'),
@@ -37,7 +50,7 @@ module.exports = {
         );
     },
 
-    //fill account password field
+    //validate account password field
 
     fillNewAccountPassword: async function(password) {
         return (await shared.wdHelper.findVisibleElement(
@@ -45,7 +58,15 @@ module.exports = {
         )).sendKeys(password);
     },
 
-    //validate account password field
+    verifyCreateNewAccountPasswordFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(
+                this.elements.newAccountPasswordField,
+            )).length,
+        ).to.equal(0);
+    },
+
+    //fill account password confirm field
 
     validateNewAccountPasswordField: async function(errorMessage) {
         return await page.common.verifyValidationErrorMessage(
@@ -54,7 +75,7 @@ module.exports = {
         );
     },
 
-    //fill account password confirm field
+    //validate account confirm password field
 
     fillNewAccountPasswordConfirmation: async function(password) {
         return (await shared.wdHelper.findVisibleElement(
@@ -62,7 +83,15 @@ module.exports = {
         )).sendKeys(password);
     },
 
-    //validate account confirm password field
+    verifyCreateNewAccountConfirmationPasswordFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(
+                this.elements.newAccountPasswordConfirmationField,
+            )).length,
+        ).to.equal(0);
+    },
+
+    //clear New Account Confirmation Password Field
 
     validateNewAccountConfirmationPasswordField: async function() {
         return await page.common.verifyValidationErrorMessage(
@@ -72,7 +101,7 @@ module.exports = {
         );
     },
 
-    //clear New Account Confirmation Password Field
+    //fill account private key field
 
     clearNewAccountPasswordField: async function() {
         return page.common.clearInputField(
@@ -80,19 +109,33 @@ module.exports = {
         );
     },
 
-    //fill account private key field
+    //create new account
 
-    fillPrivateKey: async function(privateKey) {
+    fillNewAccountPrivateKeyField: async function(privateKey) {
         return (await shared.wdHelper.findVisibleElement(
             this.elements.newAccountPrivateKeyField,
         )).sendKeys(privateKey);
     },
 
-    //create new account
+    verifyCreateNewAccountPrivateKeyFieldIsEmpty: async function() {
+        return await expect(
+            (await page.common.verifyFieldLength(
+                this.elements.newAccountPrivateKeyField,
+            )).length,
+        ).to.equal(0);
+    },
+
+    //close create new account dialogue
 
     clickCreateNewAccountButton: async function() {
         return (await shared.wdHelper.findVisibleElement(
             this.elements.createNewAccountButton,
+        )).click();
+    },
+
+    closeCreateNewAccountDialogue: async function() {
+        return (await shared.wdHelper.findVisibleElement(
+            this.elements.closeCreateNewAccountDialogueButton,
         )).click();
     },
 };
