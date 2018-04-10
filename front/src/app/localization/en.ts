@@ -3,7 +3,12 @@ import { ILocalizationDictionary } from './types';
 export const en: ILocalizationDictionary = {
     path_not_valid: 'Incorrect file path',
     password_not_valid: 'Password is not valid',
-    gas_too_low: 'The transaction was rejected because of insufficient gas',
+
+    sonmapi_gas_too_low:
+        'The transaction was rejected because of insufficient gas',
+    sonmapi_insufficient_funds: 'There is not enough Ether for the transaction',
+    sonmapi_network_error: 'No blockchain node connection',
+
     password_not_match: 'Password does not match',
     wallet_allready_exists: 'Already exist',
     password_required: 'Password is required',
@@ -15,12 +20,12 @@ export const en: ILocalizationDictionary = {
     select_file: 'Please select file',
     wait_your_tokens: 'SNMT has been successfully delivered from Mars',
     give_me_more: 'Give me SONM tokens!',
-    insufficient_funds: 'There is not enough Ether for the transaction',
+
     required_params_missed: 'Required parameter missed',
     not_sonm_wallet_file: 'This is not SONM wallet export file',
     not_erc20_token: 'Token is not ERC20',
     not_smart_contract: 'Address is not a token contract address',
-    network_error: 'Ethereum node is unavailable',
+
     walletFile_required: 'Select SONM wallet export file',
     should_be_ether_address: 'Please input correct address',
     should_be_positive_integer: 'Should be positive integer',
@@ -28,7 +33,6 @@ export const en: ILocalizationDictionary = {
     required_value: 'Required value',
     no_addres_in_account_file: 'Incorrect file: no address field',
     incorrect_file: 'Incorrect file',
-    no_blockchain_conection: 'No blockchain node connection',
     livenet: 'LIVENET',
     testnet: 'TESTNET',
     accounts: 'Accounts',

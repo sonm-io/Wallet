@@ -47,6 +47,7 @@ export interface ICurrencyInfo {
     decimalPointOffset: number;
     name: string;
     address: string;
+    balance: string;
 }
 
 export interface ITxListFilter {

@@ -1,0 +1,72 @@
+@dropdownInputColor: rgba(0,0,0,.65);
+@dropdownInputBorderColor: #d9d9d9;
+@dropdownInputBgColor: #fff;
+@dropdownBorderColor: #d8d8d8;
+@dropdownInputBorderHoverColor: #9ca0a6;
+@dropdownInputBorderActiveBorder: 0 0 0 2px rgba(147,149,152,.2);
+
+.dropdown-input {
+    position: relative;
+    display: inline-block;
+    overflow: visible;
+    position: relative;
+    padding: 0;
+    color: @dropdownInputColor;
+
+    &__popup {
+        margin: 4px 0 0;
+        padding: 5px;
+        background: @dropdownInputBgColor;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        border: solid 1px @dropdownBorderColor;
+        min-width: 100%;
+        z-index: 100;
+    }
+
+    &__button {
+        &:after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            position: absolute;
+            border: solid @dropdownInputBorderHoverColor 1px;
+            border-right-width: 0;
+            border-bottom-width: 0;
+            top: 50%;
+            right: 9px;
+            transform: translate(0, -4px) rotateZ(225deg);
+            transition: transform 100ms;
+        }
+    }
+
+    &--expanded > &__button {
+        &:after {
+            transform: translate(0, -1px) rotateZ(45deg);
+        }
+    }
+
+    &__button {
+        width: 100%;
+        margin: 0;
+        padding: 0 25px 0 10px;
+        line-height: 30px;
+        font-size: 14px;
+        border: 1px solid @dropdownInputBorderColor;
+        text-align: left;
+        position: relative;
+
+        &:hover {
+            border: 1px solid @dropdownInputBorderHoverColor;
+            outline: none;
+        }
+
+        &:focus,
+        &:active {
+            border-color: #9ca0a6;
+            outline: none;
+            box-shadow: @dropdownInputBorderActiveBorder;
+        }
+    }
+}

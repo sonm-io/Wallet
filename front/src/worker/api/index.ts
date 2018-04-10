@@ -1,10 +1,8 @@
-import { Request } from '../ipc/messages';
 import * as sonmApi from 'sonm-api';
 import * as AES from 'crypto-js/aes';
 import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
-import * as ipc from '../ipc/ipc';
 import * as t from 'app/api/types';
 
 import { migrate } from '../migrations';
@@ -14,6 +12,8 @@ const { createSonmFactory, utils } = sonmApi;
 const STORAGE_VERSION = 2;
 const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
+
+import ipc from '../ipc';
 
 interface INodes {
     [index: string]: string;
@@ -45,28 +45,9 @@ interface IResponse {
     validation?: object;
 }
 
-let count = 0;
-function nextRequestId(): string {
-    return 'request' + count++;
-}
-
-function createPromise(action: string, payload?: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-        const reqId = nextRequestId();
-
-        (ipc as any).send({
-            reqId,
-            type: 'storage',
-            action,
-            payload,
-        });
-
-        (ipc as any).listen((response: any) => {
-            if (reqId === response.reqId) {
-                resolve(response.data);
-            }
-        });
-    });
+async function ipcSend(type: string, payload?: any): Promise<any> {
+    const res = await ipc.send(type, payload);
+    return res.data || null;
 }
 
 const DEFAULT_NODES: INodes = {
@@ -83,6 +64,7 @@ const DEFAULT_TOKENS: ITokens = {
             decimalPointOffset: 18,
             symbol: 'STORJ',
             address: '0xb64ef51c888972c908cfacf59b47c1afbc0ab8ac',
+            balance: '0',
         },
     ],
     rinkeby: [
@@ -91,6 +73,7 @@ const DEFAULT_TOKENS: ITokens = {
             decimalPointOffset: 18,
             symbol: 'PIG',
             address: '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
+            balance: '0',
         },
     ],
     testrpc: [
@@ -99,6 +82,7 @@ const DEFAULT_TOKENS: ITokens = {
             decimalPointOffset: 18,
             symbol: 'PIG',
             address: '0x917cc8f2180e469c733abc67e1b36b0ab3aeff60',
+            balance: '0',
         },
     ],
 };
@@ -303,9 +287,9 @@ class Api {
     }
 
     private createAccount = async (data: IPayload): Promise<IResponse> => {
-        if (data.passphase) {
+        if (data.password) {
             return {
-                data: JSON.stringify(utils.newAccount(data.passphase)),
+                data: JSON.stringify(utils.newAccount(data.password)),
             };
         } else {
             throw new Error('required_params_missed');
@@ -315,11 +299,11 @@ class Api {
     private createAccountFromPrivateKey = async (
         data: IPayload,
     ): Promise<IResponse> => {
-        if (data.passphase && data.privateKey) {
+        if (data.password && data.privateKey) {
             try {
                 return {
                     data: JSON.stringify(
-                        utils.newAccount(data.passphase, data.privateKey),
+                        utils.newAccount(data.password, data.privateKey),
                     ),
                 };
             } catch (err) {
@@ -582,7 +566,7 @@ class Api {
         data: any,
         encrypt: boolean,
     ): Promise<void> => {
-        await createPromise('set', {
+        await ipcSend('set', {
             key,
             value: encrypt ? this.encrypt(data) : JSON.stringify(data),
         });
@@ -592,7 +576,7 @@ class Api {
         key: string,
         decrypt: boolean,
     ): Promise<any> => {
-        const dataFromStorage = await createPromise('get', { key });
+        const dataFromStorage = await ipcSend('get', { key });
 
         if (dataFromStorage) {
             try {
@@ -602,6 +586,7 @@ class Api {
 
                 return await this.checkStorageVersion(key, data);
             } catch (err) {
+                // console.log(err);
                 return false;
             }
         } else {
@@ -756,9 +741,13 @@ class Api {
         if (data.address) {
             try {
                 const tokenList = await this.getTokenList();
+                const token = await tokenList.getTokenInfo(
+                    data.address,
+                    data.accounts,
+                );
 
                 return {
-                    data: await tokenList.getTokenInfo(data.address),
+                    data: token,
                 };
             } catch (err) {
                 return {
@@ -814,7 +803,7 @@ class Api {
     };
 
     public addAccount = async (data: IPayload): Promise<IResponse> => {
-        if (data.json && data.password) {
+        if (data.json && data.password && data.name) {
             try {
                 const json = JSON.parse(data.json.toLowerCase());
 
@@ -850,7 +839,7 @@ class Api {
                 } else {
                     return {
                         validation: {
-                            password: 'account_already_exists',
+                            json: 'account_already_exists',
                         },
                     };
                 }
@@ -928,7 +917,7 @@ class Api {
     };
 
     public getTransactions = async () => {
-        const data = await createPromise('get', { key: 'transactions' });
+        const data = await ipcSend('get', { key: 'transactions' });
 
         if (data) {
             return this.decrypt(data) || [];
@@ -1074,17 +1063,11 @@ class Api {
         };
     };
 
-    public async resolve(request: Request): Promise<IResponse> {
-        if (this.routes[request.type]) {
-            try {
-                return await this.routes[request.type](request.payload);
-            } catch (err) {
-                throw new Error(err);
-            }
+    public async resolve(type: string, payload: any): Promise<IResponse> {
+        if (this.routes[type]) {
+            return this.routes[type](payload);
         } else {
-            return {
-                data: false,
-            };
+            throw new Error('route_not_exists');
         }
     }
 

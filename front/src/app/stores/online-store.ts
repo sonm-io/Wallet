@@ -82,12 +82,12 @@ export class OnlineStore {
 
     @action
     protected handleError(e: WalletApiError, restart: boolean) {
-        if (e.code === 'network_error') {
+        if (e.code === 'sonmapi_network_error') {
             // TODO err code enum
             this.goOffline();
         }
 
-        if (e.code === 'network_error' && restart) {
+        if (e.code === 'sonmapi_network_error' && restart) {
             when(
                 () => !this.isOffline,
                 () => {

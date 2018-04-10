@@ -66,12 +66,14 @@ export const currencyListResult: t.IResult<t.ICurrencyInfo[]> = {
             name: 'Etherium',
             address: ETHER_ADDR,
             decimalPointOffset: 18,
+            balance: '0',
         },
         {
             symbol: 'SNMT',
             name: 'Sonm token',
             address: SONM_ADDR,
             decimalPointOffset: 18,
+            balance: '0',
         },
     ],
 };

@@ -10,7 +10,7 @@ import { CurrencyBalanceList } from 'app/components/common/currency-balance-list
 import { DeletableItemWithConfirmation } from 'app/components/common/deletable-item/with-confirmation';
 import { Header } from 'app/components/common/header';
 import { Button } from 'app/components/common/button';
-import { AddAccount, IAddAccountForm } from './sub/add-account';
+import { ImportAccount, IImportAccountForm } from './sub/import-account';
 import { CreateAccount, ICreateAccountForm } from './sub/create-account';
 import { EmptyAccountList } from './sub/empty-account-list';
 import { AddToken } from './sub/add-token';
@@ -55,7 +55,7 @@ export class Wallets extends React.Component<IProps, IState> {
         rootStore.mainStore.deleteAccount(deleteAddress);
     };
 
-    protected handleAddAccount = async (data: IAddAccountForm) => {
+    protected handleAddAccount = async (data: IImportAccountForm) => {
         await rootStore.mainStore.addAccount(
             data.json,
             data.password,
@@ -210,13 +210,13 @@ export class Wallets extends React.Component<IProps, IState> {
                         />
                     ) : null}
                     {this.state.visibleDialog === WalletDialogs.add ? (
-                        <AddAccount
+                        <ImportAccount
                             existingAccounts={
                                 rootStore.mainStore.accountAddressList
                             }
                             serverValidation={
                                 rootStore.mainStore
-                                    .serverValidation as IValidation
+                                    .serverValidation as IImportAccountForm
                             }
                             onSubmit={this.handleAddAccount}
                             onClickCross={this.closeDialog}
