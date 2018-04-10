@@ -7,8 +7,5 @@
 /docs
 /releases
 **/.DS_Store
-<<<<<<< HEAD
 /test/features/reports
-=======
 yarn-error.log
->>>>>>> dev
