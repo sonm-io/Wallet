@@ -8,6 +8,7 @@ import {
 } from './types';
 import { TJsPropTypes } from '../types';
 import * as propTypes from 'prop-types';
+import { Balloon } from '../balloon';
 
 export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     public static readonly getDefaultCssClasses = (
@@ -22,6 +23,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     public static readonly defaultProps: IDropdownOptionalInputProps = {
         className: '',
         dropdownCssClasses: DropdownInput.getDefaultCssClasses('dropdown'),
+        hasBalloon: false,
     };
 
     public static propTypes: TJsPropTypes<IDropdownAllProps> = {
@@ -31,6 +33,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
         onRequireClose: propTypes.func,
         children: propTypes.node,
         className: propTypes.string,
+        hasBalloon: propTypes.bool,
         dropdownCssClasses: propTypes.shape({
             root: propTypes.string,
             button: propTypes.string,
@@ -84,6 +87,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     public render() {
         const props = this.getProps();
         const s = props.dropdownCssClasses;
+        const Tag = props.hasBalloon ? Balloon : 'div';
 
         return (
             <div
@@ -100,7 +104,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
                     {this.props.valueString}
                 </button>
                 {this.props.isExpanded ? (
-                    <div className={s.popup}>{this.props.children}</div>
+                    <Tag className={s.popup}>{this.props.children}</Tag>
                 ) : null}
             </div>
         );

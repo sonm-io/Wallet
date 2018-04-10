@@ -149,6 +149,55 @@ export function send(
     return result;
 }
 
+export const profileListResult: t.IResult<t.IProfileBrief[]> = {
+    data: [
+        {
+            name: 'VAsya',
+            address: '0x1234567890`123456789012345678901234567890',
+            buyOrders: 99,
+            sellOrders: 88,
+            deals: 98,
+            country: 'ru',
+            isPro: true,
+            isCorp: true,
+            status: t.ProfileStatus.anon,
+        },
+        {
+            name: 'VAsya',
+            address: '0x1234567890`123456789012345678901234567890',
+            buyOrders: 99,
+            sellOrders: 88,
+            deals: 98,
+            country: 'ru',
+            isPro: true,
+            isCorp: true,
+            status: t.ProfileStatus.anon,
+        },
+        {
+            name: 'VAsya',
+            address: '0x1234567890`123456789012345678901234567890',
+            buyOrders: 99,
+            sellOrders: 88,
+            deals: 98,
+            country: 'ru',
+            isPro: true,
+            isCorp: true,
+            status: t.ProfileStatus.anon,
+        },
+        {
+            name: 'VAsya',
+            address: '0x1234567890`123456789012345678901234567890',
+            buyOrders: 99,
+            sellOrders: 88,
+            deals: 98,
+            country: 'ru',
+            isPro: true,
+            isCorp: true,
+            status: t.ProfileStatus.anon,
+        },
+    ],
+};
+
 // export function send(tx: any) {
 //     console.log('send!!!');
 // }

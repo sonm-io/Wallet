@@ -81,4 +81,22 @@ export enum NetworkEnum {
     rinkeby = 'rinkeby',
 }
 
+export enum ProfileStatus {
+    anon = 0,
+    reg = 1,
+    ident = 2,
+}
+
+export interface IProfileBrief {
+    name: string;
+    address: string;
+    status: ProfileStatus;
+    sellOrders: number;
+    buyOrders: number;
+    deals: number;
+    country: string;
+    isPro: boolean;
+    isCorp: boolean;
+}
+
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';
