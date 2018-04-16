@@ -1,0 +1,131 @@
+@import 'guide.less';
+@import './antd.less';
+
+@confirm-padding: 20px;
+@confirm-border: 1px solid @color-border;
+
+.sonm-send-confirm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 30px 1.1fr 1fr;
+    grid-gap: @confirm-padding;
+
+    &__header {
+        grid-column: ~'1 / 3';
+        grid-row: 1;
+    }
+
+    &__from-to {
+        grid-column: ~'1 / 3';
+        grid-row: 2;
+
+        border: @confirm-border;
+        padding: @confirm-padding 30px;
+    }
+
+    &__account {
+        display: grid;
+        grid-template-columns: 100px min-content auto;
+        grid-template-rows: 1fr 1fr;
+        font-weight: normal;
+
+        &-blockies {
+            margin: 10px;
+            grid-column: 1;
+            grid-row: 2 span;
+            align-self: center;
+        }
+
+        &-name {
+            padding-top: 20px;
+            font-size: 14px;
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        &-addr {
+            font-size: 14px;
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        &-target {
+            justify-content: center;
+            align-self: center;
+            font-size: 14px;
+            grid-column: 2;
+            grid-row: 2 span;
+        }
+    }
+
+    &__arrow {
+        background: url('./icon-from-to.svg') no-repeat center;
+
+        margin: 0 0 0 42px;
+
+        width: 10px;
+        height: 50px;
+    }
+
+    &__values {
+        grid-column: 1;
+        grid-row: 3;
+
+        border: @confirm-border;
+        padding: @confirm-padding 30px 30px;
+        margin: 0;
+
+        font-size: 16px;
+
+        overflow: hidden;
+
+        dt {
+            font-weight: bold;
+            display: block;
+            margin: 0;
+        }
+
+        dd {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            margin: 0 0 20px 0;
+        }
+    }
+
+    &__password {
+        background-color: @color-light-gray;
+        border: @confirm-border;
+
+        grid-column: 2;
+        grid-row: 3;
+
+        display: flex;
+        flex-direction: column;
+
+        padding: @confirm-padding 30px 30px;
+
+        &-header {
+            flex-grow: 0;
+            width: 100%;
+            margin: 0;
+        }
+
+        &-form {
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        &-button-ct {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: flex-end;
+        }
+
+        &-button {
+            margin: 0 0 0 20px;
+        }
+    }
+}
