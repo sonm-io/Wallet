@@ -36,10 +36,12 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
             hideDelay = 0,
         } = this.props;
 
+        const style: any = { '--hide-delay': hideDelay };
+
         return (
             <div
                 className={cn(className, 'sonm-alert', `sonm-alert--${type}`)}
-                style={{ '--hide-delay': hideDelay }}
+                style={style}
             >
                 <span className="sonm-alert__message">{children}</span>
                 {onClosed ? (
