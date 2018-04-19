@@ -149,53 +149,56 @@ export function send(
     return result;
 }
 
-export const profileListResult: t.IResult<t.IProfileBrief[]> = {
-    data: [
-        {
-            name: 'VAsya',
-            address: '0x1234567890`123456789012345678901234567890',
-            buyOrders: 99,
-            sellOrders: 88,
-            deals: 98,
-            country: 'ru',
-            isPro: true,
-            isCorp: true,
-            status: t.ProfileStatus.anon,
-        },
-        {
-            name: 'VAsya',
-            address: '0x1234567890`123456789012345678901234567890',
-            buyOrders: 99,
-            sellOrders: 88,
-            deals: 98,
-            country: 'ru',
-            isPro: true,
-            isCorp: true,
-            status: t.ProfileStatus.anon,
-        },
-        {
-            name: 'VAsya',
-            address: '0x1234567890`123456789012345678901234567890',
-            buyOrders: 99,
-            sellOrders: 88,
-            deals: 98,
-            country: 'ru',
-            isPro: true,
-            isCorp: true,
-            status: t.ProfileStatus.anon,
-        },
-        {
-            name: 'VAsya',
-            address: '0x1234567890`123456789012345678901234567890',
-            buyOrders: 99,
-            sellOrders: 88,
-            deals: 98,
-            country: 'ru',
-            isPro: true,
-            isCorp: true,
-            status: t.ProfileStatus.anon,
-        },
-    ],
+export const profileListResult: t.IResult<t.IProfileListResult> = {
+    data: {
+        records: [
+            {
+                name: 'Vasya',
+                address: '0x1234567890`123456789012345678901234567890',
+                buyOrders: 99,
+                sellOrders: 88,
+                deals: 98,
+                country: 'ru',
+                isPro: true,
+                isCorp: true,
+                status: t.ProfileStatus.anon,
+            },
+            {
+                name: undefined,
+                address: '0x1234567890123456789012345678901234567893',
+                buyOrders: 99,
+                sellOrders: 88,
+                deals: 98,
+                country: 'ru',
+                isPro: true,
+                isCorp: true,
+                status: t.ProfileStatus.anon,
+            },
+            {
+                name: 'Ololan Ololoshevich',
+                address: '0x1234567890123456789012345678901234567895',
+                buyOrders: 99,
+                sellOrders: 88,
+                deals: 98,
+                country: 'gb',
+                isPro: true,
+                isCorp: true,
+                status: t.ProfileStatus.anon,
+            },
+            {
+                name: 'BG',
+                address: '0x1234562890123456789013345678901234567897',
+                buyOrders: 99,
+                sellOrders: 88,
+                deals: 98,
+                country: 'us',
+                isPro: true,
+                isCorp: true,
+                status: t.ProfileStatus.anon,
+            },
+        ],
+        total: 5,
+    },
 };
 
 // export function send(tx: any) {

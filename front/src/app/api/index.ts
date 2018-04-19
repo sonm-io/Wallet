@@ -9,7 +9,7 @@ import {
     ITxListFilter,
     ISettings,
     IWalletListItem,
-    IProfileBrief,
+    IProfileListResult,
 } from './types';
 
 import { profileListResult } from './mock';
@@ -178,7 +178,7 @@ export class Api {
         return ipcSend('getPresetTokenList');
     }
 
-    public static getProfileList(): Promise<IResult<IProfileBrief[]>> {
+    public static getProfileList(): Promise<IResult<IProfileListResult>> {
         return new Promise(done => {
             setTimeout(() => {
                 done(profileListResult);

@@ -18,8 +18,9 @@ export interface ISelectProps<T> {
     options: Array<ISelectItem<T>>;
     value: T;
     name: string;
-    hasBalloon: boolean;
+    hasBalloon?: boolean;
     onChange: (params: ISelectChangeParams<T>) => void;
+    compareValues?: (a: T, b: T) => boolean;
 }
 
 export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
@@ -61,14 +62,24 @@ export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
         });
     };
 
+    protected static compareValues<T>(a: T, b: T) {
+        return a === b;
+    }
+
+    public static compareAsJson<T>(a: T, b: T) {
+        return JSON.stringify(a) === JSON.stringify(b);
+    }
+
     public render() {
-        const { value, className, options, hasBalloon } = this.props;
-        const current = options.find(x => x.value === value);
+        const p = this.props;
+        const { value, className, options, hasBalloon } = p;
+        const compareValues = p.compareValues || FixedSelect.compareValues;
+        const current = options.find(x => compareValues(value, x.value));
 
         return (
             <DropdownInput
-                className={cn(className, 'sonm-balloon-select')}
-                valueString={current ? current.stringValue : ''}
+                className={cn(className, 'sonm-fixed-select')}
+                valueString={current ? current.stringValue : '[No value]'}
                 onRequireClose={this.handleClose}
                 onButtonClick={this.handleButtonClick}
                 isExpanded={this.state.expanded}
@@ -79,7 +90,7 @@ export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
                         type="button"
                         key={x.stringValue}
                         value={x.stringValue}
-                        className={cn('sonm-balloon-select__item', x.className)}
+                        className={cn('sonm-fixed-select__item', x.className)}
                         onClick={this.handleSelect}
                     >
                         {x.stringValue}

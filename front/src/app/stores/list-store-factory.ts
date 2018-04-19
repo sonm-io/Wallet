@@ -4,8 +4,13 @@ import { Status } from './types';
 import { OnlineStore } from './online-store';
 const { pending } = OnlineStore;
 
-export interface IListStoreApi {
-    fetchList: (params: IListServerQuery) => void;
+interface IFetchListResult<T> {
+    records: Array<T>;
+    total: number;
+}
+
+export interface IListStoreApi<T> {
+    fetchList: (params: IListServerQuery) => Promise<IFetchListResult<T>>;
 }
 
 export interface IListServerQuery {
@@ -32,10 +37,11 @@ export interface IListStore<T> {
     totalPage: number;
     hasPrevPage: boolean;
     hasNextPage: boolean;
+    update: () => any;
     updateUserInput: (input: Partial<IUserInput>) => any;
 }
 
-export function createListStore<T>(api: IListStoreApi) {
+export function createListStore<T>(api: IListStoreApi<T>) {
     class ListStoreClass extends OnlineStore implements IListStore<T> {
         @observable public status: Status = Status.PENDING;
 
@@ -47,7 +53,7 @@ export function createListStore<T>(api: IListStoreApi) {
 
         @observable public limit = 20;
 
-        @observable.ref public records = [];
+        @observable.ref public records: Array<T> = [];
 
         @observable
         private userInput: IUserInput = {
@@ -79,22 +85,7 @@ export function createListStore<T>(api: IListStoreApi) {
 
         @pending
         @asyncAction
-        public *updateUserInput(input: Partial<IUserInput>) {
-            const changes = Object.keys(input).filter(k => {
-                const key = k as keyof IUserInput;
-                const result = input[key] !== this.userInput[key];
-
-                if (result) {
-                    this.userInput[key] = input[key] as any;
-                }
-
-                return result;
-            });
-
-            if (changes.length === 0) {
-                return;
-            }
-
+        public *update() {
             const { page, limit, sortBy, filter } = this.userInput;
 
             const offset = (page - 1) * limit;
@@ -119,8 +110,8 @@ export function createListStore<T>(api: IListStoreApi) {
 
                 this.offset = offset;
                 this.limit = limit;
-                this.records = response.data.data;
-                this.total = response.data.total_count;
+                this.records = response.records;
+                this.total = response.total;
                 this.status = Status.DONE;
             } catch (e) {
                 this.error = e.message;
@@ -128,6 +119,26 @@ export function createListStore<T>(api: IListStoreApi) {
 
                 throw e;
             }
+        }
+
+        @asyncAction
+        public *updateUserInput(input: Partial<IUserInput>) {
+            const changes = Object.keys(input).filter(k => {
+                const key = k as keyof IUserInput;
+                const result = input[key] !== this.userInput[key];
+
+                if (result) {
+                    this.userInput[key] = input[key] as any;
+                }
+
+                return result;
+            });
+
+            if (changes.length === 0) {
+                return;
+            }
+
+            yield this.update();
         }
     }
 
