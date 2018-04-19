@@ -8,6 +8,7 @@ import {
 } from './types';
 import { TJsPropTypes } from '../types';
 import * as propTypes from 'prop-types';
+import { Balloon } from '../balloon';
 
 export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     public static readonly getDefaultCssClasses = (
@@ -22,6 +23,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     public static readonly defaultProps: IDropdownOptionalInputProps = {
         className: '',
         dropdownCssClasses: DropdownInput.getDefaultCssClasses('dropdown'),
+        hasBalloon: false,
     };
 
     public static propTypes: TJsPropTypes<IDropdownAllProps> = {
@@ -31,6 +33,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
         onRequireClose: propTypes.func,
         children: propTypes.node,
         className: propTypes.string,
+        hasBalloon: propTypes.bool,
         dropdownCssClasses: propTypes.shape({
             root: propTypes.string,
             button: propTypes.string,
@@ -39,7 +42,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     };
 
     protected handleBodyClick = (event: any) => {
-        const children = this.node && this.node.children;
+        const children = this.rootNodeRef && this.rootNodeRef.children;
         if (
             children &&
             (children[0].contains(event.target) ||
@@ -50,6 +53,13 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
 
         this.props.onRequireClose();
     };
+
+    public focus() {
+        this.rootNodeRef &&
+            this.rootNodeRef.children &&
+            this.rootNodeRef.children[0] &&
+            (this.rootNodeRef.children[0] as HTMLButtonElement).focus();
+    }
 
     public componentDidMount() {
         if (typeof window !== 'undefined') {
@@ -69,11 +79,11 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
         }
     }
 
-    protected node?: HTMLDivElement;
+    public rootNodeRef?: HTMLDivElement;
 
     protected saveRef = (ref: HTMLDivElement | null) => {
-        if (ref && ref !== this.node) {
-            this.node = ref;
+        if (ref && ref !== this.rootNodeRef) {
+            this.rootNodeRef = ref;
         }
     };
 
@@ -84,6 +94,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     public render() {
         const props = this.getProps();
         const s = props.dropdownCssClasses;
+        const Tag = props.hasBalloon ? Balloon : 'div';
 
         return (
             <div
@@ -100,7 +111,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
                     {this.props.valueString}
                 </button>
                 {this.props.isExpanded ? (
-                    <div className={s.popup}>{this.props.children}</div>
+                    <Tag className={s.popup}>{this.props.children}</Tag>
                 ) : null}
             </div>
         );

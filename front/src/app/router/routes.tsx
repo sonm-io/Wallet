@@ -5,6 +5,7 @@ import { History } from 'app/components/layouts/history';
 import { SendSuccess } from 'app/components/layouts/send/sub/success';
 import { SendConfirm } from 'app/components/layouts/send/sub/confirm';
 import { Account } from 'app/components/layouts/account';
+import { ProfileList } from 'app/components/layouts/profile-list';
 import * as React from 'react';
 
 import { navigate } from './navigate';
@@ -164,6 +165,16 @@ const routes = [
                         },
                     },
                 ],
+            },
+            {
+                path: '/profile-list',
+                action: (ctx: IContext, params: IUrlParams) => {
+                    return {
+                        pathKey: '/profile-list',
+                        title: 'Profiles',
+                        content: <ProfileList />,
+                    };
+                },
             },
             {
                 path: /.*/,
