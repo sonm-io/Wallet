@@ -42,7 +42,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     };
 
     protected handleBodyClick = (event: any) => {
-        const children = this.node && this.node.children;
+        const children = this.rootNodeRef && this.rootNodeRef.children;
         if (
             children &&
             (children[0].contains(event.target) ||
@@ -53,6 +53,13 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
 
         this.props.onRequireClose();
     };
+
+    public focus() {
+        this.rootNodeRef &&
+            this.rootNodeRef.children &&
+            this.rootNodeRef.children[0] &&
+            (this.rootNodeRef.children[0] as HTMLButtonElement).focus();
+    }
 
     public componentDidMount() {
         if (typeof window !== 'undefined') {
@@ -72,11 +79,11 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
         }
     }
 
-    protected node?: HTMLDivElement;
+    public rootNodeRef?: HTMLDivElement;
 
     protected saveRef = (ref: HTMLDivElement | null) => {
-        if (ref && ref !== this.node) {
-            this.node = ref;
+        if (ref && ref !== this.rootNodeRef) {
+            this.rootNodeRef = ref;
         }
     };
 

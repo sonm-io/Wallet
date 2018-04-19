@@ -70,6 +70,25 @@ export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
         return JSON.stringify(a) === JSON.stringify(b);
     }
 
+    public getSnapshotBeforeUpdate(
+        prevProps: ISelectProps<T>,
+        prevState: any,
+    ): any {
+        const keepFocus =
+            this.rootRef.rootNodeRef.querySelector(':focus') !== null;
+
+        return { keepFocus };
+    }
+
+    public componentDidUpdate(p: any, s: any, snapshot: any) {
+        if (snapshot.keepFocus) {
+            this.rootRef.focus();
+        }
+    }
+
+    protected rootRef: any;
+    protected saveRef = (ref: any) => (this.rootRef = ref);
+
     public render() {
         const p = this.props;
         const { value, className, options, hasBalloon } = p;
@@ -84,6 +103,7 @@ export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
                 onButtonClick={this.handleButtonClick}
                 isExpanded={this.state.expanded}
                 hasBalloon={hasBalloon}
+                ref={this.saveRef}
             >
                 {options.map((x: ISelectItem<T>) => (
                     <button

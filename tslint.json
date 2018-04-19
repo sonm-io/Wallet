@@ -22,6 +22,7 @@
         "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-separator", "check-rest-spread", "check-type", "check-typecast", "check-type-operator", "check-preblock"],
         "no-implicit-dependencies": false,
         "no-bitwise": false,
-        "array-type": false
+        "array-type": false,
+        "prefer-for-of": false
     }
 }
