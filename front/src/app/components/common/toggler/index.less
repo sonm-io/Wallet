@@ -1,0 +1,53 @@
+@import 'guide.less';
+
+@togglerHeight: 15px;
+@toggleBorder: 2px;
+
+.sonm-toggler {
+    background: transparent;
+    height: @togglerHeight;
+    width: @togglerHeight * 2;
+    display: inline-block;
+    position: relative;
+    padding: 0;
+    cursor: pointer;
+
+    &__input {
+        display: none;
+    }
+
+    &__input + &__cradle {
+        height: 100%;
+        width: 100%;
+        border-radius: @togglerHeight / 2;
+        background-color: @color-border;
+        transition: background-color 0.2s ease;
+
+        &:after {
+            height: @togglerHeight - 2 * @toggleBorder;
+            width: @togglerHeight - 2 * @toggleBorder;
+            border-radius: (@togglerHeight - 2 * @toggleBorder) / 2;
+            background: @color-white;
+            display: block;
+            position: absolute;
+            content: '';
+            margin: 0;
+            position: absolute;
+            top: @toggleBorder;
+            left: @toggleBorder;
+            transition: transform 0.2s ease;
+        }
+    }
+
+    &__input:not(checked) + &__cradle:after {
+        transform: none;
+    }
+
+    &__input:checked + &__cradle {
+        background-color: @color-violet;
+
+        &:after {
+            transform: translateX(@togglerHeight);
+        }
+    }
+}

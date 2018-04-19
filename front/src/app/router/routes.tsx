@@ -6,6 +6,7 @@ import { SendSuccess } from 'app/components/layouts/send/sub/success';
 import { SendConfirm } from 'app/components/layouts/send/sub/confirm';
 import { Account } from 'app/components/layouts/account';
 import { Profile } from 'app/components/layouts/profile';
+import { ProfileList } from 'app/components/layouts/profile-list';
 import * as React from 'react';
 
 import { navigate } from './navigate';
@@ -58,13 +59,6 @@ const routes = [
             };
         },
         children: [
-            {
-                path: 'market/profile',
-                action: (ctx: IContext) => ({
-                    title: 'Profile',
-                    content: <Profile />,
-                }),
-            },
             {
                 path: '/send',
                 action: async (ctx: IContext, params: IUrlParams) => {
@@ -172,6 +166,23 @@ const routes = [
                         },
                     },
                 ],
+            },
+            {
+                path: 'profile',
+                action: (ctx: IContext) => ({
+                    title: 'Profile',
+                    content: <Profile />,
+                }),
+            },
+            {
+                path: '/profile-list',
+                action: (ctx: IContext, params: IUrlParams) => {
+                    return {
+                        pathKey: '/profile-list',
+                        title: 'Profiles',
+                        content: <ProfileList />,
+                    };
+                },
             },
             {
                 path: /.*/,

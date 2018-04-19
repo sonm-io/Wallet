@@ -122,7 +122,7 @@ export class App extends React.Component<IProps, any> {
                         {rootStore.isOffline ? (
                             <Alert type="error" id="no-connect">
                                 {rootStore.localizator.getMessageText(
-                                    'no_blockchain_conection',
+                                    'sonmapi_network_error',
                                 )}
                             </Alert>
                         ) : null}

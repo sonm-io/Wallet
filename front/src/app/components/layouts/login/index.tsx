@@ -107,6 +107,8 @@ export class Login extends React.Component<IProps, IState> {
                 ? EnumAction.selectWallet
                 : EnumAction.disclaimer,
         });
+
+        this.getWalletList();
     }
 
     protected getWalletList = async () => {
@@ -140,6 +142,8 @@ export class Login extends React.Component<IProps, IState> {
                 this.nextAction();
             }
         });
+
+        this.fastLogin();
     };
 
     protected nextAction() {
@@ -160,19 +164,13 @@ export class Login extends React.Component<IProps, IState> {
 
     protected async fastLogin() {
         if (window.localStorage.getItem('sonm-4ever')) {
-            const { data } = await Api.unlockWallet('1', '1');
+            const { data } = await Api.unlockWallet('2', '2');
             if (data) {
-                const wallet = this.findWalletByName('1');
+                const wallet = this.findWalletByName('2');
 
                 this.props.onLogin(wallet);
             }
         }
-    }
-
-    public componentWillMount() {
-        this.fastLogin();
-
-        this.getWalletList();
     }
 
     protected openDialog(
@@ -202,9 +200,7 @@ export class Login extends React.Component<IProps, IState> {
     );
 
     protected findWalletByName(name: string) {
-        const wallet = this.state.listOfWallets.find(
-            x => x.name === this.state.name,
-        );
+        const wallet = this.state.listOfWallets.find(x => x.name === name);
 
         if (wallet === undefined) {
             throw new Error('wallet_not_found');

@@ -11,6 +11,7 @@ import { Input } from 'app/components/common/input';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { observer } from 'mobx-react';
 import { rootStore } from 'app/stores';
+import { Balance } from 'app/components/common/balance-view';
 
 export interface IProps {
     onClickCross: () => void;
@@ -57,7 +58,13 @@ export class AddToken extends React.Component<IProps, {}> {
                         <FormField
                             fullWidth
                             label="Token contract address"
-                            error={tokenAddress.length === 0 ? '' : validation}
+                            error={
+                                tokenAddress.length === 0
+                                    ? ''
+                                    : rootStore.localizator.getMessageText(
+                                          validation,
+                                      )
+                            }
                         >
                             <Input
                                 autoFocus
@@ -88,7 +95,15 @@ export class AddToken extends React.Component<IProps, {}> {
                                 {tokenInfo.name}
                             </span>
                             <span className="sonm-add-token__preview-ticker">
-                                {tokenInfo.symbol}
+                                <Balance
+                                    className="sonm-add-token__sonm"
+                                    balance={tokenInfo.balance}
+                                    symbol={tokenInfo.symbol}
+                                    decimalPointOffset={
+                                        tokenInfo.decimalPointOffset
+                                    }
+                                    fontSizePx={16}
+                                />
                             </span>
                         </div>
                     ) : null}

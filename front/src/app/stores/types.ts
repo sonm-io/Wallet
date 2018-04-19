@@ -65,3 +65,9 @@ export interface IAlert {
     type: AlertType;
     message: string;
 }
+
+export enum Status {
+    PENDING,
+    ERROR,
+    DONE,
+}

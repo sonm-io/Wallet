@@ -7,4 +7,5 @@
 /docs
 /releases
 **/.DS_Store
+/test/features/reports
 yarn-error.log

@@ -14,14 +14,19 @@
     color: @dropdownInputColor;
 
     &__popup {
-        margin: 4px 0 0;
-        padding: 5px;
+        padding: 0;
+        max-width: 0;
+        transition: max-width 1s ease;
+    }
+
+    & &__popup {
+        margin: 4px 0 0 0;
         background: @dropdownInputBgColor;
         position: absolute;
-        top: 100;
-        left: 0;
         border: solid 1px @dropdownBorderColor;
         min-width: 100%;
+        z-index: 100;
+        max-width: 4000px;
     }
 
     &__button {
@@ -55,6 +60,9 @@
         border: 1px solid @dropdownInputBorderColor;
         text-align: left;
         position: relative;
+        box-shadow: none;
+        transition: box-shadow 0.1s 0.1s, border-color 0.1s 0.1s;
+        outline: none;
 
         &:hover {
             border: 1px solid @dropdownInputBorderHoverColor;

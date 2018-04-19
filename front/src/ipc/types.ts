@@ -33,6 +33,7 @@ export type TResultPromise<T> = Promise<IResult<T>>;
 
 export interface IResult<T> {
     data?: T;
+    error?: string;
     validation?: IValidation;
     continuation?: TResultPromise<T>;
 }
@@ -42,14 +43,27 @@ export type TRequestProcessor<TPayload, TResult> = (
     payload: TPayload,
 ) => TResultPromise<TResult>;
 
-export interface IWebWorker {
+export interface IWorker {
     addEventListener: (
         name: TMessageEventName,
         callback: TMessageHandler,
     ) => void;
     postMessage: (
         message: IRequest<any> | IResponse<any>,
-        origin: string,
         transfer?: any[],
     ) => void;
+    processRequest?: TRequestProcessor<string, any>;
+}
+
+export interface IWindowWorker {
+    addEventListener: (
+        name: TMessageEventName,
+        callback: TMessageHandler,
+    ) => void;
+    postMessage: (
+        message: IRequest<any> | IResponse<any>,
+        targetOrigin: string,
+        transfer?: any[],
+    ) => void;
+    processRequest?: TRequestProcessor<string, any>;
 }
