@@ -8,9 +8,10 @@ interface ITogglerChangeParams {
 }
 
 interface ICssClasses {
-    label: string;
+    title: string;
     input: string;
     cradle: string;
+    label: string;
 }
 
 interface ITogglerProps {
@@ -19,7 +20,8 @@ interface ITogglerProps {
     onChange?: (params: ITogglerChangeParams) => void;
     name: string;
     value: boolean;
-    label: string;
+    title: string;
+    titleBefore?: boolean;
 }
 
 export class Toggler extends React.PureComponent<ITogglerProps, never> {
@@ -28,6 +30,7 @@ export class Toggler extends React.PureComponent<ITogglerProps, never> {
             input: 'sonm-toggler__input',
             label: 'sonm-toggler',
             cradle: 'sonm-toggler__cradle',
+            title: 'sonm-toggler__title',
         },
     };
 
@@ -36,20 +39,39 @@ export class Toggler extends React.PureComponent<ITogglerProps, never> {
             className,
             name,
             value,
+            title,
+            titleBefore,
             cssClasses = Toggler.defaultProps.cssClasses,
         } = this.props;
 
+        const content = [
+            <input
+                key="a"
+                name={name}
+                type="checkbox"
+                className={cssClasses.input}
+                checked={value}
+                onChange={this.handleChange}
+            />,
+            <div className={cssClasses.cradle} key="b" />,
+        ];
+
+        if (title) {
+            const titleBlock = (
+                <div key="t" className={cssClasses.title}>
+                    {title}
+                </div>
+            );
+
+            if (titleBefore) {
+                content.unshift(titleBlock);
+            } else {
+                content.push(titleBlock);
+            }
+        }
+
         return (
-            <label className={cn(className, cssClasses.label)}>
-                <input
-                    name={name}
-                    type="checkbox"
-                    className={cssClasses.input}
-                    checked={value}
-                    onChange={this.handleChange}
-                />
-                <div className={cssClasses.cradle} />
-            </label>
+            <label className={cn(className, cssClasses.label)}>{content}</label>
         );
     }
 

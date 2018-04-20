@@ -8,4 +8,8 @@ toggler:
 
 toggler:
 
-    <Toggler />
+    <Toggler title="Professional"/>
+
+toggler:
+
+    <Toggler title="Professional" titleBefore />

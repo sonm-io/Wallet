@@ -2,26 +2,49 @@
 
 @togglerHeight: 15px;
 @toggleBorder: 2px;
+@toggleVerticalAligth: bottom;
 
 .sonm-toggler {
+    --toggler-background-color: @color-violet;
     background: transparent;
-    height: @togglerHeight;
-    width: @togglerHeight * 2;
     display: inline-block;
-    position: relative;
     padding: 0;
+    margin: 0;
+    box-sizing: 0;
     cursor: pointer;
+    line-height: 100%;
+    white-space: nowrap;
 
     &__input {
         display: none;
     }
 
+    &__title {
+        padding: 0;
+        margin: 0;
+        vertical-align: @toggleVerticalAligth;
+        display: inline-block;
+
+        &:first-child {
+            margin-right: 10px;
+        }
+
+        &:last-child {
+            margin-left: 10px;
+        }
+    }
+
     &__input + &__cradle {
-        height: 100%;
-        width: 100%;
+        vertical-align: @toggleVerticalAligth;
+        position: relative;
+        height: @togglerHeight;
+        width: @togglerHeight * 2;
         border-radius: @togglerHeight / 2;
         background-color: @color-border;
         transition: background-color 0.2s ease;
+        display: inline-block;
+        padding: 0;
+        margin: 0;
 
         &:after {
             height: @togglerHeight - 2 * @toggleBorder;
@@ -44,7 +67,7 @@
     }
 
     &__input:checked + &__cradle {
-        background-color: @color-violet;
+        background-color: var(--toggler-background-color);
 
         &:after {
             transform: translateX(@togglerHeight);

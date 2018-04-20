@@ -5,6 +5,7 @@
 .sonm-profiles {
     &__filters {
         display: flex;
+        align-items: baseline;
         column-gap: 10xp;
         padding: 0;
         margin: 0 0 10px 0;
@@ -19,6 +20,16 @@
         &-deals {
             margin: 0 10px 0 0;
             width: 200px;
+        }
+
+        &-pro {
+            margin: 0 10px 0 0;
+            flex: auto 0;
+        }
+
+        &-cloud {
+            margin: 0 10px 0 0;
+            flex: auto 0;
         }
 
         &-status {
@@ -40,7 +51,7 @@
         }
     }
 
-    & &__cell {
+    &__cell {
         margin: 0;
         padding: @profilesCellPadding;
         font-size: 15px;
@@ -50,9 +61,13 @@
 .sonm-cell {
     &-address {
         position: relative;
+        line-height: 120%;
+        font-size: 12px;
 
         &__name {
-            margin: 0 0 0 40px;
+            margin: 0 0 0 30px;
+            color: @color-font-dark;
+            font-weight: bold;
 
             &:empty {
                 &:before {
@@ -69,7 +84,7 @@
         }
 
         &__hex {
-            margin: 0 0 0 40px;
+            margin: 0 0 0 30px;
         }
     }
 

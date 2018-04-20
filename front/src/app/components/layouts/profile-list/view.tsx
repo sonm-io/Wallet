@@ -12,6 +12,7 @@ import { IProfileBrief, ProfileStatus } from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { Country } from 'app/components/common/country';
+import { Toggler } from 'app/components/common/toggler';
 
 class ProfileTable extends Table<IProfileBrief> {}
 
@@ -53,9 +54,11 @@ export class ProfileListView extends React.Component<IProps, any> {
                                 className="sonm-cell-address__img"
                             />
                         )}
-                        <div className="sonm-cell-address__name">
-                            {record.name}
-                        </div>
+                        {record.name ? (
+                            <div className="sonm-cell-address__name">
+                                {record.name}
+                            </div>
+                        ) : null}
                         <Hash
                             className="sonm-cell-address__hex"
                             hash={record.address}
@@ -198,6 +201,18 @@ export class ProfileListView extends React.Component<IProps, any> {
                         hasBalloon
                         compareValues={FixedSelect.compareAsJson}
                         onChange={this.handleChangeFilter}
+                    />
+                    <Toggler
+                        className="sonm-profiles__filter-pro"
+                        title="Professional"
+                        value={true}
+                        name="professional"
+                    />
+                    <Toggler
+                        className="sonm-profiles__filter-cloud"
+                        title="Cloud"
+                        value={true}
+                        name="cloud"
                     />
                     <FixedSelect
                         className="sonm-profiles__filter-deals"
