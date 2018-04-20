@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { ProfileView } from './view';
-import * as lands from './lands-utils';
 
 interface IProps {
     className?: string;
     style?: any;
 }
-
-const mapAbbrToCountry = lands.getMap();
 
 const returnFirstArg = (...as: any[]) => String(as[0]);
 const p = {
@@ -61,25 +58,8 @@ const p = {
     address: '0x1234567890123456789012345678901234567890',
 };
 
-function getCountryFlagUrl(countryAbbr: string) {
-    const abbr = countryAbbr.toLocaleLowerCase();
-    return `https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.1.0/flags/4x3/${abbr}.svg`;
-}
-
 export class Profile extends React.PureComponent<IProps, never> {
-    public static defaultCountry: lands.ILand = {
-        name: 'Democratic Republic of Nowhere',
-        abCode2: 'KZ',
-        abCode3: 'NWE',
-        isoNumber: '777',
-        phoneCode: '+7-777',
-        domain: '.nowhere',
-    };
-
     public render() {
-        const country =
-            mapAbbrToCountry[p.countryAbbr] || Profile.defaultCountry;
-
         return (
             <ProfileView
                 className=""
@@ -95,8 +75,7 @@ export class Profile extends React.PureComponent<IProps, never> {
                 supplierToken={p.supplierToken}
                 my={p.my}
                 userName={p.userName}
-                country={country ? country.name : ''}
-                countryFlagUrl={getCountryFlagUrl(p.countryAbbr)}
+                countryAbCode2={p.countryAbbr}
                 logoUrl={p.logoUrl}
                 userStatus={p.userStatus}
                 address={p.address}

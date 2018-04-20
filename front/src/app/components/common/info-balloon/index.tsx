@@ -3,7 +3,7 @@ import * as cn from 'classnames';
 import { Balloon } from '../balloon';
 
 interface ITooltip {
-    chidren: React.ReactNode;
+    children: React.ReactNode;
     className: string;
 }
 
@@ -62,7 +62,6 @@ export class InfoBalloon extends React.Component<ITooltip, any> {
                 className={cn('sonm-info', p.className)}
                 ref={this.saveRef}
             >
-                i
                 {this.state.expanded ? (
                     <Balloon position="bottom" className="sonm-info__balloon">
                         {p.children}

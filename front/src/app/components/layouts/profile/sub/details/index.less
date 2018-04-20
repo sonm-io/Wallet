@@ -4,7 +4,6 @@
     font-size: 15px;
     font-weight: 400;
     line-height: 24px;
-    width: 300px;
     padding: 0;
     margin: 0;
 }
@@ -58,13 +57,13 @@
 
     & &__address-hash {
         margin: 0 0 0 80px;
-        display: block;
         color: @color-font-dark;
         line-height: 24px;
     }
 
     &__main-info {
         .sonm-profile-definition-container;
+        width: 300px;
 
         & > dt {
             .sonm-profile-definition-label;
@@ -98,6 +97,7 @@
 
     &__extra {
         .sonm-profile-definition-container;
+        width: 100%;
 
         &-label {
             .sonm-profile-definition-label;
@@ -105,6 +105,10 @@
 
         &-value {
             .sonm-profile-definition-value;
+        }
+
+        &-info {
+            float: right;
         }
     }
 }

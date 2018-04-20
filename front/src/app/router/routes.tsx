@@ -168,7 +168,7 @@ const routes = [
                 ],
             },
             {
-                path: 'profile',
+                path: '/profile',
                 action: (ctx: IContext) => ({
                     title: 'Profile',
                     content: <Profile />,

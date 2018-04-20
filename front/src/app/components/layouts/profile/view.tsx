@@ -21,9 +21,8 @@ interface IProps {
     supplierToken: string;
     my: boolean;
     userName: string;
-    country: string;
+    countryAbCode2: string;
     logoUrl: string;
-    countryFlagUrl: string;
     userStatus: number;
     address: string;
     style?: any;
@@ -35,11 +34,10 @@ export class ProfileView extends React.PureComponent<IProps, never> {
 
         return (
             <div className={cn('sonm-profile', p.className)} style={p.style}>
-                <div className="sonm-profile__row sonm-profile__row--top">
+                <div className="sonm-profile__column">
                     <Details
                         userName={p.userName}
-                        country={p.country}
-                        countryFlagUrl={p.countryFlagUrl}
+                        countryAbCode2={p.countryAbCode2}
                         logoUrl={p.logoUrl}
                         className="sonm-profile__panel"
                         status={p.userStatus}
@@ -47,13 +45,6 @@ export class ProfileView extends React.PureComponent<IProps, never> {
                         getUiText={p.getUiText}
                         definitions={p.definitionList}
                     />
-                    <CertificatesPanel
-                        className="sonm-profile__panel"
-                        certificates={p.certificates}
-                        my={p.my}
-                    />
-                </div>
-                <div className="sonm-profile__row sonm-profile__row--bottom">
                     {p.description ? (
                         <Panel
                             key="desc"
@@ -63,18 +54,23 @@ export class ProfileView extends React.PureComponent<IProps, never> {
                             {p.description}
                         </Panel>
                     ) : null}
-                    {
-                        <Statistic
-                            className="sonm-profile__panel"
-                            consumerDeals={p.consumerDeals}
-                            consumerAvgTime={p.consumerAvgTime}
-                            consumerToken={p.consumerToken}
-                            supplierDeals={p.supplierDeals}
-                            supplierAvgTime={p.supplierAvgTime}
-                            supplierToken={p.supplierToken}
-                            getUiText={p.getUiText}
-                        />
-                    }
+                </div>
+                <div className="sonm-profile__column">
+                    <CertificatesPanel
+                        className="sonm-profile__panel"
+                        certificates={p.certificates}
+                        my={p.my}
+                    />
+                    <Statistic
+                        className="sonm-profile__panel"
+                        consumerDeals={p.consumerDeals}
+                        consumerAvgTime={p.consumerAvgTime}
+                        consumerToken={p.consumerToken}
+                        supplierDeals={p.supplierDeals}
+                        supplierAvgTime={p.supplierAvgTime}
+                        supplierToken={p.supplierToken}
+                        getUiText={p.getUiText}
+                    />
                 </div>
             </div>
         );

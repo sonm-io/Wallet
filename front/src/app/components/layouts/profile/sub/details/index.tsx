@@ -1,9 +1,11 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { ShowMorePanel } from 'app/components/common/show-more-panel';
+import { Panel } from 'app/components/common/panel';
 import { TFnGetUiText } from 'app/components/common/localized-pure-component';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
+import { InfoBalloon } from 'app/components/common/info-balloon';
+import { Country } from 'app/components/common/country';
 
 export interface IProfileDefinition {
     label: string;
@@ -15,8 +17,7 @@ interface IProps {
     children?: never;
     userName: string;
     status: number;
-    country: string;
-    countryFlagUrl: string;
+    countryAbCode2: string;
     address: string;
     logoUrl: string;
     getUiText: TFnGetUiText<string>;
@@ -75,38 +76,9 @@ export class Details extends React.PureComponent<IProps, TUiText> {
         const statusText = this.getStatusText();
 
         return (
-            <ShowMorePanel
+            <Panel
                 className={cn(p.className, 'sonm-profile-details')}
                 title={t('Account details')}
-                showMoreContentStepPx={30}
-                showMoreContent={
-                    <div className="sonm-profile-details__extra">
-                        {
-                            (p.definitions.forEach(({ label, value }) => {
-                                const render =
-                                    label in renders
-                                        ? renders[label]
-                                        : Details.defaultRender;
-
-                                definitions.push(
-                                    <dt
-                                        key={label}
-                                        className="sonm-profile-details__extra-label"
-                                    >
-                                        {t(label)}
-                                    </dt>,
-                                    <dd
-                                        key={`${label}^*`}
-                                        className="sonm-profile-details__extra-value"
-                                    >
-                                        {render(value)}
-                                    </dd>,
-                                );
-                            }),
-                            definitions)
-                        }
-                    </div>
-                }
             >
                 <dl className="sonm-profile-details__main-info">
                     {!!p.userName && <dt key="nk">{t('Name')}</dt>}
@@ -122,13 +94,13 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                         {t(statusText)}
                     </dd>
 
-                    {!!p.country && <dt key="ck">{t('Country')}</dt>}
-                    {!!p.country && (
+                    {!!p.countryAbCode2 && <dt key="ck">{t('Country')}</dt>}
+                    {!!p.countryAbCode2 && (
                         <dd key="cv" className="sonm-profile-details__country">
-                            {t(p.country)}
-                            <img
-                                className="sonm-profile-details__country-flag"
-                                src={p.countryFlagUrl}
+                            <Country
+                                abCode2={p.countryAbCode2}
+                                hasName
+                                flagHeightPx={20}
                             />
                         </dd>
                     )}
@@ -148,6 +120,35 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                         hash={p.address}
                     />
                 </div>
+                <div className="sonm-profile-details__extra">
+                    {
+                        (p.definitions.forEach(({ label, value }) => {
+                            const render =
+                                label in renders
+                                    ? renders[label]
+                                    : Details.defaultRender;
+
+                            definitions.push(
+                                <dt
+                                    key={label}
+                                    className="sonm-profile-details__extra-label"
+                                >
+                                    {t(label)}
+                                </dt>,
+                                <dd
+                                    key={`${label}^*`}
+                                    className="sonm-profile-details__extra-value"
+                                >
+                                    {render(value)}
+                                    <InfoBalloon className="sonm-profile-details__extra-info">
+                                        {'text'}
+                                    </InfoBalloon>
+                                </dd>,
+                            );
+                        }),
+                        definitions)
+                    }
+                </div>
                 {definitions.length === 0 && (
                     <span className="sonm-profile-details__certificate">
                         {t('before_certification_link')}
@@ -160,7 +161,7 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                         {t('after_certification_link')}
                     </span>
                 )}
-            </ShowMorePanel>
+            </Panel>
         );
     }
 }
