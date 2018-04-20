@@ -1,11 +1,10 @@
 @import 'guide.less';
 
-@togglerHeight: 15px;
-@toggleBorder: 2px;
-@toggleVerticalAligth: bottom;
+@checkboxSize: 15px;
+@checkboxVerticalAligth: bottom;
 
-.sonm-toggler {
-    --toggler-background-color: @color-violet;
+.sonm-checkbox {
+    --checkbox-background-color: @color-violet;
     background: transparent;
     display: inline-block;
     padding: 0;
@@ -37,39 +36,42 @@
     &__input + &__cradle {
         vertical-align: @toggleVerticalAligth;
         position: relative;
-        height: @togglerHeight;
-        width: @togglerHeight * 2;
-        border-radius: @togglerHeight / 2;
-        background-color: @color-border;
+        height: @checkboxSize;
+        width: @checkboxSize;
+        border-radius: 0;
+        border: 0;
+        background-color: var(--checkbox-background-color);
         transition: background-color 0.2s ease;
         display: inline-block;
         padding: 0;
         margin: 0;
 
         &:after {
-            height: @togglerHeight - 2 * @toggleBorder;
-            width: @togglerHeight - 2 * @toggleBorder;
-            border-radius: (@togglerHeight - 2 * @toggleBorder) / 2;
-            background: @color-white;
+            border-radius: 0;
+            border: 2px solid @color-white;
+            border-top-width: 0;
+            border-left-width: 0;
+            transform: rotateZ(40deg) scaleX(1);
+
+            box-sizing: border-box;
+            height: @checkboxSize * 0.9;
+            width: @checkboxSize * 0.4;
+
+            background: none;
             display: block;
             position: absolute;
             content: '';
             margin: 0;
-            top: @toggleBorder;
-            left: @toggleBorder;
+            top: @checkboxSize * -0.1;
+            left: @checkboxSize * 0.3;
             transition: transform 0.2s ease;
         }
     }
 
-    &__input:not(checked) + &__cradle:after {
-        transform: none;
-    }
-
     &__input:checked + &__cradle {
-        background-color: var(--toggler-background-color);
-
         &:after {
-            transform: translateX(@togglerHeight);
+            transform: rotateZ(40deg) scaleX(0);
+            border: 0;
         }
     }
 }
