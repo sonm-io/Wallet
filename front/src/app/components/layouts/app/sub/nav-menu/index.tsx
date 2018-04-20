@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import { DropdownInput } from '../../../../common/dropdown-input';
 
 interface INavMenuItems {
     title: string;
@@ -46,13 +47,13 @@ export class NavMenu extends React.PureComponent<INavMenuProps, any> {
                         })}
                         key={item.title}
                     >
-                        <a
+                        <DropdownInput
                             className="sonm-app-nav-menu__item-link"
                             href={item.url}
                             onClick={this.handleClick}
                         >
                             {item.title}
-                        </a>
+                        </DropdownInput>
                     </li>
                 ))}
             </ul>
