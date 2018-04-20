@@ -22,6 +22,7 @@ export interface ISendTransaction {
 }
 
 export interface ISendTransactionResult extends ISendTransaction {
+    action?: string;
     currencySymbol: string;
     decimalPointOffset: number;
     fee?: string;

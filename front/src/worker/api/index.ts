@@ -129,7 +129,9 @@ class Api {
             'account.getGasPrice': this.getGasPrice,
             'account.getCurrencyBalances': this.getCurrencyBalances,
             'account.getCurrencies': this.getCurrencies,
-            'account.send': this.send,
+            'account.send': this.transaction('send'),
+            'account.deposit': this.transaction('deposit'),
+            'account.withdraw': this.transaction('withdraw'),
             'account.list': this.getAccountList,
             'account.requestTestTokens': this.requestTestTokens,
             'account.getPrivateKey': this.getPrivateKey,
@@ -932,77 +934,103 @@ class Api {
         };
     };
 
-    public send = async (data: IPayload): Promise<IResponse> => {
-        const {
-            fromAddress,
-            toAddress,
-            currencyAddress,
-            password,
-            gasLimit,
-            timestamp,
-            amount,
-            gasPrice,
-        } = data;
+    public transaction = (action: string) => {
+        return async (data: IPayload): Promise<IResponse> => {
+            const {
+                fromAddress,
+                toAddress,
+                currencyAddress,
+                password,
+                gasLimit,
+                timestamp,
+                amount,
+                gasPrice,
+            } = data;
 
-        const validation = await this.checkAccountPassword(
-            password,
-            fromAddress,
-        );
+            const validation = await this.checkAccountPassword(
+                password,
+                fromAddress,
+            );
 
-        if (!validation.data) {
-            return validation;
-        }
+            if (!validation.data) {
+                return validation;
+            }
 
-        const client = await this.initAccount(fromAddress);
-        const transactions = this.storage.transactions;
-        const token = this.storage.tokens.find(
-            (item: t.ICurrencyInfo) => item.address === currencyAddress,
-        );
+            const client = await this.initAccount(fromAddress);
+            const transactions = this.storage.transactions;
+            const token = this.storage.tokens.find(
+                (item: t.ICurrencyInfo) => item.address === currencyAddress,
+            );
 
-        const transaction = {
-            timestamp,
-            fromAddress,
-            toAddress,
-            amount,
-            currencyAddress,
-            currencySymbol: token.symbol,
-            decimalPointOffset: token.decimals,
-            hash: PENDING_HASH,
-            fee: null,
-            status: 'pending',
-        };
-
-        transactions.unshift(transaction);
-
-        try {
-            const txResult =
-                currencyAddress === '0x'
-                    ? await client.account.sendEther(
-                          toAddress,
-                          amount,
-                          gasLimit,
-                          gasPrice,
-                      )
-                    : await client.account.sendTokens(
-                          toAddress,
-                          amount,
-                          currencyAddress,
-                          gasLimit,
-                          gasPrice,
-                      );
-
-            transaction.hash = await txResult.getHash();
-
-            await this.saveData();
-            await this.proceedTx(transaction, txResult);
-
-            return {
-                data: transaction,
+            const transaction = {
+                action,
+                timestamp,
+                fromAddress,
+                toAddress,
+                amount,
+                currencyAddress,
+                currencySymbol: token.symbol,
+                decimalPointOffset: token.decimals,
+                hash: PENDING_HASH,
+                fee: null,
+                status: 'pending',
             };
-        } catch (err) {
-            transactions.shift();
-            throw err;
-        }
+
+            transactions.unshift(transaction);
+
+            try {
+                const txResult =
+                    currencyAddress === '0x'
+                        ? await client.account.sendEther(
+                              toAddress,
+                              amount,
+                              gasLimit,
+                              gasPrice,
+                          )
+                        : await client.account.sendTokens(
+                              toAddress,
+                              amount,
+                              currencyAddress,
+                              gasLimit,
+                              gasPrice,
+                          );
+
+                transaction.hash = await txResult.getHash();
+
+                await this.saveData();
+                await this.proceedTx(transaction, txResult);
+
+                return {
+                    data: transaction,
+                };
+            } catch (err) {
+                transactions.shift();
+                throw err;
+            }
+        };
+    };
+
+    public getMethod = (method: string) => {
+        return async (data: IPayload): Promise<IResponse> => {
+            if (data.address && data.password) {
+                const validation = await this.checkAccountPassword(
+                    data.password,
+                    data.address,
+                );
+
+                if (!validation.data) {
+                    return validation;
+                }
+
+                const client = await this.initAccount(data.address);
+
+                return {
+                    data: await client.account[method](),
+                };
+            } else {
+                throw new Error('required_params_missed');
+            }
+        };
     };
 
     private async proceedTx(transaction: any, txResult: any) {
@@ -1016,15 +1044,25 @@ class Api {
     }
 
     public getTransactionList = async (data: IPayload): Promise<IResponse> => {
-        let { filters, limit, offset } = data;
+        let { filters, limit, offset, source } = data;
 
         filters = filters || {};
         limit = limit || 10;
         offset = offset || 0;
+        source = source || 'send';
 
         let filtered = [];
         for (const item of this.storage.transactions) {
+            const sidechainAction = item.fromAddress === item.toAddress;
+
             let ok = true;
+
+            // filter transaction by source
+            if (source === 'send' && sidechainAction) {
+                ok = false;
+            } else if (source === 'dw' && !sidechainAction) {
+                ok = false;
+            }
 
             if (Object.keys(filters).length) {
                 for (const type of ['fromAddress', 'currencyAddress']) {
@@ -1046,6 +1084,10 @@ class Api {
                 }
 
                 if (filters.timeEnd && item.timestamp > filters.timeEnd) {
+                    ok = false;
+                }
+
+                if (filters.operation && item.action !== filters.operation) {
                     ok = false;
                 }
             }

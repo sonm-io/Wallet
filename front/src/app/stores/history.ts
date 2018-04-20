@@ -12,6 +12,7 @@ import { OnlineStore } from './online-store';
 import { RootStore } from './';
 import { IHasLocalizator, ILocalizator } from 'app/localization';
 const { pending } = OnlineStore;
+import { TSourceMode } from './types';
 
 const Api = api.Api;
 
@@ -24,13 +25,14 @@ export interface ISendForm {
     currency: string;
 }
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 4;
 
 export class HistoryStore extends OnlineStore implements IHasLocalizator {
     @observable public errors: any[] = [];
 
     @observable.ref public currentPageTxHashList: string[] = [];
 
+    @observable public operation = '';
     @observable public curencyAddress = '';
     @observable public query = '';
     @observable public toAddress = '';
@@ -61,15 +63,20 @@ export class HistoryStore extends OnlineStore implements IHasLocalizator {
     protected isInitiated = false;
 
     protected rootStore: RootStore;
+    protected source: TSourceMode;
 
-    public constructor(rootStore: RootStore, localizator: ILocalizator) {
+    public constructor(
+        rootStore: RootStore,
+        localizator: ILocalizator,
+        source: TSourceMode,
+    ) {
         super({
             errorProcessor: rootStore.uiStore,
             localizator,
         });
-
         this.rootStore = rootStore;
         this.localizator = localizator;
+        this.source = source;
     }
 
     @pending
@@ -103,6 +110,7 @@ export class HistoryStore extends OnlineStore implements IHasLocalizator {
             timeStart: this.timeStart,
             timeEnd: this.timeEnd,
             query: this.query,
+            operation: this.operation,
         };
 
         return filter;
@@ -113,8 +121,10 @@ export class HistoryStore extends OnlineStore implements IHasLocalizator {
     public *update() {
         const filter = this.filterParams;
         const page = this.page;
+        const source = this.source;
 
         const { data: [txList, total] } = yield Api.getSendTransactionList(
+            source,
             filter,
             ITEMS_PER_PAGE,
             (page - 1) * ITEMS_PER_PAGE,
@@ -144,6 +154,18 @@ export class HistoryStore extends OnlineStore implements IHasLocalizator {
 
         if (currency !== this.curencyAddress || this.page !== 1) {
             this.curencyAddress = currency;
+            this.page = 1;
+
+            return true;
+        }
+
+        return false;
+    };
+
+    @action
+    public setFilterOperation = (operation: string) => {
+        if (operation !== this.operation || this.page !== 1) {
+            this.operation = operation;
             this.page = 1;
 
             return true;

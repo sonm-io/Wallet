@@ -134,12 +134,27 @@ export class Api {
         return ipcSend('account.send', { ...tx, password });
     }
 
+    public static async deposit(
+        tx: ISendTransaction,
+        password: string,
+    ): Promise<IResult<ISendTransactionResult>> {
+        return ipcSend('account.deposit', { ...tx, password });
+    }
+
+    public static async withdraw(
+        tx: ISendTransaction,
+        password: string,
+    ): Promise<IResult<ISendTransactionResult>> {
+        return ipcSend('account.withdraw', { ...tx, password });
+    }
+
     public static async getSendTransactionList(
+        source?: string,
         filters?: ITxListFilter,
         limit?: number,
         offset?: number,
     ): Promise<IResult<[ISendTransactionResult[], number]>> {
-        return ipcSend('transaction.list', { filters, limit, offset });
+        return ipcSend('transaction.list', { filters, limit, offset, source });
     }
 
     public static async getGasPrice(): Promise<IResult<string>> {

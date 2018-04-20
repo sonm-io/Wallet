@@ -1,7 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import {
-    Api,
     IAccountInfo,
     ISendTransactionResult,
     TransactionStatus,
@@ -12,6 +11,8 @@ import {
     TGasPricePriority,
     IPasswordCache,
     AlertType,
+    TSendMode,
+    IApiSend,
 } from './types';
 import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
@@ -44,8 +45,16 @@ Object.freeze(emptyForm);
 
 export class SendStore extends OnlineStore implements IHasLocalizator {
     protected rootStore: RootStore;
+    protected mode: TSendMode;
+    protected api: IApiSend;
+    protected disableToAddressValidation: boolean;
 
-    constructor(rootStore: RootStore, localizator: ILocalizator) {
+    constructor(
+        rootStore: RootStore,
+        localizator: ILocalizator,
+        api: IApiSend,
+        disableToAddressValidation: boolean = false,
+    ) {
         super({
             errorProcessor: rootStore.uiStore,
             localizator,
@@ -53,6 +62,8 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
         this.rootStore = rootStore;
         this.localizator = localizator;
+        this.disableToAddressValidation = disableToAddressValidation;
+        this.api = api;
     }
 
     @computed
@@ -79,7 +90,8 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     @computed
     public get isFormValid() {
         return (
-            this.validationToAddress.length === 0 &&
+            (this.disableToAddressValidation ||
+                this.validationToAddress.length === 0) &&
             this.validationGasPrice.length === 0 &&
             this.validationAmount.length === 0 &&
             this.validationGasLimit.length === 0
@@ -89,7 +101,8 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     @computed
     public get hasNecessaryValues() {
         return (
-            this.userInput.amountEther !== '' && this.userInput.toAddress !== ''
+            this.userInput.amountEther !== '' &&
+            (this.disableToAddressValidation || this.userInput.toAddress !== '')
         );
     }
 
@@ -98,7 +111,10 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         const result: string[] = [];
         const toAddress = this.userInput.toAddress;
 
-        if (this.isFieldTouched('toAddress')) {
+        if (
+            !this.disableToAddressValidation &&
+            this.isFieldTouched('toAddress')
+        ) {
             if (toAddress === '') {
                 result.push('Required field');
             } else if (toAddress === this.fromAddress) {
@@ -409,10 +425,10 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         ) {
             validationMessage = '';
         } else {
-            const { data: privateKey, validation } = yield Api.getPrivateKey(
-                password,
-                accountAddress,
-            );
+            const {
+                data: privateKey,
+                validation,
+            } = yield this.api.getPrivateKey(password, accountAddress);
 
             if (privateKey) {
                 this.passwordCache[accountAddress] = password;
@@ -445,7 +461,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         this.userInput.toAddress = '';
         this.userInput.amountEther = '';
 
-        const { data } = yield Api.send(tx, password);
+        const { data } = yield this.api.send(tx, password);
 
         const result = data as ISendTransactionResult;
 

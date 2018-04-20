@@ -7,7 +7,8 @@ import { SendConfirm } from 'app/components/layouts/send/sub/confirm';
 import { Account } from 'app/components/layouts/account';
 import { DepositWithdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
-import { DepositWithdrawConfirm } from 'app/components/layouts/deposit-withdraw/sub/confirm';
+import { DepositWithdrawHistory } from 'app/components/layouts/deposit-withdraw-history';
+
 import { rootStore } from 'app/stores';
 import * as React from 'react';
 import { navigate } from './navigate';
@@ -30,13 +31,12 @@ const navigateToHistory = (
     });
 };
 const navigateToSend = () => navigate({ path: '/send' });
-const navigateToDPSend = () => navigate({ path: '/deposit-withdraw' });
+const navigateToDeposit = () => navigate({ path: '/deposit' });
+const navigateToWithdraw = () => navigate({ path: '/withdraw' });
 const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
-const navigateToDPConfirmation = () =>
-    navigate({ path: '/deposit-withdraw/confirm' });
-const navigateToDPSuccess = () =>
-    navigate({ path: '/deposit-withdraw/success' });
+const navigateToDWSuccess = (action: string) =>
+    navigate({ path: `/${action}/success` });
 const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 
@@ -123,64 +123,6 @@ const routes = [
                 ],
             },
             {
-                path: '/deposit-withdraw',
-                action: async (ctx: IContext, params: IUrlParams) => {
-                    const initialAddress = (ctx.query as any).address;
-                    const initialCurrency =
-                        rootStore.mainStore.primaryTokenAddress;
-
-                    const next = await ctx.next();
-
-                    const content =
-                        next && next.content ? (
-                            next.content
-                        ) : (
-                            <DepositWithdraw
-                                onNotAvailable={navigateToMain}
-                                initialAddress={initialAddress}
-                                initialCurrency={initialCurrency}
-                                onRequireConfirmation={navigateToDPConfirmation}
-                            />
-                        );
-
-                    if (next && next.popup) {
-                        content.push(next.popup);
-                    }
-
-                    return {
-                        pathKey: '/deposit-withdraw',
-                        title: 'deposit-withdraw',
-                        content,
-                    };
-                },
-                children: [
-                    {
-                        path: '/confirm',
-                        action: (ctx: IContext) => ({
-                            title: 'Confirmation',
-                            content: (
-                                <DepositWithdrawConfirm
-                                    onBack={navigateToDPSend}
-                                    onSuccess={navigateToDPSuccess}
-                                />
-                            ),
-                        }),
-                    },
-                    {
-                        path: '/success',
-                        action: (ctx: IContext) => ({
-                            title: 'Success',
-                            content: (
-                                <DepositWithdrawSuccess
-                                    onClickHistory={navigateToHistory}
-                                    onClickSend={navigateToDPSend}
-                                />
-                            ),
-                        }),
-                    },
-                ],
-            },
-            {
                 path: '/history',
                 action: (ctx: IContext, params: IUrlParams) => {
                     const initialAddress = (ctx.query as any).address;
@@ -193,6 +135,21 @@ const routes = [
                             <History
                                 initialAddress={initialAddress}
                                 initialCurrency={initialCurrency}
+                            />
+                        ),
+                    };
+                },
+            },
+            {
+                path: '/deposit-withdraw-history',
+                action: (ctx: IContext, params: IUrlParams) => {
+                    return {
+                        pathKey: '/deposit-withdraw-history',
+                        title: 'Deposit&Withdraw history',
+                        content: (
+                            <DepositWithdrawHistory
+                                onClickDeposit={navigateToDeposit}
+                                onClickWithdraw={navigateToWithdraw}
                             />
                         ),
                     };
@@ -231,13 +188,71 @@ const routes = [
                     },
                 ],
             },
-            {
-                path: /.*/,
-                action: defaultAction,
-            },
         ],
     },
 ];
+
+for (const action of ['deposit', 'withdraw']) {
+    routes[0].children.push({
+        path: `/${action}`,
+        action: async (ctx: IContext, params: IUrlParams) => {
+            // FIX THIS THEN MENU WILL BE READY
+            //const initialAddress = (ctx.query as any).address || rootStore.mainStore.accountList[0].address;
+
+            const initialAddress = rootStore.mainStore.accountList[0].address;
+            const initialCurrency = rootStore.mainStore.primaryTokenAddress;
+
+            const next = await ctx.next();
+
+            const content =
+                next && next.content ? (
+                    next.content
+                ) : (
+                    <DepositWithdraw
+                        action={action}
+                        onNotAvailable={navigateToMain}
+                        initialAddress={initialAddress}
+                        initialCurrency={initialCurrency}
+                        onSuccess={() => navigateToDWSuccess(action)}
+                    />
+                );
+
+            if (next && next.popup) {
+                content.push(next.popup);
+            }
+
+            return {
+                pathKey: `/${action}`,
+                title: action,
+                content,
+            };
+        },
+        children: [
+            {
+                path: '/success',
+                action: (ctx: IContext) => ({
+                    title: 'Success',
+                    content: (
+                        <DepositWithdrawSuccess
+                            onClickHistory={navigateToHistory}
+                            onClickDeposit={navigateToDeposit}
+                            onClickWithdraw={navigateToWithdraw}
+                        />
+                    ),
+                }),
+            },
+        ],
+    });
+}
+
+routes[0].children.push({
+    path: '/.*/',
+    action: defaultAction,
+    children: [],
+});
+
+//
+// console.log(routes)
 
 export interface IUrlParams {
     [key: string]: string;

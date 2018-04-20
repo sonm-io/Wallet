@@ -9,11 +9,19 @@ import { Button } from 'app/components/common/button/index';
 import { observer } from 'mobx-react';
 import { rootStore } from 'app/stores/';
 import { Header } from 'app/components/common/header';
-
+import { SendStore } from 'app/stores/send';
 interface IProps {
     className?: string;
     onSuccess: () => void;
     onBack: () => void;
+    action: string;
+
+    // fromAddress?: string;
+    // fromName?: string;
+    // amount?: string;
+    // gasLimit?: string;
+    // gasPrice?: string;
+    // currency?: any;
 }
 
 @observer
@@ -24,23 +32,22 @@ export class DepositWithdrawConfirm extends React.Component<IProps, any> {
     };
 
     public handleConfrim = async (event: any) => {
-        const sendStore = rootStore.sendStore;
-        const historyStore = rootStore.historyStore;
+        const historyStore = rootStore.dwHistoryStore;
 
         event.preventDefault();
 
-        const password = event.target.password.value;
+        const password = this.state.password;
 
-        const isPasswordValid = await sendStore.checkSelectedAccountPassword(
+        const isPasswordValid = await this.store.checkSelectedAccountPassword(
             password,
         );
 
         if (isPasswordValid) {
-            (sendStore.confirmTransaction(password) as any).then(() =>
+            (this.store.confirmTransaction(password) as any).then(() =>
                 historyStore.update(),
             );
 
-            sendStore.resetUserInput();
+            this.store.resetUserInput();
 
             this.setState({ validationPassword: '' });
 
@@ -50,8 +57,14 @@ export class DepositWithdrawConfirm extends React.Component<IProps, any> {
         }
     };
 
+    protected get store(): SendStore {
+        return this.props.action === 'deposit'
+            ? rootStore.depositStore
+            : rootStore.withdrawStore;
+    }
+
     public handleCancel = () => {
-        rootStore.sendStore.resetServerValidation();
+        this.store.resetServerValidation();
 
         this.props.onBack();
     };
@@ -62,66 +75,103 @@ export class DepositWithdrawConfirm extends React.Component<IProps, any> {
 
     public render() {
         const mainStore = rootStore.mainStore;
-        const sendStore = rootStore.sendStore;
 
-        const accountAddress = sendStore.fromAddress;
-        const account = mainStore.accountMap.get(accountAddress);
-        const accountName = account ? account.name : '';
-        const currency = mainStore.currencyMap.get(sendStore.currencyAddress);
-        const amount = sendStore.amount;
-        const gasLimit = sendStore.gasLimit;
-        const gasPrice = sendStore.gasPriceGwei;
+        // const {
+        //     fromAddress,
+        //     fromName,
+        //     amount,
+        //     gasLimit,
+        //     gasPrice,
+        //     currency,
+        // } = this.props;
+
+        const fromAddress = this.store.fromAddress;
+        const account = mainStore.accountMap.get(fromAddress);
+        const fromName = account ? account.name : '';
+        const currency = mainStore.currencyMap.get(this.store.currencyAddress);
+        const amount = this.store.amount;
+        const gasLimit = this.store.gasLimit;
+        const gasPrice = this.store.gasPriceGwei;
 
         if (!currency) {
             return null;
         }
 
         return (
-            <div className={cn('sonm-send-confirm', this.props.className)}>
-                <Header className="sonm-send-confirm__header">
-                    Transfer confirmation
+            <div
+                className={cn(
+                    'sonm-deposit-withdraw-confirm',
+                    this.props.className,
+                )}
+            >
+                <Header className="sonm-deposit-withdraw-confirm__header">
+                    From account to account
                 </Header>
-                <section className="sonm-send-confirm__from-to">
-                    <div className="sonm-send-confirm__account">
+                <section className="sonm-deposit-withdraw-confirm__from-to">
+                    <div className="sonm-deposit-withdraw-confirm__account">
                         <IdentIcon
-                            address={accountAddress}
-                            className="sonm-send-confirm__account-blockies"
+                            address={fromAddress || ''}
+                            className="sonm-deposit-withdraw-confirm__account-blockies"
                         />
-                        <span className="sonm-send-confirm__account-name">
-                            {accountName}
+                        <span className="sonm-deposit-withdraw-confirm__account-name">
+                            {fromName}
                         </span>
-                        <span className="sonm-send-confirm__account-addr">
-                            {accountAddress}
+                        <span className="sonm-deposit-withdraw-confirm__account-addr">
+                            {fromAddress}
                         </span>
                     </div>
+                    <dl className="sonm-deposit-withdraw-confirm__values">
+                        <div className="sonm-deposit-withdraw-confirm__values-amount">
+                            <dt>Amount</dt>
+                            <dd>
+                                {amount} {currency.symbol}
+                            </dd>
+                        </div>
+                        <div className="sonm-deposit-withdraw-confirm__values-gas-limit">
+                            <dt>Gas limit</dt>
+                            <dd>{gasLimit}</dd>
+                        </div>
+                        <div className="sonm-deposit-withdraw-confirm__values-gas-price">
+                            <dt>Gas price</dt>
+                            <dd>{gasPrice} Gwei</dd>
+                        </div>
+                    </dl>
                 </section>
-                <dl className="sonm-send-confirm__values">
-                    <dt>Amount</dt>
-                    <dd>
-                        {amount} {currency.symbol}
-                    </dd>
-                    <dt>Gas limit</dt>
-                    <dd>{gasLimit}</dd>
-                    <dt>Gas price</dt>
-                    <dd>{gasPrice} Gwei</dd>
+                <dl className="sonm-deposit-withdraw-confirm__commission">
+                    <div className="sonm-deposit-withdraw-confirm__commission-grid">
+                        <div className="sonm-deposit-withdraw-confirm__commission-grid-left">
+                            <dt>You get</dt>
+                            <dd>
+                                {amount} {currency.symbol}
+                            </dd>
+                        </div>
+                        <div className="sonm-deposit-withdraw-confirm__commission-grid-right">
+                            <dt>SONM commission</dt>
+                            <dd>0</dd>
+                        </div>
+                    </div>
                 </dl>
-                <div className="sonm-send-confirm__password">
-                    <h2 className="sonm-send-confirm__password-header">
-                        Please enter account password
+                <div className="sonm-deposit-withdraw-confirm__password">
+                    <h2 className="sonm-deposit-withdraw-confirm__password-header">
+                        Confirm operation
                     </h2>
+                    <span className="sonm-deposit-withdraw-confirm__password-description">
+                        Please, enter password for this account to confirm
+                        operation
+                    </span>
                     <Form
                         onSubmit={this.handleConfrim}
-                        className="sonm-send-confirm__password-form"
+                        className="sonm-deposit-withdraw-confirm__password-form"
                     >
                         <FormField
                             label=""
-                            className="sonm-send-confirm__password-field"
+                            className="sonm-deposit-withdraw-confirm__password-field"
                             error={this.state.validationPassword}
                         >
                             <Input
                                 autoComplete="off"
                                 name="password"
-                                className="sonm-send-confirm__password-input"
+                                className="sonm-deposit-withdraw-confirm__password-input"
                                 prefix={
                                     <Icon
                                         type="lock"
@@ -134,25 +184,26 @@ export class DepositWithdrawConfirm extends React.Component<IProps, any> {
                                 onChange={this.handleChange}
                             />
                         </FormField>
-                        <div className="sonm-send-confirm__password-button-ct">
-                            <Button
-                                className="sonm-send-confirm__password-button"
-                                transparent
-                                type="button"
-                                onClick={this.handleCancel}
-                            >
-                                Back
-                            </Button>
-                            <Button
-                                disabled={mainStore.isOffline}
-                                className="sonm-send-confirm__password-button"
-                                type="submit"
-                                color="violet"
-                            >
-                                Send
-                            </Button>
-                        </div>
                     </Form>
+                </div>
+                <div className="sonm-deposit-withdraw-confirm__button-ct">
+                    <Button
+                        className="sonm-send-confirm__button"
+                        transparent
+                        type="button"
+                        onClick={this.handleCancel}
+                    >
+                        Back
+                    </Button>
+                    <Button
+                        disabled={mainStore.isOffline}
+                        className="sonm-deposit-withdraw-confirm__button"
+                        type="submit"
+                        color="violet"
+                        onClick={this.handleConfrim}
+                    >
+                        Deposit
+                    </Button>
                 </div>
             </div>
         );

@@ -1,22 +1,87 @@
-@import 'guide.less';
+@import 'sub/confirm/index.less';
 @import './antd.less';
 
-.sonm-deposit-withdraw-confirm {
+@sonm-send-item-margin: 20px;
+
+.sonm-send {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    &__header {
+        flex-grow: 0;
+    }
+
+    &__form {
+        flex-grow: 1;
+    }
+
+    & &__input {
+        width: 300px;
+    }
+
+    & &__row {
+        &-submit {
+            justify-content: flex-end;
+            align-items: flex-end;
+            flex-grow: 1;
+            padding: 0 30px 30px 0;
+        }
+
+        &-to-address {
+            justify-content: space-between;
+        }
+    }
+
+    & &__address-to {
+        &-icon {
+            margin: 0 0 0 @sonm-send-item-margin;
+        }
+
+        &-field {
+            flex: 1 1 0;
+            margin: 0;
+        }
+    }
+
+    & &__currency-select {
+        flex: 0 0 400px;
+        margin: 0 0 0 @sonm-send-item-margin;
+    }
+
+    & &__address-from-field {
+        flex: 1 1 100%;
+    }
+
+    & &__max-amount-btn {
+        margin: 0 0 0 5px;
+    }
+
+    & &__gas-price {
+        &-buttons {
+            margin: 0 0 0 @sonm-send-item-margin;
+        }
+
+        &-unit {
+            margin: 0 0 0 5px;
+        }
+    }
+}
+
+.sonm-deposit-withdraw {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 30px 1fr 80px;
+    grid-template-rows: 30px 100px 1fr 80px;
 
     &__header {
         grid-column: 1;
         grid-row: 1;
     }
 
-    &__from-to {
+    &__account {
         grid-column: 1;
         grid-row: 2;
-    }
 
-    &__account {
         display: grid;
         grid-template-columns: 100px min-content auto;
         grid-template-rows: 1fr 1fr;
@@ -45,10 +110,13 @@
     }
 
     &__values {
-        margin-top: 50px;
+        grid-column: 1;
+        grid-row: 3;
+
         display: grid;
-        grid-template-columns: 200px 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 1fr 1fr;
+        margin: 30px 0px 30px 0px;
 
         dt {
             color: @color-dark-gray;
@@ -57,9 +125,21 @@
         }
 
         &-amount {
-            grid-column: 1;
-            grid-row: 1;
-            margin-bottom: 20px;
+            &-input {
+                grid-column: 1 / span 2;
+                grid-row: 1;
+            }
+
+            &-maximum {
+                grid-column: 3;
+                grid-row: 1;
+                text-transform: uppercase;
+                text-align: right;
+                margin-top: 30px;
+                color: @color-green;
+                font-weight: bold;
+                font-size: 18px;
+            }
         }
 
         &-gas-limit {
@@ -71,12 +151,18 @@
             grid-column: 2;
             grid-row: 2;
         }
+
+        &-priority {
+            grid-column: 3;
+            grid-row: 2;
+            text-align: right;
+            margin-top: 25px;
+        }
     }
 
     &__commission {
         grid-column: 1;
-        grid-row: 3;
-        padding-right: 40px;
+        grid-row: 4;
 
         &-grid {
             display: grid;
@@ -134,11 +220,11 @@
     &__button-ct {
         padding-top: 20px;
         grid-column: 2;
-        grid-row: 3;
+        grid-row: 4;
         flex-grow: 1;
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        justify-content: flex-end;
         align-items: center;
     }
 

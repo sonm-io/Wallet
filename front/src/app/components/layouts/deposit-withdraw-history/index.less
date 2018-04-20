@@ -1,0 +1,81 @@
+@sonm-tx-list-cell-padding: 10px;
+
+.sonm-tx-list {
+    &__currency-col,
+    &__time-col,
+    &__amount-col {
+        white-space: nowrap;
+    }
+}
+
+.sonm-history {
+    &__select-operation {
+        width: ~'calc(20% - 10px)';
+        margin: 5px;
+    }
+
+    &__withdraw-button {
+        margin-left: 10px;
+        font-size: 12px !important;
+    }
+
+    &__deposit-button {
+        font-size: 12px !important;
+    }
+}
+
+.sonm-tx-list {
+    & &__cell {
+        &-dw-time {
+            width: 150px;
+        }
+
+        &-action {
+            text-transform: uppercase;
+            width: 100px;
+
+            &--withdraw {
+                background-color: @color-orange;
+                transform: rotate(180deg);
+            }
+
+            &--deposit {
+                background-color: @color-green;
+            }
+
+            &--deposit,
+            &--withdraw {
+                -webkit-mask: url(./icon-arrow-right.svg) no-repeat center;
+                -webkit-mask-size: 70%;
+                height: 10px;
+                width: 20px;
+                display: inline-block;
+            }
+
+            &--label {
+                margin-left: 10px;
+                display: inline-block;
+            }
+        }
+
+        &-tx-hash {
+            width: 300px;
+        }
+
+        &-fee {
+            width: 140px;
+        }
+
+        &-dw-amount {
+            width: 100px;
+
+            &-ct {
+                display: flex;
+                align-items: end;
+                flex-direction: column;
+                padding: 0;
+                margin: 0;
+            }
+        }
+    }
+}
