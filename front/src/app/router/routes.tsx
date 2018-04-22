@@ -203,7 +203,6 @@ for (const action of ['deposit', 'withdraw']) {
             const initialCurrency = rootStore.mainStore.primaryTokenAddress;
 
             const next = await ctx.next();
-
             const content =
                 next && next.content ? (
                     next.content
@@ -224,6 +223,9 @@ for (const action of ['deposit', 'withdraw']) {
             return {
                 pathKey: `/${action}`,
                 title: action,
+                props: {
+                    className: 'sonm-deposit-withdraw__confirmation',
+                },
                 content,
             };
         },

@@ -178,39 +178,22 @@ export class DepositWithdraw extends React.Component<IProps, any> {
         }
 
         const result = [];
-        if (this.state.isConfirmation) {
-            result.push(
-                <div className="sonm-deposit-withdraw__values-amount-input">
-                    <dt>Amount</dt>
-                    <dd>
-                        {this.store.userInput.amountEther} {currency.symbol}
-                    </dd>
-                </div>,
-                <div className="sonm-deposit-withdraw__values-gas-price">
-                    <dt>Gas price</dt>
-                    <dd>{this.store.userInput.gasPriceGwei} Gwei</dd>
-                </div>,
-                <div className="sonm-deposit-withdraw__values-gas-limit">
-                    <dt>Gas limit</dt>
-                    <dd>{this.store.userInput.gasLimit}</dd>
-                </div>,
-            );
-        } else {
-            result.push(
-                <FormRow className="sonm-deposit-withdraw__values-amount-input">
-                    <FormField
-                        error={this.store.validationAmount}
-                        label="Amount"
-                    >
-                        <Input
-                            className="sonm-send__input"
-                            onChange={this.handleChangeAmount}
-                            autoComplete="off"
-                            placeholder="Amount"
-                            value={this.store.userInput.amountEther}
-                        />
-                    </FormField>
-                </FormRow>,
+        result.push(
+            <FormRow className="sonm-deposit-withdraw__values-amount-input">
+                <FormField error={this.store.validationAmount} label="Amount">
+                    <Input
+                        className="sonm-send__input"
+                        onChange={this.handleChangeAmount}
+                        autoComplete="off"
+                        placeholder="Amount"
+                        value={this.store.userInput.amountEther}
+                        readOnly={this.state.isConfirmation}
+                    />
+                </FormField>
+            </FormRow>,
+            this.state.isConfirmation ? (
+                ''
+            ) : (
                 <Button
                     color="blue"
                     transparent
@@ -219,47 +202,53 @@ export class DepositWithdraw extends React.Component<IProps, any> {
                     className="sonm-deposit-withdraw__values-amount-maximum"
                 >
                     Add maximum
-                </Button>,
-                <FormRow className="sonm-deposit-withdraw__values-gas-price">
-                    <FormField
-                        label="Gas price"
-                        error={this.store.validationGasPrice}
-                    >
-                        <Input
-                            className="sonm-send__input"
-                            value={this.store.userInput.gasPriceGwei}
-                            onChange={this.handleChangeGasPrice}
-                            autoComplete="off"
-                            placeholder={this.store.gasPriceGwei}
-                        />
-                    </FormField>
+                </Button>
+            ),
+            <FormRow className="sonm-deposit-withdraw__values-gas-price">
+                <FormField
+                    label="Gas price"
+                    error={this.store.validationGasPrice}
+                >
+                    <Input
+                        className="sonm-send__input"
+                        value={this.store.userInput.gasPriceGwei}
+                        onChange={this.handleChangeGasPrice}
+                        autoComplete="off"
+                        placeholder={this.store.gasPriceGwei}
+                        readOnly={this.state.isConfirmation}
+                    />
+                </FormField>
 
-                    <span className="sonm-send__gas-price-unit">Gwei</span>
-                </FormRow>,
+                <span className="sonm-send__gas-price-unit">Gwei</span>
+            </FormRow>,
+            this.state.isConfirmation ? (
+                ''
+            ) : (
                 <PriorityInput
                     className="sonm-deposit-withdraw__values-priority"
                     valueList={['low', 'normal', 'high']}
                     value={this.store.priority}
                     onChange={this.handleChangePriority}
-                />,
-                <div className="sonm-deposit-withdraw-confirm__values-gas-limit">
-                    <FormRow className="sonm-deposit-withdraw">
-                        <FormField
-                            label="Gas limit"
-                            error={this.store.validationGasLimit}
-                        >
-                            <Input
-                                className="sonm-send__input"
-                                value={this.store.userInput.gasLimit}
-                                onChange={this.handleChangeGasLimit}
-                                autoComplete="off"
-                                placeholder={this.store.gasLimit}
-                            />
-                        </FormField>
-                    </FormRow>
-                </div>,
-            );
-        }
+                />
+            ),
+            <div className="sonm-deposit-withdraw-confirm__values-gas-limit">
+                <FormRow className="sonm-deposit-withdraw">
+                    <FormField
+                        label="Gas limit"
+                        error={this.store.validationGasLimit}
+                    >
+                        <Input
+                            className="sonm-send__input"
+                            value={this.store.userInput.gasLimit}
+                            onChange={this.handleChangeGasLimit}
+                            autoComplete="off"
+                            placeholder={this.store.gasLimit}
+                            readOnly={this.state.isConfirmation}
+                        />
+                    </FormField>
+                </FormRow>
+            </div>,
+        );
 
         return <div className="sonm-deposit-withdraw__values">{result}</div>;
     }
