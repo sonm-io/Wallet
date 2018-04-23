@@ -9,7 +9,10 @@ import {
     ITxListFilter,
     ISettings,
     IWalletListItem,
+    IProfileListResult,
 } from './types';
+
+import { profileListResult } from './mock';
 
 export * from './types';
 
@@ -188,6 +191,14 @@ export class Api {
         IResult<ICurrencyInfo[]>
     > {
         return ipcSend('getPresetTokenList');
+    }
+
+    public static getProfileList(): Promise<IResult<IProfileListResult>> {
+        return new Promise(done => {
+            setTimeout(() => {
+                done(profileListResult);
+            }, 100);
+        });
     }
 }
 

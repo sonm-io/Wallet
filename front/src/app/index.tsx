@@ -39,7 +39,6 @@ async function handleLogin(wallet: IWalletListItem) {
         rootStore.dwHistoryStore.init(),
     ]);
 
-    history.replace('/accounts');
     renderByPath((history as any).location);
 }
 

@@ -10,7 +10,10 @@ import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/
 import { DepositWithdrawHistory } from 'app/components/layouts/deposit-withdraw-history';
 
 import { rootStore } from 'app/stores';
+import { Profile } from 'app/components/layouts/profile';
+import { ProfileList } from 'app/components/layouts/profile-list';
 import * as React from 'react';
+
 import { navigate } from './navigate';
 
 let defaultAction;
@@ -35,8 +38,6 @@ const navigateToDeposit = () => navigate({ path: '/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/withdraw' });
 const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
-const navigateToDWSuccess = (action: string) =>
-    navigate({ path: `/${action}/success` });
 const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 
@@ -188,6 +189,23 @@ const routes = [
                     },
                 ],
             },
+            {
+                path: '/profile',
+                action: (ctx: IContext) => ({
+                    title: 'Profile',
+                    content: <Profile />,
+                }),
+            },
+            {
+                path: '/profile-list',
+                action: (ctx: IContext, params: IUrlParams) => {
+                    return {
+                        pathKey: '/profile-list',
+                        title: 'Profiles',
+                        content: <ProfileList />,
+                    };
+                },
+            },
         ],
     },
 ];
@@ -212,7 +230,7 @@ for (const action of ['deposit', 'withdraw']) {
                         onNotAvailable={navigateToMain}
                         initialAddress={initialAddress}
                         initialCurrency={initialCurrency}
-                        onSuccess={() => navigateToDWSuccess(action)}
+                        onSuccess={() => navigateToSuccess()}
                     />
                 );
 
@@ -252,9 +270,6 @@ routes[0].children.push({
     action: defaultAction,
     children: [],
 });
-
-//
-// console.log(routes)
 
 export interface IUrlParams {
     [key: string]: string;

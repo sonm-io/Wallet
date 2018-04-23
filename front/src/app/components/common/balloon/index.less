@@ -1,0 +1,65 @@
+@import 'guide.less';
+
+.sonm-balloon {
+    margin: 0;
+    padding: 7px 0;
+    min-width: 1px;
+    min-height: 1px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+    border: 1px solid @color-border;
+    border-radius: 3px;
+    background: @color-white;
+    position: absolute;
+    box-sizing: border-box;
+
+    &:before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        bottom: initial;
+        right: initial;
+        background: @color-white;
+        border: 1px solid @color-border;
+        transform: translate(-50%, -50%) rotateZ(45deg);
+    }
+
+    &--bottom {
+        transform: translate(-50%, 9px);
+        top: 100%;
+        left: 50%;
+
+        &:before {
+            top: 0;
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+        }
+    }
+
+    &--right {
+        transform: translate(9px, -50%);
+        top: 50%;
+        left: 100%;
+
+        &:before {
+            left: 0;
+            border-top-color: transparent;
+            border-right-color: transparent;
+        }
+    }
+
+    &--left {
+        transform: translate(-100%, -50%);
+        top: 50%;
+        left: -9px;
+
+        &:before {
+            left: 100%;
+            border-bottom-color: transparent;
+            border-left-color: transparent;
+        }
+    }
+}

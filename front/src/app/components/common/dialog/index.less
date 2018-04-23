@@ -1,4 +1,6 @@
 @import 'guide.less';
+@dialogInnerMargin: 10px;
+@dialogInnerMarginX2: @dialogInnerMargin * 2;
 
 .sonm-popup {
     padding: 0;
@@ -30,8 +32,7 @@
         justify-content: center;
         width: 100%;
         min-height: 100vh;
-
-        padding: 10px;
+        padding: @dialogInnerMargin;
         margin: 0;
         border: 0;
     }
@@ -55,6 +56,10 @@
     &__inner {
         margin: 0;
         padding: 40px;
+
+        max-width: ~'calc(100vw - @{dialogInnerMarginX2})';
+        max-height: ~'calc(100vh - @{dialogInnerMarginX2})';
+        overflow: auto;
 
         opacity: 1;
         animation: inner-fade-in 0.25s ease;

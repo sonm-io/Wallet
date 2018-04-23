@@ -1,6 +1,6 @@
 calendar:
 
-    <Calendar value={Date.now() + 24*60*60*1000} name="1" onChange={e => console.log(JSON.stringify(e))}/>
+    <Calendar value={new Date()} name="1" onChange={e => console.log(JSON.stringify(e))}/>
 
 calendar:
 

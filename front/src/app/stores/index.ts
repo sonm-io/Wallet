@@ -1,5 +1,5 @@
 import { useStrict } from 'mobx';
-
+import { IProfileBrief } from 'app/api/types';
 import { HistoryStore } from './history';
 import { MainStore } from './main';
 import { SendStore } from './send';
@@ -11,6 +11,8 @@ import {
     ILocalizator,
     IHasLocalizator,
 } from 'app/localization';
+import { IListStore } from './list-store-factory';
+import { ProfileList } from './profile-list';
 
 import { Api } from 'app/api';
 
@@ -25,6 +27,7 @@ export class RootStore implements IHasLocalizator {
     public readonly withdrawStore: SendStore;
     public readonly uiStore: UiStore;
     public readonly addTokenStore: AddTokenStore;
+    public readonly profileListStore: IListStore<IProfileBrief>;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -63,6 +66,10 @@ export class RootStore implements IHasLocalizator {
         );
 
         this.addTokenStore = new AddTokenStore(this, this.localizator);
+        this.profileListStore = new ProfileList({
+            errorProcessor: this.uiStore,
+            localizator: this.localizator,
+        });
     }
 
     public get isPending() {
