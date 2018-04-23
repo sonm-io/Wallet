@@ -1,0 +1,50 @@
+@import 'guide.less';
+
+.sonm-nav-menu {
+    background: @color-brand-bg;
+    display: inline-block;
+
+    &__top-item {
+        display: inline-block;
+        vertical-align: top;
+        padding: 0;
+        margin: 0;
+        height: 50px;
+        background: transparent;
+        position: relative;
+        overflow: visible;
+
+        &--active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        &--disabled {
+        }
+    }
+
+    & &__top-item-button {
+        height: 100%;
+        -webkit-appearance: none;
+        outline: none;
+        border: none;
+
+        &:active,
+        &:focus {
+            outline: none;
+        }
+    }
+
+    &__sub-item {
+        display: block;
+    }
+
+    &__popup {
+        margin: 0;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+        left: 0;
+        top: 100%;
+    }
+}
