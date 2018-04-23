@@ -5,16 +5,14 @@ import { History } from 'app/components/layouts/history';
 import { SendSuccess } from 'app/components/layouts/send/sub/success';
 import { SendConfirm } from 'app/components/layouts/send/sub/confirm';
 import { Account } from 'app/components/layouts/account';
+import { ProfileList } from 'app/components/layouts/profile-list';
 import { DepositWithdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
 import { DepositWithdrawHistory } from 'app/components/layouts/deposit-withdraw-history';
 
-import { rootStore } from 'app/stores';
-import { Profile } from 'app/components/layouts/profile';
-import { ProfileList } from 'app/components/layouts/profile-list';
 import * as React from 'react';
-
 import { navigate } from './navigate';
+import { rootStore } from 'app/stores';
 
 let defaultAction;
 
@@ -38,6 +36,11 @@ const navigateToDeposit = () => navigate({ path: '/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/withdraw' });
 const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
+const navigateToDWSuccess = (action: string) =>
+    navigate({ path: `/${action}/success` });
+const navigateToDWConfirm = (action: string) =>
+    navigate({ path: `/${action}/confirm` });
+const navigateToDW = (action: string) => navigate({ path: `/${action}` });
 const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 
@@ -190,13 +193,6 @@ const routes = [
                 ],
             },
             {
-                path: '/profile',
-                action: (ctx: IContext) => ({
-                    title: 'Profile',
-                    content: <Profile />,
-                }),
-            },
-            {
                 path: '/profile-list',
                 action: (ctx: IContext, params: IUrlParams) => {
                     return {
@@ -227,12 +223,17 @@ for (const action of ['deposit', 'withdraw']) {
                 ) : (
                     <DepositWithdraw
                         action={action}
+                        isConfirmation={false}
                         onNotAvailable={navigateToMain}
                         initialAddress={initialAddress}
                         initialCurrency={initialCurrency}
-                        onSuccess={() => navigateToSuccess()}
+                        onSuccess={() => navigateToDWSuccess(action)}
+                        onConfirm={() => navigateToDWConfirm(action)}
+                        onBack={() => navigateToDW(action)}
                     />
                 );
+
+            const props = next && next.props ? next.props : null;
 
             if (next && next.popup) {
                 content.push(next.popup);
@@ -241,13 +242,39 @@ for (const action of ['deposit', 'withdraw']) {
             return {
                 pathKey: `/${action}`,
                 title: action,
-                props: {
-                    className: 'sonm-deposit-withdraw__confirmation',
-                },
                 content,
+                props,
             };
         },
         children: [
+            {
+                path: `/confirm`,
+                action: (ctx: IContext) => {
+                    const initialAddress =
+                        rootStore.mainStore.accountList[0].address;
+                    const initialCurrency =
+                        rootStore.mainStore.primaryTokenAddress;
+
+                    return {
+                        title: 'Confirm',
+                        props: {
+                            className: 'sonm-deposit-withdraw__confirmation',
+                        },
+                        content: (
+                            <DepositWithdraw
+                                action={action}
+                                isConfirmation={true}
+                                onNotAvailable={navigateToMain}
+                                initialAddress={initialAddress}
+                                initialCurrency={initialCurrency}
+                                onSuccess={() => navigateToDWSuccess(action)}
+                                onConfirm={() => navigateToDWConfirm(action)}
+                                onBack={() => navigateToDW(action)}
+                            />
+                        ),
+                    };
+                },
+            },
             {
                 path: '/success',
                 action: (ctx: IContext) => ({
@@ -270,6 +297,9 @@ routes[0].children.push({
     action: defaultAction,
     children: [],
 });
+
+//
+// console.log(routes)
 
 export interface IUrlParams {
     [key: string]: string;

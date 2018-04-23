@@ -160,7 +160,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         const result: string[] = [];
         const amount = this.userInput.amountEther;
 
-        debugger;
+        //debugger;
 
         if (this.isFieldTouched('amountEther')) {
             if (amount === '') {
