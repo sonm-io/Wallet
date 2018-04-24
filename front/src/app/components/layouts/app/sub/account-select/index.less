@@ -5,13 +5,8 @@
 @navMenuTextColor: @color-white;
 @navMenuTextColorActive: @color-green;
 
-.sonm-nav-menu-dropdown {
+.sonm-market-account {
     --color-nav-menu-selection: @navMenuTextColorActive;
-
-    padding: 0;
-    background: transparent;
-    position: relative;
-    overflow: visible;
 
     &--expanded {
     }
@@ -40,14 +35,11 @@
         left: 0;
         top: 100%;
     }
-}
 
-.sonm-nav-menu {
-    background: @navMenuBgColor;
-    display: inline-block;
-    position: relative;
-
-    &__item {
+    &__wrapper {
+        background: @navMenuBgColor;
+        display: inline-block;
+        position: relative;
         display: inline-block;
         vertical-align: top;
         margin: 0;
@@ -55,28 +47,10 @@
         color: @navMenuTextColor;
         background: none transparent;
         border: none;
-
-        &--opened {
-            background-color: @navMenuBgColorActive;
-        }
-
-        &--active {
-            background-color: @navMenuBgColorActive;
-            color: var(--color-nav-menu-selection);
-
-            &:after {
-                content: '';
-                display: block;
-                left: 0;
-                right: 0;
-                position: absolute;
-                bottom: 0px;
-                height: 4px;
-                margin: 0;
-                padding: 0;
-                background-color: var(--color-nav-menu-selection);
-            }
-        }
+        padding: 0;
+        background: transparent;
+        position: relative;
+        overflow: visible;
     }
 
     &__sub-item {

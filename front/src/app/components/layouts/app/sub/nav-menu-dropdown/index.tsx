@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { DropdownInput } from '../../../../common/dropdown-input';
+import { DropdownInput } from 'app/components/common/dropdown-input';
 
 type TItem<T> = [string, string, T[] | undefined]; // Title, Path. children
 
@@ -25,9 +25,11 @@ export class NavMenuDropdown extends React.PureComponent<INavMenuProps, any> {
             : Array.prototype;
     }
 
-    protected handleClickTopMenu = () => {};
+    protected handleClickUrl = (event: any) => {
+        const path = event.target.value;
 
-    protected handleClickUrl = () => {};
+        this.props.onChange(path);
+    };
 
     protected handleCloseTopMenu = () => {
         this.setState({ opened: '' });
@@ -60,10 +62,12 @@ export class NavMenuDropdown extends React.PureComponent<INavMenuProps, any> {
 
                     return (
                         <DropdownInput
-                            className={cn('sonm-nav-menu__top-item', {
-                                'sonm-nav-menu__top-item--active':
+                            className={cn('sonm-nav-menu__item', {
+                                'sonm-nav-menu__item--opened':
+                                    this.state.opened === title,
+                                'sonm-nav-menu__item--active':
                                     this.props.url === path,
-                                'sonm-nav-menu__top-item--disabled':
+                                'sonm-nav-menu__item--disabled':
                                     disabledUrlList.indexOf(path) !== -1,
                             })}
                             key={title}
@@ -72,21 +76,20 @@ export class NavMenuDropdown extends React.PureComponent<INavMenuProps, any> {
                             onButtonClick={this.getBindedTopMenuHandler(title)}
                             onRequireClose={this.handleCloseTopMenu}
                             dropdownCssClasses={{
-                                root: '',
-                                button: 'sonm-nav-menu__top-item-button',
-                                popup: 'sonm-nav-menu__popup',
-                                expanded: 'sonm-nav-menu--expanded',
+                                root: 'sonm-nav-menu-dropdown',
+                                button: 'sonm-nav-menu-dropdown__button',
+                                popup: 'sonm-nav-menu-dropdown__popup',
+                                expanded: 'sonm-nav-menu-dropdown--expanded',
                             }}
                         >
                             {children &&
                                 children.map((subItem: TItem<undefined>) => {
                                     const [subTitle, subPath] = subItem;
-                                    const href = `/${subPath}`;
 
                                     return (
                                         <button
                                             key={subPath}
-                                            value={href}
+                                            value={subPath}
                                             className="sonm-nav-menu__sub-item"
                                             onClick={this.handleClickUrl}
                                         >

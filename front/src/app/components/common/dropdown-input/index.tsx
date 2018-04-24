@@ -29,7 +29,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     };
 
     public static propTypes: TJsPropTypes<IDropdownAllProps> = {
-        valueString: propTypes.string,
+        valueString: propTypes.node,
         isExpanded: propTypes.bool,
         onButtonClick: propTypes.func,
         onRequireClose: propTypes.func,

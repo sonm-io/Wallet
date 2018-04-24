@@ -46,7 +46,7 @@ export class AccountBigSelect extends React.PureComponent<
                     if (hasEmptyOption) {
                         options.push(
                             <Option key="empty" value="">
-                                <div className="sonm-account-big-select__option-emty">
+                                <div className="sonm-account-big-select__option-empty">
                                     All accounts
                                 </div>
                             </Option>,
