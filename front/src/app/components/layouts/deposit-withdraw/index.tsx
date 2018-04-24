@@ -18,7 +18,10 @@ interface IProps {
     initialAddress: string;
     onSuccess: () => void;
     onNotAvailable: () => void;
+    onConfirm: () => void;
+    onBack: () => void;
     action: string;
+    isConfirmation: boolean;
 }
 
 type PriorityInput = new () => ButtonGroup<string>;
@@ -28,7 +31,6 @@ const PriorityInput = ButtonGroup as PriorityInput;
 export class DepositWithdraw extends React.Component<IProps, any> {
     public state = {
         validationPassword: '',
-        isConfirmation: false,
     };
 
     public componentWillMount() {
@@ -57,18 +59,12 @@ export class DepositWithdraw extends React.Component<IProps, any> {
 
     protected handleSubmit = (event: any) => {
         event.preventDefault();
-
-        if (this.store.isFormValid) {
-            this.setState({ isConfirmation: true });
-        }
+        this.props.onConfirm();
     };
 
     public handleCancel = () => {
-        this.store.resetServerValidation();
-
-        if (this.store.isFormValid) {
-            this.setState({ isConfirmation: false });
-        }
+        //this.store.resetServerValidation();
+        this.props.onBack();
     };
 
     protected handleChangeFormInput(value: Partial<ISendFormValues>) {
@@ -187,11 +183,11 @@ export class DepositWithdraw extends React.Component<IProps, any> {
                         autoComplete="off"
                         placeholder="Amount"
                         value={this.store.userInput.amountEther}
-                        readOnly={this.state.isConfirmation}
+                        readOnly={this.props.isConfirmation}
                     />
                 </FormField>
             </FormRow>,
-            this.state.isConfirmation ? (
+            this.props.isConfirmation ? (
                 ''
             ) : (
                 <Button
@@ -215,13 +211,13 @@ export class DepositWithdraw extends React.Component<IProps, any> {
                         onChange={this.handleChangeGasPrice}
                         autoComplete="off"
                         placeholder={this.store.gasPriceGwei}
-                        readOnly={this.state.isConfirmation}
+                        readOnly={this.props.isConfirmation}
                     />
                 </FormField>
 
                 <span className="sonm-send__gas-price-unit">Gwei</span>
             </FormRow>,
-            this.state.isConfirmation ? (
+            this.props.isConfirmation ? (
                 ''
             ) : (
                 <PriorityInput
@@ -243,7 +239,7 @@ export class DepositWithdraw extends React.Component<IProps, any> {
                             onChange={this.handleChangeGasLimit}
                             autoComplete="off"
                             placeholder={this.store.gasLimit}
-                            readOnly={this.state.isConfirmation}
+                            readOnly={this.props.isConfirmation}
                         />
                     </FormField>
                 </FormRow>
@@ -280,7 +276,7 @@ export class DepositWithdraw extends React.Component<IProps, any> {
     }
 
     public renderPasswordConfirmation() {
-        return !this.state.isConfirmation ? (
+        return !this.props.isConfirmation ? (
             ''
         ) : (
             <div className="sonm-deposit-withdraw-confirm__password">
@@ -315,7 +311,7 @@ export class DepositWithdraw extends React.Component<IProps, any> {
     }
 
     public renderGasLimit() {
-        const result = !this.state.isConfirmation ? (
+        const result = !this.props.isConfirmation ? (
             <FormRow className="sonm-deposit-withdraw">
                 <FormField
                     label="Gas limit"
@@ -345,7 +341,7 @@ export class DepositWithdraw extends React.Component<IProps, any> {
     }
 
     public renderButtons() {
-        const buttons = !this.state.isConfirmation ? (
+        const buttons = !this.props.isConfirmation ? (
             <Button
                 onClick={this.handleSubmit}
                 type="submit"

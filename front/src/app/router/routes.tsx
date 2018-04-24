@@ -39,6 +39,9 @@ const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
 const navigateToDWSuccess = (action: string) =>
     navigate({ path: `/${action}/success` });
+const navigateToDWConfirm = (action: string) =>
+    navigate({ path: `/${action}/confirm` });
+const navigateToDW = (action: string) => navigate({ path: `/${action}` });
 const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 
@@ -228,12 +231,17 @@ for (const action of ['deposit', 'withdraw']) {
                 ) : (
                     <DepositWithdraw
                         action={action}
+                        isConfirmation={false}
                         onNotAvailable={navigateToMain}
                         initialAddress={initialAddress}
                         initialCurrency={initialCurrency}
                         onSuccess={() => navigateToDWSuccess(action)}
+                        onConfirm={() => navigateToDWConfirm(action)}
+                        onBack={() => navigateToDW(action)}
                     />
                 );
+
+            const props = next && next.props ? next.props : null;
 
             if (next && next.popup) {
                 content.push(next.popup);
@@ -242,13 +250,39 @@ for (const action of ['deposit', 'withdraw']) {
             return {
                 pathKey: `/${action}`,
                 title: action,
-                props: {
-                    className: 'sonm-deposit-withdraw__confirmation',
-                },
                 content,
+                props,
             };
         },
         children: [
+            {
+                path: `/confirm`,
+                action: (ctx: IContext) => {
+                    const initialAddress =
+                        rootStore.mainStore.accountList[0].address;
+                    const initialCurrency =
+                        rootStore.mainStore.primaryTokenAddress;
+
+                    return {
+                        title: 'Confirm',
+                        props: {
+                            className: 'sonm-deposit-withdraw__confirmation',
+                        },
+                        content: (
+                            <DepositWithdraw
+                                action={action}
+                                isConfirmation={true}
+                                onNotAvailable={navigateToMain}
+                                initialAddress={initialAddress}
+                                initialCurrency={initialCurrency}
+                                onSuccess={() => navigateToDWSuccess(action)}
+                                onConfirm={() => navigateToDWConfirm(action)}
+                                onBack={() => navigateToDW(action)}
+                            />
+                        ),
+                    };
+                },
+            },
             {
                 path: '/success',
                 action: (ctx: IContext) => ({
