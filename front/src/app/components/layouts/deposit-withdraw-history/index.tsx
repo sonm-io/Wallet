@@ -49,7 +49,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
                 const cls = `sonm-dw-tx-list__cell-action--${record.action}`;
 
                 return (
-                    <div>
+                    <React.Fragment>
                         <Icon
                             i="ArrowRight"
                             className={cn('sonm-dw-tx-list__cell-action', cls)}
@@ -57,7 +57,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
                         <div className="sonm-dw-tx-list__cell-action--label">
                             {record.action}
                         </div>
-                    </div>
+                    </React.Fragment>
                 );
             },
         },
