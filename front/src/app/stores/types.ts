@@ -79,3 +79,9 @@ export interface IApiSend {
     getPrivateKey: (password: string, accountAddress: string) => void;
     send: (tx: ISendTransaction, password: string) => void;
 }
+
+export enum Status {
+    PENDING,
+    ERROR,
+    DONE,
+}

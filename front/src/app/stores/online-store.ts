@@ -12,29 +12,18 @@ interface ILocalizator {
     getMessageText: (code: string) => string;
 }
 
-interface IOnlineStore {
-    errorProcessor?: IErrorProcessor;
-    localizator?: ILocalizator;
+interface IOnlineStoreServices {
+    errorProcessor: IErrorProcessor;
+    localizator: ILocalizator;
 }
 
 // TODO use delegating instead inherit
 export class OnlineStore {
-    constructor(args: IOnlineStore) {
-        if (args.errorProcessor) {
-            this._errorProcessor = args.errorProcessor;
-        }
-        if (args.localizator) {
-            this._localizator = args.localizator;
-        }
+    constructor(params: IOnlineStoreServices) {
+        this.services = { ...params };
     }
 
-    public readonly _errorProcessor: IErrorProcessor = {
-        processError: (e: Error) => console.error(e),
-    };
-
-    public readonly _localizator: ILocalizator = {
-        getMessageText: (x: string) => x,
-    };
+    private services: IOnlineStoreServices;
 
     @asyncAction
     protected *goOffline() {
@@ -95,7 +84,7 @@ export class OnlineStore {
                 },
             );
         } else {
-            this._errorProcessor.processError(e);
+            this.services.errorProcessor.processError(e);
         }
     }
 
@@ -141,7 +130,9 @@ export class OnlineStore {
                 store.handleError(
                     new WalletApiError(
                         errorStringCode,
-                        store._localizator.getMessageText(errorStringCode),
+                        store.services.localizator.getMessageText(
+                            errorStringCode,
+                        ),
                         store,
                         descriptor.value,
                         args,

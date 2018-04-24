@@ -16,6 +16,7 @@ export interface IDropdownRequredInputProps {
 export interface IDropdownOptionalInputProps {
     className: string;
     dropdownCssClasses: IDropdownCssClasses;
+    hasBalloon: boolean;
 }
 
 export type IDropdownAllProps = IDropdownRequredInputProps &
