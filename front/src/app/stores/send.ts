@@ -11,7 +11,6 @@ import {
     TGasPricePriority,
     IPasswordCache,
     AlertType,
-    TSendMode,
     IApiSend,
 } from './types';
 import { OnlineStore } from './online-store';
@@ -45,7 +44,6 @@ Object.freeze(emptyForm);
 
 export class SendStore extends OnlineStore implements IHasLocalizator {
     protected rootStore: RootStore;
-    protected mode: TSendMode;
     protected api: IApiSend;
     protected disableToAddressValidation: boolean;
 

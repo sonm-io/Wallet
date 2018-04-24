@@ -12,7 +12,7 @@ import { OnlineStore } from './online-store';
 import { RootStore } from './';
 import { IHasLocalizator, ILocalizator } from 'app/localization';
 const { pending } = OnlineStore;
-import { TSourceMode } from './types';
+import { THistorySourceMode } from './types';
 
 const Api = api.Api;
 
@@ -63,12 +63,12 @@ export class HistoryStore extends OnlineStore implements IHasLocalizator {
     protected isInitiated = false;
 
     protected rootStore: RootStore;
-    protected source: TSourceMode;
+    protected source: THistorySourceMode;
 
     public constructor(
         rootStore: RootStore,
         localizator: ILocalizator,
-        source: TSourceMode,
+        source: THistorySourceMode,
     ) {
         super({
             errorProcessor: rootStore.uiStore,

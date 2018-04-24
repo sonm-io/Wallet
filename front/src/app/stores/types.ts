@@ -66,13 +66,9 @@ export interface IAlert {
     message: string;
 }
 
-export type TSourceMode = 'send' | 'dw';
-export type TSendMode = 'send' | 'deposit' | 'withdraw';
-export type TDepositWithdrawMode = 'deposit' | 'withdraw';
-
-export enum EDepositWithdrawMode {
-    deposit = 'deposit',
-    withdraw = 'withdraw',
+export enum THistorySourceMode {
+    wallet = 'wallet',
+    market = 'market',
 }
 
 export interface IApiSend {

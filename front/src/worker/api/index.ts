@@ -5,6 +5,8 @@ import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
 import * as t from 'app/api/types';
 
+//import { THistorySourceMode } from 'app/stores/types';
+
 import { migrate } from '../migrations';
 
 const { createSonmFactory, utils } = sonmApi;
@@ -1049,7 +1051,7 @@ class Api {
         filters = filters || {};
         limit = limit || 10;
         offset = offset || 0;
-        source = source || 'send';
+        source = source || 'wallet';
 
         let filtered = [];
         for (const item of this.storage.transactions) {
@@ -1058,9 +1060,9 @@ class Api {
             let ok = true;
 
             // filter transaction by source
-            if (source === 'send' && sidechainAction) {
+            if (source === 'wallet' && sidechainAction) {
                 ok = false;
-            } else if (source === 'dw' && !sidechainAction) {
+            } else if (source === 'market' && !sidechainAction) {
                 ok = false;
             }
 

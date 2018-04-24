@@ -10,11 +10,9 @@ interface IProps {
 }
 
 export class DepositWithdrawSuccess extends React.PureComponent<IProps, any> {
-    // protected handleClickHistory = this.props ? this.props.onClickHistory.bind(
-    //     undefined,
-    //     'all',
-    //     'all',
-    // ) : null;
+    protected handleClickHistory = this.props
+        ? this.props.onClickHistory.bind(undefined, 'all', 'all')
+        : null;
 
     public render() {
         return [
@@ -35,7 +33,10 @@ export class DepositWithdrawSuccess extends React.PureComponent<IProps, any> {
                         Make a new deposit
                     </div>
                 </button>
-                <button className="sonm-send-success__button">
+                <button
+                    onClick={this.handleClickHistory}
+                    className="sonm-send-success__button"
+                >
                     <div className="sonm-send-success__icon-history" />
                     <div className="sonm-send-success__label">
                         View deposit&withdraw history

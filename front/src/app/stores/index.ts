@@ -15,6 +15,7 @@ import { IListStore } from './list-store-factory';
 import { ProfileList } from './profile-list';
 
 import { Api } from 'app/api';
+import { THistorySourceMode } from './types';
 
 useStrict(true);
 
@@ -35,8 +36,16 @@ export class RootStore implements IHasLocalizator {
         // should be first cause used in all stores;
         this.uiStore = new UiStore();
 
-        this.historyStore = new HistoryStore(this, this.localizator, 'send');
-        this.dwHistoryStore = new HistoryStore(this, this.localizator, 'dw');
+        this.historyStore = new HistoryStore(
+            this,
+            this.localizator,
+            THistorySourceMode.wallet,
+        );
+        this.dwHistoryStore = new HistoryStore(
+            this,
+            this.localizator,
+            THistorySourceMode.market,
+        );
 
         this.mainStore = new MainStore(this, this.localizator);
 

@@ -44,6 +44,8 @@ const navigateToDWConfirm = (action: string) =>
 const navigateToDW = (action: string) => navigate({ path: `/${action}` });
 const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
+const navigateToDWHistory = () =>
+    navigate({ path: '/deposit-withdraw-history' });
 
 function reload() {
     window.location.reload(true);
@@ -289,7 +291,7 @@ for (const action of ['deposit', 'withdraw']) {
                     title: 'Success',
                     content: (
                         <DepositWithdrawSuccess
-                            onClickHistory={navigateToHistory}
+                            onClickHistory={navigateToDWHistory}
                             onClickDeposit={navigateToDeposit}
                             onClickWithdraw={navigateToWithdraw}
                         />
