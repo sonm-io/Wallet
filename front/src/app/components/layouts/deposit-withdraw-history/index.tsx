@@ -15,6 +15,7 @@ import * as debounce from 'lodash/fp/debounce';
 import { Balance } from 'app/components/common/balance-view';
 import { Hash } from 'app/components/common/hash-view';
 import { Button } from 'app/components/common/button';
+import { Icon } from 'app/components/common/icon';
 
 const Option = Select.Option;
 
@@ -32,7 +33,7 @@ interface IProps {
 export class DepositWithdrawHistory extends React.Component<IProps, any> {
     protected columns: Array<ColumnProps<ISendTransactionResult>> = [
         {
-            className: 'sonm-tx-list__cell-dw-time sonm-tx-list__cell',
+            className: 'sonm-dw-tx-list__cell-time sonm-dw-tx-list__cell',
             dataIndex: 'timestamp',
             title: 'Time',
             render: (time, record) => {
@@ -43,14 +44,17 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         {
             dataIndex: 'operation',
             title: 'Operation',
-            className: 'sonm-tx-list__cell-action sonm-tx-list__cell',
+            className: 'sonm-dw-tx-list__cell-action sonm-dw-tx-list__cell',
             render: (_, record) => {
-                const cls = `sonm-tx-list__cell-action--${record.action}`;
+                const cls = `sonm-dw-tx-list__cell-action--${record.action}`;
 
                 return (
                     <div>
-                        <div className={cn('sonm-tx-list__cell-action', cls)} />
-                        <div className="sonm-tx-list__cell-action--label">
+                        <Icon
+                            i="ArrowRight"
+                            className={cn('sonm-dw-tx-list__cell-action', cls)}
+                        />
+                        <div className="sonm-dw-tx-list__cell-action--label">
                             {record.action}
                         </div>
                     </div>
@@ -59,14 +63,13 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         },
         {
             dataIndex: 'amount',
-            className: 'sonm-tx-list__cell-dw-amount sonm-tx-list__cell',
+            className: 'sonm-dw-tx-list__cell-amount sonm-dw-tx-list__cell',
             title: 'Amount',
             render: (_, record) => {
                 const currency = rootStore.mainStore.primaryTokenInfo;
 
                 return (
                     <Balance
-                        className="sonm-tx-list__cell-amount-value"
                         key="0"
                         symbol={currency.symbol}
                         balance={record.amount}
@@ -78,7 +81,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         },
         {
             dataIndex: 'fee',
-            className: 'sonm-tx-list__cell-dw-amount sonm-tx-list__cell',
+            className: 'sonm-dw-tx-list__cell-fee sonm-dw-tx-list__cell',
             title: 'Fee',
             render: (_, record) => {
                 return !record.fee ? (
@@ -86,7 +89,6 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
                 ) : (
                     <Balance
                         key="1"
-                        className="sonm-tx-list__cell-amount-fee"
                         balance={record.fee}
                         symbol="Ether"
                         decimalDigitAmount={10}
@@ -97,14 +99,13 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         },
         {
             dataIndex: 'commission',
-            className: 'sonm-tx-list__cell-dw-amount sonm-tx-list__cell',
-            title: 'Fee',
+            className: 'sonm-dw-tx-list__cell-commission sonm-dw-tx-list__cell',
+            title: 'Commission',
             render: (_, record) => {
                 const currency = rootStore.mainStore.primaryTokenInfo;
 
                 return (
                     <Balance
-                        className="sonm-tx-list__cell-amount-amount"
                         key="2"
                         symbol={currency.symbol}
                         balance={'0'}
@@ -117,7 +118,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         {
             dataIndex: 'hash',
             title: 'TxHash',
-            className: 'sonm-tx-list__cell-tx-hash sonm-tx-list__cell',
+            className: 'sonm-dw-tx-list__cell-tx-hash sonm-dw-tx-list__cell',
             render: (_, record) => {
                 return <Hash hash={record.hash} hasCopyButton />;
             },
@@ -125,12 +126,12 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         {
             dataIndex: 'status',
             title: 'Status',
-            className: 'sonm-tx-list__cell-status sonm-tx-list__cell',
+            className: 'sonm-dw-tx-list__cell-status sonm-dw-tx-list__cell',
             render: (_, record) => {
-                const cls = `sonm-tx-list__cell-status--${record.status}`;
+                const cls = `sonm-dw-tx-list__cell-status--${record.status}`;
 
                 return (
-                    <div className={cn('sonm-tx-list__cell-status', cls)}>
+                    <div className={cn('sonm-dw-tx-list__cell-status', cls)}>
                         {record.status}
                     </div>
                 );
@@ -200,9 +201,9 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         ];
 
         return (
-            <div className={cn('sonm-history', className)}>
+            <div className={cn('sonm-dw-history', className)}>
                 <DateRangeDropdown
-                    className="sonm-history__date-range"
+                    className="sonm-dw-history__date-range"
                     value={[
                         new Date(rootStore.dwHistoryStore.timeStart),
                         new Date(rootStore.dwHistoryStore.timeEnd),
@@ -213,7 +214,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
                 <Select
                     onChange={this.handleSelectOperation}
                     value={rootStore.dwHistoryStore.operation}
-                    className="sonm-history__select-operation"
+                    className="sonm-dw-history__select-operation"
                 >
                     {operations.map(x => (
                         <Option key={x.value} value={x.value} title={x.name}>
@@ -226,7 +227,8 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
                     onClick={this.props.onClickDeposit}
                     color="violet"
                     transparent
-                    className="sonm-history__deposit-button"
+                    className="sonm-dw-history__deposit-button"
+                    height={30}
                 >
                     DEPOSIT
                 </Button>
@@ -234,13 +236,14 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
                     onClick={this.props.onClickWithdraw}
                     color="blue"
                     transparent
-                    className="sonm-history__withdraw-button"
+                    className="sonm-dw-history__withdraw-button"
+                    height={30}
                 >
                     WITHDRAW
                 </Button>
 
                 <TxTable
-                    className="sonm-history__table sonm-tx-list"
+                    className="sonm-dw-history__table sonm-dw-tx-list"
                     dataSource={rootStore.dwHistoryStore.currentList}
                     columns={this.columns}
                     pagination={pagination}

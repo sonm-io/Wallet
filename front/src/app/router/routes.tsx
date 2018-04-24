@@ -51,6 +51,92 @@ function reload() {
     window.location.reload(true);
 }
 
+const getRouteForDW = (action: string) => {
+    return {
+        path: `/${action}`,
+        action: async (ctx: IContext, params: IUrlParams) => {
+            // FIX THIS THEN MENU WILL BE READY
+            //const initialAddress = (ctx.query as any).address || rootStore.mainStore.accountList[0].address;
+
+            const initialAddress = rootStore.mainStore.accountList[0].address;
+            const initialCurrency = rootStore.mainStore.primaryTokenAddress;
+
+            const next = await ctx.next();
+            const content =
+                next && next.content ? (
+                    next.content
+                ) : (
+                    <DepositWithdraw
+                        action={action}
+                        isConfirmation={false}
+                        onNotAvailable={navigateToMain}
+                        initialAddress={initialAddress}
+                        initialCurrency={initialCurrency}
+                        onSuccess={() => navigateToDWSuccess(action)}
+                        onConfirm={() => navigateToDWConfirm(action)}
+                        onBack={() => navigateToDW(action)}
+                    />
+                );
+
+            const props = next && next.props ? next.props : null;
+
+            if (next && next.popup) {
+                content.push(next.popup);
+            }
+
+            return {
+                pathKey: `/${action}`,
+                title: action,
+                content,
+                props,
+            };
+        },
+        children: [
+            {
+                path: `/confirm`,
+                action: (ctx: IContext) => {
+                    const initialAddress =
+                        rootStore.mainStore.accountList[0].address;
+                    const initialCurrency =
+                        rootStore.mainStore.primaryTokenAddress;
+
+                    return {
+                        title: 'Confirm',
+                        props: {
+                            className: 'sonm-deposit-withdraw__confirmation',
+                        },
+                        content: (
+                            <DepositWithdraw
+                                action={action}
+                                isConfirmation={true}
+                                onNotAvailable={navigateToMain}
+                                initialAddress={initialAddress}
+                                initialCurrency={initialCurrency}
+                                onSuccess={() => navigateToDWSuccess(action)}
+                                onConfirm={() => navigateToDWConfirm(action)}
+                                onBack={() => navigateToDW(action)}
+                            />
+                        ),
+                    };
+                },
+            },
+            {
+                path: '/success',
+                action: (ctx: IContext) => ({
+                    title: 'Success',
+                    content: (
+                        <DepositWithdrawSuccess
+                            onClickHistory={navigateToDWHistory}
+                            onClickDeposit={navigateToDeposit}
+                            onClickWithdraw={navigateToWithdraw}
+                        />
+                    ),
+                }),
+            },
+        ],
+    };
+};
+
 const routes = [
     {
         path: '/',
@@ -212,101 +298,15 @@ const routes = [
                     };
                 },
             },
+            getRouteForDW('deposit'),
+            getRouteForDW('withdraw'),
+            {
+                path: /.*/,
+                action: defaultAction,
+            },
         ],
     },
 ];
-
-for (const action of ['deposit', 'withdraw']) {
-    routes[0].children.push({
-        path: `/${action}`,
-        action: async (ctx: IContext, params: IUrlParams) => {
-            // FIX THIS THEN MENU WILL BE READY
-            //const initialAddress = (ctx.query as any).address || rootStore.mainStore.accountList[0].address;
-
-            const initialAddress = rootStore.mainStore.accountList[0].address;
-            const initialCurrency = rootStore.mainStore.primaryTokenAddress;
-
-            const next = await ctx.next();
-            const content =
-                next && next.content ? (
-                    next.content
-                ) : (
-                    <DepositWithdraw
-                        action={action}
-                        isConfirmation={false}
-                        onNotAvailable={navigateToMain}
-                        initialAddress={initialAddress}
-                        initialCurrency={initialCurrency}
-                        onSuccess={() => navigateToDWSuccess(action)}
-                        onConfirm={() => navigateToDWConfirm(action)}
-                        onBack={() => navigateToDW(action)}
-                    />
-                );
-
-            const props = next && next.props ? next.props : null;
-
-            if (next && next.popup) {
-                content.push(next.popup);
-            }
-
-            return {
-                pathKey: `/${action}`,
-                title: action,
-                content,
-                props,
-            };
-        },
-        children: [
-            {
-                path: `/confirm`,
-                action: (ctx: IContext) => {
-                    const initialAddress =
-                        rootStore.mainStore.accountList[0].address;
-                    const initialCurrency =
-                        rootStore.mainStore.primaryTokenAddress;
-
-                    return {
-                        title: 'Confirm',
-                        props: {
-                            className: 'sonm-deposit-withdraw__confirmation',
-                        },
-                        content: (
-                            <DepositWithdraw
-                                action={action}
-                                isConfirmation={true}
-                                onNotAvailable={navigateToMain}
-                                initialAddress={initialAddress}
-                                initialCurrency={initialCurrency}
-                                onSuccess={() => navigateToDWSuccess(action)}
-                                onConfirm={() => navigateToDWConfirm(action)}
-                                onBack={() => navigateToDW(action)}
-                            />
-                        ),
-                    };
-                },
-            },
-            {
-                path: '/success',
-                action: (ctx: IContext) => ({
-                    title: 'Success',
-                    content: (
-                        <DepositWithdrawSuccess
-                            onClickHistory={navigateToDWHistory}
-                            onClickDeposit={navigateToDeposit}
-                            onClickWithdraw={navigateToWithdraw}
-                        />
-                    ),
-                }),
-            },
-        ],
-    });
-}
-
-routes[0].children.push({
-    path: '/.*/',
-    action: defaultAction,
-    children: [],
-});
 
 export interface IUrlParams {
     [key: string]: string;

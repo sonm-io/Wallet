@@ -1,54 +1,49 @@
-@sonm-tx-list-cell-padding: 10px;
-
-.sonm-tx-list {
-    &__currency-col,
-    &__time-col,
-    &__amount-col {
-        white-space: nowrap;
-    }
-}
-
-.sonm-history {
+.sonm-dw-history {
     &__select-operation {
         width: ~'calc(20% - 10px)';
         margin: 5px;
     }
 
-    &__withdraw-button {
-        margin-left: 10px;
-        font-size: 12px !important;
-    }
-
+    &__withdraw-button,
     &__deposit-button {
-        font-size: 12px !important;
+        margin: 5px;
     }
 }
 
-.sonm-tx-list {
+.sonm-dw-tx-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+
+    & table {
+        table-layout: fixed;
+        font-size: 12px;
+    }
+
     & &__cell {
-        &-dw-time {
+        &-time {
             width: 150px;
         }
 
         &-action {
             text-transform: uppercase;
-            width: 100px;
+            width: 150px;
 
             &--withdraw {
-                background-color: @color-orange;
+                color: @color-orange;
                 transform: rotate(180deg);
             }
 
             &--deposit {
-                background-color: @color-green;
+                color: @color-green;
             }
 
             &--deposit,
             &--withdraw {
-                -webkit-mask: url(./icon-arrow-right.svg) no-repeat center;
-                -webkit-mask-size: 70%;
-                height: 10px;
-                width: 20px;
+                width: 15px;
                 display: inline-block;
             }
 
@@ -66,7 +61,28 @@
             width: 140px;
         }
 
-        &-dw-amount {
+        &-commission {
+            width: 120px;
+        }
+
+        &-status {
+            width: 70px;
+            text-transform: uppercase;
+
+            &--success {
+                color: @color-green;
+            }
+
+            &--failed {
+                color: @color-red;
+            }
+
+            &--pending {
+                color: @color-dark-blue;
+            }
+        }
+
+        &-amount {
             width: 100px;
 
             &-ct {
