@@ -37,8 +37,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
             dataIndex: 'timestamp',
             title: 'Time',
             render: (time, record) => {
-                const m = moment(time);
-                return <div>{m.format('D MMM YY H:mm:ss')}</div>;
+                return moment(time).format('D MMM YY H:mm:ss');
             },
         },
         {
@@ -128,11 +127,12 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
             title: 'Status',
             className: 'sonm-dw-tx-list__cell-status sonm-dw-tx-list__cell',
             render: (_, record) => {
-                const cls = `sonm-dw-tx-list__cell-status--${record.status}`;
+                const status = String(record.status).toLowerCase();
+                const cls = `sonm-dw-tx-list__cell-status--${status}`;
 
                 return (
                     <div className={cn('sonm-dw-tx-list__cell-status', cls)}>
-                        {record.status}
+                        {status}
                     </div>
                 );
             },
@@ -143,10 +143,9 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         query: '',
     };
 
-    public componentWillMount() {
-        if (!rootStore.dwHistoryStore) {
-            return;
-        }
+    constructor(props: IProps) {
+        super(props);
+        rootStore.dwHistoryStore.update();
     }
 
     protected handleChangeTime = (params: IDateRangeChangeParams) => {

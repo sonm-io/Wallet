@@ -20,10 +20,17 @@
         grid-column: 1;
         grid-row: 2;
 
+        &--span {
+            grid-column: 1 / span 2;
+            background-color: @color-light-gray-bg;
+        }
+
         display: grid;
         grid-template-columns: 100px min-content auto;
         grid-template-rows: 1fr 1fr;
         font-weight: normal;
+        margin-top: 10px;
+        padding: 20px;
 
         &-blockies {
             margin: 10px;
@@ -52,9 +59,10 @@
         grid-row: 3;
 
         display: grid;
-        grid-template-columns: 1fr 1fr auto;
+        grid-template-columns: 180px 180px auto;
         grid-template-rows: 1fr 1fr;
-        margin: 30px 0px 30px 0px;
+        margin: 20px 0px 20px 0px;
+        grid-gap: 15px;
 
         label,
         dt {
@@ -77,7 +85,7 @@
                 grid-column: 3;
                 grid-row: 1;
                 text-transform: uppercase;
-                margin-top: 30px;
+                margin-top: 25px;
                 color: @color-green;
                 font-weight: bold;
             }
@@ -91,7 +99,6 @@
         &-gas-price {
             grid-column: 2;
             grid-row: 2;
-            padding-right: 10px;
         }
 
         &-priority {
@@ -166,12 +173,13 @@
         flex-grow: 1;
         display: flex;
         flex-direction: row;
-        justify-content: flex-end;
+        justify-content: center;
         align-items: center;
-        text-transform: uppercase;
     }
 
     &__button {
-        margin: 0 0 0 100px;
+        &--action {
+            margin: 0 0 0 100px;
+        }
     }
 }

@@ -3,13 +3,13 @@ import * as cn from 'classnames';
 import { observer } from 'mobx-react';
 import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
-import { Form, FormRow, FormField } from 'app/components/common/form';
+import { Form, FormField } from 'app/components/common/form';
 import { SendStore } from 'app/stores/send';
 import { rootStore } from 'app/stores';
 import { Header } from 'app/components/common/header';
 import { ISendFormValues } from 'app/stores/types';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
-import { IdentIcon } from 'app/components/common/ident-icon';
+import { AccountItem } from 'app/components/common/account-item';
 import { Input } from 'app/components/common/input';
 
 interface IProps {
@@ -119,8 +119,6 @@ export class DepositWithdraw extends React.Component<IProps, any> {
     };
 
     public handleConfrim = async (event: any) => {
-        const historyStore = rootStore.dwHistoryStore;
-
         event.preventDefault();
 
         const password = this.store.userInput.password;
@@ -131,7 +129,7 @@ export class DepositWithdraw extends React.Component<IProps, any> {
 
         if (isPasswordValid) {
             (this.store.confirmTransaction(password) as any).then(() =>
-                historyStore.update(),
+                rootStore.dwHistoryStore.update(),
             );
 
             this.store.resetUserInput();
@@ -145,24 +143,28 @@ export class DepositWithdraw extends React.Component<IProps, any> {
     };
 
     public renderAccount() {
-        const fromAddress = this.store.fromAddress;
-        const account = rootStore.mainStore.accountMap.get(fromAddress);
-        const fromName = account ? account.name : '';
-
-        return (
-            <div className="sonm-deposit-withdraw__account">
-                <IdentIcon
-                    address={fromAddress || ''}
-                    className="sonm-deposit-withdraw-confirm__account-blockies"
-                />
-                <span className="sonm-deposit-withdraw-confirm__account-name">
-                    {fromName}
-                </span>
-                <span className="sonm-deposit-withdraw-confirm__account-addr">
-                    {fromAddress}
-                </span>
-            </div>
+        const account = rootStore.mainStore.accountList.find(
+            item => item.address === this.store.fromAddress,
         );
+        const className = `sonm-deposit-withdraw__account${
+            !this.props.isConfirmation ? '--span' : ''
+        }`;
+
+        if (account) {
+            const { name, address } = account;
+
+            return this.props.isConfirmation ? (
+                <AccountItem
+                    name={name}
+                    address={address}
+                    className={className}
+                />
+            ) : (
+                <AccountItem {...account} className={className} />
+            );
+        } else {
+            return null;
+        }
     }
 
     public renderAmount() {
@@ -175,22 +177,24 @@ export class DepositWithdraw extends React.Component<IProps, any> {
 
         const result = [];
         result.push(
-            <FormRow className="sonm-deposit-withdraw__values-amount-input">
-                <FormField error={this.store.validationAmount} label="Amount">
-                    <Input
-                        className="sonm-send__input"
-                        onChange={this.handleChangeAmount}
-                        autoComplete="off"
-                        placeholder="Amount"
-                        value={this.store.userInput.amountEther}
-                        readOnly={this.props.isConfirmation}
-                    />
-                </FormField>
-            </FormRow>,
-            this.props.isConfirmation ? (
-                ''
-            ) : (
+            <FormField
+                error={this.store.validationAmount}
+                label="Amount"
+                className="sonm-deposit-withdraw__values-amount-input"
+                key="amount"
+            >
+                <Input
+                    className="sonm-send__input"
+                    onChange={this.handleChangeAmount}
+                    autoComplete="off"
+                    placeholder="Amount"
+                    value={this.store.userInput.amountEther}
+                    readOnly={this.props.isConfirmation}
+                />
+            </FormField>,
+            this.props.isConfirmation ? null : (
                 <Button
+                    key="amount-maximum"
                     color="blue"
                     transparent
                     square
@@ -200,50 +204,45 @@ export class DepositWithdraw extends React.Component<IProps, any> {
                     Add maximum
                 </Button>
             ),
-            <FormRow className="sonm-deposit-withdraw__values-gas-price">
-                <FormField
-                    label="Gas price"
-                    error={this.store.validationGasPrice}
-                >
-                    <Input
-                        className="sonm-send__input"
-                        value={this.store.userInput.gasPriceGwei}
-                        onChange={this.handleChangeGasPrice}
-                        autoComplete="off"
-                        placeholder={this.store.gasPriceGwei}
-                        readOnly={this.props.isConfirmation}
-                    />
-                </FormField>
-
-                <span className="sonm-send__gas-price-unit">Gwei</span>
-            </FormRow>,
-            this.props.isConfirmation ? (
-                ''
-            ) : (
+            <FormField
+                label="Gas price, Gwei"
+                error={this.store.validationGasPrice}
+                key="gas-price"
+                className="sonm-deposit-withdraw__values-gas-price"
+            >
+                <Input
+                    className="sonm-send__input"
+                    value={this.store.userInput.gasPriceGwei}
+                    onChange={this.handleChangeGasPrice}
+                    autoComplete="off"
+                    placeholder={this.store.gasPriceGwei}
+                    readOnly={this.props.isConfirmation}
+                />
+            </FormField>,
+            this.props.isConfirmation ? null : (
                 <PriorityInput
                     className="sonm-deposit-withdraw__values-priority"
                     valueList={['low', 'normal', 'high']}
                     value={this.store.priority}
                     onChange={this.handleChangePriority}
+                    key="gas-price-priority"
                 />
             ),
-            <div className="sonm-deposit-withdraw-confirm__values-gas-limit">
-                <FormRow className="sonm-deposit-withdraw">
-                    <FormField
-                        label="Gas limit"
-                        error={this.store.validationGasLimit}
-                    >
-                        <Input
-                            className="sonm-send__input"
-                            value={this.store.userInput.gasLimit}
-                            onChange={this.handleChangeGasLimit}
-                            autoComplete="off"
-                            placeholder={this.store.gasLimit}
-                            readOnly={this.props.isConfirmation}
-                        />
-                    </FormField>
-                </FormRow>
-            </div>,
+            <FormField
+                label="Gas limit"
+                error={this.store.validationGasLimit}
+                className="sonm-deposit-withdraw-confirm__values-gas-limit"
+                key="gas-limit"
+            >
+                <Input
+                    className="sonm-send__input"
+                    value={this.store.userInput.gasLimit}
+                    onChange={this.handleChangeGasLimit}
+                    autoComplete="off"
+                    placeholder={this.store.gasLimit}
+                    readOnly={this.props.isConfirmation}
+                />
+            </FormField>,
         );
 
         return <div className="sonm-deposit-withdraw__values">{result}</div>;
@@ -310,43 +309,12 @@ export class DepositWithdraw extends React.Component<IProps, any> {
         );
     }
 
-    public renderGasLimit() {
-        const result = !this.props.isConfirmation ? (
-            <FormRow className="sonm-deposit-withdraw">
-                <FormField
-                    label="Gas limit"
-                    error={this.store.validationGasLimit}
-                >
-                    <Input
-                        className="sonm-send__input"
-                        value={this.store.userInput.gasLimit}
-                        onChange={this.handleChangeGasLimit}
-                        autoComplete="off"
-                        placeholder={this.store.gasLimit}
-                    />
-                </FormField>
-            </FormRow>
-        ) : (
-            <div>
-                <dt>Gas limit</dt>
-                <dd>{this.store.userInput.gasPriceGwei}</dd>
-            </div>
-        );
-
-        return (
-            <div className="sonm-deposit-withdraw-confirm__values-gas-limit">
-                {result}
-            </div>
-        );
-    }
-
     public renderButtons() {
         const buttons = !this.props.isConfirmation ? (
             <Button
                 onClick={this.handleSubmit}
                 type="submit"
                 color="violet"
-                className="sonm-send__submit"
                 disabled={
                     !this.store.isFormValid || !this.store.hasNecessaryValues
                 }
@@ -354,25 +322,20 @@ export class DepositWithdraw extends React.Component<IProps, any> {
                 NEXT
             </Button>
         ) : (
-            <div>
-                <Button
-                    className="sonm-send-confirm__button"
-                    transparent
-                    type="button"
-                    onClick={this.handleCancel}
-                >
-                    Back
+            <React.Fragment>
+                <Button transparent type="button" onClick={this.handleCancel}>
+                    BACK
                 </Button>
                 <Button
                     disabled={rootStore.mainStore.isOffline}
-                    className="sonm-deposit-withdraw__button"
                     type="submit"
                     color="violet"
                     onClick={this.handleConfrim}
+                    className="sonm-deposit-withdraw__button--action"
                 >
-                    {this.props.action}
+                    {this.props.action.toUpperCase()}
                 </Button>
-            </div>
+            </React.Fragment>
         );
         return (
             <div className="sonm-deposit-withdraw__button-ct">{buttons}</div>
