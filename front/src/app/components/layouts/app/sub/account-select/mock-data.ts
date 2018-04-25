@@ -6,33 +6,27 @@ export const props: IMarketAccountSelectProps = {
     value: (value = {
         address: '0x1234567890123456789012345678901234567890',
         name: 'name1',
-        currencyBalanceMap: {
-            '0x1': '123',
-        },
-        json: '{a: {}}',
+        snmBalance: '1234124.12',
+        usdBalance: '456723.12',
     }),
     accounts: [
         value,
         {
             address: '0x1234567890123456789012345678901234567866',
             name: 'name2',
-            currencyBalanceMap: {
-                '0x1': '456',
-            },
-            json: '{b: {}}',
+            snmBalance: '1000000.12',
+            usdBalance: '56723.12',
         },
         {
             address: '0x1234567890123456789012345678901234567877',
             name: 'name2',
-            currencyBalanceMap: {
-                '0x1': '789',
-            },
-            json: '{c: {}}',
+            snmBalance: '11.12',
+            usdBalance: '22.12',
         },
     ],
     url: '/url',
-    onChange: (...as: any[]) => {
-        console.log(...as);
+    onChange() {
+        console.log(arguments);
     },
     hidden: false,
 };

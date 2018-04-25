@@ -1,22 +1,29 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
-import { IAccountInfo } from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon';
-import { Hash } from '../../../../common/hash-view';
+import { Hash } from 'app/components/common/hash-view';
+
+export interface IAccount {
+    name: string;
+    address: string;
+    usdBalance: string;
+    snmBalance: string;
+}
 
 export interface IMarketAccountSelectProps {
-    accounts: Array<IAccountInfo>;
+    accounts: Array<IAccount>;
     url: string;
     onChange: (url: string) => void;
     className?: string;
     hidden: boolean;
-    value: IAccountInfo;
+    value: IAccount;
 }
 
-export interface IMarketAccountSelectItemProps extends IAccountInfo {
+export interface IMarketAccountSelectItemProps extends IAccount {
     className?: string;
-    onClick?: (account: IAccountInfo) => void;
+    usdMultiplier?: string;
+    onClick?: (account: IAccount) => void;
 }
 
 export class MarketAccountSelect extends React.PureComponent<
@@ -73,14 +80,14 @@ export class MarketAccountSelect extends React.PureComponent<
                         {p.name}
                     </div>
                     <div className="sonm-market-select-item__balance">
-                        {0} SNM
+                        {p.usdBalance} USD ({p.snmBalance} SNM)
                     </div>
                 </Tag>
             );
         }
     };
 
-    protected handleSelectAccount = (account: IAccountInfo) => {};
+    protected handleSelectAccount = (account: IAccount) => {};
 
     public render() {
         const p = this.props;
@@ -112,7 +119,7 @@ export class MarketAccountSelect extends React.PureComponent<
                 }
             >
                 {accounts &&
-                    accounts.map((item: IAccountInfo) => (
+                    accounts.map((item: IAccount) => (
                         <MarketAccountSelect.Item
                             className="sonm-market-account__select-item"
                             onClick={this.handleSelectAccount}

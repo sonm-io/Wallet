@@ -4,26 +4,22 @@ import { DropdownInput } from 'app/components/common/dropdown-input';
 
 type TItem<T> = [string, string, T[] | undefined]; // Title, Path. children
 
-type TMenuItem = TItem<TItem<undefined>>;
+export type TMenuItem = TItem<TItem<undefined>>;
 
-interface INavMenuProps {
+export interface INavMenuDropdownProps {
     items: Array<TMenuItem>;
-    url: string;
+    path: string;
     onChange: (url: string) => void;
     className?: string;
-    disabled?: string; // coma separated url list
 }
 
-export class NavMenuDropdown extends React.PureComponent<INavMenuProps, any> {
+export class NavMenuDropdown extends React.PureComponent<
+    INavMenuDropdownProps,
+    any
+> {
     public state = {
         opened: '',
     };
-
-    protected get disabledUrlList() {
-        return this.props.disabled
-            ? this.props.disabled.split(',')
-            : Array.prototype;
-    }
 
     protected handleClickUrl = (event: any) => {
         const path = event.target.value;
@@ -53,8 +49,6 @@ export class NavMenuDropdown extends React.PureComponent<INavMenuProps, any> {
     };
 
     public render() {
-        const disabledUrlList = this.disabledUrlList;
-
         return (
             <div className={cn(this.props.className, 'sonm-nav-menu')}>
                 {this.props.items.map((item: TMenuItem) => {
@@ -66,9 +60,7 @@ export class NavMenuDropdown extends React.PureComponent<INavMenuProps, any> {
                                 'sonm-nav-menu__item--opened':
                                     this.state.opened === title,
                                 'sonm-nav-menu__item--active':
-                                    this.props.url === path,
-                                'sonm-nav-menu__item--disabled':
-                                    disabledUrlList.indexOf(path) !== -1,
+                                    this.props.path === path,
                             })}
                             key={title}
                             valueString={title}

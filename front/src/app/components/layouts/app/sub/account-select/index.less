@@ -129,11 +129,16 @@
     &__name {
         flex-grow: 1;
         margin: 0 6px;
+        text-align: left;
     }
 
     &__balance {
         width: 150px;
         margin: 0 6px;
         color: @accountSelectTextColorMarked;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
     }
 }
