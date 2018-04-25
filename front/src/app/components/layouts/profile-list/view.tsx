@@ -49,7 +49,7 @@ export class ProfileListView extends React.Component<IProps, any> {
                             />
                         ) : (
                             <IdentIcon
-                                width={25}
+                                sizePx={25}
                                 address={record.address}
                                 className="sonm-cell-address__img"
                             />

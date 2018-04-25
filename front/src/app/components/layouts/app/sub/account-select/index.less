@@ -1,14 +1,44 @@
 @import 'guide.less';
 
-@navMenuBgColor: @color-brand-bg;
-@navMenuBgColorActive: lighten(@color-brand-bg, 5%);
-@navMenuTextColor: @color-white;
-@navMenuTextColorActive: @color-green;
+@accountSelectBgColor: @color-brand-bg;
+@accountSelectBgColorActive: lighten(@color-brand-bg, 5%);
+@accountSelectTextColor: @color-font-gray;
+@accountSelectTextColorActive: @color-white;
+@accountSelectTextColorMarked: @color-green;
+@accountSelectPaddingLeft: 20px;
 
 .sonm-market-account {
-    --color-nav-menu-selection: @navMenuTextColorActive;
+    --color-nav-menu-selection: @accountSelectTextColorActive;
+    background-color: @accountSelectBgColor;
 
-    &--expanded {
+    &__title {
+        color: @accountSelectTextColorActive;
+        font-size: 15px;
+        text-align: left;
+        padding: 0 @accountSelectPaddingLeft;
+        margin: 8px 0 0;
+        line-height: 1;
+        position: relative;
+
+        &:after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            position: absolute;
+            border: solid @accountSelectTextColorActive 1px;
+            border-right-width: 0;
+            border-bottom-width: 0;
+            top: 50%;
+            right: @accountSelectPaddingLeft;
+            transform: translate(0, -4px) rotateZ(225deg);
+            transition: transform 100ms;
+        }
+    }
+
+    &--expanded &__title {
+        &:after {
+            transform: translate(0, -1px) rotateZ(45deg);
+        }
     }
 
     &__button {
@@ -19,6 +49,9 @@
         border: none;
         background: none transparent;
         cursor: pointer;
+        overflow: hidden;
+        padding: 0;
+        border: 1px solid @accountSelectBgColor;
 
         &:active,
         &:focus {
@@ -34,46 +67,73 @@
         justify-content: stretch;
         left: 0;
         top: 100%;
+        background-color: @accountSelectBgColorActive;
+        z-index: @z-lhotse;
     }
 
     &__wrapper {
-        background: @navMenuBgColor;
         display: inline-block;
         position: relative;
         display: inline-block;
         vertical-align: top;
         margin: 0;
-        height: 50px;
-        color: @navMenuTextColor;
-        background: none transparent;
+        height: 57px;
+        color: @accountSelectTextColor;
         border: none;
         padding: 0;
-        background: transparent;
         position: relative;
         overflow: visible;
     }
 
-    &__sub-item {
-        display: block;
-        -webkit-appearance: none;
-        outline: none;
-        border: none;
-        background: none @navMenuBgColorActive;
-        border: 1px solid @navMenuBgColor;
-        color: @navMenuTextColor;
-        margin: 0;
-        padding: 5px 10px;
-        cursor: pointer;
+    & &__select-item {
+        border: 1px solid @accountSelectBgColor;
+        border-top-width: 0;
+        padding: 14px @accountSelectPaddingLeft;
+        box-sizing: border-box;
 
-        &:hover,
-        &:active,
-        &:focus {
-            outline: none;
-            color: @navMenuTextColorActive;
+        &:hover {
+            color: @accountSelectTextColorActive;
         }
     }
+}
 
-    &__popup {
-        background-color: @navMenuBgColor;
+.sonm-market-select-item {
+    display: flex;
+    -webkit-appearance: none;
+    outline: none;
+    border: none;
+    background: none transparent;
+    border: none;
+    color: @accountSelectTextColor;
+    margin: 0;
+    cursor: pointer;
+    position: relative;
+    font-size: 12px;
+    padding: 6px @accountSelectPaddingLeft;
+
+    &:hover,
+    &:active,
+    &:focus {
+        outline: none;
+    }
+
+    &__icon {
+        margin: 0;
+    }
+
+    &__addr {
+        width: 100px;
+        margin: 0 6px;
+    }
+
+    &__name {
+        flex-grow: 1;
+        margin: 0 6px;
+    }
+
+    &__balance {
+        width: 150px;
+        margin: 0 6px;
+        color: @accountSelectTextColorMarked;
     }
 }

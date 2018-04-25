@@ -6,7 +6,7 @@ export interface IProps {
     address: string;
     onlyGeneratedIcon?: boolean;
     className?: string;
-    width?: number;
+    sizePx?: number;
 }
 
 export class IdentIcon extends React.Component<IProps, any> {
@@ -20,7 +20,7 @@ export class IdentIcon extends React.Component<IProps, any> {
     };
 
     public static defaultProps: Partial<IProps> = {
-        width: 75,
+        sizePx: 75,
     };
 
     public componentWillMount() {
@@ -37,7 +37,7 @@ export class IdentIcon extends React.Component<IProps, any> {
         if (
             props === null ||
             props.address !== address ||
-            props.width !== nextProps.width
+            props.sizePx !== nextProps.sizePx
         ) {
             this.draw(address);
         }
@@ -206,16 +206,16 @@ export class IdentIcon extends React.Component<IProps, any> {
     }
 
     private getCanvasSize(): number {
-        const x = (this.props.width as number) / ICON_PIXEL_SIZE;
+        const x = (this.props.sizePx as number) / ICON_PIXEL_SIZE;
 
         return Math.ceil(x) * ICON_PIXEL_SIZE;
     }
 
     public render() {
-        const { className, width, address, onlyGeneratedIcon } = this.props;
+        const { className, sizePx, address, onlyGeneratedIcon } = this.props;
         const canvasSize = this.getCanvasSize();
 
-        const correction = `-${(canvasSize - (width as number)) / 2}px`;
+        const correction = `-${(canvasSize - (sizePx as number)) / 2}px`;
 
         return (
             <div className={cn(className, 'sonm-ident-icon')}>
@@ -228,7 +228,10 @@ export class IdentIcon extends React.Component<IProps, any> {
                               }`
                             : undefined,
                     )}
-                    style={{ width: width as number, height: width as number }}
+                    style={{
+                        width: sizePx as number,
+                        height: sizePx as number,
+                    }}
                 >
                     {IdentIcon.icons[address] ? null : (
                         <canvas

@@ -117,7 +117,7 @@ export class Account extends React.Component<IProps, any> {
                                     >
                                         <IdentIcon
                                             address={address}
-                                            width={40}
+                                            sizePx={40}
                                             className="sonm-account-token-list__currency-blockies"
                                         />
                                         <div className="sonm-account-token-list__currency-name">

@@ -1,20 +1,22 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import {
-    DropdownInput,
-    IDropdownInputProps,
-} from 'app/components/common/dropdown-input';
+import { DropdownInput } from 'app/components/common/dropdown-input';
 import { IAccountInfo } from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from '../../../../common/hash-view';
 
-interface IMarketAccountSelectProps {
+export interface IMarketAccountSelectProps {
     accounts: Array<IAccountInfo>;
     url: string;
     onChange: (url: string) => void;
     className?: string;
     hidden: boolean;
     value: IAccountInfo;
+}
+
+export interface IMarketAccountSelectItemProps extends IAccountInfo {
+    className?: string;
+    onClick?: (account: IAccountInfo) => void;
 }
 
 export class MarketAccountSelect extends React.PureComponent<
@@ -36,27 +38,49 @@ export class MarketAccountSelect extends React.PureComponent<
     };
 
     protected handleButtonClick = () => {
-        this.setState({ opened: this.state.opened });
+        this.setState({ opened: !this.state.opened });
     };
 
-    protected static Item(props: IAccountInfo) {
-        return (
-            <React.Fragment>
-                <IdentIcon
-                    className="sonm-market-select-item__icon"
-                    address={props.address}
-                />
-                <Hash
-                    className="sonm-market-select-item__addr"
-                    hash={props.address}
-                />
-                <div className="sonm-market-select-item__name">
-                    {props.name}
-                </div>
-                <div className="sonm-market-select-item__balance">{0}</div>
-            </React.Fragment>
-        );
-    }
+    protected static Item = class extends React.PureComponent<
+        IMarketAccountSelectItemProps,
+        never
+    > {
+        protected handleClick = (event: any) => {
+            if (this.props.onClick) {
+                this.props.onClick(this.props);
+            }
+        };
+
+        public render() {
+            const p = this.props;
+            const Tag = p.onClick ? 'button' : 'div';
+
+            return (
+                <Tag
+                    className={cn('sonm-market-select-item', p.className)}
+                    onClick={this.handleClick}
+                >
+                    <IdentIcon
+                        sizePx={18}
+                        className="sonm-market-select-item__icon"
+                        address={p.address}
+                    />
+                    <Hash
+                        className="sonm-market-select-item__addr"
+                        hash={p.address}
+                    />
+                    <div className="sonm-market-select-item__name">
+                        {p.name}
+                    </div>
+                    <div className="sonm-market-select-item__balance">
+                        {0} SNM
+                    </div>
+                </Tag>
+            );
+        }
+    };
+
+    protected handleSelectAccount = (account: IAccountInfo) => {};
 
     public render() {
         const p = this.props;
@@ -65,7 +89,7 @@ export class MarketAccountSelect extends React.PureComponent<
 
         return (
             <DropdownInput
-                className={cn({
+                className={cn('sonm-market-account', {
                     'sonm-market-account--opened': this.state.opened,
                     'sonm-market-account--hidden': this.props.hidden,
                 })}
@@ -73,13 +97,16 @@ export class MarketAccountSelect extends React.PureComponent<
                 onButtonClick={this.handleButtonClick}
                 onRequireClose={this.handleCloseTopMenu}
                 dropdownCssClasses={{
-                    root: 'sonm-market-account',
+                    root: 'sonm-market-account__wrapper',
                     button: 'sonm-market-account__button',
                     popup: 'sonm-market-account__popup',
                     expanded: 'sonm-market-account--expanded',
                 }}
                 valueString={
                     <React.Fragment>
+                        <div className="sonm-market-account__title">
+                            Market account
+                        </div>
                         <MarketAccountSelect.Item {...account} />
                     </React.Fragment>
                 }
@@ -87,6 +114,8 @@ export class MarketAccountSelect extends React.PureComponent<
                 {accounts &&
                     accounts.map((item: IAccountInfo) => (
                         <MarketAccountSelect.Item
+                            className="sonm-market-account__select-item"
+                            onClick={this.handleSelectAccount}
                             key={item.address}
                             {...item}
                         />
