@@ -1,9 +1,8 @@
-import { INavMenuDropdown } from './index';
+import { INavMenuDropdownProps } from './index';
 
-export const props: INavMenuDropdown = {
-    disabled: '/accounts',
-    onChange: url => alert(url),
-    url: '/send',
+export const props: INavMenuDropdownProps = {
+    onChange: (url: string) => alert(url),
+    path: '/send',
     items: [
         [
             'Wallet',

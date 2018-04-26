@@ -2,7 +2,7 @@ import { IMarketAccountSelectProps } from './index';
 
 let value;
 
-export const props: IMarketAccountSelectProps = {
+export const marketAccountSelectProps: IMarketAccountSelectProps = {
     value: (value = {
         address: '0x1234567890123456789012345678901234567890',
         name: 'name1',

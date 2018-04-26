@@ -96,7 +96,7 @@ export class MarketAccountSelect extends React.PureComponent<
 
         return (
             <DropdownInput
-                className={cn('sonm-market-account', {
+                className={cn(p.className, 'sonm-market-account', {
                     'sonm-market-account--opened': this.state.opened,
                     'sonm-market-account--hidden': this.props.hidden,
                 })}

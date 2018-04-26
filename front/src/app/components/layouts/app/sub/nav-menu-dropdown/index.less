@@ -4,14 +4,18 @@
 @navMenuBgColorActive: lighten(@color-brand-bg, 5%);
 @navMenuTextColor: @color-white;
 @navMenuTextColorActive: @color-green;
+@navMenuLeftPadding: 12px;
+@navMenuZIndex: @z-kangchenjunga;
 
 .sonm-nav-menu-dropdown {
     --color-nav-menu-selection: @navMenuTextColorActive;
+    font-size: 15px;
 
     padding: 0;
     background: transparent;
     position: relative;
     overflow: visible;
+    height: 100%;
 
     &--expanded {
     }
@@ -19,7 +23,6 @@
     &__button {
         height: 100%;
         -webkit-appearance: none;
-        outline: none;
         outline: none;
         border: none;
         background: none transparent;
@@ -39,22 +42,26 @@
         justify-content: stretch;
         left: 0;
         top: 100%;
+        border: 1px solid @navMenuBgColor;
+        border-bottom-width: 0;
+        z-index: @navMenuZIndex;
     }
 }
 
 .sonm-nav-menu {
     background: @navMenuBgColor;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
     position: relative;
+    white-space: nowrap;
 
     &__item {
-        display: inline-block;
-        vertical-align: top;
+        display: block;
         margin: 0;
-        height: 50px;
         color: @navMenuTextColor;
         background: none transparent;
         border: none;
+        padding: 0 @navMenuLeftPadding;
 
         &--opened {
             background-color: @navMenuBgColorActive;
@@ -85,10 +92,13 @@
         outline: none;
         border: none;
         background: none @navMenuBgColorActive;
-        border: 1px solid @navMenuBgColor;
+        border: 0 solid @navMenuBgColor;
+        border-bottom-width: 1px;
         color: @navMenuTextColor;
+        font-weight: 100;
+        min-width: 115px;
         margin: 0;
-        padding: 5px 10px;
+        padding: 5px @navMenuLeftPadding;
         cursor: pointer;
 
         &:hover,
@@ -97,9 +107,5 @@
             outline: none;
             color: @navMenuTextColorActive;
         }
-    }
-
-    &__popup {
-        background-color: @navMenuBgColor;
     }
 }
