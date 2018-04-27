@@ -1,3 +1,5 @@
 AppBalance:
 
-    <AppBalance />
+    <AppBalance
+
+    />

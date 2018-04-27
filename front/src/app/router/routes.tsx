@@ -38,151 +38,236 @@ function reload() {
     window.location.reload(true);
 }
 
-const routes = [
+async function replaceWithChild(
+    me: IRouterResult,
+    ctx: IContext,
+): Promise<IRouterResult> {
+    const params: IRouterResult = await ctx.next();
+
+    if (params) {
+        return params;
+    }
+
+    return me;
+}
+
+async function firstByDefault(ctx: IContext, p: any) {
+    const params: IRouterResult = await ctx.next();
+
+    return params ? params : ctx.route.children[0].action(ctx, p);
+}
+
+export const univeralRouterArgument: Array<IUniversalRouterItem> = [
     {
         path: '/',
-        async action(ctx: IContext) {
-            const inner = await ctx.next();
+        action: async (ctx: IContext, _: IUrlParams) => {
+            const params: IRouterResult = await ctx.next();
 
             return {
                 content: (
                     <App
                         onNavigate={navigateTo}
                         onExit={reload}
-                        selectedNavMenuItem={inner.pathKey}
-                        {...inner.props}
+                        path={ctx.pathname}
+                        title={params.pageTitle}
+                        {...params.props}
                     >
-                        {inner && inner.content}
+                        {params.content}
                     </App>
                 ),
-                title: `SONM Wallet: ${inner.title}`,
+                browserTabTitle: params.browserTabTitle || '_SONM_',
             };
         },
         children: [
             {
-                path: '/send',
-                action: async (ctx: IContext, params: IUrlParams) => {
-                    const initialAddress = (ctx.query as any).address;
-                    const initialCurrency = (ctx.query as any).currency;
-
-                    const next = await ctx.next();
-
-                    const content =
-                        next && next.content ? (
-                            next.content
-                        ) : (
-                            <Send
-                                onNotAvailable={navigateToMain}
-                                initialAddress={initialAddress}
-                                initialCurrency={initialCurrency}
-                                onRequireConfirmation={navigateToConfirmation}
-                            />
-                        );
-
-                    if (next && next.popup) {
-                        content.push(next.popup);
-                    }
-
-                    return {
-                        pathKey: '/send',
-                        title: 'Send',
-                        content,
-                    };
-                },
+                path: '/wallet',
+                action: firstByDefault,
                 children: [
                     {
-                        path: '/confirm',
-                        action: (ctx: IContext) => ({
-                            title: 'Confirmation',
+                        path: '/send',
+                        action: async (ctx: IContext, params: IUrlParams) =>
+                            replaceWithChild(
+                                {
+                                    browserTabTitle: 'Send',
+                                    pageTitle: 'Send',
+                                    content: (
+                                        <Send
+                                            onNotAvailable={navigateToMain}
+                                            initialAddress={ctx.query.address}
+                                            initialCurrency={ctx.query.currency}
+                                            onRequireConfirmation={
+                                                navigateToConfirmation
+                                            }
+                                        />
+                                    ),
+                                },
+                                ctx,
+                            ),
+                        children: [
+                            {
+                                path: '/confirm',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) =>
+                                    replaceWithChild(
+                                        {
+                                            browserTabTitle:
+                                                'Transfer confirmation',
+                                            pageTitle: 'Transfer confirmation',
+                                            content: (
+                                                <SendConfirm
+                                                    onBack={navigateToSend}
+                                                    onSuccess={
+                                                        navigateToSuccess
+                                                    }
+                                                />
+                                            ),
+                                        },
+                                        ctx,
+                                    ),
+                            },
+                            {
+                                path: '/success',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) =>
+                                    replaceWithChild(
+                                        {
+                                            browserTabTitle: 'Transfer success',
+                                            pageTitle: 'Transfer success',
+                                            content: (
+                                                <SendSuccess
+                                                    onClickHistory={
+                                                        navigateToHistory
+                                                    }
+                                                    onClickSend={navigateToSend}
+                                                />
+                                            ),
+                                        },
+                                        ctx,
+                                    ),
+                            },
+                        ],
+                    },
+                    {
+                        path: '/history',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'History',
+                            pageTitle: 'History',
                             content: (
-                                <SendConfirm
-                                    onBack={navigateToSend}
-                                    onSuccess={navigateToSuccess}
+                                <History
+                                    initialAddress={ctx.query.address}
+                                    initialCurrency={ctx.query.currency}
                                 />
                             ),
                         }),
                     },
                     {
-                        path: '/success',
-                        action: (ctx: IContext) => ({
-                            title: 'Success',
-                            content: (
-                                <SendSuccess
-                                    onClickHistory={navigateToHistory}
-                                    onClickSend={navigateToSend}
-                                />
-                            ),
-                        }),
+                        path: '/accounts',
+                        action: (defaultAction = async (
+                            ctx: IContext,
+                            params: IUrlParams,
+                        ) =>
+                            replaceWithChild(
+                                {
+                                    browserTabTitle: 'Accounts',
+                                    pageTitle: 'Accounts',
+                                    content: <Wallets />,
+                                },
+                                ctx,
+                            )),
+                        children: [
+                            {
+                                path: '/:address',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: (
+                                        <Account
+                                            initialAddress={params.address}
+                                        />
+                                    ),
+                                    browserTabTitle: 'Accounts',
+                                    pageTitle: 'Accounts',
+                                }),
+                            },
+                        ],
                     },
                 ],
             },
             {
-                path: '/history',
-                action: (ctx: IContext, params: IUrlParams) => {
-                    const initialAddress = (ctx.query as any).address;
-                    const initialCurrency = (ctx.query as any).currency;
-
-                    return {
-                        pathKey: '/history',
-                        title: 'History',
-                        content: (
-                            <History
-                                initialAddress={initialAddress}
-                                initialCurrency={initialCurrency}
-                            />
-                        ),
-                    };
-                },
-            },
-            {
-                path: '/accounts',
-                action: (defaultAction = async (ctx: IContext) => {
-                    const next = await ctx.next();
-
-                    const content =
-                        next && next.content ? next.content : <Wallets />;
-
-                    if (next && next.popup) {
-                        content.push(next.popup);
-                    }
-
-                    return {
-                        pathKey: '/accounts',
-                        title: 'Accounts',
-                        content,
-                    };
-                }),
+                path: '/market',
+                action: firstByDefault,
                 children: [
                     {
-                        path: '/:address',
-                        action: (ctx: IContext, params: IUrlParams) => {
-                            const initialAddress = params.address;
-
-                            return {
-                                content: (
-                                    <Account initialAddress={initialAddress} />
-                                ),
-                            };
-                        },
+                        path: '/profiles',
+                        action: async (ctx: IContext) =>
+                            replaceWithChild(
+                                {
+                                    pathKey: '/profiles',
+                                    browserTabTitle: 'Profiles',
+                                    pageTitle: 'Profiles',
+                                    content: <ProfileList />,
+                                },
+                                ctx,
+                            ),
+                        children: [
+                            {
+                                path: '/:address',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: <Profile />,
+                                    browserTabTitle: 'Accounts',
+                                    pageTitle: 'Accounts',
+                                }),
+                            },
+                        ],
+                    },
+                    {
+                        path: '/dw',
+                        action: firstByDefault,
+                        children: [
+                            {
+                                path: '/deposit',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: 'Deposit',
+                                    browserTabTitle: 'Deposit',
+                                    pageTitle: 'Deposit',
+                                }),
+                            },
+                            {
+                                path: '/withdraw',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: 'Withdraw',
+                                    browserTabTitle: 'Withdraw',
+                                    pageTitle: 'Withdraw',
+                                }),
+                            },
+                            {
+                                path: '/history',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: 'D & W History',
+                                    browserTabTitle: 'D & W History',
+                                    pageTitle: 'D & W History',
+                                }),
+                            },
+                        ],
                     },
                 ],
-            },
-            {
-                path: '/profile',
-                action: (ctx: IContext) => ({
-                    title: 'Profile',
-                    content: <Profile />,
-                }),
-            },
-            {
-                path: '/profile-list',
-                action: (ctx: IContext, params: IUrlParams) => {
-                    return {
-                        pathKey: '/profile-list',
-                        title: 'Profiles',
-                        content: <ProfileList />,
-                    };
-                },
             },
             {
                 path: /.*/,
@@ -197,18 +282,25 @@ export interface IUrlParams {
 }
 
 interface IContext {
-    query: object;
+    query: any;
+    route: any;
     pathname: string;
-    params?: any;
+    params?: IRouterResult;
     next: () => IRouterResult;
 }
 
-interface IRouterResult {
-    popup?: any;
-    content?: any;
-    title: string;
-    props?: any;
-    pathKey: string;
+interface IUniversalRouterItem {
+    path: string | RegExp;
+    action?: (ctx: IContext, params: any) => any;
+    children?: Array<IUniversalRouterItem>;
 }
 
-export { routes };
+interface IRouterResult {
+    content?: React.ReactNode;
+    browserTabTitle?: string;
+    pageTitle?: string;
+    props?: any;
+    pathKey?: string;
+}
+
+export default univeralRouterArgument;

@@ -7,14 +7,17 @@ import { LoadMask } from 'app/components/common/load-mask';
 import { AlertList } from './sub/alerts';
 import { AppHeader } from './sub/app-header';
 import { Header } from 'app/components/common/header';
+import { BreadCrumbs } from 'app/components/common/breadcrumbs';
 
 interface IProps {
     className?: string;
     children: any;
     error: string;
-    selectedNavMenuItem: string;
+    path: string;
     onNavigate: (url: string) => void;
     onExit: () => void;
+    title?: string;
+    breadcrumb: any;
 }
 
 @observer
@@ -26,7 +29,8 @@ export class App extends React.Component<IProps, any> {
     };
 
     public render() {
-        const { className, selectedNavMenuItem, children } = this.props;
+        const p = this.props;
+        const { className, path, children } = this.props;
         const t = rootStore.localizator.getMessageText;
 
         return (
@@ -34,7 +38,7 @@ export class App extends React.Component<IProps, any> {
                 <LoadMask white visible={rootStore.isPending}>
                     <AppHeader
                         className="sonm-app__header"
-                        path={selectedNavMenuItem}
+                        path={path}
                         isTestNet={true}
                         gethNodeUrl="infura.com"
                         sonmNodeUrl="dwh.sonm.com"
@@ -53,7 +57,10 @@ export class App extends React.Component<IProps, any> {
                         />
                     </div>
                     <div className="sonm-app__common sonm-app-common-block">
-                        <Header className="sonm-app-common-block__title" />
+                        <BreadCrumbs />
+                        <Header className="sonm-app-common-block__title">
+                            {p.title}
+                        </Header>
                     </div>
                     <div className="sonm-app__content">
                         <div className="sonm-app__content-scroll-ct">

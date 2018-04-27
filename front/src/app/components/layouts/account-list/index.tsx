@@ -8,7 +8,6 @@ import {
 } from 'app/components/common/account-item';
 import { CurrencyBalanceList } from 'app/components/common/currency-balance-list';
 import { DeletableItemWithConfirmation } from 'app/components/common/deletable-item/with-confirmation';
-import { Header } from 'app/components/common/header';
 import { Button } from 'app/components/common/button';
 import { ImportAccount, IImportAccountForm } from './sub/import-account';
 import { CreateAccount, ICreateAccountForm } from './sub/create-account';
@@ -120,7 +119,6 @@ export class Wallets extends React.Component<IProps, IState> {
 
         return (
             <div className={cn('sonm-accounts', className)}>
-                <Header className="sonm-accounts__header">Accounts</Header>
                 <DownloadFile
                     getData={rootStore.mainStore.getWalletExportText}
                     className="sonm-accounts__export-wallet"

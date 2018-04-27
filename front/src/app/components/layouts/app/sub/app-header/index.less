@@ -8,6 +8,7 @@
 @sonmHeaderHeight: 57px;
 @sonmHeaderSizePadding: 40px;
 @sonmHeaderColor: @color-white;
+@sonmHeaderZindex: @z-kangchenjunga;
 
 .sonm-app-header {
     --color-nav-menu-selection: yellow;
@@ -93,6 +94,7 @@
         background-color: var(--color-nav-menu-selection);
         color: @sonmHeaderColor;
         padding: 3px @sonmHeaderSizePadding 3px 10px;
+        z-index: @sonmHeaderZindex;
     }
 
     &__balance {
