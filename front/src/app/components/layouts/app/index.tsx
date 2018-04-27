@@ -57,7 +57,11 @@ export class App extends React.Component<IProps, any> {
                         />
                     </div>
                     <div className="sonm-app__common sonm-app-common-block">
-                        <BreadCrumbs />
+                        <BreadCrumbs
+                            className="sonm-app__breadcrumbs"
+                            items={[['Tam', '/path']]}
+                            onNavigate={p.onNavigate}
+                        />
                         <Header className="sonm-app-common-block__title">
                             {p.title}
                         </Header>

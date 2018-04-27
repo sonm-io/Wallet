@@ -1,4 +1,13 @@
 @import 'guide.less';
 
 .sonm-breadcrumbs {
+    &__items {
+        &:after {
+            content: ' > ';
+        }
+
+        &:last-of-type {
+            content: '';
+        }
+    }
 }

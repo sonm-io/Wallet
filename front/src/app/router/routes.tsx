@@ -38,17 +38,16 @@ function reload() {
     window.location.reload(true);
 }
 
-async function replaceWithChild(
-    me: IRouterResult,
-    ctx: IContext,
-): Promise<IRouterResult> {
-    const params: IRouterResult = await ctx.next();
+function replaceWithChild(action: TFnAction): TFnAction {
+    return async (ctx: IContext, p: any) => {
+        const child: IRouterResult = await ctx.next();
 
-    if (params) {
-        return params;
-    }
-
-    return me;
+        if (child) {
+            return child;
+        } else {
+            return action(ctx, p);
+        }
+    };
 }
 
 async function firstByDefault(ctx: IContext, p: any) {
@@ -85,69 +84,61 @@ export const univeralRouterArgument: Array<IUniversalRouterItem> = [
                 children: [
                     {
                         path: '/send',
-                        action: async (ctx: IContext, params: IUrlParams) =>
-                            replaceWithChild(
-                                {
-                                    browserTabTitle: 'Send',
-                                    pageTitle: 'Send',
-                                    content: (
-                                        <Send
-                                            onNotAvailable={navigateToMain}
-                                            initialAddress={ctx.query.address}
-                                            initialCurrency={ctx.query.currency}
-                                            onRequireConfirmation={
-                                                navigateToConfirmation
-                                            }
-                                        />
-                                    ),
-                                },
-                                ctx,
-                            ),
+                        action: replaceWithChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'Send',
+                                pageTitle: 'Send',
+                                content: (
+                                    <Send
+                                        onNotAvailable={navigateToMain}
+                                        initialAddress={ctx.query.address}
+                                        initialCurrency={ctx.query.currency}
+                                        onRequireConfirmation={
+                                            navigateToConfirmation
+                                        }
+                                    />
+                                ),
+                            }),
+                        ),
                         children: [
                             {
                                 path: '/confirm',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) =>
-                                    replaceWithChild(
-                                        {
-                                            browserTabTitle:
-                                                'Transfer confirmation',
-                                            pageTitle: 'Transfer confirmation',
-                                            content: (
-                                                <SendConfirm
-                                                    onBack={navigateToSend}
-                                                    onSuccess={
-                                                        navigateToSuccess
-                                                    }
-                                                />
-                                            ),
-                                        },
-                                        ctx,
-                                    ),
+                                action: replaceWithChild(
+                                    async (
+                                        ctx: IContext,
+                                        params: IUrlParams,
+                                    ) => ({
+                                        browserTabTitle:
+                                            'Transfer confirmation',
+                                        pageTitle: 'Transfer confirmation',
+                                        content: (
+                                            <SendConfirm
+                                                onBack={navigateToSend}
+                                                onSuccess={navigateToSuccess}
+                                            />
+                                        ),
+                                    }),
+                                ),
                             },
                             {
                                 path: '/success',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) =>
-                                    replaceWithChild(
-                                        {
-                                            browserTabTitle: 'Transfer success',
-                                            pageTitle: 'Transfer success',
-                                            content: (
-                                                <SendSuccess
-                                                    onClickHistory={
-                                                        navigateToHistory
-                                                    }
-                                                    onClickSend={navigateToSend}
-                                                />
-                                            ),
-                                        },
-                                        ctx,
-                                    ),
+                                action: replaceWithChild(
+                                    async (
+                                        ctx: IContext,
+                                        params: IUrlParams,
+                                    ) => ({
+                                        browserTabTitle: 'Transfer success',
+                                        pageTitle: 'Transfer success',
+                                        content: (
+                                            <SendSuccess
+                                                onClickHistory={
+                                                    navigateToHistory
+                                                }
+                                                onClickSend={navigateToSend}
+                                            />
+                                        ),
+                                    }),
+                                ),
                             },
                         ],
                     },
@@ -166,18 +157,13 @@ export const univeralRouterArgument: Array<IUniversalRouterItem> = [
                     },
                     {
                         path: '/accounts',
-                        action: (defaultAction = async (
-                            ctx: IContext,
-                            params: IUrlParams,
-                        ) =>
-                            replaceWithChild(
-                                {
-                                    browserTabTitle: 'Accounts',
-                                    pageTitle: 'Accounts',
-                                    content: <Wallets />,
-                                },
-                                ctx,
-                            )),
+                        action: (defaultAction = replaceWithChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'Accounts',
+                                pageTitle: 'Accounts',
+                                content: <Wallets />,
+                            }),
+                        )),
                         children: [
                             {
                                 path: '/:address',
@@ -204,16 +190,14 @@ export const univeralRouterArgument: Array<IUniversalRouterItem> = [
                 children: [
                     {
                         path: '/profiles',
-                        action: async (ctx: IContext) =>
-                            replaceWithChild(
-                                {
-                                    pathKey: '/profiles',
-                                    browserTabTitle: 'Profiles',
-                                    pageTitle: 'Profiles',
-                                    content: <ProfileList />,
-                                },
-                                ctx,
-                            ),
+                        action: replaceWithChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                pathKey: '/profiles',
+                                browserTabTitle: 'Profiles',
+                                pageTitle: 'Profiles',
+                                content: <ProfileList />,
+                            }),
+                        ),
                         children: [
                             {
                                 path: '/:address',
@@ -289,9 +273,11 @@ interface IContext {
     next: () => IRouterResult;
 }
 
+type TFnAction = (ctx: IContext, params: any) => Promise<IRouterResult>;
+
 interface IUniversalRouterItem {
     path: string | RegExp;
-    action?: (ctx: IContext, params: any) => any;
+    action?: TFnAction;
     children?: Array<IUniversalRouterItem>;
 }
 
