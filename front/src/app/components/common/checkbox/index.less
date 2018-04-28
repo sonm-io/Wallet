@@ -69,7 +69,7 @@
         }
     }
 
-    &__input:checked + &__cradle {
+    &__input:not(:checked) + &__cradle {
         &:after {
             transform: rotateZ(40deg) scaleX(0);
         }
