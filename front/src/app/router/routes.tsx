@@ -282,19 +282,22 @@ const routes = [
                 ],
             },
             {
-                path: '/profile',
-                action: (ctx: IContext) => ({
-                    title: 'Profile',
-                    content: <Profile />,
-                }),
+                path: '/market/profile/:address',
+                action: (ctx: IContext, params: IUrlParams) => {
+                    const initialAddress = params.address;
+
+                    return {
+                        content: <Profile initialAddress={initialAddress} />,
+                    };
+                },
             },
             {
-                path: '/profile-list',
+                path: '/market/profiles',
                 action: (ctx: IContext, params: IUrlParams) => {
                     return {
                         pathKey: '/profile-list',
                         title: 'Profiles',
-                        content: <ProfileList />,
+                        content: <ProfileList navigate={navigate} />,
                     };
                 },
             },

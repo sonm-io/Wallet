@@ -8,11 +8,12 @@ import {
     ISelectItem,
     ISelectChangeParams,
 } from 'app/components/common/fixed-select';
-import { IProfileBrief, ProfileStatus } from 'app/api/types';
+import { IProfileBrief, EProfileStatus } from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { Country } from 'app/components/common/country';
 import { Toggler } from 'app/components/common/toggler';
+import { ProfileStatus } from 'app/components/common/profile-status';
 
 class ProfileTable extends Table<IProfileBrief> {}
 
@@ -25,6 +26,7 @@ interface IProps {
     filter: string;
     onChangePage: (page: number) => void;
     onChangeFilter: (filter: string) => void;
+    onRowClick: (record: IProfileBrief) => void;
 }
 
 const defaultFilter = {
@@ -72,14 +74,14 @@ export class ProfileListView extends React.Component<IProps, any> {
             className: 'sonm-cell-status sonm-profiles__cell',
             dataIndex: 'status',
             title: 'Status',
-            render: (status: ProfileStatus, record: IProfileBrief) => {
-                return name;
+            render: (status: EProfileStatus, record: IProfileBrief) => {
+                return <ProfileStatus status={status} />;
             },
         },
         {
             className: 'sonm-cell-buy-orders sonm-profiles__cell',
             dataIndex: 'buyOrders',
-            title: 'Orders',
+            title: 'Buy orders',
             render: (buyOrders: number, record: IProfileBrief) => {
                 return buyOrders;
             },
@@ -87,19 +89,19 @@ export class ProfileListView extends React.Component<IProps, any> {
         {
             className: 'sonm-cell-sell-orders sonm-profiles__cell',
             dataIndex: 'sellOrders',
-            title: 'Orders',
+            title: 'Sell orders',
             render: (sellOrders: number, record: IProfileBrief) => {
                 return sellOrders;
             },
         },
-        {
+        /*{
             className: 'sonm-cell-deals sonm-profiles__cell',
             dataIndex: 'deals',
             title: 'Deals',
             render: (deals: number, record: IProfileBrief) => {
                 return name;
             },
-        },
+        },*/
         {
             className: 'sonm-cell-country sonm-profile-list__cell',
             dataIndex: 'country',
@@ -113,18 +115,18 @@ export class ProfileListView extends React.Component<IProps, any> {
     protected static statusOptions: Array<ISelectItem<any>> = [
         {
             value: (defaultFilter.status = { $eq: 0 }),
-            stringValue: 'ANONIMOUS',
-            className: 'sonm-profiles__filter-status--anon',
+            stringValue: 'ANONYMOUS',
+            className: 'sonm-profiles__status--anon',
         },
         {
             value: { $eq: 1 },
             stringValue: 'REGISTERED',
-            className: 'sonm-profiles__filter-status--reg',
+            className: 'sonm-profiles__status--reg',
         },
         {
             value: { $eq: 2 },
             stringValue: 'IDENTIFIED',
-            className: 'sonm-profiles__filter-status--ident',
+            className: 'sonm-profiles__status--ident',
         },
     ];
 
@@ -207,12 +209,14 @@ export class ProfileListView extends React.Component<IProps, any> {
                         title="Professional"
                         value={true}
                         name="professional"
+                        titleBefore
                     />
                     <Toggler
                         className="sonm-profiles__filter-cloud"
-                        title="Cloud"
+                        title="Corporate"
                         value={true}
-                        name="cloud"
+                        name="corporate"
+                        titleBefore
                     />
                     <FixedSelect
                         className="sonm-profiles__filter-deals"
@@ -231,6 +235,11 @@ export class ProfileListView extends React.Component<IProps, any> {
                     columns={ProfileListView.columns}
                     pagination={pagination}
                     rowKey="address"
+                    onRow={(record: IProfileBrief) => {
+                        return {
+                            onClick: () => this.props.onRowClick(record),
+                        };
+                    }}
                 />
             </div>
         );

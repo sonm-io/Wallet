@@ -13,7 +13,7 @@ ipc.setRequestProcessor(async (type: string, payload: any): TResultPromise<
             validation: validation as IValidation,
         };
     } catch (err) {
-        if (IS_DEV) {
+        if (IS_DEV || 1) {
             console.error(type, payload);
             console.error(err);
         }

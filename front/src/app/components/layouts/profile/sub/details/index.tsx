@@ -6,6 +6,8 @@ import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { InfoBalloon } from 'app/components/common/info-balloon';
 import { Country } from 'app/components/common/country';
+import { EProfileStatus } from 'app/api/types';
+import { ProfileStatus } from 'app/components/common/profile-status';
 
 export interface IProfileDefinition {
     label: string;
@@ -16,7 +18,7 @@ interface IProps {
     className?: string;
     children?: never;
     userName: string;
-    status: number;
+    status: EProfileStatus;
     countryAbCode2: string;
     address: string;
     logoUrl: string;
@@ -58,12 +60,6 @@ export class Details extends React.PureComponent<IProps, TUiText> {
         getUiText: (s: string, args: any[]) => s,
     };
 
-    protected getStatusText(): string {
-        return this.props.status === 1
-            ? 'REGISTERED'
-            : this.props.status === 2 ? 'IDENTIFIED' : 'ANONIMOUS';
-    }
-
     protected handleClickUrl(event: any) {
         event.preventDefault();
     }
@@ -73,7 +69,6 @@ export class Details extends React.PureComponent<IProps, TUiText> {
         const t = p.getUiText;
         const definitions: React.ReactNode[] = [];
         const renders = Details.profileDefinitionRenders as any;
-        const statusText = this.getStatusText();
 
         return (
             <Panel
@@ -85,13 +80,8 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                     {!!p.userName && <dd key="nv">{p.userName}</dd>}
 
                     <dt key="sk">{t('Status')}</dt>
-                    <dd
-                        key="sv"
-                        className={`sonm-profile-details__status sonm-profile-details__status--${
-                            p.status
-                        }`}
-                    >
-                        {t(statusText)}
+                    <dd key="sv" className={`sonm-profile-details__status`}>
+                        <ProfileStatus status={p.status} />
                     </dd>
 
                     {!!p.countryAbCode2 && <dt key="ck">{t('Country')}</dt>}
@@ -149,18 +139,18 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                         definitions)
                     }
                 </div>
-                {definitions.length === 0 && (
-                    <span className="sonm-profile-details__certificate">
-                        {t('before_certification_link')}
-                        <a
-                            href="#go-to-instruction"
-                            onClick={this.handleClickUrl}
-                        >
-                            {t('certification_link')}
-                        </a>
-                        {t('after_certification_link')}
-                    </span>
-                )}
+                {/*{definitions.length === 0 && (*/}
+                {/*<span className="sonm-profile-details__certificate">*/}
+                {/*{t('before_certification_link')}*/}
+                {/*<a*/}
+                {/*href="#go-to-instruction"*/}
+                {/*onClick={this.handleClickUrl}*/}
+                {/*>*/}
+                {/*{t('certification_link')}*/}
+                {/*</a>*/}
+                {/*{t('after_certification_link')}*/}
+                {/*</span>*/}
+                {/*)}*/}
             </Panel>
         );
     }

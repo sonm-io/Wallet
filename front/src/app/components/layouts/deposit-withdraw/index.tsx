@@ -337,6 +337,7 @@ export class DepositWithdraw extends React.Component<IProps, any> {
                 </Button>
             </React.Fragment>
         );
+
         return (
             <div className="sonm-deposit-withdraw__button-ct">{buttons}</div>
         );

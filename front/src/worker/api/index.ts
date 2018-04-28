@@ -3,11 +3,10 @@ import * as AES from 'crypto-js/aes';
 import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
-import * as t from 'app/api/types';
-
-//import { THistorySourceMode } from 'app/stores/types';
+import * as t from './types';
 
 import { migrate } from '../migrations';
+import { DWH } from './dwh';
 
 const { createSonmFactory, utils } = sonmApi;
 
@@ -17,49 +16,21 @@ const PENDING_HASH = 'waiting for hash...';
 
 import ipc from '../ipc';
 
-interface INodes {
-    [index: string]: string;
-}
-
-interface ITokens {
-    [index: string]: t.ICurrencyInfo[];
-}
-
-interface IPayload {
-    [index: string]: any;
-}
-
-interface IWalletJson {
-    address: string;
-    crypto: object;
-}
-
-interface IAccounts {
-    [address: string]: {
-        json: IWalletJson;
-        name: string;
-        address: string;
-    };
-}
-
-interface IResponse {
-    data?: any;
-    validation?: object;
-}
-
 async function ipcSend(type: string, payload?: any): Promise<any> {
     const res = await ipc.send(type, payload);
     return res.data || null;
 }
 
-const DEFAULT_NODES: INodes = {
+const DWH_URL = 'http://5.178.85.52:15022/DWHServer/';
+const DEFAULT_NODES: t.INodes = {
     default: 'https://mainnet.infura.io',
     livenet: 'https://mainnet.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
     testrpc: 'http://localhost:8545',
+    private: 'http://159.65.167.139:8545',
 };
 
-const DEFAULT_TOKENS: ITokens = {
+const DEFAULT_TOKENS: t.ITokens = {
     livenet: [
         {
             name: 'STORJ',
@@ -90,25 +61,36 @@ const DEFAULT_TOKENS: ITokens = {
 };
 
 class Api {
-    private routes: {
+    private dwh: DWH;
+
+    protected routes: {
         [index: string]: any;
     };
 
     private accounts: {
         [index: string]: any;
-    };
+    } = {};
 
     private storage: {
         [index: string]: any;
+    } = {
+        accounts: {},
+        transactions: [],
+        tokens: [],
+        settings: {
+            chainId: null,
+            nodeUrl: null,
+        },
     };
 
     private secretKey: string = '';
     private hash: string = '';
-    private tokenList: any;
 
-    private constructor() {
-        this.accounts = {};
+    private tokenList: {
+        [index: string]: any;
+    } = {};
 
+    constructor(dwh: DWH) {
         this.routes = {
             ping: this.ping,
             getWalletList: this.getWalletList,
@@ -131,6 +113,7 @@ class Api {
             'account.getGasPrice': this.getGasPrice,
             'account.getCurrencyBalances': this.getCurrencyBalances,
             'account.getCurrencies': this.getCurrencies,
+            'account.getMarketBalance': this.getMarketBalance,
             'account.send': this.transaction('send'),
             'account.deposit': this.transaction('deposit'),
             'account.withdraw': this.transaction('withdraw'),
@@ -140,6 +123,11 @@ class Api {
 
             'transaction.list': this.getTransactionList,
 
+            'profile.get': this.getProfile,
+            'profile.list': this.getProfiles,
+            'order.get': this.getOrder,
+            'order.list': this.getOrders,
+
             getSonmTokenAddress: this.getSonmTokenAddress,
 
             addToken: this.addToken,
@@ -148,15 +136,7 @@ class Api {
             getPresetTokenList: this.getPresetTokenList,
         };
 
-        this.storage = {
-            accounts: {},
-            transactions: [],
-            tokens: [],
-            settings: {
-                chainId: null,
-                nodeUrl: null,
-            },
-        };
+        this.dwh = dwh;
     }
 
     public decrypt = (data: string): any => {
@@ -172,7 +152,7 @@ class Api {
         ).toString();
     };
 
-    public getWalletList = async (): Promise<IResponse> => {
+    public getWalletList = async (): Promise<t.IResponse> => {
         return {
             data: (await this.getWallets()).data,
         };
@@ -194,13 +174,13 @@ class Api {
         }
     };
 
-    public getSettings = async (): Promise<IResponse> => {
+    public getSettings = async (): Promise<t.IResponse> => {
         return {
             data: this.storage.settings,
         };
     };
 
-    public setSettings = async (data: IPayload): Promise<IResponse> => {
+    public setSettings = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.settings) {
             this.storage.settings = data.settings;
             await this.saveData();
@@ -213,7 +193,7 @@ class Api {
         }
     };
 
-    public checkConnection = async (): Promise<IResponse> => {
+    public checkConnection = async (): Promise<t.IResponse> => {
         try {
             await this.getGasPrice();
 
@@ -227,7 +207,7 @@ class Api {
         }
     };
 
-    public getPrivateKey = async (data: IPayload): Promise<IResponse> => {
+    public getPrivateKey = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             const { address, password } = data;
 
@@ -240,7 +220,7 @@ class Api {
     private async checkAccountPassword(
         password: string,
         address: string,
-    ): Promise<IResponse> {
+    ): Promise<t.IResponse> {
         if (!password) {
             return {
                 validation: {
@@ -290,7 +270,7 @@ class Api {
         }
     }
 
-    private createAccount = async (data: IPayload): Promise<IResponse> => {
+    private createAccount = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.password) {
             return {
                 data: JSON.stringify(utils.newAccount(data.password)),
@@ -301,8 +281,8 @@ class Api {
     };
 
     private createAccountFromPrivateKey = async (
-        data: IPayload,
-    ): Promise<IResponse> => {
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
         if (data.password && data.privateKey) {
             try {
                 return {
@@ -326,7 +306,7 @@ class Api {
         this.hash = `sonm_${SHA256(name).toString(Hex)}`;
     }
 
-    public createWallet = async (data: IPayload): Promise<IResponse> => {
+    public createWallet = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.password && data.walletName && data.chainId) {
             this.setWalletHash(data.walletName);
             this.secretKey = data.password;
@@ -378,7 +358,7 @@ class Api {
         }
     };
 
-    public importWallet = async (data: IPayload): Promise<IResponse> => {
+    public importWallet = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.password && data.file && data.walletName) {
             if (data.file.substr(0, 4) === 'sonm') {
                 try {
@@ -450,7 +430,7 @@ class Api {
         }
     };
 
-    public unlockWallet = async (data: IPayload): Promise<IResponse> => {
+    public unlockWallet = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.password && data.walletName) {
             this.setWalletHash(data.walletName);
             this.secretKey = data.password;
@@ -501,13 +481,13 @@ class Api {
         }
     };
 
-    public exportWallet = async (): Promise<IResponse> => {
+    public exportWallet = async (): Promise<t.IResponse> => {
         return {
             data: 'sonm' + this.encrypt(this.storage),
         };
     };
 
-    public getAccountList = async (): Promise<IResponse> => {
+    public getAccountList = async (): Promise<t.IResponse> => {
         const accounts = (await this.getAccounts()) || {};
         const addresses = Object.keys(accounts);
 
@@ -619,11 +599,11 @@ class Api {
         return data;
     };
 
-    private getAccounts = async (): Promise<IAccounts | null> => {
+    private getAccounts = async (): Promise<t.IAccounts | null> => {
         return this.storage.accounts || null;
     };
 
-    public async ping(): Promise<IResponse> {
+    public async ping(): Promise<t.IResponse> {
         return {
             data: {
                 pong: true,
@@ -669,31 +649,10 @@ class Api {
         }
     }
 
-    private async initAccount(address: string) {
-        if (!this.accounts[address]) {
-            const factory = createSonmFactory(
-                this.storage.settings.nodeUrl,
-                this.storage.settings.chainId,
-            );
-
-            this.accounts[address] = {
-                factory,
-                account: await factory.createAccount(address),
-                password: null,
-            };
-        }
-
-        return this.accounts[address];
-    }
-
     public getCurrencyBalances = async (address: string): Promise<any> => {
         if (address) {
             const tokenList = await this.getTokenList();
             const balancies = await tokenList.getBalances(address);
-
-            for (const key of Object.keys(balancies)) {
-                balancies[key] = balancies[key];
-            }
 
             return balancies;
         } else {
@@ -701,7 +660,7 @@ class Api {
         }
     };
 
-    public addToken = async (data: IPayload): Promise<IResponse> => {
+    public addToken = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             try {
                 const tokenList = await this.getTokenList();
@@ -725,7 +684,7 @@ class Api {
         }
     };
 
-    public removeToken = async (data: IPayload): Promise<IResponse> => {
+    public removeToken = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             const tokenList = await this.getTokenList();
             await tokenList.remove(data.address);
@@ -741,7 +700,7 @@ class Api {
         }
     };
 
-    public getTokenInfo = async (data: IPayload): Promise<IResponse> => {
+    public getTokenInfo = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             try {
                 const tokenList = await this.getTokenList();
@@ -765,25 +724,65 @@ class Api {
         }
     };
 
-    private async getTokenList() {
-        if (!this.tokenList) {
-            const factory = createSonmFactory(
-                this.storage.settings.nodeUrl,
-                this.storage.settings.chainId,
-            );
-            this.tokenList = await factory.createTokenList();
-        }
+    private getFactory(key = 'main') {
+        const chainId = key === 'main' ? this.storage.settings.chainId : key;
+        const nodeUrl =
+            key === 'main'
+                ? this.storage.settings.nodeUrl
+                : DEFAULT_NODES[chainId];
 
-        return this.tokenList;
+        return createSonmFactory(nodeUrl, chainId);
     }
 
-    public getCurrencies = async (data: IPayload): Promise<IResponse> => {
+    private async getTokenList(key = 'main') {
+        if (!this.tokenList[key]) {
+            const factory = this.getFactory(key);
+            this.tokenList[key] = await factory.createTokenList();
+        }
+
+        return this.tokenList[key];
+    }
+
+    private async initAccount(address: string, key = 'main') {
+        if (!this.accounts[key]) {
+            this.accounts[key] = {};
+        }
+
+        if (!this.accounts[key][address]) {
+            const factory = this.getFactory(key);
+
+            this.accounts[key][address] = {
+                factory,
+                account: await factory.createAccount(address),
+                password: null,
+            };
+        }
+
+        return this.accounts[key][address];
+    }
+
+    public getMarketBalance = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
+        if (data.address) {
+            const tokenList = await this.getTokenList('private');
+            const balancies = await tokenList.getBalances(data.address);
+
+            return {
+                data: balancies[Object.keys(balancies)[1]],
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public getCurrencies = async (data: t.IPayload): Promise<t.IResponse> => {
         return {
             data: this.storage.tokens,
         };
     };
 
-    public getGasPrice = async (): Promise<IResponse> => {
+    public getGasPrice = async (): Promise<t.IResponse> => {
         const factory = createSonmFactory(
             this.storage.settings.nodeUrl,
             this.storage.settings.chainId,
@@ -795,7 +794,7 @@ class Api {
         };
     };
 
-    public getSonmTokenAddress = async (): Promise<IResponse> => {
+    public getSonmTokenAddress = async (): Promise<t.IResponse> => {
         const factory = createSonmFactory(
             this.storage.settings.nodeUrl,
             this.storage.settings.chainId,
@@ -806,7 +805,7 @@ class Api {
         };
     };
 
-    public addAccount = async (data: IPayload): Promise<IResponse> => {
+    public addAccount = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.json && data.password && data.name) {
             try {
                 const json = JSON.parse(data.json.toLowerCase());
@@ -861,7 +860,7 @@ class Api {
         }
     };
 
-    public renameAccount = async (data: IPayload): Promise<IResponse> => {
+    public renameAccount = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address && data.name) {
             const accounts = (await this.getAccounts()) || {};
             if (accounts[data.address]) {
@@ -879,7 +878,7 @@ class Api {
         }
     };
 
-    public removeAccount = async (data: IPayload): Promise<IResponse> => {
+    public removeAccount = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             const address = data.address;
             const accounts = (await this.getAccounts()) || {};
@@ -899,7 +898,9 @@ class Api {
         }
     };
 
-    public requestTestTokens = async (data: IPayload): Promise<IResponse> => {
+    public requestTestTokens = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
         if (data.address && data.password) {
             const validation = await this.checkAccountPassword(
                 data.password,
@@ -930,14 +931,16 @@ class Api {
         }
     };
 
-    public getPresetTokenList = async (data: IPayload): Promise<IResponse> => {
+    public getPresetTokenList = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
         return {
             data: DEFAULT_TOKENS[this.storage.settings.chainId],
         };
     };
 
     public transaction = (action: string) => {
-        return async (data: IPayload): Promise<IResponse> => {
+        return async (data: t.IPayload): Promise<t.IResponse> => {
             const {
                 fromAddress,
                 toAddress,
@@ -1013,7 +1016,7 @@ class Api {
     };
 
     public getMethod = (method: string) => {
-        return async (data: IPayload): Promise<IResponse> => {
+        return async (data: t.IPayload): Promise<t.IResponse> => {
             if (data.address && data.password) {
                 const validation = await this.checkAccountPassword(
                     data.password,
@@ -1045,7 +1048,9 @@ class Api {
         await this.saveData();
     }
 
-    public getTransactionList = async (data: IPayload): Promise<IResponse> => {
+    public getTransactionList = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
         let { filters, limit, offset, source } = data;
 
         filters = filters || {};
@@ -1107,15 +1112,57 @@ class Api {
         };
     };
 
-    public async resolve(type: string, payload: any): Promise<IResponse> {
+    public getProfiles = async (data: t.IPayload): Promise<t.IResponse> => {
+        let { filters, limit, offset } = data;
+
+        filters = filters || {};
+        limit = limit || 10;
+        offset = offset || 0;
+
+        return {
+            data: await this.dwh.getProfiles(),
+        };
+    };
+
+    public getProfile = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (data.address) {
+            return {
+                data: await this.dwh.getProfile(data.address),
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public getOrders = async (data: t.IPayload): Promise<t.IResponse> => {
+        let { filters, limit, offset } = data;
+
+        filters = filters || {};
+        limit = limit || 10;
+        offset = offset || 0;
+
+        return {
+            data: await this.dwh.getOrders(),
+        };
+    };
+
+    public getOrder = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (data.id) {
+            return {
+                data: await this.dwh.getOrder(data.id),
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public async resolve(type: string, payload: any): Promise<t.IResponse> {
         if (this.routes[type]) {
             return this.routes[type](payload);
         } else {
             throw new Error('route_not_exists');
         }
     }
-
-    public static instance = new Api();
 }
 
-export const api = Api.instance;
+export const api = new Api(new DWH(DWH_URL));

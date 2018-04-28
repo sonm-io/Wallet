@@ -82,16 +82,23 @@ export enum NetworkEnum {
     rinkeby = 'rinkeby',
 }
 
-export enum ProfileStatus {
+export enum EProfileStatus {
     anon = 0,
     reg = 1,
     ident = 2,
+    full = 3,
+    pro = 4,
+}
+
+export interface IAttribute {
+    label: string;
+    value: string;
 }
 
 export interface IProfileBrief {
     name?: string;
     address: string;
-    status: ProfileStatus;
+    status: EProfileStatus;
     sellOrders: number;
     buyOrders: number;
     deals: number;
@@ -99,11 +106,29 @@ export interface IProfileBrief {
     isPro?: boolean;
     isCorp?: boolean;
     logoUrl?: string;
+    attributes?: IAttribute[];
 }
 
 export interface IProfileListResult {
     records: Array<IProfileBrief>;
     total: number;
+}
+
+export interface IOrder {
+    id: number;
+    orderType: number;
+    price: number;
+    duration: number;
+    orderStatus: number;
+    authorID: string;
+}
+
+export interface IOrderListResult {
+    records: IOrder[];
+}
+
+export interface IOrderListFilter {
+    authorID?: string;
 }
 
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

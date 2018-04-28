@@ -71,7 +71,7 @@ export const en: ILocalizationDictionary = {
         `Should be hex string with length ${length}`,
     privatekey_not_valid: 'Private key not valid',
 
-    'status-anon': 'ANONIMOUS',
+    'status-anon': 'ANONYMOUS',
     'status-reg': 'REGISTERED',
     'status-ident': 'IDENTIFIED',
 };

@@ -6,6 +6,7 @@ import { Statistic } from './sub/statistic';
 import { ICertificateProps } from './sub/certificate';
 import { CertificatesPanel } from './sub/certificates-panel';
 import { Panel } from 'app/components/common/panel';
+import { EProfileStatus } from 'app/api/types';
 
 interface IProps {
     className?: string;
@@ -23,7 +24,7 @@ interface IProps {
     userName: string;
     countryAbCode2: string;
     logoUrl: string;
-    userStatus: number;
+    userStatus: EProfileStatus;
     address: string;
     style?: any;
 }

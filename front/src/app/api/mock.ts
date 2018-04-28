@@ -161,7 +161,7 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 country: 'ru',
                 isPro: true,
                 isCorp: true,
-                status: t.ProfileStatus.anon,
+                status: t.EProfileStatus.anon,
             },
             {
                 name: undefined,
@@ -172,7 +172,7 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 country: 'ru',
                 isPro: true,
                 isCorp: true,
-                status: t.ProfileStatus.anon,
+                status: t.EProfileStatus.anon,
             },
             {
                 name: 'Ololan Ololoshevich',
@@ -183,7 +183,7 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 country: 'gb',
                 isPro: true,
                 isCorp: true,
-                status: t.ProfileStatus.anon,
+                status: t.EProfileStatus.anon,
             },
             {
                 name: 'BG',
@@ -194,7 +194,7 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 country: 'us',
                 isPro: true,
                 isCorp: true,
-                status: t.ProfileStatus.anon,
+                status: t.EProfileStatus.anon,
             },
         ],
         total: 5,
