@@ -77,10 +77,7 @@ export class Account extends React.Component<IProps, any> {
 
         const testEtherUrl = 'https://faucet.rinkeby.io/';
 
-        return [
-            <Header className="sonm-account__header" key="header">
-                Account
-            </Header>,
+        return (
             <div className={cn('sonm-account', className)} key="account">
                 <AccountBigSelect
                     className="sonm-account__account-select"
@@ -117,7 +114,7 @@ export class Account extends React.Component<IProps, any> {
                                     >
                                         <IdentIcon
                                             address={address}
-                                            width={40}
+                                            sizePx={40}
                                             className="sonm-account-token-list__currency-blockies"
                                         />
                                         <div className="sonm-account-token-list__currency-name">
@@ -192,7 +189,7 @@ export class Account extends React.Component<IProps, any> {
                         </div>
                     </form>
                 ) : null}
-            </div>,
-        ];
+            </div>
+        );
     }
 }

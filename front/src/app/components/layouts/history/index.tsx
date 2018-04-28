@@ -62,7 +62,7 @@ export class History extends React.Component<IProps, any> {
                     <IdentIcon
                         key="1"
                         address={addr}
-                        width={20}
+                        sizePx={20}
                         className="sonm-tx-list__cell-from-icon"
                     />,
                     <Hash
@@ -90,7 +90,7 @@ export class History extends React.Component<IProps, any> {
                     <IdentIcon
                         key="1"
                         address={addr}
-                        width={20}
+                        sizePx={20}
                         className="sonm-tx-list__cell-to-icon"
                     />,
                     <Hash

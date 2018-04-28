@@ -6,7 +6,7 @@ export interface IDropdownCssClasses {
 }
 
 export interface IDropdownRequredInputProps {
-    valueString: string;
+    valueString: any;
     isExpanded: boolean;
     onButtonClick: () => void;
     onRequireClose: () => void;

@@ -7,16 +7,13 @@ import { SendConfirm } from 'app/components/layouts/send/sub/confirm';
 import { Account } from 'app/components/layouts/account';
 import { Profile } from 'app/components/layouts/profile';
 import { ProfileList } from 'app/components/layouts/profile-list';
-import { DepositWithdraw } from 'app/components/layouts/deposit-withdraw';
-import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
-import { DepositWithdrawHistory } from 'app/components/layouts/deposit-withdraw-history';
-
-import { rootStore } from 'app/stores';
 import * as React from 'react';
+
 import { navigate } from './navigate';
 
 let defaultAction;
 
+const navigateToSend = () => navigate({ path: '/send' });
 const navigateToHistory = (
     accountAddress: string = '',
     currencyAddress: string = '',
@@ -32,277 +29,265 @@ const navigateToHistory = (
                 : undefined,
     });
 };
-const navigateToSend = () => navigate({ path: '/send' });
-const navigateToDeposit = () => navigate({ path: '/deposit' });
-const navigateToWithdraw = () => navigate({ path: '/withdraw' });
 const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
-const navigateToDWSuccess = (action: string) =>
-    navigate({ path: `/${action}/success` });
-const navigateToDWConfirm = (action: string) =>
-    navigate({ path: `/${action}/confirm` });
-const navigateToDW = (action: string) => navigate({ path: `/${action}` });
 const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
-const navigateToDWHistory = () =>
-    navigate({ path: '/deposit-withdraw-history' });
+
+function addBreadcrumb(ctx: IContext) {
+    ctx.breadcrumbs = ctx.breadcrumbs || [];
+
+    if (ctx.route.breadcrumbTitle) {
+        ctx.breadcrumbs.push({
+            path: ctx.route.path,
+            title: ctx.route.breadcrumbTitle,
+        });
+    }
+}
 
 function reload() {
     window.location.reload(true);
 }
 
-const getRouteForDW = (action: string) => {
-    return {
-        path: `/${action}`,
-        action: async (ctx: IContext, params: IUrlParams) => {
-            // FIX THIS THEN MENU WILL BE READY
-            //const initialAddress = (ctx.query as any).address || rootStore.mainStore.accountList[0].address;
+function replaceWithChild(action: TFnAction): TFnAction {
+    return async (ctx: IContext, p: any): Promise<IRouterResult> => {
+        addBreadcrumb(ctx);
 
-            const initialAddress = rootStore.mainStore.accountList[0].address;
-            const initialCurrency = rootStore.mainStore.primaryTokenAddress;
+        const child: IRouterResult = await ctx.next();
 
-            const next = await ctx.next();
-            const content =
-                next && next.content ? (
-                    next.content
-                ) : (
-                    <DepositWithdraw
-                        action={action}
-                        isConfirmation={false}
-                        onNotAvailable={navigateToMain}
-                        initialAddress={initialAddress}
-                        initialCurrency={initialCurrency}
-                        onSuccess={() => navigateToDWSuccess(action)}
-                        onConfirm={() => navigateToDWConfirm(action)}
-                        onBack={() => navigateToDW(action)}
-                    />
-                );
-
-            const props = next && next.props ? next.props : null;
-
-            if (next && next.popup) {
-                content.push(next.popup);
-            }
-
-            return {
-                pathKey: `/${action}`,
-                title: action,
-                content,
-                props,
-            };
-        },
-        children: [
-            {
-                path: `/confirm`,
-                action: (ctx: IContext) => {
-                    const initialAddress =
-                        rootStore.mainStore.accountList[0].address;
-                    const initialCurrency =
-                        rootStore.mainStore.primaryTokenAddress;
-
-                    return {
-                        title: 'Confirm',
-                        props: {
-                            className: 'sonm-deposit-withdraw__confirmation',
-                        },
-                        content: (
-                            <DepositWithdraw
-                                action={action}
-                                isConfirmation={true}
-                                onNotAvailable={navigateToMain}
-                                initialAddress={initialAddress}
-                                initialCurrency={initialCurrency}
-                                onSuccess={() => navigateToDWSuccess(action)}
-                                onConfirm={() => navigateToDWConfirm(action)}
-                                onBack={() => navigateToDW(action)}
-                            />
-                        ),
-                    };
-                },
-            },
-            {
-                path: '/success',
-                action: (ctx: IContext) => ({
-                    title: 'Success',
-                    content: (
-                        <DepositWithdrawSuccess
-                            onClickHistory={navigateToDWHistory}
-                            onClickDeposit={navigateToDeposit}
-                            onClickWithdraw={navigateToWithdraw}
-                        />
-                    ),
-                }),
-            },
-        ],
+        if (child) {
+            return child;
+        } else {
+            return action(ctx, p);
+        }
     };
-};
+}
 
-const routes = [
+async function firstByDefault(ctx: IContext, p: any) {
+    addBreadcrumb(ctx);
+
+    const params: IRouterResult = await ctx.next();
+
+    return params ? params : ctx.route.children[0].action(ctx, p);
+}
+
+function leaf(action: TFnAction) {
+    return async (ctx: IContext, p: any): Promise<IRouterResult> => {
+        addBreadcrumb(ctx);
+
+        return ctx.route.action(ctx, p);
+    };
+}
+
+export const univeralRoutes: Array<IUniversalRouterItem> = [
     {
         path: '/',
-        async action(ctx: IContext) {
-            const inner = await ctx.next();
+        action: async (ctx: IContext, _: IUrlParams) => {
+            const params: IRouterResult = await ctx.next();
+
+            const breadcrumbs = ctx.breadcrumbs;
+
+            ctx.breadcrumbs = [];
 
             return {
                 content: (
                     <App
+                        breadcrumbs={breadcrumbs}
                         onNavigate={navigateTo}
                         onExit={reload}
-                        selectedNavMenuItem={inner.pathKey}
-                        {...inner.props}
+                        path={ctx.pathname}
+                        title={params.pageTitle}
+                        {...params.props}
                     >
-                        {inner && inner.content}
+                        {params.content}
                     </App>
                 ),
-                title: `SONM Wallet: ${inner.title}`,
+                browserTabTitle: params.browserTabTitle || '_SONM_',
             };
         },
         children: [
             {
-                path: '/send',
-                action: async (ctx: IContext, params: IUrlParams) => {
-                    const initialAddress = (ctx.query as any).address;
-                    const initialCurrency = (ctx.query as any).currency;
-
-                    const next = await ctx.next();
-
-                    const content =
-                        next && next.content ? (
-                            next.content
-                        ) : (
-                            <Send
-                                onNotAvailable={navigateToMain}
-                                initialAddress={initialAddress}
-                                initialCurrency={initialCurrency}
-                                onRequireConfirmation={navigateToConfirmation}
-                            />
-                        );
-
-                    if (next && next.popup) {
-                        content.push(next.popup);
-                    }
-
-                    return {
-                        pathKey: '/send',
-                        title: 'Send',
-                        content,
-                    };
-                },
+                path: '/wallet',
+                breadcrumbTitle: 'Wallet',
+                action: firstByDefault,
                 children: [
                     {
-                        path: '/confirm',
-                        action: (ctx: IContext) => ({
-                            title: 'Confirmation',
-                            content: (
-                                <SendConfirm
-                                    onBack={navigateToSend}
-                                    onSuccess={navigateToSuccess}
-                                />
-                            ),
-                        }),
-                    },
-                    {
-                        path: '/success',
-                        action: (ctx: IContext) => ({
-                            title: 'Success',
-                            content: (
-                                <SendSuccess
-                                    onClickHistory={navigateToHistory}
-                                    onClickSend={navigateToSend}
-                                />
-                            ),
-                        }),
-                    },
-                ],
-            },
-            {
-                path: '/history',
-                action: (ctx: IContext, params: IUrlParams) => {
-                    const initialAddress = (ctx.query as any).address;
-                    const initialCurrency = (ctx.query as any).currency;
-
-                    return {
-                        pathKey: '/history',
-                        title: 'History',
-                        content: (
-                            <History
-                                initialAddress={initialAddress}
-                                initialCurrency={initialCurrency}
-                            />
-                        ),
-                    };
-                },
-            },
-            {
-                path: '/deposit-withdraw-history',
-                action: (ctx: IContext, params: IUrlParams) => {
-                    return {
-                        pathKey: '/deposit-withdraw-history',
-                        title: 'Deposit&Withdraw history',
-                        content: (
-                            <DepositWithdrawHistory
-                                onClickDeposit={navigateToDeposit}
-                                onClickWithdraw={navigateToWithdraw}
-                            />
-                        ),
-                    };
-                },
-            },
-            {
-                path: '/accounts',
-                action: (defaultAction = async (ctx: IContext) => {
-                    const next = await ctx.next();
-
-                    const content =
-                        next && next.content ? next.content : <Wallets />;
-
-                    if (next && next.popup) {
-                        content.push(next.popup);
-                    }
-
-                    return {
-                        pathKey: '/accounts',
-                        title: 'Accounts',
-                        content,
-                    };
-                }),
-                children: [
-                    {
-                        path: '/:address',
-                        action: (ctx: IContext, params: IUrlParams) => {
-                            const initialAddress = params.address;
-
-                            return {
+                        path: '/send',
+                        breadcrumbTitle: 'Send',
+                        action: replaceWithChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'Send',
+                                pageTitle: 'Send',
                                 content: (
-                                    <Account initialAddress={initialAddress} />
+                                    <Send
+                                        onNotAvailable={navigateToMain}
+                                        initialAddress={ctx.query.address}
+                                        initialCurrency={ctx.query.currency}
+                                        onRequireConfirmation={
+                                            navigateToConfirmation
+                                        }
+                                    />
                                 ),
-                            };
-                        },
+                            }),
+                        ),
+                        children: [
+                            {
+                                path: '/confirm',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    browserTabTitle: 'Transfer confirmation',
+                                    pageTitle: 'Transfer confirmation',
+                                    content: (
+                                        <SendConfirm
+                                            onBack={navigateToSend}
+                                            onSuccess={navigateToSuccess}
+                                        />
+                                    ),
+                                }),
+                            },
+                            {
+                                path: '/success',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    browserTabTitle: 'Transfer success',
+                                    pageTitle: 'Transfer success',
+                                    content: (
+                                        <SendSuccess
+                                            onClickHistory={navigateToHistory}
+                                            onClickSend={navigateToSend}
+                                        />
+                                    ),
+                                }),
+                            },
+                        ],
+                    },
+                    {
+                        path: '/history',
+                        breadcrumbTitle: 'History',
+                        action: leaf(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'History',
+                                pageTitle: 'History',
+                                content: (
+                                    <History
+                                        initialAddress={ctx.query.address}
+                                        initialCurrency={ctx.query.currency}
+                                    />
+                                ),
+                            }),
+                        ),
+                    },
+                    {
+                        path: '/accounts',
+                        breadcrumbTitle: 'Accounts',
+                        action: (defaultAction = replaceWithChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'Accounts',
+                                pageTitle: 'Accounts',
+                                content: <Wallets />,
+                            }),
+                        )),
+                        children: [
+                            {
+                                breadcrumbTitle: 'Accounts details',
+                                path: '/:address',
+                                action: leaf(
+                                    async (
+                                        ctx: IContext,
+                                        params: IUrlParams,
+                                    ) => ({
+                                        content: (
+                                            <Account
+                                                initialAddress={params.address}
+                                            />
+                                        ),
+                                        browserTabTitle: 'Account',
+                                        pageTitle: 'Account',
+                                    }),
+                                ),
+                            },
+                        ],
                     },
                 ],
             },
             {
-                path: '/market/profile/:address',
-                action: (ctx: IContext, params: IUrlParams) => {
-                    const initialAddress = params.address;
-
-                    return {
-                        content: <Profile initialAddress={initialAddress} />,
-                    };
-                },
+                path: '/market',
+                breadcrumbTitle: 'Market',
+                action: firstByDefault,
+                children: [
+                    {
+                        path: '/profiles',
+                        breadcrumbTitle: 'Profiles',
+                        action: replaceWithChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                pathKey: '/profiles',
+                                browserTabTitle: 'Profiles',
+                                pageTitle: 'Profiles',
+                                content: <ProfileList />,
+                            }),
+                        ),
+                        children: [
+                            {
+                                breadcrumbTitle: 'Profile details',
+                                path: '/:address',
+                                action: leaf(
+                                    async (
+                                        ctx: IContext,
+                                        params: IUrlParams,
+                                    ) => ({
+                                        content: <Profile />,
+                                        browserTabTitle: 'Profiles',
+                                        pageTitle: 'Profiles',
+                                    }),
+                                ),
+                            },
+                        ],
+                    },
+                    {
+                        path: '/dw',
+                        action: firstByDefault,
+                        children: [
+                            {
+                                path: '/deposit',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: 'Deposit',
+                                    browserTabTitle: 'Deposit',
+                                    pageTitle: 'Deposit',
+                                }),
+                            },
+                            {
+                                path: '/withdraw',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: 'Withdraw',
+                                    browserTabTitle: 'Withdraw',
+                                    pageTitle: 'Withdraw',
+                                }),
+                            },
+                            {
+                                path: '/history',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: 'D & W History',
+                                    browserTabTitle: 'D & W History',
+                                    pageTitle: 'D & W History',
+                                }),
+                            },
+                        ],
+                    },
+                ],
             },
-            {
-                path: '/market/profiles',
-                action: (ctx: IContext, params: IUrlParams) => {
-                    return {
-                        pathKey: '/profile-list',
-                        title: 'Profiles',
-                        content: <ProfileList navigate={navigate} />,
-                    };
-                },
-            },
-            getRouteForDW('deposit'),
-            getRouteForDW('withdraw'),
             {
                 path: /.*/,
                 action: defaultAction,
@@ -315,19 +300,35 @@ export interface IUrlParams {
     [key: string]: string;
 }
 
-interface IContext {
-    query: object;
+export interface IContext {
+    query: any;
+    route: any;
     pathname: string;
-    params?: any;
+    params?: IRouterResult;
     next: () => IRouterResult;
+    breadcrumbs: Array<IBreadcrumb>;
+}
+
+type TFnAction = (ctx: IContext, params: any) => Promise<IRouterResult>;
+
+export interface IBreadcrumb {
+    path: string;
+    title: string;
+}
+
+interface IUniversalRouterItem {
+    path: string | RegExp;
+    action?: TFnAction;
+    children?: Array<IUniversalRouterItem>;
+    breadcrumbTitle?: string;
 }
 
 interface IRouterResult {
-    popup?: any;
-    content?: any;
-    title: string;
+    content?: React.ReactNode;
+    browserTabTitle?: string;
+    pageTitle?: string;
     props?: any;
-    pathKey: string;
+    pathKey?: string;
 }
 
-export { routes };
+export default univeralRoutes;

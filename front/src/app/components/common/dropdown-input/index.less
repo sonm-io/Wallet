@@ -6,10 +6,9 @@
 @dropdownInputBorderActiveBorder: 0 0 0 2px rgba(147,149,152,.2);
 
 .dropdown-input {
-    position: relative;
     display: inline-block;
-    overflow: visible;
     position: relative;
+    overflow: visible;
     padding: 0;
     color: @dropdownInputColor;
 
@@ -20,13 +19,13 @@
     }
 
     & &__popup {
+        // TODO
         margin: 4px 0 0 0;
         background: @dropdownInputBgColor;
         position: absolute;
         border: solid 1px @dropdownBorderColor;
         min-width: 100%;
         z-index: 100;
-        max-width: 4000px;
     }
 
     &__button {

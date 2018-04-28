@@ -16,7 +16,7 @@ export function TokenItem(props: ITokenItemProps) {
             <IdentIcon
                 key="i"
                 address={props.address}
-                width={26}
+                sizePx={26}
                 className="sonm-token-item__icon"
             />
             <Balance

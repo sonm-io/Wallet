@@ -39,7 +39,7 @@ export class DateRangeDropdown extends React.PureComponent<
                 onButtonClick={this.handleButtonClick}
                 isExpanded={this.state.expanded}
             >
-                <DateRange {...this.props} />
+                <DateRange {...this.props} className="" />
             </DropdownInput>
         );
     }

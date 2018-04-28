@@ -7,14 +7,14 @@ interface ITogglerChangeParams {
     stringValue: string;
 }
 
-interface ICssClasses {
+export interface ICssClasses {
     title: string;
     input: string;
     cradle: string;
     label: string;
 }
 
-interface ITogglerProps {
+export interface ITogglerProps {
     className?: string;
     cssClasses?: ICssClasses;
     onChange?: (params: ITogglerChangeParams) => void;

@@ -14,20 +14,22 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     public static readonly getDefaultCssClasses = (
         rootClassName: string,
     ): IDropdownCssClasses => ({
-        root: `${rootClassName}-input`,
-        expanded: `${rootClassName}-input--expanded`,
-        button: `${rootClassName}-input__button`,
-        popup: `${rootClassName}-input__popup`,
+        root: `${rootClassName}`,
+        expanded: `${rootClassName}--expanded`,
+        button: `${rootClassName}__button`,
+        popup: `${rootClassName}__popup`,
     });
 
     public static readonly defaultProps: IDropdownOptionalInputProps = {
         className: '',
-        dropdownCssClasses: DropdownInput.getDefaultCssClasses('dropdown'),
+        dropdownCssClasses: DropdownInput.getDefaultCssClasses(
+            'dropdown-input',
+        ),
         hasBalloon: false,
     };
 
     public static propTypes: TJsPropTypes<IDropdownAllProps> = {
-        valueString: propTypes.string,
+        valueString: propTypes.node,
         isExpanded: propTypes.bool,
         onButtonClick: propTypes.func,
         onRequireClose: propTypes.func,

@@ -100,7 +100,7 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                         {t('Account address')}
                     </h4>
                     <IdentIcon
-                        width={50}
+                        sizePx={50}
                         className="sonm-profile-details__address-icon"
                         address={p.address}
                     />
