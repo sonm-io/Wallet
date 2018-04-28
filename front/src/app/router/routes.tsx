@@ -34,12 +34,25 @@ const navigateToSuccess = () => navigate({ path: '/send/success' });
 const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 
+function addBreadcrumb(ctx: IContext) {
+    ctx.breadcrumbs = ctx.breadcrumbs || [];
+
+    if (ctx.route.breadcrumbTitle) {
+        ctx.breadcrumbs.push({
+            path: ctx.route.path,
+            title: ctx.route.breadcrumbTitle,
+        });
+    }
+}
+
 function reload() {
     window.location.reload(true);
 }
 
 function replaceWithChild(action: TFnAction): TFnAction {
-    return async (ctx: IContext, p: any) => {
+    return async (ctx: IContext, p: any): Promise<IRouterResult> => {
+        addBreadcrumb(ctx);
+
         const child: IRouterResult = await ctx.next();
 
         if (child) {
@@ -51,20 +64,35 @@ function replaceWithChild(action: TFnAction): TFnAction {
 }
 
 async function firstByDefault(ctx: IContext, p: any) {
+    addBreadcrumb(ctx);
+
     const params: IRouterResult = await ctx.next();
 
     return params ? params : ctx.route.children[0].action(ctx, p);
 }
 
-export const univeralRouterArgument: Array<IUniversalRouterItem> = [
+function leaf(action: TFnAction) {
+    return async (ctx: IContext, p: any): Promise<IRouterResult> => {
+        addBreadcrumb(ctx);
+
+        return ctx.route.action(ctx, p);
+    };
+}
+
+export const univeralRoutes: Array<IUniversalRouterItem> = [
     {
         path: '/',
         action: async (ctx: IContext, _: IUrlParams) => {
             const params: IRouterResult = await ctx.next();
 
+            const breadcrumbs = ctx.breadcrumbs;
+
+            ctx.breadcrumbs = [];
+
             return {
                 content: (
                     <App
+                        breadcrumbs={breadcrumbs}
                         onNavigate={navigateTo}
                         onExit={reload}
                         path={ctx.pathname}
@@ -80,10 +108,12 @@ export const univeralRouterArgument: Array<IUniversalRouterItem> = [
         children: [
             {
                 path: '/wallet',
+                breadcrumbTitle: 'Wallet',
                 action: firstByDefault,
                 children: [
                     {
                         path: '/send',
+                        breadcrumbTitle: 'Send',
                         action: replaceWithChild(
                             async (ctx: IContext, params: IUrlParams) => ({
                                 browserTabTitle: 'Send',
@@ -103,60 +133,57 @@ export const univeralRouterArgument: Array<IUniversalRouterItem> = [
                         children: [
                             {
                                 path: '/confirm',
-                                action: replaceWithChild(
-                                    async (
-                                        ctx: IContext,
-                                        params: IUrlParams,
-                                    ) => ({
-                                        browserTabTitle:
-                                            'Transfer confirmation',
-                                        pageTitle: 'Transfer confirmation',
-                                        content: (
-                                            <SendConfirm
-                                                onBack={navigateToSend}
-                                                onSuccess={navigateToSuccess}
-                                            />
-                                        ),
-                                    }),
-                                ),
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    browserTabTitle: 'Transfer confirmation',
+                                    pageTitle: 'Transfer confirmation',
+                                    content: (
+                                        <SendConfirm
+                                            onBack={navigateToSend}
+                                            onSuccess={navigateToSuccess}
+                                        />
+                                    ),
+                                }),
                             },
                             {
                                 path: '/success',
-                                action: replaceWithChild(
-                                    async (
-                                        ctx: IContext,
-                                        params: IUrlParams,
-                                    ) => ({
-                                        browserTabTitle: 'Transfer success',
-                                        pageTitle: 'Transfer success',
-                                        content: (
-                                            <SendSuccess
-                                                onClickHistory={
-                                                    navigateToHistory
-                                                }
-                                                onClickSend={navigateToSend}
-                                            />
-                                        ),
-                                    }),
-                                ),
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    browserTabTitle: 'Transfer success',
+                                    pageTitle: 'Transfer success',
+                                    content: (
+                                        <SendSuccess
+                                            onClickHistory={navigateToHistory}
+                                            onClickSend={navigateToSend}
+                                        />
+                                    ),
+                                }),
                             },
                         ],
                     },
                     {
                         path: '/history',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'History',
-                            pageTitle: 'History',
-                            content: (
-                                <History
-                                    initialAddress={ctx.query.address}
-                                    initialCurrency={ctx.query.currency}
-                                />
-                            ),
-                        }),
+                        breadcrumbTitle: 'History',
+                        action: leaf(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'History',
+                                pageTitle: 'History',
+                                content: (
+                                    <History
+                                        initialAddress={ctx.query.address}
+                                        initialCurrency={ctx.query.currency}
+                                    />
+                                ),
+                            }),
+                        ),
                     },
                     {
                         path: '/accounts',
+                        breadcrumbTitle: 'Accounts',
                         action: (defaultAction = replaceWithChild(
                             async (ctx: IContext, params: IUrlParams) => ({
                                 browserTabTitle: 'Accounts',
@@ -166,19 +193,22 @@ export const univeralRouterArgument: Array<IUniversalRouterItem> = [
                         )),
                         children: [
                             {
+                                breadcrumbTitle: 'Accounts details',
                                 path: '/:address',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) => ({
-                                    content: (
-                                        <Account
-                                            initialAddress={params.address}
-                                        />
-                                    ),
-                                    browserTabTitle: 'Accounts',
-                                    pageTitle: 'Accounts',
-                                }),
+                                action: leaf(
+                                    async (
+                                        ctx: IContext,
+                                        params: IUrlParams,
+                                    ) => ({
+                                        content: (
+                                            <Account
+                                                initialAddress={params.address}
+                                            />
+                                        ),
+                                        browserTabTitle: 'Account',
+                                        pageTitle: 'Account',
+                                    }),
+                                ),
                             },
                         ],
                     },
@@ -186,10 +216,12 @@ export const univeralRouterArgument: Array<IUniversalRouterItem> = [
             },
             {
                 path: '/market',
+                breadcrumbTitle: 'Market',
                 action: firstByDefault,
                 children: [
                     {
                         path: '/profiles',
+                        breadcrumbTitle: 'Profiles',
                         action: replaceWithChild(
                             async (ctx: IContext, params: IUrlParams) => ({
                                 pathKey: '/profiles',
@@ -200,15 +232,18 @@ export const univeralRouterArgument: Array<IUniversalRouterItem> = [
                         ),
                         children: [
                             {
+                                breadcrumbTitle: 'Profile details',
                                 path: '/:address',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) => ({
-                                    content: <Profile />,
-                                    browserTabTitle: 'Accounts',
-                                    pageTitle: 'Accounts',
-                                }),
+                                action: leaf(
+                                    async (
+                                        ctx: IContext,
+                                        params: IUrlParams,
+                                    ) => ({
+                                        content: <Profile />,
+                                        browserTabTitle: 'Profiles',
+                                        pageTitle: 'Profiles',
+                                    }),
+                                ),
                             },
                         ],
                     },
@@ -265,20 +300,27 @@ export interface IUrlParams {
     [key: string]: string;
 }
 
-interface IContext {
+export interface IContext {
     query: any;
     route: any;
     pathname: string;
     params?: IRouterResult;
     next: () => IRouterResult;
+    breadcrumbs: Array<IBreadcrumb>;
 }
 
 type TFnAction = (ctx: IContext, params: any) => Promise<IRouterResult>;
+
+export interface IBreadcrumb {
+    path: string;
+    title: string;
+}
 
 interface IUniversalRouterItem {
     path: string | RegExp;
     action?: TFnAction;
     children?: Array<IUniversalRouterItem>;
+    breadcrumbTitle?: string;
 }
 
 interface IRouterResult {
@@ -289,4 +331,4 @@ interface IRouterResult {
     pathKey?: string;
 }
 
-export default univeralRouterArgument;
+export default univeralRoutes;

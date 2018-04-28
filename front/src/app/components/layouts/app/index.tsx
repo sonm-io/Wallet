@@ -17,7 +17,7 @@ interface IProps {
     onNavigate: (url: string) => void;
     onExit: () => void;
     title?: string;
-    breadcrumb: any;
+    breadcrumbs: any;
 }
 
 @observer
@@ -59,7 +59,7 @@ export class App extends React.Component<IProps, any> {
                     <div className="sonm-app__common sonm-app-common-block">
                         <BreadCrumbs
                             className="sonm-app__breadcrumbs"
-                            items={[['Tam', '/path']]}
+                            items={p.breadcrumbs}
                             onNavigate={p.onNavigate}
                         />
                         <Header className="sonm-app-common-block__title">
