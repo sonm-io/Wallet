@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { ProfileView } from './view';
+import { Api } from 'app/api';
+import { IProfileBrief } from 'app/api/types';
 
 interface IProps {
     className?: string;
     style?: any;
+    initialAddress: string;
 }
 
 const returnFirstArg = (...as: any[]) => String(as[0]);
 const p = {
     countryAbbr: 'BL',
     getUiText: returnFirstArg,
-    definitionList: [
+    attributes: [
         {
             label: 'Phone number',
             value: '+7 78 3782 23 23',
@@ -58,13 +61,29 @@ const p = {
     address: '0x1234567890123456789012345678901234567890',
 };
 
-export class Profile extends React.PureComponent<IProps, never> {
+export class Profile extends React.PureComponent<IProps, any> {
+    public state = {
+        profile: {} as IProfileBrief,
+    };
+
+    constructor(props: IProps) {
+        super(props);
+
+        Api.getProfile(props.initialAddress).then(response => {
+            this.setState({ profile: response.data as IProfileBrief });
+        });
+    }
+
     public render() {
+        const profile = this.state.profile;
+
+        console.log(profile);
+
         return (
             <ProfileView
                 className=""
                 getUiText={p.getUiText}
-                definitionList={p.definitionList}
+                definitionList={profile.attributes || []}
                 certificates={p.certificates}
                 description={p.description}
                 consumerDeals={p.consumerDeals}
@@ -74,11 +93,11 @@ export class Profile extends React.PureComponent<IProps, never> {
                 supplierAvgTime={p.supplierAvgTime}
                 supplierToken={p.supplierToken}
                 my={p.my}
-                userName={p.userName}
-                countryAbCode2={p.countryAbbr}
+                userName={profile.name || ''}
+                countryAbCode2={profile.country || ''}
                 logoUrl={p.logoUrl}
-                userStatus={p.userStatus}
-                address={p.address}
+                userStatus={profile.status}
+                address={profile.address || ''}
                 style={this.props.style}
             />
         );

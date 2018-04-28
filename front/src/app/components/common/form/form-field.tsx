@@ -10,6 +10,7 @@ interface IFormFieldProps {
     children: any;
     label?: string;
     fullWidth?: boolean;
+    postfix?: string;
 }
 
 const helpTextTypes: Array<keyof IFormFieldProps> = [
@@ -43,6 +44,10 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
             }
         }
 
+        const postfix = this.props.postfix ? (
+            <div className="sonm-form-field__postfix">{this.props.postfix}</div>
+        ) : null;
+
         return (
             <label
                 className={cn(
@@ -65,6 +70,7 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
                 </div>
                 <div className="sonm-form-field__input">
                     {this.props.children}
+                    {postfix}
                 </div>
                 <div className="sonm-form-field__help">{helpText}</div>
             </label>

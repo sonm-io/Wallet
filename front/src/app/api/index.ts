@@ -10,9 +10,11 @@ import {
     ISettings,
     IWalletListItem,
     IProfileListResult,
+    IProfileBrief,
+    IOrderListFilter,
+    IOrder,
+    IOrderListResult,
 } from './types';
-
-import { profileListResult } from './mock';
 
 export * from './types';
 
@@ -130,6 +132,12 @@ export class Api {
         return ipcSend('account.getCurrencies');
     }
 
+    public static async getMarketBalance(
+        address: string,
+    ): Promise<IResult<string>> {
+        return ipcSend('account.getMarketBalance', { address });
+    }
+
     public static async send(
         tx: ISendTransaction,
         password: string,
@@ -137,12 +145,27 @@ export class Api {
         return ipcSend('account.send', { ...tx, password });
     }
 
+    public static async deposit(
+        tx: ISendTransaction,
+        password: string,
+    ): Promise<IResult<ISendTransactionResult>> {
+        return ipcSend('account.deposit', { ...tx, password });
+    }
+
+    public static async withdraw(
+        tx: ISendTransaction,
+        password: string,
+    ): Promise<IResult<ISendTransactionResult>> {
+        return ipcSend('account.withdraw', { ...tx, password });
+    }
+
     public static async getSendTransactionList(
+        source?: string,
         filters?: ITxListFilter,
         limit?: number,
         offset?: number,
     ): Promise<IResult<[ISendTransactionResult[], number]>> {
-        return ipcSend('transaction.list', { filters, limit, offset });
+        return ipcSend('transaction.list', { filters, limit, offset, source });
     }
 
     public static async getGasPrice(): Promise<IResult<string>> {
@@ -178,12 +201,28 @@ export class Api {
         return ipcSend('getPresetTokenList');
     }
 
-    public static getProfileList(): Promise<IResult<IProfileListResult>> {
-        return new Promise(done => {
-            setTimeout(() => {
-                done(profileListResult);
-            }, 100);
-        });
+    public static async getProfileList(
+        filters?: ITxListFilter,
+        limit?: number,
+        offset?: number,
+    ): Promise<IResult<IProfileListResult>> {
+        return ipcSend('profile.list', { filters, limit, offset });
+    }
+
+    public static async getProfile(
+        address: string,
+    ): Promise<IResult<IProfileBrief>> {
+        return ipcSend('profile.get', { address });
+    }
+
+    public static async getOrderList(
+        filters?: IOrderListFilter,
+    ): Promise<IResult<IOrderListResult>> {
+        return ipcSend('order.list', { filters });
+    }
+
+    public static async getOrder(id: number): Promise<IResult<IOrder>> {
+        return ipcSend('order.get', { id });
     }
 }
 

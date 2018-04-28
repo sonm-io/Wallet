@@ -1,0 +1,97 @@
+.sonm-dw-history {
+    &__select-operation {
+        width: ~'calc(20% - 10px)';
+        margin: 5px;
+    }
+
+    &__withdraw-button,
+    &__deposit-button {
+        margin: 5px;
+    }
+}
+
+.sonm-dw-tx-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+
+    & table {
+        table-layout: fixed;
+        font-size: 12px;
+    }
+
+    & &__cell {
+        &-time {
+            width: 150px;
+        }
+
+        &-action {
+            text-transform: uppercase;
+            width: 150px;
+
+            &--withdraw {
+                color: @color-orange;
+                transform: rotate(180deg);
+            }
+
+            &--deposit {
+                color: @color-green;
+            }
+
+            &--deposit,
+            &--withdraw {
+                width: 15px;
+                display: inline-block;
+            }
+
+            &--label {
+                margin-left: 10px;
+                display: inline-block;
+            }
+        }
+
+        &-tx-hash {
+            width: 300px;
+        }
+
+        &-fee {
+            width: 140px;
+        }
+
+        &-commission {
+            width: 120px;
+        }
+
+        &-status {
+            width: 70px;
+            text-transform: uppercase;
+
+            &--success {
+                color: @color-green;
+            }
+
+            &--failed {
+                color: @color-red;
+            }
+
+            &--pending {
+                color: @color-dark-blue;
+            }
+        }
+
+        &-amount {
+            width: 100px;
+
+            &-ct {
+                display: flex;
+                align-items: end;
+                flex-direction: column;
+                padding: 0;
+                margin: 0;
+            }
+        }
+    }
+}

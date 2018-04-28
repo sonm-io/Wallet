@@ -31,6 +31,7 @@ async function handleLogin(wallet: IWalletListItem) {
     await Promise.all([
         rootStore.mainStore.init(wallet),
         rootStore.historyStore.init(),
+        rootStore.dwHistoryStore.init(),
     ]);
 
     renderByPath((history as any).location);

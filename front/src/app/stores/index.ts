@@ -14,12 +14,18 @@ import {
 import { IListStore } from './list-store-factory';
 import { ProfileList } from './profile-list';
 
+import { Api } from 'app/api';
+import { THistorySourceMode } from './types';
+
 useStrict(true);
 
 export class RootStore implements IHasLocalizator {
     public readonly historyStore: HistoryStore;
+    public readonly dwHistoryStore: HistoryStore;
     public readonly mainStore: MainStore;
     public readonly sendStore: SendStore;
+    public readonly depositStore: SendStore;
+    public readonly withdrawStore: SendStore;
     public readonly uiStore: UiStore;
     public readonly addTokenStore: AddTokenStore;
     public readonly profileListStore: IListStore<IProfileBrief>;
@@ -30,9 +36,44 @@ export class RootStore implements IHasLocalizator {
         // should be first cause used in all stores;
         this.uiStore = new UiStore();
 
-        this.historyStore = new HistoryStore(this, this.localizator);
+        this.historyStore = new HistoryStore(
+            this,
+            this.localizator,
+            THistorySourceMode.wallet,
+        );
+        this.dwHistoryStore = new HistoryStore(
+            this,
+            this.localizator,
+            THistorySourceMode.market,
+        );
+
         this.mainStore = new MainStore(this, this.localizator);
-        this.sendStore = new SendStore(this, this.localizator);
+
+        this.sendStore = new SendStore(this, this.localizator, {
+            getPrivateKey: Api.getPrivateKey,
+            send: Api.send,
+        });
+
+        this.depositStore = new SendStore(
+            this,
+            this.localizator,
+            {
+                getPrivateKey: Api.getPrivateKey,
+                send: Api.deposit,
+            },
+            true,
+        );
+
+        this.withdrawStore = new SendStore(
+            this,
+            this.localizator,
+            {
+                getPrivateKey: Api.getPrivateKey,
+                send: Api.withdraw,
+            },
+            true,
+        );
+
         this.addTokenStore = new AddTokenStore(this, this.localizator);
         this.profileListStore = new ProfileList({
             errorProcessor: this.uiStore,
@@ -44,8 +85,11 @@ export class RootStore implements IHasLocalizator {
         return OnlineStore.getAccumulatedFlag(
             'isPending',
             this.historyStore,
+            this.dwHistoryStore,
             this.mainStore,
             this.sendStore,
+            this.depositStore,
+            this.withdrawStore,
             this.addTokenStore,
         );
     }
@@ -57,6 +101,9 @@ export class RootStore implements IHasLocalizator {
             this.mainStore,
             this.sendStore,
             this.addTokenStore,
+            this.dwHistoryStore,
+            this.depositStore,
+            this.withdrawStore,
         );
     }
 

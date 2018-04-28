@@ -1,0 +1,185 @@
+@import 'sub/confirm/index.less';
+@import './antd.less';
+
+.sonm-deposit-withdraw {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 30px 100px 1fr 80px;
+    grid-column-gap: 50px;
+
+    &__confirmation {
+        background: linear-gradient(90deg, white 50%, @color-light-gray 50%);
+    }
+
+    &__header {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    &__account {
+        grid-column: 1;
+        grid-row: 2;
+
+        &--span {
+            grid-column: 1 / span 2;
+            background-color: @color-light-gray-bg;
+        }
+
+        display: grid;
+        grid-template-columns: 100px min-content auto;
+        grid-template-rows: 1fr 1fr;
+        font-weight: normal;
+        margin-top: 10px;
+        padding: 20px;
+
+        &-blockies {
+            margin: 10px;
+            grid-column: 1;
+            grid-row: 2 span;
+            align-self: center;
+        }
+
+        &-name {
+            font-weight: bold;
+            padding-top: 20px;
+            font-size: 20px;
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        &-addr {
+            font-size: 14px;
+            grid-column: 2;
+            grid-row: 2;
+        }
+    }
+
+    &__values {
+        grid-column: 1;
+        grid-row: 3;
+
+        display: grid;
+        grid-template-columns: 180px 180px auto;
+        grid-template-rows: 1fr 1fr;
+        margin: 20px 0px 20px 0px;
+        grid-gap: 15px;
+
+        label,
+        dt {
+            color: @color-dark-gray;
+            margin-bottom: 0px;
+        }
+
+        dd {
+            font-size: 16px;
+            margin-bottom: 0px;
+        }
+
+        &-amount {
+            &-input {
+                grid-column: 1 / span 2;
+                grid-row: 1;
+            }
+
+            &-maximum {
+                grid-column: 3;
+                grid-row: 1;
+                text-transform: uppercase;
+                margin-top: 25px;
+                color: @color-green;
+                font-weight: bold;
+            }
+        }
+
+        &-gas-limit {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        &-gas-price {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        &-priority {
+            grid-column: 3;
+            grid-row: 2;
+            margin-top: 25px;
+            text-transform: capitalize;
+        }
+    }
+
+    &__commission {
+        grid-column: 1;
+        grid-row: 4;
+
+        &-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            grid-template-rows: 1fr;
+            border-top: 2px solid @color-green;
+            padding-top: 20px;
+
+            dt {
+                color: @color-dark-gray;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            &-left {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            &-right {
+                grid-column: 2;
+                grid-row: 1;
+            }
+        }
+    }
+
+    &__password {
+        background-color: @color-light-gray;
+
+        grid-column: 2;
+        grid-row: 2;
+        display: flex;
+        flex-direction: column;
+        padding: 30px;
+
+        &-header {
+            flex-grow: 0;
+            width: 100%;
+            margin: 0;
+        }
+
+        &-info {
+            flex-grow: 0;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        &-form {
+            flex-grow: 1;
+            width: 100%;
+            margin-top: 50px;
+        }
+    }
+
+    &__button-ct {
+        padding-top: 30px;
+        grid-column: 2;
+        grid-row: 4;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__button {
+        &--action {
+            margin: 0 0 0 100px;
+        }
+    }
+}

@@ -2,7 +2,7 @@ import { OnlineStore } from './online-store';
 
 export { OnlineStore } from './online-store';
 
-import { IValidation } from 'app/api';
+import { IValidation, ISendTransaction } from 'app/api';
 
 export interface IHasAddress {
     address: string;
@@ -64,6 +64,16 @@ export enum AlertType {
 export interface IAlert {
     type: AlertType;
     message: string;
+}
+
+export enum THistorySourceMode {
+    wallet = 'wallet',
+    market = 'market',
+}
+
+export interface IApiSend {
+    getPrivateKey: (password: string, accountAddress: string) => void;
+    send: (tx: ISendTransaction, password: string) => void;
 }
 
 export enum Status {

@@ -7,9 +7,15 @@ import { SendConfirm } from 'app/components/layouts/send/sub/confirm';
 import { Account } from 'app/components/layouts/account';
 import { Profile } from 'app/components/layouts/profile';
 import { ProfileList } from 'app/components/layouts/profile-list';
+import { DepositWithdrawHistory } from 'app/components/layouts/deposit-withdraw-history';
+import { DepositWithdraw } from 'app/components/layouts/deposit-withdraw';
+import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
+
 import * as React from 'react';
 
 import { navigate } from './navigate';
+
+import { rootStore } from 'app/stores';
 
 let defaultAction;
 
@@ -33,17 +39,20 @@ const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/send/success' });
 const navigateToMain = () => navigate({ path: '/accounts' });
 const navigateTo = (path: string) => navigate({ path });
+const navigateToProfile = (address: string) =>
+    navigate({ path: `/market/profiles/${address}` });
 
-function addBreadcrumb(ctx: IContext) {
-    ctx.breadcrumbs = ctx.breadcrumbs || [];
-
-    if (ctx.route.breadcrumbTitle) {
-        ctx.breadcrumbs.push({
-            path: ctx.route.path,
-            title: ctx.route.breadcrumbTitle,
-        });
-    }
-}
+const navigateToDepositSuccess = () =>
+    navigate({ path: `/market/dw/deposit/success` });
+const navigateToDepositConfirm = () =>
+    navigate({ path: `/market/dw/deposit/confirm` });
+// const navigateToWithdrawSuccess = () =>
+//     navigate({ path: `/market/dw/withdraw/success` });
+// const navigateToWithdrawConfirm = () =>
+//     navigate({ path: `/market/dw/withdraw/confirm` });
+const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
+const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
+const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
 
 function reload() {
     window.location.reload(true);
@@ -51,8 +60,6 @@ function reload() {
 
 function replaceWithChild(action: TFnAction): TFnAction {
     return async (ctx: IContext, p: any): Promise<IRouterResult> => {
-        addBreadcrumb(ctx);
-
         const child: IRouterResult = await ctx.next();
 
         if (child) {
@@ -64,8 +71,6 @@ function replaceWithChild(action: TFnAction): TFnAction {
 }
 
 async function firstByDefault(ctx: IContext, p: any) {
-    addBreadcrumb(ctx);
-
     const params: IRouterResult = await ctx.next();
 
     return params ? params : ctx.route.children[0].action(ctx, p);
@@ -73,8 +78,6 @@ async function firstByDefault(ctx: IContext, p: any) {
 
 function leaf(action: TFnAction) {
     return async (ctx: IContext, p: any): Promise<IRouterResult> => {
-        addBreadcrumb(ctx);
-
         return ctx.route.action(ctx, p);
     };
 }
@@ -227,7 +230,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 pathKey: '/profiles',
                                 browserTabTitle: 'Profiles',
                                 pageTitle: 'Profiles',
-                                content: <ProfileList />,
+                                content: (
+                                    <ProfileList
+                                        onNavigate={navigateToProfile}
+                                    />
+                                ),
                             }),
                         ),
                         children: [
@@ -239,7 +246,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                         ctx: IContext,
                                         params: IUrlParams,
                                     ) => ({
-                                        content: <Profile />,
+                                        content: (
+                                            <Profile
+                                                initialAddress={params.address}
+                                            />
+                                        ),
                                         browserTabTitle: 'Profiles',
                                         pageTitle: 'Profiles',
                                     }),
@@ -253,14 +264,103 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         children: [
                             {
                                 path: '/deposit',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) => ({
-                                    content: 'Deposit',
-                                    browserTabTitle: 'Deposit',
-                                    pageTitle: 'Deposit',
-                                }),
+                                action: replaceWithChild(
+                                    async (
+                                        ctx: IContext,
+                                        params: IUrlParams,
+                                    ) => ({
+                                        content: (
+                                            <DepositWithdraw
+                                                action="deposit"
+                                                isConfirmation={false}
+                                                onNotAvailable={navigateToMain}
+                                                initialAddress={
+                                                    rootStore.mainStore
+                                                        .accountList[0].address
+                                                }
+                                                initialCurrency={
+                                                    rootStore.mainStore
+                                                        .primaryTokenAddress
+                                                }
+                                                onSuccess={
+                                                    navigateToDepositSuccess
+                                                }
+                                                onConfirm={
+                                                    navigateToDepositConfirm
+                                                }
+                                                onBack={
+                                                    navigateToDepositSuccess
+                                                }
+                                            />
+                                        ),
+                                        browserTabTitle: 'Deposit',
+                                        pageTitle: 'Deposit',
+                                    }),
+                                ),
+                                children: [
+                                    {
+                                        breadcrumbTitle: 'Deposit confirmation',
+                                        path: '/confirm',
+                                        action: leaf(
+                                            async (
+                                                ctx: IContext,
+                                                params: IUrlParams,
+                                            ) => ({
+                                                content: (
+                                                    <DepositWithdraw
+                                                        action="deposit"
+                                                        isConfirmation={true}
+                                                        onNotAvailable={
+                                                            navigateToMain
+                                                        }
+                                                        initialAddress={
+                                                            rootStore.mainStore
+                                                                .accountList[0]
+                                                                .address
+                                                        }
+                                                        initialCurrency={
+                                                            rootStore.mainStore
+                                                                .primaryTokenAddress
+                                                        }
+                                                        onSuccess={
+                                                            navigateToDepositSuccess
+                                                        }
+                                                        onConfirm={
+                                                            navigateToDepositConfirm
+                                                        }
+                                                        onBack={
+                                                            navigateToDepositSuccess
+                                                        }
+                                                    />
+                                                ),
+                                                browserTabTitle: 'Deposit',
+                                                pageTitle: 'Deposit',
+                                            }),
+                                        ),
+                                    },
+                                    {
+                                        breadcrumbTitle: '',
+                                        path: '/success',
+                                        action: (ctx: IContext) => ({
+                                            title: 'Success',
+                                            content: (
+                                                <DepositWithdrawSuccess
+                                                    onClickHistory={
+                                                        navigateToDWHistory
+                                                    }
+                                                    onClickDeposit={
+                                                        navigateToDeposit
+                                                    }
+                                                    onClickWithdraw={
+                                                        navigateToWithdraw
+                                                    }
+                                                />
+                                            ),
+                                            browserTabTitle: 'Deposit',
+                                            pageTitle: 'Deposit',
+                                        }),
+                                    },
+                                ],
                             },
                             {
                                 path: '/withdraw',
@@ -279,7 +379,12 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => ({
-                                    content: 'D & W History',
+                                    content: (
+                                        <DepositWithdrawHistory
+                                            onClickDeposit={navigateToDeposit}
+                                            onClickWithdraw={navigateToWithdraw}
+                                        />
+                                    ),
                                     browserTabTitle: 'D & W History',
                                     pageTitle: 'D & W History',
                                 }),

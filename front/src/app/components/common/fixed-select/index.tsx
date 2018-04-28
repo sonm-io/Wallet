@@ -81,7 +81,7 @@ export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
     }
 
     public componentDidUpdate(p: any, s: any, snapshot: any) {
-        if (snapshot.keepFocus) {
+        if (snapshot && snapshot.keepFocus) {
             this.rootRef.focus();
         }
     }
