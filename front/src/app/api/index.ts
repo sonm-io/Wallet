@@ -138,6 +138,10 @@ export class Api {
         return ipcSend('account.getMarketBalance', { address });
     }
 
+    public static async getTokenExchangeRate(): Promise<IResult<string>> {
+        return ipcSend('getTokenExchangeRate');
+    }
+
     public static async send(
         tx: ISendTransaction,
         password: string,

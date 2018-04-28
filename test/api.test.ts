@@ -1,15 +1,15 @@
 const { expect } = require('chai');
 
-//const walletName = 'wallet 1';
-//const walletPassword = 'my secret key';
-//const tokenAddress = '0x225b929916daadd5044d5934936313001f55d8f0';
-//const vasyaCfg = require('./data/Vasya_11111111.json');
-//const address = `0x${vasyaCfg.address}`;
-//const json = JSON.stringify(vasyaCfg);
-//const accountName = 'Account 1';
-//const password = '11111111';
+const walletName = 'wallet 1';
+const walletPassword = 'my secret key';
+const tokenAddress = '0x225b929916daadd5044d5934936313001f55d8f0';
+const vasyaCfg = require('./data/Vasya_11111111.json');
+const address = `0x${vasyaCfg.address}`;
+const json = JSON.stringify(vasyaCfg);
+const accountName = 'Account 1';
+const password = '11111111';
 
-//import { THistorySourceMode } from 'app/stores/types';
+import { THistorySourceMode } from 'app/stores/types';
 
 import { Api } from 'app/api';
 
@@ -50,7 +50,6 @@ describe('Api', async function() {
         }
     });
 
-    /*
     it('should get empty wallets list', async function() {
         const response = await Api.getWalletList();
         expect(response.data).to.have.lengthOf(0);
@@ -81,9 +80,13 @@ describe('Api', async function() {
 
     it('should recieve market balance', async function() {
         const response = await Api.getMarketBalance(address);
-        console.log(response);
+        expect(response.data).not.equal(null);
     });
 
+    it('should recieve token exchange', async function() {
+        const response = await Api.getTokenExchangeRate();
+        expect(response.data).not.equal(null);
+    });
 
     it('should get token info', async function() {
         const response = await Api.getTokenInfo(tokenAddress, [address]);
@@ -206,6 +209,44 @@ describe('Api', async function() {
         expect(response).to.have.nested.property('validation.password');
     });
 
+    it('should deposit', async function() {
+        const currencies = await Api.getCurrencyList();
+        expect(currencies.data).not.equal(null);
+        if (currencies.data) {
+            const tx = {
+                timestamp: new Date().valueOf(),
+                fromAddress: address,
+                toAddress: address,
+                amount: '10',
+                gasLimit: '100000',
+                gasPrice: '200000000000',
+                currencyAddress: currencies.data[1].address,
+            };
+
+            const response = await Api.deposit(tx, password);
+            expect(response.data).not.equal(null);
+        }
+    });
+
+    it('should withdraw', async function() {
+        const currencies = await Api.getCurrencyList();
+        expect(currencies.data).not.equal(null);
+        if (currencies.data) {
+            const tx = {
+                timestamp: new Date().valueOf(),
+                fromAddress: address,
+                toAddress: address,
+                amount: '10',
+                gasLimit: '100000',
+                gasPrice: '200000000000',
+                currencyAddress: currencies.data[1].address,
+            };
+
+            const response = await Api.withdraw(tx, password);
+            expect(response.data).not.equal(null);
+        }
+    });
+
     it('should send ether and snm', async function() {
         const amount = '2';
         const to = 'fd0c80ba15cbf19770319e5e76ae05012314608f';
@@ -276,9 +317,12 @@ describe('Api', async function() {
         expect(currencies.data).not.equal(null);
 
         if (currencies.data) {
-            const response = await Api.getSendTransactionList(THistorySourceMode.wallet,{
-                currencyAddress: currencies.data[1].address,
-            });
+            const response = await Api.getSendTransactionList(
+                THistorySourceMode.wallet,
+                {
+                    currencyAddress: currencies.data[1].address,
+                },
+            );
             expect(response.data).not.equal(null);
 
             if (response.data) {
@@ -334,5 +378,4 @@ describe('Api', async function() {
             expect(response3.data).equal(privateKey);
         }
     });
-    */
 });

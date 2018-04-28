@@ -129,6 +129,7 @@ class Api {
             'order.list': this.getOrders,
 
             getSonmTokenAddress: this.getSonmTokenAddress,
+            getTokenExchangeRate: this.getTokenExchangeRate,
 
             addToken: this.addToken,
             removeToken: this.removeToken,
@@ -220,6 +221,7 @@ class Api {
     private async checkAccountPassword(
         password: string,
         address: string,
+        network: string = 'main',
     ): Promise<t.IResponse> {
         if (!password) {
             return {
@@ -231,7 +233,7 @@ class Api {
 
         address = utils.add0x(address);
 
-        const client = await this.initAccount(address);
+        const client = await this.initAccount(address, network);
 
         if (client && client.password) {
             if (client.password !== password) {
@@ -794,6 +796,15 @@ class Api {
         };
     };
 
+    public getTokenExchangeRate = async (): Promise<t.IResponse> => {
+        //const client = await this.initAccount('0x');
+        //await client.account.getTokenExchangeRate(),
+
+        return {
+            data: 1,
+        };
+    };
+
     public getSonmTokenAddress = async (): Promise<t.IResponse> => {
         const factory = createSonmFactory(
             this.storage.settings.nodeUrl,
@@ -952,16 +963,17 @@ class Api {
                 gasPrice,
             } = data;
 
+            const network = action === 'withdraw' ? 'private' : 'main';
             const validation = await this.checkAccountPassword(
                 password,
                 fromAddress,
+                network,
             );
 
             if (!validation.data) {
                 return validation;
             }
 
-            const client = await this.initAccount(fromAddress);
             const transactions = this.storage.transactions;
             const token = this.storage.tokens.find(
                 (item: t.ICurrencyInfo) => item.address === currencyAddress,
@@ -983,22 +995,33 @@ class Api {
 
             transactions.unshift(transaction);
 
+            const client = await this.initAccount(fromAddress, network);
+
             try {
-                const txResult =
-                    currencyAddress === '0x'
-                        ? await client.account.sendEther(
-                              toAddress,
-                              amount,
-                              gasLimit,
-                              gasPrice,
-                          )
-                        : await client.account.sendTokens(
-                              toAddress,
-                              amount,
-                              currencyAddress,
-                              gasLimit,
-                              gasPrice,
-                          );
+                let txResult;
+                if (action === 'wallet') {
+                    txResult =
+                        currencyAddress === '0x'
+                            ? await client.account.sendEther(
+                                  toAddress,
+                                  amount,
+                                  gasLimit,
+                                  gasPrice,
+                              )
+                            : await client.account.sendTokens(
+                                  toAddress,
+                                  amount,
+                                  currencyAddress,
+                                  gasLimit,
+                                  gasPrice,
+                              );
+                } else {
+                    txResult = await client.account.migrateToken(
+                        amount,
+                        gasLimit,
+                        gasPrice,
+                    );
+                }
 
                 transaction.hash = await txResult.getHash();
 
@@ -1009,6 +1032,8 @@ class Api {
                     data: transaction,
                 };
             } catch (err) {
+                console.log(err);
+
                 transactions.shift();
                 throw err;
             }
