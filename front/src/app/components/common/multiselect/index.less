@@ -3,6 +3,8 @@
 @Multiselect-ListContainer-MaxHeight: 200px;
 @Multiselect-Padding: 5px;
 
+@Multiselect-GrayBorder: 1px @color-border solid;
+
 .multiselect {
     &__container {
         display: flex;
@@ -12,29 +14,27 @@
     // Containers
     &__input-container {
         height: 50px;
-        padding: 5px 10px;
-        border-bottom: 1px @color-border solid;
+        padding: @Multiselect-Padding @Multiselect-Padding*2;
+        border-bottom: @Multiselect-GrayBorder;
     }
     &__list-container {
         padding: @Multiselect-Padding;
         max-height: @Multiselect-ListContainer-MaxHeight;
         overflow: hidden;
         overflow-y: scroll;
-        margin-top: @Multiselect-Padding;
-        padding: @Multiselect-Padding;
     }
     &__button-container {
         display: flex;
         flex-direction: column-reverse;
         align-items: center;
-        border-top: 1px @color-border solid;
+        border-top: @Multiselect-GrayBorder;
     }
 
     // Controls
     &__input {
-        margin: 10px;
+        margin: @Multiselect-Padding*2;
         width: 100%;
-        border: 1px @color-border solid;
+        border: @Multiselect-GrayBorder;
         margin: auto;
         padding: 5px;
         &:focus {
@@ -43,12 +43,12 @@
     }
     &__button {
         text-align: center;
-        margin: 10px;
+        margin: @Multiselect-Padding*2;
     }
     &__clear-button {
         width: 30px;
         margin-left: 1px;
-        border: 1px @color-border solid;
+        border: @Multiselect-GrayBorder;
         background: url('./ic_clear_black_24px.svg') no-repeat center;
     }
 }
