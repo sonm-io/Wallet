@@ -11,6 +11,8 @@ import { Checkbox } from '../checkbox';
 import { ITogglerChangeParams } from '../toggler';
 import * as debounce from 'lodash/fp/debounce';
 
+const Svg = require('./ic_clear_black_24px.svg').default;
+
 export class MultiSelect<T> extends React.Component<
     IMultiSelectInputProps<T>,
     any
@@ -177,7 +179,9 @@ export class MultiSelect<T> extends React.Component<
                     <button
                         className="multiselect__clear-button"
                         onClick={this.onClearClick}
-                    />
+                    >
+                        <Svg />
+                    </button>
                 ) : null}
             </div>
         );
