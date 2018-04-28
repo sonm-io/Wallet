@@ -10,10 +10,13 @@
     }
 
     // Containers
-    &__drop-down-panel {
-        padding: @Multiselect-Padding;
+    &__input-container {
+        height: 50px;
+        padding: 5px 10px;
+        border-bottom: 1px @color-border solid;
     }
     &__list-container {
+        padding: @Multiselect-Padding;
         max-height: @Multiselect-ListContainer-MaxHeight;
         overflow: hidden;
         overflow-y: scroll;
@@ -29,12 +32,13 @@
 
     // Controls
     &__input {
+        margin: 10px;
         width: 100%;
-        border: none;
-        border-bottom: 1px @color-border solid;
+        border: 1px @color-border solid;
+        margin: auto;
+        padding: 5px;
         &:focus {
-            outline: none;
-            border-bottom-color: #675fda;
+            outline-color: #675fda;
         }
     }
     &__button {

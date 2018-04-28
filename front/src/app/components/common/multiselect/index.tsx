@@ -148,16 +148,15 @@ export class MultiSelect<T> extends React.Component<
                     hasBalloon
                     isExpanded={this.props.isExpanded}
                 >
-                    <div
-                        className="multiselect__drop-down-panel"
-                        style={panelStyle}
-                    >
-                        <input
-                            className="multiselect__input"
-                            name="filter"
-                            onChange={this.onChangeFilter}
-                            placeholder={this.props.filterPlaceHolder}
-                        />
+                    <div style={panelStyle}>
+                        <div className="multiselect__input-container">
+                            <input
+                                className="multiselect__input"
+                                name="filter"
+                                onChange={this.onChangeFilter}
+                                placeholder={this.props.filterPlaceHolder}
+                            />
+                        </div>
 
                         <div className="multiselect__list-container">
                             {filteredList.map(this.createListItem.bind(this))}
