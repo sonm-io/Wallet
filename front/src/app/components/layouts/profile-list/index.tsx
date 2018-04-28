@@ -4,11 +4,10 @@ import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import { IProfileBrief } from 'app/api/types';
-import { INavigateArgument } from 'app/router/navigate';
 
 interface IProps {
     className?: string;
-    navigate: (path: INavigateArgument) => void;
+    onNavigate: (address: string) => void;
 }
 
 @observer
@@ -20,7 +19,7 @@ export class ProfileList extends React.Component<IProps, any> {
 
     public onRowClick(record: IProfileBrief) {
         console.log(record);
-        this.props.navigate({ path: `/market/profile/${record.address}` });
+        this.props.onNavigate(record.address);
     }
 
     public render() {
