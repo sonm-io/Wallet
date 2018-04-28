@@ -26,6 +26,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
             'dropdown-input',
         ),
         hasBalloon: false,
+        bgcolor: '',
     };
 
     public static propTypes: TJsPropTypes<IDropdownAllProps> = {
@@ -41,6 +42,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
             button: propTypes.string,
             popup: propTypes.string,
         }),
+        bgcolor: '',
     };
 
     protected handleBodyClick = (event: any) => {
@@ -107,7 +109,12 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
             >
                 <button
                     type="button"
-                    className={s.button}
+                    className={cn(
+                        s.button,
+                        this.props.bgcolor
+                            ? `${s.button}--${this.props.bgcolor}`
+                            : '',
+                    )}
                     onClick={this.props.onButtonClick}
                 >
                     {this.props.valueString}

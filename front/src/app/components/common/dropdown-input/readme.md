@@ -48,6 +48,7 @@ date range:
     const Container = observer(
         () => <DropdownInput
             hasBaloon
+            bgcolor="white"
             valueString='Dropdown input'
             isExpanded={state.isExpanded}
             onButtonClick={state.toggle}
