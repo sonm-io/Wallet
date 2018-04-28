@@ -9,7 +9,7 @@ const json = JSON.stringify(vasyaCfg);
 const accountName = 'Account 1';
 const password = '11111111';
 
-import { THistorySourceMode } from 'app/stores/types';
+// import { THistorySourceMode } from 'app/stores/types';
 
 import { Api } from 'app/api';
 
@@ -83,7 +83,7 @@ describe('Api', async function() {
         expect(response.data).not.equal(null);
     });
 
-    it('should recieve token exchange', async function() {
+    it('should recieve token exchange rate', async function() {
         const response = await Api.getTokenExchangeRate();
         expect(response.data).not.equal(null);
     });
@@ -209,6 +209,12 @@ describe('Api', async function() {
         expect(response).to.have.nested.property('validation.password');
     });
 
+    it('should buy market order', async function() {
+        const response = await Api.buyOrder(password, address, 1);
+        expect(response.validation).equal(undefined);
+    });
+
+    /*
     it('should deposit', async function() {
         const currencies = await Api.getCurrencyList();
         expect(currencies.data).not.equal(null);
@@ -378,4 +384,5 @@ describe('Api', async function() {
             expect(response3.data).equal(privateKey);
         }
     });
+    */
 });

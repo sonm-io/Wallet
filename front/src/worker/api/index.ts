@@ -29,6 +29,7 @@ const DEFAULT_NODES: t.INodes = {
     testrpc: 'http://localhost:8545',
     private: 'http://159.65.167.139:8545',
 };
+const ZERO_ADDRESS = Array(41).join('0');
 
 const DEFAULT_TOKENS: t.ITokens = {
     livenet: [
@@ -127,6 +128,8 @@ class Api {
             'profile.list': this.getProfiles,
             'order.get': this.getOrder,
             'order.list': this.getOrders,
+
+            'market.buyOrder': this.buyOrder,
 
             getSonmTokenAddress: this.getSonmTokenAddress,
             getTokenExchangeRate: this.getTokenExchangeRate,
@@ -797,12 +800,33 @@ class Api {
     };
 
     public getTokenExchangeRate = async (): Promise<t.IResponse> => {
-        //const client = await this.initAccount('0x');
-        //await client.account.getTokenExchangeRate(),
+        const client = await this.initAccount(ZERO_ADDRESS, 'private');
 
         return {
-            data: 1,
+            data: await client.account.getTokenExchangeRate(),
         };
+    };
+
+    public buyOrder = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (data.address && data.id && data.password) {
+            const validation = await this.checkAccountPassword(
+                data.password,
+                data.address,
+                'private',
+            );
+
+            if (!validation.data) {
+                return validation;
+            }
+
+            const client = await this.initAccount(data.address, 'private');
+
+            return {
+                data: await client.account.buyOrder(data.id),
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
     };
 
     public getSonmTokenAddress = async (): Promise<t.IResponse> => {

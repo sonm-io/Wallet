@@ -113,6 +113,18 @@ export class Api {
         });
     }
 
+    public static async buyOrder(
+        password: string,
+        address: string,
+        id: number,
+    ): Promise<IResult<boolean>> {
+        return ipcSend('market.buyOrder', {
+            password,
+            address,
+            id,
+        });
+    }
+
     public static async renameAccount(
         address: string,
         name: string,
