@@ -1,0 +1,50 @@
+@import 'guide.less';
+
+@Multiselect-ListContainer-MaxHeight: 200px;
+@Multiselect-Padding: 5px;
+
+.multiselect {
+    &__container {
+        display: flex;
+        width: fit-content;
+    }
+
+    // Containers
+    &__drop-down-panel {
+        padding: @Multiselect-Padding;
+    }
+    &__list-container {
+        max-height: @Multiselect-ListContainer-MaxHeight;
+        overflow: hidden;
+        overflow-y: scroll;
+        margin-top: @Multiselect-Padding;
+        padding: @Multiselect-Padding;
+    }
+    &__button-container {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        border-top: 1px @color-border solid;
+    }
+
+    // Controls
+    &__input {
+        width: 100%;
+        border: none;
+        border-bottom: 1px @color-border solid;
+        &:focus {
+            outline: none;
+            border-bottom-color: #675fda;
+        }
+    }
+    &__button {
+        text-align: center;
+        margin: 10px;
+    }
+    &__clear-button {
+        width: 30px;
+        margin-left: 1px;
+        border: 1px @color-border solid;
+        background: url('./ic_clear_black_24px.svg') no-repeat center;
+    }
+}
