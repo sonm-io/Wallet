@@ -164,10 +164,10 @@ export class MultiSelect<T> extends React.Component<
                             {filteredList.map(this.createListItem.bind(this))}
                         </div>
 
-                        <div className="multiselect__button-container">
+                        <div className="multiselect__apply-button-container">
                             <Button
                                 color="violet"
-                                className="multiselect__button"
+                                className="multiselect__apply-button"
                                 onClick={this.onClickApply}
                             >
                                 APPLY

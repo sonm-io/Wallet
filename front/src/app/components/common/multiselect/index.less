@@ -9,30 +9,17 @@
     &__container {
         display: flex;
         width: fit-content;
+
+        & .sonm-balloon {
+            padding: 0;
+        }
     }
 
-    // Containers
     &__input-container {
-        height: 50px;
-        padding: @Multiselect-Padding @Multiselect-Padding*2;
+        padding: @Multiselect-Padding*2;
         border-bottom: @Multiselect-GrayBorder;
     }
-    &__list-container {
-        padding: @Multiselect-Padding;
-        max-height: @Multiselect-ListContainer-MaxHeight;
-        overflow: hidden;
-        overflow-y: scroll;
-    }
-    &__button-container {
-        display: flex;
-        flex-direction: column-reverse;
-        align-items: center;
-        border-top: @Multiselect-GrayBorder;
-    }
-
-    // Controls
     &__input {
-        margin: @Multiselect-Padding*2;
         width: 100%;
         border: @Multiselect-GrayBorder;
         margin: auto;
@@ -41,10 +28,25 @@
             outline-color: #675fda;
         }
     }
-    &__button {
+
+    &__list-container {
+        padding: @Multiselect-Padding;
+        max-height: @Multiselect-ListContainer-MaxHeight;
+        overflow: hidden;
+        overflow-y: scroll;
+    }
+
+    &__apply-button-container {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        border-top: @Multiselect-GrayBorder;
+    }
+    &__apply-button {
         text-align: center;
         margin: @Multiselect-Padding*2;
     }
+
     &__clear-button {
         display: flex;
         align-items: center;
