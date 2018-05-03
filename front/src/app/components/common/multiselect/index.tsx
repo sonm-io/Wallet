@@ -122,7 +122,7 @@ export class MultiSelect<T> extends React.Component<
         this.props.onRequireClose && this.props.onRequireClose();
     };
 
-    protected onClearClick = () => {
+    protected onClickClear = () => {
         this.props.onChange({
             value: [],
             name: this.props.name,
@@ -175,7 +175,7 @@ export class MultiSelect<T> extends React.Component<
                 {this.props.clearBtn ? (
                     <button
                         className="multiselect__clear-button"
-                        onClick={this.onClearClick}
+                        onClick={this.onClickClear}
                     >
                         <Icon i="Close" />
                     </button>
