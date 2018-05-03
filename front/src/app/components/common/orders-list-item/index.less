@@ -1,0 +1,75 @@
+@import 'guide.less';
+
+@ordersListItem-fontFamily: Roboto, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+@ordersListItem-label-fontColor: #95989a;
+@ordersListItem-value-fontColor: #333333;
+
+.orders-list-item__label {
+    font-family: @ordersListItem-fontFamily;
+    font-size: 12px;
+    font-weight: 400;
+    color: @ordersListItem-label-fontColor;
+}
+
+.orders-list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    // Colums
+
+    &__column1 {
+        display: flex;
+        flex-direction: row;
+    }
+    &__column2 {
+        width: 165px;
+    }
+    &__column3 {
+        width: 100px;
+    }
+
+    // Row
+
+    &__row {
+        display: flex;
+        flex-direction: row;
+        padding: 0 10px;
+        align-items: center;
+    }
+
+    // Values
+
+    &__label1 {
+        .orders-list-item__label;
+        width: 57px;
+    }
+
+    &__label2 {
+        .orders-list-item__label;
+        width: 70px;
+    }
+
+    &__name {
+        color: @ordersListItem-value-fontColor;
+        font-family: @ordersListItem-fontFamily;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    &__account {
+        color: @ordersListItem-value-fontColor;
+        font-family: @ordersListItem-fontFamily;
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    &__value {
+        color: @ordersListItem-value-fontColor;
+        font-family: @ordersListItem-fontFamily;
+        font-size: 15px;
+        font-weight: 400;
+    }
+}
