@@ -33,6 +33,8 @@ export class MultiSelect<T> extends React.Component<
         this.state = {
             filteredList: props.list,
         };
+
+        this.renderFilteredList = this.renderFilteredList.bind(this);
     }
 
     // Helpers
@@ -86,6 +88,12 @@ export class MultiSelect<T> extends React.Component<
         );
     }
 
+    protected renderFilteredList() {
+        return this.state.filteredList.map((i: T) =>
+            this.createListItem.call(this, i),
+        );
+    }
+
     // Event Handlers
 
     protected onChangeFilter = (event: any) => {
@@ -130,7 +138,6 @@ export class MultiSelect<T> extends React.Component<
 
     public render() {
         const { className } = this.props;
-        const { filteredList } = this.state;
 
         const panelStyle =
             this.props.panelStyle || MultiSelect.defaultProps.panelStyle;
@@ -156,7 +163,7 @@ export class MultiSelect<T> extends React.Component<
                         </div>
 
                         <div className="multiselect__list-container">
-                            {filteredList.map(this.createListItem.bind(this))}
+                            {this.renderFilteredList()}
                         </div>
 
                         <div className="multiselect__apply-button-container">
