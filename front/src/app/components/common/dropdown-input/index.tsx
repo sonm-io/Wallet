@@ -107,7 +107,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
             >
                 <button
                     type="button"
-                    className={s.button}
+                    className={cn(s.button)}
                     onClick={this.props.onButtonClick}
                 >
                     {this.props.valueString}
