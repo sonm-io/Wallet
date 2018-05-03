@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 
-interface ITogglerChangeParams {
+export interface ITogglerChangeParams {
     name: string;
     value: boolean;
     stringValue: string;

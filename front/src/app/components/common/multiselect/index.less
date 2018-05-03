@@ -1,0 +1,59 @@
+@import 'guide.less';
+
+@multiselect-listcontainer-maxHeight: 200px;
+@multiselect-padding: 5px;
+@multiselect-grayBorder: 1px @color-border solid;
+
+.multiselect {
+    &__container {
+        --dropdown-input-button-bg-color: white;
+        display: flex;
+
+        & .sonm-balloon {
+            padding: 0;
+        }
+    }
+
+    &__input-container {
+        padding: @multiselect-padding*2;
+        border-bottom: @multiselect-grayBorder;
+    }
+    &__input {
+        width: 100%;
+        border: @multiselect-grayBorder;
+        margin: auto;
+        padding: 5px;
+        &:focus {
+            outline-color: #675fda;
+        }
+    }
+
+    &__list-container {
+        padding: @multiselect-padding;
+        max-height: @multiselect-listcontainer-maxHeight;
+        overflow: hidden;
+        overflow-y: scroll;
+    }
+
+    &__apply-button-container {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        border-top: @multiselect-grayBorder;
+    }
+    &__apply-button {
+        text-align: center;
+        margin: @multiselect-padding*2;
+    }
+
+    &__clear-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        margin-left: 1px;
+        border: @multiselect-grayBorder;
+        color: @color-font-gray;
+        background: transparent;
+    }
+}
