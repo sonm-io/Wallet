@@ -59,7 +59,7 @@ Multiselect:
             onChange={state.onChange}
             onButtonClick={state.onButtonClick}
             onRequireClose={state.onRequireClose.bind(state)}
-            />
+        />
     );
 
     const StateInfo = observer(() =>
