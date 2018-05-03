@@ -80,7 +80,7 @@ export class MultiSelect<T> extends React.Component<
                     name={value}
                     title={name}
                     value={checked}
-                    onChange={this.onChangeCheckbox.bind(this, value)}
+                    onChange={this.onChangeCheckbox}
                 />
             </div>
         );
@@ -98,10 +98,8 @@ export class MultiSelect<T> extends React.Component<
         this.props.onRequireClose && this.props.onRequireClose();
     };
 
-    protected onChangeCheckbox = (
-        itemValue: any,
-        params: ITogglerChangeParams,
-    ) => {
+    protected onChangeCheckbox = (params: ITogglerChangeParams) => {
+        let itemValue = params.name;
         let value = this.props.value.slice(0);
         if (params.value) {
             value.push(this.state.filteredList.find(
