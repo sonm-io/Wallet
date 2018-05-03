@@ -24,19 +24,20 @@ export class Input extends React.Component<IInputProps, any>
     public render() {
         const { autoFocus, className, allowAutoComplete, ...rest } = this.props;
         const autoComplete = allowAutoComplete ? 'on' : 'off';
-        const underlineClass = `sonm-input__underline${
-            this.props.readOnly ? '--readonly' : ''
-        }`;
 
         return (
-            <div className={cn('sonm-input', className)}>
+            <div
+                className={cn('sonm-input', className, {
+                    'sonm-input--readonly': this.props.readOnly,
+                })}
+            >
                 <input
                     {...rest}
                     className="sonm-input__input"
                     ref={this.saveRef}
                     autoComplete={autoComplete}
                 />
-                <div className={underlineClass} />
+                <div className="sonm-input__underline" />
             </div>
         );
     }
