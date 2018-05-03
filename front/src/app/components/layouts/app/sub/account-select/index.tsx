@@ -13,7 +13,6 @@ export interface IAccount {
 
 export interface IMarketAccountSelectProps {
     accounts: Array<IAccount>;
-    url: string;
     onChange: (url: string) => void;
     className?: string;
     hidden: boolean;

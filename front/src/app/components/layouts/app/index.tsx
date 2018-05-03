@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Alert } from 'app/components/common/alert';
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores';
 import { LoadMask } from 'app/components/common/load-mask';
 import { AlertList } from './sub/alerts';
 import { AppHeader } from './sub/app-header';
 import { Header } from 'app/components/common/header';
 import { BreadCrumbs } from 'app/components/common/breadcrumbs';
+import { rootStore } from 'app/stores/index';
+import { IMarketAccountSelectProps } from './sub/account-select/index';
 
 interface IProps {
     className?: string;
@@ -18,10 +19,13 @@ interface IProps {
     onExit: () => void;
     title?: string;
     breadcrumbs: any;
+    accounts: IAccount[];
 }
 
 @observer
 export class App extends React.Component<IProps, any> {
+    protected accountSelect: IMarketAccountSelectProps = {};
+
     protected handleExit = (event: any) => {
         event.preventDefault();
 
@@ -37,6 +41,8 @@ export class App extends React.Component<IProps, any> {
             <div className={cn('sonm-app', className)}>
                 <LoadMask white visible={rootStore.isPending}>
                     <AppHeader
+                        onChangeAccount={Function.prototype}
+                        accounts={}
                         className="sonm-app__header"
                         path={path}
                         isTestNet={true}

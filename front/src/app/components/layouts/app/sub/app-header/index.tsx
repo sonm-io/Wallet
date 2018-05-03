@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'app/components/common/icon';
 import { NavMenuDropdown, TMenuItem } from '../nav-menu-dropdown';
-import { MarketAccountSelect } from '../account-select';
-import { marketAccountSelectProps } from '../account-select/mock-data';
+import { MarketAccountSelect, IAccount } from '../account-select';
 import { AppBalance } from '../balance';
 
 export interface IAppHeaderProps {
@@ -13,6 +12,10 @@ export interface IAppHeaderProps {
     sonmNodeUrl: string;
     onNavigate: (url: string) => void;
     onExit: () => void;
+    accounts: Array<IAccount>;
+    onChangeAccount: (url: string) => void;
+    hidden: boolean;
+    marketAccount: IAccount;
 }
 
 export class AppHeader extends React.Component<IAppHeaderProps, any> {
@@ -55,14 +58,17 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
             >
                 <div className="sonm-app-header__logo sonm-app-header__item" />
                 <NavMenuDropdown
-                    className={'sonm-app-header__menu sonm-app-header__item'}
+                    className="sonm-app-header__menu sonm-app-header__item"
                     path={p.path}
                     items={AppHeader.menuConfig}
                     onChange={this.props.onNavigate}
                 />
                 <MarketAccountSelect
-                    {...marketAccountSelectProps}
-                    className={'sonm-app-header__account sonm-app-header__item'}
+                    value={p.marketAccount}
+                    accounts={p.accounts}
+                    onChange={p.onChangeAccount}
+                    hidden={false}
+                    className="sonm-app-header__account sonm-app-header__item"
                 />
                 <div className="sonm-app-header-block__wrapper sonm-app-header__item">
                     <AppBalance
