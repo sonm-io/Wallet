@@ -5,6 +5,10 @@
 @dropdownInputBorderHoverColor: #9ca0a6;
 @dropdownInputBorderActiveBorder: 0 0 0 2px rgba(147,149,152,.2);
 
+:root {
+    --dropdown-input-button-bg-color: @dropdownInputBgColor;
+}
+
 .dropdown-input {
     display: inline-block;
     position: relative;
@@ -30,6 +34,7 @@
     }
 
     &__button {
+        background-color: var(--dropdown-input-button-bg-color);
         &:after {
             content: '';
             width: 6px;
@@ -75,9 +80,5 @@
             outline: none;
             box-shadow: @dropdownInputBorderActiveBorder;
         }
-    }
-
-    &__button--white {
-        background: white;
     }
 }

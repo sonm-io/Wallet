@@ -145,7 +145,6 @@ export class MultiSelect<T> extends React.Component<
                     valueString={`${this.props.label}: ${this.getLabelValue()}`}
                     onRequireClose={this.onRequireClose}
                     onButtonClick={this.props.onButtonClick}
-                    bgcolor="white"
                     hasBalloon
                     isExpanded={this.props.isExpanded}
                 >
