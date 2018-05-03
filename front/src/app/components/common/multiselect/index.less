@@ -4,20 +4,20 @@
 @multiselect-padding: 5px;
 @multiselect-grayBorder: 1px @color-border solid;
 
+:root {
+    --dropdown-input-button-bg-color: @color-white;
+}
+
 .multiselect {
     &__container {
-        --dropdown-input-button-bg-color: white;
         display: flex;
-
-        & .sonm-balloon {
-            padding: 0;
-        }
     }
 
     &__input-container {
         padding: @multiselect-padding*2;
         border-bottom: @multiselect-grayBorder;
     }
+
     &__input {
         width: 100%;
         border: @multiselect-grayBorder;
@@ -41,6 +41,7 @@
         align-items: center;
         border-top: @multiselect-grayBorder;
     }
+
     &__apply-button {
         text-align: center;
         margin: @multiselect-padding*2;
@@ -55,5 +56,20 @@
         border: @multiselect-grayBorder;
         color: @color-font-gray;
         background: transparent;
+        outline: none;
+
+        &:focus,
+        &:active {
+            outline: none;
+        }
+    }
+
+    &__item {
+        display: block;
+        padding: 3px;
+    }
+
+    &__popup {
+        min-width: 200px;
     }
 }
