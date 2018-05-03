@@ -21,7 +21,6 @@ export interface IMultiSelectOptionalInputProps {
     className: string;
     nameIndex: string;
     valueIndex: string;
-    throttleTime: number;
     filterPlaceHolder: string;
     panelStyle: object;
 }

@@ -12,13 +12,14 @@ import { ITogglerChangeParams } from '../toggler';
 import * as debounce from 'lodash/fp/debounce';
 import Icon from '../icon';
 
+const DebounceWait = 100; //ms
+
 export class MultiSelect<T> extends React.Component<
     IMultiSelectInputProps<T>,
     any
 > {
     public static readonly defaultProps: IMultiSelectOptionalInputProps = {
         label: '',
-        throttleTime: 100,
         className: '',
         nameIndex: '',
         valueIndex: '',
@@ -50,23 +51,21 @@ export class MultiSelect<T> extends React.Component<
             : this.props.value.length.toString();
     };
 
-    protected filterList = debounce(this.props.throttleTime || 0)(
-        (value: string) => {
-            const filteredInputValue = value.trim().toLowerCase();
-            const filteredList =
-                filteredInputValue === ''
-                    ? this.props.list
-                    : this.props.list.filter(item =>
-                          this.getName(item)
-                              .toLowerCase()
-                              .includes(filteredInputValue),
-                      );
+    protected filterList = debounce(DebounceWait)((value: string) => {
+        const filteredInputValue = value.trim().toLowerCase();
+        const filteredList =
+            filteredInputValue === ''
+                ? this.props.list
+                : this.props.list.filter(item =>
+                      this.getName(item)
+                          .toLowerCase()
+                          .includes(filteredInputValue),
+                  );
 
-            this.setState({
-                filteredList,
-            });
-        },
-    );
+        this.setState({
+            filteredList,
+        });
+    });
 
     protected createListItem(item: any) {
         const value = this.getValue(item);
