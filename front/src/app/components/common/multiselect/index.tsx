@@ -10,8 +10,7 @@ import { DropdownInput } from '../dropdown-input';
 import { Checkbox } from '../checkbox';
 import { ITogglerChangeParams } from '../toggler';
 import * as debounce from 'lodash/fp/debounce';
-
-const Svg = require('./ic_clear_black_24px.svg').default;
+import Icon from '../icon';
 
 export class MultiSelect<T> extends React.Component<
     IMultiSelectInputProps<T>,
@@ -180,7 +179,7 @@ export class MultiSelect<T> extends React.Component<
                         className="multiselect__clear-button"
                         onClick={this.onClearClick}
                     >
-                        <Svg />
+                        <Icon i="Close" />
                     </button>
                 ) : null}
             </div>
