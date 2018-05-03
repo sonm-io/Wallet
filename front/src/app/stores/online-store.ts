@@ -3,13 +3,10 @@ import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api';
 import { WalletApiError } from './types';
+import { ILocalizator } from 'app/localization';
 
-interface IErrorProcessor {
+export interface IErrorProcessor {
     processError: (err: Error) => void;
-}
-
-interface ILocalizator {
-    getMessageText: (code: string) => string;
 }
 
 interface IOnlineStoreServices {
@@ -23,7 +20,7 @@ export class OnlineStore {
         this.services = { ...params };
     }
 
-    private services: IOnlineStoreServices;
+    protected services: IOnlineStoreServices;
 
     @asyncAction
     protected *goOffline() {
