@@ -22,6 +22,14 @@
     font-weight: 700;
 }
 
+.list-header__noButton {
+    border: none;
+    background: transparent;
+    &:focus {
+        outline: 1px dotted #a6c8ff;
+    }
+}
+
 // Component
 
 .list-header {
@@ -37,6 +45,7 @@
 
             &__item {
                 .list-header__font;
+                .list-header__noButton;
                 margin: 0 5px;
                 cursor: pointer;
                 user-select: none;
@@ -56,18 +65,23 @@
         .list-header__font;
         margin-left: auto;
 
-        &__item {
-            .list-header__font;
-            margin: 0 5px;
-            cursor: pointer;
-            user-select: none;
+        &__button {
+            .list-header__noButton;
 
-            &--selected {
-                text-decoration: underline;
+            &__label {
+                .list-header__font;
+                margin: 0 5px;
+                cursor: pointer;
+                user-select: none;
+
+                &--selected {
+                    text-decoration: underline;
+                }
             }
         }
 
-        &__sync-icon {
+        &__refresh {
+            .list-header__noButton;
             cursor: pointer;
         }
     }

@@ -25,12 +25,18 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
         return 'OrderAsc';
     };
 
-    protected handleClickOrder(selectedKey: string) {
+    protected handleClickOrder = (event: any) => {
+        const selectedKey = event.currentTarget.value;
         this.props.onChangeOrder(
             selectedKey,
             !(this.props.orderBy === selectedKey && this.props.desc),
         );
-    }
+    };
+
+    protected handleClickPageLimit = (event: any) => {
+        const limit = event.currentTarget.value;
+        limit !== this.props.limit && this.props.onChangeLimit(limit);
+    };
 
     public render() {
         return (
@@ -39,7 +45,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                     Sort by:
                     <div className="list-header__sortings__container">
                         {this.props.orderKeys.map(orderKey => (
-                            <div
+                            <button
                                 key={orderKey}
                                 className={cn(
                                     'list-header__sortings__container__item',
@@ -48,38 +54,47 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                                             orderKey === this.props.orderBy,
                                     },
                                 )}
-                                onClick={() => this.handleClickOrder(orderKey)}
+                                onClick={this.handleClickOrder}
+                                value={orderKey}
                             >
                                 {orderKey}
                                 <Icon
                                     className="list-header__sortings__container__icon"
                                     i={this.getOrderIconName(orderKey)}
                                 />
-                            </div>
+                            </button>
                         ))}
                     </div>
                 </div>
                 <div className="list-header__pageSize">
-                    {this.props.limits.map(i => (
-                        <div
-                            key={i}
-                            className={cn('list-header__pageSize__item', {
-                                'list-header__pageSize__item--selected':
-                                    i === this.props.limit,
-                            })}
-                            onClick={() =>
-                                i !== this.props.limit &&
-                                this.props.onChangeLimit(i)
-                            }
-                        >
-                            {i}
-                        </div>
-                    ))}
-                    <Icon
-                        i="Sync"
-                        className="list-header__pageSize__sync-icon"
+                    {this.props.limits.map((limit: number) => {
+                        return (
+                            <button
+                                className="list-header__pageSize__button"
+                                key={limit}
+                                value={limit}
+                                onClick={this.handleClickPageLimit}
+                            >
+                                <span
+                                    className={cn(
+                                        'list-header__pageSize__button__label',
+                                        {
+                                            'list-header__pageSize__button__label--selected':
+                                                limit == this.props.limit,
+                                        },
+                                    )}
+                                >
+                                    {limit}
+                                </span>
+                            </button>
+                        );
+                    })}
+                    <button
                         onClick={this.props.onRefresh}
-                    />
+                        className="list-header__pageSize__refresh"
+                    >
+                        <Icon i="Sync" />
+                    </button>
                 </div>
             </div>
         );
