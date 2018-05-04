@@ -11,15 +11,15 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     public render() {
         return (
             <div className="orders-list-item">
-                <div className="orders-list-item__column1">
-                    <div>
+                <div className="orders-list-item__column-logo">
+                    <div className="orders-list-item__column-logo__logo">
                         {this.props.logoUrl ? (
                             <img src={this.props.logoUrl} />
                         ) : (
                             <IdentIcon address={this.props.address} />
                         )}
                     </div>
-                    <div>
+                    <div className="orders-list-item__column1">
                         <div className="orders-list-item__row">
                             <div className="orders-list-item__label1">
                                 Name:
@@ -77,6 +77,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                     <div className="orders-list-item__value">
                         {this.props.duration} hours
                     </div>
+                    <div>&nbsp;</div>
                 </div>
             </div>
         );

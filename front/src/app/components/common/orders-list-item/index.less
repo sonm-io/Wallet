@@ -1,33 +1,66 @@
 @import 'guide.less';
 
+// External variables
+
 @ordersListItem-fontFamily: Roboto, -apple-system, BlinkMacSystemFont,
     'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
     'Helvetica Neue', Helvetica, Arial, sans-serif;
 @ordersListItem-label-fontColor: #95989a;
 @ordersListItem-value-fontColor: #333333;
+@ordersListItem-borderColor: #eeeeee;
+
+// Internal variables
+
+@listItemBorder: 1px solid @ordersListItem-borderColor;
+
+// Mixins
 
 .orders-list-item__label {
     font-family: @ordersListItem-fontFamily;
     font-size: 12px;
     font-weight: 400;
     color: @ordersListItem-label-fontColor;
+    padding: 5px 0;
 }
+
+.orders-list-item__column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+// Component
 
 .orders-list-item {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    border-bottom: @listItemBorder;
+
+    &:first-child {
+        border-top: @listItemBorder;
+    }
 
     // Colums
 
-    &__column1 {
+    &__column-logo {
         display: flex;
         flex-direction: row;
+
+        &__logo {
+            display: flex;
+            align-items: center;
+        }
+    }
+    &__column1 {
+        .orders-list-item__column;
     }
     &__column2 {
+        .orders-list-item__column;
         width: 165px;
     }
     &__column3 {
+        .orders-list-item__column;
         width: 100px;
     }
 
