@@ -1,22 +1,16 @@
 @import 'guide.less';
 
-// External variables
+// Variables
 
-@ordersListItem-fontFamily: Roboto, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
-    'Helvetica Neue', Helvetica, Arial, sans-serif;
-@ordersListItem-label-fontColor: #95989a;
-@ordersListItem-value-fontColor: #333333;
-@ordersListItem-borderColor: #eeeeee;
-
-// Internal variables
-
-@listItemBorder: 1px solid @ordersListItem-borderColor;
+@ordersListItem-label-fontColor: @color-light-font;
+@ordersListItem-value-fontColor: @color-font-dark;
+@ordersListItem-borderColor: @color-gray-bg;
+@ordersListItem-border: 1px solid @ordersListItem-borderColor;
 
 // Mixins
 
 .orders-list-item__label {
-    font-family: @ordersListItem-fontFamily;
+    font-family: @font-family;
     font-size: 12px;
     font-weight: 400;
     color: @ordersListItem-label-fontColor;
@@ -35,10 +29,10 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border-bottom: @listItemBorder;
+    border-bottom: @ordersListItem-border;
 
     &:first-child {
-        border-top: @listItemBorder;
+        border-top: @ordersListItem-border;
     }
 
     // Colums
@@ -87,21 +81,21 @@
 
     &__name {
         color: @ordersListItem-value-fontColor;
-        font-family: @ordersListItem-fontFamily;
+        font-family: @font-family;
         font-size: 15px;
         font-weight: 500;
     }
 
     &__account {
         color: @ordersListItem-value-fontColor;
-        font-family: @ordersListItem-fontFamily;
+        font-family: @font-family;
         font-size: 12px;
         font-weight: 400;
     }
 
     &__value {
         color: @ordersListItem-value-fontColor;
-        font-family: @ordersListItem-fontFamily;
+        font-family: @font-family;
         font-size: 15px;
         font-weight: 400;
     }
