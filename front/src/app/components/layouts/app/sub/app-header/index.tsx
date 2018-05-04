@@ -4,25 +4,30 @@ import { NavMenuDropdown, TMenuItem } from '../nav-menu-dropdown';
 import { MarketAccountSelect, IAccount } from '../account-select';
 import { AppBalance } from '../balance';
 
+export { IAccount } from '../account-select';
+
 export interface IAppHeaderProps {
     className?: string;
-    path: string;
     isTestNet: boolean;
     gethNodeUrl: string;
     sonmNodeUrl: string;
     onNavigate: (url: string) => void;
     onExit: () => void;
-    accounts: Array<IAccount>;
-    onChangeAccount: (url: string) => void;
-    hidden: boolean;
-    marketAccount: IAccount;
+    onChangeAccount: (account: IAccount) => void;
+    hasMarketAccountSelect: boolean;
+    account?: IAccount;
+    accountList: Array<IAccount>;
+    decimalPointOffset: number;
 }
+
+let sendPath = '';
+let marketPath = '';
 
 export class AppHeader extends React.Component<IAppHeaderProps, any> {
     protected static menuConfig: Array<TMenuItem> = [
         [
             'Wallet',
-            '/send',
+            (sendPath = '/send'),
             [
                 ['Accounts', '/accounts', undefined],
                 ['History', '/history', undefined],
@@ -31,7 +36,7 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
         ],
         [
             'Market',
-            '/market/deals',
+            (marketPath = '/market/deals'),
             [
                 ['Search', '/market/search', undefined],
                 ['Profiles', '/market/profile-list', undefined],
@@ -59,17 +64,21 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                 <div className="sonm-app-header__logo sonm-app-header__item" />
                 <NavMenuDropdown
                     className="sonm-app-header__menu sonm-app-header__item"
-                    path={p.path}
+                    topMenuActiveItem={
+                        p.hasMarketAccountSelect ? marketPath : sendPath
+                    }
                     items={AppHeader.menuConfig}
                     onChange={this.props.onNavigate}
                 />
-                <MarketAccountSelect
-                    value={p.marketAccount}
-                    accounts={p.accounts}
-                    onChange={p.onChangeAccount}
-                    hidden={false}
-                    className="sonm-app-header__account sonm-app-header__item"
-                />
+                {p.account && p.hasMarketAccountSelect ? (
+                    <MarketAccountSelect
+                        value={p.account}
+                        accounts={p.accountList}
+                        decimalPointOffset={p.decimalPointOffset}
+                        onChange={p.onChangeAccount}
+                        className="sonm-app-header__account sonm-app-header__item"
+                    />
+                ) : null}
                 <div className="sonm-app-header-block__wrapper sonm-app-header__item">
                     <AppBalance
                         className="sonm-app-header-block__balance"

@@ -24,7 +24,6 @@ export function TokenItem(props: ITokenItemProps) {
                 className="sonm-token-item__balance"
                 balance={props.balance}
                 symbol={props.symbol}
-                fontSizePx={18}
                 decimalPointOffset={props.decimalPointOffset}
             />
         </Empty>

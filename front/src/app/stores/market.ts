@@ -1,6 +1,5 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import { IAccountInfo } from 'app/api';
 import { ISendFormValues, IAccountItemView } from './types';
 import { OnlineStore, IErrorProcessor } from './online-store';
 const { catchErrors } = OnlineStore;
@@ -72,23 +71,31 @@ export class MarketStore extends OnlineStore {
     }
 
     @computed
-    public get marketAccountView(): IAccountItemView {
-        return this.rootStore.mainStore.transformAccountInfoToView(
-            this.rootStore.mainStore.accountMap.get(
-                this.marketAccountAddress,
-            ) as IAccountInfo,
+    public get marketAccountView(): IAccountItemView | undefined {
+        let result;
+
+        const account = this.rootStore.mainStore.accountMap.get(
+            this.marketAccountAddress,
         );
+
+        if (account) {
+            result = this.rootStore.mainStore.transformAccountInfoToView(
+                account,
+            );
+        }
+
+        return result;
     }
 
     @computed
     public get marketAccountAddress(): string {
         return this.userInput.marketAccountAddress === ''
-            ? this.accountList[0].address
+            ? this.marketAccountViewList[0].address
             : this.userInput.marketAccountAddress;
     }
 
     @computed
-    public get accountList(): IAccountItemView[] {
+    public get marketAccountViewList(): IAccountItemView[] {
         return this.rootStore.mainStore.accountList;
     }
 }

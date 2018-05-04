@@ -80,9 +80,7 @@ export class RootStore implements IHasLocalizator {
             localizator: this.localizator,
             errorProcessor: this.uiStore,
             api: {
-                fetchMarketBalance: unwrapApiResult<string>(
-                    Api.getMarketBalance,
-                ),
+                fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
             },
         });
 

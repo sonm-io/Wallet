@@ -188,7 +188,7 @@ export class MainStore extends OnlineStore {
     @computed
     public get accountList(): IAccountItemView[] {
         const result = Array.from(this.accountMap.values()).map(
-            account => this.transformAccountInfoToView,
+            this.transformAccountInfoToView,
         );
 
         return sortByName(result) as IAccountItemView[];
@@ -198,6 +198,10 @@ export class MainStore extends OnlineStore {
         info: IAccountInfo,
     ): IAccountItemView => {
         const isCurrencyListEmpty = this.currencyMap.size === 0;
+        const primaryTokenBalance = isCurrencyListEmpty
+            ? ''
+            : info.currencyBalanceMap[this.primaryTokenAddress];
+
         const preview: IAccountItemView = {
             address: info.address,
             json: info.json,
@@ -205,10 +209,9 @@ export class MainStore extends OnlineStore {
             etherBalance: isCurrencyListEmpty
                 ? ''
                 : info.currencyBalanceMap[this.etherAddress],
-            primaryTokenBalance: isCurrencyListEmpty
-                ? ''
-                : info.currencyBalanceMap[this.primaryTokenAddress],
+            primaryTokenBalance,
             primaryTokenInfo: this.primaryTokenInfo,
+            usdBalance: isCurrencyListEmpty ? '' : primaryTokenBalance,
         };
 
         return preview;

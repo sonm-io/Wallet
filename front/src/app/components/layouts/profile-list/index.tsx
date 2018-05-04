@@ -17,9 +17,12 @@ export class ProfileList extends React.Component<IProps, any> {
         rootStore.profileListStore.update();
     }
 
-    public onRowClick(record: IProfileBrief) {
-        console.log(record);
+    public handleRowClick = (record: IProfileBrief) => {
         this.props.onNavigate(record.address);
+    };
+
+    public componentDidCatch(error: any, info: any) {
+        console.log('ProfileList', error, info);
     }
 
     public render() {
@@ -35,7 +38,7 @@ export class ProfileList extends React.Component<IProps, any> {
                 filter={ProfileListView.defaultFilter}
                 onChangePage={Function.prototype as any}
                 onChangeFilter={Function.prototype as any}
-                onRowClick={(record: IProfileBrief) => this.onRowClick(record)}
+                onRowClick={this.handleRowClick}
             />
         );
     }

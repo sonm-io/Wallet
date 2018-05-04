@@ -3,25 +3,26 @@ import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
+import { Balance } from 'app/components/common/balance-view';
 
 export interface IAccount {
     name: string;
     address: string;
     usdBalance: string;
-    snmBalance: string;
+    primaryTokenBalance: string;
 }
 
 export interface IMarketAccountSelectProps {
     accounts: Array<IAccount>;
-    onChange: (url: string) => void;
+    onChange: (account: IAccount) => void;
     className?: string;
-    hidden: boolean;
-    value: IAccount;
+    value?: IAccount;
+    decimalPointOffset: number;
 }
 
 export interface IMarketAccountSelectItemProps extends IAccount {
     className?: string;
-    usdMultiplier?: string;
+    decimalPointOffset: number;
     onClick?: (account: IAccount) => void;
 }
 
@@ -33,14 +34,8 @@ export class MarketAccountSelect extends React.PureComponent<
         opened: false,
     };
 
-    protected handleClickUrl = (event: any) => {
-        const path = event.target.value;
-
-        this.props.onChange(path);
-    };
-
     protected handleCloseTopMenu = () => {
-        this.setState({ opened: '' });
+        this.setState({ opened: false });
     };
 
     protected handleButtonClick = () => {
@@ -79,25 +74,42 @@ export class MarketAccountSelect extends React.PureComponent<
                         {p.name}
                     </div>
                     <div className="sonm-market-select-item__balance">
-                        {p.usdBalance} USD ({p.snmBalance} SNM)
+                        <Balance
+                            balance={p.usdBalance}
+                            decimalPointOffset={p.decimalPointOffset}
+                            decimalDigitAmount={2}
+                            symbol="USD"
+                        />
+                        (<Balance
+                            balance={p.primaryTokenBalance}
+                            decimalPointOffset={p.decimalPointOffset}
+                            decimalDigitAmount={2}
+                            symbol="SNM"
+                        />)
                     </div>
                 </Tag>
             );
         }
     };
 
-    protected handleSelectAccount = (account: IAccount) => {};
+    protected handleSelectAccount = (account: IAccount) => {
+        this.setState({ opened: false });
+        this.props.onChange(account);
+    };
 
     public render() {
         const p = this.props;
         const account = p.value;
         const accounts = p.accounts;
 
+        if (!account) {
+            return null;
+        }
+
         return (
             <DropdownInput
                 className={cn(p.className, 'sonm-market-account', {
                     'sonm-market-account--opened': this.state.opened,
-                    'sonm-market-account--hidden': this.props.hidden,
                 })}
                 isExpanded={this.state.opened}
                 onButtonClick={this.handleButtonClick}
@@ -113,7 +125,10 @@ export class MarketAccountSelect extends React.PureComponent<
                         <div className="sonm-market-account__title">
                             Market account
                         </div>
-                        <MarketAccountSelect.Item {...account} />
+                        <MarketAccountSelect.Item
+                            {...account}
+                            decimalPointOffset={p.decimalPointOffset}
+                        />
                     </React.Fragment>
                 }
             >
@@ -121,6 +136,7 @@ export class MarketAccountSelect extends React.PureComponent<
                     accounts.map((item: IAccount) => (
                         <MarketAccountSelect.Item
                             className="sonm-market-account__select-item"
+                            decimalPointOffset={p.decimalPointOffset}
                             onClick={this.handleSelectAccount}
                             key={item.address}
                             {...item}

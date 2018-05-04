@@ -8,7 +8,7 @@ export type TMenuItem = TItem<TItem<undefined>>;
 
 export interface INavMenuDropdownProps {
     items: Array<TMenuItem>;
-    path: string;
+    topMenuActiveItem: string;
     onChange: (url: string) => void;
     className?: string;
 }
@@ -60,7 +60,7 @@ export class NavMenuDropdown extends React.PureComponent<
                                 'sonm-nav-menu__item--opened':
                                     this.state.opened === title,
                                 'sonm-nav-menu__item--active':
-                                    this.props.path === path,
+                                    this.props.topMenuActiveItem === path,
                             })}
                             key={title}
                             valueString={title}
@@ -74,21 +74,28 @@ export class NavMenuDropdown extends React.PureComponent<
                                 expanded: 'sonm-nav-menu-dropdown--expanded',
                             }}
                         >
-                            {children &&
-                                children.map((subItem: TItem<undefined>) => {
-                                    const [subTitle, subPath] = subItem;
+                            <div className="sonm-nav-menu__popup">
+                                {children &&
+                                    children.map(
+                                        (subItem: TItem<undefined>) => {
+                                            const [subTitle, subPath] = subItem;
 
-                                    return (
-                                        <button
-                                            key={subPath}
-                                            value={subPath}
-                                            className="sonm-nav-menu__sub-item"
-                                            onClick={this.handleClickUrl}
-                                        >
-                                            {subTitle}
-                                        </button>
-                                    );
-                                })}
+                                            return (
+                                                <button
+                                                    key={subTitle}
+                                                    value={subPath}
+                                                    type="button"
+                                                    className="sonm-nav-menu__sub-item"
+                                                    onClick={
+                                                        this.handleClickUrl
+                                                    }
+                                                >
+                                                    {subTitle}
+                                                </button>
+                                            );
+                                        },
+                                    )}
+                            </div>
                         </DropdownInput>
                     );
                 })}

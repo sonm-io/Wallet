@@ -19,6 +19,7 @@ import { DownloadFile } from 'app/components/common/download-file';
 import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
 import { IValidation } from 'app/api/types';
+import { IAccountItemView } from 'app/stores/types';
 
 enum WalletDialogs {
     new,
@@ -143,7 +144,7 @@ export class Wallets extends React.Component<IProps, IState> {
                         <EmptyAccountList />
                     ) : (
                         rootStore.mainStore.accountList.map(
-                            (x: IAccountItemProps) => {
+                            (x: IAccountItemView) => {
                                 return (
                                     <DeletableItem
                                         item={x}

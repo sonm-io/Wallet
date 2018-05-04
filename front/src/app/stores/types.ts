@@ -62,6 +62,7 @@ export enum AlertType {
 }
 
 export interface IAlert {
+    id: string;
     type: AlertType;
     message: string;
 }
@@ -87,6 +88,7 @@ export interface IAccountItemView {
     json: string;
     name: string;
     etherBalance: string;
+    usdBalance: string;
     primaryTokenBalance: string;
     primaryTokenInfo: ICurrencyInfo;
 }
