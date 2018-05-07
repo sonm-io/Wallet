@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ProfileStatus } from '../profile-status';
 import { IOrdersListItemProps } from './types';
 import { IdentIcon } from '../ident-icon';
+import * as cn from 'classnames';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     constructor(props: IOrdersListItemProps) {
@@ -10,7 +11,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
 
     public render() {
         return (
-            <div className="orders-list-item">
+            <div className={cn('orders-list-item', this.props.className)}>
                 <div className="orders-list-item__column-logo">
                     <div className="orders-list-item__column-logo__logo">
                         {this.props.logoUrl ? (

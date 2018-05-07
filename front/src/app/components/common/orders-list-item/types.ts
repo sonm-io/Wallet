@@ -11,4 +11,6 @@ export interface IOrdersListItemProps {
     ramSize: number; // MB
     usdPerHour: number;
     duration: number;
+    // optional
+    className?: string;
 }
