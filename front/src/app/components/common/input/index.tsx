@@ -4,6 +4,7 @@ import * as cn from 'classnames';
 interface IInputProps extends React.InputHTMLAttributes<any> {
     autoFocus?: boolean;
     allowAutoComplete?: boolean;
+    prefix?: string;
 }
 
 interface IFocusable {
@@ -22,15 +23,26 @@ export class Input extends React.Component<IInputProps, any>
     };
 
     public render() {
-        const { autoFocus, className, allowAutoComplete, ...rest } = this.props;
+        const {
+            autoFocus,
+            allowAutoComplete,
+            prefix,
+            className,
+            style,
+            ...rest
+        } = this.props;
         const autoComplete = allowAutoComplete ? 'on' : 'off';
 
         return (
             <div
+                style={style}
                 className={cn('sonm-input', className, {
                     'sonm-input--readonly': this.props.readOnly,
                 })}
             >
+                {prefix ? (
+                    <span className="sonm-input__prefix">{prefix}</span>
+                ) : null}
                 <input
                     {...rest}
                     className="sonm-input__input"
