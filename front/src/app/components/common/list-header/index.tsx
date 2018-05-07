@@ -1,17 +1,7 @@
 import * as React from 'react';
 import { Icon } from '../icon';
 import * as cn from 'classnames';
-
-export interface IListHeaderProps {
-    orderBy: string;
-    orderKeys: Array<string>;
-    desc: boolean;
-    limit: number;
-    limits: Array<number>;
-    onChangeLimit: (limit: number) => void;
-    onChangeOrder: (orderKey: string, isDesc: boolean) => void;
-    onRefresh: () => void;
-}
+import { IListHeaderProps } from './types';
 
 export class ListHeader extends React.Component<IListHeaderProps, any> {
     constructor(props: IListHeaderProps) {
@@ -40,7 +30,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
 
     public render() {
         return (
-            <div className="list-header">
+            <div className={cn('list-header', this.props.className)}>
                 <div className="list-header__sortings">
                     Sort by:
                     <div className="list-header__sortings__container">
@@ -100,3 +90,6 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
         );
     }
 }
+
+export default ListHeader;
+export * from './types';
