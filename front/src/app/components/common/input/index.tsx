@@ -28,14 +28,13 @@ export class Input extends React.Component<IInputProps, any>
             allowAutoComplete,
             prefix,
             className,
-            style,
             ...rest
         } = this.props;
         const autoComplete = allowAutoComplete ? 'on' : 'off';
 
         return (
             <div
-                style={style}
+                style={undefined}
                 className={cn('sonm-input', className, {
                     'sonm-input--readonly': this.props.readOnly,
                 })}
@@ -45,6 +44,7 @@ export class Input extends React.Component<IInputProps, any>
                 ) : null}
                 <input
                     {...rest}
+                    style={undefined}
                     className="sonm-input__input"
                     ref={this.saveRef}
                     autoComplete={autoComplete}

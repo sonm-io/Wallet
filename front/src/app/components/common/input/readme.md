@@ -1,9 +1,12 @@
 Input:
 
-    <div>
-      <Input />
-      <div style={{display:'flex', 'flex-direction': 'row' }}>
-        <Input prefix="from" style={{'margin-right': '5px'}} />
-        <Input prefix="to" />
-      </div>  
-    </div>
+ <Input />
+
+Input with prefix:
+
+    <div style={{display:'flex', 'flex-direction': 'row' }}>
+      <div style={{'margin-right': '5px'}}>
+        <Input prefix="from" />
+      </div>
+      <Input prefix="to" />
+    </div>  
