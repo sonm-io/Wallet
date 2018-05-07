@@ -21,10 +21,6 @@ export class ProfileList extends React.Component<IProps, any> {
         this.props.onNavigate(record.address);
     };
 
-    public componentDidCatch(error: any, info: any) {
-        console.log('ProfileList', error, info);
-    }
-
     public render() {
         const dataSource = toJS(rootStore.profileListStore.records);
 

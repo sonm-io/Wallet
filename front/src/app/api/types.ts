@@ -83,11 +83,16 @@ export enum NetworkEnum {
 }
 
 export enum EProfileStatus {
-    anon = 0,
-    reg = 1,
-    ident = 2,
-    full = 3,
+    anonimest = 0,
+    anon = 1,
+    reg = 2,
+    ident = 3,
     pro = 4,
+}
+
+export enum EProfileRole {
+    customer = 1,
+    supplier = 2,
 }
 
 export interface IAttribute {

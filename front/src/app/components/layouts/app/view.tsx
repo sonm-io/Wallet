@@ -29,8 +29,6 @@ interface IProps {
     onCloseAlert: (alertId: string) => void;
 
     title?: string;
-
-    decimalPointOffset: number;
 }
 
 export class AppView extends React.PureComponent<IProps, any> {
@@ -42,7 +40,6 @@ export class AppView extends React.PureComponent<IProps, any> {
                 <LoadMask white visible={p.isPending}>
                     <AppHeader
                         onChangeAccount={p.onChangeMarketAccount}
-                        decimalPointOffset={p.decimalPointOffset}
                         accountList={p.marketAccountList}
                         account={p.marketAccount}
                         className="sonm-app__header"

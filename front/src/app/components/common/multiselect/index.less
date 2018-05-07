@@ -3,14 +3,22 @@
 @multiselect-listcontainer-maxHeight: 200px;
 @multiselect-padding: 5px;
 @multiselect-grayBorder: 1px @color-border solid;
+@multiselectButtonWidth: 30px;
+@multiselectBorderHoverColor: #9ca0a6;
+@multiselectBorderActiveBorder: 0 0 0 2px rgba(147,149,152,.2);
 
 :root {
     --dropdown-input-button-bg-color: @color-white;
 }
 
 .multiselect {
-    &__container {
-        display: flex;
+    display: inline-block;
+    position: relative;
+    padding: 0 @multiselectButtonWidth+1px 0 0;
+
+    &__dropdown-wrapper {
+        margin: 0;
+        width: 100%;
     }
 
     &__input-container {
@@ -23,6 +31,7 @@
         border: @multiselect-grayBorder;
         margin: auto;
         padding: 5px;
+
         &:focus {
             outline-color: #675fda;
         }
@@ -48,20 +57,36 @@
     }
 
     &__clear-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        margin-left: 1px;
+        display: block;
+        width: @multiselectButtonWidth;
+        height: 100%;
+        margin: 0;
         border: @multiselect-grayBorder;
         color: @color-font-gray;
         background: transparent;
         outline: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        cursor: pointer;
 
         &:focus,
-        &:active {
+        &:hover {
+            border: 1px solid @multiselectBorderHoverColor;
             outline: none;
         }
+
+        &:active {
+            border-color: @dropdownInputBorderHoverColor;
+            outline: none;
+            box-shadow: @multiselectBorderActiveBorder;
+        }
+    }
+
+    &__clear-icon {
+        margin: auto;
+        vertical-align: middle;
+        outline: none !important;
     }
 
     &__item {

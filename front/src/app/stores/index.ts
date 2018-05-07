@@ -7,6 +7,7 @@ import { MarketStore } from './market';
 import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
 import { OnlineStore } from './online-store';
+import { ProfileFilterStore } from './profile-filter';
 import {
     localizator as en,
     ILocalizator,
@@ -31,6 +32,7 @@ export class RootStore implements IHasLocalizator {
     public readonly addTokenStore: AddTokenStore;
     public readonly profileListStore: IListStore<IProfileBrief>;
     public readonly marketStore: MarketStore;
+    public readonly profileFilterStore: ProfileFilterStore;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -84,10 +86,13 @@ export class RootStore implements IHasLocalizator {
             },
         });
 
+        this.profileFilterStore = new ProfileFilterStore();
+
         this.addTokenStore = new AddTokenStore(this, this.localizator);
         this.profileListStore = new ProfileList({
             errorProcessor: this.uiStore,
             localizator: this.localizator,
+            filterStore: this.profileFilterStore,
         });
     }
 

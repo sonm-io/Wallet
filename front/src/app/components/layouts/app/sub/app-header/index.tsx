@@ -17,7 +17,6 @@ export interface IAppHeaderProps {
     hasMarketAccountSelect: boolean;
     account?: IAccount;
     accountList: Array<IAccount>;
-    decimalPointOffset: number;
 }
 
 let sendPath = '';
@@ -39,7 +38,7 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
             (marketPath = '/market/deals'),
             [
                 ['Search', '/market/search', undefined],
-                ['Profiles', '/market/profile-list', undefined],
+                ['Profiles', '/market/profiles', undefined],
                 ['Deals', '/market/deals', undefined],
                 ['Send', '/market/send', undefined],
             ],
@@ -50,6 +49,10 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
         event.preventDefault();
 
         this.props.onExit();
+    };
+
+    protected handleChangePath = (path: string) => {
+        this.props.onNavigate(path);
     };
 
     public render() {
@@ -68,13 +71,12 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                         p.hasMarketAccountSelect ? marketPath : sendPath
                     }
                     items={AppHeader.menuConfig}
-                    onChange={this.props.onNavigate}
+                    onChange={this.handleChangePath}
                 />
                 {p.account && p.hasMarketAccountSelect ? (
                     <MarketAccountSelect
                         value={p.account}
                         accounts={p.accountList}
-                        decimalPointOffset={p.decimalPointOffset}
                         onChange={p.onChangeAccount}
                         className="sonm-app-header__account sonm-app-header__item"
                     />

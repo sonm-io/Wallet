@@ -1,7 +1,10 @@
-import { observable, computed } from 'mobx';
+import { observable, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Status } from './types';
-import { OnlineStore } from './online-store';
+import { IErrorProcessor, OnlineStore } from './online-store';
+import { IFilterStore } from './profile-filter';
+import { ILocalizator } from '../localization/types';
+
 const { pending } = OnlineStore;
 
 interface IFetchListResult<T> {
@@ -41,8 +44,26 @@ export interface IListStore<T> {
     updateUserInput: (input: Partial<IUserInput>) => any;
 }
 
+export interface IListStoreServices {
+    errorProcessor: IErrorProcessor;
+    localizator: ILocalizator;
+    filterStore: IFilterStore;
+}
+
 export function createListStore<T>(api: IListStoreApi<T>) {
     class ListStoreClass extends OnlineStore implements IListStore<T> {
+        constructor(services: IListStoreServices) {
+            super(services);
+
+            autorun(() => {
+                if (services.filterStore.filterAsString) {
+                    this.updateUserInput({
+                        filter: services.filterStore.filterAsString,
+                    });
+                }
+            });
+        }
+
         @observable public status: Status = Status.PENDING;
 
         @observable public error = '';

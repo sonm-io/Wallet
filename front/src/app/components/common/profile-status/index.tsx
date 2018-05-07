@@ -7,23 +7,20 @@ interface IProfileStatusProps {
 
 export function ProfileStatus(p: IProfileStatusProps) {
     let name = 'ANONYMOUS';
-    let key = 'reg';
+    let modifier = 'anon';
 
     if (p.status === EProfileStatus.reg) {
         name = 'REGISTERED';
-        key = 'reg';
+        modifier = 'reg';
     } else if (p.status === EProfileStatus.ident) {
         name = 'IDENTIFIED';
-        key = 'ident';
-    } else if (p.status === EProfileStatus.full) {
-        name = 'FULL KYC';
-        key = 'full';
+        modifier = 'ident';
     } else if (p.status === EProfileStatus.pro) {
         name = 'PROFESSIONAL';
-        key = 'pro';
+        modifier = 'pro';
     }
 
-    return <div className={`sonm-profile-status--${key}`}>{name}</div>;
+    return <div className={`sonm-profile-status--${modifier}`}>{name}</div>;
 }
 
 export default ProfileStatus;

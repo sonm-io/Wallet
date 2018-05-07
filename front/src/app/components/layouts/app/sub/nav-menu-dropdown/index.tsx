@@ -21,10 +21,19 @@ export class NavMenuDropdown extends React.PureComponent<
         opened: '',
     };
 
+    public static dropdownCssClasses = {
+        root: 'sonm-nav-menu-dropdown',
+        button: 'sonm-nav-menu-dropdown__button',
+        popup: 'sonm-nav-menu-dropdown__popup',
+        expanded: 'sonm-nav-menu-dropdown--expanded',
+    };
+
     protected handleClickUrl = (event: any) => {
         const path = event.target.value;
 
         this.props.onChange(path);
+
+        this.handleCloseTopMenu();
     };
 
     protected handleCloseTopMenu = () => {
@@ -67,12 +76,9 @@ export class NavMenuDropdown extends React.PureComponent<
                             isExpanded={this.state.opened === title}
                             onButtonClick={this.getBindedTopMenuHandler(title)}
                             onRequireClose={this.handleCloseTopMenu}
-                            dropdownCssClasses={{
-                                root: 'sonm-nav-menu-dropdown',
-                                button: 'sonm-nav-menu-dropdown__button',
-                                popup: 'sonm-nav-menu-dropdown__popup',
-                                expanded: 'sonm-nav-menu-dropdown--expanded',
-                            }}
+                            dropdownCssClasses={
+                                NavMenuDropdown.dropdownCssClasses
+                            }
                         >
                             <div className="sonm-nav-menu__popup">
                                 {children &&

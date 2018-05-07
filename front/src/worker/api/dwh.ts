@@ -5,8 +5,6 @@ interface IDictionary {
     [index: string]: string;
 }
 
-//const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 export class DWH {
     public structureConverter = {
         UserID: 'address',
@@ -70,12 +68,12 @@ export class DWH {
         for (const key of Object.keys(structureConverter)) {
             const newKey = structureConverter[key];
 
-            if (item[key]) {
+            if (item[key] !== '') {
                 if (key === 'Certificates') {
                     item.attributes = [] as IAttribute[];
-
-                    for (const row of JSON.parse(item[key])) {
-                        try {
+                    try {
+                        const parsed = JSON.parse(item.Certificates);
+                        for (const row of parsed) {
                             if (attributesConverter[row.attribute]) {
                                 item.attributes.push({
                                     label: attributesConverter[row.attribute],
@@ -87,9 +85,9 @@ export class DWH {
                                     value: self.atob(row.value),
                                 });
                             }
-                        } catch (err) {
-                            //console.log([row.attribute, row.value]);
                         }
+                    } catch (err) {
+                        console.log(err);
                     }
                 } else {
                     item[newKey] = item[key];

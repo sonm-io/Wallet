@@ -76,12 +76,6 @@ async function firstByDefault(ctx: IContext, p: any) {
     return params ? params : ctx.route.children[0].action(ctx, p);
 }
 
-function leaf(action: TFnAction) {
-    return async (ctx: IContext, p: any): Promise<IRouterResult> => {
-        return ctx.route.action(ctx, p);
-    };
-}
-
 export const univeralRoutes: Array<IUniversalRouterItem> = [
     {
         path: '/',
@@ -171,18 +165,16 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                     {
                         path: '/history',
                         breadcrumbTitle: 'History',
-                        action: leaf(
-                            async (ctx: IContext, params: IUrlParams) => ({
-                                browserTabTitle: 'History',
-                                pageTitle: 'History',
-                                content: (
-                                    <History
-                                        initialAddress={ctx.query.address}
-                                        initialCurrency={ctx.query.currency}
-                                    />
-                                ),
-                            }),
-                        ),
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'History',
+                            pageTitle: 'History',
+                            content: (
+                                <History
+                                    initialAddress={ctx.query.address}
+                                    initialCurrency={ctx.query.currency}
+                                />
+                            ),
+                        }),
                     },
                     {
                         path: '/accounts',
@@ -198,20 +190,18 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             {
                                 breadcrumbTitle: 'Accounts details',
                                 path: '/:address',
-                                action: leaf(
-                                    async (
-                                        ctx: IContext,
-                                        params: IUrlParams,
-                                    ) => ({
-                                        content: (
-                                            <Account
-                                                initialAddress={params.address}
-                                            />
-                                        ),
-                                        browserTabTitle: 'Account',
-                                        pageTitle: 'Account',
-                                    }),
-                                ),
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: (
+                                        <Account
+                                            initialAddress={params.address}
+                                        />
+                                    ),
+                                    browserTabTitle: 'Account',
+                                    pageTitle: 'Account',
+                                }),
                             },
                         ],
                     },
@@ -241,20 +231,18 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             {
                                 breadcrumbTitle: 'Profile details',
                                 path: '/:address',
-                                action: leaf(
-                                    async (
-                                        ctx: IContext,
-                                        params: IUrlParams,
-                                    ) => ({
-                                        content: (
-                                            <Profile
-                                                initialAddress={params.address}
-                                            />
-                                        ),
-                                        browserTabTitle: 'Profiles',
-                                        pageTitle: 'Profiles',
-                                    }),
-                                ),
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    content: (
+                                        <Profile
+                                            initialAddress={params.address}
+                                        />
+                                    ),
+                                    browserTabTitle: 'Profiles',
+                                    pageTitle: 'Profiles',
+                                }),
                             },
                         ],
                     },
@@ -301,42 +289,40 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     {
                                         breadcrumbTitle: 'Deposit confirmation',
                                         path: '/confirm',
-                                        action: leaf(
-                                            async (
-                                                ctx: IContext,
-                                                params: IUrlParams,
-                                            ) => ({
-                                                content: (
-                                                    <DepositWithdraw
-                                                        action="deposit"
-                                                        isConfirmation={true}
-                                                        onNotAvailable={
-                                                            navigateToMain
-                                                        }
-                                                        initialAddress={
-                                                            rootStore.mainStore
-                                                                .accountList[0]
-                                                                .address
-                                                        }
-                                                        initialCurrency={
-                                                            rootStore.mainStore
-                                                                .primaryTokenAddress
-                                                        }
-                                                        onSuccess={
-                                                            navigateToDepositSuccess
-                                                        }
-                                                        onConfirm={
-                                                            navigateToDepositConfirm
-                                                        }
-                                                        onBack={
-                                                            navigateToDepositSuccess
-                                                        }
-                                                    />
-                                                ),
-                                                browserTabTitle: 'Deposit',
-                                                pageTitle: 'Deposit',
-                                            }),
-                                        ),
+                                        action: async (
+                                            ctx: IContext,
+                                            params: IUrlParams,
+                                        ) => ({
+                                            content: (
+                                                <DepositWithdraw
+                                                    action="deposit"
+                                                    isConfirmation={true}
+                                                    onNotAvailable={
+                                                        navigateToMain
+                                                    }
+                                                    initialAddress={
+                                                        rootStore.mainStore
+                                                            .accountList[0]
+                                                            .address
+                                                    }
+                                                    initialCurrency={
+                                                        rootStore.mainStore
+                                                            .primaryTokenAddress
+                                                    }
+                                                    onSuccess={
+                                                        navigateToDepositSuccess
+                                                    }
+                                                    onConfirm={
+                                                        navigateToDepositConfirm
+                                                    }
+                                                    onBack={
+                                                        navigateToDepositSuccess
+                                                    }
+                                                />
+                                            ),
+                                            browserTabTitle: 'Deposit',
+                                            pageTitle: 'Deposit',
+                                        }),
                                     },
                                     {
                                         breadcrumbTitle: '',

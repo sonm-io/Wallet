@@ -4,7 +4,7 @@ import { DropdownInput } from '../dropdown-input';
 
 export interface ISelectItem<T> {
     value: T;
-    stringValue: string;
+    stringValue: any;
     className?: string;
 }
 
@@ -105,10 +105,14 @@ export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
                 hasBalloon={hasBalloon}
                 ref={this.saveRef}
             >
-                {options.map((x: ISelectItem<T>) => (
+                {options.map((x: ISelectItem<T>, idx: number) => (
                     <button
                         type="button"
-                        key={x.stringValue}
+                        key={
+                            typeof x.stringValue === 'string'
+                                ? x.stringValue
+                                : idx
+                        }
                         value={x.stringValue}
                         className={cn('sonm-fixed-select__item', x.className)}
                         onClick={this.handleSelect}

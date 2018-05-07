@@ -17,12 +17,10 @@ export interface IMarketAccountSelectProps {
     onChange: (account: IAccount) => void;
     className?: string;
     value?: IAccount;
-    decimalPointOffset: number;
 }
 
 export interface IMarketAccountSelectItemProps extends IAccount {
     className?: string;
-    decimalPointOffset: number;
     onClick?: (account: IAccount) => void;
 }
 
@@ -76,13 +74,13 @@ export class MarketAccountSelect extends React.PureComponent<
                     <div className="sonm-market-select-item__balance">
                         <Balance
                             balance={p.usdBalance}
-                            decimalPointOffset={p.decimalPointOffset}
+                            decimalPointOffset={18}
                             decimalDigitAmount={2}
                             symbol="USD"
                         />
                         (<Balance
                             balance={p.primaryTokenBalance}
-                            decimalPointOffset={p.decimalPointOffset}
+                            decimalPointOffset={18}
                             decimalDigitAmount={2}
                             symbol="SNM"
                         />)
@@ -93,8 +91,11 @@ export class MarketAccountSelect extends React.PureComponent<
     };
 
     protected handleSelectAccount = (account: IAccount) => {
-        this.setState({ opened: false });
+        debugger;
+
         this.props.onChange(account);
+
+        this.setState({ opened: false });
     };
 
     public render() {
@@ -125,10 +126,7 @@ export class MarketAccountSelect extends React.PureComponent<
                         <div className="sonm-market-account__title">
                             Market account
                         </div>
-                        <MarketAccountSelect.Item
-                            {...account}
-                            decimalPointOffset={p.decimalPointOffset}
-                        />
+                        <MarketAccountSelect.Item {...account} />
                     </React.Fragment>
                 }
             >
@@ -136,7 +134,6 @@ export class MarketAccountSelect extends React.PureComponent<
                     accounts.map((item: IAccount) => (
                         <MarketAccountSelect.Item
                             className="sonm-market-account__select-item"
-                            decimalPointOffset={p.decimalPointOffset}
                             onClick={this.handleSelectAccount}
                             key={item.address}
                             {...item}

@@ -44,9 +44,6 @@ export class App extends React.Component<IProps, any> {
                 isPending={rootStore.isPending}
                 alerts={uiStore.alertList}
                 onCloseAlert={uiStore.closeAlert}
-                decimalPointOffset={
-                    rootStore.mainStore.primaryTokenInfo.decimalPointOffset
-                }
             >
                 {p.children}
             </AppView>

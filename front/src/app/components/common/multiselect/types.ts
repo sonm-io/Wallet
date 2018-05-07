@@ -9,9 +9,6 @@ export interface IMultiSelectRequiredProps<T> {
     value: T[];
     name: string;
     onChange: (params: IMultiSelectChangeParams<T>) => void;
-    onButtonClick: () => void;
-    onRequireClose: () => void;
-    onButtonApplyClick: () => void;
     hasClearButton: boolean;
 }
 

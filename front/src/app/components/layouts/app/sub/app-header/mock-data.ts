@@ -12,5 +12,4 @@ export const props: IAppHeaderProps = {
     accountList: marketAccountSelectProps.accounts,
     account: marketAccountSelectProps.accounts[0],
     isTestNet: false,
-    decimalPointOffset: 18,
 };

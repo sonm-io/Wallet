@@ -4,6 +4,7 @@ import {
     IMultiSelectProps,
     IMultiSelectAllProps,
     IMultiSelectOptionalProps,
+    IMultiSelectChangeParams,
 } from './types';
 import { Button } from '../button';
 import { DropdownInput } from '../dropdown-input';
@@ -68,8 +69,6 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
             filteredList: this.props.list,
             isExpanded: false,
         });
-
-        this.props.onRequireClose && this.props.onRequireClose();
     };
 
     protected handleChangeCheckbox = (params: ITogglerChangeParams) => {
@@ -82,11 +81,13 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
               ]
             : this.props.value.filter(x => this.getName(x) !== itemName);
 
-        this.props.onChange({
+        const p: IMultiSelectChangeParams<T> = {
             value,
             name: this.props.name,
             valueString: value.map(this.getName).join(', '),
-        });
+        };
+
+        this.props.onChange(p);
     };
 
     protected handleClickClear = () => {
@@ -101,7 +102,7 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
         });
     };
 
-    protected handleButtonClick = () => {
+    protected handleClickButton = () => {
         this.setState({
             isExpanded: !this.state.isExpanded,
         });
@@ -112,12 +113,12 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
         const valueNames = p.value.map(this.getName);
 
         return (
-            <div className={cn('multiselect__container', p.className)}>
+            <div className={cn('multiselect', p.className)}>
                 <DropdownInput
-                    className="multiselect__dropdown-input"
+                    className="multiselect__dropdown-wrapper"
                     valueString={`${p.label}: ${this.getLabelValue()}`}
                     onRequireClose={this.handleRequireClose}
-                    onButtonClick={this.handleButtonClick}
+                    onButtonClick={this.handleClickButton}
                     hasBalloon
                     isExpanded={this.state.isExpanded}
                 >
@@ -164,7 +165,7 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
                         className="multiselect__clear-button"
                         onClick={this.handleClickClear}
                     >
-                        <Icon i="Close" />
+                        <Icon i="Close" className="multiselect__clear-icon" />
                     </button>
                 ) : null}
             </div>

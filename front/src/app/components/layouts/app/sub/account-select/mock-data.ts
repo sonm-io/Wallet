@@ -27,5 +27,4 @@ export const marketAccountSelectProps: IMarketAccountSelectProps = {
     onChange() {
         console.log(arguments);
     },
-    decimalPointOffset: 18,
 };

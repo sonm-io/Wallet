@@ -8,12 +8,16 @@ import {
     ISelectItem,
     ISelectChangeParams,
 } from 'app/components/common/fixed-select';
-import { IProfileBrief, EProfileStatus } from 'app/api/types';
+import { IProfileBrief, EProfileStatus, EProfileRole } from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { Country } from 'app/components/common/country';
-import { Toggler } from 'app/components/common/toggler';
+import { lands } from 'app/components/common/country/lands-data';
 import { ProfileStatus } from 'app/components/common/profile-status';
+import {
+    MultiSelect,
+    IMultiSelectChangeParams,
+} from 'app/components/common/multiselect/index';
 
 class ProfileTable extends Table<IProfileBrief> {}
 
@@ -27,6 +31,10 @@ interface IProps {
     onChangePage: (page: number) => void;
     onChangeFilter: (filter: string) => void;
     onRowClick: (record: IProfileBrief) => void;
+    filterRole: EProfileRole;
+    filterStatus: EProfileStatus;
+    filterQuery: string;
+    filterCountry;
 }
 
 const defaultFilter = {
@@ -94,14 +102,6 @@ export class ProfileListView extends React.Component<IProps, any> {
                 return sellOrders;
             },
         },
-        /*{
-            className: 'sonm-cell-deals sonm-profiles__cell',
-            dataIndex: 'deals',
-            title: 'Deals',
-            render: (deals: number, record: IProfileBrief) => {
-                return name;
-            },
-        },*/
         {
             className: 'sonm-cell-country sonm-profile-list__cell',
             dataIndex: 'country',
@@ -114,19 +114,20 @@ export class ProfileListView extends React.Component<IProps, any> {
 
     protected static statusOptions: Array<ISelectItem<any>> = [
         {
-            value: (defaultFilter.status = { $eq: 0 }),
-            stringValue: 'ANONYMOUS',
-            className: 'sonm-profiles__status--anon',
+            value: (defaultFilter.status = EProfileStatus.anon),
+            stringValue: <ProfileStatus status={EProfileStatus.anon} />,
         },
         {
-            value: { $eq: 1 },
-            stringValue: 'REGISTERED',
-            className: 'sonm-profiles__status--reg',
+            value: EProfileStatus.reg,
+            stringValue: <ProfileStatus status={EProfileStatus.reg} />,
         },
         {
-            value: { $eq: 2 },
-            stringValue: 'IDENTIFIED',
-            className: 'sonm-profiles__status--ident',
+            value: EProfileStatus.ident,
+            stringValue: <ProfileStatus status={EProfileStatus.ident} />,
+        },
+        {
+            value: EProfileStatus.pro,
+            stringValue: <ProfileStatus status={EProfileStatus.pro} />,
         },
     ];
 
@@ -147,15 +148,15 @@ export class ProfileListView extends React.Component<IProps, any> {
             stringValue: 'Any',
         },
         {
-            value: (defaultFilter.deals = { $gt: 0 }),
+            value: (defaultFilter.deals = '0'),
             stringValue: '> 0',
         },
         {
-            value: { $gt: 50 },
+            value: '50',
             stringValue: '> 50',
         },
         {
-            value: { $gt: 1000 },
+            value: '1000',
             stringValue: '> 1000',
         },
     ];
@@ -165,6 +166,13 @@ export class ProfileListView extends React.Component<IProps, any> {
     public handlePageChange() {}
 
     public handleChangeFilter = (params: ISelectChangeParams<any>) => {
+        const filter = JSON.parse(this.props.filter) as any;
+        const result = { [params.name]: params.value, ...filter };
+
+        this.props.onChangeFilter(JSON.stringify(result));
+    };
+
+    public handleChangeCountry = (params: IMultiSelectChangeParams<any>) => {
         const filter = JSON.parse(this.props.filter) as any;
         const result = { [params.name]: params.value, ...filter };
 
@@ -204,19 +212,16 @@ export class ProfileListView extends React.Component<IProps, any> {
                         compareValues={FixedSelect.compareAsJson}
                         onChange={this.handleChangeFilter}
                     />
-                    <Toggler
-                        className="sonm-profiles__filter-pro"
-                        title="Professional"
-                        value={true}
-                        name="professional"
-                        titleBefore
-                    />
-                    <Toggler
-                        className="sonm-profiles__filter-cloud"
-                        title="Corporate"
-                        value={true}
-                        name="corporate"
-                        titleBefore
+                    <MultiSelect
+                        list={lands.data}
+                        value={[]}
+                        name="country"
+                        onChange={this.handleChangeCountry}
+                        hasClearButton={true}
+                        label="Country"
+                        className="sonm-profiles__filter-country"
+                        nameIndex="[0]"
+                        filterPlaceHolder="Country"
                     />
                     <FixedSelect
                         className="sonm-profiles__filter-deals"
