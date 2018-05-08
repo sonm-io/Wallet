@@ -24,7 +24,7 @@ export class DWH {
         this.url = url;
     }
 
-    public getProfiles = async (): Promise<t.IProfileListResult> => {
+    public getProfiles = async (): Promise<t.IListResult<t.IProfileBrief>> => {
         const res = await this.fetchData('GetProfiles');
         const records = [] as t.IProfileBrief[];
 
