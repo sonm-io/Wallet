@@ -24,6 +24,11 @@
     display: grid;
     grid-auto-flow: column dense;
     grid-template-columns: ~'min-content auto [line-3] max-content [line-4] auto [line-5] auto [line-6]';
+    border-bottom: @ordersListItem-border;
+
+    &:first-child {
+        border-top: @ordersListItem-border;
+    }
 
     // Logo
 
@@ -90,5 +95,7 @@
 
     &__cost {
         grid-column: line-5 / line-6;
+        display: flex;
+        align-items: center;
     }
 }
