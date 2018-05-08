@@ -22,14 +22,17 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
 
                 {/* Column 1 - Main Info */}
                 <div className="orders-list-item__main">
-                    <div className="orders-list-item__main-row">
-                        <div className="orders-list-item__main-label">
-                            Name:
+                    {this.props.name ? (
+                        <div className="orders-list-item__main-row">
+                            <div className="orders-list-item__main-label">
+                                Name:
+                            </div>
+                            <div className="orders-list-item__name">
+                                {this.props.name}
+                            </div>
                         </div>
-                        <div className="orders-list-item__name">
-                            {this.props.name}
-                        </div>
-                    </div>
+                    ) : null}
+
                     <div className="orders-list-item__main-row">
                         <div className="orders-list-item__main-label">
                             Account:
