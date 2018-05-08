@@ -15,68 +15,44 @@
     font-weight: 400;
     color: @ordersListItem-label-fontColor;
     padding: 5px 0;
-}
-
-.orders-list-item__column {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    margin-right: 10px;
 }
 
 // Component
 
 .orders-list-item {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    border-bottom: @ordersListItem-border;
+    display: grid;
+    grid-auto-flow: column dense;
+    grid-template-columns: ~'min-content auto [line-3] max-content [line-4] auto [line-5] auto [line-6]';
 
-    &:first-child {
-        border-top: @ordersListItem-border;
+    // Logo
+
+    &__logo {
+        grid-row: 1 / span 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 15px;
     }
 
-    // Colums
+    // Column1 - Main Info
 
-    &__column-logo {
+    &__main {
+        grid-row: 1 / span 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    &__main-row {
         display: flex;
         flex-direction: row;
-
-        &__logo {
-            display: flex;
-            align-items: center;
-        }
-    }
-    &__column1 {
-        .orders-list-item__column;
-    }
-    &__column2 {
-        .orders-list-item__column;
-        width: 165px;
-    }
-    &__column3 {
-        .orders-list-item__column;
-        width: 100px;
-    }
-
-    // Row
-
-    &__row {
-        display: flex;
-        flex-direction: row;
-        padding: 0 10px;
         align-items: center;
     }
 
-    // Values
-
-    &__label1 {
+    &__main-label {
         .orders-list-item__label;
         width: 57px;
-    }
-
-    &__label2 {
-        .orders-list-item__label;
-        width: 70px;
     }
 
     &__name {
@@ -93,10 +69,26 @@
         font-weight: 400;
     }
 
-    &__value {
+    // Column2 - Indicators
+
+    &__indicator-name {
+        .orders-list-item__label;
+        grid-column: line-3 / line-4;
+    }
+
+    &__indicator-value {
+        grid-column: line-4 / line-5;
         color: @ordersListItem-value-fontColor;
         font-family: @font-family;
         font-size: 15px;
         font-weight: 400;
+        display: flex;
+        align-items: center;
+    }
+
+    // Column 3 - Cost
+
+    &__cost {
+        grid-column: line-5 / line-6;
     }
 }

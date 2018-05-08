@@ -7,7 +7,7 @@ export interface IOrdersListItemProps {
     account: string;
     status: EProfileStatus;
     cpuCount: number;
-    gpuCount: number;
+    hashRate: number;
     ramSize: number; // MB
     usdPerHour: number;
     duration: number;

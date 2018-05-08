@@ -12,73 +12,66 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     public render() {
         return (
             <div className={cn('orders-list-item', this.props.className)}>
-                <div className="orders-list-item__column-logo">
-                    <div className="orders-list-item__column-logo__logo">
-                        {this.props.logoUrl ? (
-                            <img src={this.props.logoUrl} />
-                        ) : (
-                            <IdentIcon address={this.props.address} />
-                        )}
+                <div className="orders-list-item__logo">
+                    {this.props.logoUrl ? (
+                        <img src={this.props.logoUrl} />
+                    ) : (
+                        <IdentIcon address={this.props.address} />
+                    )}
+                </div>
+
+                {/* Column 1 - Main Info */}
+                <div className="orders-list-item__main">
+                    <div className="orders-list-item__main-row">
+                        <div className="orders-list-item__main-label">
+                            Name:
+                        </div>
+                        <div className="orders-list-item__name">
+                            {this.props.name}
+                        </div>
                     </div>
-                    <div className="orders-list-item__column1">
-                        <div className="orders-list-item__row">
-                            <div className="orders-list-item__label1">
-                                Name:
-                            </div>
-                            <div className="orders-list-item__name">
-                                {this.props.name}
-                            </div>
+                    <div className="orders-list-item__main-row">
+                        <div className="orders-list-item__main-label">
+                            Account:
                         </div>
-                        <div className="orders-list-item__row">
-                            <div className="orders-list-item__label1">
-                                Account:
-                            </div>
-                            <div className="orders-list-item__account">
-                                {this.props.account}
-                            </div>
+                        <div className="orders-list-item__account">
+                            {this.props.account}
                         </div>
-                        <div className="orders-list-item__row">
-                            <div className="orders-list-item__label1">
-                                Status:
-                            </div>
-                            <ProfileStatus status={this.props.status} />
+                    </div>
+                    <div className="orders-list-item__main-row">
+                        <div className="orders-list-item__main-label">
+                            Status:
                         </div>
+                        <ProfileStatus status={this.props.status} />
                     </div>
                 </div>
-                <div className="orders-list-item__column2">
-                    <div className="orders-list-item__row">
-                        <div className="orders-list-item__label2">
-                            CPU count:
-                        </div>
-                        <div className="orders-list-item__value">
-                            {this.props.cpuCount}
-                        </div>
-                    </div>
-                    <div className="orders-list-item__row">
-                        <div className="orders-list-item__label2">
-                            GPU count:
-                        </div>
-                        <div className="orders-list-item__value">
-                            {this.props.gpuCount}
-                        </div>
-                    </div>
-                    <div className="orders-list-item__row">
-                        <div className="orders-list-item__label2">
-                            Ram size:
-                        </div>
-                        <div className="orders-list-item__value">
-                            {this.props.ramSize} MB
-                        </div>
-                    </div>
+
+                {/* Column 2 - Indicators */}
+                <div className="orders-list-item__indicator-name">
+                    CPU count:
                 </div>
-                <div className="orders-list-item__column3">
-                    <div className="orders-list-item__value">
-                        {this.props.usdPerHour} USD/h
-                    </div>
-                    <div className="orders-list-item__value">
-                        {this.props.duration} hours
-                    </div>
-                    <div>&nbsp;</div>
+                <div className="orders-list-item__indicator-value">
+                    {this.props.cpuCount}
+                </div>
+                <div className="orders-list-item__indicator-name">
+                    GPU ETH hashrate:
+                </div>
+                <div className="orders-list-item__indicator-value">
+                    {this.props.hashRate} Mh/s
+                </div>
+                <div className="orders-list-item__indicator-name">
+                    Ram size:
+                </div>
+                <div className="orders-list-item__indicator-value">
+                    {this.props.ramSize} MB
+                </div>
+
+                {/* Column3 - Costs */}
+                <div className="orders-list-item__cost">
+                    {this.props.usdPerHour} USD/h
+                </div>
+                <div className="orders-list-item__cost">
+                    {this.props.duration} hours
                 </div>
             </div>
         );

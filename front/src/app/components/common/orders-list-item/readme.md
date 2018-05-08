@@ -8,7 +8,7 @@ Order list item:
       account="0x06bda3cf79946e8b32a0bb6a3daa174b577c55b52"
       status={EProfileStatus.ident}
       cpuCount={3}
-      gpuCount={1}
+      hashRate={1}
       ramSize={1024}
       usdPerHour={120}
       duration={500}
