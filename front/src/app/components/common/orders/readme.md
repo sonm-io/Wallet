@@ -11,8 +11,8 @@ Orders:
         account: '0x06bda3cf79946e8b32a0bb6a3daa174b577c55b52',
         status: EProfileStatus.ident,
         customFields: new Map([['CPU Count','3'],['GPU ETH hashrate','80.1 Mh/s',],['RAM size','1024 Mb']]),
-        usdPerHour: 120,
-        duration: 500
+        usdPerHour: 9,
+        duration: 1000
       },
       {
         address:'0x0',
@@ -20,15 +20,15 @@ Orders:
         status: EProfileStatus.full,
         customFields: new Map([['CPU Count','2'],['GPU ETH hashrate','180.1 Mh/s',],['RAM size','1024 Mb']]),
         usdPerHour: 120,
-        duration: 500
+        duration: 50
       },
       {
         address:'0x0',
         account: '0x06bda3cf79946e8b32a0bb6a3daa174b577c55b52',
         status: EProfileStatus.pro,
         customFields: new Map([['CPU Count','6'],['GPU ETH hashrate','211.22 Mh/s',],['RAM size','4 Gb']]),
-        usdPerHour: 120,
-        duration: 500
+        usdPerHour: 9,
+        duration: 5
       }
     ];
 
