@@ -47,24 +47,16 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 </div>
 
                 {/* Column 2 - Indicators */}
-                <div className="orders-list-item__indicator-name">
-                    CPU count:
-                </div>
-                <div className="orders-list-item__indicator-value">
-                    {this.props.cpuCount}
-                </div>
-                <div className="orders-list-item__indicator-name">
-                    GPU ETH hashrate:
-                </div>
-                <div className="orders-list-item__indicator-value">
-                    {this.props.hashRate} Mh/s
-                </div>
-                <div className="orders-list-item__indicator-name">
-                    Ram size:
-                </div>
-                <div className="orders-list-item__indicator-value">
-                    {this.props.ramSize} MB
-                </div>
+                {Array.from(this.props.customFields.keys()).map(key => (
+                    <div className="orders-list-item__indicator-name">
+                        {key}:
+                    </div>
+                ))}
+                {Array.from(this.props.customFields.values()).map(value => (
+                    <div className="orders-list-item__indicator-value">
+                        {value}
+                    </div>
+                ))}
 
                 {/* Column3 - Costs */}
                 <div className="orders-list-item__cost">
