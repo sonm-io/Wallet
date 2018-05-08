@@ -40,12 +40,18 @@ export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
         });
     };
 
+    protected static asString(valueString: any, value: any) {
+        return typeof valueString === 'string'
+            ? valueString
+            : JSON.stringify(value);
+    }
+
     protected handleSelect = (event: any) => {
         const p = this.props;
         const prev = p.options.find(x => x.value === p.value);
-        const stringValue = event.target.stringValue;
+        const stringValue = event.currentTarget.value;
         const next = p.options.find(
-            x => x.stringValue === stringValue,
+            x => FixedSelect.asString(x.stringValue, x.value) === stringValue,
         ) as ISelectItem<T>;
 
         if (p.onChange) {
@@ -105,21 +111,22 @@ export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
                 hasBalloon={hasBalloon}
                 ref={this.saveRef}
             >
-                {options.map((x: ISelectItem<T>, idx: number) => (
-                    <button
-                        type="button"
-                        key={
-                            typeof x.stringValue === 'string'
-                                ? x.stringValue
-                                : idx
-                        }
-                        value={x.stringValue}
-                        className={cn('sonm-fixed-select__item', x.className)}
-                        onClick={this.handleSelect}
-                    >
-                        {x.stringValue}
-                    </button>
-                ))}
+                {options.map((x: ISelectItem<T>, idx: number) => {
+                    return (
+                        <button
+                            type="button"
+                            key={idx}
+                            value={FixedSelect.asString(x.stringValue, x.value)}
+                            className={cn(
+                                'sonm-fixed-select__item',
+                                x.className,
+                            )}
+                            onClick={this.handleSelect}
+                        >
+                            {x.stringValue}
+                        </button>
+                    );
+                })}
             </DropdownInput>
         );
     }

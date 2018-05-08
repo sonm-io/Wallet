@@ -3,23 +3,22 @@ import Table from 'antd/es/table';
 import Input from 'antd/es/input';
 import * as cn from 'classnames';
 import { ColumnProps } from 'antd/lib/table';
+import { FixedSelect, ISelectItem } from 'app/components/common/fixed-select';
 import {
-    FixedSelect,
-    ISelectItem,
-    ISelectChangeParams,
-} from 'app/components/common/fixed-select';
-import { IProfileBrief, EProfileStatus, EProfileRole } from 'app/api/types';
+    IProfileBrief,
+    EnumProfileStatus,
+    EnumProfileRole,
+} from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { Country } from 'app/components/common/country';
-import { lands } from 'app/components/common/country/lands-data';
+import { getMap } from 'app/components/common/country/lands-utils';
 import { ProfileStatus } from 'app/components/common/profile-status';
-import {
-    MultiSelect,
-    IMultiSelectChangeParams,
-} from 'app/components/common/multiselect/index';
+import { MultiSelect } from 'app/components/common/multiselect/index';
 
 class ProfileTable extends Table<IProfileBrief> {}
+
+class DealsFilter extends FixedSelect<number | undefined> {}
 
 interface IProps {
     className?: string;
@@ -29,12 +28,13 @@ interface IProps {
     dataSource: Array<IProfileBrief>;
     filter: string;
     onChangePage: (page: number) => void;
-    onChangeFilter: (filter: string) => void;
-    onRowClick: (record: IProfileBrief) => void;
-    filterRole: EProfileRole;
-    filterStatus: EProfileStatus;
+    onChangeFilter: (name: string, value: any) => void;
+    onClickRow: (record: IProfileBrief) => void;
+    filterRole: EnumProfileRole;
+    filterStatus: EnumProfileStatus;
     filterQuery: string;
-    filterCountry;
+    filterCountry: Array<string>;
+    filterMinDeals?: number;
 }
 
 const defaultFilter = {
@@ -43,7 +43,10 @@ const defaultFilter = {
     role: {},
 };
 
-export class ProfileListView extends React.Component<IProps, any> {
+const mapAbCode2ToLand = getMap();
+const lands = (Object as any).values(mapAbCode2ToLand);
+
+export class ProfileListView extends React.PureComponent<IProps, any> {
     protected static columns: Array<ColumnProps<IProfileBrief>> = [
         {
             className: 'sonm-cell-address sonm-profiles__cell',
@@ -82,7 +85,7 @@ export class ProfileListView extends React.Component<IProps, any> {
             className: 'sonm-cell-status sonm-profiles__cell',
             dataIndex: 'status',
             title: 'Status',
-            render: (status: EProfileStatus, record: IProfileBrief) => {
+            render: (status: EnumProfileStatus, record: IProfileBrief) => {
                 return <ProfileStatus status={status} />;
             },
         },
@@ -114,75 +117,72 @@ export class ProfileListView extends React.Component<IProps, any> {
 
     protected static statusOptions: Array<ISelectItem<any>> = [
         {
-            value: (defaultFilter.status = EProfileStatus.anon),
-            stringValue: <ProfileStatus status={EProfileStatus.anon} />,
+            value: (defaultFilter.status = EnumProfileStatus.anon),
+            stringValue: <ProfileStatus status={EnumProfileStatus.anon} />,
         },
         {
-            value: EProfileStatus.reg,
-            stringValue: <ProfileStatus status={EProfileStatus.reg} />,
+            value: EnumProfileStatus.reg,
+            stringValue: <ProfileStatus status={EnumProfileStatus.reg} />,
         },
         {
-            value: EProfileStatus.ident,
-            stringValue: <ProfileStatus status={EProfileStatus.ident} />,
+            value: EnumProfileStatus.ident,
+            stringValue: <ProfileStatus status={EnumProfileStatus.ident} />,
         },
         {
-            value: EProfileStatus.pro,
-            stringValue: <ProfileStatus status={EProfileStatus.pro} />,
+            value: EnumProfileStatus.pro,
+            stringValue: <ProfileStatus status={EnumProfileStatus.pro} />,
         },
     ];
 
     protected static roleOptions: Array<ISelectItem<any>> = [
         {
-            value: (defaultFilter.role = { $eq: 1 }),
+            value: (defaultFilter.role = EnumProfileRole.customer),
             stringValue: 'Customer',
         },
         {
-            value: { $eq: 2 },
+            value: EnumProfileRole.supplier,
             stringValue: 'Supplier',
         },
     ];
 
     protected static dealsOptions: Array<ISelectItem<any>> = [
         {
-            value: null,
+            value: undefined,
             stringValue: 'Any',
         },
         {
-            value: (defaultFilter.deals = '0'),
+            value: (defaultFilter.deals = 0),
             stringValue: '> 0',
         },
         {
-            value: '50',
+            value: 50,
             stringValue: '> 50',
         },
         {
-            value: '1000',
+            value: 1000,
             stringValue: '> 1000',
         },
     ];
 
     public static defaultFilter = JSON.stringify(defaultFilter);
 
-    public handlePageChange() {}
+    public getRowProps = (record: IProfileBrief) => ({
+        onClick: () => this.props.onClickRow(record),
+    });
 
-    public handleChangeFilter = (params: ISelectChangeParams<any>) => {
-        const filter = JSON.parse(this.props.filter) as any;
-        const result = { [params.name]: params.value, ...filter };
-
-        this.props.onChangeFilter(JSON.stringify(result));
+    public handleChangeFilter = (params: any) => {
+        this.props.onChangeFilter(params.name, params.value);
     };
 
-    public handleChangeCountry = (params: IMultiSelectChangeParams<any>) => {
-        const filter = JSON.parse(this.props.filter) as any;
-        const result = { [params.name]: params.value, ...filter };
+    public handleChangeCountry = (params: any) => {
+        const value = params.value.map((x: any) => x.abCode2);
 
-        this.props.onChangeFilter(JSON.stringify(result));
+        this.props.onChangeFilter('country', value);
     };
 
     public render() {
         const p = this.props;
         const { className, dataSource } = p;
-        const filter = JSON.parse(p.filter) as any;
 
         const pagination = {
             total: p.totalPage,
@@ -191,6 +191,8 @@ export class ProfileListView extends React.Component<IProps, any> {
             onChange: p.onChangePage,
         };
 
+        const countryValue = p.filterCountry.map(x => mapAbCode2ToLand[x]);
+
         return (
             <div className={cn('sonm-profiles', className)}>
                 <div className="sonm-profiles__filters">
@@ -198,7 +200,7 @@ export class ProfileListView extends React.Component<IProps, any> {
                         className="sonm-profiles__filter-status"
                         name="status"
                         options={ProfileListView.statusOptions}
-                        value={filter.status}
+                        value={p.filterStatus}
                         hasBalloon
                         compareValues={FixedSelect.compareAsJson}
                         onChange={this.handleChangeFilter}
@@ -207,27 +209,27 @@ export class ProfileListView extends React.Component<IProps, any> {
                         className="sonm-profiles__filter-role"
                         name="role"
                         options={ProfileListView.roleOptions}
-                        value={filter.role}
+                        value={p.filterRole}
                         hasBalloon
                         compareValues={FixedSelect.compareAsJson}
                         onChange={this.handleChangeFilter}
                     />
                     <MultiSelect
-                        list={lands.data}
-                        value={[]}
+                        list={lands}
+                        value={countryValue}
                         name="country"
                         onChange={this.handleChangeCountry}
                         hasClearButton={true}
                         label="Country"
                         className="sonm-profiles__filter-country"
-                        nameIndex="[0]"
+                        nameIndex="name"
                         filterPlaceHolder="Country"
                     />
-                    <FixedSelect
+                    <DealsFilter
                         className="sonm-profiles__filter-deals"
-                        name="deals"
+                        name="minDeals"
                         options={ProfileListView.dealsOptions}
-                        value={filter.deals}
+                        value={p.filterMinDeals}
                         hasBalloon
                         compareValues={FixedSelect.compareAsJson}
                         onChange={this.handleChangeFilter}
@@ -240,11 +242,7 @@ export class ProfileListView extends React.Component<IProps, any> {
                     columns={ProfileListView.columns}
                     pagination={pagination}
                     rowKey="address"
-                    onRow={(record: IProfileBrief) => {
-                        return {
-                            onClick: () => this.props.onRowClick(record),
-                        };
-                    }}
+                    onRow={this.getRowProps}
                 />
             </div>
         );

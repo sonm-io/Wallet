@@ -13,10 +13,10 @@ import {
     ILocalizator,
     IHasLocalizator,
 } from 'app/localization';
-import { IListStore } from './list-store-factory';
 import { ProfileList } from './profile-list';
 import { Api } from 'app/api';
 import { THistorySourceMode } from './types';
+import { IListStore, IListServerQuery } from './list-store';
 import { unwrapApiResult } from './utils/unwrap-api-result';
 
 useStrict(true);
@@ -89,11 +89,27 @@ export class RootStore implements IHasLocalizator {
         this.profileFilterStore = new ProfileFilterStore();
 
         this.addTokenStore = new AddTokenStore(this, this.localizator);
-        this.profileListStore = new ProfileList({
-            errorProcessor: this.uiStore,
-            localizator: this.localizator,
-            filterStore: this.profileFilterStore,
-        });
+        this.profileListStore = new ProfileList(
+            {
+                filter: this.profileFilterStore,
+            },
+            {
+                errorProcessor: this.uiStore,
+                localizator: this.localizator,
+                api: {
+                    fetchList: async (query: IListServerQuery) => {
+                        const result = await Api.getProfileList({
+                            offset: query.offset,
+                            limit: query.limit,
+                            sortBy: query.sortBy,
+                            sortDesc: query.sortDesc,
+                        });
+
+                        return (result as any).data.records;
+                    },
+                },
+            },
+        );
     }
 
     public get isPending() {

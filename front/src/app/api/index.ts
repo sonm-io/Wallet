@@ -9,11 +9,13 @@ import {
     ITxListFilter,
     ISettings,
     IWalletListItem,
-    IProfileListResult,
+    IListResult,
     IProfileBrief,
     IOrderListFilter,
     IOrder,
     IOrderListResult,
+    IListQuery,
+    IProfileFilter,
 } from './types';
 
 export * from './types';
@@ -218,11 +220,13 @@ export class Api {
     }
 
     public static async getProfileList(
-        filters?: ITxListFilter,
-        limit?: number,
-        offset?: number,
-    ): Promise<IResult<IProfileListResult>> {
-        return ipcSend('profile.list', { filters, limit, offset });
+        query: IListQuery<IProfileFilter>,
+    ): Promise<IResult<IListResult<IProfileBrief>>> {
+        return ipcSend('profile.list', {
+            filters: query.filter,
+            limit: query.limit,
+            offset: query.offset,
+        });
     }
 
     public static async getProfile(

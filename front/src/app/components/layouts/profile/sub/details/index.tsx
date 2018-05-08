@@ -6,7 +6,7 @@ import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { InfoBalloon } from 'app/components/common/info-balloon';
 import { Country } from 'app/components/common/country';
-import { EProfileStatus } from 'app/api/types';
+import { EnumProfileStatus } from 'app/api/types';
 import { ProfileStatus } from 'app/components/common/profile-status';
 
 export interface IProfileDefinition {
@@ -18,7 +18,7 @@ interface IProps {
     className?: string;
     children?: never;
     userName: string;
-    status: EProfileStatus;
+    status: EnumProfileStatus;
     countryAbCode2: string;
     address: string;
     logoUrl: string;

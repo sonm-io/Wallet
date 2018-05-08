@@ -149,7 +149,7 @@ export function send(
     return result;
 }
 
-export const profileListResult: t.IResult<t.IProfileListResult> = {
+export const profileListResult: t.IResult<t.IListResult<t.IProfileBrief>> = {
     data: {
         records: [
             {
@@ -161,7 +161,7 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 country: 'ru',
                 isPro: true,
                 isCorp: true,
-                status: t.EProfileStatus.anon,
+                status: t.EnumProfileStatus.anon,
             },
             {
                 name: undefined,
@@ -172,7 +172,7 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 country: 'ru',
                 isPro: true,
                 isCorp: true,
-                status: t.EProfileStatus.anon,
+                status: t.EnumProfileStatus.anon,
             },
             {
                 name: 'Ololan Ololoshevich',
@@ -183,7 +183,7 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 country: 'gb',
                 isPro: true,
                 isCorp: true,
-                status: t.EProfileStatus.anon,
+                status: t.EnumProfileStatus.anon,
             },
             {
                 name: 'BG',
@@ -194,7 +194,7 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 country: 'us',
                 isPro: true,
                 isCorp: true,
-                status: t.EProfileStatus.anon,
+                status: t.EnumProfileStatus.anon,
             },
         ],
         total: 5,

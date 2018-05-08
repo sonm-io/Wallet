@@ -1,21 +1,21 @@
 import * as React from 'react';
-import { EProfileStatus } from 'app/api/types';
+import { EnumProfileStatus } from 'app/api/types';
 
 interface IProfileStatusProps {
-    status: EProfileStatus;
+    status: EnumProfileStatus;
 }
 
 export function ProfileStatus(p: IProfileStatusProps) {
     let name = 'ANONYMOUS';
     let modifier = 'anon';
 
-    if (p.status === EProfileStatus.reg) {
+    if (p.status === EnumProfileStatus.reg) {
         name = 'REGISTERED';
         modifier = 'reg';
-    } else if (p.status === EProfileStatus.ident) {
+    } else if (p.status === EnumProfileStatus.ident) {
         name = 'IDENTIFIED';
         modifier = 'ident';
-    } else if (p.status === EProfileStatus.pro) {
+    } else if (p.status === EnumProfileStatus.pro) {
         name = 'PROFESSIONAL';
         modifier = 'pro';
     }

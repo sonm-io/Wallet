@@ -25,7 +25,7 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
         super(props);
 
         this.state = {
-            filteredList: props.list,
+            filteredList: props.list || [],
             isExpanded: false,
         };
     }

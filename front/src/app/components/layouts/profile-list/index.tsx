@@ -21,8 +21,18 @@ export class ProfileList extends React.Component<IProps, any> {
         this.props.onNavigate(record.address);
     };
 
+    public handleChangeFilter = (key: string, value: any) => {
+        rootStore.profileFilterStore.updateUserInput({ [key]: value });
+    };
+
+    public handleChangePage() {
+        return undefined;
+    }
+
     public render() {
-        const dataSource = toJS(rootStore.profileListStore.records);
+        const listStore = rootStore.profileListStore;
+        const filterStore = rootStore.profileFilterStore;
+        const dataSource = toJS(listStore.records);
 
         return (
             <ProfileListView
@@ -32,9 +42,14 @@ export class ProfileList extends React.Component<IProps, any> {
                 limit={20}
                 dataSource={dataSource}
                 filter={ProfileListView.defaultFilter}
-                onChangePage={Function.prototype as any}
-                onChangeFilter={Function.prototype as any}
-                onRowClick={this.handleRowClick}
+                onChangePage={this.handleChangePage}
+                onChangeFilter={this.handleChangeFilter}
+                onClickRow={this.handleRowClick}
+                filterCountry={filterStore.country}
+                filterQuery={''}
+                filterRole={filterStore.role}
+                filterStatus={filterStore.status}
+                filterMinDeals={filterStore.minDeals}
             />
         );
     }

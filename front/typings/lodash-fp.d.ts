@@ -29,3 +29,11 @@ declare module 'lodash/fp/capitalize' {
     }
     export = capitalize;
 }
+
+declare module 'lodash/fp/mapKeys' {
+    function mapKeys(map: { [k: string]: string }): (item: any) => any;
+    namespace mapKeys {
+
+    }
+    export = mapKeys;
+}

@@ -1,11 +1,11 @@
 import { observable, computed, action } from 'mobx';
-import { EProfileStatus, EProfileRole } from '../api/types';
+import { EnumProfileStatus, EnumProfileRole } from '../api/types';
 
 export interface IOrderFilter {
-    status: EProfileStatus;
-    role: EProfileRole;
-    country: string;
-    minDeals: string;
+    status: EnumProfileStatus;
+    role: EnumProfileRole;
+    country: Array<string>;
+    minDeals: number | undefined;
 }
 
 export interface IFilterStore {
@@ -13,37 +13,43 @@ export interface IFilterStore {
     readonly filterAsString: string;
 }
 
-export interface IUserInput {
-    [key: string]: string;
-}
-
 export class ProfileFilterStore implements IOrderFilter, IFilterStore {
-    @observable public userInput: IUserInput = {};
+    @observable
+    public userInput: Partial<IOrderFilter> = {
+        status: undefined,
+        role: undefined,
+        country: undefined,
+        minDeals: undefined,
+    };
 
     @action
-    public setUserInput(values: Partial<IUserInput>) {
-        const keys = Object.keys(values) as Array<keyof IUserInput>;
+    public updateUserInput(values: Partial<IOrderFilter>) {
+        const keys = Object.keys(values) as Array<keyof IOrderFilter>;
 
         keys.forEach(key => {
+            if (!(key in this.userInput)) {
+                throw new Error(`Unknown user input ${key}`);
+            }
+
             if (values[key] !== undefined) {
-                this.userInput[key] = String(values[key]);
+                this.userInput[key] = values[key];
             }
         });
     }
 
     @computed
-    public get status(): EProfileStatus {
-        return Number(this.userInput.status) || EProfileStatus.anon;
+    public get status(): EnumProfileStatus {
+        return Number(this.userInput.status) || EnumProfileStatus.anon;
     }
 
     @computed
-    public get role(): EProfileRole {
-        return Number(this.userInput.role) || EProfileRole.customer;
+    public get role(): EnumProfileRole {
+        return Number(this.userInput.role) || EnumProfileRole.customer;
     }
 
     @computed
     public get country() {
-        return this.userInput.country || '';
+        return this.userInput.country || [];
     }
 
     @computed
@@ -53,11 +59,23 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
 
     @computed
     public get filter(): any {
-        return {
-            identityLevel: this.status.valueOf(),
-            role: this.role.valueOf(),
-            country: this.country,
+        const result: any = {
+            status: {
+                $gte: this.status,
+            },
+            role: {
+                $gte: this.role,
+            },
+            country: {
+                $in: this.country,
+            },
         };
+
+        if (this.minDeals) {
+            result.minDeals = { $gte: this.minDeals };
+        }
+
+        return result;
     }
 
     @computed

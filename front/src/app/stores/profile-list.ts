@@ -1,7 +1,4 @@
-import Api from 'app/api';
-import { createListStore } from './list-store-factory';
-import { dataFromApiResult } from './utils/data-from-api-result';
+import { ListStore } from './list-store';
+import { IProfileBrief } from '../api/types';
 
-export const ProfileList = createListStore({
-    fetchList: dataFromApiResult(Api.getProfileList),
-});
+export class ProfileList extends ListStore<IProfileBrief> {}

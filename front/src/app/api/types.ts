@@ -60,6 +60,18 @@ export interface ITxListFilter {
     query?: string;
 }
 
+export interface IListQuery<T> {
+    limit: number;
+    offset: number;
+    sortBy?: string;
+    sortDesc?: boolean;
+    filter?: T;
+}
+
+export interface IProfileFilter {
+    country: string;
+}
+
 export interface ISettings {
     chainId: string;
     nodeUrl: string;
@@ -82,7 +94,7 @@ export enum NetworkEnum {
     rinkeby = 'rinkeby',
 }
 
-export enum EProfileStatus {
+export enum EnumProfileStatus {
     anonimest = 0,
     anon = 1,
     reg = 2,
@@ -90,7 +102,7 @@ export enum EProfileStatus {
     pro = 4,
 }
 
-export enum EProfileRole {
+export enum EnumProfileRole {
     customer = 1,
     supplier = 2,
 }
@@ -103,7 +115,7 @@ export interface IAttribute {
 export interface IProfileBrief {
     name?: string;
     address: string;
-    status: EProfileStatus;
+    status: EnumProfileStatus;
     sellOrders: number;
     buyOrders: number;
     deals: number;
@@ -114,8 +126,8 @@ export interface IProfileBrief {
     attributes?: IAttribute[];
 }
 
-export interface IProfileListResult {
-    records: Array<IProfileBrief>;
+export interface IListResult<T> {
+    records: Array<T>;
     total: number;
 }
 
