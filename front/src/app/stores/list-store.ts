@@ -49,7 +49,9 @@ export interface IListStoreServices<TItem> {
     errorProcessor: IErrorProcessor;
     localizator: ILocalizator;
     api: {
-        fetchList: (query: IListServerQuery) => Promise<Array<TItem>>;
+        fetchList: (
+            query: IListServerQuery,
+        ) => Promise<IFetchListResult<TItem>>;
     };
 }
 

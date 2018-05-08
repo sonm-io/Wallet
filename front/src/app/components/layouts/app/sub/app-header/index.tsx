@@ -26,11 +26,11 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
     protected static menuConfig: Array<TMenuItem> = [
         [
             'Wallet',
-            (sendPath = '/send'),
+            (sendPath = '/wallet/send'),
             [
-                ['Accounts', '/accounts', undefined],
-                ['History', '/history', undefined],
-                ['Send', '/send', undefined],
+                ['Accounts', '/wallet/accounts', undefined],
+                ['History', '/wallet/history', undefined],
+                ['Send', '/wallet/send', undefined],
             ],
         ],
         [
@@ -40,7 +40,8 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                 ['Search', '/market/search', undefined],
                 ['Profiles', '/market/profiles', undefined],
                 ['Deals', '/market/deals', undefined],
-                ['Send', '/market/send', undefined],
+                ['Deposit', '/market/dw/deposit', undefined],
+                ['Withdraw', '/market/dw/withdraw', undefined],
             ],
         ],
     ];

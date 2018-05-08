@@ -105,7 +105,11 @@ export class RootStore implements IHasLocalizator {
                             sortDesc: query.sortDesc,
                         });
 
-                        return (result as any).data.records;
+                        if (result.data === undefined) {
+                            throw new Error('Empty data');
+                        }
+
+                        return result.data;
                     },
                 },
             },

@@ -71,23 +71,32 @@ export class DWH {
             if (item[key] !== '') {
                 if (key === 'Certificates') {
                     item.attributes = [] as IAttribute[];
-                    try {
-                        const parsed = JSON.parse(item.Certificates);
-                        for (const row of parsed) {
-                            if (attributesConverter[row.attribute]) {
-                                item.attributes.push({
-                                    label: attributesConverter[row.attribute],
-                                    value: self.atob(row.value),
-                                });
-                            } else {
-                                item.attributes.push({
-                                    label: row.attribute,
-                                    value: self.atob(row.value),
-                                });
+                    const parsed = JSON.parse(item.Certificates);
+
+                    for (const row of parsed) {
+                        if (row.value) {
+                            try {
+                                if (attributesConverter[row.attribute]) {
+                                    item.attributes.push({
+                                        label:
+                                            attributesConverter[row.attribute],
+                                        value: self.atob(row.value),
+                                    });
+                                } else {
+                                    item.attributes.push({
+                                        label: row.attribute,
+                                        value: self.atob(row.value),
+                                    });
+                                }
+                            } catch (err) {
+                                console.log(err);
+                                console.log(
+                                    `Incorrect attr ${row.attribute} value ${
+                                        row.value
+                                    }`,
+                                );
                             }
                         }
-                    } catch (err) {
-                        console.log(err);
                     }
                 } else {
                     item[newKey] = item[key];
