@@ -68,10 +68,6 @@ export interface IListQuery<T> {
     filter?: T;
 }
 
-export interface IProfileFilter {
-    country: string;
-}
-
 export interface ISettings {
     chainId: string;
     nodeUrl: string;
@@ -113,17 +109,14 @@ export interface IAttribute {
 }
 
 export interface IProfileBrief {
-    name?: string;
+    name: string;
     address: string;
     status: EnumProfileStatus;
     sellOrders: number;
     buyOrders: number;
     deals: number;
-    country?: string;
-    isPro?: boolean;
-    isCorp?: boolean;
-    logoUrl?: string;
-    attributes?: IAttribute[];
+    country: string;
+    logoUrl: string;
 }
 
 export interface IListResult<T> {
@@ -146,6 +139,10 @@ export interface IOrderListResult {
 
 export interface IOrderListFilter {
     authorID?: string;
+}
+
+export interface ISender {
+    send: (messageType: string, payload?: any) => any;
 }
 
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

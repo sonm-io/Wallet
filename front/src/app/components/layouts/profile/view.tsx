@@ -21,9 +21,9 @@ interface IProps {
     supplierAvgTime: string;
     supplierToken: string;
     my: boolean;
-    userName: string;
-    countryAbCode2: string;
-    logoUrl: string;
+    userName?: string;
+    countryAbCode2?: string;
+    logoUrl?: string;
     userStatus: EnumProfileStatus;
     address: string;
     style?: any;

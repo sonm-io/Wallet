@@ -236,9 +236,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     params: IUrlParams,
                                 ) => ({
                                     content: (
-                                        <Profile
-                                            initialAddress={params.address}
-                                        />
+                                        <Profile address={params.address} />
                                     ),
                                     browserTabTitle: 'Profiles',
                                     pageTitle: 'Profiles',

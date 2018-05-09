@@ -89,9 +89,14 @@ export class MarketStore extends OnlineStore {
 
     @computed
     public get marketAccountAddress(): string {
-        return this.userInput.marketAccountAddress === ''
-            ? this.marketAccountViewList[0].address
-            : this.userInput.marketAccountAddress;
+        if (
+            this.userInput.marketAccountAddress === '' &&
+            this.marketAccountViewList.length > 0
+        ) {
+            return this.marketAccountViewList[0].address;
+        }
+
+        return this.userInput.marketAccountAddress;
     }
 
     @computed

@@ -16,8 +16,8 @@ import {
 import { ProfileList } from './profile-list';
 import { Api } from 'app/api';
 import { THistorySourceMode } from './types';
-import { IListStore, IListServerQuery } from './list-store';
-import { unwrapApiResult } from './utils/unwrap-api-result';
+import { IListStore } from './list-store';
+import { unwrapApiResult } from '../api/utils/unwrap-api-result';
 
 useStrict(true);
 
@@ -94,24 +94,9 @@ export class RootStore implements IHasLocalizator {
                 filter: this.profileFilterStore,
             },
             {
+                localizator,
                 errorProcessor: this.uiStore,
-                localizator: this.localizator,
-                api: {
-                    fetchList: async (query: IListServerQuery) => {
-                        const result = await Api.getProfileList({
-                            offset: query.offset,
-                            limit: query.limit,
-                            sortBy: query.sortBy,
-                            sortDesc: query.sortDesc,
-                        });
-
-                        if (result.data === undefined) {
-                            throw new Error('Empty data');
-                        }
-
-                        return result.data;
-                    },
-                },
+                api: Api.profile,
             },
         );
     }

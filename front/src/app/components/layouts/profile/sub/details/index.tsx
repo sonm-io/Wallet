@@ -17,11 +17,11 @@ export interface IProfileDefinition {
 interface IProps {
     className?: string;
     children?: never;
-    userName: string;
+    userName?: string;
     status: EnumProfileStatus;
-    countryAbCode2: string;
+    countryAbCode2?: string;
     address: string;
-    logoUrl: string;
+    logoUrl?: string;
     getUiText: TFnGetUiText<string>;
     definitions: IProfileDefinition[];
 }

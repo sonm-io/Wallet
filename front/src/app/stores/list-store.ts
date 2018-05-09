@@ -3,6 +3,7 @@ import { asyncAction } from 'mobx-utils';
 import { Status } from './types';
 import { IErrorProcessor, OnlineStore } from './online-store';
 import { ILocalizator } from '../localization/types';
+import { IListQuery } from '../api';
 
 const { pending } = OnlineStore;
 
@@ -11,16 +12,8 @@ interface IFetchListResult<T> {
     total: number;
 }
 
-export interface IListStoreApi<T> {
-    fetchList: (params: IListServerQuery) => Promise<IFetchListResult<T>>;
-}
-
-export interface IListServerQuery {
-    limit: number;
-    offset: number;
-    sortDesc: boolean;
-    sortBy?: string;
-    filter?: string;
+export interface IListStoreApi<TItem> {
+    fetchList: (params: IListQuery<string>) => Promise<IFetchListResult<TItem>>;
 }
 
 export interface IUserInput {
@@ -48,16 +41,12 @@ export interface IListStore<T> {
 export interface IListStoreServices<TItem> {
     errorProcessor: IErrorProcessor;
     localizator: ILocalizator;
-    api: {
-        fetchList: (
-            query: IListServerQuery,
-        ) => Promise<IFetchListResult<TItem>>;
-    };
+    api: IListStoreApi<TItem>;
 }
 
 export interface IListStoreStores {
     filter: {
-        readonly filterAsString: string;
+        readonly filterAsString: any;
     };
 }
 
@@ -128,14 +117,14 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
         this.status = Status.PENDING;
 
-        const query: IListServerQuery = {
+        const query: IListQuery<string> = {
             offset,
             limit,
             sortDesc: Boolean(sortDesc),
         };
 
         if (filter) {
-            query.filter = JSON.stringify(filter);
+            query.filter = filter;
         }
 
         if (sortBy) {
