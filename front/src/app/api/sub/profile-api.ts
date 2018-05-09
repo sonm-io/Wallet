@@ -27,6 +27,8 @@ export class ProfileApi {
             address,
         });
 
+        debugger;
+
         return TypeProfileFull(response.data);
     }
 }

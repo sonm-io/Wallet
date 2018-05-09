@@ -38,7 +38,7 @@ export class DWH {
         logoUrl: '',
     };
 
-    public static readonly mapAttributes = {
+    public static readonly mapAttributes: any = {
         1201: ['Website', self.atob],
         2201: ['Telephone', self.atob],
         2202: ['E-mail', self.atob],
@@ -72,10 +72,30 @@ export class DWH {
 
     public getProfileFull = async ({
         address,
-    }: any): Promise<t.IProfileBrief> => {
+    }: any): Promise<t.IProfileFull> => {
         const res = await this.fetchData('GetProfileInfo', { Id: address });
         const brief = this.processProfile(res);
-        const full = { ...brief, attributes: [] }; // TODO
+        const full = {
+            ...brief,
+            attributes: res.Certificates
+                ? JSON.parse(res.Certificates).map((x: any) => {
+                      if (x.attribute in DWH.mapAttributes) {
+                          const [label, converter] = DWH.mapAttributes[
+                              x.attribute
+                          ];
+
+                          return {
+                              value: converter(x.value),
+                              label,
+                          };
+                      }
+                      return {
+                          value: String(x.value),
+                          label: String(x.attribute),
+                      };
+                  })
+                : [],
+        };
 
         return full as any; // TODO
     };
