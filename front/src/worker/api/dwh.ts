@@ -53,18 +53,26 @@ export class DWH {
         return result as t.IProfileBrief;
     }
 
-    public getProfiles = async (): Promise<t.IListResult<t.IProfileBrief>> => {
+    public getProfiles = async ({
+        filter,
+        limit,
+        offset,
+    }: t.IListQuery): Promise<t.IListResult<t.IProfileBrief>> => {
         const res = await this.fetchData('GetProfiles');
+
+        const mongoLikeFilter = filter ? JSON.parse(filter) : {};
+
+        console.log(filter, mongoLikeFilter);
 
         return {
             records: res.profiles.map(this.processProfile),
-            total: 4,
+            total: 100,
         };
     };
 
-    public getProfileFull = async (
-        address: string,
-    ): Promise<t.IProfileBrief> => {
+    public getProfileFull = async ({
+        address,
+    }: any): Promise<t.IProfileBrief> => {
         const res = await this.fetchData('GetProfileInfo', { Id: address });
         const brief = this.processProfile(res);
         const full = { ...brief, attributes: [] }; // TODO

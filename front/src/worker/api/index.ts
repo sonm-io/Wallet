@@ -4,6 +4,7 @@ import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
 import * as t from './types';
+import { wrapInResponse } from './utils';
 
 import { migrate } from '../migrations';
 import { DWH } from './dwh';
@@ -124,8 +125,8 @@ class Api {
 
             'transaction.list': this.getTransactionList,
 
-            'profile.get': this.getProfile,
-            'profile.list': this.getProfiles,
+            'profile.get': wrapInResponse(dwh.getProfileFull),
+            'profile.list': wrapInResponse(dwh.getProfiles),
             'order.get': this.getOrder,
             'order.list': this.getOrders,
 
@@ -1159,28 +1160,6 @@ class Api {
         return {
             data: [filtered, total],
         };
-    };
-
-    public getProfiles = async (data: t.IPayload): Promise<t.IResponse> => {
-        let { filters, limit, offset } = data;
-
-        filters = filters || {};
-        limit = limit || 10;
-        offset = offset || 0;
-
-        return {
-            data: await this.dwh.getProfiles(),
-        };
-    };
-
-    public getProfile = async (data: t.IPayload): Promise<t.IResponse> => {
-        if (data.address) {
-            return {
-                data: await this.dwh.getProfile(data.address),
-            };
-        } else {
-            throw new Error('required_params_missed');
-        }
     };
 
     public getOrders = async (data: t.IPayload): Promise<t.IResponse> => {

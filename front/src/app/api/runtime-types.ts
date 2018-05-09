@@ -1,7 +1,7 @@
 import * as t from 'tcomb';
 import { createStruct } from './utils/runtime-types-utils';
 
-import { IProfileBrief, IListResult } from './types';
+import { IProfileBrief, IListResult, IAttribute, IProfileFull } from './types';
 
 export const TypeProfileBrief = createStruct<IProfileBrief>(
     {
@@ -23,4 +23,19 @@ export const TypeProfileList = createStruct<IListResult<IProfileBrief>>(
         total: t.Number,
     },
     'IListResult<IProfileBrief>',
+);
+
+export const TypeAttribute = createStruct<IAttribute>(
+    {
+        label: t.String,
+        value: t.String,
+    },
+    'IAttribute',
+);
+
+export const TypeProfileFull = TypeProfileBrief.extend<IProfileFull>(
+    {
+        attributes: t.list(TypeAttribute),
+    },
+    'IProfileFull',
 );

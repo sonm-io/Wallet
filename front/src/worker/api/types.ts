@@ -29,9 +29,19 @@ export interface IAccounts {
     };
 }
 
-export interface IResponse {
-    data?: any;
-    validation?: object;
+export interface IResponse<T = any> {
+    data?: T;
+    validation?: any;
+}
+
+export class Response<T> implements IResponse<T> {
+    public data?: T;
+    public validation?: IDictionary;
+
+    constructor(data: T, validation?: IDictionary) {
+        this.data = data;
+        this.validation = validation;
+    }
 }
 
 export * from 'app/api/types';

@@ -60,7 +60,7 @@ export interface ITxListFilter {
     query?: string;
 }
 
-export interface IListQuery<T> {
+export interface IListQuery<T = string> {
     limit: number;
     offset: number;
     sortBy?: string;
@@ -117,6 +117,10 @@ export interface IProfileBrief {
     deals: number;
     country: string;
     logoUrl: string;
+}
+
+export interface IProfileFull extends IProfileBrief {
+    attributes: Array<IAttribute>;
 }
 
 export interface IListResult<T> {
