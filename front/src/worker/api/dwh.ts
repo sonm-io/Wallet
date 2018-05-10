@@ -39,7 +39,8 @@ export class DWH {
     };
 
     public static readonly mapAttributes: any = {
-        1201: ['Website', self.atob],
+        1201: ['KYC 2', self.atob],
+        1202: ['Website', self.atob],
         2201: ['Telephone', self.atob],
         2202: ['E-mail', self.atob],
         2203: ['Service link', self.atob],
