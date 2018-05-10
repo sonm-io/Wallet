@@ -533,8 +533,8 @@ class Api {
             if (accounts[address]) {
                 list.push({
                     address,
-                    marketBalance: '1234567890',
-                    marketUsdBalance: '0987654321',
+                    marketBalance: '12345678901234567890',
+                    marketUsdBalance: '09876543210987654321',
                     name: accounts[address].name,
                     json: JSON.stringify(accounts[address].json),
                     currencyBalanceMap:
