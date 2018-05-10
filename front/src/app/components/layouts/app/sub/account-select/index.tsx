@@ -9,7 +9,7 @@ export interface IAccount {
     name: string;
     address: string;
     usdBalance: string;
-    primaryTokenBalance: string;
+    marketBalance: string;
 }
 
 export interface IMarketAccountSelectProps {
@@ -79,7 +79,7 @@ export class MarketAccountSelect extends React.PureComponent<
                             symbol="USD"
                         />
                         (<Balance
-                            balance={p.primaryTokenBalance}
+                            balance={p.marketBalance}
                             decimalPointOffset={18}
                             decimalDigitAmount={2}
                             symbol="SNM"
@@ -91,8 +91,6 @@ export class MarketAccountSelect extends React.PureComponent<
     };
 
     protected handleSelectAccount = (account: IAccount) => {
-        debugger;
-
         this.props.onChange(account);
 
         this.setState({ opened: false });

@@ -211,7 +211,8 @@ export class MainStore extends OnlineStore {
                 : info.currencyBalanceMap[this.etherAddress],
             primaryTokenBalance,
             primaryTokenInfo: this.primaryTokenInfo,
-            usdBalance: isCurrencyListEmpty ? '' : primaryTokenBalance,
+            usdBalance: info.marketUsdBalance,
+            marketBalance: info.marketBalance,
         };
 
         return preview;
