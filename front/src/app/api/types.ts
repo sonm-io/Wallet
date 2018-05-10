@@ -38,8 +38,6 @@ export interface IAccountInfo {
     marketBalance: string;
     marketUsdBalance: string;
     currencyBalanceMap: ICurrencyBalanceMap;
-    marketBalance: string;
-    marketUsdBalance: string;
     json: string;
 }
 
@@ -125,6 +123,7 @@ export interface IProfileBrief {
 
 export interface IProfileFull extends IProfileBrief {
     attributes: Array<IAttribute>;
+    description: string;
 }
 
 export interface IListResult<T> {

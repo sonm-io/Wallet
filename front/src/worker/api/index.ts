@@ -539,8 +539,6 @@ class Api {
                     json: JSON.stringify(accounts[address].json),
                     currencyBalanceMap:
                         balancies && balancies[i] ? balancies[i] : {},
-                    marketBalance: '123',
-                    marketUsdBalance: '124',
                 });
             }
         }

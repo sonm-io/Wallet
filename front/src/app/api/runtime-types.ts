@@ -73,6 +73,7 @@ export const TypeProfileFull = createStruct<IProfileFull>(
         deals: t.Number,
         country: t.String,
         logoUrl: t.String,
+        description: t.String,
     },
     'IProfileFull',
 );
