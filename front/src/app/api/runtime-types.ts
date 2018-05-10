@@ -50,7 +50,7 @@ export const TypeOrder = createStruct<IOrder>(
     {
         id: t.String,
         orderType: t.Number,
-        price: t.Number,
+        price: t.String,
         duration: t.Number,
         orderStatus: t.Number,
         authorID: t.String,
