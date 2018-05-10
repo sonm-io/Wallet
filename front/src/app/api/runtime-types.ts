@@ -6,8 +6,31 @@ import {
     IListResult,
     IAttribute,
     IProfileFull,
+    IAccountInfo,
     IOrder,
 } from './types';
+
+const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
+
+const isHexDeximal = (x: string) => hexDeximalRegex.test(x);
+
+const digitsRegex = /^[0-9]+$/;
+
+const isDigits = (x: string) => digitsRegex.test(x);
+
+export const TypeEthereumAddress = t.refinement(
+    t.String,
+    (s: string) => s.length === 42 && s.startsWith('0x') && isHexDeximal(s),
+    'EthereumAddress',
+);
+
+export const TypeCurrencyAddress = t.refinement(
+    t.String,
+    (s: string) => s === '0x' || s === '0x1' || Boolean(TypeEthereumAddress(s)),
+    'CurrencyAddress',
+);
+
+export const TypeBalance = t.refinement(t.String, isDigits);
 
 export const TypeProfileBrief = createStruct<IProfileBrief>(
     {
@@ -39,12 +62,45 @@ export const TypeAttribute = createStruct<IAttribute>(
     'IAttribute',
 );
 
-export const TypeProfileFull = TypeProfileBrief.extend<IProfileFull>(
+export const TypeProfileFull = createStruct<IProfileFull>(
     {
         attributes: t.list(TypeAttribute),
+        address: TypeEthereumAddress,
+        status: t.Number,
+        name: t.String,
+        sellOrders: t.Number,
+        buyOrders: t.Number,
+        deals: t.Number,
+        country: t.String,
+        logoUrl: t.String,
+        description: t.String,
     },
     'IProfileFull',
 );
+
+export const TypeCurrencyBalanceMap = t.irreducible(
+    'CurrencyBalanceMap',
+    (x: any) =>
+        x !== null &&
+        typeof x === 'object' &&
+        Object.keys(x).every(
+            key => Boolean(TypeCurrencyAddress(key)) && isDigits(x[key]),
+        ),
+);
+
+export const TypeAccountInfo = createStruct<IAccountInfo>(
+    {
+        address: TypeEthereumAddress,
+        name: t.String,
+        marketBalance: t.String,
+        marketUsdBalance: t.String,
+        currencyBalanceMap: TypeCurrencyBalanceMap,
+        json: t.String,
+    },
+    'IAccountInfo',
+);
+
+export const TypeAccountInfoList = t.list(TypeAccountInfo);
 
 export const TypeOrder = createStruct<IOrder>(
     {

@@ -12,6 +12,7 @@ import {
     IWalletListItem,
     ISender,
 } from './types';
+import { TypeAccountInfoList } from './runtime-types';
 
 export * from './types';
 
@@ -126,8 +127,10 @@ class AllApi {
         return this.ipc.send('account.rename', { address, name });
     }
 
-    public async getAccountList(): Promise<IResult<IAccountInfo[]>> {
-        return this.ipc.send('account.list');
+    public async getAccountList(): Promise<IAccountInfo[]> {
+        const data = await this.ipc.send('account.list');
+
+        return TypeAccountInfoList(data.data);
     }
 
     public async ping(): Promise<IResult<object>> {

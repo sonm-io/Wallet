@@ -35,9 +35,9 @@ export interface ISendTransactionResult extends ISendTransaction {
 export interface IAccountInfo {
     name: string;
     address: string;
-    currencyBalanceMap: ICurrencyBalanceMap;
     marketBalance: string;
     marketUsdBalance: string;
+    currencyBalanceMap: ICurrencyBalanceMap;
     json: string;
 }
 
@@ -123,6 +123,7 @@ export interface IProfileBrief {
 
 export interface IProfileFull extends IProfileBrief {
     attributes: Array<IAttribute>;
+    description: string;
 }
 
 export interface IListResult<T> {

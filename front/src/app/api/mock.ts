@@ -14,8 +14,8 @@ export const newAccount: t.IAccountInfo = {
     name: 'new',
     address: '0x1234567890123456789012345678901234567890',
     json: '',
-    marketBalance: '20',
-    marketUsdBalance: '20',
+    marketUsdBalance: '12345678',
+    marketBalance: '0987654321',
     currencyBalanceMap: {
         [SONM_ADDR]: '1',
     },
@@ -86,8 +86,8 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             name: 'Vasya',
             address: VASYA_ADDR,
             json: '',
-            marketBalance: '20',
-            marketUsdBalance: '20',
+            marketUsdBalance: '12345678',
+            marketBalance: '0987654321',
             currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(
@@ -104,8 +104,8 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             name: 'Petya',
             address: PETYA_ADDR,
             json: '',
-            marketBalance: '20',
-            marketUsdBalance: '20',
+            marketUsdBalance: '12345678',
+            marketBalance: '0987654321',
             currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(

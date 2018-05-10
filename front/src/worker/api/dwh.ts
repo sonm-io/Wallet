@@ -7,6 +7,8 @@ interface IDictionary<T> {
     [index: string]: keyof T;
 }
 
+const ATTRIBUTE_DESCRIPTION = 1103;
+
 export class DWH {
     private url: string;
 
@@ -39,7 +41,8 @@ export class DWH {
     };
 
     public static readonly mapAttributes: any = {
-        1201: ['Website', self.atob],
+        1201: ['KYC 2', self.atob],
+        1202: ['Website', self.atob],
         2201: ['Telephone', self.atob],
         2202: ['E-mail', self.atob],
         2203: ['Service link', self.atob],
@@ -85,28 +88,36 @@ export class DWH {
     }: any): Promise<t.IProfileFull> => {
         const res = await this.fetchData('GetProfileInfo', { Id: address });
         const brief = this.processProfile(res);
-        const full = {
+        const certificates = res.Certificates
+            ? JSON.parse(res.Certificates)
+            : [];
+        const attrMap: any = {};
+        const attributes = certificates
+            .map((x: any) => {
+                attrMap[x.attribute] = x;
+
+                if (x.attribute in DWH.mapAttributes) {
+                    const [label, converter] = DWH.mapAttributes[x.attribute];
+
+                    return {
+                        value: converter(x.value),
+                        label,
+                    };
+                }
+                return undefined;
+            })
+            .filter(Boolean);
+
+        const description =
+            ATTRIBUTE_DESCRIPTION in attrMap
+                ? self.atob(attrMap[ATTRIBUTE_DESCRIPTION].value)
+                : '';
+
+        return {
             ...brief,
-            attributes: res.Certificates
-                ? JSON.parse(res.Certificates)
-                      .map((x: any) => {
-                          if (x.attribute in DWH.mapAttributes) {
-                              const [label, converter] = DWH.mapAttributes[
-                                  x.attribute
-                              ];
-
-                              return {
-                                  value: converter(x.value),
-                                  label,
-                              };
-                          }
-                          return undefined;
-                      })
-                      .filter((x: any) => x !== undefined)
-                : [],
+            attributes,
+            description,
         };
-
-        return full as any; // TODO
     };
 
     public getOrders = async (): Promise<t.IListResult<t.IOrder>> => {

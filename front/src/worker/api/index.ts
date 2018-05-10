@@ -533,12 +533,12 @@ class Api {
             if (accounts[address]) {
                 list.push({
                     address,
+                    marketBalance: '1234567890',
+                    marketUsdBalance: '0987654321',
                     name: accounts[address].name,
                     json: JSON.stringify(accounts[address].json),
                     currencyBalanceMap:
                         balancies && balancies[i] ? balancies[i] : {},
-                    marketBalance: '123',
-                    marketUsdBalance: '124',
                 });
             }
         }

@@ -314,7 +314,7 @@ export class MainStore extends OnlineStore {
     }
 
     public async update() {
-        const { data: accountList } = await Api.getAccountList();
+        const accountList = await Api.getAccountList();
         this.updateList(accountList);
 
         const { data: gasPrice } = await Api.getGasPrice();
