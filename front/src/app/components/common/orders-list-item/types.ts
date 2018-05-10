@@ -1,7 +1,7 @@
 import { EnumProfileStatus } from 'app/api/types';
 
 export interface IOrdersListItemProps {
-    logoUrl: string;
+    logoUrl?: string;
     address: string;
     name?: string;
     account: string;

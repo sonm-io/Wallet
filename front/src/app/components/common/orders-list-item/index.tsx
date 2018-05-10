@@ -51,15 +51,23 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
 
                 {/* Column 2 - Indicators */}
                 {Array.from(this.props.customFields.keys()).map(key => (
-                    <div className="orders-list-item__indicator-name">
+                    <div
+                        className="orders-list-item__indicator-name"
+                        key={`indicatorKey:${key}`}
+                    >
                         {key}:
                     </div>
                 ))}
-                {Array.from(this.props.customFields.values()).map(value => (
-                    <div className="orders-list-item__indicator-value">
-                        {value}
-                    </div>
-                ))}
+                {Array.from(this.props.customFields.values()).map(
+                    (value, i) => (
+                        <div
+                            className="orders-list-item__indicator-value"
+                            key={`indicatorValueNum:${i}`}
+                        >
+                            {value}
+                        </div>
+                    ),
+                )}
 
                 {/* Column3 - Costs */}
                 <div className="orders-list-item__cost">

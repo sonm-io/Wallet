@@ -10,6 +10,7 @@ import { ProfileList } from 'app/components/layouts/profile-list';
 import { DepositWithdrawHistory } from 'app/components/layouts/deposit-withdraw-history';
 import { Deposit, Withdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
+import { Orders } from 'app/components/layouts/orders';
 
 import * as React from 'react';
 
@@ -415,6 +416,18 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     ),
                                     browserTabTitle: 'D & W History',
                                     pageTitle: 'D & W History',
+                                }),
+                            },
+                            {
+                                path: '/orders',
+                                breadcrumbTitle: 'Orders',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    browserTabTitle: 'Orders',
+                                    pageTitle: 'Orders',
+                                    content: <Orders />,
                                 }),
                             },
                         ],
