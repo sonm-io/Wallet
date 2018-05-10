@@ -35,6 +35,8 @@ export interface ISendTransactionResult extends ISendTransaction {
 export interface IAccountInfo {
     name: string;
     address: string;
+    marketBalance: string;
+    marketUsdBalance: string;
     currencyBalanceMap: ICurrencyBalanceMap;
     json: string;
 }
@@ -61,8 +63,8 @@ export interface ITxListFilter {
 }
 
 export interface IListQuery<T = string> {
-    limit: number;
-    offset: number;
+    limit?: number;
+    offset?: number;
     sortBy?: string;
     sortDesc?: boolean;
     filter?: T;
@@ -121,6 +123,7 @@ export interface IProfileBrief {
 
 export interface IProfileFull extends IProfileBrief {
     attributes: Array<IAttribute>;
+    description: string;
 }
 
 export interface IListResult<T> {
@@ -129,7 +132,7 @@ export interface IListResult<T> {
 }
 
 export interface IOrder {
-    id: number;
+    id: string;
     orderType: number;
     price: number;
     duration: number;
@@ -137,8 +140,8 @@ export interface IOrder {
     authorID: string;
 }
 
-export interface IOrderListResult {
-    records: IOrder[];
+export interface IOrderListResult<T> {
+    records: Array<T>;
 }
 
 export interface IOrderListFilter {

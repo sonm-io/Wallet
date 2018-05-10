@@ -37,9 +37,7 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
             'Market',
             (marketPath = '/market/deals'),
             [
-                ['Search', '/market/search', undefined],
                 ['Profiles', '/market/profiles', undefined],
-                ['Deals', '/market/deals', undefined],
                 ['Deposit', '/market/dw/deposit', undefined],
                 ['Withdraw', '/market/dw/withdraw', undefined],
                 ['History', '/market/dw/history', undefined],

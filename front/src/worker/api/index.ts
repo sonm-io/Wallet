@@ -28,7 +28,7 @@ const DEFAULT_NODES: t.INodes = {
     livenet: 'https://mainnet.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
     testrpc: 'http://localhost:8545',
-    private: 'http://159.65.167.139:8545',
+    private: 'https://sidechain-dev.sonm.com',
 };
 const ZERO_ADDRESS = Array(41).join('0');
 
@@ -63,8 +63,6 @@ const DEFAULT_TOKENS: t.ITokens = {
 };
 
 class Api {
-    private dwh: DWH;
-
     protected routes: {
         [index: string]: any;
     };
@@ -127,8 +125,8 @@ class Api {
 
             'profile.get': wrapInResponse(dwh.getProfileFull),
             'profile.list': wrapInResponse(dwh.getProfiles),
-            'order.get': this.getOrder,
-            'order.list': this.getOrders,
+            'order.get': wrapInResponse(dwh.getOrderFull),
+            'order.list': wrapInResponse(dwh.getOrders),
 
             'market.buyOrder': this.buyOrder,
 
@@ -140,8 +138,6 @@ class Api {
             getTokenInfo: this.getTokenInfo,
             getPresetTokenList: this.getPresetTokenList,
         };
-
-        this.dwh = dwh;
     }
 
     public decrypt = (data: string): any => {
@@ -516,8 +512,11 @@ class Api {
         } catch (err) {}
 
         const requests = [];
+        //const tokenList = await this.getTokenList('private');
+
         for (const address of Object.keys(accounts)) {
             requests.push(this.getCurrencyBalances(address));
+            //requests.push(tokenList.getBalances(address));
         }
 
         let balancies;
@@ -534,6 +533,8 @@ class Api {
             if (accounts[address]) {
                 list.push({
                     address,
+                    marketBalance: '1234567890',
+                    marketUsdBalance: '0987654321',
                     name: accounts[address].name,
                     json: JSON.stringify(accounts[address].json),
                     currencyBalanceMap:
@@ -1160,28 +1161,6 @@ class Api {
         return {
             data: [filtered, total],
         };
-    };
-
-    public getOrders = async (data: t.IPayload): Promise<t.IResponse> => {
-        let { filters, limit, offset } = data;
-
-        filters = filters || {};
-        limit = limit || 10;
-        offset = offset || 0;
-
-        return {
-            data: await this.dwh.getOrders(),
-        };
-    };
-
-    public getOrder = async (data: t.IPayload): Promise<t.IResponse> => {
-        if (data.id) {
-            return {
-                data: await this.dwh.getOrder(data.id),
-            };
-        } else {
-            throw new Error('required_params_missed');
-        }
     };
 
     public async resolve(type: string, payload: any): Promise<t.IResponse> {

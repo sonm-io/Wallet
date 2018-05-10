@@ -1,5 +1,6 @@
 import { ipc as IPC } from './ipc';
 import { ProfileApi } from './sub/profile-api';
+import { OrderApi } from './sub/order-api';
 import {
     ISendTransactionResult,
     IAccountInfo,
@@ -9,11 +10,9 @@ import {
     ITxListFilter,
     ISettings,
     IWalletListItem,
-    IOrderListFilter,
-    IOrder,
-    IOrderListResult,
     ISender,
 } from './types';
+import { TypeAccountInfoList } from './runtime-types';
 
 export * from './types';
 
@@ -21,6 +20,7 @@ class AllApi {
     private ipc: ISender = IPC;
 
     public profile = new ProfileApi(this.ipc);
+    public order = new OrderApi(this.ipc);
 
     public async createWallet(
         password: string,
@@ -127,8 +127,10 @@ class AllApi {
         return this.ipc.send('account.rename', { address, name });
     }
 
-    public async getAccountList(): Promise<IResult<IAccountInfo[]>> {
-        return this.ipc.send('account.list');
+    public async getAccountList(): Promise<IAccountInfo[]> {
+        const data = await this.ipc.send('account.list');
+
+        return TypeAccountInfoList(data.data);
     }
 
     public async ping(): Promise<IResult<object>> {
@@ -207,16 +209,6 @@ class AllApi {
 
     public async getPresetTokenList(): Promise<IResult<ICurrencyInfo[]>> {
         return this.ipc.send('getPresetTokenList');
-    }
-
-    public async getOrderList(
-        filters?: IOrderListFilter,
-    ): Promise<IResult<IOrderListResult>> {
-        return this.ipc.send('order.list', { filters });
-    }
-
-    public async getOrder(id: number): Promise<IResult<IOrder>> {
-        return this.ipc.send('order.get', { id });
     }
 }
 
