@@ -7,7 +7,7 @@
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: [label] 100px [value] 1fr [info] 30px;
+    grid-template-columns: ~'[label] 100px [value] 1fr [info] min-content';
     grid-gap: 10px;
 }
 
@@ -15,6 +15,7 @@
     color: @color-font-gray;
     display: block;
     margin: 0;
+    grid-column: label;
 
     &:last-of-type {
         margin: 0;
@@ -25,6 +26,9 @@
     color: @color-font-dark;
     display: block;
     margin: 0;
+    grid-column: value;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:last-of-type {
         margin: 0;
@@ -64,7 +68,7 @@
 
     &__main-info {
         .sonm-profile-definition-container;
-        width: 300px;
+        width: 400px;
 
         & > dt {
             .sonm-profile-definition-label;
@@ -91,14 +95,10 @@
 
         &-label {
             .sonm-profile-definition-label;
-            grid-column: label;
         }
 
         &-value {
             .sonm-profile-definition-value;
-            grid-column: value;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         &-info {
