@@ -28,7 +28,7 @@ const DEFAULT_NODES: t.INodes = {
     livenet: 'https://mainnet.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
     testrpc: 'http://localhost:8545',
-    private: 'http://159.65.167.139:8545',
+    private: 'https://sidechain-dev.sonm.com',
 };
 const ZERO_ADDRESS = Array(41).join('0');
 
@@ -512,8 +512,11 @@ class Api {
         } catch (err) {}
 
         const requests = [];
+        //const tokenList = await this.getTokenList('private');
+
         for (const address of Object.keys(accounts)) {
             requests.push(this.getCurrencyBalances(address));
+            //requests.push(tokenList.getBalances(address));
         }
 
         let balancies;
@@ -534,6 +537,8 @@ class Api {
                     json: JSON.stringify(accounts[address].json),
                     currencyBalanceMap:
                         balancies && balancies[i] ? balancies[i] : {},
+                    marketBalance: '123',
+                    marketUsdBalance: '124',
                 });
             }
         }

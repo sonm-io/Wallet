@@ -36,6 +36,8 @@ export interface IAccountInfo {
     name: string;
     address: string;
     currencyBalanceMap: ICurrencyBalanceMap;
+    marketBalance: string;
+    marketUsdBalance: string;
     json: string;
 }
 

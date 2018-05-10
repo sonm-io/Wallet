@@ -1,13 +1,13 @@
 const { expect } = require('chai');
 
-// const walletName = 'wallet 1';
-// const walletPassword = 'my secret key';
-// const tokenAddress = '0x225b929916daadd5044d5934936313001f55d8f0';
-// const vasyaCfg = require('./data/Vasya_11111111.json');
-// const address = `0x${vasyaCfg.address}`;
-// const json = JSON.stringify(vasyaCfg);
-// const accountName = 'Account 1';
-// const password = '11111111';
+const walletName = 'wallet 1';
+const walletPassword = 'my secret key';
+const tokenAddress = '0x225b929916daadd5044d5934936313001f55d8f0';
+const vasyaCfg = require('./data/Vasya_11111111.json');
+const address = `0x${vasyaCfg.address}`;
+const json = JSON.stringify(vasyaCfg);
+const accountName = 'Account 1';
+const password = '11111111';
 
 // import { THistorySourceMode } from 'app/stores/types';
 
@@ -50,7 +50,6 @@ describe('Api', async function() {
         }
     });
 
-    /*
     it('should get empty wallets list', async function() {
         const response = await Api.getWalletList();
         expect(response.data).to.have.lengthOf(0);
@@ -84,10 +83,10 @@ describe('Api', async function() {
         expect(response.data).not.equal(null);
     });
 
-    it('should recieve token exchange rate', async function() {
-        const response = await Api.getTokenExchangeRate();
-        expect(response.data).not.equal(null);
-    });
+    // it('should recieve token exchange rate', async function() {
+    //     const response = await Api.getTokenExchangeRate();
+    //     expect(response.data).not.equal(null);
+    // });
 
     it('should get token info', async function() {
         const response = await Api.getTokenInfo(tokenAddress, [address]);
@@ -174,6 +173,7 @@ describe('Api', async function() {
         }
     });
 
+    /*
     it('should export wallet && import wallet', async function() {
         const response = await Api.exportWallet();
         expect(response.data).to.be.a('string');
