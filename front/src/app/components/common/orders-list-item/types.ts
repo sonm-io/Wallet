@@ -1,11 +1,11 @@
-import { EProfileStatus } from 'app/api/types';
+import { EnumProfileStatus } from 'app/api/types';
 
 export interface IOrdersListItemProps {
     logoUrl: string;
     address: string;
     name?: string;
     account: string;
-    status: EProfileStatus;
+    status: EnumProfileStatus;
     customFields: Map<string, string>;
     usdPerHour: number;
     duration: number;
