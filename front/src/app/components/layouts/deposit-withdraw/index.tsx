@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
+import { autorun } from 'mobx';
 import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
 import { Form, FormField } from 'app/components/common/form';
@@ -14,47 +15,70 @@ import { Input } from 'app/components/common/input';
 
 interface IProps {
     className?: string;
-    initialCurrency: string;
-    initialAddress: string;
     onSuccess: () => void;
     onNotAvailable: () => void;
     onConfirm: () => void;
     onBack: () => void;
-    action: string;
     isConfirmation: boolean;
+}
+
+interface IDWProps extends IProps {
+    title: string;
+    sendStore: SendStore;
 }
 
 type PriorityInput = new () => ButtonGroup<string>;
 const PriorityInput = ButtonGroup as PriorityInput;
 
+export function Deposit(props: IProps) {
+    return (
+        <DepositWithdraw
+            {...props}
+            sendStore={rootStore.depositStore}
+            title="Deposit"
+        />
+    );
+}
+
+export function Withdraw(props: IProps) {
+    return (
+        <DepositWithdraw
+            {...props}
+            sendStore={rootStore.withdrawStore}
+            title="Withdraw"
+        />
+    );
+}
+
 @observer
-export class DepositWithdraw extends React.Component<IProps, any> {
+class DepositWithdraw extends React.Component<IDWProps, any> {
     public state = {
         validationPassword: '',
     };
 
-    public componentWillMount() {
-        if (rootStore.mainStore.accountAddressList.length === 0) {
-            this.props.onNotAvailable();
-        }
+    protected syncStores() {
+        autorun(() => {
+            const fromAddress = rootStore.marketStore.marketAccountAddress;
+            const primaryTokenAddress = rootStore.mainStore.primaryTokenAddress;
 
-        this.store.setUserInput({
-            fromAddress: this.props.initialAddress,
-        });
-
-        this.store.setUserInput({
-            toAddress: this.props.initialAddress,
-        });
-
-        this.store.setUserInput({
-            currencyAddress: this.props.initialCurrency,
+            this.props.sendStore.setUserInput({
+                fromAddress,
+                toAddress: fromAddress,
+                currencyAddress: primaryTokenAddress,
+            });
         });
     }
 
+    public componentDidMount() {
+        if (rootStore.mainStore.accountAddressList.length === 0) {
+            this.props.onNotAvailable();
+        } else {
+            this.syncStores();
+        }
+    }
+
     protected get store(): SendStore {
-        return this.props.action === 'deposit'
-            ? rootStore.depositStore
-            : rootStore.withdrawStore;
+        return this.props.sendStore;
     }
 
     protected handleSubmit = (event: any) => {
@@ -63,7 +87,6 @@ export class DepositWithdraw extends React.Component<IProps, any> {
     };
 
     public handleCancel = () => {
-        //this.store.resetServerValidation();
         this.props.onBack();
     };
 
@@ -333,7 +356,7 @@ export class DepositWithdraw extends React.Component<IProps, any> {
                     onClick={this.handleConfrim}
                     className="sonm-deposit-withdraw__button--action"
                 >
-                    {this.props.action.toUpperCase()}
+                    {this.props.title.toUpperCase()}
                 </Button>
             </React.Fragment>
         );
@@ -348,7 +371,7 @@ export class DepositWithdraw extends React.Component<IProps, any> {
         return (
             <div className={cn('sonm-deposit-withdraw', className)}>
                 <Header className="sonm-deposit-withdraw__header">
-                    {this.props.action}
+                    {this.props.title}
                 </Header>
                 {this.renderAccount()}
                 {this.renderAmount()}
