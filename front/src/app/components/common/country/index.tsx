@@ -8,6 +8,10 @@ export interface ICountryComponentProps {
 }
 
 export function Country(props: ICountryComponentProps) {
+    if (props.abCode2 === undefined) {
+        return null;
+    }
+
     const land = getByAbCode2(props.abCode2.toUpperCase());
 
     if (land === undefined) {

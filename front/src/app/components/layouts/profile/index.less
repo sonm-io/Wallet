@@ -11,7 +11,8 @@
     flex-direction: row;
 
     &__column {
-        flex: 1 0;
+        flex-shrink: 0;
+        width: 50%;
         display: flex;
         flex-direction: column;
         margin: 0 @panel-gap-half;
@@ -26,7 +27,8 @@
     }
 
     &__panel {
-        flex: auto 0;
+        flex-shrink: 0;
+        width: 100%;
         flex-direction: column;
         margin: @panel-gap-half 0;
 

@@ -6,7 +6,7 @@ import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { InfoBalloon } from 'app/components/common/info-balloon';
 import { Country } from 'app/components/common/country';
-import { EProfileStatus } from 'app/api/types';
+import { EnumProfileStatus } from 'app/api/types';
 import { ProfileStatus } from 'app/components/common/profile-status';
 
 export interface IProfileDefinition {
@@ -17,11 +17,11 @@ export interface IProfileDefinition {
 interface IProps {
     className?: string;
     children?: never;
-    userName: string;
-    status: EProfileStatus;
-    countryAbCode2: string;
+    userName?: string;
+    status: EnumProfileStatus;
+    countryAbCode2?: string;
     address: string;
-    logoUrl: string;
+    logoUrl?: string;
     getUiText: TFnGetUiText<string>;
     definitions: IProfileDefinition[];
 }
@@ -130,27 +130,15 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                                     className="sonm-profile-details__extra-value"
                                 >
                                     {render(value)}
-                                    <InfoBalloon className="sonm-profile-details__extra-info">
-                                        {'text'}
-                                    </InfoBalloon>
                                 </dd>,
+                                <InfoBalloon className="sonm-profile-details__extra-info">
+                                    {'text'}
+                                </InfoBalloon>,
                             );
                         }),
                         definitions)
                     }
                 </div>
-                {/*{definitions.length === 0 && (*/}
-                {/*<span className="sonm-profile-details__certificate">*/}
-                {/*{t('before_certification_link')}*/}
-                {/*<a*/}
-                {/*href="#go-to-instruction"*/}
-                {/*onClick={this.handleClickUrl}*/}
-                {/*>*/}
-                {/*{t('certification_link')}*/}
-                {/*</a>*/}
-                {/*{t('after_certification_link')}*/}
-                {/*</span>*/}
-                {/*)}*/}
             </Panel>
         );
     }

@@ -45,8 +45,6 @@
         height: 100%;
         -webkit-appearance: none;
         outline: none;
-        outline: none;
-        border: none;
         background: none transparent;
         cursor: pointer;
         overflow: hidden;
@@ -66,6 +64,7 @@
         flex-direction: column;
         justify-content: stretch;
         left: 0;
+        right: 0;
         top: 100%;
         background-color: @accountSelectBgColorActive;
         z-index: @z-lhotse;
@@ -74,14 +73,12 @@
     &__wrapper {
         display: inline-block;
         position: relative;
-        display: inline-block;
         vertical-align: top;
         margin: 0;
         height: 100%;
         color: @accountSelectTextColor;
         border: none;
         padding: 0;
-        position: relative;
         overflow: visible;
     }
 
@@ -103,13 +100,13 @@
     outline: none;
     border: none;
     background: none transparent;
-    border: none;
     color: @accountSelectTextColor;
     margin: 0;
     cursor: pointer;
     position: relative;
     font-size: 12px;
     padding: 6px @accountSelectPaddingLeft;
+    width: 350px;
 
     &:hover,
     &:active,

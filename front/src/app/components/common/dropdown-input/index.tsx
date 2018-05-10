@@ -44,16 +44,12 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     };
 
     protected handleBodyClick = (event: any) => {
-        const children = this.rootNodeRef && this.rootNodeRef.children;
         if (
-            children &&
-            (children[0].contains(event.target) ||
-                (children[1] && children[1].contains(event.target)))
+            this.props.isExpanded &&
+            (this.rootNodeRef && !this.rootNodeRef.contains(event.target))
         ) {
-            return;
+            this.props.onRequireClose();
         }
-
-        this.props.onRequireClose();
     };
 
     public focus() {

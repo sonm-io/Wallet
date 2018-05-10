@@ -6,13 +6,16 @@
     line-height: 24px;
     padding: 0;
     margin: 0;
+    display: grid;
+    grid-template-columns: ~'[label] 100px [value] 1fr [info] min-content';
+    grid-gap: 10px;
 }
 
 .sonm-profile-definition-label {
     color: @color-font-gray;
-    width: 40%;
-    display: inline-block;
-    margin: 0 0 5px 0;
+    display: block;
+    margin: 0;
+    grid-column: label;
 
     &:last-of-type {
         margin: 0;
@@ -21,9 +24,11 @@
 
 .sonm-profile-definition-value {
     color: @color-font-dark;
-    width: 60%;
-    display: inline-block;
-    margin: 0 0 5px 0;
+    display: block;
+    margin: 0;
+    grid-column: value;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:last-of-type {
         margin: 0;
@@ -63,7 +68,7 @@
 
     &__main-info {
         .sonm-profile-definition-container;
-        width: 300px;
+        width: 400px;
 
         & > dt {
             .sonm-profile-definition-label;
@@ -87,7 +92,6 @@
 
     &__extra {
         .sonm-profile-definition-container;
-        width: 100%;
 
         &-label {
             .sonm-profile-definition-label;
@@ -98,7 +102,8 @@
         }
 
         &-info {
-            float: right;
+            grid-column: info;
+            display: inline-block;
         }
     }
 }

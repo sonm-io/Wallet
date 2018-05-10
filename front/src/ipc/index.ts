@@ -51,7 +51,7 @@ export class IPC implements InterfaceIPC {
         );
     }
 
-    private getListeners(requestId: string): t.TListener<any> {
+    private getListenerByRequestId(requestId: string): t.TListener<any> {
         return this.requestIdToListener.get(requestId) || noop;
     }
 
@@ -62,7 +62,7 @@ export class IPC implements InterfaceIPC {
             const message = event.data;
             const requestId = message.requestId;
 
-            this.getListeners(requestId)(message);
+            this.getListenerByRequestId(requestId)(message);
         } else if (
             processRequest !== undefined &&
             event.data &&
@@ -77,32 +77,30 @@ export class IPC implements InterfaceIPC {
                 result?: t.IResult<any>,
                 err?: Error,
             ) => {
-                const success = result !== undefined;
+                const success = err === undefined;
 
                 const response: t.IResponse<any> = {
                     done: true, // see continuation
                     data: undefined,
+                    error: undefined,
                     requestId,
                     sign,
                     success,
                 };
 
-                if (result !== undefined) {
-                    const { data, validation /*, continuation*/ } = result;
-
-                    // if (continuation) {
-                    //     response.done = false;
-                    //     continuation
-                    //         .then(r => processResponse(r, undefined))
-                    //         .catch(e => processResponse(undefined, e));
-                    // }
+                if (typeof result === 'object') {
+                    const { data, validation } = result;
 
                     response.data = data;
+
                     (response as t.IFormResponse<any>).validation = validation;
                 } else {
-                    response.success = false;
+                    response.data = result;
+                }
+
+                if (err !== undefined) {
                     response.error =
-                        err && err.message ? err.message : String(err);
+                        'message' in err ? err.message : String(err);
                 }
 
                 this.postMessage(response);

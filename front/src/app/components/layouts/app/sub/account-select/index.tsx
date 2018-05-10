@@ -3,26 +3,24 @@ import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
+import { Balance } from 'app/components/common/balance-view';
 
 export interface IAccount {
     name: string;
     address: string;
     usdBalance: string;
-    snmBalance: string;
+    primaryTokenBalance: string;
 }
 
 export interface IMarketAccountSelectProps {
     accounts: Array<IAccount>;
-    url: string;
-    onChange: (url: string) => void;
+    onChange: (account: IAccount) => void;
     className?: string;
-    hidden: boolean;
-    value: IAccount;
+    value?: IAccount;
 }
 
 export interface IMarketAccountSelectItemProps extends IAccount {
     className?: string;
-    usdMultiplier?: string;
     onClick?: (account: IAccount) => void;
 }
 
@@ -34,14 +32,8 @@ export class MarketAccountSelect extends React.PureComponent<
         opened: false,
     };
 
-    protected handleClickUrl = (event: any) => {
-        const path = event.target.value;
-
-        this.props.onChange(path);
-    };
-
     protected handleCloseTopMenu = () => {
-        this.setState({ opened: '' });
+        this.setState({ opened: false });
     };
 
     protected handleButtonClick = () => {
@@ -80,25 +72,45 @@ export class MarketAccountSelect extends React.PureComponent<
                         {p.name}
                     </div>
                     <div className="sonm-market-select-item__balance">
-                        {p.usdBalance} USD ({p.snmBalance} SNM)
+                        <Balance
+                            balance={p.usdBalance}
+                            decimalPointOffset={18}
+                            decimalDigitAmount={2}
+                            symbol="USD"
+                        />
+                        (<Balance
+                            balance={p.primaryTokenBalance}
+                            decimalPointOffset={18}
+                            decimalDigitAmount={2}
+                            symbol="SNM"
+                        />)
                     </div>
                 </Tag>
             );
         }
     };
 
-    protected handleSelectAccount = (account: IAccount) => {};
+    protected handleSelectAccount = (account: IAccount) => {
+        debugger;
+
+        this.props.onChange(account);
+
+        this.setState({ opened: false });
+    };
 
     public render() {
         const p = this.props;
         const account = p.value;
         const accounts = p.accounts;
 
+        if (!account) {
+            return null;
+        }
+
         return (
             <DropdownInput
                 className={cn(p.className, 'sonm-market-account', {
                     'sonm-market-account--opened': this.state.opened,
-                    'sonm-market-account--hidden': this.props.hidden,
                 })}
                 isExpanded={this.state.opened}
                 onButtonClick={this.handleButtonClick}

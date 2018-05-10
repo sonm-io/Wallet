@@ -4,9 +4,8 @@ display balance:
         fullString="20000000000000000000000000000000000 ETH"
         symbol="ETH"
         widthPx={330}
-        fontSizePx={40}
     />
-    
+
 display balance:
 
     <div style={{ border: '1px solid black', width: '100px', height: '50px' }}>
@@ -15,6 +14,6 @@ display balance:
             balance="222323438948.34234234"
             symbol="ETH"
             maxWidthPx={330}
-            fontSizePx={10}
+            maxWidthPx={330}
         />
-    </div> 
+    </div>

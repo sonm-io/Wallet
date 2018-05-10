@@ -80,7 +80,6 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                         balance={etherBalance}
                         symbol="Ether"
                         decimalPointOffset={18}
-                        fontSizePx={16}
                     />
                 ) : null}
                 <Hash
@@ -95,7 +94,6 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                         balance={primaryTokenBalance}
                         symbol={primaryTokenInfo.symbol}
                         decimalPointOffset={primaryTokenInfo.decimalPointOffset}
-                        fontSizePx={16}
                     />
                 ) : null}
                 {hasButtons && json ? (

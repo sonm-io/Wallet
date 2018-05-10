@@ -2,7 +2,7 @@ import { INavMenuDropdownProps } from './index';
 
 export const props: INavMenuDropdownProps = {
     onChange: (url: string) => alert(url),
-    path: '/send',
+    topMenuActiveItem: '/send',
     items: [
         [
             'Wallet',

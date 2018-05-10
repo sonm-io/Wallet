@@ -23,7 +23,6 @@
     }
 
     & &__popup {
-        // TODO
         margin: 4px 0 0 0;
         background: @dropdownInputBgColor;
         position: absolute;
@@ -31,23 +30,7 @@
         min-width: 100%;
         z-index: 100;
         max-width: 4000px;
-    }
-
-    &__button {
-        background-color: var(--dropdown-input-button-bg-color);
-        &:after {
-            content: '';
-            width: 6px;
-            height: 6px;
-            position: absolute;
-            border: solid @dropdownInputBorderHoverColor 1px;
-            border-right-width: 0;
-            border-bottom-width: 0;
-            top: 50%;
-            right: 9px;
-            transform: translate(0, -4px) rotateZ(225deg);
-            transition: transform 100ms;
-        }
+        cursor: pointer;
     }
 
     &--expanded > &__button {
@@ -68,6 +51,9 @@
         box-shadow: none;
         transition: box-shadow 0.1s 0.1s, border-color 0.1s 0.1s;
         outline: none;
+        background-color: var(--dropdown-input-button-bg-color);
+        cursor: pointer;
+        white-space: nowrap;
 
         &:hover {
             border: 1px solid @dropdownInputBorderHoverColor;
@@ -76,9 +62,23 @@
 
         &:focus,
         &:active {
-            border-color: #9ca0a6;
+            border-color: @dropdownInputBorderHoverColor;
             outline: none;
             box-shadow: @dropdownInputBorderActiveBorder;
+        }
+
+        &:after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            position: absolute;
+            border: solid @dropdownInputBorderHoverColor 1px;
+            border-right-width: 0;
+            border-bottom-width: 0;
+            top: 50%;
+            right: 9px;
+            transform: translate(0, -4px) rotateZ(225deg);
+            transition: transform 100ms;
         }
     }
 }

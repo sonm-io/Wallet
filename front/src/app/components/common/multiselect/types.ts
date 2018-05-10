@@ -4,26 +4,23 @@ export interface IMultiSelectChangeParams<T> {
     valueString: string;
 }
 
-export interface IMultiSelectRequiredInputProps<T> {
+export interface IMultiSelectRequiredProps<T> {
     list: T[];
+    value: T[];
     name: string;
     onChange: (params: IMultiSelectChangeParams<T>) => void;
-    isExpanded: boolean;
-    onButtonClick: () => void;
-    onRequireClose: () => void;
-    onButtonApplyClick: () => void;
-    clearBtn: boolean;
-    value: T[];
+    hasClearButton: boolean;
 }
 
-export interface IMultiSelectOptionalInputProps {
+export interface IMultiSelectOptionalProps {
     label: string;
     className: string;
     nameIndex: string;
-    valueIndex: string;
     filterPlaceHolder: string;
-    panelStyle: object;
 }
 
-export type IMultiSelectInputProps<T> = IMultiSelectRequiredInputProps<T> &
-    Partial<IMultiSelectOptionalInputProps>;
+export type IMultiSelectAllProps<T> = IMultiSelectRequiredProps<T> &
+    IMultiSelectOptionalProps;
+
+export type IMultiSelectProps<T> = IMultiSelectRequiredProps<T> &
+    Partial<IMultiSelectOptionalProps>;

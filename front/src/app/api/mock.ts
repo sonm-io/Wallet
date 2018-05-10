@@ -149,7 +149,7 @@ export function send(
     return result;
 }
 
-export const profileListResult: t.IResult<t.IProfileListResult> = {
+export const profileListResult: t.IResult<t.IListResult<t.IProfileBrief>> = {
     data: {
         records: [
             {
@@ -159,20 +159,18 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 sellOrders: 88,
                 deals: 98,
                 country: 'ru',
-                isPro: true,
-                isCorp: true,
-                status: t.EProfileStatus.anon,
+                logoUrl: '',
+                status: t.EnumProfileStatus.anon,
             },
             {
-                name: undefined,
+                name: '',
                 address: '0x1234567890123456789012345678901234567893',
                 buyOrders: 99,
                 sellOrders: 88,
                 deals: 98,
                 country: 'ru',
-                isPro: true,
-                isCorp: true,
-                status: t.EProfileStatus.anon,
+                logoUrl: '',
+                status: t.EnumProfileStatus.anon,
             },
             {
                 name: 'Ololan Ololoshevich',
@@ -181,9 +179,8 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 sellOrders: 88,
                 deals: 98,
                 country: 'gb',
-                isPro: true,
-                isCorp: true,
-                status: t.EProfileStatus.anon,
+                logoUrl: '',
+                status: t.EnumProfileStatus.anon,
             },
             {
                 name: 'BG',
@@ -192,9 +189,8 @@ export const profileListResult: t.IResult<t.IProfileListResult> = {
                 sellOrders: 88,
                 deals: 98,
                 country: 'us',
-                isPro: true,
-                isCorp: true,
-                status: t.EProfileStatus.anon,
+                logoUrl: '',
+                status: t.EnumProfileStatus.anon,
             },
         ],
         total: 5,

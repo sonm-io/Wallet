@@ -1,39 +1,47 @@
 import * as React from 'react';
 import { Icon } from 'app/components/common/icon';
 import { NavMenuDropdown, TMenuItem } from '../nav-menu-dropdown';
-import { MarketAccountSelect } from '../account-select';
-import { marketAccountSelectProps } from '../account-select/mock-data';
+import { MarketAccountSelect, IAccount } from '../account-select';
 import { AppBalance } from '../balance';
+
+export { IAccount } from '../account-select';
 
 export interface IAppHeaderProps {
     className?: string;
-    path: string;
     isTestNet: boolean;
     gethNodeUrl: string;
     sonmNodeUrl: string;
     onNavigate: (url: string) => void;
     onExit: () => void;
+    onChangeAccount: (account: IAccount) => void;
+    hasMarketAccountSelect: boolean;
+    account?: IAccount;
+    accountList: Array<IAccount>;
 }
+
+let sendPath = '';
+let marketPath = '';
 
 export class AppHeader extends React.Component<IAppHeaderProps, any> {
     protected static menuConfig: Array<TMenuItem> = [
         [
             'Wallet',
-            '/send',
+            (sendPath = '/wallet/send'),
             [
-                ['Accounts', '/accounts', undefined],
-                ['History', '/history', undefined],
-                ['Send', '/send', undefined],
+                ['Accounts', '/wallet/accounts', undefined],
+                ['History', '/wallet/history', undefined],
+                ['Send', '/wallet/send', undefined],
             ],
         ],
         [
             'Market',
-            '/market/deals',
+            (marketPath = '/market/deals'),
             [
                 ['Search', '/market/search', undefined],
-                ['Profiles', '/market/profile-list', undefined],
+                ['Profiles', '/market/profiles', undefined],
                 ['Deals', '/market/deals', undefined],
-                ['Send', '/market/send', undefined],
+                ['Deposit', '/market/dw/deposit', undefined],
+                ['Withdraw', '/market/dw/withdraw', undefined],
             ],
         ],
     ];
@@ -42,6 +50,10 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
         event.preventDefault();
 
         this.props.onExit();
+    };
+
+    protected handleChangePath = (path: string) => {
+        this.props.onNavigate(path);
     };
 
     public render() {
@@ -55,15 +67,21 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
             >
                 <div className="sonm-app-header__logo sonm-app-header__item" />
                 <NavMenuDropdown
-                    className={'sonm-app-header__menu sonm-app-header__item'}
-                    path={p.path}
+                    className="sonm-app-header__menu sonm-app-header__item"
+                    topMenuActiveItem={
+                        p.hasMarketAccountSelect ? marketPath : sendPath
+                    }
                     items={AppHeader.menuConfig}
-                    onChange={this.props.onNavigate}
+                    onChange={this.handleChangePath}
                 />
-                <MarketAccountSelect
-                    {...marketAccountSelectProps}
-                    className={'sonm-app-header__account sonm-app-header__item'}
-                />
+                {p.account && p.hasMarketAccountSelect ? (
+                    <MarketAccountSelect
+                        value={p.account}
+                        accounts={p.accountList}
+                        onChange={p.onChangeAccount}
+                        className="sonm-app-header__account sonm-app-header__item"
+                    />
+                ) : null}
                 <div className="sonm-app-header-block__wrapper sonm-app-header__item">
                     <AppBalance
                         className="sonm-app-header-block__balance"

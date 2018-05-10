@@ -102,7 +102,6 @@ export class AddToken extends React.Component<IProps, {}> {
                                     decimalPointOffset={
                                         tokenInfo.decimalPointOffset
                                     }
-                                    fontSizePx={16}
                                 />
                             </span>
                         </div>

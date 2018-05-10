@@ -2,7 +2,7 @@ import { OnlineStore } from './online-store';
 
 export { OnlineStore } from './online-store';
 
-import { IValidation, ISendTransaction } from 'app/api';
+import { IValidation, ISendTransaction, ICurrencyInfo } from 'app/api';
 
 export interface IHasAddress {
     address: string;
@@ -62,6 +62,7 @@ export enum AlertType {
 }
 
 export interface IAlert {
+    id: string;
     type: AlertType;
     message: string;
 }
@@ -80,4 +81,22 @@ export enum Status {
     PENDING,
     ERROR,
     DONE,
+}
+
+export interface IAccountItemView {
+    address: string;
+    json: string;
+    name: string;
+    etherBalance: string;
+    usdBalance: string;
+    primaryTokenBalance: string;
+    primaryTokenInfo: ICurrencyInfo;
+}
+
+export interface ICurrencyItemView {
+    address: string;
+    name: string;
+    symbol: string;
+    balance: string;
+    decimalPointOffset: number;
 }

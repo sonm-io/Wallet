@@ -60,6 +60,14 @@ export interface ITxListFilter {
     query?: string;
 }
 
+export interface IListQuery<T = string> {
+    limit: number;
+    offset: number;
+    sortBy?: string;
+    sortDesc?: boolean;
+    filter?: T;
+}
+
 export interface ISettings {
     chainId: string;
     nodeUrl: string;
@@ -82,12 +90,17 @@ export enum NetworkEnum {
     rinkeby = 'rinkeby',
 }
 
-export enum EProfileStatus {
-    anon = 0,
-    reg = 1,
-    ident = 2,
-    full = 3,
+export enum EnumProfileStatus {
+    anonimest = 0,
+    anon = 1,
+    reg = 2,
+    ident = 3,
     pro = 4,
+}
+
+export enum EnumProfileRole {
+    customer = 1,
+    supplier = 2,
 }
 
 export interface IAttribute {
@@ -96,21 +109,22 @@ export interface IAttribute {
 }
 
 export interface IProfileBrief {
-    name?: string;
+    name: string;
     address: string;
-    status: EProfileStatus;
+    status: EnumProfileStatus;
     sellOrders: number;
     buyOrders: number;
     deals: number;
-    country?: string;
-    isPro?: boolean;
-    isCorp?: boolean;
-    logoUrl?: string;
-    attributes?: IAttribute[];
+    country: string;
+    logoUrl: string;
 }
 
-export interface IProfileListResult {
-    records: Array<IProfileBrief>;
+export interface IProfileFull extends IProfileBrief {
+    attributes: Array<IAttribute>;
+}
+
+export interface IListResult<T> {
+    records: Array<T>;
     total: number;
 }
 
@@ -129,6 +143,10 @@ export interface IOrderListResult {
 
 export interface IOrderListFilter {
     authorID?: string;
+}
+
+export interface ISender {
+    send: (messageType: string, payload?: any) => any;
 }
 
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

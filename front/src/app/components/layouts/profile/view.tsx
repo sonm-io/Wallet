@@ -6,7 +6,7 @@ import { Statistic } from './sub/statistic';
 import { ICertificateProps } from './sub/certificate';
 import { CertificatesPanel } from './sub/certificates-panel';
 import { Panel } from 'app/components/common/panel';
-import { EProfileStatus } from 'app/api/types';
+import { EnumProfileStatus } from 'app/api/types';
 
 interface IProps {
     className?: string;
@@ -21,10 +21,10 @@ interface IProps {
     supplierAvgTime: string;
     supplierToken: string;
     my: boolean;
-    userName: string;
-    countryAbCode2: string;
-    logoUrl: string;
-    userStatus: EProfileStatus;
+    userName?: string;
+    countryAbCode2?: string;
+    logoUrl?: string;
+    userStatus: EnumProfileStatus;
     address: string;
     style?: any;
 }

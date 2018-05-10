@@ -4,7 +4,6 @@ interface IBalanceViewProps {
     className?: string;
     balance?: string;
     symbol?: string;
-    fontSizePx?: number;
     decimalDigitAmount?: number;
     prefix?: string;
     decimalPointOffset: number;
@@ -28,7 +27,6 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
     public render() {
         const {
             className,
-            fontSizePx,
             prefix,
             decimalPointOffset,
             decimalDigitAmount = 4,
@@ -42,14 +40,15 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
             num = Balance.limitDecimalDigitAmount(num, decimalDigitAmount);
         }
 
-        const style = fontSizePx ? { fontSize: `${fontSizePx}px` } : undefined;
-
         return (
-            <div className={cn('sonm-balance', className)} style={style}>
+            <div className={cn('sonm-balance', className)}>
                 <span className="sonm-balance__number">
-                    {prefix} {num}
+                    {prefix ? `${prefix} ` : null}
+                    {num}
                 </span>
-                <span className="sonm-balance__symbol">{symbol}</span>
+                {symbol ? (
+                    <span className="sonm-balance__symbol">{symbol}</span>
+                ) : null}
             </div>
         );
     }

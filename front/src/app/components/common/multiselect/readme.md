@@ -14,13 +14,7 @@ Multiselect:
             onRequireClose: 0
         },
 
-        value: [{name: 'test3', value: 3}],
-
-        toggle: action.bound(function (event, value) {
-            this.isExpanded = value !== undefined
-                ? value
-                : !this.isExpanded;
-        }),
+        value: [],
 
         // Event Handlers:
 
@@ -33,11 +27,6 @@ Multiselect:
             this.eventCounter.onChange++;
             this.value = params.value;
         }),
-
-        onRequireClose: action.bound(function () {
-            this.eventCounter.onRequireClose++;
-            this.toggle(null, false);
-        }),
     });
 
     const list = Array.from(Array(50).keys()).map(i => ({ name: 'test' + (i+1), value: i+1 }));
@@ -47,24 +36,19 @@ Multiselect:
             name="test"
             label="Country"
             filterPlaceHolder='Type to search'
-            isExpanded={state.isExpanded}
-            clearBtn
-            panelStyle={{ width: 150 }}
+            hasClearButton
             // data
             nameIndex="name"
-            valueIndex="value"
             list={list}
             value={toJS(state.value)}
             // events
             onChange={state.onChange}
-            onButtonClick={state.onButtonClick}
-            onRequireClose={state.onRequireClose.bind(state)}
         />
     );
 
     const StateInfo = observer(() =>
         <div>
-            <div>value: {state.value.map(i => `${i.value}: ${i.name}`).join('; ')}</div>
+            <div>value: {JSON.stringify(state.value)}</div>
             <div>isExpanded: {state.isExpanded.toString()}</div>
             <div>events: {Object.keys(state.eventCounter).map(name => `${name}: ${state.eventCounter[name]}`).join(', ')}</div>
         </div>

@@ -8,7 +8,7 @@ export type TMenuItem = TItem<TItem<undefined>>;
 
 export interface INavMenuDropdownProps {
     items: Array<TMenuItem>;
-    path: string;
+    topMenuActiveItem: string;
     onChange: (url: string) => void;
     className?: string;
 }
@@ -21,10 +21,19 @@ export class NavMenuDropdown extends React.PureComponent<
         opened: '',
     };
 
+    public static dropdownCssClasses = {
+        root: 'sonm-nav-menu-dropdown',
+        button: 'sonm-nav-menu-dropdown__button',
+        popup: 'sonm-nav-menu-dropdown__popup',
+        expanded: 'sonm-nav-menu-dropdown--expanded',
+    };
+
     protected handleClickUrl = (event: any) => {
         const path = event.target.value;
 
         this.props.onChange(path);
+
+        this.handleCloseTopMenu();
     };
 
     protected handleCloseTopMenu = () => {
@@ -60,35 +69,39 @@ export class NavMenuDropdown extends React.PureComponent<
                                 'sonm-nav-menu__item--opened':
                                     this.state.opened === title,
                                 'sonm-nav-menu__item--active':
-                                    this.props.path === path,
+                                    this.props.topMenuActiveItem === path,
                             })}
                             key={title}
                             valueString={title}
                             isExpanded={this.state.opened === title}
                             onButtonClick={this.getBindedTopMenuHandler(title)}
                             onRequireClose={this.handleCloseTopMenu}
-                            dropdownCssClasses={{
-                                root: 'sonm-nav-menu-dropdown',
-                                button: 'sonm-nav-menu-dropdown__button',
-                                popup: 'sonm-nav-menu-dropdown__popup',
-                                expanded: 'sonm-nav-menu-dropdown--expanded',
-                            }}
+                            dropdownCssClasses={
+                                NavMenuDropdown.dropdownCssClasses
+                            }
                         >
-                            {children &&
-                                children.map((subItem: TItem<undefined>) => {
-                                    const [subTitle, subPath] = subItem;
+                            <div className="sonm-nav-menu__popup">
+                                {children &&
+                                    children.map(
+                                        (subItem: TItem<undefined>) => {
+                                            const [subTitle, subPath] = subItem;
 
-                                    return (
-                                        <button
-                                            key={subPath}
-                                            value={subPath}
-                                            className="sonm-nav-menu__sub-item"
-                                            onClick={this.handleClickUrl}
-                                        >
-                                            {subTitle}
-                                        </button>
-                                    );
-                                })}
+                                            return (
+                                                <button
+                                                    key={subTitle}
+                                                    value={subPath}
+                                                    type="button"
+                                                    className="sonm-nav-menu__sub-item"
+                                                    onClick={
+                                                        this.handleClickUrl
+                                                    }
+                                                >
+                                                    {subTitle}
+                                                </button>
+                                            );
+                                        },
+                                    )}
+                            </div>
                         </DropdownInput>
                     );
                 })}

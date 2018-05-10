@@ -1,111 +1,112 @@
 import * as t from './types';
-import { IAttribute } from '../../app/api/types';
+// import { IAttribute } from '../../app/api/types';
+import * as mapKeys from 'lodash/fp/mapKeys';
+import * as pick from 'lodash/fp/pick';
 
-interface IDictionary {
-    [index: string]: string;
+interface IDictionary<T> {
+    [index: string]: keyof T;
 }
 
-//const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 export class DWH {
-    public structureConverter = {
-        UserID: 'address',
-        IdentityLevel: 'status',
-        Name: 'name',
-        Country: 'country',
-        IsCorporation: 'isCorp',
-        IsProfessional: 'isPro',
-        activeAsks: 'buyOrders',
-        activeBids: 'sellOrders',
-        Certificates: 'certificates',
-    } as IDictionary;
-
     private url: string;
 
     constructor(url: string) {
         this.url = url;
     }
 
-    public getProfiles = async (): Promise<t.IProfileListResult> => {
-        const res = await this.fetchData('GetProfiles');
-        const records = [] as t.IProfileBrief[];
+    public static readonly mapProfile: IDictionary<t.IProfileBrief> = {
+        UserID: 'address',
+        IdentityLevel: 'status',
+        Name: 'name',
+        Country: 'country',
+        activeAsks: 'buyOrders',
+        activeBids: 'sellOrders',
+    };
+    public static renameProfileKeys = mapKeys((x: string) => DWH.mapProfile[x]);
+    public static pickProfileKeys = pick(
+        (Object as any).values(DWH.mapProfile),
+    );
 
-        if (res && res.profiles) {
-            for (const item of res.profiles) {
-                records.push(this.parseProfile(item));
-            }
-        }
+    public static readonly defaultProfile: t.IProfileBrief = {
+        name: '',
+        address: '0x0',
+        status: t.EnumProfileStatus.anonimest,
+        sellOrders: 0,
+        buyOrders: 0,
+        deals: 0,
+        country: '',
+        logoUrl: '',
+    };
+
+    public static readonly mapAttributes: any = {
+        1201: ['Website', self.atob],
+        2201: ['Telephone', self.atob],
+        2202: ['E-mail', self.atob],
+        2203: ['Service link', self.atob],
+    };
+
+    private processProfile(item: any): t.IProfileBrief {
+        const renamed = DWH.renameProfileKeys(item);
+        const picked = DWH.pickProfileKeys(renamed);
+        const result = { ...DWH.defaultProfile, ...picked };
+
+        return result as t.IProfileBrief;
+    }
+
+    public getProfiles = async ({
+        filter,
+        limit,
+        offset,
+    }: t.IListQuery): Promise<t.IListResult<t.IProfileBrief>> => {
+        const mongoLikeFilter = filter ? JSON.parse(filter) : {};
+
+        const res = await this.fetchData('GetProfiles', {
+            offset,
+            limit,
+            name: mongoLikeFilter.query.$eq,
+            country: mongoLikeFilter.country.$in.length
+                ? mongoLikeFilter.country.$in[0].toLowerCase()
+                : null,
+            identityLevel:
+                mongoLikeFilter.status.$gte <= 1
+                    ? 0
+                    : mongoLikeFilter.status.$gte,
+        });
 
         return {
-            records,
-            total: 4,
+            records: res.profiles ? res.profiles.map(this.processProfile) : [],
+            total: 100,
         };
     };
 
-    public getProfile = async (address: string): Promise<t.IProfileBrief> => {
+    public getProfileFull = async ({
+        address,
+    }: any): Promise<t.IProfileFull> => {
         const res = await this.fetchData('GetProfileInfo', { Id: address });
-        return this.parseProfile(res);
+        const brief = this.processProfile(res);
+        const full = {
+            ...brief,
+            attributes: res.Certificates
+                ? JSON.parse(res.Certificates)
+                      .map((x: any) => {
+                          if (x.attribute in DWH.mapAttributes) {
+                              const [label, converter] = DWH.mapAttributes[
+                                  x.attribute
+                              ];
+
+                              return {
+                                  value: converter(x.value),
+                                  label,
+                              };
+                          }
+                          return undefined;
+                      })
+                      .filter((x: any) => x !== undefined)
+                : [],
+        };
+
+        return full as any; // TODO
     };
-
-    private parseProfile(item: any): t.IProfileBrief {
-        const structureConverter = {
-            UserID: 'address',
-            IdentityLevel: 'status',
-            Name: 'name',
-            Country: 'country',
-            IsCorporation: 'isCorp',
-            IsProfessional: 'isPro',
-            activeAsks: 'buyOrders',
-            activeBids: 'sellOrders',
-            Certificates: 'certificates',
-        } as IDictionary;
-
-        const attributesConverter = {
-            1201: 'Website',
-            2201: 'Telephone',
-            2202: 'E-mail',
-            2203: 'Service link',
-        } as IDictionary;
-
-        for (const key of Object.keys(structureConverter)) {
-            const newKey = structureConverter[key];
-
-            if (item[key]) {
-                if (key === 'Certificates') {
-                    item.attributes = [] as IAttribute[];
-
-                    for (const row of JSON.parse(item[key])) {
-                        try {
-                            if (attributesConverter[row.attribute]) {
-                                item.attributes.push({
-                                    label: attributesConverter[row.attribute],
-                                    value: self.atob(row.value),
-                                });
-                            } else {
-                                item.attributes.push({
-                                    label: row.attribute,
-                                    value: self.atob(row.value),
-                                });
-                            }
-                        } catch (err) {
-                            //console.log([row.attribute, row.value]);
-                        }
-                    }
-                } else {
-                    item[newKey] = item[key];
-                }
-            } else {
-                if (newKey === 'country') {
-                    item[newKey] = '';
-                } else {
-                    item[newKey] = 0;
-                }
-            }
-            delete item[key];
-        }
-
-        return item as t.IProfileBrief;
-    }
 
     public getOrders = async (): Promise<t.IOrderListResult> => {
         const res = await this.fetchData('GetOrders');
