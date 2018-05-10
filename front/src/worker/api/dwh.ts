@@ -64,12 +64,13 @@ export class DWH {
         const res = await this.fetchData('GetProfiles', {
             offset,
             limit,
-            name: mongoLikeFilter.query.$eq,
-            country: mongoLikeFilter.country.$in.length
-                ? mongoLikeFilter.country.$in[0].toLowerCase()
-                : null,
+            name: mongoLikeFilter.query ? mongoLikeFilter.query.$eq : null,
+            country:
+                mongoLikeFilter.country && mongoLikeFilter.country.$in.length
+                    ? mongoLikeFilter.country.$in[0].toLowerCase()
+                    : null,
             identityLevel:
-                mongoLikeFilter.status.$gte <= 1
+                !mongoLikeFilter.status || mongoLikeFilter.status.$gte <= 1
                     ? 0
                     : mongoLikeFilter.status.$gte,
         });
@@ -109,7 +110,7 @@ export class DWH {
         return full as any; // TODO
     };
 
-    public getOrders = async (): Promise<t.IOrderListResult> => {
+    public getOrders = async (): Promise<t.IListResult<t.IOrder>> => {
         const res = await this.fetchData('GetOrders');
         const records = [] as t.IOrder[];
 
@@ -121,11 +122,12 @@ export class DWH {
 
         return {
             records,
+            total: records.length,
         };
     };
 
-    public getOrder = async (address: string): Promise<t.IOrder> => {
-        const res = await this.fetchData('GetOrderDetails', { Id: address });
+    public getOrderFull = async ({ id }: any): Promise<t.IOrder> => {
+        const res = await this.fetchData('GetOrderDetails', id);
         return this.parseOrder(res);
     };
 

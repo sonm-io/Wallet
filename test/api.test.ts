@@ -25,28 +25,28 @@ describe('Api', async function() {
         expect(response).to.have.nested.property('data.pong');
     });
 
-    it('should get merket profiles', async function() {
-        const response = await Api.getProfileList();
-        expect(response).to.have.nested.property('data.records');
-        expect(response).to.have.nested.property('data.total');
+    it('should get market profiles', async function() {
+        const response = await Api.profile.fetchList({});
+        expect(response).to.have.nested.property('records');
+        expect(response).to.have.nested.property('total');
 
-        if (response.data) {
-            const response1 = await Api.getProfile(
-                response.data.records[1].address,
+        if (response.records) {
+            const response1 = await Api.profile.fetchByAddress(
+                response.records[1].address,
             );
-            expect(response1).to.have.nested.property('data.name');
-            expect(response1).to.have.nested.property('data.address');
+            expect(response1).to.have.nested.property('name');
+            expect(response1).to.have.nested.property('address');
         }
     });
 
-    it('should get market orders profiles', async function() {
-        const response = await Api.getOrderList();
-        expect(response).to.have.nested.property('data.records');
+    it('should get market orders', async function() {
+        const response = await Api.order.fetchList({});
+        expect(response).to.have.nested.property('records');
 
-        if (response.data) {
-            const response1 = await Api.getOrder(response.data.records[0].id);
-            expect(response1).to.have.nested.property('data.id');
-            expect(response1).to.have.nested.property('data.orderType');
+        if (response.records) {
+            const response1 = await Api.order.fetchById(response.records[0].id);
+            expect(response1).to.have.nested.property('id');
+            expect(response1).to.have.nested.property('orderType');
         }
     });
 
@@ -83,10 +83,10 @@ describe('Api', async function() {
         expect(response.data).not.equal(null);
     });
 
-    it('should recieve token exchange rate', async function() {
-        const response = await Api.getTokenExchangeRate();
-        expect(response.data).not.equal(null);
-    });
+    // it('should recieve token exchange rate', async function() {
+    //     const response = await Api.getTokenExchangeRate();
+    //     expect(response.data).not.equal(null);
+    // });
 
     it('should get token info', async function() {
         const response = await Api.getTokenInfo(tokenAddress, [address]);
@@ -173,6 +173,7 @@ describe('Api', async function() {
         }
     });
 
+    /*
     it('should export wallet && import wallet', async function() {
         const response = await Api.exportWallet();
         expect(response.data).to.be.a('string');
@@ -214,7 +215,6 @@ describe('Api', async function() {
         expect(response.validation).equal(undefined);
     });
 
-    /*
     it('should deposit', async function() {
         const currencies = await Api.getCurrencyList();
         expect(currencies.data).not.equal(null);
