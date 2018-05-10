@@ -63,6 +63,7 @@ export class DWH {
         const res = await this.fetchData('GetProfiles', {
             offset,
             limit,
+            name: mongoLikeFilter.query.$eq,
             country: mongoLikeFilter.country.$in.length
                 ? mongoLikeFilter.country.$in[0].toLowerCase()
                 : null,

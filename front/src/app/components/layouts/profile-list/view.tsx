@@ -180,6 +180,10 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
         this.props.onChangeFilter('country', value);
     };
 
+    public handleChangeQueryFilter = (event: any) => {
+        this.props.onChangeFilter('query', event.target.value);
+    };
+
     public render() {
         const p = this.props;
         const { className, dataSource } = p;
@@ -234,7 +238,10 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
                         compareValues={FixedSelect.compareAsJson}
                         onChange={this.handleChangeFilter}
                     />
-                    <Input />
+                    <Input
+                        name="query"
+                        onChange={this.handleChangeQueryFilter}
+                    />
                 </div>
                 <ProfileTable
                     className="sonm-profiles__table"

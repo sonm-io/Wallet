@@ -6,6 +6,7 @@ export interface IOrderFilter {
     role: EnumProfileRole;
     country: Array<string>;
     minDeals: number | undefined;
+    query: string;
 }
 
 export interface IFilterStore {
@@ -20,6 +21,7 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
         role: undefined,
         country: undefined,
         minDeals: undefined,
+        query: '',
     };
 
     @action
@@ -53,6 +55,11 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
     }
 
     @computed
+    public get query() {
+        return this.userInput.query || '';
+    }
+
+    @computed
     public get minDeals() {
         return this.userInput.minDeals;
     }
@@ -68,6 +75,9 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
             },
             country: {
                 $in: this.country,
+            },
+            query: {
+                $eq: this.query,
             },
         };
 
