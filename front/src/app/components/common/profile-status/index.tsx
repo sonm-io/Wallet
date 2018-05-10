@@ -20,7 +20,11 @@ export function ProfileStatus(p: IProfileStatusProps) {
         modifier = 'pro';
     }
 
-    return <div className={`sonm-profile-status--${modifier}`}>{name}</div>;
+    return (
+        <div className={`sonm-profile-status sonm-profile-status--${modifier}`}>
+            {name}
+        </div>
+    );
 }
 
 export default ProfileStatus;

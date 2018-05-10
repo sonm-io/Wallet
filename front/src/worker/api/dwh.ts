@@ -58,11 +58,11 @@ export class DWH {
         limit,
         offset,
     }: t.IListQuery): Promise<t.IListResult<t.IProfileBrief>> => {
-        const res = await this.fetchData('GetProfiles');
-
         const mongoLikeFilter = filter ? JSON.parse(filter) : {};
 
         console.log(filter, mongoLikeFilter);
+
+        const res = await this.fetchData('GetProfiles');
 
         return {
             records: res.profiles.map(this.processProfile),

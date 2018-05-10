@@ -39,8 +39,6 @@ export class Profile extends React.PureComponent<IProps, IState> {
     protected async fetchData() {
         const profile = await Api.profile.fetcByAddress(this.props.address);
 
-        debugger;
-
         this.setState({
             profile,
         });
@@ -54,7 +52,7 @@ export class Profile extends React.PureComponent<IProps, IState> {
             <ProfileView
                 getUiText={returnFirstArg}
                 className={props.className}
-                definitionList={[]}
+                definitionList={profile.attributes}
                 certificates={[]}
                 description={''}
                 consumerDeals="0"

@@ -130,27 +130,15 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                                     className="sonm-profile-details__extra-value"
                                 >
                                     {render(value)}
-                                    <InfoBalloon className="sonm-profile-details__extra-info">
-                                        {'text'}
-                                    </InfoBalloon>
                                 </dd>,
+                                <InfoBalloon className="sonm-profile-details__extra-info">
+                                    {'text'}
+                                </InfoBalloon>,
                             );
                         }),
                         definitions)
                     }
                 </div>
-                {/*{definitions.length === 0 && (*/}
-                {/*<span className="sonm-profile-details__certificate">*/}
-                {/*{t('before_certification_link')}*/}
-                {/*<a*/}
-                {/*href="#go-to-instruction"*/}
-                {/*onClick={this.handleClickUrl}*/}
-                {/*>*/}
-                {/*{t('certification_link')}*/}
-                {/*</a>*/}
-                {/*{t('after_certification_link')}*/}
-                {/*</span>*/}
-                {/*)}*/}
             </Panel>
         );
     }
