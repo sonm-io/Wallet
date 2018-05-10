@@ -1,7 +1,13 @@
 import * as t from 'tcomb';
 import { createStruct } from './utils/runtime-types-utils';
 
-import { IProfileBrief, IListResult, IAttribute, IProfileFull } from './types';
+import {
+    IProfileBrief,
+    IListResult,
+    IAttribute,
+    IProfileFull,
+    IOrder,
+} from './types';
 
 export const TypeProfileBrief = createStruct<IProfileBrief>(
     {
@@ -38,4 +44,24 @@ export const TypeProfileFull = TypeProfileBrief.extend<IProfileFull>(
         attributes: t.list(TypeAttribute),
     },
     'IProfileFull',
+);
+
+export const TypeOrder = createStruct<IOrder>(
+    {
+        id: t.String,
+        orderType: t.Number,
+        price: t.Number,
+        duration: t.Number,
+        orderStatus: t.Number,
+        authorID: t.String,
+    },
+    'IOrder',
+);
+
+export const TypeOrderList = createStruct<IListResult<IOrder>>(
+    {
+        records: t.list(TypeOrder),
+        total: t.Number,
+    },
+    'IListResult<IOrder>',
 );

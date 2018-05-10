@@ -63,8 +63,6 @@ const DEFAULT_TOKENS: t.ITokens = {
 };
 
 class Api {
-    private dwh: DWH;
-
     protected routes: {
         [index: string]: any;
     };
@@ -127,8 +125,8 @@ class Api {
 
             'profile.get': wrapInResponse(dwh.getProfileFull),
             'profile.list': wrapInResponse(dwh.getProfiles),
-            'order.get': this.getOrder,
-            'order.list': this.getOrders,
+            'order.get': wrapInResponse(dwh.getOrderFull),
+            'order.list': wrapInResponse(dwh.getOrders),
 
             'market.buyOrder': this.buyOrder,
 
@@ -140,8 +138,6 @@ class Api {
             getTokenInfo: this.getTokenInfo,
             getPresetTokenList: this.getPresetTokenList,
         };
-
-        this.dwh = dwh;
     }
 
     public decrypt = (data: string): any => {
@@ -1160,28 +1156,6 @@ class Api {
         return {
             data: [filtered, total],
         };
-    };
-
-    public getOrders = async (data: t.IPayload): Promise<t.IResponse> => {
-        let { filters, limit, offset } = data;
-
-        filters = filters || {};
-        limit = limit || 10;
-        offset = offset || 0;
-
-        return {
-            data: await this.dwh.getOrders(),
-        };
-    };
-
-    public getOrder = async (data: t.IPayload): Promise<t.IResponse> => {
-        if (data.id) {
-            return {
-                data: await this.dwh.getOrder(data.id),
-            };
-        } else {
-            throw new Error('required_params_missed');
-        }
     };
 
     public async resolve(type: string, payload: any): Promise<t.IResponse> {
