@@ -60,12 +60,21 @@ export class DWH {
     }: t.IListQuery): Promise<t.IListResult<t.IProfileBrief>> => {
         const mongoLikeFilter = filter ? JSON.parse(filter) : {};
 
-        console.log(filter, mongoLikeFilter);
-
-        const res = await this.fetchData('GetProfiles');
+        const res = await this.fetchData('GetProfiles', {
+            offset,
+            limit,
+            name: mongoLikeFilter.query.$eq,
+            country: mongoLikeFilter.country.$in.length
+                ? mongoLikeFilter.country.$in[0].toLowerCase()
+                : null,
+            identityLevel:
+                mongoLikeFilter.status.$gte <= 1
+                    ? 0
+                    : mongoLikeFilter.status.$gte,
+        });
 
         return {
-            records: res.profiles.map(this.processProfile),
+            records: res.profiles ? res.profiles.map(this.processProfile) : [],
             total: 100,
         };
     };
@@ -78,22 +87,21 @@ export class DWH {
         const full = {
             ...brief,
             attributes: res.Certificates
-                ? JSON.parse(res.Certificates).map((x: any) => {
-                      if (x.attribute in DWH.mapAttributes) {
-                          const [label, converter] = DWH.mapAttributes[
-                              x.attribute
-                          ];
+                ? JSON.parse(res.Certificates)
+                      .map((x: any) => {
+                          if (x.attribute in DWH.mapAttributes) {
+                              const [label, converter] = DWH.mapAttributes[
+                                  x.attribute
+                              ];
 
-                          return {
-                              value: converter(x.value),
-                              label,
-                          };
-                      }
-                      return {
-                          value: String(x.value),
-                          label: String(x.attribute),
-                      };
-                  })
+                              return {
+                                  value: converter(x.value),
+                                  label,
+                              };
+                          }
+                          return undefined;
+                      })
+                      .filter((x: any) => x !== undefined)
                 : [],
         };
 

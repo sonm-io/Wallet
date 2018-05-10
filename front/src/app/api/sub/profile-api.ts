@@ -22,12 +22,10 @@ export class ProfileApi {
         return TypeProfileList(response.data);
     }
 
-    public async fetcByAddress(address: string): Promise<IProfileFull> {
+    public async fetchByAddress(address: string): Promise<IProfileFull> {
         const response = await this.ipc.send('profile.get', {
             address,
         });
-
-        debugger;
 
         return TypeProfileFull(response.data);
     }

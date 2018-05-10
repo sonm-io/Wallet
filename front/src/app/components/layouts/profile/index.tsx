@@ -37,7 +37,7 @@ export class Profile extends React.PureComponent<IProps, IState> {
     }
 
     protected async fetchData() {
-        const profile = await Api.profile.fetcByAddress(this.props.address);
+        const profile = await Api.profile.fetchByAddress(this.props.address);
 
         this.setState({
             profile,
