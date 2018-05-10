@@ -110,6 +110,7 @@ export const TypeOrder = createStruct<IOrder>(
         duration: t.Number,
         orderStatus: t.Number,
         authorID: t.String,
+        benchmarks: t.Any,
     },
     'IOrder',
 );

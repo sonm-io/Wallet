@@ -7,7 +7,7 @@ export interface IOrdersListItemProps {
     account: string;
     status: EnumProfileStatus;
     customFields: Map<string, string>;
-    usdPerHour: number;
+    usdPerHour: string;
     duration: number;
     // optional
     className?: string;

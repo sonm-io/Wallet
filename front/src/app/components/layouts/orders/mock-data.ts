@@ -12,7 +12,7 @@ const data: Array<IOrdersListItemProps> = [
             ['GPU ETH hashrate', '80.1 Mh/s'],
             ['RAM size', '1024 Mb'],
         ]),
-        usdPerHour: 8,
+        usdPerHour: '8',
         duration: 1000,
     },
     {
@@ -24,7 +24,7 @@ const data: Array<IOrdersListItemProps> = [
             ['GPU ETH hashrate', '180.1 Mh/s'],
             ['RAM size', '2048 Mb'],
         ]),
-        usdPerHour: 120,
+        usdPerHour: '120',
         duration: 50,
     },
     {
@@ -36,9 +36,41 @@ const data: Array<IOrdersListItemProps> = [
             ['GPU ETH hashrate', '211.22 Mh/s'],
             ['RAM size', '4096 Mb'],
         ]),
-        usdPerHour: 9,
+        usdPerHour: '9',
         duration: 5,
     },
 ];
 
-export { data };
+const getSorted = (
+    data: Array<IOrdersListItemProps>,
+    sortField: string,
+    isDesc: boolean,
+) => {
+    let list = data;
+    let sortFactor = isDesc ? -1 : 1;
+    switch (sortField) {
+        case 'CPU Count':
+        case 'GPU ETH hashrate':
+        case 'RAM size':
+            list = list.sort((a, b) => {
+                let result =
+                    (a.customFields.get(sortField) as any) >
+                    (b.customFields.get(sortField) as any);
+                return (result ? 1 : -1) * sortFactor;
+            });
+            break;
+        case 'Cost':
+            list = list.sort(
+                (a, b) => (a.usdPerHour > b.usdPerHour ? 1 : -1) * sortFactor,
+            );
+            break;
+        case 'Lease duration':
+            list = list.sort((a, b) => (a.duration - b.duration) * sortFactor);
+            break;
+        default:
+            throw new Error('Not implemented sort field: ' + sortField);
+    }
+    return list;
+};
+
+export { data, getSorted };

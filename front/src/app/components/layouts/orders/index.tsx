@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { Orders as OrdersCmp } from 'app/components/common/orders';
-import { data } from './mock-data';
-//import { rootStore } from 'app/stores';
-import { observable, action } from 'mobx';
+import { IOrdersListItemProps } from 'app/components/common/orders-list-item/types';
+//import { data, getSorted } from './mock-data';
+import { rootStore } from 'app/stores';
+import { observable, action, toJS } from 'mobx';
+import { IOrder, EnumProfileStatus } from 'app/api/types';
 
 const initialState = observable({
     eventsCounter: {
@@ -32,46 +34,36 @@ const initialState = observable({
     }),
 });
 
+const map = (source: IOrder): IOrdersListItemProps => {
+    let cpuCount = source.benchmarks.values[2] * 0.001;
+    let hashrate = source.benchmarks.values[9];
+    let ramSize = source.benchmarks.values[3] * 1024 * 1024;
+    return {
+        address: '0x0',
+        account: source.authorID,
+        status: source.orderStatus as EnumProfileStatus,
+        customFields: new Map([
+            ['CPU Count', `${cpuCount}`],
+            ['GPU ETH hashrate', `${hashrate} Mh/s`],
+            ['RAM size', `${ramSize} Mb`],
+        ]),
+        usdPerHour: source.price,
+        duration: source.duration,
+    };
+};
+
 @observer
 export class Orders extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.state = initialState;
-    }
-
-    protected getSorted() {
-        let list = data;
-        let sortFactor = this.state.desc ? -1 : 1;
-        switch (this.state.orderBy) {
-            case 'CPU Count':
-            case 'GPU ETH hashrate':
-            case 'RAM size':
-                list = list.sort((a, b) => {
-                    let result =
-                        (a.customFields.get(this.state.orderBy) as any) >
-                        (b.customFields.get(this.state.orderBy) as any);
-                    return (result ? 1 : -1) * sortFactor;
-                });
-                break;
-            case 'Cost':
-                list = list.sort(
-                    (a, b) => (a.usdPerHour - b.usdPerHour) * sortFactor,
-                );
-                break;
-            case 'Lease duration':
-                list = list.sort(
-                    (a, b) => (a.duration - b.duration) * sortFactor,
-                );
-                break;
-            default:
-                throw new Error(
-                    'Not implemented sort field: ' + this.state.orderBy,
-                );
-        }
-        return list;
+        rootStore.ordersListStore.update();
     }
 
     public render() {
+        const listStore = rootStore.ordersListStore;
+        const dataSource = toJS(listStore.records).map(map);
+
         let header = {
             orderBy: this.state.orderBy,
             orderKeys: [
@@ -88,6 +80,6 @@ export class Orders extends React.Component<any, any> {
             onChangeOrder: this.state.onChangeOrder,
             onRefresh: this.state.onRefresh,
         };
-        return <OrdersCmp header={header} list={this.getSorted()} />;
+        return <OrdersCmp header={header} list={dataSource} />;
     }
 }
