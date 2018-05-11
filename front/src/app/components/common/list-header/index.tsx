@@ -4,10 +4,6 @@ import * as cn from 'classnames';
 import { IListHeaderProps } from './types';
 
 export class ListHeader extends React.Component<IListHeaderProps, any> {
-    constructor(props: IListHeaderProps) {
-        super(props);
-    }
-
     protected getOrderIconName = (orderKey: string) => {
         if (orderKey === this.props.orderBy) {
             return this.props.orderDesc ? 'OrderDesc' : 'OrderAsc';

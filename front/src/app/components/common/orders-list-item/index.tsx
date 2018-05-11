@@ -5,10 +5,6 @@ import { IdentIcon } from '../ident-icon';
 import * as cn from 'classnames';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
-    constructor(props: IOrdersListItemProps) {
-        super(props);
-    }
-
     public render() {
         return (
             <div className={cn('orders-list-item', this.props.className)}>
