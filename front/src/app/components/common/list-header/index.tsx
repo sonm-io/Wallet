@@ -10,7 +10,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
 
     protected getOrderIconName = (orderKey: string) => {
         if (orderKey === this.props.orderBy) {
-            return this.props.desc ? 'OrderDesc' : 'OrderAsc';
+            return this.props.orderDesc ? 'OrderDesc' : 'OrderAsc';
         }
         return 'OrderAsc';
     };
@@ -21,7 +21,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
         const selectedKey = event.currentTarget.value;
         this.props.onChangeOrder(
             selectedKey,
-            !(this.props.orderBy === selectedKey && this.props.desc),
+            !(this.props.orderBy === selectedKey && this.props.orderDesc),
         );
     };
 
@@ -29,7 +29,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
         event: React.MouseEvent<HTMLButtonElement>,
     ) => {
         const limit = parseInt(event.currentTarget.value);
-        limit !== this.props.limit && this.props.onChangeLimit(limit);
+        limit !== this.props.pageLimit && this.props.onChangeLimit(limit);
     };
 
     public render() {
@@ -61,7 +61,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                     </div>
                 </div>
                 <div className="list-header__pageSize">
-                    {this.props.limits.map((limit: number) => {
+                    {this.props.pageLimits.map((limit: number) => {
                         return (
                             <button
                                 className="list-header__pageSize__button"
@@ -74,7 +74,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                                         'list-header__pageSize__button__label',
                                         {
                                             'list-header__pageSize__button__label--selected':
-                                                limit == this.props.limit,
+                                                limit == this.props.pageLimit,
                                         },
                                     )}
                                 >

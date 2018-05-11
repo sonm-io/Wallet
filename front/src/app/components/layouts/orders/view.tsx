@@ -9,9 +9,11 @@ export class OrdersView extends React.Component<IOrdersProps, any> {
     }
 
     public render() {
+        const { list, ...rest } = this.props;
+
         return (
             <div className="orders">
-                <ListHeader {...this.props.header} className="orders__header" />
+                <ListHeader className="orders__header" {...rest} />
                 <div className="orders__list">
                     {this.props.list.map(order => (
                         <OrdersListItem {...order} key={order.account} />

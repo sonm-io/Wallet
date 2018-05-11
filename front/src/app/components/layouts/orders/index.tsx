@@ -9,26 +9,8 @@ import { IOrder, EnumProfileStatus } from 'app/api/types';
 
 const store = rootStore.ordersListStore;
 
-const map = (source: IOrder): IOrdersListItemProps => {
-    let cpuCount = source.benchmarks.values[2] * 0.001;
-    let hashrate = source.benchmarks.values[9];
-    let ramSize = source.benchmarks.values[3] * 1024 * 1024;
-    return {
-        address: '0x0',
-        account: source.authorID,
-        status: source.orderStatus as EnumProfileStatus,
-        customFields: new Map([
-            ['CPU Count', `${cpuCount}`],
-            ['GPU ETH hashrate', `${hashrate} Mh/s`],
-            ['RAM size', `${ramSize} Mb`],
-        ]),
-        usdPerHour: source.price,
-        duration: source.duration,
-    };
-};
-
 @observer
-export class Orders extends React.Component<any, any> {
+export class Orders extends React.PureComponent<any, any> {
     constructor(props: any) {
         super(props);
         store.update();
@@ -45,24 +27,48 @@ export class Orders extends React.Component<any, any> {
     };
 
     public render() {
-        const dataSource = toJS(store.records).map(map);
+        const dataSource = toJS(store.records).map(Orders.map);
 
-        let header = {
-            orderBy: 'id',
-            orderKeys: [
-                'CPU Count',
-                'GPU ETH hashrate',
-                'RAM size',
-                'Cost',
-                'Lease duration',
-            ],
-            desc: false,
-            limit: store.limit,
-            limits: [10, 25, 50, 100],
-            onChangeLimit: this.handleChangeLimit,
-            onChangeOrder: this.handleChangeOrder,
-            onRefresh: this.handleRefresh,
-        };
-        return <OrdersView header={header} list={dataSource} />;
+        return (
+            <OrdersView
+                {...Orders.headerProps}
+                pageLimit={store.limit}
+                onChangeLimit={this.handleChangeLimit}
+                onChangeOrder={this.handleChangeOrder}
+                onRefresh={this.handleRefresh}
+                list={dataSource}
+            />
+        );
     }
+
+    protected static map = (source: IOrder): IOrdersListItemProps => {
+        let cpuCount = source.benchmarks.values[2] * 0.001;
+        let hashrate = source.benchmarks.values[9];
+        let ramSize = source.benchmarks.values[3] * 1024 * 1024;
+        return {
+            address: '0x0',
+            account: source.authorID,
+            status: source.orderStatus as EnumProfileStatus,
+            customFields: new Map([
+                ['CPU Count', `${cpuCount}`],
+                ['GPU ETH hashrate', `${hashrate} Mh/s`],
+                ['RAM size', `${ramSize} Mb`],
+            ]),
+            usdPerHour: source.price,
+            duration: source.duration,
+        };
+    };
+
+    protected static headerProps = {
+        orderBy: 'id',
+        orderDesc: false,
+        orderKeys: [
+            'CPU Count',
+            'GPU ETH hashrate',
+            'RAM size',
+            'Cost',
+            'Lease duration',
+        ],
+        pageLimits: [10, 25, 50, 100],
+    };
 }

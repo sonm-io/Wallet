@@ -10,16 +10,16 @@ List header:
         onRefresh: 0
       },
       orderBy: 'foo',
-      desc: true,
-      limit: 25,
+      orderDesc: true,
+      pageLimit: 25,
       onChangeLimit: action.bound(function (limit) {
         this.eventsCounter.onChangeLimit++;
-        this.limit = limit;
+        this.pageLimit = limit;
       }),
       onChangeOrder: action.bound(function (orderKey, isDesc) {
         this.eventsCounter.onChangeOrder++;
         this.orderBy = orderKey;
-        this.desc = isDesc;
+        this.orderDesc = isDesc;
       }),
       onRefresh: action.bound(function () {
         this.eventsCounter.onRefresh++;
@@ -30,9 +30,9 @@ List header:
       <ListHeader
         orderBy={state.orderBy}
         orderKeys={['lol', 'foo', 'bar']}
-        desc={state.desc}
-        limit={state.limit}
-        limits={[10, 25, 50, 100]}
+        orderDesc={state.orderDesc}
+        pageLimit={state.pageLimit}
+        pageLimits={[10, 25, 50, 100]}
         onChangeLimit={state.onChangeLimit}
         onChangeOrder={state.onChangeOrder}
         onRefresh={state.onRefresh}
@@ -43,8 +43,8 @@ List header:
       <div>
         <div>events: {Object.keys(state.eventsCounter).map(name => `${name}: ${state.eventsCounter[name]}`).join(', ')}</div>
         <div>orderBy: {state.orderBy}</div>
-        <div>desc: {state.desc.toString()}</div>
-        <div>limit: {state.limit}</div>
+        <div>orderDesc: {state.orderDesc.toString()}</div>
+        <div>pageLimit: {state.pageLimit}</div>
       </div>
     );
 
