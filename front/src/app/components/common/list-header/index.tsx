@@ -15,7 +15,9 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
         return 'OrderAsc';
     };
 
-    protected handleClickOrder = (event: any) => {
+    protected handleClickOrder = (
+        event: React.MouseEvent<HTMLButtonElement>,
+    ) => {
         const selectedKey = event.currentTarget.value;
         this.props.onChangeOrder(
             selectedKey,
@@ -23,8 +25,10 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
         );
     };
 
-    protected handleClickPageLimit = (event: any) => {
-        const limit = event.currentTarget.value;
+    protected handleClickPageLimit = (
+        event: React.MouseEvent<HTMLButtonElement>,
+    ) => {
+        const limit = parseInt(event.currentTarget.value);
         limit !== this.props.limit && this.props.onChangeLimit(limit);
     };
 
