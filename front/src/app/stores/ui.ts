@@ -33,7 +33,7 @@ export class UiStore {
         this.mapIdToAlert.set(full.id, full);
     }
 
-    @action
+    @action.bound
     public closeAlert(id: string) {
         this.mapIdToAlert.delete(id);
     }
