@@ -63,8 +63,8 @@ export interface ITxListFilter {
 }
 
 export interface IListQuery<T = string> {
-    limit?: number;
-    offset?: number;
+    limit: number;
+    offset: number;
     sortBy?: string;
     sortDesc?: boolean;
     filter?: T;

@@ -2,6 +2,8 @@ import * as t from './types';
 // import { IAttribute } from '../../app/api/types';
 import * as mapKeys from 'lodash/fp/mapKeys';
 import * as pick from 'lodash/fp/pick';
+import { TypeEthereumAddress } from '../../app/api/runtime-types';
+import * as tcomb from 'tcomb';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -61,6 +63,10 @@ export class DWH {
         limit,
         offset,
     }: t.IListQuery): Promise<t.IListResult<t.IProfileBrief>> => {
+        tcomb.maybe(tcomb.String)(filter);
+        tcomb.Number(limit);
+        tcomb.Number(offset);
+
         const mongoLikeFilter = filter ? JSON.parse(filter) : {};
 
         const res = await this.fetchData('GetProfiles', {
@@ -86,6 +92,8 @@ export class DWH {
     public getProfileFull = async ({
         address,
     }: any): Promise<t.IProfileFull> => {
+        TypeEthereumAddress(address);
+
         const res = await this.fetchData('GetProfileInfo', { Id: address });
         const brief = this.processProfile(res);
         const certificates = res.Certificates
