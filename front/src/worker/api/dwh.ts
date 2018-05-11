@@ -120,8 +120,14 @@ export class DWH {
         };
     };
 
-    public getOrders = async (): Promise<t.IListResult<t.IOrder>> => {
-        const res = await this.fetchData('GetOrders');
+    public getOrders = async ({
+        limit,
+        offset,
+    }: t.IListQuery): Promise<t.IListResult<t.IOrder>> => {
+        const res = await this.fetchData('GetOrders', {
+            offset,
+            limit,
+        });
         const records = [] as t.IOrder[];
 
         if (res && res.orders) {
