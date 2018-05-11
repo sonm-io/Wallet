@@ -42,6 +42,8 @@ export class Orders extends React.Component<IProps, never> {
         return (
             <OrdersView
                 {...Orders.headerProps}
+                orderBy={store.sortBy}
+                orderDesc={store.sortDesc}
                 pageLimit={store.limit}
                 onChangeLimit={this.handleChangeLimit}
                 onChangeOrder={this.handleChangeOrder}
@@ -67,8 +69,6 @@ export class Orders extends React.Component<IProps, never> {
     };
 
     protected static headerProps = {
-        orderBy: 'id',
-        orderDesc: false,
         orderKeys: [
             'CPU Count',
             'GPU ETH hashrate',
