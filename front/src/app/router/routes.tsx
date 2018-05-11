@@ -418,19 +418,18 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     pageTitle: 'D & W History',
                                 }),
                             },
-                            {
-                                path: '/orders',
-                                breadcrumbTitle: 'Orders',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) => ({
-                                    browserTabTitle: 'Orders',
-                                    pageTitle: 'Orders',
-                                    content: <Orders />,
-                                }),
-                            },
                         ],
+                    },
+                    {
+                        path: '/orders/:address',
+                        breadcrumbTitle: 'Orders',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'Orders',
+                            pageTitle: 'Orders',
+                            content: (
+                                <Orders filterByAddress={params.address} />
+                            ),
+                        }),
                     },
                 ],
             },

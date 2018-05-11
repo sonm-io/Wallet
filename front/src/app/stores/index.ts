@@ -1,6 +1,5 @@
 import { useStrict } from 'mobx';
-import { IProfileBrief } from 'app/api/types';
-import { IOrder } from 'app/api/types';
+import { IProfileBrief, IOrder } from 'app/api/types';
 import { HistoryStore } from './history';
 import { MainStore } from './main';
 import { SendStore } from './send';
@@ -9,6 +8,7 @@ import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
 import { OnlineStore } from './online-store';
 import { ProfileFilterStore } from './profile-filter';
+import { OrderFilterStore } from './order-filter';
 import {
     localizator as en,
     ILocalizator,
@@ -36,6 +36,7 @@ export class RootStore implements IHasLocalizator {
     public readonly ordersListStore: IListStore<IOrder>;
     public readonly marketStore: MarketStore;
     public readonly profileFilterStore: ProfileFilterStore;
+    public readonly orderFilterStore: OrderFilterStore;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -103,11 +104,11 @@ export class RootStore implements IHasLocalizator {
             },
         );
 
+        this.orderFilterStore = new OrderFilterStore();
+
         this.ordersListStore = new OrdersList(
             {
-                filter: {
-                    filterAsString: '',
-                },
+                filter: this.orderFilterStore,
             },
             {
                 localizator,

@@ -2,18 +2,23 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { OrdersView } from './view';
 import { IOrdersListItemProps } from 'app/components/common/orders-list-item/types';
-//import { data, getSorted } from './mock-data';
 import { rootStore } from 'app/stores';
 import { toJS } from 'mobx';
 import { IOrder, EnumProfileStatus } from 'app/api/types';
 
 const store = rootStore.ordersListStore;
+const filterStore = rootStore.orderFilterStore;
+
+interface IProps {
+    filterByAddress?: string;
+}
 
 @observer
-export class Orders extends React.PureComponent<any, any> {
+export class Orders extends React.PureComponent<IProps, never> {
     constructor(props: any) {
         super(props);
-        store.update();
+
+        filterStore.updateUserInput({ address: props.address });
     }
 
     protected handleChangeLimit = (limit: number) => {
