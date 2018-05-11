@@ -152,6 +152,31 @@ export class DWH {
         return item.order as t.IOrder;
     }
 
+    public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
+        const res = await this.fetchData('GetDeals', id);
+        return this.parseDeal(res);
+    };
+
+    public getDeals = async (): Promise<t.IListResult<t.IDeal>> => {
+        const res = await this.fetchData('GetDeals');
+        const records = [] as t.IDeal[];
+
+        if (res && res.deals) {
+            for (const item of res.deals) {
+                records.push(this.parseDeal(item));
+            }
+        }
+
+        return {
+            records,
+            total: records.length,
+        };
+    };
+
+    private parseDeal(item: any): t.IDeal {
+        return item.deal as t.IDeal;
+    }
+
     private async fetchData(method: string, params: any = {}) {
         const response = await fetch(`${this.url}${method}`, {
             method: 'POST',

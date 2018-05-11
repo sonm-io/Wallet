@@ -131,6 +131,8 @@ class Api {
             'profile.list': wrapInResponse(dwh.getProfiles),
             'order.get': wrapInResponse(dwh.getOrderFull),
             'order.list': wrapInResponse(dwh.getOrders),
+            'deal.get': wrapInResponse(dwh.getDealFull),
+            'deal.list': wrapInResponse(dwh.getDeals),
 
             'market.buyOrder': this.buyOrder,
 

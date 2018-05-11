@@ -8,6 +8,7 @@ import {
     IProfileFull,
     IAccountInfo,
     IOrder,
+    IDeal,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -121,4 +122,24 @@ export const TypeOrderList = createStruct<IListResult<IOrder>>(
         total: t.Number,
     },
     'IListResult<IOrder>',
+);
+
+export const TypeDeal = createStruct<IDeal>(
+    {
+        netflags: t.Number,
+        askIdentityLevel: t.Number,
+        bidIdentityLevel: t.Number,
+        supplierCertificates: t.String,
+        consumerCertificates: t.String,
+        activeChangeRequest: t.Boolean,
+    },
+    'IDeal',
+);
+
+export const TypeDealList = createStruct<IListResult<IDeal>>(
+    {
+        records: t.list(TypeDeal),
+        total: t.Number,
+    },
+    'IListResult<IDeal>',
 );

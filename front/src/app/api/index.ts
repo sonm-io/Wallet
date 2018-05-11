@@ -21,6 +21,7 @@ class AllApi {
 
     public profile = new ProfileApi(this.ipc);
     public order = new OrderApi(this.ipc);
+    public deal = new DealApi(this.ipc);
 
     public async createWallet(
         password: string,

@@ -141,8 +141,28 @@ export interface IOrder {
     benchmarks: any;
 }
 
-export interface IOrderListResult<T> {
-    records: Array<T>;
+export interface IDealDetails {
+    id: number;
+    supplierID: string;
+    consumerID: string;
+    masterID: string;
+    askID: number;
+    bidID: number;
+    duration: number;
+    price: string;
+    status: number;
+    blockedBalance: string;
+    totalPayout: string;
+}
+
+export interface IDeal {
+    deal: IDealDetails;
+    netflags: number;
+    askIdentityLevel: number;
+    bidIdentityLevel: number;
+    supplierCertificates: string;
+    consumerCertificates: string;
+    activeChangeRequest: boolean;
 }
 
 export interface IOrderListFilter {
