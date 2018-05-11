@@ -17,7 +17,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                     {this.props.logoUrl ? (
                         <img src={this.props.logoUrl} />
                     ) : (
-                        <IdentIcon address={this.props.address} />
+                        <IdentIcon address={this.props.account} />
                     )}
                 </div>
 

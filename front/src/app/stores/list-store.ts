@@ -172,6 +172,10 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
             return result;
         });
 
+        if ('filter' in input) {
+            this.userInput.page = 1;
+        }
+
         if (changes.length === 0) {
             return;
         }

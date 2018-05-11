@@ -539,6 +539,7 @@ class Api {
 
         const rate =
             rateResponse && rateResponse.data ? rateResponse.data : undefined;
+
         const list = [] as t.IAccountInfo[];
         for (let i = 0; i < addresses.length; i++) {
             const address = addresses[i];

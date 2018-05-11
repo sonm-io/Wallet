@@ -87,7 +87,7 @@ export class DWH {
 
         return {
             records: res.profiles ? res.profiles.map(this.processProfile) : [],
-            total: 100,
+            total: res && res.count ? res.count : 0,
         };
     };
 
@@ -143,10 +143,10 @@ export class DWH {
 
         const res = await this.fetchData('GetOrders', {
             offset,
-            limit: 5,
             authorID: mongoLikeQuery.address
                 ? mongoLikeQuery.address.$eq
                 : null,
+            limit,
         });
         const records = [] as t.IOrder[];
 
@@ -158,7 +158,7 @@ export class DWH {
 
         return {
             records,
-            total: records.length,
+            total: res && res.count ? res.count : 0,
         };
     };
 
@@ -205,7 +205,7 @@ export class DWH {
 
         return {
             records,
-            total: records.length,
+            total: res && res.count ? res.count : 0,
         };
     };
 
@@ -216,7 +216,10 @@ export class DWH {
     private async fetchData(method: string, params: any = {}) {
         const response = await fetch(`${this.url}${method}`, {
             method: 'POST',
-            body: JSON.stringify(params),
+            body: JSON.stringify({
+                ...params,
+                WithCount: true,
+            }),
         });
 
         if (response && response.status === 200) {

@@ -23,7 +23,7 @@ class DealsFilter extends FixedSelect<number | undefined> {}
 interface IProps {
     className?: string;
     page: number;
-    totalPage: number;
+    total: number;
     limit: number;
     dataSource: Array<IProfileBrief>;
     filter: string;
@@ -189,11 +189,13 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
         const { className, dataSource } = p;
 
         const pagination = {
-            total: p.totalPage,
+            total: p.total,
             defaultPageSize: p.limit,
             current: p.page,
             onChange: p.onChangePage,
         };
+
+        console.log(pagination);
 
         const countryValue = p.filterCountry.map(x => mapAbCode2ToLand[x]);
 

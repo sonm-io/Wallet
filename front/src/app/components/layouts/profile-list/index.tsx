@@ -25,8 +25,8 @@ export class ProfileList extends React.Component<IProps, any> {
         rootStore.profileFilterStore.updateUserInput({ [key]: value });
     };
 
-    public handleChangePage() {
-        return undefined;
+    public handleChangePage(page: number) {
+        rootStore.profileListStore.updateUserInput({ page });
     }
 
     public render() {
@@ -37,9 +37,9 @@ export class ProfileList extends React.Component<IProps, any> {
         return (
             <ProfileListView
                 className=""
-                page={1}
-                totalPage={3}
-                limit={20}
+                page={listStore.page}
+                total={toJS(listStore.total)}
+                limit={listStore.limit}
                 dataSource={dataSource}
                 filter={ProfileListView.defaultFilter}
                 onChangePage={this.handleChangePage}
