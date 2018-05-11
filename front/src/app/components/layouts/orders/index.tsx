@@ -25,7 +25,12 @@ export class Orders extends React.Component<IProps, never> {
         store.updateUserInput({ limit });
     };
 
-    protected handleChangeOrder = (orderKey: string, isDesc: boolean) => {};
+    protected handleChangeOrder = (orderKey: string, isDesc: boolean) => {
+        store.updateUserInput({
+            sortBy: orderKey,
+            sortDesc: isDesc,
+        });
+    };
 
     protected handleRefresh = () => {
         store.update();

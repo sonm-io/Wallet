@@ -7,6 +7,7 @@ import { ICertificateProps } from './sub/certificate';
 import { CertificatesPanel } from './sub/certificates-panel';
 import { Panel } from 'app/components/common/panel';
 import { EnumProfileStatus } from 'app/api/types';
+import { Button } from 'app/components/common/button';
 
 interface IProps {
     className?: string;
@@ -27,9 +28,14 @@ interface IProps {
     userStatus: EnumProfileStatus;
     address: string;
     style?: any;
+    onNavigateToOrders: (address: string) => void;
 }
 
 export class ProfileView extends React.PureComponent<IProps, never> {
+    protected handleClickOrders = () => {
+        this.props.onNavigateToOrders(this.props.address);
+    };
+
     public render() {
         const p = this.props;
 
@@ -72,6 +78,12 @@ export class ProfileView extends React.PureComponent<IProps, never> {
                         supplierToken={p.supplierToken}
                         getUiText={p.getUiText}
                     />
+                    <Button
+                        className="sonm-profile__orders"
+                        onClick={this.handleClickOrders}
+                    >
+                        Go to orders
+                    </Button>
                 </div>
             </div>
         );

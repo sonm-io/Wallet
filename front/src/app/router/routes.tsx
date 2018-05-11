@@ -52,6 +52,8 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
+const navigateToOrdersByAddress = (address: string) =>
+    navigate({ path: `/market/orders/${address}` });
 
 function reload() {
     window.location.reload(true);
@@ -235,7 +237,12 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     params: IUrlParams,
                                 ) => ({
                                     content: (
-                                        <Profile address={params.address} />
+                                        <Profile
+                                            address={params.address}
+                                            onNavigateToOrders={
+                                                navigateToOrdersByAddress
+                                            }
+                                        />
                                     ),
                                     browserTabTitle: 'Profiles',
                                     pageTitle: 'Profiles',

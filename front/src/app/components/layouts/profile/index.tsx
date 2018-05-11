@@ -7,6 +7,7 @@ import { rootStore } from '../../../stores';
 interface IProps {
     className?: string;
     address: string;
+    onNavigateToOrders: (address: string) => void;
 }
 
 interface IState {
@@ -70,6 +71,7 @@ export class Profile extends React.PureComponent<IProps, IState> {
                 logoUrl={profile.logoUrl}
                 userStatus={profile.status}
                 address={profile.address}
+                onNavigateToOrders={props.onNavigateToOrders}
             />
         );
     }
