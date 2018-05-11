@@ -134,10 +134,11 @@ export interface IListResult<T> {
 export interface IOrder {
     id: string;
     orderType: number;
-    price: number;
+    price: string;
     duration: number;
     orderStatus: number;
     authorID: string;
+    benchmarks: any;
 }
 
 export interface IOrderListResult<T> {

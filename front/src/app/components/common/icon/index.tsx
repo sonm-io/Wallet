@@ -13,6 +13,10 @@ const icons: any = {
     Info: require('./info.svg').default,
     Close: require('./close.svg').default,
     ArrowRight: require('./arrow-right.svg').default,
+    Refresh: require('./refresh.svg').default,
+    Sync: require('./sync.svg').default,
+    OrderAsc: require('./order-asc.svg').default,
+    OrderDesc: require('./order-desc.svg').default,
 };
 
 interface IAny {
