@@ -1,0 +1,106 @@
+@import 'guide.less';
+
+// Variables
+
+@ordersListItem-label-fontColor: @color-light-font;
+@ordersListItem-value-fontColor: @color-font-dark;
+@ordersListItem-borderColor: @color-gray-bg;
+@ordersListItem-border: 1px solid @ordersListItem-borderColor;
+
+// Mixins
+
+.orders-list-item__label {
+    font-family: @font-family;
+    font-size: 12px;
+    font-weight: 400;
+    color: @ordersListItem-label-fontColor;
+    padding: 5px 0;
+    margin-right: 10px;
+}
+
+.orders-list-item__value-font {
+    color: @ordersListItem-value-fontColor;
+    font-family: @font-family;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+// Component
+
+.orders-list-item {
+    display: grid;
+    grid-auto-flow: column dense;
+    grid-template-columns: ~'min-content max-content [labels] max-content [values] 3fr [billing] 2fr [end]';
+    border-bottom: @ordersListItem-border;
+
+    &:first-child {
+        border-top: @ordersListItem-border;
+    }
+
+    // Logo
+
+    &__logo {
+        grid-row: 1 / span 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    // Column1 - Main Info
+
+    &__main {
+        grid-row: 1 / span 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    &__main-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 10px;
+    }
+
+    &__main-label {
+        .orders-list-item__label;
+        width: 57px;
+    }
+
+    &__name {
+        color: @ordersListItem-value-fontColor;
+        font-family: @font-family;
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    &__account {
+        color: @ordersListItem-value-fontColor;
+        font-family: @font-family;
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    // Column2 - Indicators
+
+    &__indicator-name {
+        .orders-list-item__label;
+        grid-column: labels / values;
+    }
+
+    &__indicator-value {
+        .orders-list-item__value-font;
+        grid-column: values / billing;
+        display: flex;
+        align-items: center;
+    }
+
+    // Column 3 - Cost
+
+    &__cost {
+        .orders-list-item__value-font;
+        grid-column: billing / end;
+        display: flex;
+        align-items: center;
+    }
+}
