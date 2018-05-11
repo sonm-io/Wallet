@@ -133,10 +133,20 @@ export class DWH {
     public getOrders = async ({
         limit,
         offset,
+        filter,
     }: t.IListQuery): Promise<t.IListResult<t.IOrder>> => {
+        tcomb.Number(limit);
+        tcomb.Number(offset);
+        tcomb.maybe(tcomb.String)(filter);
+
+        const mongoLikeQuery = filter ? JSON.parse(filter) : {};
+
         const res = await this.fetchData('GetOrders', {
             offset,
             limit: 5,
+            authorID: mongoLikeQuery.address
+                ? mongoLikeQuery.address.$eq
+                : null,
         });
         const records = [] as t.IOrder[];
 

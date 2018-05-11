@@ -14,11 +14,11 @@ interface IProps {
 }
 
 @observer
-export class Orders extends React.PureComponent<IProps, never> {
-    constructor(props: any) {
+export class Orders extends React.Component<IProps, never> {
+    constructor(props: IProps) {
         super(props);
 
-        filterStore.updateUserInput({ address: props.address });
+        filterStore.updateUserInput({ address: props.filterByAddress });
     }
 
     protected handleChangeLimit = (limit: number) => {
@@ -32,7 +32,7 @@ export class Orders extends React.PureComponent<IProps, never> {
     };
 
     public render() {
-        const dataSource = toJS(store.records).map(Orders.map);
+        const dataSource = toJS(store.records).map(Orders.processItem);
 
         return (
             <OrdersView
@@ -46,11 +46,7 @@ export class Orders extends React.PureComponent<IProps, never> {
         );
     }
 
-    protected static map = (source: IOrder): IOrdersListItemProps => {
-        //let cpuCount = source.benchmarks.values[2] * 0.001;
-        //let hashrate = source.benchmarks.values[9];
-        //let ramSize = source.benchmarks.values[3] / (1024 * 1024);
-
+    protected static processItem = (source: IOrder): IOrdersListItemProps => {
         return {
             address: '0x0',
             account: source.authorID,
