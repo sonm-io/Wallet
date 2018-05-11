@@ -7,32 +7,7 @@ import { rootStore } from 'app/stores';
 import { observable, action, toJS } from 'mobx';
 import { IOrder, EnumProfileStatus } from 'app/api/types';
 
-const initialState = observable({
-    eventsCounter: {
-        onChangeLimit: 0,
-        onChangeOrder: 0,
-        onRefresh: 0,
-    },
-    orderBy: 'CPU Count',
-    desc: true,
-    limit: 25,
-    onChangeLimit: action.bound(function(this: any, limit) {
-        this.eventsCounter.onChangeLimit++;
-        this.limit = limit;
-    }),
-    onChangeOrder: action.bound(function(
-        this: any,
-        orderKey: string,
-        isDesc: boolean,
-    ) {
-        this.eventsCounter.onChangeOrder++;
-        this.orderBy = orderKey;
-        this.desc = isDesc;
-    }),
-    onRefresh: action.bound(function(this: any) {
-        this.eventsCounter.onRefresh++;
-    }),
-});
+const store = rootStore.ordersListStore;
 
 const map = (source: IOrder): IOrdersListItemProps => {
     let cpuCount = source.benchmarks.values[2] * 0.001;
@@ -56,16 +31,24 @@ const map = (source: IOrder): IOrdersListItemProps => {
 export class Orders extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
-        this.state = initialState;
-        rootStore.ordersListStore.update();
+        store.update();
     }
 
+    protected handleChangeLimit = (limit: number) => {
+        store.updateUserInput({ limit });
+    };
+
+    protected handleChangeOrder = (orderKey: string, isDesc: boolean) => {};
+
+    protected handleRefresh = () => {
+        store.update();
+    };
+
     public render() {
-        const listStore = rootStore.ordersListStore;
-        const dataSource = toJS(listStore.records).map(map);
+        const dataSource = toJS(store.records).map(map);
 
         let header = {
-            orderBy: this.state.orderBy,
+            orderBy: 'id',
             orderKeys: [
                 'CPU Count',
                 'GPU ETH hashrate',
@@ -73,12 +56,12 @@ export class Orders extends React.Component<any, any> {
                 'Cost',
                 'Lease duration',
             ],
-            desc: this.state.desc,
-            limit: this.state.limit,
+            desc: false,
+            limit: store.limit,
             limits: [10, 25, 50, 100],
-            onChangeLimit: this.state.onChangeLimit,
-            onChangeOrder: this.state.onChangeOrder,
-            onRefresh: this.state.onRefresh,
+            onChangeLimit: this.handleChangeLimit,
+            onChangeOrder: this.handleChangeOrder,
+            onRefresh: this.handleRefresh,
         };
         return <OrdersCmp header={header} list={dataSource} />;
     }
