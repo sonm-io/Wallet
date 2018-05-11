@@ -2,6 +2,7 @@ import * as t from './types';
 // import { IAttribute } from '../../app/api/types';
 import * as mapKeys from 'lodash/fp/mapKeys';
 import * as pick from 'lodash/fp/pick';
+import { BN } from 'bn.js';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -158,10 +159,15 @@ export class DWH {
                 0,
         };
 
-        return {
+        const order = {
             ...item.order,
             ...attributes,
         };
+
+        order.duration = Math.round(order.duration / 3600);
+        order.price = new BN(order.price).mul(new BN(3600)).toString();
+
+        return order;
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
