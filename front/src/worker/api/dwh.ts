@@ -81,6 +81,7 @@ export class DWH {
                 !mongoLikeFilter.status || mongoLikeFilter.status.$gte <= 1
                     ? 0
                     : mongoLikeFilter.status.$gte,
+            role: mongoLikeFilter.role ? mongoLikeFilter.role.$eq : 0,
         });
 
         return {

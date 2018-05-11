@@ -71,7 +71,7 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
                 $gte: this.status,
             },
             role: {
-                $gte: this.role,
+                $eq: this.role,
             },
             country: {
                 $in: this.country,

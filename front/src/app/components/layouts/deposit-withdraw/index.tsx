@@ -169,9 +169,12 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         const account = rootStore.mainStore.accountList.find(
             item => item.address === this.store.fromAddress,
         );
-        const className = `sonm-deposit-withdraw__account${
-            !this.props.isConfirmation ? '--span' : ''
-        }`;
+        const className = cn(
+            'sonm-deposit-withdraw__account',
+            this.props.isConfirmation
+                ? null
+                : 'sonm-deposit-withdraw__account--span',
+        );
 
         if (account) {
             const { name, address } = account;
