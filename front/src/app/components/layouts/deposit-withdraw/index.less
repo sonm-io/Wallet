@@ -19,18 +19,16 @@
     &__account {
         grid-column: 1;
         grid-row: 2;
+        display: grid;
+        grid-template-columns: 100px min-content auto;
+        grid-template-rows: 1fr 1fr;
+        font-weight: normal;
+        padding: 10px;
 
         &--span {
             grid-column: 1 / span 2;
             background-color: @color-light-gray-bg;
         }
-
-        display: grid;
-        grid-template-columns: 100px min-content auto;
-        grid-template-rows: 1fr 1fr;
-        font-weight: normal;
-        margin-top: 10px;
-        padding: 20px;
 
         &-blockies {
             margin: 10px;
@@ -63,17 +61,6 @@
         grid-template-rows: 1fr 1fr;
         margin: 20px 0px 20px 0px;
         grid-gap: 15px;
-
-        label,
-        dt {
-            color: @color-dark-gray;
-            margin-bottom: 0px;
-        }
-
-        dd {
-            font-size: 16px;
-            margin-bottom: 0px;
-        }
 
         &-amount {
             &-input {
@@ -173,7 +160,7 @@
         flex-grow: 1;
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        justify-content: flex-end;
         align-items: center;
     }
 

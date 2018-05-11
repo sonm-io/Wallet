@@ -83,10 +83,10 @@ describe('Api', async function() {
         expect(response.data).not.equal(null);
     });
 
-    // it('should recieve token exchange rate', async function() {
-    //     const response = await Api.getTokenExchangeRate();
-    //     expect(response.data).not.equal(null);
-    // });
+    it('should recieve token exchange rate', async function() {
+        const response = await Api.getTokenExchangeRate();
+        expect(response.data).not.equal(null);
+    });
 
     it('should get token info', async function() {
         const response = await Api.getTokenInfo(tokenAddress, [address]);
@@ -165,12 +165,9 @@ describe('Api', async function() {
         expect(response1.data).not.equal(null);
 
         const response2 = await Api.getAccountList();
-        expect(response2.data).to.have.lengthOf(1);
-
-        if (response2.data) {
-            expect(response2.data[0].name).equal(name);
-            expect(response2.data[0].address).equal(address);
-        }
+        expect(response2).to.have.lengthOf(1);
+        expect(response2[0].name).equal(name);
+        expect(response2[0].address).equal(address);
     });
 
     /*

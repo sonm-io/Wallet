@@ -53,12 +53,12 @@ class AllApi {
         return this.ipc.send('checkConnection');
     }
 
-    public async getPrivateKey(
+    public getPrivateKey = async (
         password: string,
         address: string,
-    ): Promise<IResult<string>> {
+    ): Promise<IResult<string>> => {
         return this.ipc.send('account.getPrivateKey', { address, password });
-    }
+    };
 
     public async createAccount(
         password: string,
@@ -149,26 +149,26 @@ class AllApi {
         return this.ipc.send('getTokenExchangeRate');
     }
 
-    public async send(
+    public send = async (
         tx: ISendTransaction,
         password: string,
-    ): Promise<IResult<ISendTransactionResult>> {
+    ): Promise<IResult<ISendTransactionResult>> => {
         return this.ipc.send('account.send', { ...tx, password });
-    }
+    };
 
-    public async deposit(
+    public deposit = async (
         tx: ISendTransaction,
         password: string,
-    ): Promise<IResult<ISendTransactionResult>> {
+    ): Promise<IResult<ISendTransactionResult>> => {
         return this.ipc.send('account.deposit', { ...tx, password });
-    }
+    };
 
-    public async withdraw(
+    public withdraw = async (
         tx: ISendTransaction,
         password: string,
-    ): Promise<IResult<ISendTransactionResult>> {
+    ): Promise<IResult<ISendTransactionResult>> => {
         return this.ipc.send('account.withdraw', { ...tx, password });
-    }
+    };
 
     public async getSendTransactionList(
         source?: string,

@@ -4,6 +4,8 @@ import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
 import * as t from './types';
+import { BN } from 'bn.js';
+
 import { wrapInResponse } from './utils';
 
 import { migrate } from '../migrations';
@@ -30,7 +32,9 @@ const DEFAULT_NODES: t.INodes = {
     testrpc: 'http://localhost:8545',
     private: 'https://sidechain-dev.sonm.com',
 };
+
 const ZERO_ADDRESS = Array(41).join('0');
+const WEI_PRECISION = Array(19).join('0');
 
 const DEFAULT_TOKENS: t.ITokens = {
     livenet: [
@@ -512,34 +516,55 @@ class Api {
         } catch (err) {}
 
         const requests = [];
-        //const tokenList = await this.getTokenList('private');
+        const marketRequests = [];
+        const tokenList = await this.getTokenList('private');
 
         for (const address of Object.keys(accounts)) {
             requests.push(this.getCurrencyBalances(address));
-            //requests.push(tokenList.getBalances(address));
+            marketRequests.push(tokenList.getBalances(address));
         }
 
-        let balancies;
+        let balancies, rateResponse, marketBalancies;
         try {
-            balancies = await Promise.all(requests);
+            [rateResponse, balancies, marketBalancies] = await Promise.all([
+                this.getTokenExchangeRate(),
+                Promise.all(requests),
+                Promise.all(marketRequests),
+            ]);
         } catch (err) {
             //console.log(err);
         }
 
+        const rate =
+            rateResponse && rateResponse.data ? rateResponse.data : undefined;
         const list = [] as t.IAccountInfo[];
         for (let i = 0; i < addresses.length; i++) {
             const address = addresses[i];
 
             if (accounts[address]) {
-                list.push({
+                const item = {
                     address,
-                    marketBalance: '1234567890',
-                    marketUsdBalance: '0987654321',
+                    marketBalance: '0',
+                    marketUsdBalance: '0',
                     name: accounts[address].name,
                     json: JSON.stringify(accounts[address].json),
                     currencyBalanceMap:
                         balancies && balancies[i] ? balancies[i] : {},
-                });
+                };
+
+                if (marketBalancies && marketBalancies[i]) {
+                    const marketBalance = marketBalancies[i];
+
+                    item.marketBalance =
+                        marketBalance[Object.keys(marketBalance)[1]];
+                    item.marketUsdBalance = rate
+                        ? new BN(item.marketBalance + WEI_PRECISION)
+                              .div(new BN(rate))
+                              .toString()
+                        : '0';
+                }
+
+                list.push(item);
             }
         }
 

@@ -45,10 +45,10 @@ const navigateToDepositSuccess = () =>
     navigate({ path: `/market/dw/deposit/success` });
 const navigateToDepositConfirm = () =>
     navigate({ path: `/market/dw/deposit/confirm` });
-// const navigateToWithdrawSuccess = () =>
-//     navigate({ path: `/market/dw/withdraw/success` });
-// const navigateToWithdrawConfirm = () =>
-//     navigate({ path: `/market/dw/withdraw/confirm` });
+const navigateToWithdrawSuccess = () =>
+    navigate({ path: `/market/dw/withdraw/success` });
+const navigateToWithdrawConfirm = () =>
+    navigate({ path: `/market/dw/withdraw/confirm` });
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
@@ -336,13 +336,13 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                                 isConfirmation={false}
                                                 onNotAvailable={navigateToMain}
                                                 onSuccess={
-                                                    navigateToDepositSuccess
+                                                    navigateToWithdrawSuccess
                                                 }
                                                 onConfirm={
-                                                    navigateToDepositConfirm
+                                                    navigateToWithdrawConfirm
                                                 }
                                                 onBack={
-                                                    navigateToDepositSuccess
+                                                    navigateToWithdrawSuccess
                                                 }
                                             />
                                         ),
@@ -366,12 +366,12 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                                         navigateToMain
                                                     }
                                                     onSuccess={
-                                                        navigateToDepositSuccess
+                                                        navigateToWithdrawSuccess
                                                     }
                                                     onConfirm={
-                                                        navigateToDepositConfirm
+                                                        navigateToWithdrawConfirm
                                                     }
-                                                    onBack={navigateToDeposit}
+                                                    onBack={navigateToWithdraw}
                                                 />
                                             ),
                                             browserTabTitle: 'Withdraw',

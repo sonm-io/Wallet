@@ -89,6 +89,7 @@ export interface IAccountItemView {
     name: string;
     etherBalance: string;
     usdBalance: string;
+    marketBalance: string;
     primaryTokenBalance: string;
     primaryTokenInfo: ICurrencyInfo;
 }
