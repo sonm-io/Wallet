@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import { Orders as OrdersCmp } from 'app/components/common/orders';
+import { OrdersView } from './view';
 import { IOrdersListItemProps } from 'app/components/common/orders-list-item/types';
 //import { data, getSorted } from './mock-data';
 import { rootStore } from 'app/stores';
-import { observable, action, toJS } from 'mobx';
+import { toJS } from 'mobx';
 import { IOrder, EnumProfileStatus } from 'app/api/types';
 
 const store = rootStore.ordersListStore;
@@ -63,6 +63,6 @@ export class Orders extends React.Component<any, any> {
             onChangeOrder: this.handleChangeOrder,
             onRefresh: this.handleRefresh,
         };
-        return <OrdersCmp header={header} list={dataSource} />;
+        return <OrdersView header={header} list={dataSource} />;
     }
 }

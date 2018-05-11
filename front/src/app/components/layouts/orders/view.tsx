@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { OrdersListItem } from '../orders-list-item';
-import { ListHeader } from '../list-header';
+import { OrdersListItem } from '../../common/orders-list-item';
+import { ListHeader } from '../../common/list-header';
 import { IOrdersProps } from './types';
 
-export class Orders extends React.Component<IOrdersProps, any> {
+export class OrdersView extends React.Component<IOrdersProps, any> {
     constructor(props: IOrdersProps) {
         super(props);
     }

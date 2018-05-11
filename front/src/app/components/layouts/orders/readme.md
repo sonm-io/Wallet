@@ -65,7 +65,7 @@ Orders:
     );
 
     const Container = observer(() =>
-      <Orders
+      <OrdersView
         header={{
           orderBy: state.orderBy,
           orderKeys: ['lol', 'foo', 'bar'],
