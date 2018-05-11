@@ -4,6 +4,7 @@ import * as mapKeys from 'lodash/fp/mapKeys';
 import * as pick from 'lodash/fp/pick';
 import { TypeEthereumAddress } from '../../app/api/runtime-types';
 import * as tcomb from 'tcomb';
+import { BN } from 'bn.js';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -135,7 +136,7 @@ export class DWH {
     }: t.IListQuery): Promise<t.IListResult<t.IOrder>> => {
         const res = await this.fetchData('GetOrders', {
             offset,
-            limit,
+            limit: 5,
         });
         const records = [] as t.IOrder[];
 
@@ -157,7 +158,49 @@ export class DWH {
     };
 
     private parseOrder(item: any): t.IOrder {
-        return item.order as t.IOrder;
+        const attributes = {
+            cpuCount: item.order.benchmarks.values[2] || 0,
+            gpuCount: item.order.benchmarks.values[7] || 0,
+            hashrate: item.order.benchmarks.values[9] || 0,
+            ramSize:
+                Math.round(item.order.benchmarks.values[3] / (1024 * 1024)) ||
+                0,
+        };
+
+        const order = {
+            ...item.order,
+            ...attributes,
+        };
+
+        order.duration = Math.round(order.duration / 3600);
+        order.price = new BN(order.price).mul(new BN(3600)).toString();
+
+        return order;
+    }
+
+    public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
+        const res = await this.fetchData('GetDeals', id);
+        return this.parseDeal(res);
+    };
+
+    public getDeals = async (): Promise<t.IListResult<t.IDeal>> => {
+        const res = await this.fetchData('GetDeals');
+        const records = [] as t.IDeal[];
+
+        if (res && res.deals) {
+            for (const item of res.deals) {
+                records.push(this.parseDeal(item));
+            }
+        }
+
+        return {
+            records,
+            total: records.length,
+        };
+    };
+
+    private parseDeal(item: any): t.IDeal {
+        return item.deal as t.IDeal;
     }
 
     private async fetchData(method: string, params: any = {}) {

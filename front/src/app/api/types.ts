@@ -138,11 +138,24 @@ export interface IOrder {
     duration: number;
     orderStatus: number;
     authorID: string;
-    benchmarks: any;
+    cpuCount: number;
+    gpuCount: number;
+    hashrate: number;
+    ramSize: number;
 }
 
-export interface IOrderListResult<T> {
-    records: Array<T>;
+export interface IDeal {
+    id: number;
+    supplierID: string;
+    consumerID: string;
+    masterID: string;
+    askID: number;
+    bidID: number;
+    duration: number;
+    price: string;
+    status: number;
+    blockedBalance: string;
+    totalPayout: string;
 }
 
 export interface IOrderListFilter {

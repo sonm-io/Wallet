@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ProfileStatus } from '../profile-status';
 import { IOrdersListItemProps } from './types';
 import { IdentIcon } from '../ident-icon';
+import { Balance } from '../balance-view';
 import * as cn from 'classnames';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
@@ -71,7 +72,12 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
 
                 {/* Column3 - Costs */}
                 <div className="orders-list-item__cost">
-                    {this.props.usdPerHour} USD/h
+                    <Balance
+                        balance={this.props.usdPerHour}
+                        decimalPointOffset={18}
+                        decimalDigitAmount={2}
+                        symbol="USD/h"
+                    />
                 </div>
                 <div className="orders-list-item__cost">
                     {this.props.duration} hours
