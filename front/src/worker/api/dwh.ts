@@ -127,7 +127,7 @@ export class DWH {
     }: t.IListQuery): Promise<t.IListResult<t.IOrder>> => {
         const res = await this.fetchData('GetOrders', {
             offset,
-            limit,
+            limit: 5,
         });
         const records = [] as t.IOrder[];
 
@@ -149,7 +149,19 @@ export class DWH {
     };
 
     private parseOrder(item: any): t.IOrder {
-        return item.order as t.IOrder;
+        const attributes = {
+            cpuCount: item.order.benchmarks.values[2] || 0,
+            gpuCount: item.order.benchmarks.values[7] || 0,
+            hashrate: item.order.benchmarks.values[9] || 0,
+            ramSize:
+                Math.round(item.order.benchmarks.values[3] / (1024 * 1024)) ||
+                0,
+        };
+
+        return {
+            ...item.order,
+            ...attributes,
+        };
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {

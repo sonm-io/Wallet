@@ -1,6 +1,7 @@
 import { ipc as IPC } from './ipc';
 import { ProfileApi } from './sub/profile-api';
 import { OrderApi } from './sub/order-api';
+import { DealApi } from './sub/deal-api';
 import {
     ISendTransactionResult,
     IAccountInfo,

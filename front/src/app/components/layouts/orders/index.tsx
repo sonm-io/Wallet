@@ -42,17 +42,18 @@ export class Orders extends React.PureComponent<any, any> {
     }
 
     protected static map = (source: IOrder): IOrdersListItemProps => {
-        let cpuCount = source.benchmarks.values[2] * 0.001;
-        let hashrate = source.benchmarks.values[9];
-        let ramSize = source.benchmarks.values[3] * 1024 * 1024;
+        //let cpuCount = source.benchmarks.values[2] * 0.001;
+        //let hashrate = source.benchmarks.values[9];
+        //let ramSize = source.benchmarks.values[3] / (1024 * 1024);
+
         return {
             address: '0x0',
             account: source.authorID,
             status: source.orderStatus as EnumProfileStatus,
             customFields: new Map([
-                ['CPU Count', `${cpuCount}`],
-                ['GPU ETH hashrate', `${hashrate} Mh/s`],
-                ['RAM size', `${ramSize} Mb`],
+                ['CPU Count', `${source.cpuCount}`],
+                ['GPU ETH hashrate', `${source.hashrate} Mh/s`],
+                ['RAM size', `${source.ramSize} Mb`],
             ]),
             usdPerHour: source.price,
             duration: source.duration,
