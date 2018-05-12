@@ -171,7 +171,9 @@ export class DWH {
         const attributes = {
             cpuCount: item.order.benchmarks.values[2] || 0,
             gpuCount: item.order.benchmarks.values[7] || 0,
-            hashrate: item.order.benchmarks.values[9] || 0,
+            hashrate:
+                Math.round(100 * item.order.benchmarks.values[9] / 1000) /
+                    100 || 0,
             ramSize:
                 Math.round(item.order.benchmarks.values[3] / (1024 * 1024)) ||
                 0,
@@ -182,10 +184,20 @@ export class DWH {
             ...attributes,
         };
 
-        order.duration = Math.round(order.duration / 3600);
-        order.price = new BN(order.price).mul(new BN(3600)).toString();
+        order.duration = this.parseDuration(order.duration);
+        order.price = this.parsePrice(order.price);
+        order.creatorStatus = item.creatorIdentityLevel || 0;
+        order.creatorName = item.creatorName || '';
 
         return order;
+    }
+
+    private parsePrice(price: number) {
+        return new BN(price).mul(new BN(3600)).toString();
+    }
+
+    private parseDuration(duration: number) {
+        return Math.round(100 * duration / 3600) / 100;
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
@@ -193,8 +205,22 @@ export class DWH {
         return this.parseDeal(res);
     };
 
-    public getDeals = async (): Promise<t.IListResult<t.IDeal>> => {
-        const res = await this.fetchData('GetDeals');
+    public getDeals = async ({
+        limit,
+        offset,
+        filter,
+    }: t.IListQuery): Promise<t.IListResult<t.IDeal>> => {
+        tcomb.Number(limit);
+        tcomb.Number(offset);
+        tcomb.maybe(tcomb.String)(filter);
+
+        const mongoLikeQuery = filter ? JSON.parse(filter) : {};
+        const res = await this.fetchData('GetDeals', {
+            offset,
+            supplierID:
+                mongoLikeQuery.address && 0 ? mongoLikeQuery.address.$eq : null,
+            limit,
+        });
         const records = [] as t.IDeal[];
 
         if (res && res.deals) {
@@ -210,7 +236,16 @@ export class DWH {
     };
 
     private parseDeal(item: any): t.IDeal {
-        return item.deal as t.IDeal;
+        const deal = {
+            ...item.deal,
+        };
+
+        deal.duration = this.parseDuration(deal.duration) || 0;
+        deal.price = this.parsePrice(deal.price) || 0;
+        deal.startTime = deal.startTime ? deal.startTime.seconds : 0;
+        deal.endTime = deal.endTime ? deal.endTime.seconds : 0;
+
+        return deal;
     }
 
     private async fetchData(method: string, params: any = {}) {

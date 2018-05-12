@@ -57,7 +57,8 @@ export class Orders extends React.Component<IProps, never> {
         return {
             address: '0x0',
             account: source.authorID,
-            status: source.orderStatus as EnumProfileStatus,
+            status: source.creatorStatus as EnumProfileStatus,
+            name: source.creatorName,
             customFields: new Map([
                 ['CPU Count', `${source.cpuCount}`],
                 ['GPU ETH hashrate', `${source.hashrate} Mh/s`],

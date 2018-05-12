@@ -1,5 +1,5 @@
 import { useStrict } from 'mobx';
-import { IProfileBrief, IOrder } from 'app/api/types';
+import { IProfileBrief, IOrder, IDeal } from 'app/api/types';
 import { HistoryStore } from './history';
 import { MainStore } from './main';
 import { SendStore } from './send';
@@ -8,6 +8,7 @@ import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
 import { OnlineStore } from './online-store';
 import { ProfileFilterStore } from './profile-filter';
+import { DealFilterStore } from './deal-filter';
 import { OrderFilterStore } from './order-filter';
 import {
     localizator as en,
@@ -16,6 +17,7 @@ import {
 } from 'app/localization';
 import { ProfileList } from './profile-list';
 import { OrdersList } from './orders-list';
+import { DealList } from './deal-list';
 import { Api } from 'app/api';
 import { THistorySourceMode } from './types';
 import { IListStore } from './list-store';
@@ -33,9 +35,11 @@ export class RootStore implements IHasLocalizator {
     public readonly uiStore: UiStore;
     public readonly addTokenStore: AddTokenStore;
     public readonly profileListStore: IListStore<IProfileBrief>;
+    public readonly dealListStore: IListStore<IDeal>;
     public readonly ordersListStore: IListStore<IOrder>;
     public readonly marketStore: MarketStore;
     public readonly profileFilterStore: ProfileFilterStore;
+    public readonly dealFilterStore: DealFilterStore;
     public readonly orderFilterStore: OrderFilterStore;
 
     constructor(localizator: ILocalizator) {
@@ -114,6 +118,19 @@ export class RootStore implements IHasLocalizator {
                 localizator,
                 errorProcessor: this.uiStore,
                 api: Api.order,
+            },
+        );
+
+        this.dealFilterStore = new DealFilterStore();
+
+        this.dealListStore = new DealList(
+            {
+                filter: this.dealFilterStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
+                api: Api.deal,
             },
         );
     }

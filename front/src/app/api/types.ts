@@ -134,6 +134,8 @@ export interface IListResult<T> {
 export interface IOrder {
     id: string;
     orderType: number;
+    creatorStatus: EnumProfileStatus;
+    creatorName: string;
     price: string;
     duration: number;
     orderStatus: number;
@@ -145,21 +147,27 @@ export interface IOrder {
 }
 
 export interface IDeal {
-    id: number;
+    id: string;
     supplierID: string;
     consumerID: string;
     masterID: string;
-    askID: number;
-    bidID: number;
+    askID: string;
+    bidID: string;
     duration: number;
     price: string;
     status: number;
     blockedBalance: string;
     totalPayout: string;
+    startTime: number;
+    endTime: number;
 }
 
 export interface IOrderListFilter {
     authorID?: string;
+}
+
+export interface IDealListFilter {
+    suppliedID?: string;
 }
 
 export interface ISender {

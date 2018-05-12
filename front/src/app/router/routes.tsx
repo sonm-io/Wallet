@@ -11,6 +11,7 @@ import { DepositWithdrawHistory } from 'app/components/layouts/deposit-withdraw-
 import { Deposit, Withdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
 import { Orders } from 'app/components/layouts/orders';
+import { DealList } from 'app/components/layouts/deals';
 
 import * as React from 'react';
 
@@ -436,6 +437,15 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             content: (
                                 <Orders filterByAddress={params.address} />
                             ),
+                        }),
+                    },
+                    {
+                        path: '/deals',
+                        breadcrumbTitle: 'Deals',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'Deals',
+                            pageTitle: 'Deals',
+                            content: <DealList />,
                         }),
                     },
                 ],

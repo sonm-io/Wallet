@@ -107,6 +107,8 @@ export const TypeOrder = createStruct<IOrder>(
     {
         id: t.String,
         orderType: t.Number,
+        creatorStatus: t.Number,
+        creatorName: t.String,
         price: t.String,
         duration: t.Number,
         orderStatus: t.Number,
@@ -129,17 +131,19 @@ export const TypeOrderList = createStruct<IListResult<IOrder>>(
 
 export const TypeDeal = createStruct<IDeal>(
     {
-        id: t.Number,
+        id: t.String,
         supplierID: TypeEthereumAddress,
         consumerID: TypeEthereumAddress,
         masterID: t.String,
-        askID: t.Number,
-        bidID: t.Number,
+        askID: t.String,
+        bidID: t.String,
         duration: t.Number,
         price: t.String,
         status: t.Number,
         blockedBalance: t.String,
         totalPayout: t.String,
+        startTime: t.Number,
+        endTime: t.Number,
     },
     'IDeal',
 );
