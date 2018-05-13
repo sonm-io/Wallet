@@ -24,7 +24,7 @@ async function ipcSend(type: string, payload?: any): Promise<any> {
     return res.data || null;
 }
 
-const DWH_URL = 'http://5.178.85.52:15022/DWHServer/';
+const DWH_URL = 'http://192.99.232.105:15022/DWHServer/';
 const DEFAULT_NODES: t.INodes = {
     default: 'https://mainnet.infura.io',
     livenet: 'https://mainnet.infura.io',

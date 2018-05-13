@@ -143,9 +143,10 @@ export class DWH {
 
         const res = await this.fetchData('GetOrders', {
             offset,
-            authorID: mongoLikeQuery.address
-                ? mongoLikeQuery.address.$eq
-                : null,
+            authorID:
+                mongoLikeQuery.address && mongoLikeQuery.address.$eq
+                    ? mongoLikeQuery.address.$eq
+                    : null,
             limit,
         });
         const records = [] as t.IOrder[];
@@ -217,8 +218,9 @@ export class DWH {
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
         const res = await this.fetchData('GetDeals', {
             offset,
-            supplierID:
-                mongoLikeQuery.address && 0 ? mongoLikeQuery.address.$eq : null,
+            supplierID: mongoLikeQuery.address
+                ? mongoLikeQuery.address.$eq
+                : null,
             limit,
         });
         const records = [] as t.IDeal[];
