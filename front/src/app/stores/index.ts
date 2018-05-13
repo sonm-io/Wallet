@@ -91,6 +91,7 @@ export class RootStore implements IHasLocalizator {
             errorProcessor: this.uiStore,
             api: {
                 fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
+                fetchMarketStats: Api.deal.fetchStats,
             },
         });
 

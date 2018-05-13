@@ -3,8 +3,8 @@ import { Icon } from 'app/components/common/icon';
 import { NavMenuDropdown, TMenuItem } from '../nav-menu-dropdown';
 import { MarketAccountSelect, IAccount } from '../account-select';
 import { AppBalance } from '../balance';
-
 export { IAccount } from '../account-select';
+import { IMarketStats } from 'app/api/types';
 
 export interface IAppHeaderProps {
     className?: string;
@@ -17,6 +17,7 @@ export interface IAppHeaderProps {
     hasMarketAccountSelect: boolean;
     account?: IAccount;
     accountList: Array<IAccount>;
+    marketStats: IMarketStats;
 }
 
 let sendPath = '';
@@ -90,8 +91,9 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                         etherBalance="1234567890123456789000"
                         snmBalance="12345678901234567890867876"
                         usdBalance="1234567890-0987654321879"
-                        ratePerDay="123"
-                        daysLeft="123"
+                        marketDealsCount={p.marketStats.dealsCount}
+                        marketDealsPrice={p.marketStats.dealsPrice}
+                        marketDaysLeft={p.marketStats.daysLeft}
                     />
                     <Icon
                         className={
