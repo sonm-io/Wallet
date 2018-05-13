@@ -23,6 +23,7 @@ export class AlertList extends React.Component<IProps, never> {
             result.push(msg.slice(idx, position));
             result.push(
                 <Hash
+                    key={value}
                     hash={value}
                     hasCopyButton
                     className="sonm-alert-list__hash"

@@ -7,6 +7,7 @@ import { AppHeader, IAccount } from './sub/app-header';
 import { Header } from 'app/components/common/header';
 import { BreadCrumbs } from 'app/components/common/breadcrumbs';
 import { IAlert } from 'app/stores/types';
+import { IMarketStats } from 'app/api/types';
 
 interface IProps {
     className?: string;
@@ -21,6 +22,7 @@ interface IProps {
 
     marketAccountList: IAccount[];
     marketAccount?: IAccount;
+    marketStats: IMarketStats;
 
     networkError: string;
     isPending: boolean;
@@ -42,6 +44,7 @@ export class AppView extends React.PureComponent<IProps, any> {
                         onChangeAccount={p.onChangeMarketAccount}
                         accountList={p.marketAccountList}
                         account={p.marketAccount}
+                        marketStats={p.marketStats}
                         className="sonm-app__header"
                         isTestNet={true}
                         gethNodeUrl="infura.com"

@@ -7,8 +7,9 @@ interface IAppBalanceProps {
     etherBalance: string;
     snmBalance: string;
     usdBalance: string;
-    ratePerDay: string;
-    daysLeft: string;
+    marketDealsCount: number;
+    marketDealsPrice: string;
+    marketDaysLeft: number;
     className?: string;
 }
 
@@ -53,10 +54,17 @@ export class AppBalance extends React.PureComponent<IAppBalanceProps, any> {
                 ) : (
                     <div className="app-balance__row">
                         <span className="app-balance__label">
-                            Current deals:
+                            Market stat:{' '}
                         </span>
                         <span className="app-balance__value">
-                            {p.ratePerDay} USD/day {p.daysLeft} days left
+                            {p.marketDealsCount} deals,{' '}
+                            <Balance
+                                className="app-balance__value"
+                                balance={p.marketDealsPrice}
+                                decimalPointOffset={18}
+                                symbol="USD/h"
+                                decimalDigitAmount={2}
+                            />
                         </span>
                     </div>
                 )}

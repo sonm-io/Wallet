@@ -195,8 +195,6 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             onChange: p.onChangePage,
         };
 
-        console.log(pagination);
-
         const countryValue = p.filterCountry.map(x => mapAbCode2ToLand[x]);
 
         return (

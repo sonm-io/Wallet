@@ -40,6 +40,7 @@ export class App extends React.Component<IProps, any> {
                 onChangeMarketAccount={this.handleChangeMarketAccount}
                 marketAccountList={marketStore.marketAccountViewList}
                 marketAccount={marketStore.marketAccountView}
+                marketStats={marketStore.marketStats}
                 networkError={
                     rootStore.isOffline ? t('sonmapi_network_error') : ''
                 }

@@ -26,7 +26,7 @@ const navigateToHistory = (
     currencyAddress: string = '',
 ) => {
     navigate({
-        path: '/history',
+        path: '/wallet/history',
         query:
             accountAddress || currencyAddress
                 ? {
@@ -36,9 +36,9 @@ const navigateToHistory = (
                 : undefined,
     });
 };
-const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
-const navigateToSuccess = () => navigate({ path: '/send/success' });
-const navigateToMain = () => navigate({ path: '/accounts' });
+const navigateToConfirmation = () => navigate({ path: '/wallet/send/confirm' });
+const navigateToSuccess = () => navigate({ path: '/wallet/send/success' });
+const navigateToMain = () => navigate({ path: '/wallet/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 const navigateToProfile = (address: string) =>
     navigate({ path: `/market/profiles/${address}` });

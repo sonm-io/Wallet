@@ -170,6 +170,12 @@ export interface IDealListFilter {
     suppliedID?: string;
 }
 
+export interface IMarketStats {
+    dealsCount: number;
+    dealsPrice: string;
+    daysLeft: number;
+}
+
 export interface ISender {
     send: (messageType: string, payload?: any) => any;
 }
