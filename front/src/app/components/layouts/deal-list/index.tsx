@@ -2,8 +2,7 @@ import * as React from 'react';
 import { DealListView } from './view';
 import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
-import { toJS } from 'mobx';
-import { autorun } from 'mobx';
+import { toJS, autorun } from 'mobx';
 
 interface IProps {
     className?: string;

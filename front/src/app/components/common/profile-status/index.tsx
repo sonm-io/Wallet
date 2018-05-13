@@ -1,8 +1,10 @@
 import * as React from 'react';
+import * as cn from 'classnames';
 import { EnumProfileStatus } from 'app/api/types';
 
 interface IProfileStatusProps {
     status: EnumProfileStatus;
+    className?: string;
 }
 
 export function ProfileStatus(p: IProfileStatusProps) {
@@ -21,7 +23,12 @@ export function ProfileStatus(p: IProfileStatusProps) {
     }
 
     return (
-        <div className={`sonm-profile-status sonm-profile-status--${modifier}`}>
+        <div
+            className={cn(
+                p.className,
+                `sonm-profile-status sonm-profile-status--${modifier}`,
+            )}
+        >
             {name}
         </div>
     );

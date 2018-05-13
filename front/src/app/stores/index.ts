@@ -22,6 +22,7 @@ import { Api } from 'app/api';
 import { THistorySourceMode } from './types';
 import { IListStore } from './list-store';
 import { unwrapApiResult } from '../api/utils/unwrap-api-result';
+import { OrderDetails } from './order-details';
 
 useStrict(true);
 
@@ -41,6 +42,7 @@ export class RootStore implements IHasLocalizator {
     public readonly profileFilterStore: ProfileFilterStore;
     public readonly dealFilterStore: DealFilterStore;
     public readonly orderFilterStore: OrderFilterStore;
+    public readonly orderDetailsStore: OrderDetails;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -133,6 +135,17 @@ export class RootStore implements IHasLocalizator {
                 api: Api.deal,
             },
         );
+
+        this.orderDetailsStore = new OrderDetails(
+            {
+                market: this.marketStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
+                api: Api.order,
+            },
+        );
     }
 
     public get isPending() {
@@ -145,6 +158,7 @@ export class RootStore implements IHasLocalizator {
             this.depositStore,
             this.withdrawStore,
             this.addTokenStore,
+            this.orderDetailsStore,
         );
     }
 

@@ -1,14 +1,16 @@
-import { EnumProfileStatus } from 'app/api/types';
+import { EnumProfileStatus, IOrder } from 'app/api/types';
 
 export interface IOrdersListItemProps {
     logoUrl?: string;
-    address: string;
-    name?: string;
-    account: string;
-    status: EnumProfileStatus;
-    customFields: Map<string, string>;
+    profileAddress: string;
+    profileName?: string;
+    profileStatus: EnumProfileStatus;
     usdPerHour: string;
     duration: number;
-    // optional
     className?: string;
+    children?: React.ReactNode;
+    orderId: string;
+
+    shemeOfCustomField: Array<Array<string>>;
+    order: IOrder;
 }

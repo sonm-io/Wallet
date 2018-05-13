@@ -4,12 +4,9 @@ import { IOrdersListItemProps } from './types';
 import { IdentIcon } from '../ident-icon';
 import { Balance } from '../balance-view';
 import * as cn from 'classnames';
+import { Hash } from '../hash-view';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
-    constructor(props: IOrdersListItemProps) {
-        super(props);
-    }
-
     public render() {
         return (
             <div className={cn('orders-list-item', this.props.className)}>
@@ -17,57 +14,56 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                     {this.props.logoUrl ? (
                         <img src={this.props.logoUrl} />
                     ) : (
-                        <IdentIcon address={this.props.account} />
+                        <IdentIcon address={this.props.profileAddress} />
                     )}
                 </div>
 
                 {/* Column 1 - Main Info */}
                 <div className="orders-list-item__main">
-                    {this.props.name ? (
+                    {this.props.profileName ? (
                         <div className="orders-list-item__main-row">
-                            <div className="orders-list-item__main-label">
+                            <span className="orders-list-item__main-label">
                                 Name:
-                            </div>
-                            <div className="orders-list-item__name">
-                                {this.props.name}
-                            </div>
+                            </span>
+                            <span className="orders-list-item__main-value">
+                                {this.props.profileName}
+                            </span>
                         </div>
                     ) : null}
 
                     <div className="orders-list-item__main-row">
-                        <div className="orders-list-item__main-label">
+                        <span className="orders-list-item__main-label">
                             Account:
-                        </div>
-                        <div className="orders-list-item__account">
-                            {this.props.account}
-                        </div>
+                        </span>
+                        <Hash
+                            className="orders-list-item__main-value"
+                            hash={this.props.profileAddress}
+                        />
                     </div>
+
                     <div className="orders-list-item__main-row">
-                        <div className="orders-list-item__main-label">
+                        <span className="orders-list-item__main-label">
                             Status:
-                        </div>
-                        <ProfileStatus status={this.props.status} />
+                        </span>
+                        <ProfileStatus
+                            className="orders-list-item__main-value"
+                            status={this.props.profileStatus}
+                        />
                     </div>
                 </div>
 
                 {/* Column 2 - Indicators */}
-                {Array.from(this.props.customFields.keys()).map(key => (
-                    <div
-                        className="orders-list-item__indicator-name"
-                        key={`indicatorKey:${key}`}
-                    >
-                        {key}:
-                    </div>
-                ))}
-                {Array.from(this.props.customFields.values()).map(
-                    (value, i) => (
-                        <div
-                            className="orders-list-item__indicator-value"
-                            key={`indicatorValueNum:${i}`}
-                        >
-                            {value}
-                        </div>
-                    ),
+                {Array.from(
+                    this.props.shemeOfCustomField.map(([title, key], idx) => (
+                        <React.Fragment key={key}>
+                            <div className="orders-list-item__indicator-name">
+                                {title}
+                            </div>
+                            <div className="orders-list-item__indicator-value">
+                                {(this.props.order as any)[key]}
+                            </div>
+                        </React.Fragment>
+                    )),
                 )}
 
                 {/* Column3 - Costs */}
@@ -79,8 +75,13 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                         symbol="USD/h"
                     />
                 </div>
+
                 <div className="orders-list-item__cost">
                     {this.props.duration} hour(s)
+                </div>
+
+                <div className="orders-list-item__child">
+                    {this.props.children}
                 </div>
             </div>
         );

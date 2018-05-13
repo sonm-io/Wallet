@@ -24,8 +24,8 @@ export class DWH {
         IdentityLevel: 'status',
         Name: 'name',
         Country: 'country',
-        activeAsks: 'buyOrders',
-        activeBids: 'sellOrders',
+        activeAsks: 'sellOrders',
+        activeBids: 'buyOrders',
     };
     public static renameProfileKeys = mapKeys((x: string) => DWH.mapProfile[x]);
     public static pickProfileKeys = pick(
@@ -185,7 +185,7 @@ export class DWH {
             ...attributes,
         };
 
-        order.duration = this.parseDuration(order.duration);
+        order.duration = this.parseDuration(order.duration) || 0;
         order.price = this.parsePrice(order.price);
         order.creatorStatus = item.creatorIdentityLevel || 0;
         order.creatorName = item.creatorName || '';
