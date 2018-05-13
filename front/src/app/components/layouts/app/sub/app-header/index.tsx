@@ -42,7 +42,6 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                 ['Deposit', '/market/dw/deposit', undefined],
                 ['Withdraw', '/market/dw/withdraw', undefined],
                 ['History', '/market/dw/history', undefined],
-                ['Orders', '/market/orders', undefined],
                 ['Deals', '/market/deals', undefined],
             ],
         ],

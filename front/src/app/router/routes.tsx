@@ -57,7 +57,11 @@ const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
 const navigateToOrdersByAddress = (address: string) =>
     navigate({ path: `/market/orders/${address}` });
 const navigateToQuickBuy = (orderId: string, creatorAddress: string = '') =>
-    navigate({ path: `/market/orders/${creatorAddress}/quick-buy/${orderId}` });
+    navigate({
+        path: `/market/orders${
+            creatorAddress ? '/' + creatorAddress : ''
+        }/quick-buy/${orderId}`,
+    });
 
 function reload() {
     window.location.reload(true);
@@ -449,7 +453,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         ],
                     },
                     {
-                        path: '/orders',
+                        path: '/orders/:address',
                         breadcrumbTitle: 'Orders',
                         action: appendChild(
                             async (ctx: IContext, params: IUrlParams) => ({
@@ -457,6 +461,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 pageTitle: 'Orders',
                                 content: (
                                     <OrderList
+                                        filterByAddress={params.address}
                                         onNavigateToQuickBuy={
                                             navigateToQuickBuy
                                         }
@@ -485,7 +490,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         ],
                     },
                     {
-                        path: '/orders/:address',
+                        path: '/orders',
                         breadcrumbTitle: 'Orders',
                         action: appendChild(
                             async (ctx: IContext, params: IUrlParams) => ({
@@ -493,7 +498,6 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 pageTitle: 'Orders',
                                 content: (
                                     <OrderList
-                                        filterByAddress={params.address}
                                         onNavigateToQuickBuy={
                                             navigateToQuickBuy
                                         }
