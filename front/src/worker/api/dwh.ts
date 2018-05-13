@@ -185,7 +185,9 @@ export class DWH {
             ...attributes,
         };
 
-        order.duration = this.parseDuration(order.duration) || 0;
+        order.duration = order.duration
+            ? this.parseDuration(order.duration)
+            : 0;
         order.price = this.parsePrice(order.price);
         order.creatorStatus = item.creatorIdentityLevel || 0;
         order.creatorName = item.creatorName || '';
@@ -242,10 +244,14 @@ export class DWH {
             ...item.deal,
         };
 
-        deal.duration = this.parseDuration(deal.duration) || 0;
+        deal.duration = deal.duration ? this.parseDuration(deal.duration) : 0;
         deal.price = this.parsePrice(deal.price) || 0;
-        deal.startTime = deal.startTime ? deal.startTime.seconds : 0;
-        deal.endTime = deal.endTime ? deal.endTime.seconds : 0;
+        deal.startTime =
+            deal.startTime && deal.startTime.seconds
+                ? deal.startTime.seconds
+                : 0;
+        deal.endTime =
+            deal.endTime && deal.endTime.seconds ? deal.endTime.seconds : 0;
 
         return deal;
     }

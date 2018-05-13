@@ -76,9 +76,11 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                     />
                 </div>
 
-                <div className="orders-list-item__cost">
-                    {this.props.duration} hour(s)
-                </div>
+                {this.props.duration ? (
+                    <div className="orders-list-item__cost">
+                        {this.props.duration} hour(s)
+                    </div>
+                ) : null}
 
                 <div className="orders-list-item__child">
                     {this.props.children}
