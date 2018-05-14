@@ -25,7 +25,7 @@ export interface ISendForm {
     currency: string;
 }
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 20;
 
 export class HistoryStore extends OnlineStore implements IHasLocalizator {
     @observable public errors: any[] = [];
