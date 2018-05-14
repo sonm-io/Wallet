@@ -11,12 +11,6 @@ export interface INavigateArgument {
 const getLocation = get('location.pathname');
 const getSearch = get('location.search');
 
-/**
- *
- * @param path url main part
- * @param query
- * @param mergeQuery will be merged with existing query params
- */
 export function navigate({
     path,
     query,
@@ -50,4 +44,8 @@ export function navigate({
     (history as any).push(url);
 
     return url || '';
+}
+
+export function navigateBack(): void {
+    history.goBack();
 }

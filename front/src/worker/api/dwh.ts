@@ -2,6 +2,9 @@ import * as t from './types';
 // import { IAttribute } from '../../app/api/types';
 import * as mapKeys from 'lodash/fp/mapKeys';
 import * as pick from 'lodash/fp/pick';
+import { TypeEthereumAddress } from '../../app/api/runtime-types';
+import * as tcomb from 'tcomb';
+import { BN } from 'bn.js';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -21,8 +24,8 @@ export class DWH {
         IdentityLevel: 'status',
         Name: 'name',
         Country: 'country',
-        activeAsks: 'buyOrders',
-        activeBids: 'sellOrders',
+        activeAsks: 'sellOrders',
+        activeBids: 'buyOrders',
     };
     public static renameProfileKeys = mapKeys((x: string) => DWH.mapProfile[x]);
     public static pickProfileKeys = pick(
@@ -61,6 +64,10 @@ export class DWH {
         limit,
         offset,
     }: t.IListQuery): Promise<t.IListResult<t.IProfileBrief>> => {
+        tcomb.maybe(tcomb.String)(filter);
+        tcomb.Number(limit);
+        tcomb.Number(offset);
+
         const mongoLikeFilter = filter ? JSON.parse(filter) : {};
 
         const res = await this.fetchData('GetProfiles', {
@@ -80,13 +87,15 @@ export class DWH {
 
         return {
             records: res.profiles ? res.profiles.map(this.processProfile) : [],
-            total: 100,
+            total: res && res.count ? res.count : 0,
         };
     };
 
     public getProfileFull = async ({
         address,
     }: any): Promise<t.IProfileFull> => {
+        TypeEthereumAddress(address);
+
         const res = await this.fetchData('GetProfileInfo', { Id: address });
         const brief = this.processProfile(res);
         const certificates = res.Certificates
@@ -124,9 +133,20 @@ export class DWH {
     public getOrders = async ({
         limit,
         offset,
+        filter,
     }: t.IListQuery): Promise<t.IListResult<t.IOrder>> => {
+        tcomb.Number(limit);
+        tcomb.Number(offset);
+        tcomb.maybe(tcomb.String)(filter);
+
+        const mongoLikeQuery = filter ? JSON.parse(filter) : {};
+
         const res = await this.fetchData('GetOrders', {
             offset,
+            authorID:
+                mongoLikeQuery.address && mongoLikeQuery.address.$eq
+                    ? mongoLikeQuery.address.$eq
+                    : null,
             limit,
         });
         const records = [] as t.IOrder[];
@@ -139,7 +159,7 @@ export class DWH {
 
         return {
             records,
-            total: records.length,
+            total: res && res.count ? res.count : 0,
         };
     };
 
@@ -149,13 +169,100 @@ export class DWH {
     };
 
     private parseOrder(item: any): t.IOrder {
-        return item.order as t.IOrder;
+        const attributes = {
+            cpuCount: item.order.benchmarks.values[2] || 0,
+            gpuCount: item.order.benchmarks.values[7] || 0,
+            hashrate:
+                Math.round(100 * item.order.benchmarks.values[9] / 1000) /
+                    100 || 0,
+            ramSize:
+                Math.round(item.order.benchmarks.values[3] / (1024 * 1024)) ||
+                0,
+        };
+
+        const order = {
+            ...item.order,
+            ...attributes,
+        };
+
+        order.duration = order.duration
+            ? this.parseDuration(order.duration)
+            : 0;
+        order.price = this.parsePrice(order.price);
+        order.creatorStatus = item.creatorIdentityLevel || 0;
+        order.creatorName = item.creatorName || '';
+
+        return order;
+    }
+
+    private parsePrice(price: number) {
+        return new BN(price).mul(new BN(3600)).toString();
+    }
+
+    private parseDuration(duration: number) {
+        return Math.round(100 * duration / 3600) / 100;
+    }
+
+    public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
+        const res = await this.fetchData('GetDeals', id);
+        return this.parseDeal(res);
+    };
+
+    public getDeals = async ({
+        limit,
+        offset,
+        filter,
+    }: t.IListQuery): Promise<t.IListResult<t.IDeal>> => {
+        tcomb.Number(limit);
+        tcomb.Number(offset);
+        tcomb.maybe(tcomb.String)(filter);
+
+        const mongoLikeQuery = filter ? JSON.parse(filter) : {};
+        const res = await this.fetchData('GetDeals', {
+            offset,
+            consumerID: mongoLikeQuery.address
+                ? mongoLikeQuery.address.$eq
+                : null,
+            limit,
+        });
+        const records = [] as t.IDeal[];
+
+        if (res && res.deals) {
+            for (const item of res.deals) {
+                records.push(this.parseDeal(item));
+            }
+        }
+
+        return {
+            records,
+            total: res && res.count ? res.count : 0,
+        };
+    };
+
+    private parseDeal(item: any): t.IDeal {
+        const deal = {
+            ...item.deal,
+        };
+
+        deal.duration = deal.duration ? this.parseDuration(deal.duration) : 0;
+        deal.price = this.parsePrice(deal.price) || 0;
+        deal.startTime =
+            deal.startTime && deal.startTime.seconds
+                ? deal.startTime.seconds
+                : 0;
+        deal.endTime =
+            deal.endTime && deal.endTime.seconds ? deal.endTime.seconds : 0;
+
+        return deal;
     }
 
     private async fetchData(method: string, params: any = {}) {
         const response = await fetch(`${this.url}${method}`, {
             method: 'POST',
-            body: JSON.stringify(params),
+            body: JSON.stringify({
+                ...params,
+                WithCount: true,
+            }),
         });
 
         if (response && response.status === 200) {

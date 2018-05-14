@@ -3,41 +3,28 @@
 // Variables
 
 @ordersListItem-label-fontColor: @color-light-font;
-@ordersListItem-value-fontColor: @color-font-dark;
+@ordersListItem-fontColor: @color-font-dark;
 @ordersListItem-borderColor: @color-gray-bg;
 @ordersListItem-border: 1px solid @ordersListItem-borderColor;
-
-// Mixins
-
-.orders-list-item__label {
-    font-family: @font-family;
-    font-size: 12px;
-    font-weight: 400;
-    color: @ordersListItem-label-fontColor;
-    padding: 5px 0;
-    margin-right: 10px;
-}
-
-.orders-list-item__value-font {
-    color: @ordersListItem-value-fontColor;
-    font-family: @font-family;
-    font-size: 15px;
-    font-weight: 400;
-}
 
 // Component
 
 .orders-list-item {
     display: grid;
     grid-auto-flow: column dense;
-    grid-template-columns: ~'75px 364px [labels] max-content [values] 3fr [billing] 2fr [end]';
+    grid-template-columns: ~'80px 300px [labels] 200px [values] 3fr [billing] 2fr [child] auto [end]';
+    grid-auto-rows: 1fr;
+    grid-row-gap: 5px;
+    grid-column-gap: 10px;
     border-bottom: @ordersListItem-border;
+    font-family: @ordersListItem-fontColor;
+    color: @ordersListItem-fontColor;
+    font-weight: 400;
+    padding: 10px;
 
     &:first-child {
         border-top: @ordersListItem-border;
     }
-
-    // Logo
 
     &__logo {
         grid-row: 1 / span 3;
@@ -52,55 +39,47 @@
         grid-row: 1 / span 3;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: center;
     }
 
     &__main-row {
+        padding: 0;
+        margin: 0;
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: 0 10px;
+        flex-wrap: nowrap;
     }
 
     &__main-label {
-        .orders-list-item__label;
-        width: 57px;
+        padding: 0;
+        margin: 0 10px 0 0;
+        width: 60px;
+        display: inline-block;
+        color: @ordersListItem-label-fontColor;
     }
 
-    &__name {
-        color: @ordersListItem-value-fontColor;
-        font-family: @font-family;
-        font-size: 15px;
-        font-weight: 500;
-    }
-
-    &__account {
-        color: @ordersListItem-value-fontColor;
-        font-family: @font-family;
-        font-size: 12px;
-        font-weight: 400;
+    &__main-value {
     }
 
     // Column2 - Indicators
 
     &__indicator-name {
-        .orders-list-item__label;
+        color: @ordersListItem-label-fontColor;
         grid-column: labels / values;
     }
 
     &__indicator-value {
-        .orders-list-item__value-font;
         grid-column: values / billing;
-        display: flex;
-        align-items: center;
     }
 
     // Column 3 - Cost
 
     &__cost {
-        .orders-list-item__value-font;
-        grid-column: billing / end;
+        grid-column: billing / child;
+    }
+
+    &__child {
+        grid-column: child / end;
+        grid-row: 1 / span 3;
         display: flex;
-        align-items: center;
     }
 }

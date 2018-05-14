@@ -10,11 +10,13 @@ import { ProfileList } from 'app/components/layouts/profile-list';
 import { DepositWithdrawHistory } from 'app/components/layouts/deposit-withdraw-history';
 import { Deposit, Withdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
-import { Orders } from 'app/components/layouts/orders';
+import { OrderList } from 'app/components/layouts/order-list';
+import { DealList } from 'app/components/layouts/deal-list';
+import { QuickBuy } from 'app/components/layouts/order-list/sub/quick-buy';
 
 import * as React from 'react';
 
-import { navigate } from './navigate';
+import { navigate, navigateBack } from './navigate';
 
 let defaultAction;
 
@@ -24,7 +26,7 @@ const navigateToHistory = (
     currencyAddress: string = '',
 ) => {
     navigate({
-        path: '/history',
+        path: '/wallet/history',
         query:
             accountAddress || currencyAddress
                 ? {
@@ -34,9 +36,9 @@ const navigateToHistory = (
                 : undefined,
     });
 };
-const navigateToConfirmation = () => navigate({ path: '/send/confirm' });
-const navigateToSuccess = () => navigate({ path: '/send/success' });
-const navigateToMain = () => navigate({ path: '/accounts' });
+const navigateToConfirmation = () => navigate({ path: '/wallet/send/confirm' });
+const navigateToSuccess = () => navigate({ path: '/wallet/send/success' });
+const navigateToMain = () => navigate({ path: '/wallet/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 const navigateToProfile = (address: string) =>
     navigate({ path: `/market/profiles/${address}` });
@@ -52,6 +54,14 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
+const navigateToOrdersByAddress = (address: string) =>
+    navigate({ path: `/market/orders/${address}` });
+const navigateToQuickBuy = (orderId: string, creatorAddress: string = '') =>
+    navigate({
+        path: `/market/orders${
+            creatorAddress ? '/' + creatorAddress : ''
+        }/quick-buy/${orderId}`,
+    });
 
 function reload() {
     window.location.reload(true);
@@ -66,6 +76,23 @@ function replaceWithChild(action: TFnAction): TFnAction {
         } else {
             return action(ctx, p);
         }
+    };
+}
+
+function appendChild(action: TFnAction): TFnAction {
+    return async (ctx: IContext, p: any): Promise<IRouterResult> => {
+        const [me, child] = await Promise.all([action(ctx, p), ctx.next()]);
+
+        return {
+            content: (
+                <React.Fragment>
+                    {me.content}
+                    {child ? child.content : null}
+                </React.Fragment>
+            ),
+            browserTabTitle: child ? child.browserTabTitle : me.browserTabTitle,
+            pageTitle: child ? child.pageTitle : me.pageTitle,
+        };
     };
 }
 
@@ -235,7 +262,12 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     params: IUrlParams,
                                 ) => ({
                                     content: (
-                                        <Profile address={params.address} />
+                                        <Profile
+                                            address={params.address}
+                                            onNavigateToOrders={
+                                                navigateToOrdersByAddress
+                                            }
+                                        />
                                     ),
                                     browserTabTitle: 'Profiles',
                                     pageTitle: 'Profiles',
@@ -418,19 +450,89 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     pageTitle: 'D & W History',
                                 }),
                             },
+                        ],
+                    },
+                    {
+                        path: '/orders/:address',
+                        breadcrumbTitle: 'Orders',
+                        action: appendChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'Orders',
+                                pageTitle: 'Orders',
+                                content: (
+                                    <OrderList
+                                        filterByAddress={params.address}
+                                        onNavigateToQuickBuy={
+                                            navigateToQuickBuy
+                                        }
+                                    />
+                                ),
+                            }),
+                        ),
+                        children: [
                             {
-                                path: '/orders',
-                                breadcrumbTitle: 'Orders',
+                                breadcrumbTitle: 'Quick deal',
+                                path: '/quick-buy/:orderId',
                                 action: async (
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => ({
-                                    browserTabTitle: 'Orders',
-                                    pageTitle: 'Orders',
-                                    content: <Orders />,
+                                    browserTabTitle: 'Quick deal',
+                                    pageTitle: 'Quick deal',
+                                    content: (
+                                        <QuickBuy
+                                            orderId={params.orderId}
+                                            onNavigateBack={navigateBack}
+                                        />
+                                    ),
                                 }),
                             },
                         ],
+                    },
+                    {
+                        path: '/orders',
+                        breadcrumbTitle: 'Orders',
+                        action: appendChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'Orders',
+                                pageTitle: 'Orders',
+                                content: (
+                                    <OrderList
+                                        onNavigateToQuickBuy={
+                                            navigateToQuickBuy
+                                        }
+                                    />
+                                ),
+                            }),
+                        ),
+                        children: [
+                            {
+                                breadcrumbTitle: 'Quick deal',
+                                path: '/quick-buy/:orderId',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    browserTabTitle: 'Quick deal',
+                                    pageTitle: 'Quick deal',
+                                    content: (
+                                        <QuickBuy
+                                            orderId={params.orderId}
+                                            onNavigateBack={navigateBack}
+                                        />
+                                    ),
+                                }),
+                            },
+                        ],
+                    },
+                    {
+                        path: '/deals',
+                        breadcrumbTitle: 'Deals',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'Deals',
+                            pageTitle: 'Deals',
+                            content: <DealList />,
+                        }),
                     },
                 ],
             },

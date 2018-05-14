@@ -12,4 +12,5 @@ export const props: IAppHeaderProps = {
     accountList: marketAccountSelectProps.accounts,
     account: marketAccountSelectProps.accounts[0],
     isTestNet: false,
+    marketStats: { dealsCount: 0, dealsPrice: '0', daysLeft: 0 },
 };

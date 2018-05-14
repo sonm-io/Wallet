@@ -63,8 +63,8 @@ export interface ITxListFilter {
 }
 
 export interface IListQuery<T = string> {
-    limit?: number;
-    offset?: number;
+    limit: number;
+    offset: number;
     sortBy?: string;
     sortDesc?: boolean;
     filter?: T;
@@ -134,19 +134,46 @@ export interface IListResult<T> {
 export interface IOrder {
     id: string;
     orderType: number;
+    creatorStatus: EnumProfileStatus;
+    creatorName: string;
     price: string;
     duration: number;
     orderStatus: number;
     authorID: string;
-    benchmarks: any;
+    cpuCount: number;
+    gpuCount: number;
+    hashrate: number;
+    ramSize: number;
 }
 
-export interface IOrderListResult<T> {
-    records: Array<T>;
+export interface IDeal {
+    id: string;
+    supplierID: string;
+    consumerID: string;
+    masterID: string;
+    askID: string;
+    bidID: string;
+    duration: number;
+    price: string;
+    status: number;
+    blockedBalance: string;
+    totalPayout: string;
+    startTime: number;
+    endTime: number;
 }
 
 export interface IOrderListFilter {
     authorID?: string;
+}
+
+export interface IDealListFilter {
+    suppliedID?: string;
+}
+
+export interface IMarketStats {
+    dealsCount: number;
+    dealsPrice: string;
+    daysLeft: number;
 }
 
 export interface ISender {

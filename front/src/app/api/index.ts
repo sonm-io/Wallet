@@ -1,6 +1,7 @@
 import { ipc as IPC } from './ipc';
 import { ProfileApi } from './sub/profile-api';
 import { OrderApi } from './sub/order-api';
+import { DealApi } from './sub/deal-api';
 import {
     ISendTransactionResult,
     IAccountInfo,
@@ -21,6 +22,7 @@ class AllApi {
 
     public profile = new ProfileApi(this.ipc);
     public order = new OrderApi(this.ipc);
+    public deal = new DealApi(this.ipc);
 
     public async createWallet(
         password: string,

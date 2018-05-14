@@ -3,14 +3,12 @@
 @navMenuBgColor: @color-brand-bg;
 @navMenuBgColorActive: lighten(@color-brand-bg, 5%);
 @navMenuTextColor: @color-white;
-@navMenuTextColorActive: @color-green;
+@navMenuTextColorActive: var(--color-nav-menu-selection);
 @navMenuLeftPadding: 12px;
 @navMenuZIndex: @z-kangchenjunga;
 
 .sonm-nav-menu-dropdown {
-    --color-nav-menu-selection: @navMenuTextColorActive;
     font-size: 15px;
-
     padding: 0;
     background: transparent;
     position: relative;

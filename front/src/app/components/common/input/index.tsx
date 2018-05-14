@@ -28,8 +28,11 @@ export class Input extends React.Component<IInputProps, any>
             allowAutoComplete,
             prefix,
             className,
+            name,
+            value,
             ...rest
         } = this.props;
+
         const autoComplete = allowAutoComplete ? 'on' : 'off';
 
         return (
@@ -48,6 +51,8 @@ export class Input extends React.Component<IInputProps, any>
                     className="sonm-input__input"
                     ref={this.saveRef}
                     autoComplete={autoComplete}
+                    name={name}
+                    value={value}
                 />
                 <div className="sonm-input__underline" />
             </div>

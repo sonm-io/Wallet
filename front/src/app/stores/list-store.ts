@@ -29,6 +29,8 @@ export interface IListStore<T> {
     total: number;
     offset: number;
     limit: number;
+    sortBy: string;
+    sortDesc: boolean;
     records: T[];
     page: number;
     totalPage: number;
@@ -87,6 +89,16 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         sortBy: '',
         filter: '',
     };
+
+    @computed
+    public get sortBy() {
+        return this.userInput.sortBy || '';
+    }
+
+    @computed
+    public get sortDesc() {
+        return this.userInput.sortDesc || false;
+    }
 
     @computed
     public get page() {
@@ -159,6 +171,10 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
             return result;
         });
+
+        if ('filter' in input) {
+            this.userInput.page = 1;
+        }
 
         if (changes.length === 0) {
             return;
