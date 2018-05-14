@@ -31,6 +31,9 @@ interface IProps {
     onCloseAlert: (alertId: string) => void;
 
     title?: string;
+
+    snmBalance: string;
+    etherBalance: string;
 }
 
 export class AppView extends React.PureComponent<IProps, any> {
@@ -51,6 +54,8 @@ export class AppView extends React.PureComponent<IProps, any> {
                         sonmNodeUrl="dwh.sonm.com"
                         onNavigate={p.onNavigate}
                         hasMarketAccountSelect={p.hasMarketAccountSelect}
+                        snmBalance={p.snmBalance}
+                        etherBalance={p.etherBalance}
                         onExit={p.onExit}
                     />
                     <div className="sonm-app__alert-group">
@@ -65,18 +70,20 @@ export class AppView extends React.PureComponent<IProps, any> {
                             onCloseAlert={p.onCloseAlert}
                         />
                     </div>
-                    <div className="sonm-app__common sonm-app-common-block">
-                        <BreadCrumbs
-                            className="sonm-app__breadcrumbs"
-                            items={p.breadcrumbs}
-                            onNavigate={p.onNavigate}
-                        />
-                        <Header className="sonm-app-common-block__title">
-                            {p.title}
-                        </Header>
-                    </div>
                     <div className="sonm-app__content">
                         <div className="sonm-app__content-scroll-ct">
+                            {p.title ? (
+                                <div className="sonm-app__common sonm-app-common-block">
+                                    <BreadCrumbs
+                                        className="sonm-app__breadcrumbs"
+                                        items={p.breadcrumbs}
+                                        onNavigate={p.onNavigate}
+                                    />
+                                    <Header className="sonm-app-common-block__title">
+                                        {p.title}
+                                    </Header>
+                                </div>
+                            ) : null}
                             {p.children}
                         </div>
                     </div>

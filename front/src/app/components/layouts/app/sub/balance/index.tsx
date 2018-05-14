@@ -19,7 +19,7 @@ export class AppBalance extends React.PureComponent<IAppBalanceProps, any> {
 
         return (
             <div className={cn('app-balance', p.className)}>
-                {p.marketMode ? (
+                {p.marketMode === false ? (
                     <React.Fragment>
                         <div className="app-balance__row">
                             <span className="app-balance__label">
@@ -32,19 +32,12 @@ export class AppBalance extends React.PureComponent<IAppBalanceProps, any> {
                                 symbol="ETH"
                                 decimalDigitAmount={2}
                             />
-                            <Balance
-                                className="app-balance__value"
-                                balance={p.snmBalance}
-                                decimalPointOffset={18}
-                                symbol="SNM"
-                                decimalDigitAmount={2}
-                            />
                         </div>
                         <div className="app-balance__row">
                             <span className="app-balance__label">On SONM:</span>
                             <Balance
                                 className="app-balance__value"
-                                balance={p.etherBalance}
+                                balance={p.snmBalance}
                                 decimalPointOffset={18}
                                 symbol="SNM"
                                 decimalDigitAmount={2}

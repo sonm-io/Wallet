@@ -18,6 +18,8 @@ export interface IAppHeaderProps {
     account?: IAccount;
     accountList: Array<IAccount>;
     marketStats: IMarketStats;
+    snmBalance: string;
+    etherBalance: string;
 }
 
 let sendPath = '';
@@ -86,9 +88,9 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                 <div className="sonm-app-header-block__wrapper sonm-app-header__item">
                     <AppBalance
                         className="sonm-app-header-block__balance"
-                        marketMode={false}
-                        etherBalance="1234567890123456789000"
-                        snmBalance="12345678901234567890867876"
+                        marketMode={p.hasMarketAccountSelect}
+                        etherBalance={p.etherBalance}
+                        snmBalance={p.snmBalance}
                         usdBalance="1234567890-0987654321879"
                         marketDealsCount={p.marketStats.dealsCount}
                         marketDealsPrice={p.marketStats.dealsPrice}

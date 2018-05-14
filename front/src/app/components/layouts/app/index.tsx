@@ -47,6 +47,8 @@ export class App extends React.Component<IProps, never> {
                 isPending={rootStore.isPending}
                 alerts={uiStore.alertList}
                 onCloseAlert={uiStore.closeAlert}
+                snmBalance={rootStore.mainStore.primaryTokenBalance}
+                etherBalance={rootStore.mainStore.etherBalance}
             >
                 {p.children}
             </AppView>
