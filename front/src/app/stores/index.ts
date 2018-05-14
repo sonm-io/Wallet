@@ -3,6 +3,7 @@ import { IProfileBrief, IOrder, IDeal } from 'app/api/types';
 import { HistoryStore } from './history';
 import { MainStore } from './main';
 import { SendStore } from './send';
+import { WithdrawStore } from './withdraw';
 import { MarketStore } from './market';
 import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
@@ -32,7 +33,7 @@ export class RootStore implements IHasLocalizator {
     public readonly mainStore: MainStore;
     public readonly sendStore: SendStore;
     public readonly depositStore: SendStore;
-    public readonly withdrawStore: SendStore;
+    public readonly withdrawStore: WithdrawStore;
     public readonly uiStore: UiStore;
     public readonly addTokenStore: AddTokenStore;
     public readonly profileListStore: IListStore<IProfileBrief>;
@@ -78,7 +79,7 @@ export class RootStore implements IHasLocalizator {
             true,
         );
 
-        this.withdrawStore = new SendStore(
+        this.withdrawStore = new WithdrawStore(
             this,
             this.localizator,
             {

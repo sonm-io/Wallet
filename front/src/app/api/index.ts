@@ -143,9 +143,11 @@ class AllApi {
         return this.ipc.send('account.getCurrencies');
     }
 
-    public async getMarketBalance(address: string): Promise<IResult<string>> {
+    public getMarketBalance = async (
+        address: string,
+    ): Promise<IResult<string>> => {
         return this.ipc.send('account.getMarketBalance', { address });
-    }
+    };
 
     public async getTokenExchangeRate(): Promise<IResult<string>> {
         return this.ipc.send('getTokenExchangeRate');
