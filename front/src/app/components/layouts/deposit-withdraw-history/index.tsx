@@ -119,7 +119,11 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
             title: 'TxHash',
             className: 'sonm-dw-tx-list__cell-tx-hash sonm-dw-tx-list__cell',
             render: (_, record) => {
-                return <Hash hash={record.hash} hasCopyButton />;
+                return record.hash.indexOf('0x') !== -1 ? (
+                    <Hash hash={record.hash} hasCopyButton />
+                ) : (
+                    record.hash
+                );
             },
         },
         {

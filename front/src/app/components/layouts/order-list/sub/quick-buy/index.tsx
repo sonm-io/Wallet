@@ -43,6 +43,7 @@ export class QuickBuy extends React.Component<IProps, any> {
                 validationPassword={validationPassword}
                 password={text}
                 onSubmit={this.handleSubmit}
+                onClickCross={this.props.onNavigateBack}
             />
         );
     }

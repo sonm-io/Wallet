@@ -153,7 +153,11 @@ export class History extends React.Component<IProps, any> {
             title: 'TxHash',
             className: 'sonm-tx-list__cell-hash sonm-tx-list__cell',
             render: (_, record) => {
-                return <Hash hash={record.hash} hasCopyButton />;
+                return record.hash.indexOf('0x') !== -1 ? (
+                    <Hash hash={record.hash} hasCopyButton />
+                ) : (
+                    record.hash
+                );
             },
         },
         {
