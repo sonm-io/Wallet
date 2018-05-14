@@ -13,7 +13,7 @@ interface IProps {
 }
 
 @observer
-export class App extends React.Component<IProps, any> {
+export class App extends React.Component<IProps, never> {
     protected handleExit = (event: any) => {
         event.preventDefault();
 
@@ -36,7 +36,7 @@ export class App extends React.Component<IProps, any> {
                 onNavigate={p.onNavigate}
                 onExit={p.onExit}
                 breadcrumbs={[]}
-                hasMarketAccountSelect={true}
+                hasMarketAccountSelect={p.path.startsWith('/market')}
                 onChangeMarketAccount={this.handleChangeMarketAccount}
                 marketAccountList={marketStore.marketAccountViewList}
                 marketAccount={marketStore.marketAccountView}
