@@ -57,7 +57,6 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
             'CPU Count',
             'GPU ETH hashrate',
             'RAM size',
-            'ramSize',
             'Cost',
             'Lease duration',
         ],
