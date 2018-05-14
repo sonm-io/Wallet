@@ -7,6 +7,7 @@ interface IAppBalanceProps {
     etherBalance: string;
     snmBalance: string;
     usdBalance: string;
+    marketBalance: string;
     marketDealsCount: number;
     marketDealsPrice: string;
     marketDaysLeft: number;
@@ -31,13 +32,20 @@ export class AppBalance extends React.PureComponent<IAppBalanceProps, any> {
                                 decimalPointOffset={18}
                                 symbol="ETH"
                                 decimalDigitAmount={2}
+                            />,{' '}
+                            <Balance
+                                className="app-balance__value"
+                                balance={p.snmBalance}
+                                decimalPointOffset={18}
+                                symbol="SNM"
+                                decimalDigitAmount={2}
                             />
                         </div>
                         <div className="app-balance__row">
                             <span className="app-balance__label">On SONM:</span>
                             <Balance
                                 className="app-balance__value"
-                                balance={p.snmBalance}
+                                balance={p.marketBalance}
                                 decimalPointOffset={18}
                                 symbol="SNM"
                                 decimalDigitAmount={2}

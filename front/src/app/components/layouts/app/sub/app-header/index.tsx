@@ -20,6 +20,7 @@ export interface IAppHeaderProps {
     marketStats: IMarketStats;
     snmBalance: string;
     etherBalance: string;
+    marketBalance: string;
 }
 
 let sendPath = '';
@@ -92,6 +93,7 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                         etherBalance={p.etherBalance}
                         snmBalance={p.snmBalance}
                         usdBalance="1234567890-0987654321879"
+                        marketBalance={p.marketBalance}
                         marketDealsCount={p.marketStats.dealsCount}
                         marketDealsPrice={p.marketStats.dealsPrice}
                         marketDaysLeft={p.marketStats.daysLeft}
