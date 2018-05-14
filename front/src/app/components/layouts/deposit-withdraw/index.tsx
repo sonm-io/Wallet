@@ -7,7 +7,6 @@ import { ButtonGroup } from 'app/components/common/button-group';
 import { Form, FormField } from 'app/components/common/form';
 import { SendStore } from 'app/stores/send';
 import { rootStore } from 'app/stores';
-import { Header } from 'app/components/common/header';
 import { ISendFormValues } from 'app/stores/types';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { AccountItem } from 'app/components/common/account-item';
@@ -373,9 +372,6 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         const { className } = this.props;
         return (
             <div className={cn('sonm-deposit-withdraw', className)}>
-                <Header className="sonm-deposit-withdraw__header">
-                    {this.props.title}
-                </Header>
                 {this.renderAccount()}
                 {this.renderAmount()}
                 {this.renderCommission()}

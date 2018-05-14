@@ -10,7 +10,6 @@ import { IdentIcon } from 'app/components/common/ident-icon';
 import { Form, FormRow, FormField } from 'app/components/common/form';
 import { SendStore } from 'app/stores/send';
 import { rootStore } from 'app/stores';
-import { Header } from 'app/components/common/header';
 import { ISendFormValues } from 'app/stores/types';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 
@@ -126,8 +125,6 @@ export class Send extends React.Component<IProps, any> {
 
         return (
             <div className={cn('sonm-send', className)}>
-                <Header className="sonm-send__header">Send</Header>
-
                 <Form onSubmit={this.handleSubmit} className="sonm-send__form">
                     <FormRow className="sonm-send__row-from-address">
                         <FormField

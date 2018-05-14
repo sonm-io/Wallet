@@ -10,6 +10,7 @@ interface IProps {
     path: string;
     onNavigate: (url: string) => void;
     onExit: () => void;
+    title?: string;
 }
 
 @observer
@@ -50,6 +51,7 @@ export class App extends React.Component<IProps, never> {
                 onCloseAlert={uiStore.closeAlert}
                 snmBalance={rootStore.mainStore.primaryTokenBalance}
                 etherBalance={rootStore.mainStore.etherBalance}
+                title={p.title}
             >
                 {p.children}
             </AppView>
