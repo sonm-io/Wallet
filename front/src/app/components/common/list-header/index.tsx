@@ -69,7 +69,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                                     className={cn(
                                         'list-header__pageSize-button-label',
                                         {
-                                            'list-header__pageSize__button__label--selected':
+                                            'list-header__pageSize-button-label--selected':
                                                 limit === this.props.pageLimit,
                                         },
                                     )}
