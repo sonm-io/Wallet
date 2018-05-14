@@ -46,7 +46,7 @@ export class OrderList extends React.Component<IProps, never> {
     public render() {
         return (
             <OrderListView
-                schemeOfOrderItem={OrderList.defaultSchemeOfOrderItem}
+                schemaOfOrderItem={OrderList.defaultSchemeOfOrderItem}
                 orderBy={store.sortBy}
                 orderDesc={store.sortDesc}
                 pageLimit={store.limit}

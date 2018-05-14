@@ -11,6 +11,6 @@ export interface IOrdersListItemProps {
     children?: React.ReactNode;
     orderId: string;
 
-    shemeOfCustomField: Array<Array<string>>;
+    schemaOfCustomField: Array<Array<string>>;
     order: IOrder;
 }

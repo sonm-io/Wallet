@@ -30,7 +30,7 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
                             usdPerHour={order.price}
                             duration={order.duration}
                             orderId={order.id}
-                            shemeOfCustomField={p.schemeOfOrderItem}
+                            schemaOfCustomField={p.schemaOfOrderItem}
                             order={order}
                             key={order.id}
                         >
