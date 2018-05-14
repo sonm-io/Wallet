@@ -5,7 +5,7 @@ import { LoadMask } from 'app/components/common/load-mask';
 import { AlertList } from './sub/alerts';
 import { AppHeader, IAccount } from './sub/app-header';
 import { Header } from 'app/components/common/header';
-import { BreadCrumbs } from 'app/components/common/breadcrumbs';
+// import { BreadCrumbs } from 'app/components/common/breadcrumbs';
 import { IAlert } from 'app/stores/types';
 import { IMarketStats } from 'app/api/types';
 
@@ -74,11 +74,11 @@ export class AppView extends React.PureComponent<IProps, any> {
                         <div className="sonm-app__content-scroll-ct">
                             {p.title ? (
                                 <div className="sonm-app__common sonm-app-common-block">
-                                    <BreadCrumbs
-                                        className="sonm-app__breadcrumbs"
-                                        items={p.breadcrumbs}
-                                        onNavigate={p.onNavigate}
-                                    />
+                                    {/*<BreadCrumbs*/}
+                                    {/*className="sonm-app__breadcrumbs"*/}
+                                    {/*items={p.breadcrumbs}*/}
+                                    {/*onNavigate={p.onNavigate}*/}
+                                    {/*/>*/}
                                     <Header className="sonm-app-common-block__title">
                                         {p.title}
                                     </Header>
