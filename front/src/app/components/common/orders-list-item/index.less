@@ -15,7 +15,7 @@
     grid-template-columns: ~'80px 300px [labels] 200px [values] 3fr [billing] 2fr [child] auto [end]';
     grid-auto-rows: 1fr;
     grid-row-gap: 5px;
-    grid-column-gap: 10px;
+    grid-column-gap: 15px;
     border-bottom: @ordersListItem-border;
     font-family: @ordersListItem-fontColor;
     color: @ordersListItem-fontColor;
@@ -36,28 +36,23 @@
     // Column1 - Main Info
 
     &__main {
+        margin: auto;
         grid-row: 1 / span 3;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    &__main-row {
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-wrap: nowrap;
+        display: grid;
+        grid-auto-flow: column dense;
+        grid-template-columns: ~'[labels] 100px [values] 1fr';
+        grid-auto-rows: 22px;
+        grid-row-gap: 5px;
+        grid-column-gap: 10px;
     }
 
     &__main-label {
-        padding: 0;
-        margin: 0 10px 0 0;
-        width: 60px;
-        display: inline-block;
         color: @ordersListItem-label-fontColor;
+        grid-column: labels;
     }
 
     &__main-value {
+        grid-column: values;
     }
 
     // Column2 - Indicators

@@ -21,35 +21,31 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 {/* Column 1 - Main Info */}
                 <div className="orders-list-item__main">
                     {this.props.profileName ? (
-                        <div className="orders-list-item__main-row">
+                        <React.Fragment>
                             <span className="orders-list-item__main-label">
                                 Name:
                             </span>
                             <span className="orders-list-item__main-value">
                                 {this.props.profileName}
                             </span>
-                        </div>
+                        </React.Fragment>
                     ) : null}
 
-                    <div className="orders-list-item__main-row">
-                        <span className="orders-list-item__main-label">
-                            Account:
-                        </span>
-                        <Hash
-                            className="orders-list-item__main-value"
-                            hash={this.props.profileAddress}
-                        />
-                    </div>
+                    <span className="orders-list-item__main-label">
+                        Account:
+                    </span>
+                    <Hash
+                        className="orders-list-item__main-value"
+                        hash={this.props.profileAddress}
+                    />
 
-                    <div className="orders-list-item__main-row">
-                        <span className="orders-list-item__main-label">
-                            Status:
-                        </span>
-                        <ProfileStatus
-                            className="orders-list-item__main-value"
-                            status={this.props.profileStatus}
-                        />
-                    </div>
+                    <span className="orders-list-item__main-label">
+                        Status:
+                    </span>
+                    <ProfileStatus
+                        className="orders-list-item__main-value"
+                        status={this.props.profileStatus}
+                    />
                 </div>
 
                 {/* Column 2 - Indicators */}
