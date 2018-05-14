@@ -1,6 +1,10 @@
+export interface IOrderBy {
+    [address: string]: string;
+}
+
 export interface IListHeaderProps {
     orderBy: string;
-    orderKeys: Array<string>;
+    orderKeys: IOrderBy;
     orderDesc: boolean;
     pageLimit: number;
     pageLimits: Array<number>;

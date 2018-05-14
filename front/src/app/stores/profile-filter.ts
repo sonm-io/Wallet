@@ -77,7 +77,7 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
                 $in: this.country,
             },
             query: {
-                $eq: this.query,
+                $like: this.query,
             },
         };
 

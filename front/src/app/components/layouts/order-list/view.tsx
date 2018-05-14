@@ -53,14 +53,14 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
     };
 
     public static readonly headerProps = {
-        orderKeys: [
-            'CPU Count',
-            'GPU ETH hashrate',
-            'RAM size',
-            'ramSize',
-            'Cost',
-            'Lease duration',
-        ],
+        orderKeys: {
+            cpuCount: 'CPU Count',
+            gpuCount: 'GPU Count',
+            hashrate: 'ETH hashrate',
+            ramSize: 'RAM size',
+            price: 'Price',
+            duration: 'Duration',
+        },
         pageLimits: [10, 25, 50, 100],
     };
 }
