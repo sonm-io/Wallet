@@ -46,7 +46,7 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
 
     @computed
     public get role(): EnumProfileRole {
-        return Number(this.userInput.role) || EnumProfileRole.customer;
+        return Number(this.userInput.role) || EnumProfileRole.supplier;
     }
 
     @computed
