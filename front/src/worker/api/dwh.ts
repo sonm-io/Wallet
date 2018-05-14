@@ -172,9 +172,7 @@ export class DWH {
         const attributes = {
             cpuCount: item.order.benchmarks.values[2] || 0,
             gpuCount: item.order.benchmarks.values[7] || 0,
-            hashrate:
-                Math.round(100 * item.order.benchmarks.values[9] / 1000) /
-                    100 || 0,
+            hashrate: item.order.benchmarks.values[9] || 0,
             ramSize:
                 Math.round(item.order.benchmarks.values[3] / (1024 * 1024)) ||
                 0,

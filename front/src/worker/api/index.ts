@@ -560,11 +560,12 @@ class Api {
 
                     item.marketBalance =
                         marketBalance[Object.keys(marketBalance)[1]];
-                    item.marketUsdBalance = rate
-                        ? new BN(item.marketBalance + WEI_PRECISION)
-                              .div(new BN(rate))
-                              .toString()
-                        : '0';
+                    item.marketUsdBalance =
+                        parseInt(rate, 10) > 0
+                            ? new BN(item.marketBalance + WEI_PRECISION)
+                                  .div(new BN(rate))
+                                  .toString()
+                            : '0';
                 }
 
                 list.push(item);
