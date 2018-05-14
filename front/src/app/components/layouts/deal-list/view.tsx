@@ -52,7 +52,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
 
                 return [
                     <div key="1">From: {start.format('D MMM YYYY H:mm')}</div>,
-                    record.endTime ? (
+                    record.endTime && now < record.endTime ? (
                         <div key="2">To: {end.format('D MMM YYYY H:mm')}</div>
                     ) : null,
                     record.endTime && now < record.endTime ? (

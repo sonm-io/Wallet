@@ -259,7 +259,7 @@ export class DWH {
             limit,
             sortings: [
                 {
-                    field: 'Id',
+                    field: 'StartTime',
                     order: 1,
                 },
             ],
