@@ -73,7 +73,10 @@ export class DWH {
         const res = await this.fetchData('GetProfiles', {
             offset,
             limit,
-            name: mongoLikeFilter.query ? mongoLikeFilter.query.$eq : null,
+            name:
+                mongoLikeFilter.query && mongoLikeFilter.query.$like
+                    ? `%${mongoLikeFilter.query.$like}%`
+                    : null,
             country:
                 mongoLikeFilter.country && mongoLikeFilter.country.$in.length
                     ? mongoLikeFilter.country.$in[0].toLowerCase()
@@ -134,10 +137,36 @@ export class DWH {
         limit,
         offset,
         filter,
+        sortBy,
+        sortDesc,
     }: t.IListQuery): Promise<t.IListResult<t.IOrder>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
+        tcomb.maybe(tcomb.String)(sortBy);
+        tcomb.maybe(tcomb.Boolean)(sortDesc);
+
+        let sortField = 'Id';
+        switch (sortBy) {
+            case 'price':
+                sortField = 'Price';
+                break;
+            case 'duration':
+                sortField = 'Duration';
+                break;
+            case 'cpuCount':
+                sortField = 'Benchmark2';
+                break;
+            case 'gpuCount':
+                sortField = 'Benchmark7';
+                break;
+            case 'hashrate':
+                sortField = 'Benchmark9';
+                break;
+            case 'ramSize':
+                sortField = 'Benchmark11';
+                break;
+        }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
 
@@ -148,6 +177,12 @@ export class DWH {
                     ? mongoLikeQuery.address.$eq
                     : null,
             limit,
+            sortings: [
+                {
+                    field: sortField,
+                    order: sortDesc ? 1 : 0,
+                },
+            ],
         });
         const records = [] as t.IOrder[];
 
@@ -172,9 +207,7 @@ export class DWH {
         const attributes = {
             cpuCount: item.order.benchmarks.values[2] || 0,
             gpuCount: item.order.benchmarks.values[7] || 0,
-            hashrate:
-                Math.round(100 * item.order.benchmarks.values[9] / 1000) /
-                    100 || 0,
+            hashrate: item.order.benchmarks.values[9] || 0,
             ramSize:
                 Math.round(item.order.benchmarks.values[3] / (1024 * 1024)) ||
                 0,
@@ -224,6 +257,12 @@ export class DWH {
                 ? mongoLikeQuery.address.$eq
                 : null,
             limit,
+            sortings: [
+                {
+                    field: 'StartTime',
+                    order: 1,
+                },
+            ],
         });
         const records = [] as t.IDeal[];
 

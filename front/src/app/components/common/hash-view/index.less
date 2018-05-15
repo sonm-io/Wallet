@@ -1,12 +1,18 @@
 .sonm-hash {
-    display: inline-flex;
-    overflow: hidden;
-    white-space: nowrap;
-    text-decoration: none !important;
+    display: inline-block;
+    text-decoration: none;
     color: inherit;
     max-width: 100%;
     padding: 0;
-    align-items: baseline;
+    overflow: hidden;
+
+    &__line {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        white-space: nowrap;
+        align-items: baseline;
+    }
 
     &:hover,
     &:active,

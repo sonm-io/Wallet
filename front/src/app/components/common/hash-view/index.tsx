@@ -57,26 +57,28 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
         const Tag = onClick ? 'a' : 'div';
 
         return (
-            <Tag
-                href={onClick ? `#${hash0x}` : undefined}
-                onClick={onClick}
-                className={cn('sonm-hash', className)}
-                style={style}
-            >
-                <span className="sonm-hash__start">
-                    {prefix} {start}
-                </span>
-                <span className="sonm-hash__end">{end}</span>
-                {showCopyButton ? (
-                    <button
-                        className="sonm-hash__copy"
-                        title="copy"
-                        onClickCapture={this.handleClickCopy}
-                    >
-                        <Icon i="Copy" />
-                    </button>
-                ) : null}
-            </Tag>
+            <div className={cn('sonm-hash', className)}>
+                <Tag
+                    href={onClick ? `#${hash0x}` : undefined}
+                    onClick={onClick}
+                    className="sonm-hash__line"
+                    style={style}
+                >
+                    <span className="sonm-hash__start">
+                        {prefix} {start}
+                    </span>
+                    <span className="sonm-hash__end">{end}</span>
+                    {showCopyButton ? (
+                        <button
+                            className="sonm-hash__copy"
+                            title="copy"
+                            onClickCapture={this.handleClickCopy}
+                        >
+                            <Icon i="Copy" />
+                        </button>
+                    ) : null}
+                </Tag>
+            </div>
         );
     }
 }

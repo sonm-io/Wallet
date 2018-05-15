@@ -101,8 +101,8 @@ export enum EnumProfileStatus {
 }
 
 export enum EnumProfileRole {
-    customer = 1,
-    supplier = 2,
+    customer = 2,
+    supplier = 1,
 }
 
 export interface IAttribute {

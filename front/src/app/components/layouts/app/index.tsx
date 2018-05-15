@@ -10,10 +10,11 @@ interface IProps {
     path: string;
     onNavigate: (url: string) => void;
     onExit: () => void;
+    title?: string;
 }
 
 @observer
-export class App extends React.Component<IProps, any> {
+export class App extends React.Component<IProps, never> {
     protected handleExit = (event: any) => {
         event.preventDefault();
 
@@ -36,10 +37,11 @@ export class App extends React.Component<IProps, any> {
                 onNavigate={p.onNavigate}
                 onExit={p.onExit}
                 breadcrumbs={[]}
-                hasMarketAccountSelect={true}
+                hasMarketAccountSelect={p.path.startsWith('/market')}
                 onChangeMarketAccount={this.handleChangeMarketAccount}
                 marketAccountList={marketStore.marketAccountViewList}
                 marketAccount={marketStore.marketAccountView}
+                marketBalance={marketStore.marketBalance}
                 marketStats={marketStore.marketStats}
                 networkError={
                     rootStore.isOffline ? t('sonmapi_network_error') : ''
@@ -47,6 +49,9 @@ export class App extends React.Component<IProps, any> {
                 isPending={rootStore.isPending}
                 alerts={uiStore.alertList}
                 onCloseAlert={uiStore.closeAlert}
+                snmBalance={rootStore.mainStore.primaryTokenBalance}
+                etherBalance={rootStore.mainStore.etherBalance}
+                title={p.title}
             >
                 {p.children}
             </AppView>

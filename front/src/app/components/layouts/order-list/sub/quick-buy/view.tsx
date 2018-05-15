@@ -7,6 +7,7 @@ import { Button } from 'app/components/common/button';
 interface IProps {
     onChangePassword: (event: any) => void;
     onSubmit: () => void;
+    onClickCross: () => void;
     validationPassword: string;
     password: string;
 }
@@ -20,7 +21,7 @@ export class QuickBuyView extends React.Component<IProps, any> {
 
     public render() {
         return (
-            <Dialog>
+            <Dialog onClickCross={this.props.onClickCross}>
                 <h3>Quick buy</h3>
                 <Form onSubmit={this.handleSubmit}>
                     <FormField

@@ -95,6 +95,7 @@ export class MarketStore extends OnlineStore {
     @action
     public setMarketAccountAddress(address: string) {
         this.userInput.marketAccountAddress = address;
+        this.updatePublicBalance();
         this.updateMarketStats();
     }
 

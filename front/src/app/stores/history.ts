@@ -25,7 +25,7 @@ export interface ISendForm {
     currency: string;
 }
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 20;
 
 export class HistoryStore extends OnlineStore implements IHasLocalizator {
     @observable public errors: any[] = [];
@@ -123,7 +123,9 @@ export class HistoryStore extends OnlineStore implements IHasLocalizator {
         const page = this.page;
         const source = this.source;
 
-        const { data: [txList, total] } = yield Api.getSendTransactionList(
+        const {
+            data: [txList, total],
+        } = yield Api.getSendTransactionList(
             source,
             filter,
             ITEMS_PER_PAGE,

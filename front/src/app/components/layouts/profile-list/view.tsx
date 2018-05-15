@@ -136,12 +136,12 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
 
     protected static roleOptions: Array<ISelectItem<any>> = [
         {
-            value: (defaultFilter.role = EnumProfileRole.customer),
-            stringValue: 'Customer',
-        },
-        {
             value: EnumProfileRole.supplier,
             stringValue: 'Supplier',
+        },
+        {
+            value: EnumProfileRole.customer,
+            stringValue: 'Customer',
         },
     ];
 

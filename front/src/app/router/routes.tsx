@@ -269,8 +269,8 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             }
                                         />
                                     ),
-                                    browserTabTitle: 'Profiles',
-                                    pageTitle: 'Profiles',
+                                    browserTabTitle: 'Profile',
+                                    pageTitle: 'Profile',
                                 }),
                             },
                         ],

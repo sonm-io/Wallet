@@ -1,11 +1,11 @@
 @import 'guide.less';
 
 @navMenuBgColor: @color-brand-bg;
-@navMenuBgColorActive: lighten(@color-brand-bg, 5%);
+@navMenuBgColorActive: lighten(@color-brand-bg, 1%);
 @navMenuTextColor: @color-white;
 @navMenuTextColorActive: var(--color-nav-menu-selection);
 @navMenuLeftPadding: 12px;
-@navMenuZIndex: @z-kangchenjunga;
+@navMenuZIndex: @z-k2;
 
 .sonm-nav-menu-dropdown {
     font-size: 15px;
@@ -49,7 +49,7 @@
 .sonm-nav-menu {
     background: @navMenuBgColor;
     display: flex;
-    justify-content: center;
+    justify-content: left;
     position: relative;
     white-space: nowrap;
 
@@ -88,7 +88,6 @@
         display: block;
         -webkit-appearance: none;
         outline: none;
-        border: none;
         background: none @navMenuBgColorActive;
         border: 0 solid @navMenuBgColor;
         border-bottom-width: 1px;

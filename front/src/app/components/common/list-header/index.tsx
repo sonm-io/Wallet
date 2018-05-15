@@ -34,9 +34,9 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                 <div className="list-header__sortings">
                     Sort by:
                     <div className="list-header__sortings-container">
-                        {this.props.orderKeys.map(orderKey => (
+                        {Object.keys(this.props.orderKeys).map(orderKey => (
                             <button
-                                key={orderKey}
+                                value={orderKey}
                                 className={cn(
                                     'list-header__sortings-container-item',
                                     {
@@ -45,9 +45,9 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                                     },
                                 )}
                                 onClick={this.handleClickOrder}
-                                value={orderKey}
+                                key={orderKey}
                             >
-                                {orderKey}
+                                {this.props.orderKeys[orderKey]}
                                 <Icon
                                     className="list-header__sortings-container-icon"
                                     i={this.getOrderIconName(orderKey)}
