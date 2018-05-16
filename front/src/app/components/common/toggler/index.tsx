@@ -18,6 +18,7 @@ export interface ITogglerProps {
     className?: string;
     cssClasses?: ICssClasses;
     onChange?: (params: ITogglerChangeParams) => void;
+    type?: string;
     name: string;
     value: boolean;
     title: string;
@@ -37,6 +38,7 @@ export class Toggler extends React.PureComponent<ITogglerProps, never> {
     public render() {
         const {
             className,
+            type,
             name,
             value,
             title,
@@ -48,7 +50,7 @@ export class Toggler extends React.PureComponent<ITogglerProps, never> {
             <input
                 key="a"
                 name={name}
-                type="checkbox"
+                type={type || 'checkbox'}
                 className={cssClasses.input}
                 checked={value}
                 onChange={this.handleChange}
