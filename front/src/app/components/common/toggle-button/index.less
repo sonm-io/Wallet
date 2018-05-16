@@ -1,0 +1,38 @@
+@import 'guide.less';
+
+.toggle-button {
+    padding: 0;
+
+    &:focus {
+        outline: dotted 1px @color-dark-gray;
+        outline-offset: 3px;
+    }
+
+    &__radio {
+        position: absolute;
+        opacity: 0;
+    }
+
+    &__button {
+        display: inline-block;
+        border: solid 1px @color-dark-gray-bg;
+        color: @color-dark-gray;
+        height: 100%;
+        padding: 0 10px;
+        border-right-width: 0;
+
+        .toggle-button:last-child & {
+            border-right-width: 1px;
+        }
+    }
+
+    &__radio:checked + &__button {
+        background-color: @color-dark-gray-bg;
+        color: @color-white;
+    }
+
+    &__radio:focus + &__button {
+        outline: dotted 1px @color-dark-gray;
+        outline-offset: 3px;
+    }
+}
