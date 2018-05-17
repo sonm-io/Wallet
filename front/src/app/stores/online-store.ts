@@ -2,11 +2,13 @@ import { observable, action, computed, when } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api';
-import { WalletApiError } from './types';
+import { IAlert, WalletApiError } from './types';
 import { ILocalizator } from 'app/localization';
 
 export interface IErrorProcessor {
     processError: (err: Error) => void;
+    addAlert: (alert: Partial<IAlert>) => string;
+    closeAlert: (id: string) => void;
 }
 
 interface IOnlineStoreServices {

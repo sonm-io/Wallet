@@ -10,6 +10,7 @@ import {
     IOrder,
     IDeal,
     IMarketStats,
+    IOrderParams,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -156,6 +157,14 @@ export const TypeDealStats = createStruct<IMarketStats>(
         daysLeft: t.Number,
     },
     'IMarketStats',
+);
+
+export const TypeOrderParams = createStruct<IOrderParams>(
+    {
+        orderStatus: t.Number,
+        dealID: t.String,
+    },
+    'IOrderParams',
 );
 
 export const TypeDealList = createStruct<IListResult<IDeal>>(

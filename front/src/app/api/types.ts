@@ -176,6 +176,11 @@ export interface IMarketStats {
     daysLeft: number;
 }
 
+export interface IOrderParams {
+    orderStatus: number;
+    dealID: string;
+}
+
 export interface ISender {
     send: (messageType: string, payload?: any) => any;
 }

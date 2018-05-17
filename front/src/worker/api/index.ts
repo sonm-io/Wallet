@@ -4,6 +4,7 @@ import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
 import * as t from './types';
+import * as tcomb from 'tcomb';
 import { BN } from 'bn.js';
 
 import { wrapInResponse } from './utils';
@@ -135,6 +136,7 @@ class Api {
             'deal.list': wrapInResponse(dwh.getDeals),
 
             'market.buyOrder': this.buyOrder,
+            'market.getOrderParams': wrapInResponse(this.getOrderParams),
 
             getSonmTokenAddress: this.getSonmTokenAddress,
             getTokenExchangeRate: this.getTokenExchangeRate,
@@ -858,6 +860,17 @@ class Api {
         } else {
             throw new Error('required_params_missed');
         }
+    };
+
+    public getOrderParams = async ({
+        address,
+        id,
+    }: any): Promise<t.IOrderParams> => {
+        tcomb.String(address);
+        tcomb.String(id);
+
+        const client = await this.initAccount(address, 'private');
+        return client.account.getOrderParams(id);
     };
 
     public getSonmTokenAddress = async (): Promise<t.IResponse> => {
