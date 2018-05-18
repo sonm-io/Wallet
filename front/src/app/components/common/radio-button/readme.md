@@ -1,7 +1,7 @@
 radio:
 
     <div>
-        <RadioButton name="level" title="low"/>
-        <RadioButton name="level" title="normal"/>
-        <RadioButton name="level" title="high"/>
+        <RadioButton groupName="level" title="low"/>
+        <RadioButton groupName="level" title="normal"/>
+        <RadioButton groupName="level" title="high"/>
     </div>

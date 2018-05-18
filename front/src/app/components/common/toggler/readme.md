@@ -20,15 +20,15 @@ Title before:
 
 Value true:
 
-    <Toggler name="toggler1" value={true} />
+    <Toggler groupName="toggler1" value={true} />
 
 Value false:
 
-    <Toggler name="toggler2" value={false} />
+    <Toggler groupName="toggler2" value={false} />
 
 With title and title before in one group (try to change them):
 
     <div>
-        <Toggler name="toggler3" title="Novice"/> |
-        <Toggler name="toggler3" title="Expert" titleBefore />
+        <Toggler groupName="toggler3" title="Novice"/> |
+        <Toggler groupName="toggler3" title="Expert" titleBefore />
     </div>

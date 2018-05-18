@@ -1,87 +1,100 @@
 import * as React from 'react';
-import get from 'lodash/fp/get';
+import * as get from 'lodash/fp/get';
 import * as cn from 'classnames';
-import { IToggle } from '../toggle-button/types';
+import { IChengable, IChengableProps, IChangeParams } from '../types';
 
 const toString = (x: any) => String(x);
-
-export interface IToggleGroupProps<TValue, TElement> {
-    value?: TValue;
-    valueList: TValue[];
-    displayValuePath?: string;
-    keyValuePath?: string;
-    onChange?: (value: TValue) => void;
-    className?: string;
-    elementClassName?: string;
-    name?: string;
-    elementCtor: new () => TElement;
-}
+const id = (x: any) => x;
 
 let uniqIdx = 0;
 function nextUniqId() {
-    return 'btnGrp' + uniqIdx++;
+    return 'toggleGroupId' + uniqIdx++;
+}
+
+export interface IToggleGroupItem extends IChengableProps<boolean> {
+    className?: string;
+    title?: string;
+    groupName?: string;
+}
+
+export interface IToggleGroupProps<
+    TValue,
+    TElement extends React.Component<IToggleGroupItem, never>
+> extends IChengableProps<TValue> {
+    values: TValue[];
+    titles?: string[] | string;
+    className?: string;
+    elementClassName?: string;
+    elementCtor: new () => TElement;
 }
 
 export class ToggleGroup<
     TValue,
-    TElement extends React.Component<IToggle<TValue>, never>
-> extends React.Component<IToggleGroupProps<TValue, TElement>, any> {
-    private buttonGroupName: string;
-
+    TElement extends React.Component<IToggleGroupItem, never>
+> extends React.Component<IToggleGroupProps<TValue, TElement>, any>
+    implements IChengable<TValue> {
     constructor(props: IToggleGroupProps<TValue, TElement>) {
         super(props);
 
-        this.buttonGroupName =
-            props.name === undefined ? nextUniqId() : props.name;
+        this.titleGetter =
+            typeof props.titles === 'string'
+                ? get(props.titles)
+                : props.titles === undefined
+                    ? toString
+                    : id;
     }
 
-    protected handleChange = (
-        checked: boolean,
-        value?: TValue,
-        groupName?: string,
-    ) => {
-        if (checked === false) {
+    private titleGetter: (value: TValue) => string;
+
+    protected getValueByName(name: string) {
+        if (this.props.titles instanceof Array) {
+            const index = this.props.titles.findIndex(i => i === name);
+            return this.props.values[index];
+        } else {
+            const res = this.props.values.find(
+                i => this.titleGetter(i) === name,
+            );
+            if (!res) throw new Error('name');
+            return res;
+        }
+    }
+
+    protected getNameByIndex(index: number) {
+        return this.props.titles instanceof Array
+            ? this.props.titles[index]
+            : this.titleGetter(this.props.values[index]);
+    }
+
+    protected handleChange = (params: IChangeParams<boolean>) => {
+        if (params.value === false) {
             return;
         }
 
-        if (this.props.onChange) {
-            this.props.onChange(value as TValue);
-        }
+        const value = this.getValueByName(params.name);
+
+        this.props.onChange &&
+            this.props.onChange({
+                name: this.props.name,
+                value,
+                stringValue: value.toString(),
+            });
     };
 
-    private getDisplayValue(raw: any) {
-        const getter =
-            this.props.displayValuePath !== undefined
-                ? get(this.props.displayValuePath)
-                : toString;
-
-        return getter(raw);
-    }
-
-    private getKeyValue(raw: any) {
-        const getter =
-            this.props.keyValuePath !== undefined
-                ? get(this.props.keyValuePath)
-                : toString;
-
-        return getter(raw);
-    }
-
     public render() {
-        const { elementCtor, valueList, value, className } = this.props;
+        const { elementCtor, value, className, elementClassName } = this.props;
         const Tag = elementCtor;
 
         return (
             <div className={cn('sonm-button-group', className)}>
-                {valueList.map(x => {
-                    const key = this.getKeyValue(x);
+                {this.props.values.map((key, index) => {
+                    const name = this.getNameByIndex(index);
                     return (
                         <Tag
-                            className="elementClassName"
-                            title={this.getDisplayValue(x)}
-                            groupName={this.buttonGroupName}
-                            value={key}
-                            checked={key === value}
+                            className={elementClassName}
+                            title={name}
+                            name={name}
+                            groupName={this.props.name || nextUniqId()}
+                            value={key === value}
                             onChange={this.handleChange}
                         />
                     );

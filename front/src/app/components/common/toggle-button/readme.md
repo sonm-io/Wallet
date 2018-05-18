@@ -1,10 +1,10 @@
 Unchecked:
 
-    <ToggleButton title="title" checked={false} />
+    <ToggleButton title="title" value={false} />
 
 Checked:
 
-    <ToggleButton title="title" checked={true} />
+    <ToggleButton title="title" value={true} />
 
 Group:
 

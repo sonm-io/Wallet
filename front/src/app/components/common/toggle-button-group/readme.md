@@ -5,15 +5,15 @@ Radio button group:
 
     const state = observable({
         value: 'normal',
-        onChange: action.bound(function (value) {
-            this.value = value;
+        onChange: action.bound(function (params) {
+            this.value = params.value;
         })
     });
 
     const Container = observer(() =>
         <ToggleButtonGroup
             value={state.value}
-            valueList={[
+            values={[
                 'low',
                 'normal',
                 'high'

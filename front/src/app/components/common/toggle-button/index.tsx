@@ -1,20 +1,22 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IToggle } from './types';
+import { IChengable, IChengableProps } from '../types';
+import { IToggleGroupItem } from '../toggle-group';
 
-export class ToggleButton<TValue> extends React.Component<
-    IToggle<TValue>,
-    never
-> {
+export interface ToggleButtonProps
+    extends IChengableProps<boolean>,
+        IToggleGroupItem {}
+
+export class ToggleButton extends React.Component<ToggleButtonProps, never>
+    implements IChengable<boolean> {
     protected handleChageInput = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
         this.props.onChange &&
-            this.props.onChange(
-                event.target.checked,
-                this.props.value,
-                this.props.groupName,
-            );
+            this.props.onChange({
+                name: this.props.name,
+                value: event.target.checked,
+            });
     };
 
     public render() {
@@ -23,9 +25,8 @@ export class ToggleButton<TValue> extends React.Component<
                 <input
                     className="toggle-button__radio"
                     type="radio"
-                    value={this.props.value as any}
-                    name={this.props.groupName}
-                    checked={this.props.checked}
+                    name={this.props.groupName || this.props.name}
+                    checked={this.props.value}
                     onChange={this.handleChageInput}
                 />
                 <span className="toggle-button__button">
