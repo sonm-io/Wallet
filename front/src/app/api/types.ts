@@ -181,7 +181,7 @@ export interface IMarketStats {
 }
 
 export interface IOrderParams {
-    orderStatus: number;
+    orderStatus: string;
     dealID: string;
 }
 

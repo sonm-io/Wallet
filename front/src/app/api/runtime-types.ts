@@ -165,7 +165,7 @@ export const TypeDealStats = createStruct<IMarketStats>(
 
 export const TypeOrderParams = createStruct<IOrderParams>(
     {
-        orderStatus: t.Number,
+        orderStatus: t.String,
         dealID: t.String,
     },
     'IOrderParams',

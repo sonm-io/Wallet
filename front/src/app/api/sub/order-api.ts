@@ -65,6 +65,17 @@ export class OrderApi {
         });
         return TypeOrderParams(response.data);
     }
+
+    public async waitForDeal(
+        address: string,
+        id: string,
+    ): Promise<IOrderParams> {
+        const response = await this.ipc.send('market.waitForOrderDeal', {
+            address,
+            id,
+        });
+        return TypeOrderParams(response.data);
+    }
 }
 
 export default OrderApi;

@@ -4,9 +4,9 @@ import { ILocalizator } from 'app/localization';
 const { pending } = OnlineStore;
 import { updateUserInput } from './utils/update-user-input';
 import { asyncAction } from 'mobx-utils';
-import { delay } from 'app/utils/async-delay';
 import { AlertType } from './types';
 import { IOrderParams } from 'app/api/types';
+import { RootStore } from './';
 
 export interface IOrderDetailsInput {
     password: string;
@@ -21,9 +21,11 @@ export interface IOrderDetailsStoreServices {
 
 export interface IOrderDetailsStoreApi {
     quickBuy: (accountAddress: string, password: string, orderId: string) => {};
-    getOrderParams: (
+    waitForDeal: (
         accountAddress: string,
         id: string,
+        delay: number,
+        retries: number,
     ) => Promise<IOrderParams>;
 }
 
@@ -37,12 +39,14 @@ const ORDER_CHECK_RETRY_COUNT = 30;
 const ORDER_CHECK_DELAY = 1000;
 
 export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
+    protected rootStore: RootStore;
     protected externalStores: IOrderDetailsStoreExternal;
     protected api: IOrderDetailsStoreApi;
     protected localizator: ILocalizator;
     protected errorProcessor: IErrorProcessor;
 
     constructor(
+        rootStore: RootStore,
         externalStores: IOrderDetailsStoreExternal,
         params: IOrderDetailsStoreServices,
     ) {
@@ -55,6 +59,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         this.api = params.api;
         this.localizator = params.localizator;
         this.errorProcessor = params.errorProcessor;
+        this.rootStore = rootStore;
     }
 
     @observable
@@ -95,6 +100,8 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         } else {
             let alert;
 
+            console.log(data);
+
             if (data.status === '0x0') {
                 alert = {
                     type: AlertType.error,
@@ -114,11 +121,52 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
             }
 
             this.serverValidation.password = '';
-            this.processOrder(
-                accountAddress,
-                id,
-                this.errorProcessor.addAlert(alert),
-            );
+            const alertId = this.rootStore.uiStore.addAlert(alert);
+
+            if (alert.type === AlertType.warning) {
+                this.api
+                    .waitForDeal(
+                        accountAddress,
+                        id,
+                        ORDER_CHECK_RETRY_COUNT,
+                        ORDER_CHECK_DELAY,
+                    )
+                    .then((orderParams: IOrderParams) => {
+                        if (orderParams && orderParams.dealID !== '0') {
+                            alert = {
+                                type: AlertType.success,
+                                message: this.localizator.getMessageText([
+                                    'tx_buy_order_matched',
+                                    [id, orderParams.dealID],
+                                ]),
+                            };
+                        } else {
+                            alert = {
+                                type: AlertType.error,
+                                message: this.localizator.getMessageText([
+                                    'tx_buy_order_match_failed',
+                                    [id],
+                                ]),
+                            };
+                        }
+
+                        this.rootStore.uiStore.closeAlert(alertId);
+                        this.rootStore.uiStore.addAlert(alert);
+                        this.update();
+                    })
+                    .catch((err: Error) => {
+                        alert = {
+                            type: AlertType.error,
+                            message: this.localizator.getMessageText([
+                                'tx_buy_order_match_failed',
+                                [id],
+                            ]),
+                        };
+
+                        this.rootStore.uiStore.closeAlert(alertId);
+                        this.rootStore.uiStore.addAlert(alert);
+                    });
+            }
         }
     }
 
@@ -135,42 +183,6 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     @computed
     public get validationPassword() {
         return this.serverValidation.password || '';
-    }
-
-    private async processOrder(
-        address: string,
-        orderId: string,
-        alertId: string,
-    ) {
-        let retry = ORDER_CHECK_RETRY_COUNT;
-        while (retry >= 0) {
-            const orderParams = await this.api.getOrderParams(address, orderId);
-
-            if (orderParams && orderParams.dealID !== '0') {
-                this.errorProcessor.closeAlert(alertId);
-                this.errorProcessor.addAlert({
-                    type: AlertType.success,
-                    message: this.localizator.getMessageText([
-                        'tx_buy_order_matched',
-                        [orderId, orderParams.dealID],
-                    ]),
-                });
-
-                return;
-            }
-
-            await delay(ORDER_CHECK_DELAY);
-            retry--;
-        }
-
-        this.errorProcessor.closeAlert(alertId);
-        this.errorProcessor.addAlert({
-            type: AlertType.error,
-            message: this.localizator.getMessageText([
-                'tx_buy_order_match_failed',
-                [orderId],
-            ]),
-        });
     }
 }
 
