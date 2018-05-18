@@ -2,11 +2,8 @@
 
 // Variables
 
-@ordersListItem-label-fontColor: @color-light-font;
-@ordersListItem-fontColor: @color-font-dark;
-@ordersListItem-borderColor: @color-gray-bg;
-@ordersListItem-border: 1px solid @ordersListItem-borderColor;
-@order-list-item-row-height: 25px;
+@deal-list-item-label-fontColor: @color-light-font;
+@deal-list-item-row-height: 25px;
 
 // Component
 
@@ -36,7 +33,7 @@
 
 .sonm-deals-list {
     &__cell {
-        &-account {
+        &__account {
             display: grid;
             grid-template-columns: 80px 300px;
             grid-template-rows: 1fr;
@@ -58,13 +55,13 @@
                 display: grid;
                 grid-auto-flow: column dense;
                 grid-template-columns: ~'[labels] 70px [values] 1fr';
-                grid-auto-rows: @order-list-item-row-height;
+                grid-auto-rows: @deal-list-item-row-height;
                 grid-row-gap: 5px;
                 grid-column-gap: 10px;
             }
 
             &__main-label {
-                color: @ordersListItem-label-fontColor;
+                color: @deal-list-item-label-fontColor;
                 grid-column: labels;
             }
 
@@ -75,19 +72,19 @@
             }
         }
 
-        &-stats {
+        &__stats {
             margin: auto 0;
             grid-row: 1;
             grid-column: 2;
             display: grid;
             grid-auto-flow: column dense;
             grid-template-columns: ~'[labels] 150px [values] 1fr';
-            grid-auto-rows: @order-list-item-row-height;
+            grid-auto-rows: @deal-list-item-row-height;
             grid-row-gap: 5px;
             grid-column-gap: 10px;
 
             &__label {
-                color: @ordersListItem-label-fontColor;
+                color: @deal-list-item-label-fontColor;
                 grid-column: labels;
             }
 
@@ -98,7 +95,7 @@
             }
         }
 
-        &-status {
+        &__status {
             text-transform: uppercase;
 
             &--buy {
@@ -110,8 +107,8 @@
             }
         }
 
-        &-price {
-            &--duration {
+        &__price {
+            &--green {
                 color: @color-green;
             }
         }

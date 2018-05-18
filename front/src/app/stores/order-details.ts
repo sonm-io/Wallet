@@ -152,7 +152,6 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
                         this.rootStore.uiStore.closeAlert(alertId);
                         this.rootStore.uiStore.addAlert(alert);
-                        this.update();
                     })
                     .catch((err: Error) => {
                         alert = {

@@ -75,7 +75,6 @@ export class DealList extends React.Component<IProps, any> {
 
         return (
             <DealListView
-                className=""
                 dataSource={dataSource}
                 marketAccountAddress={
                     rootStore.marketStore.marketAccountAddress
