@@ -1,7 +1,12 @@
 import { observable, computed, action } from 'mobx';
+import * as moment from 'moment';
 
 export interface IDealFilter {
     address: string;
+    query: string;
+    dateFrom: number;
+    dateTo: number;
+    onlyActive: boolean;
 }
 
 export interface IFilterStore {
@@ -13,6 +18,12 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
     @observable
     public userInput: Partial<IDealFilter> = {
         address: undefined,
+        query: undefined,
+        dateFrom: moment('20171201', 'YYYYMMDD').valueOf(),
+        dateTo: moment()
+            .endOf('day')
+            .valueOf(),
+        onlyActive: true,
     };
 
     @action
@@ -36,10 +47,40 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
     }
 
     @computed
+    public get dateFrom() {
+        return this.userInput.dateFrom || 0;
+    }
+
+    @computed
+    public get dateTo() {
+        return this.userInput.dateTo || 0;
+    }
+
+    @computed
+    public get query() {
+        return this.userInput.query || '';
+    }
+
+    @computed
+    public get onlyActive() {
+        return this.userInput.onlyActive || false;
+    }
+
+    @computed
     public get filter(): any {
         const result: any = {
             address: {
                 $eq: this.address,
+            },
+            date: {
+                $gte: this.dateFrom,
+                $lte: this.dateTo,
+            },
+            onlyActive: {
+                $eq: this.onlyActive,
+            },
+            query: {
+                $like: this.query,
             },
         };
 

@@ -10,6 +10,13 @@ interface IDictionary<T> {
     [index: string]: keyof T;
 }
 
+interface IBenchmark {
+    cpuCount: number;
+    gpuCount: number;
+    hashrate: string;
+    ramSize: string;
+}
+
 const ATTRIBUTE_DESCRIPTION = 1103;
 
 export class DWH {
@@ -203,19 +210,20 @@ export class DWH {
         return this.parseOrder(res);
     };
 
-    private parseOrder(item: any): t.IOrder {
-        const attributes = {
-            cpuCount: item.order.benchmarks.values[2] || 0,
-            gpuCount: item.order.benchmarks.values[7] || 0,
-            hashrate: item.order.benchmarks.values[9] || 0,
+    private parseBenchmarks(benchmarks: any): IBenchmark {
+        return {
+            cpuCount: benchmarks.values[2] || 0,
+            gpuCount: benchmarks.values[7] || 0,
+            hashrate: (benchmarks.values[9] || 0) + ' MH/s',
             ramSize:
-                Math.round(item.order.benchmarks.values[3] / (1024 * 1024)) ||
-                0,
+                (Math.round(benchmarks.values[3] / (1024 * 1024)) || 0) + ' MB',
         };
+    }
 
+    private parseOrder(item: any): t.IOrder {
         const order = {
             ...item.order,
-            ...attributes,
+            ...this.parseBenchmarks(item.order.benchmarks),
         };
 
         order.duration = order.duration
@@ -256,6 +264,10 @@ export class DWH {
             consumerID: mongoLikeQuery.address
                 ? mongoLikeQuery.address.$eq
                 : null,
+            supplierID:
+                mongoLikeQuery.query && mongoLikeQuery.query.$like
+                    ? `${mongoLikeQuery.query.$like}`
+                    : null,
             limit,
             sortings: [
                 {
@@ -281,6 +293,7 @@ export class DWH {
     private parseDeal(item: any): t.IDeal {
         const deal = {
             ...item.deal,
+            ...this.parseBenchmarks(item.deal.benchmarks),
         };
 
         deal.duration = deal.duration ? this.parseDuration(deal.duration) : 0;

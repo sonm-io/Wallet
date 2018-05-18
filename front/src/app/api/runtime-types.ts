@@ -117,8 +117,8 @@ export const TypeOrder = createStruct<IOrder>(
         authorID: TypeEthereumAddress,
         cpuCount: t.Number,
         gpuCount: t.Number,
-        hashrate: t.Number,
-        ramSize: t.Number,
+        hashrate: t.String,
+        ramSize: t.String,
     },
     'IOrder',
 );
@@ -146,6 +146,10 @@ export const TypeDeal = createStruct<IDeal>(
         totalPayout: t.String,
         startTime: t.Number,
         endTime: t.Number,
+        cpuCount: t.Number,
+        gpuCount: t.Number,
+        hashrate: t.String,
+        ramSize: t.String,
     },
     'IDeal',
 );

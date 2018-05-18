@@ -142,8 +142,8 @@ export interface IOrder {
     authorID: string;
     cpuCount: number;
     gpuCount: number;
-    hashrate: number;
-    ramSize: number;
+    hashrate: string;
+    ramSize: string;
 }
 
 export interface IDeal {
@@ -160,6 +160,10 @@ export interface IDeal {
     totalPayout: string;
     startTime: number;
     endTime: number;
+    cpuCount: number;
+    gpuCount: number;
+    hashrate: string;
+    ramSize: string;
 }
 
 export interface IOrderListFilter {
