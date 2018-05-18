@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 
 export interface ITogglerChangeParams {
-    name: string;
+    name?: string;
     value: boolean;
     stringValue: string;
 }
@@ -18,7 +18,7 @@ export interface ITogglerProps {
     className?: string;
     cssClasses?: ICssClasses;
     onChange?: (params: ITogglerChangeParams) => void;
-    name: string;
+    name?: string;
     value: boolean;
     title: string;
     titleBefore?: boolean;
