@@ -134,11 +134,19 @@ export interface IAccountBrief {
     status?: EnumProfileStatus;
 }
 
-export interface IBenchmark {
+export interface IBenchmarkMap {
+    cpuSysbenchMulti: number;
+    cpuSysbenchOne: number;
     cpuCount: number;
     gpuCount: number;
-    hashrate: string;
+    ethHashrate: string;
     ramSize: string;
+    storageSize: string;
+    downloadNetSpeed: string;
+    uploadNetSpeed: string;
+    gpuRamSize: string;
+    zcashHashrate: string;
+    redshiftGpu: string;
 }
 
 export interface IOrder {
@@ -148,7 +156,7 @@ export interface IOrder {
     price: string;
     duration: number;
     orderStatus: number;
-    benchmarkMap: IBenchmark;
+    benchmarkMap: IBenchmarkMap;
 }
 
 export interface IDeal {
@@ -165,7 +173,7 @@ export interface IDeal {
     totalPayout: string;
     startTime: number;
     endTime: number;
-    benchmarkMap: IBenchmark;
+    benchmarkMap: IBenchmarkMap;
 }
 
 export interface IOrderListFilter {

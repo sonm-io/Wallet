@@ -113,7 +113,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                             GPU ETH hashrate
                         </div>
                         <div className="sonm-deals-list__cell__stats__value">
-                            {record.benchmarkMap.hashrate}
+                            {record.benchmarkMap.ethHashrate}
                         </div>
                         <div className="sonm-deals-list__cell__stats__name">
                             RAM size

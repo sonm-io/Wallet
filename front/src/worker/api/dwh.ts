@@ -5,17 +5,10 @@ import * as pick from 'lodash/fp/pick';
 import { TypeEthereumAddress } from '../../app/api/runtime-types';
 import * as tcomb from 'tcomb';
 import { BN } from 'bn.js';
-import { EnumProfileStatus } from '../../app/api/types';
+import { EnumProfileStatus, IBenchmarkMap } from '../../app/api/types';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
-}
-
-interface IBenchmark {
-    cpuCount: number;
-    gpuCount: number;
-    hashrate: string;
-    ramSize: string;
 }
 
 const ATTRIBUTE_DESCRIPTION = 1103;
@@ -211,13 +204,25 @@ export class DWH {
         return this.parseOrder(res);
     };
 
-    private parseBenchmarks(benchmarks: any): IBenchmark {
+    private parseBenchmarks(benchmarks: any): IBenchmarkMap {
         return {
+            cpuSysbenchMulti: benchmarks.values[0] || 0,
+            cpuSysbenchOne: benchmarks.values[1] || 0,
             cpuCount: benchmarks.values[2] || 0,
-            gpuCount: benchmarks.values[7] || 0,
-            hashrate: (benchmarks.values[9] || 0) + ' MH/s',
             ramSize:
                 (Math.round(benchmarks.values[3] / (1024 * 1024)) || 0) + ' MB',
+            storageSize:
+                (Math.round(benchmarks.values[4] / (1024 * 1024)) || 0) + ' MB',
+            downloadNetSpeed:
+                (Math.round(benchmarks.values[5] / (1024 * 1024)) || 0) + ' MB',
+            uploadNetSpeed:
+                (Math.round(benchmarks.values[6] / (1024 * 1024)) || 0) + ' MB',
+            gpuCount: benchmarks.values[7] || 0,
+            gpuRamSize:
+                (Math.round(benchmarks.values[8] / (1024 * 1024)) || 0) + ' MB',
+            ethHashrate: (benchmarks.values[9] || 0) + ' MH/s',
+            zcashHashrate: (benchmarks.values[10] || 0) + ' sol/s',
+            redshiftGpu: (benchmarks.values[11] || 0) + '',
         };
     }
 
@@ -319,8 +324,6 @@ export class DWH {
                 : 0;
         deal.endTime =
             deal.endTime && deal.endTime.seconds ? deal.endTime.seconds : 0;
-
-        console.log(deal);
 
         return deal;
     }
