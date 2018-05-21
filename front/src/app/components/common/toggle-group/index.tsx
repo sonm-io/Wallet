@@ -53,8 +53,7 @@ export class ToggleGroup<
         } else {
             const res = this.props.values.find(
                 i => this.titleGetter(i) === name,
-            );
-            if (!res) throw new Error('name');
+            ) as TValue;
             return res;
         }
     }
@@ -72,12 +71,13 @@ export class ToggleGroup<
 
         const value = this.getValueByName(params.name);
 
-        this.props.onChange &&
+        if (this.props.onChange) {
             this.props.onChange({
                 name: this.props.name,
                 value,
                 stringValue: value.toString(),
             });
+        }
     };
 
     public render() {
@@ -90,6 +90,7 @@ export class ToggleGroup<
                     const name = this.getNameByIndex(index);
                     return (
                         <Tag
+                            key={this.titleGetter(key)}
                             className={elementClassName}
                             title={name}
                             name={name}
