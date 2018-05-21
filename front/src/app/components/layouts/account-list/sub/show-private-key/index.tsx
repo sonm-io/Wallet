@@ -79,7 +79,9 @@ export class ShowPassword extends React.Component<IProps, any> {
                                     autoFocus
                                     type="password"
                                     value={this.state.password}
-                                    onChange={this.handleChangePassword}
+                                    onChangeDeprecated={
+                                        this.handleChangePassword
+                                    }
                                 />
                             </FormField>
                         </FormRow>

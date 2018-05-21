@@ -9,7 +9,7 @@ export interface IProps {
     sizePx?: number;
 }
 
-export class IdentIcon extends React.Component<IProps, any> {
+export class IdentIcon extends React.PureComponent<IProps, any> {
     protected static icons: any = {
         '0x': 'ether',
         '0x0': 'ether',
