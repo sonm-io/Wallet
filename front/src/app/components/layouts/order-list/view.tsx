@@ -24,13 +24,7 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
                 <div className="orders__list">
                     {p.dataSource.map((order, idx) => (
                         <OrdersListItem
-                            profileAddress={order.creator.address || ''}
-                            profileName={order.creator.name || ''}
-                            profileStatus={order.creator.status || 0}
-                            usdPerHour={order.price}
-                            duration={order.duration}
-                            orderId={order.id}
-                            shemeOfCustomField={p.schemeOfOrderItem}
+                            schemaOfCustomField={p.schemaOfOrderItem}
                             order={order}
                             key={order.id}
                         >

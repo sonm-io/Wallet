@@ -4,10 +4,6 @@ import * as cn from 'classnames';
 import { IListHeaderProps } from './types';
 
 export class ListHeader extends React.Component<IListHeaderProps, any> {
-    constructor(props: IListHeaderProps) {
-        super(props);
-    }
-
     protected getOrderIconName = (orderKey: string) => {
         if (orderKey === this.props.orderBy) {
             return this.props.orderDesc ? 'OrderDesc' : 'OrderAsc';
@@ -37,14 +33,14 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
             <div className={cn('list-header', this.props.className)}>
                 <div className="list-header__sortings">
                     Sort by:
-                    <div className="list-header__sortings__container">
+                    <div className="list-header__sortings-container">
                         {Object.keys(this.props.orderKeys).map(orderKey => (
                             <button
                                 value={orderKey}
                                 className={cn(
-                                    'list-header__sortings__container__item',
+                                    'list-header__sortings-container-item',
                                     {
-                                        'list-header__sortings__container__item--selected':
+                                        'list-header__sortings-container-item--selected':
                                             orderKey === this.props.orderBy,
                                     },
                                 )}
@@ -53,7 +49,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                             >
                                 {this.props.orderKeys[orderKey]}
                                 <Icon
-                                    className="list-header__sortings__container__icon"
+                                    className="list-header__sortings-container-icon"
                                     i={this.getOrderIconName(orderKey)}
                                 />
                             </button>
@@ -64,16 +60,16 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                     {this.props.pageLimits.map((limit: number) => {
                         return (
                             <button
-                                className="list-header__pageSize__button"
+                                className="list-header__pageSize-button"
                                 key={limit}
                                 value={limit}
                                 onClick={this.handleClickPageLimit}
                             >
                                 <span
                                     className={cn(
-                                        'list-header__pageSize__button__label',
+                                        'list-header__pageSize-button-label',
                                         {
-                                            'list-header__pageSize__button__label--selected':
+                                            'list-header__pageSize-button-label--selected':
                                                 limit === this.props.pageLimit,
                                         },
                                     )}
@@ -85,7 +81,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                     })}
                     <button
                         onClick={this.props.onRefresh}
-                        className="list-header__pageSize__refresh"
+                        className="list-header__pageSize-refresh"
                     >
                         <Icon i="Sync" />
                     </button>

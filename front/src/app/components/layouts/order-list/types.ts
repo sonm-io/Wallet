@@ -9,6 +9,6 @@ export interface IOrdersProps {
     onRefresh: () => void;
     className?: string;
     dataSource: Array<IOrder>;
-    schemeOfOrderItem: Array<Array<string>>;
+    schemaOfOrderItem: Array<Array<string>>;
     onRequireQuickBuy: (orderId: string) => void;
 }

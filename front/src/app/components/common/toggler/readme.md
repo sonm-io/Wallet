@@ -1,15 +1,34 @@
-toggler:
+### Checkbox
+
+Value true:
 
     <Toggler value={true} />
 
-toggler:
+Value false:
 
     <Toggler value={false} />
 
-toggler:
+With title:
 
     <Toggler title="Professional"/>
 
-toggler:
+Title before:
 
     <Toggler title="Professional" titleBefore />
+
+### Radio
+
+Value true:
+
+    <Toggler groupName="toggler1" value={true} />
+
+Value false:
+
+    <Toggler groupName="toggler2" value={false} />
+
+With title and title before in one group (try to change them):
+
+    <div>
+        <Toggler groupName="toggler3" title="Novice"/> |
+        <Toggler groupName="toggler3" title="Expert" titleBefore />
+    </div>
