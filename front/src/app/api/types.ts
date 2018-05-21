@@ -134,6 +134,13 @@ export interface IAccountBrief {
     status?: EnumProfileStatus;
 }
 
+export interface IBenchmark {
+    cpuCount: number;
+    gpuCount: number;
+    hashrate: string;
+    ramSize: string;
+}
+
 export interface IOrder {
     id: string;
     orderType: number;
@@ -141,10 +148,7 @@ export interface IOrder {
     price: string;
     duration: number;
     orderStatus: number;
-    cpuCount: number;
-    gpuCount: number;
-    hashrate: string;
-    ramSize: string;
+    benchmarkMap: IBenchmark;
 }
 
 export interface IDeal {
@@ -161,10 +165,7 @@ export interface IDeal {
     totalPayout: string;
     startTime: number;
     endTime: number;
-    cpuCount: number;
-    gpuCount: number;
-    hashrate: string;
-    ramSize: string;
+    benchmarkMap: IBenchmark;
 }
 
 export interface IOrderListFilter {

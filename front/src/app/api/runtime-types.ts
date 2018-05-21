@@ -12,6 +12,7 @@ import {
     IMarketStats,
     IOrderParams,
     IAccountBrief,
+    IBenchmark,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -108,9 +109,19 @@ export const TypeAccountBrief = createStruct<IAccountBrief>(
     {
         address: TypeEthereumAddress,
         name: t.String,
-        status: t.String,
+        status: t.Number,
     },
     'IAccountInfo',
+);
+
+export const TypeBenchmarkMap = createStruct<IBenchmark>(
+    {
+        cpuCount: t.Number,
+        gpuCount: t.Number,
+        hashrate: t.String,
+        ramSize: t.String,
+    },
+    'IBenchmark',
 );
 
 export const TypeAccountInfoList = t.list(TypeAccountInfo);
@@ -123,10 +134,7 @@ export const TypeOrder = createStruct<IOrder>(
         price: t.String,
         duration: t.Number,
         orderStatus: t.Number,
-        cpuCount: t.Number,
-        gpuCount: t.Number,
-        hashrate: t.String,
-        ramSize: t.String,
+        benchmarkMap: TypeBenchmarkMap,
     },
     'IOrder',
 );
@@ -154,10 +162,7 @@ export const TypeDeal = createStruct<IDeal>(
         totalPayout: t.String,
         startTime: t.Number,
         endTime: t.Number,
-        cpuCount: t.Number,
-        gpuCount: t.Number,
-        hashrate: t.String,
-        ramSize: t.String,
+        benchmarkMap: TypeBenchmarkMap,
     },
     'IDeal',
 );

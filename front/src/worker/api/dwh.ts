@@ -5,6 +5,7 @@ import * as pick from 'lodash/fp/pick';
 import { TypeEthereumAddress } from '../../app/api/runtime-types';
 import * as tcomb from 'tcomb';
 import { BN } from 'bn.js';
+import { EnumProfileStatus } from '../../app/api/types';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -223,17 +224,17 @@ export class DWH {
     private parseOrder(item: any): t.IOrder {
         const order = {
             ...item.order,
-            ...this.parseBenchmarks(item.order.benchmarks),
         };
 
+        order.benchmarkMap = this.parseBenchmarks(item.order.benchmarks);
         order.duration = order.duration
             ? this.parseDuration(order.duration)
             : 0;
         order.price = this.parsePrice(order.price);
         order.creator = {
-            status: item.creatorIdentityLevel || 0,
+            status: item.creatorIdentityLevel || EnumProfileStatus.anonimest,
             name: item.creatorName || '',
-            address: item.authorID,
+            address: order.authorID,
         };
 
         return order;
@@ -299,14 +300,15 @@ export class DWH {
             ...this.parseBenchmarks(item.deal.benchmarks),
         };
 
+        deal.benchmarkMap = this.parseBenchmarks(item.deal.benchmarks);
         deal.supplier = {
             address: deal.supplierID,
-            status: 0,
+            status: EnumProfileStatus.anonimest,
             name: '',
         };
         deal.consumer = {
             address: deal.consumerID,
-            status: 0,
+            status: EnumProfileStatus.anonimest,
             name: '',
         };
         deal.duration = deal.duration ? this.parseDuration(deal.duration) : 0;
@@ -317,6 +319,8 @@ export class DWH {
                 : 0;
         deal.endTime =
             deal.endTime && deal.endTime.seconds ? deal.endTime.seconds : 0;
+
+        console.log(deal);
 
         return deal;
     }

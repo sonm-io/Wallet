@@ -107,19 +107,19 @@ export class DealListView extends React.PureComponent<IProps, any> {
                             CPU Count
                         </div>
                         <div className="sonm-deals-list__cell__stats__value">
-                            {record.cpuCount}
+                            {record.benchmarkMap.cpuCount}
                         </div>
                         <div className="sonm-deals-list__cell__stats__name">
                             GPU ETH hashrate
                         </div>
                         <div className="sonm-deals-list__cell__stats__value">
-                            {record.hashrate}
+                            {record.benchmarkMap.hashrate}
                         </div>
                         <div className="sonm-deals-list__cell__stats__name">
                             RAM size
                         </div>
                         <div className="sonm-deals-list__cell__stats__value">
-                            {record.ramSize}
+                            {record.benchmarkMap.ramSize}
                         </div>
                     </div>
                 );
