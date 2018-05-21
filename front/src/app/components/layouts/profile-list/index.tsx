@@ -36,7 +36,6 @@ export class ProfileList extends React.Component<IProps, any> {
 
         return (
             <ProfileListView
-                className=""
                 page={listStore.page}
                 total={toJS(listStore.total)}
                 limit={listStore.limit}

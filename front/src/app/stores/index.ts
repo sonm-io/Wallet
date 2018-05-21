@@ -139,6 +139,7 @@ export class RootStore implements IHasLocalizator {
         );
 
         this.orderDetailsStore = new OrderDetails(
+            this,
             {
                 market: this.marketStore,
             },

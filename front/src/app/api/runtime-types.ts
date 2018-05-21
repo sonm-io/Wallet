@@ -10,6 +10,9 @@ import {
     IOrder,
     IDeal,
     IMarketStats,
+    IOrderParams,
+    IAccountBrief,
+    IBenchmark,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -102,22 +105,36 @@ export const TypeAccountInfo = createStruct<IAccountInfo>(
     'IAccountInfo',
 );
 
+export const TypeAccountBrief = createStruct<IAccountBrief>(
+    {
+        address: TypeEthereumAddress,
+        name: t.String,
+        status: t.Number,
+    },
+    'IAccountInfo',
+);
+
+export const TypeBenchmarkMap = createStruct<IBenchmark>(
+    {
+        cpuCount: t.Number,
+        gpuCount: t.Number,
+        hashrate: t.String,
+        ramSize: t.String,
+    },
+    'IBenchmark',
+);
+
 export const TypeAccountInfoList = t.list(TypeAccountInfo);
 
 export const TypeOrder = createStruct<IOrder>(
     {
         id: t.String,
         orderType: t.Number,
-        creatorStatus: t.Number,
-        creatorName: t.String,
+        creator: TypeAccountBrief,
         price: t.String,
         duration: t.Number,
         orderStatus: t.Number,
-        authorID: TypeEthereumAddress,
-        cpuCount: t.Number,
-        gpuCount: t.Number,
-        hashrate: t.Number,
-        ramSize: t.Number,
+        benchmarkMap: TypeBenchmarkMap,
     },
     'IOrder',
 );
@@ -133,8 +150,8 @@ export const TypeOrderList = createStruct<IListResult<IOrder>>(
 export const TypeDeal = createStruct<IDeal>(
     {
         id: t.String,
-        supplierID: TypeEthereumAddress,
-        consumerID: TypeEthereumAddress,
+        supplier: TypeAccountBrief,
+        consumer: TypeAccountBrief,
         masterID: t.String,
         askID: t.String,
         bidID: t.String,
@@ -145,6 +162,7 @@ export const TypeDeal = createStruct<IDeal>(
         totalPayout: t.String,
         startTime: t.Number,
         endTime: t.Number,
+        benchmarkMap: TypeBenchmarkMap,
     },
     'IDeal',
 );
@@ -156,6 +174,14 @@ export const TypeDealStats = createStruct<IMarketStats>(
         daysLeft: t.Number,
     },
     'IMarketStats',
+);
+
+export const TypeOrderParams = createStruct<IOrderParams>(
+    {
+        orderStatus: t.String,
+        dealID: t.String,
+    },
+    'IOrderParams',
 );
 
 export const TypeDealList = createStruct<IListResult<IDeal>>(

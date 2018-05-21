@@ -5,9 +5,17 @@ import * as pick from 'lodash/fp/pick';
 import { TypeEthereumAddress } from '../../app/api/runtime-types';
 import * as tcomb from 'tcomb';
 import { BN } from 'bn.js';
+import { EnumProfileStatus } from '../../app/api/types';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
+}
+
+interface IBenchmark {
+    cpuCount: number;
+    gpuCount: number;
+    hashrate: string;
+    ramSize: string;
 }
 
 const ATTRIBUTE_DESCRIPTION = 1103;
@@ -203,27 +211,31 @@ export class DWH {
         return this.parseOrder(res);
     };
 
-    private parseOrder(item: any): t.IOrder {
-        const attributes = {
-            cpuCount: item.order.benchmarks.values[2] || 0,
-            gpuCount: item.order.benchmarks.values[7] || 0,
-            hashrate: item.order.benchmarks.values[9] || 0,
+    private parseBenchmarks(benchmarks: any): IBenchmark {
+        return {
+            cpuCount: benchmarks.values[2] || 0,
+            gpuCount: benchmarks.values[7] || 0,
+            hashrate: (benchmarks.values[9] || 0) + ' MH/s',
             ramSize:
-                Math.round(item.order.benchmarks.values[3] / (1024 * 1024)) ||
-                0,
+                (Math.round(benchmarks.values[3] / (1024 * 1024)) || 0) + ' MB',
         };
+    }
 
+    private parseOrder(item: any): t.IOrder {
         const order = {
             ...item.order,
-            ...attributes,
         };
 
+        order.benchmarkMap = this.parseBenchmarks(item.order.benchmarks);
         order.duration = order.duration
             ? this.parseDuration(order.duration)
             : 0;
         order.price = this.parsePrice(order.price);
-        order.creatorStatus = item.creatorIdentityLevel || 0;
-        order.creatorName = item.creatorName || '';
+        order.creator = {
+            status: item.creatorIdentityLevel || EnumProfileStatus.anonimest,
+            name: item.creatorName || '',
+            address: order.authorID,
+        };
 
         return order;
     }
@@ -256,6 +268,10 @@ export class DWH {
             consumerID: mongoLikeQuery.address
                 ? mongoLikeQuery.address.$eq
                 : null,
+            supplierID:
+                mongoLikeQuery.query && mongoLikeQuery.query.$like
+                    ? `${mongoLikeQuery.query.$like}`
+                    : null,
             limit,
             sortings: [
                 {
@@ -281,8 +297,20 @@ export class DWH {
     private parseDeal(item: any): t.IDeal {
         const deal = {
             ...item.deal,
+            ...this.parseBenchmarks(item.deal.benchmarks),
         };
 
+        deal.benchmarkMap = this.parseBenchmarks(item.deal.benchmarks);
+        deal.supplier = {
+            address: deal.supplierID,
+            status: EnumProfileStatus.anonimest,
+            name: '',
+        };
+        deal.consumer = {
+            address: deal.consumerID,
+            status: EnumProfileStatus.anonimest,
+            name: '',
+        };
         deal.duration = deal.duration ? this.parseDuration(deal.duration) : 0;
         deal.price = this.parsePrice(deal.price) || 0;
         deal.startTime =
@@ -291,6 +319,8 @@ export class DWH {
                 : 0;
         deal.endTime =
             deal.endTime && deal.endTime.seconds ? deal.endTime.seconds : 0;
+
+        console.log(deal);
 
         return deal;
     }
