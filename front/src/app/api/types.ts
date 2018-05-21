@@ -110,10 +110,7 @@ export interface IAttribute {
     value: string;
 }
 
-export interface IProfileBrief {
-    name: string;
-    address: string;
-    status: EnumProfileStatus;
+export interface IProfileBrief extends IAccountBrief {
     sellOrders: number;
     buyOrders: number;
     deals: number;
@@ -131,25 +128,33 @@ export interface IListResult<T> {
     total: number;
 }
 
+export interface IAccountBrief {
+    name?: string;
+    address: string;
+    status?: EnumProfileStatus;
+}
+
+export interface IBenchmark {
+    cpuCount: number;
+    gpuCount: number;
+    hashrate: string;
+    ramSize: string;
+}
+
 export interface IOrder {
     id: string;
     orderType: number;
-    creatorStatus: EnumProfileStatus;
-    creatorName: string;
+    creator: IAccountBrief;
     price: string;
     duration: number;
     orderStatus: number;
-    authorID: string;
-    cpuCount: number;
-    gpuCount: number;
-    hashrate: number;
-    ramSize: number;
+    benchmarkMap: IBenchmark;
 }
 
 export interface IDeal {
     id: string;
-    supplierID: string;
-    consumerID: string;
+    supplier: IAccountBrief;
+    consumer: IAccountBrief;
     masterID: string;
     askID: string;
     bidID: string;
@@ -160,6 +165,7 @@ export interface IDeal {
     totalPayout: string;
     startTime: number;
     endTime: number;
+    benchmarkMap: IBenchmark;
 }
 
 export interface IOrderListFilter {
@@ -174,6 +180,11 @@ export interface IMarketStats {
     dealsCount: number;
     dealsPrice: string;
     daysLeft: number;
+}
+
+export interface IOrderParams {
+    orderStatus: string;
+    dealID: string;
 }
 
 export interface ISender {

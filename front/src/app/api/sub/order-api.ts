@@ -1,5 +1,11 @@
-import { IOrder, IListResult, ISender, IListQuery } from '../types';
-import { TypeOrder, TypeOrderList } from '../runtime-types';
+import {
+    IOrder,
+    IListResult,
+    ISender,
+    IListQuery,
+    IOrderParams,
+} from '../types';
+import { TypeOrder, TypeOrderList, TypeOrderParams } from '../runtime-types';
 
 export class OrderApi {
     private ipc: ISender;
@@ -17,6 +23,9 @@ export class OrderApi {
         gpuCount: 0,
         hashrate: 0,
         ramSize: 0,
+        creator: {
+            address: '0x',
+        },
     };
 
     constructor(ipc: ISender) {
@@ -46,9 +55,29 @@ export class OrderApi {
             password,
         });
 
-        console.log(data, validation);
-
         return { data, validation };
+    }
+
+    public async getOrderParams(
+        address: string,
+        id: string,
+    ): Promise<IOrderParams> {
+        const response = await this.ipc.send('market.getOrderParams', {
+            address,
+            id,
+        });
+        return TypeOrderParams(response.data);
+    }
+
+    public async waitForDeal(
+        address: string,
+        id: string,
+    ): Promise<IOrderParams> {
+        const response = await this.ipc.send('market.waitForOrderDeal', {
+            address,
+            id,
+        });
+        return TypeOrderParams(response.data);
     }
 }
 
