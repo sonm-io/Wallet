@@ -12,7 +12,7 @@ import {
     IMarketStats,
     IOrderParams,
     IAccountBrief,
-    IBenchmark,
+    IBenchmarkMap,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -114,14 +114,22 @@ export const TypeAccountBrief = createStruct<IAccountBrief>(
     'IAccountInfo',
 );
 
-export const TypeBenchmarkMap = createStruct<IBenchmark>(
+export const TypeBenchmarkMap = createStruct<IBenchmarkMap>(
     {
         cpuCount: t.Number,
         gpuCount: t.Number,
-        hashrate: t.String,
+        ethHashrate: t.String,
         ramSize: t.String,
+        cpuSysbenchMulti: t.Number,
+        cpuSysbenchOne: t.Number,
+        storageSize: t.String,
+        downloadNetSpeed: t.String,
+        uploadNetSpeed: t.String,
+        zcashHashrate: t.String,
+        redshiftGpu: t.String,
+        gpuRamSize: t.String,
     },
-    'IBenchmark',
+    'IBenchmarkMap',
 );
 
 export const TypeAccountInfoList = t.list(TypeAccountInfo);
