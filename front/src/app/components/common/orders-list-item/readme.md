@@ -3,11 +3,19 @@ Order list item:
     const { EnumProfileStatus } = require ('app/api/types');
 
     <OrdersListItem
-      address="0x0"
-      name="Vasian Home Mining Inc"
-      account="0x06bda3cf79946e8b32a0bb6a3daa174b577c55b52"
-      status={EnumProfileStatus.ident}
-      customFields={new Map([['CPU Count','3'],['GPU ETH hashrate','80.1 Mh/s',],['RAM size','1024 Mb']])}
-      usdPerHour={120}
-      duration={500}
+      schemaOfCustomField={[ ['Cpu Count', 'cpuCount'],['Gpu Count', 'gpuCount'],['GPU Eth hashrate', 'hashrate'],['Ram Size', 'ramSize'] ]}
+      order={{
+        id: '9',
+        orderType: 1,
+        creatorStatus: 0,
+        creatorName: '',
+        price: '2499999999999998400',
+        duration: 8,
+        orderStatus: 2,
+        authorID: '0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD',
+        cpuCount: 1,
+        gpuCount: 0,
+        hashrate: 0,
+        ramSize: 1,
+      }}
     />

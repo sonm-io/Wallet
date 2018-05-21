@@ -123,7 +123,9 @@ export class HistoryStore extends OnlineStore implements IHasLocalizator {
         const page = this.page;
         const source = this.source;
 
-        const { data: [txList, total] } = yield Api.getSendTransactionList(
+        const {
+            data: [txList, total],
+        } = yield Api.getSendTransactionList(
             source,
             filter,
             ITEMS_PER_PAGE,

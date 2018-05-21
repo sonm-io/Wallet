@@ -3,13 +3,14 @@ Orders:
     const { observable, action, useStrict, toJS } = mobx;
     const { observer } = mobxReact;
     const { EnumProfileStatus } = require ('app/api/types');
-    const { data, getSorted } = require ('./mock-data')
+    const { data } = require ('./mock-data')
 
     const state = observable({
       eventsCounter: {
         onChangeLimit: 0,
         onChangeOrder: 0,
-        onRefresh: 0
+        onRefresh: 0,
+        onRequireQuickBuy: 0
       },
       orderBy: 'RAM size',
       orderDesc: false,
@@ -25,6 +26,9 @@ Orders:
       }),
       onRefresh: action.bound(function () {
         this.eventsCounter.onRefresh++;
+      }),
+      onRequireQuickBuy: action.bound(function (orderId) {
+        this.eventsCounter.onRequireQuickBuy++;
       })
     });
 
@@ -38,16 +42,16 @@ Orders:
     );
 
     const Container = observer(() =>
-      <OrdersView
+      <OrderListView
         orderBy={state.orderBy}
-        orderKeys={['CPU Count', 'GPU ETH hashrate', 'RAM size']}
         orderDesc={state.orderDesc}
         pageLimit={state.pageLimit}
-        pageLimits={[10, 25, 50, 100]}
+        dataSource={data}
+        schemaOfOrderItem={[['Cpu Count','cpuCount'],['Gpu Count','gpuCount'],['Eth hashrate','hashrate']]}
         onChangeLimit={state.onChangeLimit}
         onChangeOrder={state.onChangeOrder}
         onRefresh={state.onRefresh}
-        list={getSorted(data, state.orderBy, state.orderDesc)}
+        onRequireQuickBuy={state.onRequireQuickBuy}
         />
     );
 

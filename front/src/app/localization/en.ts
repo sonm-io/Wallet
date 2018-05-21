@@ -74,6 +74,17 @@ export const en: ILocalizationDictionary = {
     'status-anon': 'ANONYMOUS',
     'status-reg': 'REGISTERED',
     'status-ident': 'IDENTIFIED',
+
+    tx_buy_order_failed: ([id, hash]: string[]) =>
+        `Buy order #${id} is failed. TxHash ${hash}.`,
+
+    tx_buy_order_matching: ([id, hash]: string[]) =>
+        `Order #${id} is matching. TxHash ${hash}.`,
+
+    tx_buy_order_matched: ([id, dealId]: string[]) =>
+        `Order #${id} is matched. Deal #${dealId}.`,
+
+    tx_buy_order_match_failed: ([id]: string[]) => `Order #${id} match failed`,
 };
 
 export default en;

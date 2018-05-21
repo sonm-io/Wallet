@@ -1,0 +1,73 @@
+@import 'guide.less';
+
+@checkboxSize: 15px;
+@checkboxDotPadding: 2px;
+
+.sonm-radio-button {
+    --checkbox-background-color: @color-violet;
+    background: transparent;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    line-height: 100%;
+    white-space: nowrap;
+    user-select: none;
+
+    &__input {
+        display: none;
+    }
+
+    &__title {
+        padding: 0;
+        margin: 0;
+        vertical-align: @toggleVerticalAligth;
+        display: inline-block;
+
+        &:first-child {
+            margin-right: 10px;
+        }
+
+        &:last-child {
+            margin-left: 10px;
+        }
+    }
+
+    &__input + &__cradle {
+        vertical-align: @toggleVerticalAligth;
+        position: relative;
+        height: @checkboxSize;
+        width: @checkboxSize;
+        border-radius: 50%;
+        border: 1px solid @color-border;
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+
+        &:after {
+            content: '';
+            position: absolute;
+            opacity: 0;
+            top: @checkboxDotPadding;
+            left: @checkboxDotPadding;
+            width: @checkboxSize - @checkboxDotPadding * 2 - 2;
+            height: @checkboxSize - @checkboxDotPadding * 2 - 2;
+            border-radius: 50%;
+            background-color: var(--checkbox-background-color);
+            transition: opacity 0.2s ease;
+        }
+    }
+
+    &__input:checked + &__cradle {
+        background: transparent;
+        border: 1px solid var(--checkbox-background-color);
+        &:after {
+            opacity: 1;
+        }
+    }
+
+    &:hover &__input + &__cradle {
+        background-color: @color-gray-bg;
+    }
+}

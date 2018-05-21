@@ -69,7 +69,7 @@ export class Profile extends React.PureComponent<IProps, IState> {
                 userName={profile.name}
                 countryAbCode2={profile.country}
                 logoUrl={profile.logoUrl}
-                userStatus={profile.status}
+                userStatus={profile.status || 0}
                 address={profile.address}
                 onNavigateToOrders={props.onNavigateToOrders}
             />

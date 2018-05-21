@@ -6,7 +6,7 @@
 @listHeader-fontFamily: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
     Helvetica, Arial, sans-serif;
-@listHeader-selectedItemColor: #6760d8;
+@listHeader-selectedItemColor: @color-violet;
 
 // Mixins
 
@@ -25,7 +25,7 @@
     border: none;
     background: transparent;
     &:focus {
-        outline: 1px dotted #a6c8ff;
+        outline: 1px dotted @listHeader-selectedItemColor;
     }
 }
 
@@ -34,54 +34,53 @@
 .list-header {
     .list-header__flexRow;
 
+    // Sortings block
+
     &__sortings {
         .list-header__flexRow;
         .list-header__font;
         white-space: nowrap;
+    }
+    &__sortings-container {
+        .list-header__flexRow;
+    }
+    &__sortings-container-item {
+        .list-header__font;
+        .list-header__noButton;
+        margin: 0 5px;
+        cursor: pointer;
+        user-select: none;
 
-        &__container {
-            .list-header__flexRow;
-
-            &__item {
-                .list-header__font;
-                .list-header__noButton;
-                margin: 0 5px;
-                cursor: pointer;
-                user-select: none;
-
-                &--selected {
-                    color: @listHeader-selectedItemColor;
-                }
-            }
-            &__icon {
-                margin-left: 3px;
-            }
+        &--selected {
+            color: @listHeader-selectedItemColor;
         }
     }
+    &__sortings-container-icon {
+        margin-left: 3px;
+    }
+
+    // PageSize block
 
     &__pageSize {
         .list-header__flexRow;
         .list-header__font;
         margin-left: auto;
+    }
+    &__pageSize-button {
+        .list-header__noButton;
+    }
+    &__pageSize-button-label {
+        .list-header__font;
+        margin: 0 5px;
+        cursor: pointer;
+        user-select: none;
 
-        &__button {
-            .list-header__noButton;
-
-            &__label {
-                .list-header__font;
-                margin: 0 5px;
-                cursor: pointer;
-                user-select: none;
-
-                &--selected {
-                    text-decoration: underline;
-                }
-            }
+        &--selected {
+            text-decoration: underline;
         }
-
-        &__refresh {
-            .list-header__noButton;
-            cursor: pointer;
-        }
+    }
+    &__pageSize-refresh {
+        .list-header__noButton;
+        cursor: pointer;
     }
 }

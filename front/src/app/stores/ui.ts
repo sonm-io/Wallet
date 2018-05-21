@@ -19,7 +19,7 @@ export class UiStore {
     }
 
     @action
-    public addAlert(alert: Partial<IAlert>) {
+    public addAlert(alert: Partial<IAlert>): string {
         if (alert.message && this.mapIdToAlert.has(alert.message)) {
             this.mapIdToAlert.delete(alert.message);
         }
@@ -31,6 +31,8 @@ export class UiStore {
         };
 
         this.mapIdToAlert.set(full.id, full);
+
+        return full.id;
     }
 
     @action.bound
