@@ -110,10 +110,7 @@ export interface IAttribute {
     value: string;
 }
 
-export interface IProfileBrief {
-    name: string;
-    address: string;
-    status: EnumProfileStatus;
+export interface IProfileBrief extends IAccountBrief {
     sellOrders: number;
     buyOrders: number;
     deals: number;
@@ -131,15 +128,19 @@ export interface IListResult<T> {
     total: number;
 }
 
+export interface IAccountBrief {
+    name?: string;
+    address: string;
+    status?: EnumProfileStatus;
+}
+
 export interface IOrder {
     id: string;
     orderType: number;
-    creatorStatus: EnumProfileStatus;
-    creatorName: string;
+    creator: IAccountBrief;
     price: string;
     duration: number;
     orderStatus: number;
-    authorID: string;
     cpuCount: number;
     gpuCount: number;
     hashrate: string;
@@ -148,8 +149,8 @@ export interface IOrder {
 
 export interface IDeal {
     id: string;
-    supplierID: string;
-    consumerID: string;
+    supplier: IAccountBrief;
+    consumer: IAccountBrief;
     masterID: string;
     askID: string;
     bidID: string;

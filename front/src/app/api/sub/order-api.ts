@@ -23,6 +23,9 @@ export class OrderApi {
         gpuCount: 0,
         hashrate: 0,
         ramSize: 0,
+        creator: {
+            address: '0x',
+        },
     };
 
     constructor(ipc: ISender) {

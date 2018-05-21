@@ -230,8 +230,11 @@ export class DWH {
             ? this.parseDuration(order.duration)
             : 0;
         order.price = this.parsePrice(order.price);
-        order.creatorStatus = item.creatorIdentityLevel || 0;
-        order.creatorName = item.creatorName || '';
+        order.creator = {
+            status: item.creatorIdentityLevel || 0,
+            name: item.creatorName || '',
+            address: item.authorID,
+        };
 
         return order;
     }
@@ -296,6 +299,16 @@ export class DWH {
             ...this.parseBenchmarks(item.deal.benchmarks),
         };
 
+        deal.supplier = {
+            address: deal.supplierID,
+            status: 0,
+            name: '',
+        };
+        deal.consumer = {
+            address: deal.consumerID,
+            status: 0,
+            name: '',
+        };
         deal.duration = deal.duration ? this.parseDuration(deal.duration) : 0;
         deal.price = this.parsePrice(deal.price) || 0;
         deal.startTime =

@@ -11,6 +11,7 @@ import {
     IDeal,
     IMarketStats,
     IOrderParams,
+    IAccountBrief,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -103,18 +104,25 @@ export const TypeAccountInfo = createStruct<IAccountInfo>(
     'IAccountInfo',
 );
 
+export const TypeAccountBrief = createStruct<IAccountBrief>(
+    {
+        address: TypeEthereumAddress,
+        name: t.String,
+        status: t.String,
+    },
+    'IAccountInfo',
+);
+
 export const TypeAccountInfoList = t.list(TypeAccountInfo);
 
 export const TypeOrder = createStruct<IOrder>(
     {
         id: t.String,
         orderType: t.Number,
-        creatorStatus: t.Number,
-        creatorName: t.String,
+        creator: TypeAccountBrief,
         price: t.String,
         duration: t.Number,
         orderStatus: t.Number,
-        authorID: TypeEthereumAddress,
         cpuCount: t.Number,
         gpuCount: t.Number,
         hashrate: t.String,
@@ -134,8 +142,8 @@ export const TypeOrderList = createStruct<IListResult<IOrder>>(
 export const TypeDeal = createStruct<IDeal>(
     {
         id: t.String,
-        supplierID: TypeEthereumAddress,
-        consumerID: TypeEthereumAddress,
+        supplier: TypeAccountBrief,
+        consumer: TypeAccountBrief,
         masterID: t.String,
         askID: t.String,
         bidID: t.String,

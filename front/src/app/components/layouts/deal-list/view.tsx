@@ -38,7 +38,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                 return (
                     <div className="sonm-deals-list__cell__account">
                         <div className="sonm-deals-list__cell__account__logo">
-                            <IdentIcon address={record.supplierID} />
+                            <IdentIcon address={record.supplier.address} />
                         </div>
                         <div className="sonm-deals-list__cell__account__main">
                             <span className="sonm-deals-list__cell__account__main-label">
@@ -46,7 +46,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                             </span>
                             <Hash
                                 className="sonm-deals-list__cell__account__main-value"
-                                hash={record.supplierID}
+                                hash={record.supplier.address}
                             />
 
                             <span className="sonm-deals-list__cell__account__main-label">
@@ -84,7 +84,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
             title: 'Type',
             render: (status: string, record: IDeal) => {
                 const type =
-                    record.consumerID.toLowerCase() ===
+                    record.consumer.address.toLowerCase() ===
                     this.props.marketAccountAddress.toLowerCase()
                         ? 'buy'
                         : 'sell';
