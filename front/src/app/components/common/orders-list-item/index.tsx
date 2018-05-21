@@ -5,6 +5,7 @@ import { IdentIcon } from '../ident-icon';
 import { Balance } from '../balance-view';
 import * as cn from 'classnames';
 import { Hash } from '../hash-view';
+import { EnumProfileStatus } from 'app/api/types';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     public render() {
@@ -14,19 +15,19 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                     {this.props.logoUrl ? (
                         <img src={this.props.logoUrl} />
                     ) : (
-                        <IdentIcon address={this.props.order.authorID} />
+                        <IdentIcon address={this.props.order.creator.address} />
                     )}
                 </div>
 
                 {/* Column 1 - Main Info */}
                 <div className="orders-list-item__main">
-                    {this.props.order.creatorName ? (
+                    {this.props.order.creator.name ? (
                         <React.Fragment>
                             <span className="orders-list-item__main-label">
                                 Name:
                             </span>
                             <span className="orders-list-item__main-value">
-                                {this.props.order.creatorName}
+                                {this.props.order.creator.name}
                             </span>
                         </React.Fragment>
                     ) : null}
@@ -36,7 +37,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                     </span>
                     <Hash
                         className="orders-list-item__main-value"
-                        hash={this.props.order.authorID}
+                        hash={this.props.order.creator.address}
                     />
 
                     <span className="orders-list-item__main-label">
@@ -44,7 +45,10 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                     </span>
                     <ProfileStatus
                         className="orders-list-item__main-value"
-                        status={this.props.order.creatorStatus}
+                        status={
+                            this.props.order.creator.status ||
+                            EnumProfileStatus.anon
+                        }
                     />
                 </div>
 
