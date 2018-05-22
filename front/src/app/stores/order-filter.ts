@@ -180,9 +180,6 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
     @computed
     public get filter(): any {
         const result: any = {
-            address: {
-                $eq: this.address,
-            },
             creator: {
                 address:
                     this.orderOwnerType === EOrderOwnerType.My

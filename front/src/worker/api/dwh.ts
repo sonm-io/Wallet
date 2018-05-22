@@ -173,8 +173,9 @@ export class DWH {
         const res = await this.fetchData('GetOrders', {
             offset,
             authorID:
-                mongoLikeQuery.address && mongoLikeQuery.address.$eq
-                    ? mongoLikeQuery.address.$eq
+                mongoLikeQuery.creator.address &&
+                mongoLikeQuery.creator.address.$eq
+                    ? mongoLikeQuery.creator.address.$eq
                     : null,
             price: this.getPriceFilter(mongoLikeQuery.price),
             limit,
