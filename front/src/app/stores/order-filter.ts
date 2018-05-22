@@ -65,6 +65,7 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
     public setUserInput(values: Partial<IOrderFilter>) {
         this.userInput = OrderFilterStore.defaultUserInput;
         this.updateUserInput(values);
+        this.applyFilter();
     }
 
     @action
