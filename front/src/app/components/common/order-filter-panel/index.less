@@ -1,23 +1,9 @@
 @import 'guide.less';
 
 @orderFilterPanel-columnWidth: minmax(140px, 200px);
+@orderFilterPanel-columnGap: 10px;
 
 // Mixins
-
-.order-filter-panel__font {
-    font-family: @font-family;
-    font-size: 15px;
-    font-weight: 400;
-}
-.order-filter-panel__headerFont {
-    .order-filter-panel__font;
-    color: #95989a;
-}
-
-.order-filter-panel__valuesFont {
-    .order-filter-panel__font;
-    color: #333333;
-}
 
 .order-filter-panel__footer {
     margin: 50px 0 0 0;
@@ -29,17 +15,24 @@
 // Component
 
 .order-filter-panel {
-    .order-filter-panel__valuesFont;
+    // grid
     display: grid;
     grid-template-columns: repeat(2, @orderFilterPanel-columnWidth);
-    grid-column-gap: 10px;
+    grid-column-gap: @orderFilterPanel-columnGap;
     height: 100%;
+
+    // font
+    font-family: @font-family;
+    font-size: 15px;
+    font-weight: 400;
+    color: @color-font-dark;
 
     &__column1 {
         grid-column: 1 / span 1;
     }
 
     &__column2 {
+        margin: auto 0;
         grid-column: 2 / span 1;
     }
 
@@ -55,7 +48,7 @@
     }
 
     &__header {
-        .order-filter-panel__headerFont;
+        color: @color-font-gray;
         grid-column: 1 / span 2;
         &:not(:first-child) {
             margin: 20px 0 0 0;
@@ -74,7 +67,7 @@
 
     &__owner-status-checkbox {
         display: block;
-        margin: 5px;
+        margin: 5px 0;
     }
 
     &__show-all-filters {
@@ -89,9 +82,4 @@
     &__type-radio-item:not(:last-child) {
         margin: 0 15px 0 0;
     }
-
-    // Visualization ToDo a remove
-    // &__column1, &__column2 {
-    //   border: 1px black solid;
-    // }
 }

@@ -1,7 +1,7 @@
 Orders Filter Panel:
 
- const { observable, action, useStrict, toJS } = mobx;
-const { observer } = mobxReact;
+    const { observable, action, useStrict, toJS } = mobx;
+    const { observer } = mobxReact;
 
     const state = observable({
         eventCounter: {
