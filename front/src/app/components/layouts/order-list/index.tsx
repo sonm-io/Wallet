@@ -72,28 +72,27 @@ export class OrderList extends React.Component<IProps, never> {
                 onRequireQuickBuy={this.handleRequireQuickBuy}
                 onApplyFilter={this.handleApplyFilter}
                 onUpdateFilter={this.handleUpdateFilter}
-                filter={{
-                    orderOwnerType: filterStore.orderOwnerType,
-                    address: filterStore.address,
-                    type: filterStore.type,
-                    onlyActive: filterStore.onlyActive,
-                    priceFrom: filterStore.priceFrom,
-                    priceTo: filterStore.priceTo,
-                    // owner status:
-                    professional: filterStore.professional,
-                    registered: filterStore.registered,
-                    identified: filterStore.identified,
-                    anonymous: filterStore.anonymous,
-                    // -
-                    cpuCountFrom: filterStore.cpuCountFrom,
-                    cpuCountTo: filterStore.cpuCountTo,
-                    gpuCountFrom: filterStore.gpuCountFrom,
-                    gpuCountTo: filterStore.gpuCountTo,
-                    ramSizeFrom: filterStore.ramSizeFrom,
-                    ramSizeTo: filterStore.ramSizeTo,
-                    storageSizeFrom: filterStore.storageSizeFrom,
-                    storageSizeTo: filterStore.storageSizeTo,
-                }}
+                // filter
+                filterOrderOwnerType={filterStore.orderOwnerType}
+                filterAddress={filterStore.address}
+                filterType={filterStore.type}
+                filterOnlyActive={filterStore.onlyActive}
+                filterPriceFrom={filterStore.priceFrom}
+                filterPriceTo={filterStore.priceTo}
+                // owner status:
+                filterProfessional={filterStore.professional}
+                filterRegistered={filterStore.registered}
+                filterIdentified={filterStore.identified}
+                filterAnonymous={filterStore.anonymous}
+                // -
+                filterCpuCountFrom={filterStore.cpuCountFrom}
+                filterCpuCountTo={filterStore.cpuCountTo}
+                filterGpuCountFrom={filterStore.gpuCountFrom}
+                filterGpuCountTo={filterStore.gpuCountTo}
+                filterRamSizeFrom={filterStore.ramSizeFrom}
+                filterRamSizeTo={filterStore.ramSizeTo}
+                filterStorageSizeFrom={filterStore.storageSizeFrom}
+                filterStorageSizeTo={filterStore.storageSizeTo}
             />
         );
     }

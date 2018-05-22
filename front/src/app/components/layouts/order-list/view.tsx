@@ -42,9 +42,29 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
                 </div>
                 <OrderFilterPanel
                     className="order-list__filter-panel"
-                    {...p.filter}
                     onApply={p.onApplyFilter}
                     onUpdateFilter={p.onUpdateFilter}
+                    // filter
+                    orderOwnerType={p.filterOrderOwnerType}
+                    address={p.filterAddress}
+                    type={p.filterType}
+                    onlyActive={p.filterOnlyActive}
+                    priceFrom={p.filterPriceFrom}
+                    priceTo={p.filterPriceTo}
+                    // owner status
+                    professional={p.filterProfessional}
+                    registered={p.filterRegistered}
+                    identified={p.filterIdentified}
+                    anonymous={p.filterAnonymous}
+                    // -
+                    cpuCountFrom={p.filterCpuCountFrom}
+                    cpuCountTo={p.filterCpuCountTo}
+                    gpuCountFrom={p.filterGpuCountFrom}
+                    gpuCountTo={p.filterGpuCountTo}
+                    ramSizeFrom={p.filterRamSizeFrom}
+                    ramSizeTo={p.filterRamSizeTo}
+                    storageSizeFrom={p.filterStorageSizeFrom}
+                    storageSizeTo={p.filterStorageSizeTo}
                 />
             </div>
         );
