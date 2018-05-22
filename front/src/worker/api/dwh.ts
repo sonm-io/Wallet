@@ -202,13 +202,11 @@ export class DWH {
     protected getPriceFilter = (price: any) => {
         const min = price.$gte;
         const max = price.$lte;
-        if (max && min) {
-            if (typeof min === 'string' && typeof max === 'string') {
-                return {
-                    min,
-                    max,
-                };
-            }
+        if (typeof min === 'string' && typeof max === 'string') {
+            return {
+                min,
+                max,
+            };
         }
         return null;
     };
