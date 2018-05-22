@@ -193,32 +193,25 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
             orderType: { $eq: this.type === 'Buy' ? 1 : 2 },
             orderStatus: { $eq: this.onlyActive ? 2 : 0 },
             price: {
-                $and: [{ $gte: this.priceFrom }, { $lte: this.priceTo }],
+                $gte: this.priceFrom,
+                $lte: this.priceTo,
             },
             benchmarkMap: {
                 cpuCount: {
-                    $and: [
-                        { $gte: this.cpuCountFrom },
-                        { $lte: this.cpuCountTo },
-                    ],
+                    $gte: this.cpuCountFrom,
+                    $lte: this.cpuCountTo,
                 },
                 gpuCount: {
-                    $and: [
-                        { $gte: this.gpuCountFrom },
-                        { $lte: this.gpuCountTo },
-                    ],
+                    $gte: this.gpuCountFrom,
+                    $lte: this.gpuCountTo,
                 },
                 ramSize: {
-                    $and: [
-                        { $gte: this.ramSizeFrom },
-                        { $lte: this.ramSizeTo },
-                    ],
+                    $gte: this.ramSizeFrom,
+                    $lte: this.ramSizeTo,
                 },
                 storageSize: {
-                    $and: [
-                        { $gte: this.storageSizeFrom },
-                        { $lte: this.storageSizeTo },
-                    ],
+                    $gte: this.storageSizeFrom,
+                    $lte: this.storageSizeTo,
                 },
             },
         };

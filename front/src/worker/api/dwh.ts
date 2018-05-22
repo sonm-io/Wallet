@@ -176,7 +176,7 @@ export class DWH {
                 mongoLikeQuery.address && mongoLikeQuery.address.$eq
                     ? mongoLikeQuery.address.$eq
                     : null,
-            price: this.getMaxMinBigFilter(mongoLikeQuery.price),
+            price: this.getPriceFilter(mongoLikeQuery.price),
             limit,
             sortings: [
                 {
@@ -199,19 +199,15 @@ export class DWH {
         };
     };
 
-    protected getMaxMinBigFilter = (obj: any) => {
-        if (obj.$and && obj.$and.length === 2) {
-            const min = obj.$and.find((i: any) => i.$gte);
-            const max = obj.$and.find((i: any) => i.$lte);
-            if (max && min) {
-                const minVal = min.$gte;
-                const maxVal = max.$lte;
-                if (typeof minVal === 'string' && typeof maxVal === 'string') {
-                    return {
-                        min: minVal,
-                        max: maxVal,
-                    };
-                }
+    protected getPriceFilter = (price: any) => {
+        const min = price.$gte;
+        const max = price.$lte;
+        if (max && min) {
+            if (typeof min === 'string' && typeof max === 'string') {
+                return {
+                    min,
+                    max,
+                };
             }
         }
         return null;
