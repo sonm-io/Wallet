@@ -241,6 +241,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                     onChangeDeprecated={this.handleChangeGasPrice}
                     placeholder={this.store.gasPriceGwei}
                     readOnly={this.props.isConfirmation}
+                    name="gasPrice"
                 />
             </FormField>,
             this.props.isConfirmation ? null : (
@@ -264,6 +265,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                     onChangeDeprecated={this.handleChangeGasLimit}
                     placeholder={this.store.gasLimit}
                     readOnly={this.props.isConfirmation}
+                    name="gasLimit"
                 />
             </FormField>,
         );

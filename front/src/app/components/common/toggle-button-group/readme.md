@@ -1,7 +1,13 @@
-Radio button group:
+Toggle button group:
 
     const { observable, action, useStrict, toJS } = mobx;
     const { observer } = mobxReact;
+
+    const values = [
+       'low',
+       'normal',
+       'high',
+    ];
 
     const state = observable({
         value: 'normal',
@@ -13,13 +19,8 @@ Radio button group:
     const Container = observer(() =>
         <ToggleButtonGroup
             value={state.value}
-            values={[
-                'low',
-                'normal',
-                'high'
-            ]}
+            values={values}
             onChange={state.onChange}
-            elementCtor={ToggleButton}
         />
     );
 

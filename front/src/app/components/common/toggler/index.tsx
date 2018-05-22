@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import { IChengable, ITogglerBaseProps } from '../types';
 
 export interface ITogglerChangeParams {
     name: string;
     value: boolean;
-    stringValue: string;
+    stringValue?: string;
 }
 
 export interface ICssClasses {
@@ -14,18 +15,13 @@ export interface ICssClasses {
     label: string;
 }
 
-export interface ITogglerProps {
-    className?: string;
+export interface ITogglerProps extends ITogglerBaseProps {
     cssClasses?: ICssClasses;
-    onChange?: (params: ITogglerChangeParams) => void;
-    name: string;
-    groupName?: string;
-    value: boolean;
-    title: string;
     titleBefore?: boolean;
 }
 
-export class Toggler extends React.PureComponent<ITogglerProps, never> {
+export class Toggler extends React.PureComponent<ITogglerProps, never>
+    implements IChengable<boolean> {
     public static defaultProps = {
         cssClasses: {
             input: 'sonm-toggler__input',

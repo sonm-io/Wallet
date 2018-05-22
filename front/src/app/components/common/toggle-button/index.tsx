@@ -1,22 +1,20 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IChengable, IChengableProps } from '../types';
-import { IToggleGroupItem } from '../toggle-group';
+import { IChengable, ITogglerBaseProps } from '../types';
 
-export interface ToggleButtonProps
-    extends IChengableProps<boolean>,
-        IToggleGroupItem {}
+export interface IToggleButtonProps extends ITogglerBaseProps {}
 
-export class ToggleButton extends React.Component<ToggleButtonProps, never>
+export class ToggleButton extends React.Component<IToggleButtonProps, never>
     implements IChengable<boolean> {
     protected handleChageInput = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
-        this.props.onChange &&
+        if (this.props.onChange !== undefined) {
             this.props.onChange({
                 name: this.props.name,
                 value: event.target.checked,
             });
+        }
     };
 
     public render() {
@@ -24,8 +22,12 @@ export class ToggleButton extends React.Component<ToggleButtonProps, never>
             <label className={cn('toggle-button', this.props.className)}>
                 <input
                     className="toggle-button__radio"
-                    type="radio"
-                    name={this.props.groupName || this.props.name}
+                    type={this.props.groupName ? 'radio' : 'checkbox'}
+                    name={
+                        this.props.groupName
+                            ? this.props.groupName
+                            : this.props.name
+                    }
                     checked={this.props.value}
                     onChange={this.handleChageInput}
                 />
@@ -36,3 +38,5 @@ export class ToggleButton extends React.Component<ToggleButtonProps, never>
         );
     }
 }
+
+export default ToggleButton;

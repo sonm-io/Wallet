@@ -2,16 +2,16 @@ export type TJsPropTypes<T> = { [K in keyof T]: any };
 
 // Changable
 
-export type OnChange<TValue> = (params: IChangeParams<TValue>) => void;
+export type FnOnChange<TValue> = (params: IChangeParams<TValue>) => void;
 
 export interface IChengable<TValue> {
     props: IChengableProps<TValue>;
 }
 
 export interface IChengableProps<TValue> {
-    value: TValue;
+    value?: TValue;
     name: string;
-    onChange: OnChange<TValue>;
+    onChange?: FnOnChange<TValue>;
 }
 
 export interface IChangeParams<TValue> {
@@ -21,3 +21,14 @@ export interface IChangeParams<TValue> {
 }
 
 // End Changable
+
+export interface IFocusable {
+    focus: () => void;
+}
+
+export interface ITogglerBaseProps extends IChengableProps<boolean> {
+    title: string;
+    className?: string;
+    name: string;
+    groupName?: string;
+}

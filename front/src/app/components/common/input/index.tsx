@@ -1,17 +1,16 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import * as debounce from 'lodash/fp/debounce';
+import { IChengable, IFocusable } from '../types';
 
 export interface ITextInputProps {
     value?: string;
     type?: 'text' | 'password';
-    name?: string;
+    name: string;
     autoFocus?: boolean;
     allowAutoComplete?: boolean;
     prefix?: string;
     onChangeDeprecated?: (event: any) => void;
     onChange?: (params: ITextChangeParams) => void;
-    debounceInterval?: number;
     className?: string;
     readOnly?: boolean;
     placeholder?: string;
@@ -22,59 +21,14 @@ export interface ITextChangeParams {
     value: string;
 }
 
-interface IFocusable {
-    focus: () => void;
-}
-
-interface IState {
-    value: string;
-    debounceInterval: number;
-    onChangeProp: (params: ITextChangeParams) => void;
-    handleChange: (params: ITextChangeParams) => void;
-}
-
-const emptyFn: (...a: any[]) => void = Function.prototype as any;
-
-export class Input extends React.Component<ITextInputProps, IState>
-    implements IFocusable {
+export class Input extends React.Component<ITextInputProps, never>
+    implements IFocusable, IChengable<string> {
     protected inputNode: IFocusable | null = null;
-
-    public state = {
-        value: '',
-        debounceInterval: 0,
-        onChangeProp: emptyFn,
-        handleChange: emptyFn,
-    };
 
     public static defaultValues = {
         value: '',
         type: 'text',
     };
-
-    public static getDerivedStateFromProps(
-        nextProps: ITextInputProps,
-        prevState: IState,
-    ) {
-        const nextState: Partial<IState> = {};
-
-        if (nextProps.value !== prevState.value) {
-            nextState.value = nextProps.value;
-        }
-
-        if (
-            nextProps.onChange &&
-            (nextProps.debounceInterval !== prevState.debounceInterval ||
-                nextProps.onChange !== prevState.onChangeProp)
-        ) {
-            nextState.debounceInterval = nextProps.debounceInterval;
-            nextState.onChangeProp = nextProps.onChange;
-            nextState.handleChange = nextProps.debounceInterval
-                ? debounce(nextProps.debounceInterval)(nextProps.onChange)
-                : nextProps.onChange;
-        }
-
-        return nextState;
-    }
 
     protected saveRef = (ref: HTMLInputElement) => {
         if (this.props.autoFocus && !this.inputNode && ref !== null) {
@@ -90,10 +44,12 @@ export class Input extends React.Component<ITextInputProps, IState>
             this.props.onChangeDeprecated(event);
         }
 
-        this.state.handleChange({
-            name: this.props.name,
-            value,
-        });
+        if (this.props.onChange) {
+            this.props.onChange({
+                name: this.props.name,
+                value,
+            });
+        }
 
         this.setState({
             value,
@@ -106,8 +62,8 @@ export class Input extends React.Component<ITextInputProps, IState>
             prefix,
             className,
             name,
-            value,
             placeholder,
+            value,
         } = this.props;
 
         return (
