@@ -170,13 +170,13 @@ export class DWH {
         }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
-
         const res = await this.fetchData('GetOrders', {
             offset,
             authorID:
                 mongoLikeQuery.address && mongoLikeQuery.address.$eq
                     ? mongoLikeQuery.address.$eq
                     : null,
+            price: this.getMaxMinBigFilter(mongoLikeQuery.price),
             limit,
             sortings: [
                 {
@@ -197,6 +197,24 @@ export class DWH {
             records,
             total: res && res.count ? res.count : 0,
         };
+    };
+
+    protected getMaxMinBigFilter = (obj: any) => {
+        if (obj.$and && obj.$and.length === 2) {
+            const min = obj.$and.find((i: any) => i.$gte);
+            const max = obj.$and.find((i: any) => i.$lte);
+            if (max && min) {
+                const minVal = min.$gte;
+                const maxVal = max.$lte;
+                if (typeof minVal === 'string' && typeof maxVal === 'string') {
+                    return {
+                        min: minVal,
+                        max: maxVal,
+                    };
+                }
+            }
+        }
+        return null;
     };
 
     public getOrderFull = async ({ id }: any): Promise<t.IOrder> => {

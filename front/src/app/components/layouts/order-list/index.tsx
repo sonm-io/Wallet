@@ -2,6 +2,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { OrderListView } from './view';
 import { rootStore } from 'app/stores';
+import { IOrderFilter } from 'app/stores/order-filter';
 
 const store = rootStore.ordersListStore;
 const filterStore = rootStore.orderFilterStore;
@@ -43,6 +44,20 @@ export class OrderList extends React.Component<IProps, never> {
         this.props.onNavigateToQuickBuy(orderId, this.props.filterByAddress);
     };
 
+    protected handleApplyFilter = () => {
+        filterStore.applyFilter();
+    };
+
+    protected handleUpdateFilter = (
+        key: keyof IOrderFilter,
+        value: IOrderFilter[keyof IOrderFilter],
+    ) => {
+        const values: Partial<IOrderFilter> = {};
+        values[key] = value;
+        // console.log(`key=${key}, value=${value}`);
+        filterStore.updateUserInput(values);
+    };
+
     public render() {
         return (
             <OrderListView
@@ -55,6 +70,30 @@ export class OrderList extends React.Component<IProps, never> {
                 onRefresh={this.handleRefresh}
                 dataSource={store.records}
                 onRequireQuickBuy={this.handleRequireQuickBuy}
+                onApplyFilter={this.handleApplyFilter}
+                onUpdateFilter={this.handleUpdateFilter}
+                filter={{
+                    orderOwnerType: filterStore.orderOwnerType,
+                    address: filterStore.address,
+                    type: filterStore.type,
+                    onlyActive: filterStore.onlyActive,
+                    priceFrom: filterStore.priceFrom,
+                    priceTo: filterStore.priceTo,
+                    // owner status:
+                    professional: filterStore.professional,
+                    registered: filterStore.registered,
+                    identified: filterStore.identified,
+                    anonymous: filterStore.anonymous,
+                    // -
+                    cpuCountFrom: filterStore.cpuCountFrom,
+                    cpuCountTo: filterStore.cpuCountTo,
+                    gpuCountFrom: filterStore.gpuCountFrom,
+                    gpuCountTo: filterStore.gpuCountTo,
+                    ramSizeFrom: filterStore.ramSizeFrom,
+                    ramSizeTo: filterStore.ramSizeTo,
+                    storageSizeFrom: filterStore.storageSizeFrom,
+                    storageSizeTo: filterStore.storageSizeTo,
+                }}
             />
         );
     }

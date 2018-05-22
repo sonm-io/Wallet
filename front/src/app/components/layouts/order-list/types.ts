@@ -1,4 +1,5 @@
 import { IOrder } from 'app/api/types';
+import { IOrderFilter } from 'app/stores/order-filter';
 
 export interface IOrdersProps {
     orderBy: string;
@@ -11,4 +12,10 @@ export interface IOrdersProps {
     dataSource: Array<IOrder>;
     schemaOfOrderItem: Array<Array<string>>;
     onRequireQuickBuy: (orderId: string) => void;
+    onApplyFilter: () => void;
+    onUpdateFilter: (
+        key: keyof IOrderFilter,
+        value: IOrderFilter[keyof IOrderFilter],
+    ) => void;
+    filter: IOrderFilter;
 }
