@@ -171,13 +171,23 @@ export class DWH {
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
         const res = await this.fetchData('GetOrders', {
-            offset,
+            // filter
             authorID:
                 mongoLikeQuery.creator.address &&
                 mongoLikeQuery.creator.address.$eq
                     ? mongoLikeQuery.creator.address.$eq
                     : null,
+            type:
+                typeof mongoLikeQuery.orderType.$eq === 'number'
+                    ? mongoLikeQuery.orderType.$eq
+                    : null,
+            status:
+                typeof mongoLikeQuery.orderStatus.$eq === 'number'
+                    ? mongoLikeQuery.orderStatus.$eq
+                    : null,
             price: this.getPriceFilter(mongoLikeQuery.price),
+            // end filter
+            offset,
             limit,
             sortings: [
                 {

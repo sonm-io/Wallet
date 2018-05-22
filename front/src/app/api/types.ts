@@ -157,8 +157,8 @@ export enum EOrderType {
 
 export enum EOrderStatus {
     Unknown = 0,
-    Inactice = 1,
-    Actice = 2,
+    Inactive = 1,
+    Active = 2,
 }
 
 export interface IOrder {

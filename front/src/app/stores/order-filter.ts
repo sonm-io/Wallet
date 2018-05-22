@@ -202,7 +202,7 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
             },
             orderStatus: {
                 $eq: this.onlyActive
-                    ? EOrderStatus.Actice
+                    ? EOrderStatus.Active
                     : EOrderStatus.Unknown,
             },
             price: {
