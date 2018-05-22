@@ -149,13 +149,25 @@ export interface IBenchmarkMap {
     redshiftGpu: string;
 }
 
+export enum EOrderType {
+    ANY = 0,
+    BID = 1,
+    ASK = 2,
+}
+
+export enum EOrderStatus {
+    Unknown = 0,
+    Inactice = 1,
+    Actice = 2,
+}
+
 export interface IOrder {
     id: string;
-    orderType: number;
+    orderType: EOrderType;
     creator: IAccountBrief;
     price: string;
     duration: number;
-    orderStatus: number;
+    orderStatus: EOrderStatus;
     benchmarkMap: IBenchmarkMap;
 }
 

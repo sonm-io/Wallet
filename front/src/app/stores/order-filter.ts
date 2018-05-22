@@ -1,4 +1,5 @@
 import { observable, computed, action } from 'mobx';
+import { EnumProfileStatus, EOrderType, EOrderStatus } from 'app/api/types';
 
 export enum EOrderOwnerType {
     Market = 0,
@@ -180,18 +181,24 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
                         : { $ne: this.address },
                 status: {
                     $in: [
-                        [0, true], // anonimest
-                        [1, this.anonymous],
-                        [2, this.identified],
-                        [3, this.registered],
-                        [4, this.professional],
+                        [EnumProfileStatus.anonimest, true],
+                        [EnumProfileStatus.anon, this.anonymous],
+                        [EnumProfileStatus.ident, this.identified],
+                        [EnumProfileStatus.reg, this.registered],
+                        [EnumProfileStatus.pro, this.professional],
                     ]
                         .filter(([n, isEnabled]) => isEnabled)
                         .map(([n, isEnabled]) => n),
                 },
             },
-            orderType: { $eq: this.type === 'Buy' ? 1 : 2 },
-            orderStatus: { $eq: this.onlyActive ? 2 : 0 },
+            orderType: {
+                $eq: this.type === 'Buy' ? EOrderType.BID : EOrderType.ASK,
+            },
+            orderStatus: {
+                $eq: this.onlyActive
+                    ? EOrderStatus.Actice
+                    : EOrderStatus.Unknown,
+            },
             price: {
                 $gte: this.priceFrom,
                 $lte: this.priceTo,
