@@ -16,13 +16,13 @@ interface IProps {
 export class OrderList extends React.Component<IProps, never> {
     constructor(props: IProps) {
         super(props);
-        filterStore.updateUserInput({
+        filterStore.setUserInput({
             address: this.props.filterByAddress || '',
         });
     }
 
     public componentWillReceiveProps(next: IProps) {
-        filterStore.updateUserInput({ address: next.filterByAddress || '' });
+        filterStore.setUserInput({ address: next.filterByAddress || '' });
     }
 
     protected handleChangeLimit = (limit: number) => {

@@ -35,8 +35,7 @@ export interface IFilterStore {
 }
 
 export class OrderFilterStore implements IOrderFilter, IFilterStore {
-    @observable
-    public userInput: IOrderFilter = {
+    private static defaultUserInput: IOrderFilter = {
         orderOwnerType: EOrderOwnerType.Market,
         address: '',
         type: 'Sell',
@@ -58,6 +57,15 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
         storageSizeFrom: undefined,
         storageSizeTo: undefined,
     };
+
+    @observable
+    public userInput: IOrderFilter = OrderFilterStore.defaultUserInput;
+
+    @action
+    public setUserInput(values: Partial<IOrderFilter>) {
+        this.userInput = OrderFilterStore.defaultUserInput;
+        this.updateUserInput(values);
+    }
 
     @action
     public updateUserInput(values: Partial<IOrderFilter>) {
