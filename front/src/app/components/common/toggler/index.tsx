@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IChengable, ITogglerBaseProps } from '../types';
+import { ITogglerBaseProps } from '../types';
 
 export interface ITogglerChangeParams {
     name: string;
@@ -20,8 +20,7 @@ export interface ITogglerProps extends ITogglerBaseProps {
     titleBefore?: boolean;
 }
 
-export class Toggler extends React.PureComponent<ITogglerProps, never>
-    implements IChengable<boolean> {
+export class Toggler extends React.PureComponent<ITogglerProps, never> {
     public static defaultProps = {
         cssClasses: {
             input: 'sonm-toggler__input',

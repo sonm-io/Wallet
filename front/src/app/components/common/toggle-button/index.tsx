@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IChengable, ITogglerBaseProps } from '../types';
+import { ITogglerBaseProps } from '../types';
 
 export interface IToggleButtonProps extends ITogglerBaseProps {}
 
-export class ToggleButton extends React.Component<IToggleButtonProps, never>
-    implements IChengable<boolean> {
+export class ToggleButton extends React.Component<IToggleButtonProps, never> {
     protected handleChageInput = (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {

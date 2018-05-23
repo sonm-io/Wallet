@@ -4,10 +4,6 @@ export type TJsPropTypes<T> = { [K in keyof T]: any };
 
 export type FnOnChange<TValue> = (params: IChangeParams<TValue>) => void;
 
-export interface IChengable<TValue> {
-    props: IChengableProps<TValue>;
-}
-
 export interface IChengableProps<TValue> {
     value?: TValue;
     name: string;

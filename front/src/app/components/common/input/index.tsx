@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IChengable, IFocusable } from '../types';
+import { IChengableProps, IFocusable } from '../types';
 
-export interface ITextInputProps {
+export interface ITextInputProps extends IChengableProps<string> {
     value?: string;
     type?: 'text' | 'password';
     name: string;
@@ -22,7 +22,7 @@ export interface ITextChangeParams {
 }
 
 export class Input extends React.Component<ITextInputProps, never>
-    implements IFocusable, IChengable<string> {
+    implements IFocusable {
     protected inputNode: IFocusable | null = null;
 
     public static defaultValues = {

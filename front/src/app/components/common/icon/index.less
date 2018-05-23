@@ -11,15 +11,18 @@
     min-width: 1em;
     min-height: 1em;
 
-    a&:focus,
-    a&:visited,
-    a&:active,
-    a&:hover {
+    &:focus,
+    &:visited,
+    &:active,
+    &:hover {
         text-decoration: none;
+        outline: none;
     }
 
-    &:focus,
-    &:active {
+    button&:focus,
+    button&:active,
+    a&:focus,
+    a&:active {
         outline: @outline;
     }
 

@@ -1,12 +1,7 @@
 import * as React from 'react';
 import * as get from 'lodash/fp/get';
 import * as cn from 'classnames';
-import {
-    IChengable,
-    IChengableProps,
-    IChangeParams,
-    ITogglerBaseProps,
-} from '../types';
+import { IChengableProps, IChangeParams, ITogglerBaseProps } from '../types';
 import { Toggler } from '../toggler';
 
 let uniqIdx = 0;
@@ -34,9 +29,10 @@ export interface IState<TValue> {
     titleGetter: (value: TValue, idx: number) => string;
 }
 
-export class ToggleGroup<TValue>
-    extends React.Component<IToggleGroupProps<TValue>, IState<TValue>>
-    implements IChengable<TValue> {
+export class ToggleGroup<TValue> extends React.Component<
+    IToggleGroupProps<TValue>,
+    IState<TValue>
+> {
     public state: IState<TValue> = {
         titlesOrDisplayIndex: '',
         titleGetter: String,
