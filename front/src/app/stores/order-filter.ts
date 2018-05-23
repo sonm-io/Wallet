@@ -11,22 +11,22 @@ export interface IOrderFilter {
     address: string;
     type: string;
     onlyActive: boolean;
-    priceFrom?: string;
-    priceTo?: string;
+    priceFrom: string;
+    priceTo: string;
     // owner status:
     professional: boolean;
     registered: boolean;
     identified: boolean;
     anonymous: boolean;
     // -
-    cpuCountFrom?: number;
-    cpuCountTo?: number;
-    gpuCountFrom?: number;
-    gpuCountTo?: number;
-    ramSizeFrom?: number;
-    ramSizeTo?: number;
-    storageSizeFrom?: number;
-    storageSizeTo?: number;
+    cpuCountFrom: string;
+    cpuCountTo: string;
+    gpuCountFrom: string;
+    gpuCountTo: string;
+    ramSizeFrom: string;
+    ramSizeTo: string;
+    storageSizeFrom: string;
+    storageSizeTo: string;
 }
 
 export interface IFilterStore {
@@ -40,22 +40,22 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
         address: '',
         type: 'Sell',
         onlyActive: false,
-        priceFrom: undefined,
-        priceTo: undefined,
+        priceFrom: '',
+        priceTo: '',
         // owner status:
         professional: false,
         registered: false,
         identified: false,
         anonymous: false,
         // -
-        cpuCountFrom: undefined,
-        cpuCountTo: undefined,
-        gpuCountFrom: undefined,
-        gpuCountTo: undefined,
-        ramSizeFrom: undefined,
-        ramSizeTo: undefined,
-        storageSizeFrom: undefined,
-        storageSizeTo: undefined,
+        cpuCountFrom: '',
+        cpuCountTo: '',
+        gpuCountFrom: '',
+        gpuCountTo: '',
+        ramSizeFrom: '',
+        ramSizeTo: '',
+        storageSizeFrom: '',
+        storageSizeTo: '',
     };
 
     @observable
@@ -78,7 +78,7 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
             }
 
             if (values[key] !== undefined) {
-                this.userInput[key] = values[key];
+                (this.userInput[key] as any) = values[key];
             }
         });
     }
@@ -177,6 +177,22 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
 
     //#endregion IOrderFilter
 
+    private isValueDefined = (value: string | number | undefined) =>
+        value !== undefined && value !== '' && !isNaN(value as number);
+
+    private getGteLte = (
+        gte: string | number | undefined,
+        lte: string | number | undefined,
+    ) => {
+        if (this.isValueDefined(gte) && this.isValueDefined(lte)) {
+            return {
+                $gte: gte,
+                $lte: lte,
+            };
+        }
+        return null;
+    };
+
     @computed
     public get filter(): any {
         const result: any = {
@@ -205,27 +221,24 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
                     ? EOrderStatus.Active
                     : EOrderStatus.Unknown,
             },
-            price: {
-                $gte: this.priceFrom,
-                $lte: this.priceTo,
-            },
+            price: this.getGteLte(this.priceFrom, this.priceTo),
             benchmarkMap: {
-                cpuCount: {
-                    $gte: this.cpuCountFrom,
-                    $lte: this.cpuCountTo,
-                },
-                gpuCount: {
-                    $gte: this.gpuCountFrom,
-                    $lte: this.gpuCountTo,
-                },
-                ramSize: {
-                    $gte: this.ramSizeFrom,
-                    $lte: this.ramSizeTo,
-                },
-                storageSize: {
-                    $gte: this.storageSizeFrom,
-                    $lte: this.storageSizeTo,
-                },
+                cpuCount: this.getGteLte(
+                    parseFloat(this.cpuCountFrom),
+                    parseFloat(this.cpuCountTo),
+                ),
+                gpuCount: this.getGteLte(
+                    parseFloat(this.gpuCountFrom),
+                    parseFloat(this.gpuCountTo),
+                ),
+                ramSize: this.getGteLte(
+                    parseFloat(this.ramSizeFrom),
+                    parseFloat(this.ramSizeTo),
+                ),
+                storageSize: this.getGteLte(
+                    parseFloat(this.storageSizeFrom),
+                    parseFloat(this.storageSizeTo),
+                ),
             },
         };
         return result;

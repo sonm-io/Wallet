@@ -148,28 +148,58 @@ export class OrderFilterPanel extends React.Component<
                 {/* CPU count */}
                 <div className="order-filter-panel__header">CPU count</div>
                 <div className="order-filter-panel__column1">
-                    <Input prefix="from" value={this.props.cpuCountFrom} />
+                    <Input
+                        name="cpuCountFrom"
+                        prefix="from"
+                        value={this.props.cpuCountFrom}
+                        onChange={this.handleChangeInput}
+                    />
                 </div>
                 <div className="order-filter-panel__column2">
-                    <Input prefix="to" value={this.props.cpuCountTo} />
+                    <Input
+                        name="cpuCountTo"
+                        prefix="to"
+                        value={this.props.cpuCountTo}
+                        onChange={this.handleChangeInput}
+                    />
                 </div>
 
                 {/* GPU count */}
                 <div className="order-filter-panel__header">GPU count</div>
                 <div className="order-filter-panel__column1">
-                    <Input prefix="from" value={this.props.gpuCountFrom} />
+                    <Input
+                        name="gpuCountFrom"
+                        prefix="from"
+                        value={this.props.gpuCountFrom}
+                        onChange={this.handleChangeInput}
+                    />
                 </div>
                 <div className="order-filter-panel__column2">
-                    <Input prefix="to" value={this.props.gpuCountTo} />
+                    <Input
+                        name="gpuCountTo"
+                        prefix="to"
+                        value={this.props.gpuCountTo}
+                        onChange={this.handleChangeInput}
+                    />
                 </div>
 
                 {/* RAM size */}
                 <div className="order-filter-panel__header">RAM size, MB</div>
                 <div className="order-filter-panel__column1">
-                    <Input prefix="from" value={this.props.ramSizeFrom} />
+                    <Input
+                        name="ramSizeFrom"
+                        prefix="from"
+                        value={this.props.ramSizeFrom}
+                        onChange={this.handleChangeInput}
+                    />
                 </div>
                 <div className="order-filter-panel__column2">
-                    <Input prefix="to" value={this.props.ramSizeTo} />
+                    <Input
+                        name="ramSizeTo"
+                        prefix="to"
+                        value={this.props.ramSizeTo}
+                        onChange={this.handleChangeInput}
+                    />
                 </div>
 
                 {/* Storage size */}
@@ -177,17 +207,27 @@ export class OrderFilterPanel extends React.Component<
                     Storage size, GB
                 </div>
                 <div className="order-filter-panel__column1">
-                    <Input prefix="from" value={this.props.storageSizeFrom} />
+                    <Input
+                        name="storageSizeFrom"
+                        prefix="from"
+                        value={this.props.storageSizeFrom}
+                        onChange={this.handleChangeInput}
+                    />
                 </div>
                 <div className="order-filter-panel__column2">
-                    <Input prefix="to" value={this.props.storageSizeTo} />
+                    <Input
+                        name="storageSizeTo"
+                        prefix="to"
+                        value={this.props.storageSizeTo}
+                        onChange={this.handleChangeInput}
+                    />
                 </div>
 
                 {/* Footer */}
                 <div className="order-filter-panel__footer-column1">
-                    <a className="order-filter-panel__show-all-filters">
+                    {/* <a className="order-filter-panel__show-all-filters">
                         Show all filters
-                    </a>
+                    </a> */}
                 </div>
                 <div className="order-filter-panel__footer-column2">
                     <Button onClick={this.handleClickApply}>

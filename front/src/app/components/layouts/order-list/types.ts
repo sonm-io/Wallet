@@ -6,22 +6,22 @@ interface IFilter {
     filterAddress: string;
     filterType: string;
     filterOnlyActive: boolean;
-    filterPriceFrom?: string;
-    filterPriceTo?: string;
+    filterPriceFrom: string;
+    filterPriceTo: string;
     // owner status:
     filterProfessional: boolean;
     filterRegistered: boolean;
     filterIdentified: boolean;
     filterAnonymous: boolean;
     // -
-    filterCpuCountFrom?: number;
-    filterCpuCountTo?: number;
-    filterGpuCountFrom?: number;
-    filterGpuCountTo?: number;
-    filterRamSizeFrom?: number;
-    filterRamSizeTo?: number;
-    filterStorageSizeFrom?: number;
-    filterStorageSizeTo?: number;
+    filterCpuCountFrom: string;
+    filterCpuCountTo: string;
+    filterGpuCountFrom: string;
+    filterGpuCountTo: string;
+    filterRamSizeFrom: string;
+    filterRamSizeTo: string;
+    filterStorageSizeFrom: string;
+    filterStorageSizeTo: string;
 }
 
 export interface IOrdersProps extends IFilter {

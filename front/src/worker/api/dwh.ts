@@ -185,7 +185,8 @@ export class DWH {
                 typeof mongoLikeQuery.orderStatus.$eq === 'number'
                     ? mongoLikeQuery.orderStatus.$eq
                     : null,
-            price: this.getPriceFilter(mongoLikeQuery.price),
+            price: this.getMinMaxFilter(mongoLikeQuery.price),
+            benchmarks: this.getBenchmarksFilter(mongoLikeQuery.benchmarkMap),
             // end filter
             offset,
             limit,
@@ -210,14 +211,47 @@ export class DWH {
         };
     };
 
-    protected getPriceFilter = (price: any) => {
-        const min = price.$gte;
-        const max = price.$lte;
-        if (typeof min === 'string' && typeof max === 'string') {
-            return {
-                min,
-                max,
-            };
+    protected typeIn = (value: any, types: Array<string>) =>
+        types.some(i => typeof value === i);
+
+    protected getBenchmarksFilter = (benchmarkMap: any) => {
+        const map: Array<[number, string]> = [
+            [2, 'cpuCount'],
+            [7, 'gpuCount'],
+            [3, 'ramSize'],
+            [4, 'storageSize'],
+        ];
+
+        return map
+            .map(
+                ([i, name]) =>
+                    [i, name, this.getMinMaxFilter(benchmarkMap[name])] as [
+                        number,
+                        string,
+                        any
+                    ],
+            )
+            .filter(([i, name, value]) => value !== null)
+            .reduce(
+                (acc, [i, name, value]) => {
+                    acc[i] = value;
+                    return acc;
+                },
+                {} as any,
+            );
+    };
+
+    protected getMinMaxFilter = (value: any) => {
+        if (value) {
+            const types = ['string', 'number'];
+            const min = value.$gte;
+            const max = value.$lte;
+            if (this.typeIn(min, types) && this.typeIn(max, types)) {
+                return {
+                    min,
+                    max,
+                };
+            }
         }
         return null;
     };
