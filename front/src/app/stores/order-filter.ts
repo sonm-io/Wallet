@@ -8,7 +8,7 @@ export enum EOrderOwnerType {
 
 export interface IOrderFilter {
     orderOwnerType: EOrderOwnerType;
-    address: string;
+    profileAddress: string;
     type: string;
     onlyActive: boolean;
     priceFrom: string;
@@ -37,7 +37,7 @@ export interface IFilterStore {
 export class OrderFilterStore implements IOrderFilter, IFilterStore {
     private static defaultUserInput: IOrderFilter = {
         orderOwnerType: EOrderOwnerType.Market,
-        address: '',
+        profileAddress: '',
         type: 'Sell',
         onlyActive: false,
         priceFrom: '',
@@ -91,8 +91,8 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
     }
 
     @computed
-    public get address() {
-        return this.userInput.address;
+    public get profileAddress() {
+        return this.userInput.profileAddress;
     }
 
     @computed
@@ -199,8 +199,8 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
             creator: {
                 address:
                     this.orderOwnerType === EOrderOwnerType.My
-                        ? { $eq: this.address }
-                        : { $ne: this.address },
+                        ? { $eq: this.profileAddress }
+                        : { $ne: this.profileAddress },
                 status: {
                     $in: [
                         [EnumProfileStatus.anonimest, true],

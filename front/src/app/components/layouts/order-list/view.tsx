@@ -46,7 +46,7 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
                     onUpdateFilter={p.onUpdateFilter}
                     // filter
                     orderOwnerType={p.filterOrderOwnerType}
-                    address={p.filterAddress}
+                    profileAddress={p.filterProfileAddress}
                     type={p.filterType}
                     onlyActive={p.filterOnlyActive}
                     priceFrom={p.filterPriceFrom}

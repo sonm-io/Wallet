@@ -17,12 +17,14 @@ export class OrderList extends React.Component<IProps, never> {
     constructor(props: IProps) {
         super(props);
         filterStore.setUserInput({
-            address: this.props.filterByAddress || '',
+            profileAddress: this.props.filterByAddress || '',
         });
     }
 
     public componentWillReceiveProps(next: IProps) {
-        filterStore.setUserInput({ address: next.filterByAddress || '' });
+        filterStore.setUserInput({
+            profileAddress: next.filterByAddress || '',
+        });
     }
 
     protected handleChangeLimit = (limit: number) => {
@@ -74,7 +76,7 @@ export class OrderList extends React.Component<IProps, never> {
                 onUpdateFilter={this.handleUpdateFilter}
                 // filter
                 filterOrderOwnerType={filterStore.orderOwnerType}
-                filterAddress={filterStore.address}
+                filterProfileAddress={filterStore.profileAddress}
                 filterType={filterStore.type}
                 filterOnlyActive={filterStore.onlyActive}
                 filterPriceFrom={filterStore.priceFrom}
