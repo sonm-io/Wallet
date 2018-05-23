@@ -1,5 +1,9 @@
 import { observable, computed, action } from 'mobx';
-import { EnumProfileStatus, EOrderType, EOrderStatus } from 'app/api/types';
+import {
+    EnumProfileStatus,
+    EnumOrderType,
+    EnumOrderStatus,
+} from 'app/api/types';
 
 export enum EOrderOwnerType {
     Market = 0,
@@ -229,12 +233,13 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
                 },
             },
             orderType: {
-                $eq: this.type === 'Buy' ? EOrderType.BID : EOrderType.ASK,
+                $eq:
+                    this.type === 'Buy' ? EnumOrderType.bid : EnumOrderType.ask,
             },
             orderStatus: {
                 $eq: this.onlyActive
-                    ? EOrderStatus.Active
-                    : EOrderStatus.Unknown,
+                    ? EnumOrderStatus.active
+                    : EnumOrderStatus.unknown,
             },
             price: this.getGteLte(this.priceFrom, this.priceTo),
             benchmarkMap: {
