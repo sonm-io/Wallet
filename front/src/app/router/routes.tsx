@@ -12,6 +12,7 @@ import { Deposit, Withdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
 import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
+import { Deal } from 'app/components/layouts/deal';
 import { QuickBuy } from 'app/components/layouts/order-list/sub/quick-buy';
 
 import * as React from 'react';
@@ -524,6 +525,17 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 }),
                             },
                         ],
+                    },
+                    {
+                        path: '/deals/:id',
+                        breadcrumbTitle: 'Deal',
+                        action: appendChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'Deals',
+                                pageTitle: 'Deals',
+                                content: <Deal id={params.id} />,
+                            }),
+                        ),
                     },
                     {
                         path: '/deals',
