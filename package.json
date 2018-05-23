@@ -99,7 +99,7 @@
         "prop-types": "^15.6.1",
         "query-string": "5.0.1",
         "rc-select": "^7.4.0",
-        "react": "^16.3.1",
+        "react": "^16.3.2",
         "react-addons-transition-group": "^15.6.2",
         "react-dom": "^16.1.0",
         "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v1.0.29",

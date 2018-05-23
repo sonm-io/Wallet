@@ -135,6 +135,7 @@ export interface IAccountBrief {
 }
 
 export interface IBenchmarkMap {
+    [index: string]: string | number;
     cpuSysbenchMulti: number;
     cpuSysbenchOne: number;
     cpuCount: number;
@@ -193,6 +194,10 @@ export interface IMarketStats {
 export interface IOrderParams {
     orderStatus: string;
     dealID: string;
+}
+
+export interface IDictionary {
+    [index: string]: string | number;
 }
 
 export interface ISender {
