@@ -263,16 +263,10 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
 
     @action
     public applyFilter() {
-        this.filterAsStringField = this.getFilterAsString();
+        this.filterAsString = this.getFilterAsString();
     }
 
-    @computed
-    public get filterAsString(): string {
-        return this.filterAsStringField;
-    }
-
-    @observable
-    protected filterAsStringField: string = this.getFilterAsString();
+    @observable public filterAsString: string = this.getFilterAsString();
 }
 
 export default OrderFilterStore;
