@@ -41,36 +41,28 @@ Orders Filter Panel:
         })
     });
 
-    const toStr = (value) => {
-        return value === undefined
-            ? 'undefined'
-            : value === null
-            ? 'null'
-            : value.toString();
-    }
-
     const StateInfo = observer(() =>
         <div>
-            <div>orderOwnerType: {toStr(state.orderOwnerType)}</div>
-            <div>address: {toStr(state.address)}</div>
-            <div>type: {toStr(state.type)}</div>
-            <div>onlyActive: {toStr(state.onlyActive)}</div>
-            <div>priceFrom: {toStr(state.priceFrom)}</div>
-            <div>priceTo: {toStr(state.priceTo)}</div>
+            <div>orderOwnerType: {String(state.orderOwnerType)}</div>
+            <div>address: {String(state.address)}</div>
+            <div>type: {String(state.type)}</div>
+            <div>onlyActive: {String(state.onlyActive)}</div>
+            <div>priceFrom: {String(state.priceFrom)}</div>
+            <div>priceTo: {String(state.priceTo)}</div>
             // owner status:
-            <div>professional: {toStr(state.professional)}</div>
-            <div>registered: {toStr(state.registered)}</div>
-            <div>identified: {toStr(state.identified)}</div>
-            <div>anonymous: {toStr(state.anonymous)}</div>
+            <div>professional: {String(state.professional)}</div>
+            <div>registered: {String(state.registered)}</div>
+            <div>identified: {String(state.identified)}</div>
+            <div>anonymous: {String(state.anonymous)}</div>
             // -
-            <div>cpuCountFrom: {toStr(state.cpuCountFrom)}</div>
-            <div>cpuCountTo: {toStr(state.cpuCountTo)}</div>
-            <div>gpuCountFrom: {toStr(state.gpuCountFrom)}</div>
-            <div>gpuCountTo: {toStr(state.gpuCountTo)}</div>
-            <div>ramSizeFrom: {toStr(state.ramSizeFrom)}</div>
-            <div>ramSizeTo: {toStr(state.ramSizeTo)}</div>
-            <div>storageSizeFrom: {toStr(state.storageSizeFrom)}</div>
-            <div>storageSizeTo: {toStr(state.storageSizeTo)}</div>
+            <div>cpuCountFrom: {String(state.cpuCountFrom)}</div>
+            <div>cpuCountTo: {String(state.cpuCountTo)}</div>
+            <div>gpuCountFrom: {String(state.gpuCountFrom)}</div>
+            <div>gpuCountTo: {String(state.gpuCountTo)}</div>
+            <div>ramSizeFrom: {String(state.ramSizeFrom)}</div>
+            <div>ramSizeTo: {String(state.ramSizeTo)}</div>
+            <div>storageSizeFrom: {String(state.storageSizeFrom)}</div>
+            <div>storageSizeTo: {String(state.storageSizeTo)}</div>
             <div>events: {Object.keys(state.eventCounter).map(name => `${name}: ${state.eventCounter[name]}`).join(', ')}</div>
         </div>
     );
