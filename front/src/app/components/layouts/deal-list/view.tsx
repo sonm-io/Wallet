@@ -7,6 +7,7 @@ import { IdentIcon } from 'app/components/common/ident-icon';
 import { Balance } from 'app/components/common/balance-view';
 import { Hash } from 'app/components/common/hash-view';
 import { ProfileStatus } from 'app/components/common/profile-status';
+import { Benchmark } from 'app/components/common/benchmark';
 import * as moment from 'moment';
 import {
     DateRangeDropdown,
@@ -102,26 +103,10 @@ export class DealListView extends React.PureComponent<IProps, any> {
             title: 'Stats',
             render: (price: string, record: IDeal) => {
                 return (
-                    <div className="sonm-deals-list__cell__stats">
-                        <div className="sonm-deals-list__cell__stats__name">
-                            CPU Count
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__value">
-                            {record.benchmarkMap.cpuCount}
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__name">
-                            GPU ETH hashrate
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__value">
-                            {record.benchmarkMap.ethHashrate}
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__name">
-                            RAM size
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__value">
-                            {record.benchmarkMap.ramSize}
-                        </div>
-                    </div>
+                    <Benchmark
+                        data={record.benchmarkMap}
+                        keys={['cpuCount', 'ethHashrate', 'ramSize']}
+                    />
                 );
             },
         },
