@@ -53,6 +53,13 @@ export class OrderFilterPanel extends React.Component<
         this.props.onApply();
     };
 
+    private static orderOwnerTypeValues = [
+        EOrderOwnerType.Market,
+        EOrderOwnerType.My,
+    ];
+    private static orderOwnerTypeTitles = ['Market orders', 'My orders'];
+    private static orderTypeValues = ['Sell', 'Buy'];
+
     public render() {
         return (
             <div className={cn('order-filter-panel', this.props.className)}>
@@ -63,8 +70,8 @@ export class OrderFilterPanel extends React.Component<
                         elementClassName="order-filter-panel__market-my-item"
                         name=""
                         value={this.props.orderOwnerType}
-                        values={[EOrderOwnerType.Market, EOrderOwnerType.My]}
-                        titles={['Market orders', 'My orders']}
+                        values={OrderFilterPanel.orderOwnerTypeValues}
+                        titles={OrderFilterPanel.orderOwnerTypeTitles}
                         onChange={this.handleClickOrderOwnerType}
                         elementCtor={ToggleButton as any}
                     />
@@ -86,7 +93,7 @@ export class OrderFilterPanel extends React.Component<
                     <RadioButtonGroupStr
                         name=""
                         value={this.props.type}
-                        values={['Sell', 'Buy']}
+                        values={OrderFilterPanel.orderTypeValues}
                         elementClassName="order-filter-panel__type-radio-item"
                         onChange={this.handleClickType}
                         elementCtor={RadioButton as any}
