@@ -9,6 +9,7 @@ export enum EOrderOwnerType {
 export interface IOrderFilter {
     orderOwnerType: EOrderOwnerType;
     profileAddress: string;
+    sellerAddress: string;
     type: string;
     onlyActive: boolean;
     priceFrom: string;
@@ -38,6 +39,7 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
     private static defaultUserInput: IOrderFilter = {
         orderOwnerType: EOrderOwnerType.Market,
         profileAddress: '',
+        sellerAddress: '',
         type: 'Sell',
         onlyActive: false,
         priceFrom: '',
@@ -93,6 +95,11 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
     @computed
     public get profileAddress() {
         return this.userInput.profileAddress;
+    }
+
+    @computed
+    public get sellerAddress() {
+        return this.userInput.sellerAddress;
     }
 
     @computed
@@ -193,14 +200,22 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
         return null;
     };
 
+    private getSellerAddress = () => {
+        return this.sellerAddress !== '' && !this.sellerAddress.startsWith('0x')
+            ? '0x' + this.sellerAddress
+            : this.sellerAddress;
+    };
+
     @computed
     public get filter(): any {
         const result: any = {
             creator: {
                 address:
-                    this.orderOwnerType === EOrderOwnerType.My
-                        ? { $eq: this.profileAddress }
-                        : { $ne: this.profileAddress },
+                    this.sellerAddress !== ''
+                        ? { $eq: this.getSellerAddress() }
+                        : this.orderOwnerType === EOrderOwnerType.My
+                            ? { $eq: this.profileAddress }
+                            : { $ne: this.profileAddress },
                 status: {
                     $in: [
                         [EnumProfileStatus.anonimest, true],

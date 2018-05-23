@@ -77,6 +77,7 @@ export class OrderList extends React.Component<IProps, never> {
                 // filter
                 filterOrderOwnerType={filterStore.orderOwnerType}
                 filterProfileAddress={filterStore.profileAddress}
+                filterSellerAddress={filterStore.sellerAddress}
                 filterType={filterStore.type}
                 filterOnlyActive={filterStore.onlyActive}
                 filterPriceFrom={filterStore.priceFrom}

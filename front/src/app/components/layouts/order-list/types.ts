@@ -4,6 +4,7 @@ import { IOrderFilter, EOrderOwnerType } from 'app/stores/order-filter';
 interface IFilter {
     filterOrderOwnerType: EOrderOwnerType;
     filterProfileAddress: string;
+    filterSellerAddress: string;
     filterType: string;
     filterOnlyActive: boolean;
     filterPriceFrom: string;

@@ -57,7 +57,7 @@ export class OrderFilterPanel extends React.Component<
         return (
             <div className={cn('order-filter-panel', this.props.className)}>
                 {/* Market Orders */}
-                <div className="order-filter-panel__market-my">
+                <div className="order-filter-panel__span2">
                     <ToggleButtonGroupOrderOwner
                         className="order-filter-panel__market-my-group"
                         elementClassName="order-filter-panel__market-my-item"
@@ -67,6 +67,16 @@ export class OrderFilterPanel extends React.Component<
                         titles={['Market orders', 'My orders']}
                         onChange={this.handleClickOrderOwnerType}
                         elementCtor={ToggleButton as any}
+                    />
+                </div>
+
+                {/* Seller Address */}
+                <div className="order-filter-panel__header">Seller address</div>
+                <div className="order-filter-panel__span2">
+                    <Input
+                        name="sellerAddress"
+                        value={this.props.sellerAddress}
+                        onChange={this.handleChangeInput}
                     />
                 </div>
 
