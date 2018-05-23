@@ -36,6 +36,8 @@ export class ToggleGroup<
     constructor(props: IToggleGroupProps<TValue, TElement>) {
         super(props);
 
+        this.groupName = this.props.name || nextUniqId();
+
         this.titleGetter =
             typeof props.titles === 'string'
                 ? get(props.titles)
@@ -43,6 +45,8 @@ export class ToggleGroup<
                     ? toString
                     : id;
     }
+
+    private groupName: string;
 
     private titleGetter: (value: TValue) => string;
 
@@ -94,7 +98,7 @@ export class ToggleGroup<
                             className={elementClassName}
                             title={name}
                             name={name}
-                            groupName={this.props.name || nextUniqId()}
+                            groupName={this.groupName}
                             value={key === value}
                             onChange={this.handleChange}
                         />
