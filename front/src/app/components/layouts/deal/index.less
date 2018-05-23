@@ -2,41 +2,16 @@
 @panel-gap-half: 25px / 2;
 
 .sonm-deal {
-    display: flex;
-    flex-direction: row;
-
-    &__column {
-        flex-shrink: 0;
-        width: 50%;
-        display: flex;
-        flex-direction: column;
-        margin: 0 @panel-gap-half;
-
-        &:first-of-type {
-            margin-left: 0;
-        }
-
-        &:last-of-type {
-            margin-right: 0;
-        }
+    &__header {
+        margin-bottom: 10px;
+        font-size: 20px;
     }
 
-    &__panel {
-        flex-shrink: 0;
-        width: 100%;
-        flex-direction: column;
-        margin: @panel-gap-half 0;
-
-        &:first-of-type {
-            margin-top: 0;
-        }
-
-        &:last-of-type {
-            margin-bottom: 0;
-        }
+    &__supplier {
+        margin-bottom: 20px;
     }
 
-    &__orders {
-        margin: 10px 0 0 0;
+    &__consumer {
+        margin-bottom: 20px;
     }
 }

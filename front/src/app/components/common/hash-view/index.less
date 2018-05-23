@@ -5,13 +5,14 @@
     max-width: 100%;
     padding: 0;
     overflow: hidden;
+    user-select: none;
 
     &__line {
         margin: 0;
         padding: 0;
         display: flex;
-        white-space: nowrap;
-        align-items: baseline;
+        align-items: center;
+        white-space: pre-line;
     }
 
     &:hover,
@@ -28,7 +29,7 @@
         display: block;
         margin: 0;
         padding: 0;
-        flex: 1 1 0;
+        flex-basis: auto;
     }
 
     &__end {
@@ -39,19 +40,14 @@
 
     &__copy {
         outline: none;
-        outline-offset: 0;
         display: inline-block;
-        border: 0 solid transparent;
-        margin: 1px 2px;
-        padding: 0;
         cursor: pointer;
         color: inherit;
         background: transparent none;
-        appearance: none;
+        margin: 0 0 0 5px;
 
-        &:focus,
-        &:active {
-            outline: @outline;
+        &:hover {
+            color: @color-violet;
         }
     }
 }

@@ -3,11 +3,9 @@ import Table from 'antd/es/table';
 import * as cn from 'classnames';
 import { ColumnProps } from 'antd/lib/table';
 import { IDeal } from 'app/api/types';
-import { IdentIcon } from 'app/components/common/ident-icon';
 import { Balance } from 'app/components/common/balance-view';
-import { Hash } from 'app/components/common/hash-view';
-import { ProfileStatus } from 'app/components/common/profile-status';
 import { Benchmark } from 'app/components/common/benchmark';
+import { ProfileBrief } from 'app/components/common/profile-brief';
 import * as moment from 'moment';
 import {
     DateRangeDropdown,
@@ -33,32 +31,15 @@ interface IProps {
 export class DealListView extends React.PureComponent<IProps, any> {
     protected columns: Array<ColumnProps<IDeal>> = [
         {
+            className: 'sonm-deals-list__cell__account',
             dataIndex: 'address',
             title: 'Account',
             render: (address: string, record: IDeal) => {
                 return (
-                    <div className="sonm-deals-list__cell__account">
-                        <div className="sonm-deals-list__cell__account__logo">
-                            <IdentIcon address={record.supplier.address} />
-                        </div>
-                        <div className="sonm-deals-list__cell__account__main">
-                            <span className="sonm-deals-list__cell__account__main-label">
-                                Account:
-                            </span>
-                            <Hash
-                                className="sonm-deals-list__cell__account__main-value"
-                                hash={record.supplier.address}
-                            />
-
-                            <span className="sonm-deals-list__cell__account__main-label">
-                                Status:
-                            </span>
-                            <ProfileStatus
-                                className="sonm-deals-list__cell__account__main-value"
-                                status={1}
-                            />
-                        </div>
-                    </div>
+                    <ProfileBrief
+                        profile={record.supplier}
+                        showBalances={false}
+                    />
                 );
             },
         },
@@ -99,6 +80,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
             },
         },
         {
+            className: 'sonm-deals-list__cell__stats',
             dataIndex: 'stats',
             title: 'Stats',
             render: (price: string, record: IDeal) => {

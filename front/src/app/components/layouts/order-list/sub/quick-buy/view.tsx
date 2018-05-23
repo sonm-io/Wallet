@@ -29,7 +29,7 @@ export class QuickBuyView extends React.Component<IProps, any> {
                         error={this.props.validationPassword}
                     >
                         <Input
-                            onChange={this.props.onChangePassword}
+                            onChangeDeprecated={this.props.onChangePassword}
                             type="password"
                             name="password"
                             value={this.props.password}

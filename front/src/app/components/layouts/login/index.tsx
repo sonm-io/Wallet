@@ -526,11 +526,9 @@ export class Login extends React.Component<IProps, IState> {
                             error={this.state.serverValidation.newName}
                         >
                             <Input
-                                autoComplete="off"
-                                type="newName"
                                 className="sonm-login__input"
                                 name="newName"
-                                onChange={this.handleChangeInput}
+                                onChangeDeprecated={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -541,11 +539,10 @@ export class Login extends React.Component<IProps, IState> {
                             error={this.state.serverValidation.password}
                         >
                             <Input
-                                autoComplete="off"
                                 type="password"
                                 className="sonm-login__input"
                                 name="password"
-                                onChange={this.handleChangeInput}
+                                onChangeDeprecated={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>

@@ -129,9 +129,9 @@ export interface IListResult<T> {
 }
 
 export interface IAccountBrief {
-    name?: string;
+    name: string;
     address: string;
-    status?: EnumProfileStatus;
+    status: EnumProfileStatus;
 }
 
 export interface IBenchmarkMap {

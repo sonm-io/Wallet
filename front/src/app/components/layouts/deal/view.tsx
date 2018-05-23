@@ -3,9 +3,8 @@ import * as cn from 'classnames';
 import { IAccountBrief, IBenchmarkMap } from 'app/api/types';
 import { Benchmark } from 'app/components/common/benchmark';
 import { PropertyList } from 'app/components/common/property-list';
-import { IdentIcon } from 'app/components/common/ident-icon';
-import { Hash } from 'app/components/common/hash-view';
-import { ProfileStatus } from 'app/components/common/profile-status';
+import * as moment from 'moment';
+import { ProfileBrief } from 'app/components/common/profile-brief';
 
 interface IProps {
     className?: string;
@@ -20,6 +19,7 @@ interface IProps {
     startTime: number;
     endTime: number;
     benchmarkMap: IBenchmarkMap;
+    marketAccountAddress: string;
 }
 
 export class DealView extends React.PureComponent<IProps, never> {
@@ -29,59 +29,35 @@ export class DealView extends React.PureComponent<IProps, never> {
         return (
             <div className={cn('deal-profile', p.className)}>
                 <div className="sonm-deal__column">
-                    <div>Consumer</div>
-                    <div className="sonm-deals-list__cell__account">
-                        <div className="sonm-deals-list__cell__account__logo">
-                            <IdentIcon address={p.consumer.address} />
-                        </div>
-                        <div className="sonm-deals-list__cell__account__main">
-                            <span className="sonm-deals-list__cell__account__main-label">
-                                Account:
-                            </span>
-                            <Hash
-                                className="sonm-deals-list__cell__account__main-value"
-                                hash={p.consumer.address}
-                            />
-
-                            <span className="sonm-deals-list__cell__account__main-label">
-                                Status:
-                            </span>
-                            <ProfileStatus
-                                className="sonm-deals-list__cell__account__main-value"
-                                status={1}
-                            />
-                        </div>
-                    </div>
-                    <div>Supplier</div>
-                    <div className="sonm-deals-list__cell__account">
-                        <div className="sonm-deals-list__cell__account__logo">
-                            <IdentIcon address={p.supplier.address} />
-                        </div>
-                        <div className="sonm-deals-list__cell__account__main">
-                            <span className="sonm-deals-list__cell__account__main-label">
-                                Account:
-                            </span>
-                            <Hash
-                                className="sonm-deals-list__cell__account__main-value"
-                                hash={p.supplier.address}
-                            />
-
-                            <span className="sonm-deals-list__cell__account__main-label">
-                                Status:
-                            </span>
-                            <ProfileStatus
-                                className="sonm-deals-list__cell__account__main-value"
-                                status={1}
-                            />
-                        </div>
-                    </div>
-                    <div>Details</div>
+                    <div className="sonm-deal__header">Consumer</div>
+                    <ProfileBrief
+                        className="sonm-deal__consumer"
+                        profile={p.consumer}
+                        showBalances={false}
+                    />
+                    <div className="sonm-deal__header">Supplier</div>
+                    <ProfileBrief
+                        className="sonm-deal__supplier"
+                        profile={p.supplier}
+                        showBalances={false}
+                    />
+                    <div className="sonm-deal__header">Details</div>
                     <PropertyList
                         dataSource={{
                             id: p.id,
-                            startDate: p.startTime,
-                            endDate: p.endTime,
-                            status: p.status,
+                            startTime: moment
+                                .unix(p.startTime)
+                                .format('D MMM YYYY | H:mm'),
+                            endTime: p.endTime
+                                ? moment
+                                      .unix(p.endTime)
+                                      .format('D MMM YYYY | H:mm')
+                                : '----',
+                            status:
+                                this.props.marketAccountAddress.toLowerCase() ===
+                                p.supplier.address
+                                    ? 'SELL'
+                                    : 'BUY',
                             blockedBalance: p.blockedBalance,
                             timeLeft: 6,
                         }}
@@ -96,11 +72,11 @@ export class DealView extends React.PureComponent<IProps, never> {
                             },
                             {
                                 name: 'Start',
-                                key: 'startDate',
+                                key: 'startTime',
                             },
                             {
                                 name: 'Finish',
-                                key: 'endDate',
+                                key: 'endTime',
                             },
                             {
                                 name: 'Type',
@@ -119,7 +95,7 @@ export class DealView extends React.PureComponent<IProps, never> {
                     />
                 </div>
                 <div className="sonm-deal__column">
-                    <div>Resource parameters</div>
+                    <div className="sonm-deal__header">Resource parameters</div>
                     <Benchmark data={p.benchmarkMap} keys={[]} />
                 </div>
             </div>

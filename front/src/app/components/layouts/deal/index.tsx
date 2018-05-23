@@ -2,6 +2,7 @@ import * as React from 'react';
 import { DealView } from './view';
 import { Api } from 'app/api/';
 import { IDeal } from 'app/api/types';
+import { rootStore } from 'app/stores';
 
 interface IProps {
     className?: string;
@@ -83,6 +84,9 @@ export class Deal extends React.PureComponent<IProps, IState> {
                 startTime={deal.startTime}
                 endTime={deal.endTime}
                 benchmarkMap={deal.benchmarkMap}
+                marketAccountAddress={
+                    rootStore.marketStore.marketAccountAddress
+                }
             />
         );
     }

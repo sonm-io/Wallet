@@ -254,7 +254,7 @@ export class DWH {
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
-        const res = await this.fetchData('GetDeals', id);
+        const res = await this.fetchData('GetDealDetails', `"${id}"`);
         return this.parseDeal(res);
     };
 
@@ -331,10 +331,13 @@ export class DWH {
     private async fetchData(method: string, params: any = {}) {
         const response = await fetch(`${this.url}${method}`, {
             method: 'POST',
-            body: JSON.stringify({
-                ...params,
-                WithCount: true,
-            }),
+            body:
+                method === 'GetDealDetails'
+                    ? params
+                    : JSON.stringify({
+                          ...params,
+                          WithCount: true,
+                      }),
         });
 
         if (response && response.status === 200) {

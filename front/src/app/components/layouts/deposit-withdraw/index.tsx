@@ -209,9 +209,9 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                 key="amount"
             >
                 <Input
+                    name="amountEther"
                     className="sonm-send__input"
-                    onChange={this.handleChangeAmount}
-                    autoComplete="off"
+                    onChangeDeprecated={this.handleChangeAmount}
                     placeholder="Amount"
                     value={this.store.userInput.amountEther}
                     readOnly={this.props.isConfirmation}
@@ -238,10 +238,10 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                 <Input
                     className="sonm-send__input"
                     value={this.store.userInput.gasPriceGwei}
-                    onChange={this.handleChangeGasPrice}
-                    autoComplete="off"
+                    onChangeDeprecated={this.handleChangeGasPrice}
                     placeholder={this.store.gasPriceGwei}
                     readOnly={this.props.isConfirmation}
+                    name="gasPrice"
                 />
             </FormField>,
             this.props.isConfirmation ? null : (
@@ -262,10 +262,10 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                 <Input
                     className="sonm-send__input"
                     value={this.store.userInput.gasLimit}
-                    onChange={this.handleChangeGasLimit}
-                    autoComplete="off"
+                    onChangeDeprecated={this.handleChangeGasLimit}
                     placeholder={this.store.gasLimit}
                     readOnly={this.props.isConfirmation}
+                    name="gasLimit"
                 />
             </FormField>,
         );
@@ -320,13 +320,12 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                         error={this.state.validationPassword}
                     >
                         <Input
-                            autoComplete="off"
                             name="password"
                             className="sonm-deposit-withdraw-confirm__password-input"
                             type="password"
                             placeholder="Password"
                             value={this.store.userInput.password}
-                            onChange={this.handleChangePassword}
+                            onChangeDeprecated={this.handleChangePassword}
                         />
                     </FormField>
                 </Form>

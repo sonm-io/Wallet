@@ -13,14 +13,13 @@ Radio button group:
     const Container = observer(() =>
         <RadioButtonGroup
             value={state.value}
-            name="volume"
+            name="volume-123"
             values={[
                 'low',
                 'normal',
                 'high'
             ]}
             onChange={state.onChange}
-            elementCtor={RadioButton}
         />
     );
 
@@ -39,6 +38,10 @@ Radio button group:
         { val: 5, text: 'rap' },
     ];
 
+    const values = list.map(i => i.val);
+
+    const titles = list.map(i => i.text);
+
     const state = observable({
         value: list[0].val,
         onChange: action.bound(function (params) {
@@ -49,11 +52,10 @@ Radio button group:
     const Container = observer(() =>
         <RadioButtonGroup
             value={state.value}
-            values={list.map(i => i.val)}
-            titles={list.map(i => i.text)}
-            name="music-genre"
+            values={values}
+            titlesOrDisplayIndex={titles}
+            name="music-genre-123"
             onChange={state.onChange}
-            elementCtor={RadioButton}
         />
     );
 
