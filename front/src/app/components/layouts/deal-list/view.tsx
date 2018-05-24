@@ -26,6 +26,7 @@ interface IProps {
     handleChangeActive: (params: ITogglerChangeParams) => void;
     filterStore: DealFilterStore;
     queryValue: string;
+    onClickRow: (record: IDeal) => void;
 }
 
 export class DealListView extends React.PureComponent<IProps, any> {
@@ -50,11 +51,10 @@ export class DealListView extends React.PureComponent<IProps, any> {
             render: (time: string, record: IDeal) => {
                 const start = moment.unix(record.startTime);
                 const end = moment.unix(record.endTime);
-                const now = moment().unix();
 
                 return [
                     <div key="1">From: {start.format('D MMM YYYY H:mm')}</div>,
-                    record.endTime && now < record.endTime ? (
+                    record.timeLeft ? (
                         <div key="2">To: {end.format('D MMM YYYY H:mm')}</div>
                     ) : null,
                 ];
@@ -82,7 +82,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
         {
             className: 'sonm-deals-list__cell__stats',
             dataIndex: 'stats',
-            title: 'Stats',
+            title: 'Resource',
             render: (price: string, record: IDeal) => {
                 return (
                     <Benchmark
@@ -97,8 +97,6 @@ export class DealListView extends React.PureComponent<IProps, any> {
             dataIndex: 'price',
             title: 'Price',
             render: (price: string, record: IDeal) => {
-                const now = moment().unix();
-
                 return [
                     <Balance
                         key="1"
@@ -107,19 +105,22 @@ export class DealListView extends React.PureComponent<IProps, any> {
                         decimalDigitAmount={2}
                         symbol="USD/h"
                     />,
-                    record.endTime && now < record.endTime ? (
+                    record.timeLeft ? (
                         <div
                             key="3"
                             className="sonm-deals-list__cell__price--green"
                         >
-                            {Math.round((record.endTime - now) / 3600)} hour(s)
-                            left
+                            {record.timeLeft} hour(s) left
                         </div>
                     ) : null,
                 ];
             },
         },
     ];
+
+    public getRowProps = (record: IDeal) => ({
+        onClick: () => this.props.onClickRow(record),
+    });
 
     public render() {
         const p = this.props;
@@ -155,6 +156,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                     columns={this.columns}
                     rowKey="id"
                     pagination={false}
+                    onRow={this.getRowProps}
                 />
             </div>
         );

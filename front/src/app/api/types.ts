@@ -140,14 +140,14 @@ export interface IBenchmarkMap {
     cpuSysbenchOne: number;
     cpuCount: number;
     gpuCount: number;
-    ethHashrate: string;
-    ramSize: string;
-    storageSize: string;
-    downloadNetSpeed: string;
-    uploadNetSpeed: string;
-    gpuRamSize: string;
-    zcashHashrate: string;
-    redshiftGpu: string;
+    ethHashrate: number;
+    ramSize: number;
+    storageSize: number;
+    downloadNetSpeed: number;
+    uploadNetSpeed: number;
+    gpuRamSize: number;
+    zcashHashrate: number;
+    redshiftGpu: number;
 }
 
 export interface IOrder {
@@ -175,6 +175,7 @@ export interface IDeal {
     startTime: number;
     endTime: number;
     benchmarkMap: IBenchmarkMap;
+    timeLeft: number;
 }
 
 export interface IOrderListFilter {

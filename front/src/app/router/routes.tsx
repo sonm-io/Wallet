@@ -43,7 +43,8 @@ const navigateToMain = () => navigate({ path: '/wallet/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 const navigateToProfile = (address: string) =>
     navigate({ path: `/market/profiles/${address}` });
-
+const navigateToDeal = (id: string) =>
+    navigate({ path: `/market/deals/${id}` });
 const navigateToDepositSuccess = () =>
     navigate({ path: `/market/dw/deposit/success` });
 const navigateToDepositConfirm = () =>
@@ -528,11 +529,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                     },
                     {
                         path: '/deals/:id',
-                        breadcrumbTitle: 'Deal',
+                        breadcrumbTitle: 'Deals',
                         action: appendChild(
                             async (ctx: IContext, params: IUrlParams) => ({
-                                browserTabTitle: 'Deals',
-                                pageTitle: 'Deals',
+                                browserTabTitle: 'Deal details',
+                                pageTitle: 'Deal details',
                                 content: <Deal id={params.id} />,
                             }),
                         ),
@@ -543,7 +544,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         action: async (ctx: IContext, params: IUrlParams) => ({
                             browserTabTitle: 'Deals',
                             pageTitle: 'Deals',
-                            content: <DealList />,
+                            content: <DealList onNavigate={navigateToDeal} />,
                         }),
                     },
                 ],

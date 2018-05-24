@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IBenchmarkMap, IDictionary } from 'app/api/types';
+import { IBenchmarkMap } from 'app/api/types';
 import { PropertyList, IPropertyListItem } from '../property-list';
 
 interface IBenchmarkProps {
@@ -21,20 +21,64 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         data: {} as IBenchmarkMap,
     };
 
-    public static readonly defaultKeys = {
-        cpuSysbenchMulti: 'cpuSysbenchMulti',
-        cpuSysbenchOne: 'cpuSysbenchOne',
-        cpuCount: 'CPU Count',
-        gpuCount: 'GPU Count',
-        ethHashrate: 'Ethereum HashRate',
-        ramSize: 'Ram Size',
-        storageSize: 'Storage Size',
-        downloadNetSpeed: 'Download net speed',
-        uploadNetSpeed: 'Upload net speed',
-        gpuRamSize: 'GPU Ram size',
-        zcashHashrate: 'ZCahs hashrate',
-        redshiftGpu: 'Redshift',
-    } as IDictionary;
+    public static readonly defaultConfig = [
+        {
+            key: 'cpuSysbenchMulti',
+            name: 'Benchmark multicore',
+        },
+        {
+            key: 'cpuSysbenchOne',
+            name: 'Benchmark one core',
+        },
+        {
+            key: 'cpuCount',
+            name: 'CPU Count',
+        },
+        {
+            key: 'gpuCount',
+            name: 'GPU Count',
+        },
+        {
+            key: 'ethHashrate',
+            name: 'Ethereum HashRate',
+            render: value => `${value} MH/s`,
+        },
+        {
+            key: 'ramSize',
+            name: 'RAM size',
+            render: value => `${value} Mb`,
+        },
+        {
+            key: 'storageSize',
+            name: 'Storage size',
+            render: value => `${value} Mb`,
+        },
+        {
+            key: 'downloadNetSpeed',
+            name: 'Download net speed',
+            render: value => `${value} Mbps`,
+        },
+        {
+            key: 'uploadNetSpeed',
+            name: 'Upload net speed',
+            render: value => `${value} Mbps`,
+        },
+        {
+            key: 'gpuRamSize',
+            name: 'RAM size',
+            render: value => `${value} Mb`,
+        },
+        {
+            key: 'zcashHashrate',
+            name: 'ZCash hashrate',
+            render: value => `${value} h/sol`,
+        },
+        {
+            key: 'redshiftGpu',
+            name: 'Redshift',
+            render: value => `${value}`,
+        },
+    ] as IPropertyListItem[];
 
     public static getDerivedStateFromProps(
         nextProps: IBenchmarkProps,
@@ -46,20 +90,13 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
             nextProps.keys !== prevState.keys ||
             nextProps.data !== prevState.data
         ) {
-            const config = [] as IPropertyListItem[];
-            Object.keys(Benchmark.defaultKeys)
-                .filter(key => nextProps.data[key] !== undefined)
+            const config = Benchmark.defaultConfig
+                .filter(item => nextProps.data[item.key] > 0)
                 .filter(
-                    key =>
+                    item =>
                         nextProps.keys.length === 0 ||
-                        nextProps.keys.indexOf(key) !== -1,
-                )
-                .map(key => {
-                    config.push({
-                        key,
-                        name: Benchmark.defaultKeys[key],
-                    } as IPropertyListItem);
-                });
+                        nextProps.keys.indexOf(item.key) !== -1,
+                );
 
             state.config = config;
             state.keys = nextProps.keys;

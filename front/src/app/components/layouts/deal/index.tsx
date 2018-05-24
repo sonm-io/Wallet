@@ -36,19 +36,20 @@ export class Deal extends React.PureComponent<IProps, IState> {
         totalPayout: '100',
         startTime: 121212,
         endTime: 21121212,
+        timeLeft: 1.5,
         benchmarkMap: {
             cpuSysbenchMulti: 1000,
             cpuSysbenchOne: 2000,
             cpuCount: 2,
             gpuCount: 2,
-            ethHashrate: '35 MH/s',
-            ramSize: '8192 Mb',
-            storageSize: '100 Gb',
-            downloadNetSpeed: '2.5 Mb/s',
-            uploadNetSpeed: '2.5 Mb/s',
-            gpuRamSize: '4 Gb',
-            zcashHashrate: '????',
-            redshiftGpu: '?????',
+            ethHashrate: 35,
+            ramSize: 8192,
+            storageSize: 100000,
+            downloadNetSpeed: 2.5,
+            uploadNetSpeed: 2.5,
+            gpuRamSize: 4912,
+            zcashHashrate: 12,
+            redshiftGpu: 15,
         },
     };
 
@@ -63,6 +64,8 @@ export class Deal extends React.PureComponent<IProps, IState> {
     protected async fetchData() {
         const deal = await Api.deal.fetchById(this.props.id);
 
+        console.log(deal);
+
         this.setState({
             deal,
         });
@@ -70,6 +73,10 @@ export class Deal extends React.PureComponent<IProps, IState> {
 
     public render() {
         const deal = this.state.deal;
+        const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
+        const isOwner =
+            deal.supplier.address.toLowerCase() === marketAccount ||
+            deal.consumer.address.toLowerCase() === marketAccount;
 
         return (
             <DealView
@@ -83,10 +90,10 @@ export class Deal extends React.PureComponent<IProps, IState> {
                 totalPayout={deal.totalPayout}
                 startTime={deal.startTime}
                 endTime={deal.endTime}
+                timeLeft={deal.timeLeft}
                 benchmarkMap={deal.benchmarkMap}
-                marketAccountAddress={
-                    rootStore.marketStore.marketAccountAddress
-                }
+                marketAccountAddress={marketAccount}
+                showButtons={isOwner}
             />
         );
     }
