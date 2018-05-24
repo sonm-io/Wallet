@@ -1,18 +1,25 @@
 @import 'guide.less';
 
+@import './sub/order-filter-panel/index';
+
 .order-list {
-    display: flex;
+    display: grid;
+    grid-template-columns: [list] 1fr [filter] 300px;
+    grid-template-rows: [top] auto [list];
+    gap: 10px;
 
     &__header {
-        margin-bottom: 10px;
-    }
-
-    &__header-and-list {
-        display: flex;
-        flex-direction: column;
+        grid-column: list;
+        grid-row: top / list;
     }
 
     &__filter-panel {
-        margin: 0 0 0 25px;
+        grid-column: filter;
+        grid-row: top / span 2;
+    }
+
+    &__list {
+        grid-column: list;
+        grid-row: list;
     }
 }

@@ -1,14 +1,15 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { Checkbox } from '../checkbox';
-import { Input } from '../input';
-import { Button } from '../button';
+import { Checkbox } from 'app/components/common/checkbox';
+import { Input } from 'app/components/common/input';
+import { Button } from 'app/components/common/button';
 import { IOrderFilterPanelProps } from './types';
 import { IOrderFilter, EOrderOwnerType } from 'app/stores/order-filter';
-import { RadioButtonGroup } from '../radio-button-group';
-import { ToggleButtonGroup } from '../toggle-button-group';
-import { IChangeParams } from '../types';
-import { ITogglerChangeParams } from '../toggler';
+import { RadioButtonGroup } from 'app/components/common/radio-button-group';
+import { ToggleButtonGroup } from 'app/components/common/toggle-button-group';
+import { IChangeParams } from 'app/components/common/types';
+import { ITogglerChangeParams } from 'app/components/common/toggler';
+import ToggleGroup from '../../../../common/toggle-group/index';
 
 export class OrderFilterPanel extends React.Component<
     IOrderFilterPanelProps,
@@ -28,11 +29,9 @@ export class OrderFilterPanel extends React.Component<
         this.props.onUpdateFilter('orderOwnerType', params.value);
     };
 
-    protected handleChangeInput = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => {
-        const key = event.target.name as keyof IOrderFilter;
-        const value: IOrderFilter[keyof IOrderFilter] = event.target.value;
+    protected handleChangeInput = (params: IChangeParams<string>) => {
+        const key = params.name as keyof IOrderFilter;
+        const value: IOrderFilter[keyof IOrderFilter] = params.value;
         this.props.onUpdateFilter(key, value);
     };
 
@@ -51,77 +50,67 @@ export class OrderFilterPanel extends React.Component<
         EOrderOwnerType.Market,
         EOrderOwnerType.My,
     ];
+
     private static orderOwnerTypeTitles = ['Market orders', 'My orders'];
     private static orderTypeValues = ['Sell', 'Buy'];
 
     public render() {
         return (
             <div className={cn('order-filter-panel', this.props.className)}>
-                {/* Market Orders */}
-                <div className="order-filter-panel__span2">
-                    <ToggleButtonGroup
-                        className="order-filter-panel__market-my-group"
-                        name="ownerType"
-                        value={this.props.orderOwnerType}
-                        values={OrderFilterPanel.orderOwnerTypeValues}
-                        titlesOrDisplayIndex={
-                            OrderFilterPanel.orderOwnerTypeTitles
-                        }
-                        onChange={this.handleClickOrderOwnerType}
-                    />
-                </div>
-
-                {/* Seller Address */}
-                <div className="order-filter-panel__header">Seller address</div>
-                <div className="order-filter-panel__span2">
+                <ToggleButtonGroup
+                    cssClasses={ToggleGroup.fullWidthCssClasses}
+                    className="order-filter-panel__order-owner"
+                    name="owner"
+                    value={this.props.orderOwnerType}
+                    values={OrderFilterPanel.orderOwnerTypeValues}
+                    titlesOrDisplayIndex={OrderFilterPanel.orderOwnerTypeTitles}
+                    onChange={this.handleClickOrderOwnerType}
+                />
+                <div className="order-filter-panel__filters">
+                    {/* Seller Address */}
+                    <h3 className="order-filter-panel__header">
+                        Seller address
+                    </h3>
                     <Input
+                        className="order-filter-panel__address"
                         name="sellerAddress"
                         value={this.props.sellerAddress}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
 
-                {/* Type */}
-                <div className="order-filter-panel__header">Type</div>
-                <div className="order-filter-panel__column1">
+                    {/* Type */}
+                    <h3 className="order-filter-panel__header">Type</h3>
                     <RadioButtonGroup
+                        cssClasses={ToggleGroup.radioRowCssClasses}
                         name="orderType"
                         value={this.props.type}
                         values={OrderFilterPanel.orderTypeValues}
                         onChange={this.handleClickType}
                     />
-                </div>
-                <div className="order-filter-panel__column2">
                     <Checkbox
                         name="onlyActive"
                         title="Only active"
                         value={this.props.onlyActive}
                         onChange={this.handleChangeCheckbox}
                     />
-                </div>
 
-                {/* Price */}
-                <div className="order-filter-panel__header">Price, USD/h</div>
-                <div className="order-filter-panel__column1">
+                    {/* Price */}
+                    <h3 className="order-filter-panel__header">Price, USD/h</h3>
                     <Input
                         name="priceFrom"
                         prefix="from"
                         value={this.props.priceFrom}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
-                <div className="order-filter-panel__column2">
                     <Input
                         name="priceTo"
                         prefix="to"
                         value={this.props.priceTo}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
 
-                {/* Owner status */}
-                <div className="order-filter-panel__header">Owner status</div>
-                <div className="order-filter-panel__column1">
+                    {/* Owner status */}
+                    <h3 className="order-filter-panel__header">Owner status</h3>
                     <Checkbox
                         name="professional"
                         title="Professional"
@@ -136,8 +125,6 @@ export class OrderFilterPanel extends React.Component<
                         onChange={this.handleChangeCheckbox}
                         className="order-filter-panel__owner-status-checkbox"
                     />
-                </div>
-                <div className="order-filter-panel__column2">
                     <Checkbox
                         name="identified"
                         title="Identified"
@@ -152,94 +139,74 @@ export class OrderFilterPanel extends React.Component<
                         onChange={this.handleChangeCheckbox}
                         className="order-filter-panel__owner-status-checkbox"
                     />
-                </div>
 
-                {/* CPU count */}
-                <div className="order-filter-panel__header">CPU count</div>
-                <div className="order-filter-panel__column1">
+                    {/* CPU count */}
+                    <h3 className="order-filter-panel__header">CPU count</h3>
                     <Input
                         name="cpuCountFrom"
                         prefix="from"
                         value={this.props.cpuCountFrom}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
-                <div className="order-filter-panel__column2">
                     <Input
                         name="cpuCountTo"
                         prefix="to"
                         value={this.props.cpuCountTo}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
 
-                {/* GPU count */}
-                <div className="order-filter-panel__header">GPU count</div>
-                <div className="order-filter-panel__column1">
+                    {/* GPU count */}
+                    <h3 className="order-filter-panel__header">GPU count</h3>
                     <Input
                         name="gpuCountFrom"
                         prefix="from"
                         value={this.props.gpuCountFrom}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
-                <div className="order-filter-panel__column2">
                     <Input
                         name="gpuCountTo"
                         prefix="to"
                         value={this.props.gpuCountTo}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
 
-                {/* RAM size */}
-                <div className="order-filter-panel__header">RAM size, MB</div>
-                <div className="order-filter-panel__column1">
+                    {/* RAM size */}
+                    <h3 className="order-filter-panel__header">RAM size, MB</h3>
                     <Input
                         name="ramSizeFrom"
                         prefix="from"
                         value={this.props.ramSizeFrom}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
-                <div className="order-filter-panel__column2">
                     <Input
                         name="ramSizeTo"
                         prefix="to"
                         value={this.props.ramSizeTo}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
 
-                {/* Storage size */}
-                <div className="order-filter-panel__header">
-                    Storage size, GB
-                </div>
-                <div className="order-filter-panel__column1">
+                    {/* Storage size */}
+                    <h3 className="order-filter-panel__header">
+                        Storage size, GB
+                    </h3>
                     <Input
                         name="storageSizeFrom"
                         prefix="from"
                         value={this.props.storageSizeFrom}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
-                <div className="order-filter-panel__column2">
                     <Input
                         name="storageSizeTo"
                         prefix="to"
                         value={this.props.storageSizeTo}
                         onChangeDeprecated={this.handleChangeInput}
                     />
-                </div>
 
-                {/* Footer */}
-                <div className="order-filter-panel__footer-column1">
-                    {/* <a className="order-filter-panel__show-all-filters">
-                        Show all filters
-                    </a> */}
-                </div>
-                <div className="order-filter-panel__footer-column2">
-                    <Button onClick={this.handleClickApply}>
+                    {/* Footer */}
+                    <Button
+                        onClick={this.handleClickApply}
+                        className="order-filter-panel__apply"
+                    >
                         APPLY FILTERS
                     </Button>
                 </div>

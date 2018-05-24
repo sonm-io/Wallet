@@ -74,7 +74,6 @@ export class OrderList extends React.Component<IProps, never> {
                 onRequireQuickBuy={this.handleRequireQuickBuy}
                 onApplyFilter={this.handleApplyFilter}
                 onUpdateFilter={this.handleUpdateFilter}
-                // filter
                 filterOrderOwnerType={filterStore.orderOwnerType}
                 filterProfileAddress={filterStore.profileAddress}
                 filterSellerAddress={filterStore.sellerAddress}
@@ -82,12 +81,10 @@ export class OrderList extends React.Component<IProps, never> {
                 filterOnlyActive={filterStore.onlyActive}
                 filterPriceFrom={filterStore.priceFrom}
                 filterPriceTo={filterStore.priceTo}
-                // owner status:
                 filterProfessional={filterStore.professional}
                 filterRegistered={filterStore.registered}
                 filterIdentified={filterStore.identified}
                 filterAnonymous={filterStore.anonymous}
-                // -
                 filterCpuCountFrom={filterStore.cpuCountFrom}
                 filterCpuCountTo={filterStore.cpuCountTo}
                 filterGpuCountFrom={filterStore.gpuCountFrom}
