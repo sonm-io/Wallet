@@ -170,13 +170,25 @@ export class DWH {
         }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
-
         const res = await this.fetchData('GetOrders', {
-            offset,
+            // filter
             authorID:
-                mongoLikeQuery.address && mongoLikeQuery.address.$eq
-                    ? mongoLikeQuery.address.$eq
+                mongoLikeQuery.creator.address &&
+                mongoLikeQuery.creator.address.$eq
+                    ? mongoLikeQuery.creator.address.$eq
                     : null,
+            type:
+                typeof mongoLikeQuery.orderType.$eq === 'number'
+                    ? mongoLikeQuery.orderType.$eq
+                    : null,
+            status:
+                typeof mongoLikeQuery.orderStatus.$eq === 'number'
+                    ? mongoLikeQuery.orderStatus.$eq
+                    : null,
+            price: this.getMinMaxFilter(mongoLikeQuery.price),
+            benchmarks: this.getBenchmarksFilter(mongoLikeQuery.benchmarkMap),
+            // end filter
+            offset,
             limit,
             sortings: [
                 {
@@ -197,6 +209,51 @@ export class DWH {
             records,
             total: res && res.count ? res.count : 0,
         };
+    };
+
+    protected typeIn = (value: any, types: Array<string>) =>
+        types.some(i => typeof value === i);
+
+    protected getBenchmarksFilter = (benchmarkMap: any) => {
+        const map: Array<[number, string]> = [
+            [2, 'cpuCount'],
+            [7, 'gpuCount'],
+            [3, 'ramSize'],
+            [4, 'storageSize'],
+        ];
+
+        return map
+            .map(
+                ([i, name]) =>
+                    [i, name, this.getMinMaxFilter(benchmarkMap[name])] as [
+                        number,
+                        string,
+                        any
+                    ],
+            )
+            .filter(([i, name, value]) => value !== null)
+            .reduce(
+                (acc, [i, name, value]) => {
+                    acc[i] = value;
+                    return acc;
+                },
+                {} as any,
+            );
+    };
+
+    protected getMinMaxFilter = (value: any) => {
+        if (value) {
+            const types = ['string', 'number'];
+            const min = value.$gte;
+            const max = value.$lte;
+            if (this.typeIn(min, types) && this.typeIn(max, types)) {
+                return {
+                    min,
+                    max,
+                };
+            }
+        }
+        return null;
     };
 
     public getOrderFull = async ({ id }: any): Promise<t.IOrder> => {

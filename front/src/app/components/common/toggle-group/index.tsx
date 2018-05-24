@@ -11,7 +11,7 @@ function nextUniqId() {
 
 export interface IToggleGroupBaseProps<TValue> extends IChengableProps<TValue> {
     values: TValue[];
-    titlesOrDisplayIndex: string[] | string;
+    titlesOrDisplayIndex?: string[] | string;
     displayIndex?: string;
     className?: string;
     elementClassName?: string;
@@ -53,7 +53,9 @@ export class ToggleGroup<TValue> extends React.Component<
                 state.titleGetter = get(nextProps.titlesOrDisplayIndex);
             } else if (Array.isArray(nextProps.titlesOrDisplayIndex)) {
                 state.titleGetter = (_: TValue, idx: number) =>
-                    nextProps.titlesOrDisplayIndex[idx];
+                    nextProps.titlesOrDisplayIndex
+                        ? nextProps.titlesOrDisplayIndex[idx]
+                        : String(nextProps.values[idx]);
             } else {
                 state.titleGetter = String;
             }

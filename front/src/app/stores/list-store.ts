@@ -48,7 +48,7 @@ export interface IListStoreServices<TItem> {
 
 export interface IListStoreStores {
     filter: {
-        readonly filterAsString: any;
+        filterAsString: any;
     };
 }
 
