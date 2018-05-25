@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { ToggleGroup, IToggleGroupBaseProps } from '../toggle-group';
+import { ToggleGroup, IToggleGroupProps } from '../toggle-group';
 import { RadioButton } from '../radio-button';
 
-export function RadioButtonGroup<TValue>(props: IToggleGroupBaseProps<TValue>) {
+export function RadioButtonGroup<TValue>(props: IToggleGroupProps<TValue>) {
     class Clazz extends ToggleGroup<TValue> {}
 
     return <Clazz {...props} elementCtor={RadioButton} />;

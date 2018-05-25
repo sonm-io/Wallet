@@ -463,43 +463,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 pageTitle: 'Orders',
                                 content: (
                                     <OrderList
-                                        filterByAddress={params.address}
-                                        onNavigateToQuickBuy={
-                                            navigateToQuickBuy
+                                        filterByAddress={
+                                            params.address === 'all'
+                                                ? undefined
+                                                : params.address
                                         }
-                                    />
-                                ),
-                            }),
-                        ),
-                        children: [
-                            {
-                                breadcrumbTitle: 'Quick deal',
-                                path: '/quick-buy/:orderId',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) => ({
-                                    browserTabTitle: 'Quick deal',
-                                    pageTitle: 'Quick deal',
-                                    content: (
-                                        <QuickBuy
-                                            orderId={params.orderId}
-                                            onNavigateBack={navigateBack}
-                                        />
-                                    ),
-                                }),
-                            },
-                        ],
-                    },
-                    {
-                        path: '/orders',
-                        breadcrumbTitle: 'Orders',
-                        action: appendChild(
-                            async (ctx: IContext, params: IUrlParams) => ({
-                                browserTabTitle: 'Orders',
-                                pageTitle: 'Orders',
-                                content: (
-                                    <OrderList
                                         onNavigateToQuickBuy={
                                             navigateToQuickBuy
                                         }

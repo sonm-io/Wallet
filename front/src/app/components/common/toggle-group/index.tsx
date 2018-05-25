@@ -9,16 +9,12 @@ function nextUniqId() {
     return 'toggleGroupId' + uniqIdx++;
 }
 
-export interface IToggleGroupBaseProps<TValue> extends IChengableProps<TValue> {
+export interface IToggleGroupProps<TValue> extends IChengableProps<TValue> {
     values: TValue[];
-    titlesOrDisplayIndex: string[] | string;
+    titlesOrDisplayIndex?: string[] | string;
     displayIndex?: string;
     className?: string;
-    elementClassName?: string;
-}
-
-export interface IToggleGroupProps<TValue>
-    extends IToggleGroupBaseProps<TValue> {
+    cssClasses?: IToggleGroupCssClasses;
     elementCtor?:
         | React.ComponentClass<ITogglerBaseProps>
         | React.SFC<ITogglerBaseProps>;
@@ -29,10 +25,30 @@ export interface IState<TValue> {
     titleGetter: (value: TValue, idx: number) => string;
 }
 
+export interface IToggleGroupCssClasses {
+    item: string;
+    container: string;
+}
+
 export class ToggleGroup<TValue> extends React.Component<
     IToggleGroupProps<TValue>,
     IState<TValue>
 > {
+    public static readonly defaultCssClasses: IToggleGroupCssClasses = {
+        item: 'sonm-button-group__item',
+        container: 'sonm-button-group',
+    };
+
+    public static readonly fullWidthCssClasses: IToggleGroupCssClasses = {
+        item: 'sonm-full-width-group__item',
+        container: 'sonm-full-width-group',
+    };
+
+    public static readonly radioRowCssClasses: IToggleGroupCssClasses = {
+        item: 'sonm-radio-row-group__item',
+        container: 'sonm-radio-row-group',
+    };
+
     public state: IState<TValue> = {
         titlesOrDisplayIndex: '',
         titleGetter: String,
@@ -40,6 +56,7 @@ export class ToggleGroup<TValue> extends React.Component<
 
     public static defaultProps = {
         elementCtor: Toggler,
+        cssClasses: ToggleGroup.defaultCssClasses,
     };
 
     public static getDerivedStateFromProps<TValue>(
@@ -52,8 +69,10 @@ export class ToggleGroup<TValue> extends React.Component<
             if (typeof nextProps.titlesOrDisplayIndex === 'string') {
                 state.titleGetter = get(nextProps.titlesOrDisplayIndex);
             } else if (Array.isArray(nextProps.titlesOrDisplayIndex)) {
-                state.titleGetter = (_: TValue, idx: number) =>
-                    nextProps.titlesOrDisplayIndex[idx];
+                state.titleGetter = (value: TValue, idx: number) =>
+                    nextProps.titlesOrDisplayIndex !== undefined
+                        ? nextProps.titlesOrDisplayIndex[idx]
+                        : String(value);
             } else {
                 state.titleGetter = String;
             }
@@ -90,7 +109,7 @@ export class ToggleGroup<TValue> extends React.Component<
     };
 
     public render() {
-        const { elementCtor, value, className, elementClassName } = this.props;
+        const { elementCtor, value, className, cssClasses } = this.props;
         const Tag = elementCtor;
 
         if (Tag === undefined) {
@@ -98,13 +117,20 @@ export class ToggleGroup<TValue> extends React.Component<
         }
 
         return (
-            <div className={cn('sonm-button-group', className)}>
+            <div
+                className={cn(
+                    (cssClasses as IToggleGroupCssClasses).container,
+                    className,
+                )}
+            >
                 {this.props.values.map((current, index) => {
                     const name = this.state.titleGetter(current, index);
                     return (
                         <Tag
                             key={name}
-                            className={elementClassName}
+                            className={
+                                (cssClasses as IToggleGroupCssClasses).item
+                            }
                             title={name}
                             name={name}
                             groupName={
