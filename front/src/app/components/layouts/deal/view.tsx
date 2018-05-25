@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import { ProfileBrief } from 'app/components/common/profile-brief';
 import { Button } from 'app/components/common/button';
 import { Balance } from 'app/components/common/balance-view';
+import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 
 interface IProps {
     className?: string;
@@ -69,7 +70,11 @@ export class DealView extends React.PureComponent<IProps, never> {
                                     p.supplier.address
                                         ? 'SELL'
                                         : 'BUY',
-                                blockedBalance: p.blockedBalance,
+                                blockedBalance: moveDecimalPoint(
+                                    p.blockedBalance,
+                                    18,
+                                    2,
+                                ),
                                 timeLeft: p.timeLeft,
                                 status: p.status === 1 ? 'Active' : 'Close',
                             }}
@@ -97,6 +102,7 @@ export class DealView extends React.PureComponent<IProps, never> {
                                 {
                                     name: 'Executed payment',
                                     key: 'blockedBalance',
+                                    render: value => `${value} SNM`,
                                 },
                                 {
                                     name: 'Time left',
