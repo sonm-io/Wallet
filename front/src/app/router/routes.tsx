@@ -493,13 +493,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                     {
                         path: '/deals/:id',
                         breadcrumbTitle: 'Deals',
-                        action: appendChild(
-                            async (ctx: IContext, params: IUrlParams) => ({
-                                browserTabTitle: 'Deal details',
-                                pageTitle: 'Deal details',
-                                content: <Deal id={params.id} />,
-                            }),
-                        ),
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'Deal details',
+                            pageTitle: 'Deal details',
+                            content: <Deal id={params.id} />,
+                        }),
                     },
                     {
                         path: '/deals',

@@ -43,7 +43,7 @@ export class OrderList extends React.Component<IProps, never> {
         store.update();
     };
 
-    protected handleСlickRow = (orderId: string) => {
+    protected handleClickRow = (orderId: string) => {
         this.props.onNavigateToOrder(orderId);
     };
 
@@ -72,7 +72,7 @@ export class OrderList extends React.Component<IProps, never> {
                 onChangeOrder={this.handleChangeOrder}
                 onRefresh={this.handleRefresh}
                 dataSource={store.records}
-                onClickRow={this.handleСlickRow}
+                onClickRow={this.handleClickRow}
                 onApplyFilter={this.handleApplyFilter}
                 onUpdateFilter={this.handleUpdateFilter}
                 filterOrderOwnerType={filterStore.orderOwnerType}
