@@ -10,7 +10,7 @@ const filterStore = rootStore.orderFilterStore;
 
 interface IProps {
     filterByAddress?: string;
-    onNavigateToQuickBuy: (orderId: string, creatorAddress?: string) => void;
+    onNavigateToOrder: (orderId: string) => void;
 }
 
 @observer
@@ -43,8 +43,8 @@ export class OrderList extends React.Component<IProps, never> {
         store.update();
     };
 
-    protected handleRequireQuickBuy = (orderId: string) => {
-        this.props.onNavigateToQuickBuy(orderId, this.props.filterByAddress);
+    protected handleClickRow = (orderId: string) => {
+        this.props.onNavigateToOrder(orderId);
     };
 
     protected handleApplyFilter = () => {
@@ -72,7 +72,7 @@ export class OrderList extends React.Component<IProps, never> {
                 onChangeOrder={this.handleChangeOrder}
                 onRefresh={this.handleRefresh}
                 dataSource={store.records}
-                onRequireQuickBuy={this.handleRequireQuickBuy}
+                onClickRow={this.handleClickRow}
                 onApplyFilter={this.handleApplyFilter}
                 onUpdateFilter={this.handleUpdateFilter}
                 filterOrderOwnerType={filterStore.orderOwnerType}

@@ -8,7 +8,6 @@ import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';
 import { observer } from 'mobx-react';
 import { rootStore } from 'app/stores/';
-import { Header } from 'app/components/common/header';
 
 interface IProps {
     className?: string;
@@ -79,9 +78,6 @@ export class SendConfirm extends React.Component<IProps, any> {
 
         return (
             <div className={cn('sonm-send-confirm', this.props.className)}>
-                <Header className="sonm-send-confirm__header">
-                    Transfer confirmation
-                </Header>
                 <section className="sonm-send-confirm__from-to">
                     <div className="sonm-send-confirm__account">
                         <IdentIcon

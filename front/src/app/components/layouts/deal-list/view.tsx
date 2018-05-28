@@ -3,10 +3,9 @@ import Table from 'antd/es/table';
 import * as cn from 'classnames';
 import { ColumnProps } from 'antd/lib/table';
 import { IDeal } from 'app/api/types';
-import { IdentIcon } from 'app/components/common/ident-icon';
 import { Balance } from 'app/components/common/balance-view';
-import { Hash } from 'app/components/common/hash-view';
-import { ProfileStatus } from 'app/components/common/profile-status';
+import { Benchmark } from 'app/components/common/benchmark';
+import { ProfileBrief } from 'app/components/common/profile-brief';
 import * as moment from 'moment';
 import {
     DateRangeDropdown,
@@ -27,37 +26,27 @@ interface IProps {
     handleChangeActive: (params: ITogglerChangeParams) => void;
     filterStore: DealFilterStore;
     queryValue: string;
+    onClickRow: (record: IDeal) => void;
 }
 
 export class DealListView extends React.PureComponent<IProps, any> {
+    private static readonly propertyList: string[] = [
+        'cpuCount',
+        'ethHashrate',
+        'ramSize',
+    ];
+
     protected columns: Array<ColumnProps<IDeal>> = [
         {
+            className: 'sonm-deals-list__cell__account',
             dataIndex: 'address',
             title: 'Account',
             render: (address: string, record: IDeal) => {
                 return (
-                    <div className="sonm-deals-list__cell__account">
-                        <div className="sonm-deals-list__cell__account__logo">
-                            <IdentIcon address={record.supplier.address} />
-                        </div>
-                        <div className="sonm-deals-list__cell__account__main">
-                            <span className="sonm-deals-list__cell__account__main-label">
-                                Account:
-                            </span>
-                            <Hash
-                                className="sonm-deals-list__cell__account__main-value"
-                                hash={record.supplier.address}
-                            />
-
-                            <span className="sonm-deals-list__cell__account__main-label">
-                                Status:
-                            </span>
-                            <ProfileStatus
-                                className="sonm-deals-list__cell__account__main-value"
-                                status={1}
-                            />
-                        </div>
-                    </div>
+                    <ProfileBrief
+                        profile={record.supplier}
+                        showBalances={false}
+                    />
                 );
             },
         },
@@ -68,11 +57,10 @@ export class DealListView extends React.PureComponent<IProps, any> {
             render: (time: string, record: IDeal) => {
                 const start = moment.unix(record.startTime);
                 const end = moment.unix(record.endTime);
-                const now = moment().unix();
 
                 return [
                     <div key="1">From: {start.format('D MMM YYYY H:mm')}</div>,
-                    record.endTime && now < record.endTime ? (
+                    record.timeLeft ? (
                         <div key="2">To: {end.format('D MMM YYYY H:mm')}</div>
                     ) : null,
                 ];
@@ -98,30 +86,15 @@ export class DealListView extends React.PureComponent<IProps, any> {
             },
         },
         {
+            className: 'sonm-deals-list__cell__stats',
             dataIndex: 'stats',
-            title: 'Stats',
+            title: 'Resource',
             render: (price: string, record: IDeal) => {
                 return (
-                    <div className="sonm-deals-list__cell__stats">
-                        <div className="sonm-deals-list__cell__stats__name">
-                            CPU Count
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__value">
-                            {record.benchmarkMap.cpuCount}
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__name">
-                            GPU ETH hashrate
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__value">
-                            {record.benchmarkMap.ethHashrate}
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__name">
-                            RAM size
-                        </div>
-                        <div className="sonm-deals-list__cell__stats__value">
-                            {record.benchmarkMap.ramSize}
-                        </div>
-                    </div>
+                    <Benchmark
+                        data={record.benchmarkMap}
+                        keys={DealListView.propertyList}
+                    />
                 );
             },
         },
@@ -130,8 +103,6 @@ export class DealListView extends React.PureComponent<IProps, any> {
             dataIndex: 'price',
             title: 'Price',
             render: (price: string, record: IDeal) => {
-                const now = moment().unix();
-
                 return [
                     <Balance
                         key="1"
@@ -140,19 +111,22 @@ export class DealListView extends React.PureComponent<IProps, any> {
                         decimalDigitAmount={2}
                         symbol="USD/h"
                     />,
-                    record.endTime && now < record.endTime ? (
+                    record.timeLeft ? (
                         <div
                             key="3"
                             className="sonm-deals-list__cell__price--green"
                         >
-                            {Math.round((record.endTime - now) / 3600)} hour(s)
-                            left
+                            {record.timeLeft} hour(s) left
                         </div>
                     ) : null,
                 ];
             },
         },
     ];
+
+    public getRowProps = (record: IDeal) => ({
+        onClick: () => this.props.onClickRow(record),
+    });
 
     public render() {
         const p = this.props;
@@ -188,6 +162,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                     columns={this.columns}
                     rowKey="id"
                     pagination={false}
+                    onRow={this.getRowProps}
                 />
             </div>
         );

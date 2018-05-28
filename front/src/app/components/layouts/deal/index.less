@@ -1,0 +1,53 @@
+@import 'guide.less';
+
+.sonm-deal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 20px;
+
+    &__column-left {
+        grid-column: 1;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 100px 100px 1fr;
+        grid-row-gap: 30px;
+    }
+
+    &__column-right {
+        grid-column: 2;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 50px 1fr;
+        grid-row-gap: 30px;
+
+        &__buttons {
+            grid-column: 1 / span 2;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &__price-duration {
+            text-align: center;
+
+            &--price {
+                font-size: 25px;
+                margin-bottom: 10px;
+            }
+
+            &--duration {
+                font-size: 22px;
+                color: @color-font-gray;
+            }
+        }
+    }
+
+    &__header {
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: @color-font-gray;
+        font-weight: bold;
+    }
+}

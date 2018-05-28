@@ -38,11 +38,11 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
             ],
         ],
         [
-            'market',
+            'Market',
             (marketPath = '/market/deals'),
             [
                 ['Profiles', '/market/profiles', undefined],
-                ['Orders', '/market/orders/all', undefined],
+                ['Orders', '/market/orders', undefined],
                 ['Deals', '/market/deals', undefined],
                 ['Deposit', '/market/dw/deposit', undefined],
                 ['Withdraw', '/market/dw/withdraw', undefined],

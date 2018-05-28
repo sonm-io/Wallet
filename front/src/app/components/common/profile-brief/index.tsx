@@ -8,7 +8,7 @@ import { Balance } from 'app/components/common/balance-view';
 
 interface IProps {
     profile: IProfileBrief;
-    className: string;
+    className?: string;
     showBalances: boolean;
 }
 

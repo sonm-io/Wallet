@@ -12,6 +12,7 @@ import { Deposit, Withdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
 import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
+import { Deal } from 'app/components/layouts/deal';
 import { QuickBuy } from 'app/components/layouts/order-list/sub/quick-buy';
 
 import * as React from 'react';
@@ -42,7 +43,8 @@ const navigateToMain = () => navigate({ path: '/wallet/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 const navigateToProfile = (address: string) =>
     navigate({ path: `/market/profiles/${address}` });
-
+const navigateToDeal = (id: string) =>
+    navigate({ path: `/market/deals/${id}` });
 const navigateToDepositSuccess = () =>
     navigate({ path: `/market/dw/deposit/success` });
 const navigateToDepositConfirm = () =>
@@ -54,13 +56,11 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
-const navigateToOrdersByAddress = (address: string) =>
-    navigate({ path: `/market/orders/${address}` });
-const navigateToQuickBuy = (orderId: string, creatorAddress: string = '') =>
+const navigateToOrdersByAddress = (creatorAddress: string) =>
+    navigate({ path: `/market/orders`, query: { creatorAddress } });
+const navigateToOrder = (orderId: string, creatorAddress: string = '') =>
     navigate({
-        path: `/market/orders${
-            creatorAddress ? '/' + creatorAddress : ''
-        }/quick-buy/${orderId}`,
+        path: `/market/orders/${orderId}`,
     });
 
 function reload() {
@@ -79,22 +79,22 @@ function replaceWithChild(action: TFnAction): TFnAction {
     };
 }
 
-function appendChild(action: TFnAction): TFnAction {
-    return async (ctx: IContext, p: any): Promise<IRouterResult> => {
-        const [me, child] = await Promise.all([action(ctx, p), ctx.next()]);
-
-        return {
-            content: (
-                <React.Fragment>
-                    {me.content}
-                    {child ? child.content : null}
-                </React.Fragment>
-            ),
-            browserTabTitle: child ? child.browserTabTitle : me.browserTabTitle,
-            pageTitle: child ? child.pageTitle : me.pageTitle,
-        };
-    };
-}
+// function appendChild(action: TFnAction): TFnAction {
+//     return async (ctx: IContext, p: any): Promise<IRouterResult> => {
+//         const [me, child] = await Promise.all([action(ctx, p), ctx.next()]);
+//
+//         return {
+//             content: (
+//                 <React.Fragment>
+//                     {me.content}
+//                     {child ? child.content : null}
+//                 </React.Fragment>
+//             ),
+//             browserTabTitle: child ? child.browserTabTitle : me.browserTabTitle,
+//             pageTitle: child ? child.pageTitle : me.pageTitle,
+//         };
+//     };
+// }
 
 async function firstByDefault(ctx: IContext, p: any) {
     const params: IRouterResult = await ctx.next();
@@ -176,8 +176,9 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => ({
-                                    browserTabTitle: 'Transfer success',
-                                    pageTitle: 'Transfer success',
+                                    browserTabTitle:
+                                        'Transaction has been sent',
+                                    pageTitle: 'Transaction has been sent',
                                     content: (
                                         <SendSuccess
                                             onClickHistory={navigateToHistory}
@@ -453,36 +454,32 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         ],
                     },
                     {
-                        path: '/orders/:address',
+                        path: '/orders',
                         breadcrumbTitle: 'Orders',
-                        action: appendChild(
+                        action: replaceWithChild(
                             async (ctx: IContext, params: IUrlParams) => ({
                                 browserTabTitle: 'Orders',
                                 pageTitle: 'Orders',
                                 content: (
                                     <OrderList
                                         filterByAddress={
-                                            params.address === 'all'
-                                                ? undefined
-                                                : params.address
+                                            ctx.query.creatorAddress
                                         }
-                                        onNavigateToQuickBuy={
-                                            navigateToQuickBuy
-                                        }
+                                        onNavigateToOrder={navigateToOrder}
                                     />
                                 ),
                             }),
                         ),
                         children: [
                             {
-                                breadcrumbTitle: 'Quick deal',
-                                path: '/quick-buy/:orderId',
+                                breadcrumbTitle: 'Order details',
+                                path: '/:orderId',
                                 action: async (
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => ({
-                                    browserTabTitle: 'Quick deal',
-                                    pageTitle: 'Quick deal',
+                                    browserTabTitle: 'Order details',
+                                    pageTitle: 'Order details',
                                     content: (
                                         <QuickBuy
                                             orderId={params.orderId}
@@ -494,12 +491,21 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         ],
                     },
                     {
+                        path: '/deals/:id',
+                        breadcrumbTitle: 'Deals',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'Deal details',
+                            pageTitle: 'Deal details',
+                            content: <Deal id={params.id} />,
+                        }),
+                    },
+                    {
                         path: '/deals',
                         breadcrumbTitle: 'Deals',
                         action: async (ctx: IContext, params: IUrlParams) => ({
                             browserTabTitle: 'Deals',
                             pageTitle: 'Deals',
-                            content: <DealList />,
+                            content: <DealList onNavigate={navigateToDeal} />,
                         }),
                     },
                 ],

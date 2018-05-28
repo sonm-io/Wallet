@@ -8,9 +8,19 @@ import { Hash } from '../hash-view';
 import { EnumProfileStatus } from 'app/api/types';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
+    protected handleClick = (event: any) => {
+        event.preventDefault();
+
+        this.props.onClick(this.props.order);
+    };
+
     public render() {
         return (
-            <div className={cn('orders-list-item', this.props.className)}>
+            <a
+                className={cn('orders-list-item', this.props.className)}
+                href={`#order-i-${this.props.order.id}`}
+                onClick={this.handleClick}
+            >
                 <div className="orders-list-item__logo">
                     {this.props.logoUrl ? (
                         <img src={this.props.logoUrl} />
@@ -83,7 +93,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 <div className="orders-list-item__child">
                     {this.props.children}
                 </div>
-            </div>
+            </a>
         );
     }
 }
