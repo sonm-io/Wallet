@@ -3,22 +3,16 @@ import * as cn from 'classnames';
 import { IChengableProps, IFocusable } from '../types';
 
 export interface ITextInputProps extends IChengableProps<string> {
-    value?: string;
-    type?: 'text' | 'password';
     name: string;
     autoFocus?: boolean;
-    allowAutoComplete?: boolean;
     prefix?: string;
     onChangeDeprecated?: (event: any) => void;
-    onChange?: (params: ITextChangeParams) => void;
     className?: string;
-    readOnly?: boolean;
     placeholder?: string;
-}
-
-export interface ITextChangeParams {
-    name: string;
-    value: string;
+    readOnly?: boolean;
+    type?: 'text' | 'password';
+    allowAutoComplete?: boolean;
+    postfix?: JSX.Element;
 }
 
 export class Input extends React.Component<ITextInputProps, never>
@@ -50,40 +44,53 @@ export class Input extends React.Component<ITextInputProps, never>
                 value,
             });
         }
+    };
 
-        this.setState({
-            value,
-        });
+    protected handleClickPrefix = () => {
+        if (this.inputNode) {
+            this.inputNode.focus();
+        }
     };
 
     public render() {
         const {
+            type,
+            readOnly,
             allowAutoComplete,
             prefix,
             className,
             name,
             placeholder,
             value,
+            postfix,
         } = this.props;
 
         return (
             <div
                 className={cn('sonm-input', className, {
-                    'sonm-input--readonly': this.props.readOnly,
+                    'sonm-input--readonly': readOnly,
                 })}
             >
                 {prefix ? (
-                    <span className="sonm-input__prefix">{prefix}</span>
+                    <button
+                        onClick={this.handleClickPrefix}
+                        className="sonm-input__prefix"
+                    >
+                        {prefix}
+                    </button>
                 ) : null}
                 <input
                     className="sonm-input__input"
+                    type={type}
                     ref={this.saveRef}
                     autoComplete={allowAutoComplete ? 'on' : 'off'}
                     name={name}
                     value={value}
                     onChange={this.handleChange}
                     placeholder={placeholder}
+                    readOnly={readOnly}
                 />
+                {postfix ? postfix : null}
                 <div className="sonm-input__underline" />
             </div>
         );
