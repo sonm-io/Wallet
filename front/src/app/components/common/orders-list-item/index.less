@@ -19,9 +19,13 @@
     grid-column-gap: 15px;
     border-bottom: @ordersListItem-border;
     font-family: @ordersListItem-fontColor;
-    color: @ordersListItem-fontColor;
-    font-weight: 400;
-    padding: 10px;
+
+    && {
+        color: @ordersListItem-fontColor;
+        font-weight: 400;
+        padding: 10px;
+        text-decoration: none;
+    }
 
     &:first-child {
         border-top: @ordersListItem-border;

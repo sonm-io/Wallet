@@ -35,7 +35,7 @@ export interface IOrdersProps extends IFilter {
     className?: string;
     dataSource: Array<IOrder>;
     schemaOfOrderItem: Array<[keyof IBenchmarkMap, string]>;
-    onRequireQuickBuy: (orderId: string) => void;
+    onClickRow: (orderId: string) => void;
     onApplyFilter: () => void;
     onUpdateFilter: (
         key: keyof IOrderFilter,
