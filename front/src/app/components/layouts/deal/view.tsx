@@ -39,19 +39,23 @@ export class DealView extends React.PureComponent<IProps, never> {
         {
             name: 'Deal status',
             key: 'status',
-            render: (value: any) => (value === 1 ? 'Active' : 'Close'),
+            render: (value: string) => (value ? 'Active' : 'Close'),
         },
         {
             name: 'Start',
             key: 'startTime',
-            render: (value: any) =>
-                moment.unix(value).format('D MMM YYYY | H:mm'),
+            render: (value: string) =>
+                moment.unix(parseInt(value, 10)).format('D MMM YYYY | H:mm'),
         },
         {
             name: 'Finish',
             key: 'endTime',
             render: (value: any) =>
-                value ? moment.unix(value).format('D MMM YYYY | H:mm') : '----',
+                value
+                    ? moment
+                          .unix(parseInt(value, 10))
+                          .format('D MMM YYYY | H:mm')
+                    : '----',
         },
         {
             name: 'Type',

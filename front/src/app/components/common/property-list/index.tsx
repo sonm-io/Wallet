@@ -5,7 +5,7 @@ import { IDictionary } from 'app/api/types';
 export interface IPropertyListItem {
     name: string;
     key: string;
-    render?: (value: string | number) => void;
+    render?: (value: string) => void;
 }
 
 interface IPropertyListProps {
