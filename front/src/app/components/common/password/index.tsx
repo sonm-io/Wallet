@@ -4,7 +4,6 @@ import { Icon } from 'app/components/common/icon';
 import { IChengableProps } from '../types';
 
 export interface IPasswordInputProps extends IChengableProps<string> {
-    name: string;
     autoFocus?: boolean;
     prefix?: string;
     className?: string;
