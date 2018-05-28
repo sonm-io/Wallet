@@ -57,3 +57,15 @@ In container:
     <div style={containerStyle}>
         <ConfirmationPanel onSubmit={() => {}} onCancel={() => {}} />
     </div>
+
+Custom labels:
+
+    <ConfirmationPanel
+        header="Header"
+        description="Text Text Text Text Text Text Text Text Text Text Text Text Text Text"
+        cancelBtnLabel="CustomCancel"
+        submitBtnLabel="CustomSubmit"
+
+        onSubmit={() => {}}
+        onCancel={() => {}}
+    />

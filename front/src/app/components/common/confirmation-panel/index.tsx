@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Form, FormField } from 'app/components/common/form';
-import { Input } from 'app/components/common/input';
+import { Password } from 'app/components/common/password';
 import { IChangeParams } from 'app/components/common/types';
 import { Button } from 'app/components/common/button';
 
@@ -25,26 +25,31 @@ export class ConfirmationPanel extends React.Component<
     IConfirmationPanelProps,
     IState
 > {
-    private static defaults: IMessages = {
+    private static defaults: IState = {
         header: 'Confirm operation',
         description:
             'Please, enter password for this account to confirm operation',
         cancelBtnLabel: 'Cancel',
         submitBtnLabel: 'NEXT',
+        password: '',
     };
 
     constructor(props: IConfirmationPanelProps) {
         super(props);
+    }
 
-        this.state = (Object.keys(ConfirmationPanel.defaults) as Array<
+    public static getDerivedStateFromProps(
+        props: IConfirmationPanelProps,
+        state: IState,
+    ) {
+        return (Object.keys(ConfirmationPanel.defaults) as Array<
             keyof IMessages
-        >).reduce(
-            (acc: Partial<IState>, key) => {
-                acc[key] = ConfirmationPanel.defaults[key];
-                return acc;
-            },
-            { password: '' },
-        ) as IState;
+        >).reduce((acc: Partial<IState>, key) => {
+            if (props[key] !== undefined) {
+                acc[key] = props[key];
+            }
+            return acc;
+        }, state || ConfirmationPanel.defaults) as IState;
     }
 
     protected handleChangePassword = (params: IChangeParams<string>) => {
@@ -74,10 +79,9 @@ export class ConfirmationPanel extends React.Component<
                         className="confirmation-panel__field"
                         error={this.props.validationMessage}
                     >
-                        <Input
+                        <Password
                             name="password"
                             className="confirmation-panel__input"
-                            type="password"
                             placeholder="Password"
                             value={this.state.password}
                             onChange={this.handleChangePassword}
