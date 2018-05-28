@@ -6,6 +6,7 @@ const icons: any = {
     Export: require('./export.svg').default,
     Import: require('./import.svg').default,
     Eye: require('./eye.svg').default,
+    EyeOff: require('./eye-off.svg').default,
     Pencil: require('./pencil.svg').default,
     Default: require('./default.svg').default,
     Copy: require('./copy.svg').default,
