@@ -44,10 +44,6 @@ export class Input extends React.Component<ITextInputProps, never>
                 value,
             });
         }
-
-        this.setState({
-            value,
-        });
     };
 
     public render() {
