@@ -1,39 +1,12 @@
 @import 'guide.less';
 
 .password {
-    display: flex;
-
-    &__input {
-        width: 100%;
-    }
-
-    &__icon-container {
-        position: relative;
-        margin: 5px 0;
-        padding: 2px 0;
-        font-weight: 400;
-        font-size: 16px;
-        height: 36px;
-        line-height: 1.5;
-
-        display: flex;
-        align-items: flex-end;
-    }
-    &__underline {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background-color: var(--color-input-border);
-    }
-
-    &__input:focus > &__underline {
-        background-color: var(--color-input-active-border);
-        height: 2px;
-    }
-
-    &--readonly &__underline {
-        display: none;
+    &__eye-button {
+        background: transparent;
+        margin: 0;
+        padding: 0;
+        border: none;
+        outline: none;
+        cursor: pointer;
     }
 }
