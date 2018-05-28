@@ -13,3 +13,11 @@ Group:
       <ToggleButton groupName="status" title="casual" />
       <ToggleButton groupName="status" title="rich" />
     </div>
+
+Multiselect group:
+
+    <div>
+      <ToggleButton name="poor" title="poor" />
+      <ToggleButton name="casual" title="casual" />
+      <ToggleButton name="rich" title="rich" />
+    </div>

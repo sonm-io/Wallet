@@ -1,19 +1,34 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import { IChengableProps, IFocusable } from '../types';
 
-interface IInputProps extends React.InputHTMLAttributes<any> {
+export interface ITextInputProps extends IChengableProps<string> {
+    value?: string;
+    type?: 'text' | 'password';
+    name: string;
     autoFocus?: boolean;
     allowAutoComplete?: boolean;
     prefix?: string;
+    onChangeDeprecated?: (event: any) => void;
+    onChange?: (params: ITextChangeParams) => void;
+    className?: string;
+    readOnly?: boolean;
+    placeholder?: string;
 }
 
-interface IFocusable {
-    focus: () => void;
+export interface ITextChangeParams {
+    name: string;
+    value: string;
 }
 
-export class Input extends React.Component<IInputProps, any>
+export class Input extends React.Component<ITextInputProps, never>
     implements IFocusable {
     protected inputNode: IFocusable | null = null;
+
+    public static defaultValues = {
+        value: '',
+        type: 'text',
+    };
 
     protected saveRef = (ref: HTMLInputElement) => {
         if (this.props.autoFocus && !this.inputNode && ref !== null) {
@@ -22,22 +37,37 @@ export class Input extends React.Component<IInputProps, any>
         this.inputNode = ref;
     };
 
+    protected handleChange = (event: any) => {
+        const value = event.target.value;
+
+        if (this.props.onChangeDeprecated) {
+            this.props.onChangeDeprecated(event);
+        }
+
+        if (this.props.onChange) {
+            this.props.onChange({
+                name: this.props.name,
+                value,
+            });
+        }
+
+        this.setState({
+            value,
+        });
+    };
+
     public render() {
         const {
-            autoFocus,
             allowAutoComplete,
             prefix,
             className,
             name,
+            placeholder,
             value,
-            ...rest
         } = this.props;
-
-        const autoComplete = allowAutoComplete ? 'on' : 'off';
 
         return (
             <div
-                style={undefined}
                 className={cn('sonm-input', className, {
                     'sonm-input--readonly': this.props.readOnly,
                 })}
@@ -46,13 +76,13 @@ export class Input extends React.Component<IInputProps, any>
                     <span className="sonm-input__prefix">{prefix}</span>
                 ) : null}
                 <input
-                    {...rest}
-                    style={undefined}
                     className="sonm-input__input"
                     ref={this.saveRef}
-                    autoComplete={autoComplete}
+                    autoComplete={allowAutoComplete ? 'on' : 'off'}
                     name={name}
                     value={value}
+                    onChange={this.handleChange}
+                    placeholder={placeholder}
                 />
                 <div className="sonm-input__underline" />
             </div>

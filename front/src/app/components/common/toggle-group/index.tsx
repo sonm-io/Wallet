@@ -1,71 +1,95 @@
 import * as React from 'react';
 import * as get from 'lodash/fp/get';
 import * as cn from 'classnames';
-import { IChengable, IChengableProps, IChangeParams } from '../types';
-
-const toString = (x: any) => String(x);
-const id = (x: any) => x;
+import { IChengableProps, IChangeParams, ITogglerBaseProps } from '../types';
+import { Toggler } from '../toggler';
 
 let uniqIdx = 0;
 function nextUniqId() {
     return 'toggleGroupId' + uniqIdx++;
 }
 
-export interface IToggleGroupItem extends IChengableProps<boolean> {
-    className?: string;
-    title?: string;
-    groupName?: string;
-}
-
-export interface IToggleGroupProps<
-    TValue,
-    TElement extends React.Component<IToggleGroupItem, never>
-> extends IChengableProps<TValue> {
+export interface IToggleGroupProps<TValue> extends IChengableProps<TValue> {
     values: TValue[];
-    titles?: string[] | string;
+    titlesOrDisplayIndex?: string[] | string;
+    displayIndex?: string;
     className?: string;
-    elementClassName?: string;
-    elementCtor: new () => TElement;
+    cssClasses?: IToggleGroupCssClasses;
+    elementCtor?:
+        | React.ComponentClass<ITogglerBaseProps>
+        | React.SFC<ITogglerBaseProps>;
 }
 
-export class ToggleGroup<
-    TValue,
-    TElement extends React.Component<IToggleGroupItem, never>
-> extends React.Component<IToggleGroupProps<TValue, TElement>, any>
-    implements IChengable<TValue> {
-    constructor(props: IToggleGroupProps<TValue, TElement>) {
-        super(props);
+export interface IState<TValue> {
+    titlesOrDisplayIndex: string[] | string;
+    titleGetter: (value: TValue, idx: number) => string;
+}
 
-        this.groupName = this.props.name || nextUniqId();
+export interface IToggleGroupCssClasses {
+    item: string;
+    container: string;
+}
 
-        this.titleGetter =
-            typeof props.titles === 'string'
-                ? get(props.titles)
-                : props.titles === undefined
-                    ? toString
-                    : id;
-    }
+export class ToggleGroup<TValue> extends React.Component<
+    IToggleGroupProps<TValue>,
+    IState<TValue>
+> {
+    public static readonly defaultCssClasses: IToggleGroupCssClasses = {
+        item: 'sonm-button-group__item',
+        container: 'sonm-button-group',
+    };
 
-    private groupName: string;
+    public static readonly fullWidthCssClasses: IToggleGroupCssClasses = {
+        item: 'sonm-full-width-group__item',
+        container: 'sonm-full-width-group',
+    };
 
-    private titleGetter: (value: TValue) => string;
+    public static readonly radioRowCssClasses: IToggleGroupCssClasses = {
+        item: 'sonm-radio-row-group__item',
+        container: 'sonm-radio-row-group',
+    };
 
-    protected getValueByName(name: string) {
-        if (this.props.titles instanceof Array) {
-            const index = this.props.titles.findIndex(i => i === name);
-            return this.props.values[index];
-        } else {
-            const res = this.props.values.find(
-                i => this.titleGetter(i) === name,
-            ) as TValue;
-            return res;
+    public state: IState<TValue> = {
+        titlesOrDisplayIndex: '',
+        titleGetter: String,
+    };
+
+    public static defaultProps = {
+        elementCtor: Toggler,
+        cssClasses: ToggleGroup.defaultCssClasses,
+    };
+
+    public static getDerivedStateFromProps<TValue>(
+        nextProps: IToggleGroupProps<TValue>,
+        prevState: IState<TValue>,
+    ) {
+        const state: Partial<IState<TValue>> = {};
+
+        if (nextProps.titlesOrDisplayIndex !== prevState.titlesOrDisplayIndex) {
+            if (typeof nextProps.titlesOrDisplayIndex === 'string') {
+                state.titleGetter = get(nextProps.titlesOrDisplayIndex);
+            } else if (Array.isArray(nextProps.titlesOrDisplayIndex)) {
+                state.titleGetter = (value: TValue, idx: number) =>
+                    nextProps.titlesOrDisplayIndex !== undefined
+                        ? nextProps.titlesOrDisplayIndex[idx]
+                        : String(value);
+            } else {
+                state.titleGetter = String;
+            }
+
+            state.titlesOrDisplayIndex = nextProps.titlesOrDisplayIndex;
         }
+
+        return state;
     }
 
-    protected getNameByIndex(index: number) {
-        return this.props.titles instanceof Array
-            ? this.props.titles[index]
-            : this.titleGetter(this.props.values[index]);
+    protected uid = nextUniqId();
+
+    protected getValueByName(name: string): TValue {
+        return this.props.values.find((x: TValue, idx) => {
+            const current = this.state.titleGetter(x, idx);
+            return current === name;
+        }) as TValue;
     }
 
     protected handleChange = (params: IChangeParams<boolean>) => {
@@ -85,21 +109,36 @@ export class ToggleGroup<
     };
 
     public render() {
-        const { elementCtor, value, className, elementClassName } = this.props;
+        const { elementCtor, value, className, cssClasses } = this.props;
         const Tag = elementCtor;
 
+        if (Tag === undefined) {
+            return null;
+        }
+
         return (
-            <div className={cn('sonm-button-group', className)}>
-                {this.props.values.map((key, index) => {
-                    const name = this.getNameByIndex(index);
+            <div
+                className={cn(
+                    (cssClasses as IToggleGroupCssClasses).container,
+                    className,
+                )}
+            >
+                {this.props.values.map((current, index) => {
+                    const name = this.state.titleGetter(current, index);
                     return (
                         <Tag
-                            key={this.titleGetter(key)}
-                            className={elementClassName}
+                            key={name}
+                            className={
+                                (cssClasses as IToggleGroupCssClasses).item
+                            }
                             title={name}
                             name={name}
-                            groupName={this.groupName}
-                            value={key === value}
+                            groupName={
+                                this.props.name === undefined
+                                    ? this.uid
+                                    : this.props.name
+                            }
+                            value={current === value}
                             onChange={this.handleChange}
                         />
                     );

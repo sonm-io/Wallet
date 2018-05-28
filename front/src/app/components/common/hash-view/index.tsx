@@ -65,17 +65,18 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
                     style={style}
                 >
                     <span className="sonm-hash__start">
-                        {prefix} {start}
+                        {prefix ? prefix + ' ' : null}
+                        {start}
                     </span>
                     <span className="sonm-hash__end">{end}</span>
                     {showCopyButton ? (
-                        <button
+                        <Icon
+                            tag="button"
+                            i="Copy"
                             className="sonm-hash__copy"
                             title="copy"
                             onClickCapture={this.handleClickCopy}
-                        >
-                            <Icon i="Copy" />
-                        </button>
+                        />
                     ) : null}
                 </Tag>
             </div>

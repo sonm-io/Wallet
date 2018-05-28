@@ -41,7 +41,7 @@ export class CreateAccountView extends React.PureComponent<IProps, any> {
                             <Input
                                 type="text"
                                 name="name"
-                                onChange={props.onChangeInput}
+                                onChangeDeprecated={props.onChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -54,7 +54,7 @@ export class CreateAccountView extends React.PureComponent<IProps, any> {
                             <Input
                                 type="password"
                                 name="password"
-                                onChange={props.onChangeInput}
+                                onChangeDeprecated={props.onChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -67,7 +67,7 @@ export class CreateAccountView extends React.PureComponent<IProps, any> {
                             <Input
                                 type="password"
                                 name="confirmation"
-                                onChange={props.onChangeInput}
+                                onChangeDeprecated={props.onChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -80,7 +80,7 @@ export class CreateAccountView extends React.PureComponent<IProps, any> {
                             <Input
                                 type="text"
                                 name="privateKey"
-                                onChange={props.onChangeInput}
+                                onChangeDeprecated={props.onChangeInput}
                             />
                         </FormField>
                     </FormRow>

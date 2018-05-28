@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { OrderListView } from './view';
 import { rootStore } from 'app/stores';
 import { IOrderFilter } from 'app/stores/order-filter';
+import { IBenchmarkMap } from 'app/api/types';
 
 const store = rootStore.ordersListStore;
 const filterStore = rootStore.orderFilterStore;
@@ -74,7 +75,6 @@ export class OrderList extends React.Component<IProps, never> {
                 onRequireQuickBuy={this.handleRequireQuickBuy}
                 onApplyFilter={this.handleApplyFilter}
                 onUpdateFilter={this.handleUpdateFilter}
-                // filter
                 filterOrderOwnerType={filterStore.orderOwnerType}
                 filterProfileAddress={filterStore.profileAddress}
                 filterSellerAddress={filterStore.sellerAddress}
@@ -82,12 +82,10 @@ export class OrderList extends React.Component<IProps, never> {
                 filterOnlyActive={filterStore.onlyActive}
                 filterPriceFrom={filterStore.priceFrom}
                 filterPriceTo={filterStore.priceTo}
-                // owner status:
                 filterProfessional={filterStore.professional}
                 filterRegistered={filterStore.registered}
                 filterIdentified={filterStore.identified}
                 filterAnonymous={filterStore.anonymous}
-                // -
                 filterCpuCountFrom={filterStore.cpuCountFrom}
                 filterCpuCountTo={filterStore.cpuCountTo}
                 filterGpuCountFrom={filterStore.gpuCountFrom}
@@ -100,10 +98,12 @@ export class OrderList extends React.Component<IProps, never> {
         );
     }
 
-    public static defaultSchemeOfOrderItem = [
-        ['CPU Count', 'cpuCount'],
-        ['GPU ETH hashrate', 'hashrate'],
-        ['RAM size', 'ramSize'],
+    public static defaultSchemeOfOrderItem: Array<
+        [keyof IBenchmarkMap, string]
+    > = [
+        ['cpuCount', 'CPU Count'],
+        ['ethHashrate', 'GPU ETH hashrate'],
+        ['ramSize', 'RAM size'],
     ];
 }
 

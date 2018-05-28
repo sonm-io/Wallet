@@ -11,7 +11,5 @@ const defaultCssClasses: ICssClasses = {
 };
 
 export function Checkbox(props: ICheckboxProps) {
-    const cssClasses = props.cssClasses ? props.cssClasses : defaultCssClasses;
-
-    return <Toggler {...props} cssClasses={cssClasses} />;
+    return <Toggler {...props} cssClasses={defaultCssClasses} />;
 }
