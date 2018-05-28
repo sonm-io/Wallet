@@ -5,13 +5,13 @@ import {
     EnumOrderStatus,
 } from 'app/api/types';
 
-export enum EOrderOwnerType {
-    Market = 0,
-    My,
+export enum EnumOrderOwnerType {
+    market,
+    my,
 }
 
 export interface IOrderFilter {
-    orderOwnerType: EOrderOwnerType;
+    orderOwnerType: EnumOrderOwnerType;
     profileAddress: string;
     sellerAddress: string;
     type: string;
@@ -41,7 +41,7 @@ export interface IFilterStore {
 
 export class OrderFilterStore implements IOrderFilter, IFilterStore {
     private static defaultUserInput: IOrderFilter = {
-        orderOwnerType: EOrderOwnerType.Market,
+        orderOwnerType: EnumOrderOwnerType.market,
         profileAddress: '',
         sellerAddress: '',
         type: 'Sell',
@@ -217,7 +217,7 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
                 address:
                     this.sellerAddress !== ''
                         ? { $eq: this.getSellerAddress() }
-                        : this.orderOwnerType === EOrderOwnerType.My
+                        : this.orderOwnerType === EnumOrderOwnerType.my
                             ? { $eq: this.profileAddress }
                             : { $ne: this.profileAddress },
                 status: {

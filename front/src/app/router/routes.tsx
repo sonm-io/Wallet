@@ -178,8 +178,9 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => ({
-                                    browserTabTitle: 'Transfer success',
-                                    pageTitle: 'Transfer success',
+                                    browserTabTitle:
+                                        'Transaction has been sent',
+                                    pageTitle: 'Transaction has been sent',
                                     content: (
                                         <SendSuccess
                                             onClickHistory={navigateToHistory}
@@ -237,7 +238,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
             },
             {
                 path: '/market',
-                breadcrumbTitle: 'Market',
+                breadcrumbTitle: 'market',
                 action: firstByDefault,
                 children: [
                     {

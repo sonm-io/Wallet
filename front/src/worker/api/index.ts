@@ -120,7 +120,7 @@ class Api {
             'account.getCurrencyBalances': this.getCurrencyBalances,
             'account.getCurrencies': this.getCurrencies,
             'account.getMarketBalance': this.getMarketBalance,
-            'account.send': this.transaction('send'),
+            'account.send': this.transaction('wallet'),
             'account.deposit': this.transaction('deposit'),
             'account.withdraw': this.transaction('withdraw'),
             'account.list': this.getAccountList,

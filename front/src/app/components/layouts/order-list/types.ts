@@ -1,8 +1,8 @@
-import { IOrder } from 'app/api/types';
-import { IOrderFilter, EOrderOwnerType } from 'app/stores/order-filter';
+import { IBenchmarkMap, IOrder } from 'app/api/types';
+import { IOrderFilter, EnumOrderOwnerType } from 'app/stores/order-filter';
 
 interface IFilter {
-    filterOrderOwnerType: EOrderOwnerType;
+    filterOrderOwnerType: EnumOrderOwnerType;
     filterProfileAddress: string;
     filterSellerAddress: string;
     filterType: string;
@@ -34,7 +34,7 @@ export interface IOrdersProps extends IFilter {
     onRefresh: () => void;
     className?: string;
     dataSource: Array<IOrder>;
-    schemaOfOrderItem: Array<Array<string>>;
+    schemaOfOrderItem: Array<[keyof IBenchmarkMap, string]>;
     onRequireQuickBuy: (orderId: string) => void;
     onApplyFilter: () => void;
     onUpdateFilter: (

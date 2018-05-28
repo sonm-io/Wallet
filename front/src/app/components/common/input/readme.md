@@ -11,17 +11,10 @@ Input with prefix:
 
     </div>
 
-Input debounced:
+With postfix:
 
-    <Input onChange={(...a) => console.log(JSON.stringify(a))} debounceInterval={1000} name="name"/>
+    const { Icon } = require ('../icon');
 
-Input debounced:
+    const Postfix = <Icon i="Eye" />;
 
-    <div style={{ background: '#000', padding: '10px' }} className="sonm-input--in-the-dark">
-        <Input
-            onChange={(...a) => console.log(JSON.stringify(a))}
-            debounceInterval={1000}
-            name="name"
-            prefix="prefix"
-        />
-    </div>
+    <Input postfix={Postfix} />

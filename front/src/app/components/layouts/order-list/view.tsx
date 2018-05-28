@@ -3,7 +3,6 @@ import { OrdersListItem } from 'app/components/common/orders-list-item';
 import { ListHeader } from 'app/components/common/list-header';
 import { OrderFilterPanel } from 'app/components/layouts/order-list/sub/order-filter-panel';
 import { IOrdersProps } from './types';
-import { Button } from 'app/components/common/button';
 
 export class OrderListView extends React.PureComponent<IOrdersProps, any> {
     public render() {
@@ -27,15 +26,9 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
                             schemaOfCustomField={p.schemaOfOrderItem}
                             order={order}
                             key={order.id}
-                        >
-                            <Button
-                                onClick={this.handleClick}
-                                value={order.id}
-                                color="violet"
-                            >
-                                Buy
-                            </Button>
-                        </OrdersListItem>
+                            className="order-list__list-item"
+                            onClick={this.handleClick}
+                        />
                     ))}
                 </div>
                 <OrderFilterPanel

@@ -28,7 +28,12 @@
 
     &__prefix {
         margin: 0 5px 0 0;
+        padding: 0;
         color: var(--color-prefix);
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
     }
 
     &__input {
@@ -55,7 +60,7 @@
         background-color: var(--color-input-border);
     }
 
-    &__input:focus + &__underline {
+    *:focus ~ &__underline {
         background-color: var(--color-input-active-border);
         height: 2px;
     }

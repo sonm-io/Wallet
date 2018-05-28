@@ -21,5 +21,14 @@
     &__list {
         grid-column: list;
         grid-row: list;
+
+        &-item {
+            cursor: pointer;
+            background: none transparent;
+
+            &:hover {
+                background-color: @color-gray-bg;
+            }
+        }
     }
 }
