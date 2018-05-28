@@ -6,6 +6,7 @@ import { TypeEthereumAddress } from '../../app/api/runtime-types';
 import * as tcomb from 'tcomb';
 import { BN } from 'bn.js';
 import { EnumProfileStatus, IBenchmarkMap } from '../../app/api/types';
+import * as moment from 'moment';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -50,6 +51,13 @@ export class DWH {
         2201: ['Telephone', self.atob],
         2202: ['E-mail', self.atob],
         2203: ['Service link', self.atob],
+    };
+
+    public static readonly mapParseAttributes: any = {
+        1102: ['name', self.atob],
+        1201: ['kyc2', self.atob],
+        1301: ['kyc3', self.atob],
+        1401: ['kyc4', self.atob],
     };
 
     private processProfile(item: any): t.IProfileBrief {
@@ -266,20 +274,17 @@ export class DWH {
             cpuSysbenchMulti: benchmarks.values[0] || 0,
             cpuSysbenchOne: benchmarks.values[1] || 0,
             cpuCount: benchmarks.values[2] || 0,
-            ramSize:
-                (Math.round(benchmarks.values[3] / (1024 * 1024)) || 0) + ' MB',
-            storageSize:
-                (Math.round(benchmarks.values[4] / (1024 * 1024)) || 0) + ' MB',
+            ramSize: Math.round(benchmarks.values[3] / (1024 * 1024)) || 0,
+            storageSize: Math.round(benchmarks.values[4] / (1024 * 1024)) || 0,
             downloadNetSpeed:
-                (Math.round(benchmarks.values[5] / (1024 * 1024)) || 0) + ' MB',
+                Math.round(benchmarks.values[5] / (1024 * 1024)) || 0,
             uploadNetSpeed:
-                (Math.round(benchmarks.values[6] / (1024 * 1024)) || 0) + ' MB',
+                Math.round(benchmarks.values[6] / (1024 * 1024)) || 0,
             gpuCount: benchmarks.values[7] || 0,
-            gpuRamSize:
-                (Math.round(benchmarks.values[8] / (1024 * 1024)) || 0) + ' MB',
-            ethHashrate: (benchmarks.values[9] || 0) + ' MH/s',
-            zcashHashrate: (benchmarks.values[10] || 0) + ' sol/s',
-            redshiftGpu: (benchmarks.values[11] || 0) + '',
+            gpuRamSize: Math.round(benchmarks.values[8] / (1024 * 1024)) || 0,
+            ethHashrate: benchmarks.values[9] || 0,
+            zcashHashrate: benchmarks.values[10] || 0,
+            redshiftGpu: benchmarks.values[11] || 0,
         };
     }
 
@@ -311,8 +316,12 @@ export class DWH {
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
-        const res = await this.fetchData('GetDeals', id);
-        return this.parseDeal(res);
+        const response = await fetch(`${this.url}GetDealDetails`, {
+            method: 'POST',
+            body: `"${id}"`,
+        });
+        const json = await response.json();
+        return this.parseDeal(json);
     };
 
     public getDeals = async ({
@@ -356,22 +365,48 @@ export class DWH {
         };
     };
 
+    private parseCertificate(data: string): any {
+        const attrMap = {} as any;
+
+        try {
+            JSON.parse(self.atob(data)).map((x: any) => {
+                if (x.attribute in DWH.mapParseAttributes) {
+                    const [label, converter] = DWH.mapParseAttributes[
+                        x.attribute
+                    ];
+                    attrMap[label] = converter(x.value);
+                }
+            });
+
+            if (attrMap.kyc4) {
+                attrMap.status = EnumProfileStatus.pro;
+            } else if (attrMap.kyc3) {
+                attrMap.status = EnumProfileStatus.ident;
+            }
+        } catch {}
+
+        return attrMap;
+    }
+
     private parseDeal(item: any): t.IDeal {
         const deal = {
             ...item.deal,
             ...this.parseBenchmarks(item.deal.benchmarks),
         };
 
+        const consumer = this.parseCertificate(item.consumerCertificates);
+        const supplier = this.parseCertificate(item.supplierCertificates);
+
         deal.benchmarkMap = this.parseBenchmarks(item.deal.benchmarks);
         deal.supplier = {
             address: deal.supplierID,
-            status: EnumProfileStatus.anonimest,
-            name: '',
+            status: supplier.status || EnumProfileStatus.anonimest,
+            name: supplier.name || '',
         };
         deal.consumer = {
             address: deal.consumerID,
-            status: EnumProfileStatus.anonimest,
-            name: '',
+            status: consumer.status || EnumProfileStatus.anonimest,
+            name: consumer.name || '',
         };
         deal.duration = deal.duration ? this.parseDuration(deal.duration) : 0;
         deal.price = this.parsePrice(deal.price) || 0;
@@ -381,6 +416,12 @@ export class DWH {
                 : 0;
         deal.endTime =
             deal.endTime && deal.endTime.seconds ? deal.endTime.seconds : 0;
+
+        const now = moment().unix();
+        deal.timeLeft =
+            deal.endTime && now < deal.endTime
+                ? Math.round((deal.endTime - now) / 3600)
+                : 0;
 
         return deal;
     }

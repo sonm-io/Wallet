@@ -33,81 +33,22 @@
 
 .sonm-deals-list {
     &__cell {
-        &__account {
-            display: grid;
-            grid-template-columns: 80px 300px;
-            grid-template-rows: 1fr;
-            grid-row-gap: 10px;
-            grid-column-gap: 10px;
-
-            &__logo {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                grid-column: 1;
-                grid-row: 1;
-            }
-
-            &__main {
-                margin: auto 0;
-                grid-row: 1;
-                grid-column: 2;
-                display: grid;
-                grid-auto-flow: column dense;
-                grid-template-columns: ~'[labels] 70px [values] 1fr';
-                grid-auto-rows: @deal-list-item-row-height;
-                grid-row-gap: 5px;
-                grid-column-gap: 10px;
-            }
-
-            &__main-label {
-                color: @deal-list-item-label-fontColor;
-                grid-column: labels;
-            }
-
-            &__main-value {
-                grid-column: values;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
+        &__date {
+            width: 200px;
         }
 
         &__stats {
-            margin: auto 0;
-            grid-row: 1;
-            grid-column: 2;
-            display: grid;
-            grid-auto-flow: column dense;
-            grid-template-columns: ~'[labels] 150px [values] 1fr';
-            grid-auto-rows: @deal-list-item-row-height;
-            grid-row-gap: 5px;
-            grid-column-gap: 10px;
-
-            &__label {
-                color: @deal-list-item-label-fontColor;
-                grid-column: labels;
-            }
-
-            &__value {
-                grid-column: values;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
+            width: 270px;
         }
 
         &__status {
+            width: 50px;
             text-transform: uppercase;
-
-            &--buy {
-                color: @color-green;
-            }
-
-            &--sell {
-                color: @color-dark-blue;
-            }
         }
 
         &__price {
+            width: 150px;
+
             &--green {
                 color: @color-green;
             }

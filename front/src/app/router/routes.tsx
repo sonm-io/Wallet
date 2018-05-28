@@ -12,6 +12,7 @@ import { Deposit, Withdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
 import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
+import { Deal } from 'app/components/layouts/deal';
 import { QuickBuy } from 'app/components/layouts/order-list/sub/quick-buy';
 
 import * as React from 'react';
@@ -42,7 +43,8 @@ const navigateToMain = () => navigate({ path: '/wallet/accounts' });
 const navigateTo = (path: string) => navigate({ path });
 const navigateToProfile = (address: string) =>
     navigate({ path: `/market/profiles/${address}` });
-
+const navigateToDeal = (id: string) =>
+    navigate({ path: `/market/deals/${id}` });
 const navigateToDepositSuccess = () =>
     navigate({ path: `/market/dw/deposit/success` });
 const navigateToDepositConfirm = () =>
@@ -489,12 +491,23 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         ],
                     },
                     {
+                        path: '/deals/:id',
+                        breadcrumbTitle: 'Deals',
+                        action: appendChild(
+                            async (ctx: IContext, params: IUrlParams) => ({
+                                browserTabTitle: 'Deal details',
+                                pageTitle: 'Deal details',
+                                content: <Deal id={params.id} />,
+                            }),
+                        ),
+                    },
+                    {
                         path: '/deals',
                         breadcrumbTitle: 'Deals',
                         action: async (ctx: IContext, params: IUrlParams) => ({
                             browserTabTitle: 'Deals',
                             pageTitle: 'Deals',
-                            content: <DealList />,
+                            content: <DealList onNavigate={navigateToDeal} />,
                         }),
                     },
                 ],

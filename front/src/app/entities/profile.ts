@@ -4,10 +4,10 @@ import { TPrice, TEthereumAddress } from './types';
 export interface IProfileBrief {
     logoUrl?: string;
     address: TEthereumAddress;
-    name: string;
+    name?: string;
     etherBalance?: TPrice;
     usdBalance?: TPrice;
-    snmBalance: TPrice;
+    snmBalance?: TPrice;
     marketBalance?: TPrice;
     status: EnumProfileStatus;
 }

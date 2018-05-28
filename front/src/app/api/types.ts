@@ -129,9 +129,9 @@ export interface IListResult<T> {
 }
 
 export interface IAccountBrief {
-    name?: string;
+    name: string;
     address: string;
-    status?: EnumProfileStatus;
+    status: EnumProfileStatus;
 }
 
 export interface IBenchmarkMap {
@@ -139,14 +139,14 @@ export interface IBenchmarkMap {
     cpuSysbenchOne: number;
     cpuCount: number;
     gpuCount: number;
-    ethHashrate: string;
-    ramSize: string;
-    storageSize: string;
-    downloadNetSpeed: string;
-    uploadNetSpeed: string;
-    gpuRamSize: string;
-    zcashHashrate: string;
-    redshiftGpu: string;
+    ethHashrate: number;
+    ramSize: number;
+    storageSize: number;
+    downloadNetSpeed: number;
+    uploadNetSpeed: number;
+    gpuRamSize: number;
+    zcashHashrate: number;
+    redshiftGpu: number;
 }
 
 export enum EnumOrderType {
@@ -186,6 +186,7 @@ export interface IDeal {
     startTime: number;
     endTime: number;
     benchmarkMap: IBenchmarkMap;
+    timeLeft: number;
 }
 
 export interface IOrderListFilter {
@@ -205,6 +206,10 @@ export interface IMarketStats {
 export interface IOrderParams {
     orderStatus: string;
     dealID: string;
+}
+
+export interface IDictionary {
+    [index: string]: string | number;
 }
 
 export interface ISender {

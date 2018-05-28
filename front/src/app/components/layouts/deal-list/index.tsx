@@ -6,12 +6,14 @@ import { toJS, autorun } from 'mobx';
 import { IDateRangeChangeParams } from 'app/components/common/date-range-dropdown';
 import { ITogglerChangeParams } from 'app/components/common/toggler';
 import * as debounce from 'lodash/fp/debounce';
+import { IDeal } from 'app/api/types';
 
 const debounce500 = debounce(500);
 
 interface IProps {
     className?: string;
     filterByAddress?: string;
+    onNavigate: (id: string) => void;
 }
 
 const filterStore = rootStore.dealFilterStore;
@@ -69,6 +71,10 @@ export class DealList extends React.Component<IProps, any> {
         });
     };
 
+    public handleRowClick = (record: IDeal) => {
+        this.props.onNavigate(record.id);
+    };
+
     public render() {
         const listStore = rootStore.dealListStore;
         const dataSource = toJS(listStore.records);
@@ -84,6 +90,7 @@ export class DealList extends React.Component<IProps, any> {
                 handleChangeActive={this.handleChangeActive}
                 filterStore={filterStore}
                 queryValue={this.state.query}
+                onClickRow={this.handleRowClick}
             />
         );
     }
