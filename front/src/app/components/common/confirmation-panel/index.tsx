@@ -38,11 +38,15 @@ export class ConfirmationPanel extends React.Component<
     }
 
     public static getDerivedStateFromProps(props: IConfirmationPanelProps) {
-        const { ...rest } = props;
-        return {
-            ...ConfirmationPanel.defaults,
-            ...rest,
-        };
+        return (Object.keys(ConfirmationPanel.defaults) as Array<
+            keyof IMessages
+        >).reduce((acc: Partial<IMessages>, i) => {
+            acc[i] =
+                props[i] !== undefined
+                    ? props[i]
+                    : ConfirmationPanel.defaults[i];
+            return acc;
+        }, {});
     }
 
     protected handleChangePassword = (params: IChangeParams<string>) => {
