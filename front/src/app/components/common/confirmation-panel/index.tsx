@@ -25,31 +25,24 @@ export class ConfirmationPanel extends React.Component<
     IConfirmationPanelProps,
     IState
 > {
-    private static defaults: IState = {
+    private static defaults: IMessages = {
         header: 'Confirm operation',
         description:
             'Please, enter password for this account to confirm operation',
         cancelBtnLabel: 'Cancel',
         submitBtnLabel: 'NEXT',
-        password: '',
     };
 
     constructor(props: IConfirmationPanelProps) {
         super(props);
     }
 
-    public static getDerivedStateFromProps(
-        props: IConfirmationPanelProps,
-        state: IState,
-    ) {
-        return (Object.keys(ConfirmationPanel.defaults) as Array<
-            keyof IMessages
-        >).reduce((acc: Partial<IState>, key) => {
-            if (props[key] !== undefined) {
-                acc[key] = props[key];
-            }
-            return acc;
-        }, state || ConfirmationPanel.defaults) as IState;
+    public static getDerivedStateFromProps(props: IConfirmationPanelProps) {
+        const { ...rest } = props;
+        return {
+            ...ConfirmationPanel.defaults,
+            ...rest,
+        };
     }
 
     protected handleChangePassword = (params: IChangeParams<string>) => {
