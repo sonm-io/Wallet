@@ -28,12 +28,12 @@ export class Password extends React.Component<IPasswordInputProps, IState> {
 
     protected renderEye = () => {
         return (
-            <button
+            <Icon
                 className="password__eye-button"
+                tag="button"
+                i={this.state.showPassword ? 'EyeOff' : 'Eye'}
                 onClick={this.handleClickEye}
-            >
-                <Icon i={this.state.showPassword ? 'EyeOff' : 'Eye'} />
-            </button>
+            />
         );
     };
 
