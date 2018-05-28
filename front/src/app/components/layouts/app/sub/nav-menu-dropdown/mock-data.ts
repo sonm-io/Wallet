@@ -14,7 +14,7 @@ export const props: INavMenuDropdownProps = {
             ],
         ],
         [
-            'Market',
+            'market',
             '/deals',
             [
                 ['Search', '/search', undefined],

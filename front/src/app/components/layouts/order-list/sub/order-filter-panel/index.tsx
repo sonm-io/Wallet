@@ -4,7 +4,7 @@ import { Checkbox } from 'app/components/common/checkbox';
 import { Input } from 'app/components/common/input';
 import { Button } from 'app/components/common/button';
 import { IOrderFilterPanelProps } from './types';
-import { IOrderFilter, EOrderOwnerType } from 'app/stores/order-filter';
+import { IOrderFilter, EnumOrderOwnerType } from 'app/stores/order-filter';
 import { RadioButtonGroup } from 'app/components/common/radio-button-group';
 import { ToggleButtonGroup } from 'app/components/common/toggle-button-group';
 import { IChangeParams } from 'app/components/common/types';
@@ -24,7 +24,7 @@ export class OrderFilterPanel extends React.Component<
     };
 
     protected handleClickOrderOwnerType = (
-        params: IChangeParams<EOrderOwnerType>,
+        params: IChangeParams<EnumOrderOwnerType>,
     ) => {
         this.props.onUpdateFilter('orderOwnerType', params.value);
     };
@@ -47,11 +47,11 @@ export class OrderFilterPanel extends React.Component<
     };
 
     private static orderOwnerTypeValues = [
-        EOrderOwnerType.Market,
-        EOrderOwnerType.My,
+        EnumOrderOwnerType.market,
+        EnumOrderOwnerType.my,
     ];
 
-    private static orderOwnerTypeTitles = ['Market orders', 'My orders'];
+    private static orderOwnerTypeTitles = ['market orders', 'my orders'];
     private static orderTypeValues = ['Sell', 'Buy'];
 
     public render() {
@@ -75,7 +75,7 @@ export class OrderFilterPanel extends React.Component<
                         className="order-filter-panel__address"
                         name="sellerAddress"
                         value={this.props.sellerAddress}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
 
                     {/* Type */}
@@ -100,13 +100,13 @@ export class OrderFilterPanel extends React.Component<
                         name="priceFrom"
                         prefix="from"
                         value={this.props.priceFrom}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
                     <Input
                         name="priceTo"
                         prefix="to"
                         value={this.props.priceTo}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
 
                     {/* Owner status */}
@@ -146,13 +146,13 @@ export class OrderFilterPanel extends React.Component<
                         name="cpuCountFrom"
                         prefix="from"
                         value={this.props.cpuCountFrom}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
                     <Input
                         name="cpuCountTo"
                         prefix="to"
                         value={this.props.cpuCountTo}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
 
                     {/* GPU count */}
@@ -161,13 +161,13 @@ export class OrderFilterPanel extends React.Component<
                         name="gpuCountFrom"
                         prefix="from"
                         value={this.props.gpuCountFrom}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
                     <Input
                         name="gpuCountTo"
                         prefix="to"
                         value={this.props.gpuCountTo}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
 
                     {/* RAM size */}
@@ -176,13 +176,13 @@ export class OrderFilterPanel extends React.Component<
                         name="ramSizeFrom"
                         prefix="from"
                         value={this.props.ramSizeFrom}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
                     <Input
                         name="ramSizeTo"
                         prefix="to"
                         value={this.props.ramSizeTo}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
 
                     {/* Storage size */}
@@ -193,19 +193,20 @@ export class OrderFilterPanel extends React.Component<
                         name="storageSizeFrom"
                         prefix="from"
                         value={this.props.storageSizeFrom}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
                     <Input
                         name="storageSizeTo"
                         prefix="to"
                         value={this.props.storageSizeTo}
-                        onChangeDeprecated={this.handleChangeInput}
+                        onChange={this.handleChangeInput}
                     />
 
                     {/* Footer */}
                     <Button
                         onClick={this.handleClickApply}
                         className="order-filter-panel__apply"
+                        color="violet"
                     >
                         APPLY FILTERS
                     </Button>

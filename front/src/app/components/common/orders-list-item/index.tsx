@@ -53,18 +53,16 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 </div>
 
                 {/* Column 2 - Indicators */}
-                {Array.from(
-                    this.props.schemaOfCustomField.map(([title, key], idx) => (
-                        <React.Fragment key={key}>
-                            <div className="orders-list-item__indicator-name">
-                                {title}
-                            </div>
-                            <div className="orders-list-item__indicator-value">
-                                {(this.props.order as any)[key]}
-                            </div>
-                        </React.Fragment>
-                    )),
-                )}
+                {this.props.schemaOfCustomField.map(([key, title], idx) => (
+                    <React.Fragment key={key}>
+                        <div className="orders-list-item__indicator-name">
+                            {title}
+                        </div>
+                        <div className="orders-list-item__indicator-value">
+                            {(this.props.order as any)[key]}
+                        </div>
+                    </React.Fragment>
+                ))}
 
                 {/* Column3 - Costs */}
                 <div className="orders-list-item__cost">
