@@ -30,6 +30,12 @@ interface IProps {
 }
 
 export class DealListView extends React.PureComponent<IProps, any> {
+    private static readonly propertyList: string[] = [
+        'cpuCount',
+        'ethHashrate',
+        'ramSize',
+    ];
+
     protected columns: Array<ColumnProps<IDeal>> = [
         {
             className: 'sonm-deals-list__cell__account',
@@ -87,7 +93,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                 return (
                     <Benchmark
                         data={record.benchmarkMap}
-                        keys={['cpuCount', 'ethHashrate', 'ramSize']}
+                        keys={DealListView.propertyList}
                     />
                 );
             },

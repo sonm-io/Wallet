@@ -135,7 +135,6 @@ export interface IAccountBrief {
 }
 
 export interface IBenchmarkMap {
-    [index: string]: string | number;
     cpuSysbenchMulti: number;
     cpuSysbenchOne: number;
     cpuCount: number;
