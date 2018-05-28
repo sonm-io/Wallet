@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { OrderListView } from './view';
 import { rootStore } from 'app/stores';
 import { IOrderFilter } from 'app/stores/order-filter';
+import { IBenchmarkMap } from 'app/api/types';
 
 const store = rootStore.ordersListStore;
 const filterStore = rootStore.orderFilterStore;
@@ -97,10 +98,12 @@ export class OrderList extends React.Component<IProps, never> {
         );
     }
 
-    public static defaultSchemeOfOrderItem = [
-        ['CPU Count', 'cpuCount'],
-        ['GPU ETH hashrate', 'hashrate'],
-        ['RAM size', 'ramSize'],
+    public static defaultSchemeOfOrderItem: Array<
+        [keyof IBenchmarkMap, string]
+    > = [
+        ['cpuCount', 'CPU Count'],
+        ['ethHashrate', 'GPU ETH hashrate'],
+        ['ramSize', 'RAM size'],
     ];
 }
 

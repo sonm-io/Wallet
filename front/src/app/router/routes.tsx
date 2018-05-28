@@ -235,7 +235,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
             },
             {
                 path: '/market',
-                breadcrumbTitle: 'Market',
+                breadcrumbTitle: 'market',
                 action: firstByDefault,
                 children: [
                     {
