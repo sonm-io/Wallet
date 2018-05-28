@@ -54,13 +54,11 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
-const navigateToOrdersByAddress = (address: string) =>
-    navigate({ path: `/market/orders/${address}` });
-const navigateToQuickBuy = (orderId: string, creatorAddress: string = '') =>
+const navigateToOrdersByAddress = (creatorAddress: string) =>
+    navigate({ path: `/market/orders`, query: { creatorAddress } });
+const navigateToOrder = (orderId: string, creatorAddress: string = '') =>
     navigate({
-        path: `/market/orders${
-            creatorAddress ? '/' + creatorAddress : ''
-        }/quick-buy/${orderId}`,
+        path: `/market/orders/${orderId}`,
     });
 
 function reload() {
@@ -79,22 +77,22 @@ function replaceWithChild(action: TFnAction): TFnAction {
     };
 }
 
-function appendChild(action: TFnAction): TFnAction {
-    return async (ctx: IContext, p: any): Promise<IRouterResult> => {
-        const [me, child] = await Promise.all([action(ctx, p), ctx.next()]);
-
-        return {
-            content: (
-                <React.Fragment>
-                    {me.content}
-                    {child ? child.content : null}
-                </React.Fragment>
-            ),
-            browserTabTitle: child ? child.browserTabTitle : me.browserTabTitle,
-            pageTitle: child ? child.pageTitle : me.pageTitle,
-        };
-    };
-}
+// function appendChild(action: TFnAction): TFnAction {
+//     return async (ctx: IContext, p: any): Promise<IRouterResult> => {
+//         const [me, child] = await Promise.all([action(ctx, p), ctx.next()]);
+//
+//         return {
+//             content: (
+//                 <React.Fragment>
+//                     {me.content}
+//                     {child ? child.content : null}
+//                 </React.Fragment>
+//             ),
+//             browserTabTitle: child ? child.browserTabTitle : me.browserTabTitle,
+//             pageTitle: child ? child.pageTitle : me.pageTitle,
+//         };
+//     };
+// }
 
 async function firstByDefault(ctx: IContext, p: any) {
     const params: IRouterResult = await ctx.next();
@@ -453,36 +451,32 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         ],
                     },
                     {
-                        path: '/orders/:address',
+                        path: '/orders',
                         breadcrumbTitle: 'Orders',
-                        action: appendChild(
+                        action: replaceWithChild(
                             async (ctx: IContext, params: IUrlParams) => ({
                                 browserTabTitle: 'Orders',
                                 pageTitle: 'Orders',
                                 content: (
                                     <OrderList
                                         filterByAddress={
-                                            params.address === 'all'
-                                                ? undefined
-                                                : params.address
+                                            ctx.query.creatorAddress
                                         }
-                                        onNavigateToQuickBuy={
-                                            navigateToQuickBuy
-                                        }
+                                        onNavigateToOrder={navigateToOrder}
                                     />
                                 ),
                             }),
                         ),
                         children: [
                             {
-                                breadcrumbTitle: 'Quick deal',
-                                path: '/quick-buy/:orderId',
+                                breadcrumbTitle: 'Order details',
+                                path: '/:orderId',
                                 action: async (
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => ({
-                                    browserTabTitle: 'Quick deal',
-                                    pageTitle: 'Quick deal',
+                                    browserTabTitle: 'Order details',
+                                    pageTitle: 'Order details',
                                     content: (
                                         <QuickBuy
                                             orderId={params.orderId}

@@ -3,6 +3,7 @@ import { OrdersListItem } from 'app/components/common/orders-list-item';
 import { ListHeader } from 'app/components/common/list-header';
 import { OrderFilterPanel } from 'app/components/layouts/order-list/sub/order-filter-panel';
 import { IOrdersProps } from './types';
+import { IOrder } from 'app/api/types';
 
 export class OrderListView extends React.PureComponent<IOrdersProps, any> {
     public render() {
@@ -59,8 +60,8 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
         );
     }
 
-    public handleClick = (event: any) => {
-        this.props.onRequireQuickBuy(event.target.value);
+    public handleClick = (order: IOrder) => {
+        this.props.onClickRow(order.id);
     };
 
     public static readonly headerProps = {
