@@ -78,22 +78,27 @@ export class Deal extends React.PureComponent<IProps, IState> {
             deal.supplier.address.toLowerCase() === marketAccount ||
             deal.consumer.address.toLowerCase() === marketAccount;
 
+        const propertyList = {
+            id: deal.id,
+            status: deal.status,
+            blockedBalance: deal.blockedBalance,
+            startTime: deal.startTime,
+            endTime: deal.endTime,
+            timeLeft: deal.timeLeft,
+            supplierAddress: deal.supplier.address,
+        };
+
         return (
             <DealView
-                id={deal.id}
                 supplier={deal.supplier}
                 consumer={deal.consumer}
                 duration={deal.duration}
                 price={deal.price}
-                status={deal.status}
-                blockedBalance={deal.blockedBalance}
                 totalPayout={deal.totalPayout}
-                startTime={deal.startTime}
-                endTime={deal.endTime}
-                timeLeft={deal.timeLeft}
                 benchmarkMap={deal.benchmarkMap}
                 marketAccountAddress={marketAccount}
                 showButtons={isOwner}
+                propertyList={propertyList}
             />
         );
     }

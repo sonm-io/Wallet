@@ -11,23 +11,68 @@ import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 
 interface IProps {
     className?: string;
-    id: string;
     supplier: IAccountBrief;
     consumer: IAccountBrief;
     duration: number;
     price: string;
-    status: number;
-    blockedBalance: string;
     totalPayout: string;
-    startTime: number;
-    endTime: number;
-    timeLeft: number;
     benchmarkMap: IBenchmarkMap;
     marketAccountAddress: string;
     showButtons: boolean;
+    propertyList: {
+        id: string;
+        startTime: number;
+        endTime: number;
+        timeLeft: number;
+        blockedBalance: string;
+        status: number;
+        supplierAddress: string;
+    };
 }
 
 export class DealView extends React.PureComponent<IProps, never> {
+    private config = [
+        {
+            name: 'Deal ID',
+            key: 'id',
+        },
+        {
+            name: 'Deal status',
+            key: 'status',
+            render: (value: any) => (value === 1 ? 'Active' : 'Close'),
+        },
+        {
+            name: 'Start',
+            key: 'startTime',
+            render: (value: any) =>
+                moment.unix(value).format('D MMM YYYY | H:mm'),
+        },
+        {
+            name: 'Finish',
+            key: 'endTime',
+            render: (value: any) =>
+                value ? moment.unix(value).format('D MMM YYYY | H:mm') : '----',
+        },
+        {
+            name: 'Type',
+            key: 'supplierAddress',
+            render: (value: any) =>
+                this.props.marketAccountAddress.toLowerCase() === value
+                    ? 'SELL'
+                    : 'BUY',
+        },
+        {
+            name: 'Executed payment',
+            key: 'blockedBalance',
+            render: (value: any) => `${moveDecimalPoint(value, 18, 2)} SNM`,
+        },
+        {
+            name: 'Time left',
+            key: 'timeLeft',
+            render: (value: any) => `${value} hours`,
+        },
+    ];
+
     public handleFinishDeal = () => {
         //this.props.onFinishDeal();
     };
@@ -55,61 +100,8 @@ export class DealView extends React.PureComponent<IProps, never> {
                     <div className="sonm-deal__column-left__details">
                         <div className="sonm-deal__header">Details</div>
                         <PropertyList
-                            dataSource={{
-                                id: p.id,
-                                startTime: moment
-                                    .unix(p.startTime)
-                                    .format('D MMM YYYY | H:mm'),
-                                endTime: p.endTime
-                                    ? moment
-                                          .unix(p.endTime)
-                                          .format('D MMM YYYY | H:mm')
-                                    : '----',
-                                type:
-                                    this.props.marketAccountAddress.toLowerCase() ===
-                                    p.supplier.address
-                                        ? 'SELL'
-                                        : 'BUY',
-                                blockedBalance: moveDecimalPoint(
-                                    p.blockedBalance,
-                                    18,
-                                    2,
-                                ),
-                                timeLeft: p.timeLeft,
-                                status: p.status === 1 ? 'Active' : 'Close',
-                            }}
-                            config={[
-                                {
-                                    name: 'Deal ID',
-                                    key: 'id',
-                                },
-                                {
-                                    name: 'Deal status',
-                                    key: 'status',
-                                },
-                                {
-                                    name: 'Start',
-                                    key: 'startTime',
-                                },
-                                {
-                                    name: 'Finish',
-                                    key: 'endTime',
-                                },
-                                {
-                                    name: 'Type',
-                                    key: 'type',
-                                },
-                                {
-                                    name: 'Executed payment',
-                                    key: 'blockedBalance',
-                                    render: value => `${value} SNM`,
-                                },
-                                {
-                                    name: 'Time left',
-                                    key: 'timeLeft',
-                                    render: value => `${value} hours`,
-                                },
-                            ]}
+                            dataSource={p.propertyList}
+                            config={this.config}
                         />
                     </div>
                 </div>
