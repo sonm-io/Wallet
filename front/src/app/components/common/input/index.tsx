@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { IChengableProps, IFocusable } from '../types';
 
-export interface IPasswordInputProps extends IChengableProps<string> {
+export interface ITextInputProps extends IChengableProps<string> {
     name: string;
     autoFocus?: boolean;
     prefix?: string;
@@ -10,9 +10,6 @@ export interface IPasswordInputProps extends IChengableProps<string> {
     className?: string;
     placeholder?: string;
     readOnly?: boolean;
-}
-
-export interface ITextInputProps extends IPasswordInputProps {
     type?: 'text' | 'password';
     allowAutoComplete?: boolean;
     postfix?: JSX.Element;

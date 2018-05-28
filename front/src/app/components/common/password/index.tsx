@@ -1,6 +1,16 @@
 import * as React from 'react';
-import { Input, IPasswordInputProps } from 'app/components/common/input';
+import { Input } from 'app/components/common/input';
 import { Icon } from 'app/components/common/icon';
+import { IChengableProps } from '../types';
+
+export interface IPasswordInputProps extends IChengableProps<string> {
+    name: string;
+    autoFocus?: boolean;
+    prefix?: string;
+    className?: string;
+    placeholder?: string;
+    readOnly?: boolean;
+}
 
 interface IState {
     showPassword: boolean;
