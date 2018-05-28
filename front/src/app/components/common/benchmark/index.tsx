@@ -116,10 +116,10 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
                 );
 
             const propertyList: IDictionary = {};
-            config.map((item: IPropertyListItem) => {
+            for (const item of config) {
                 propertyList[item.key] =
                     nextProps.data[item.key as keyof IBenchmarkMap];
-            });
+            }
             state.config = config;
             state.keys = nextProps.keys;
             state.data = nextProps.data;

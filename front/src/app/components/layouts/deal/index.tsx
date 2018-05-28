@@ -63,9 +63,6 @@ export class Deal extends React.PureComponent<IProps, IState> {
 
     protected async fetchData() {
         const deal = await Api.deal.fetchById(this.props.id);
-
-        console.log(deal);
-
         this.setState({
             deal,
         });
