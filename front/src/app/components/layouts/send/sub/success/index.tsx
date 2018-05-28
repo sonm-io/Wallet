@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { Header } from 'app/components/common/header';
 
 interface IProps {
     className?: string;
@@ -19,9 +18,6 @@ export class SendSuccess extends React.PureComponent<IProps, any> {
 
     public render() {
         return [
-            <Header className="sonm-send-success__header" key="header">
-                Transaction has been sent
-            </Header>,
             <div
                 className={cn('sonm-send-success', this.props.className)}
                 key="success"

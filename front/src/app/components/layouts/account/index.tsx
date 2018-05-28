@@ -43,7 +43,7 @@ export class Account extends React.Component<IProps, any> {
 
     protected handleHistoryClick = () => {
         navigate({
-            path: '/history',
+            path: '/wallet/history',
             query: {
                 address: rootStore.sendStore.fromAddress,
             },
@@ -54,7 +54,7 @@ export class Account extends React.Component<IProps, any> {
         const currencyAddress = event.target.name;
 
         navigate({
-            path: '/send',
+            path: '/wallet/send',
             query: {
                 currency: currencyAddress,
             },
