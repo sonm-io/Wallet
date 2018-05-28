@@ -15,6 +15,7 @@ export interface IPasswordInputProps extends IChengableProps<string> {
 export interface ITextInputProps extends IPasswordInputProps {
     type?: 'text' | 'password';
     allowAutoComplete?: boolean;
+    postfix?: JSX.Element;
 }
 
 export class Input extends React.Component<ITextInputProps, never>
@@ -62,6 +63,7 @@ export class Input extends React.Component<ITextInputProps, never>
             name,
             placeholder,
             value,
+            postfix,
         } = this.props;
 
         return (
@@ -84,6 +86,7 @@ export class Input extends React.Component<ITextInputProps, never>
                     placeholder={placeholder}
                     readOnly={readOnly}
                 />
+                {postfix ? postfix : null}
                 <div className="sonm-input__underline" />
             </div>
         );

@@ -10,3 +10,11 @@ Input with prefix:
         <Input prefix="to" />
 
     </div>
+
+With postfix:
+
+    const { Icon } = require ('../icon');
+
+    const Postfix = <Icon i="Eye" />;
+
+    <Input postfix={Postfix} />
