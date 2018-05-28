@@ -2,23 +2,19 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { IChengableProps, IFocusable } from '../types';
 
-export interface ITextInputProps extends IChengableProps<string> {
-    value?: string;
-    type?: 'text' | 'password';
+export interface IPasswordInputProps extends IChengableProps<string> {
     name: string;
     autoFocus?: boolean;
-    allowAutoComplete?: boolean;
     prefix?: string;
     onChangeDeprecated?: (event: any) => void;
-    onChange?: (params: ITextChangeParams) => void;
     className?: string;
-    readOnly?: boolean;
     placeholder?: string;
+    readOnly?: boolean;
 }
 
-export interface ITextChangeParams {
-    name: string;
-    value: string;
+export interface ITextInputProps extends IPasswordInputProps {
+    type?: 'text' | 'password';
+    allowAutoComplete?: boolean;
 }
 
 export class Input extends React.Component<ITextInputProps, never>
@@ -58,6 +54,8 @@ export class Input extends React.Component<ITextInputProps, never>
 
     public render() {
         const {
+            type,
+            readOnly,
             allowAutoComplete,
             prefix,
             className,
@@ -69,7 +67,7 @@ export class Input extends React.Component<ITextInputProps, never>
         return (
             <div
                 className={cn('sonm-input', className, {
-                    'sonm-input--readonly': this.props.readOnly,
+                    'sonm-input--readonly': readOnly,
                 })}
             >
                 {prefix ? (
@@ -77,12 +75,14 @@ export class Input extends React.Component<ITextInputProps, never>
                 ) : null}
                 <input
                     className="sonm-input__input"
+                    type={type}
                     ref={this.saveRef}
                     autoComplete={allowAutoComplete ? 'on' : 'off'}
                     name={name}
                     value={value}
                     onChange={this.handleChange}
                     placeholder={placeholder}
+                    readOnly={readOnly}
                 />
                 <div className="sonm-input__underline" />
             </div>
