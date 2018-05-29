@@ -1,4 +1,4 @@
-Interactivity:
+### Interactivity demo
 
     const { observable, action, useStrict, toJS } = mobx;
     const { observer } = mobxReact;
@@ -46,7 +46,9 @@ Interactivity:
         <Container />
     </div>
 
-In container:
+### In container
+
+ConfirmationPanel fills its container.
 
     const containerStyle = {
         width: '230px',
@@ -58,7 +60,7 @@ In container:
         <ConfirmationPanel onSubmit={() => {}} onCancel={() => {}} />
     </div>
 
-Custom labels:
+### Custom labels
 
     <ConfirmationPanel
         header="Header"
@@ -69,3 +71,7 @@ Custom labels:
         onSubmit={() => {}}
         onCancel={() => {}}
     />
+
+### No cancel button, Next button is disabled
+
+    <ConfirmationPanel />

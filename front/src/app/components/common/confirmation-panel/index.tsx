@@ -8,7 +8,13 @@ import * as cn from 'classnames';
 export interface IConfirmationPanelProps extends Partial<IMessages> {
     className?: string;
     validationMessage?: string;
-    onSubmit: (password: string) => void;
+    /**
+     * If not set, then button is disabled.
+     */
+    onSubmit?: (password: string) => void;
+    /**
+     * If not set, then button doesn't appear.
+     */
     onCancel?: () => void;
 }
 
@@ -57,7 +63,9 @@ export class ConfirmationPanel extends React.Component<
 
     protected handleSubmit = (event: React.FormEvent<any>) => {
         event.preventDefault();
-        this.props.onSubmit(this.state.password);
+        if (this.props.onSubmit) {
+            this.props.onSubmit(this.state.password);
+        }
     };
 
     public render() {
@@ -99,6 +107,7 @@ export class ConfirmationPanel extends React.Component<
                         ) : null}
                         <Button
                             className="confirmation-panel__submit-button"
+                            disabled={this.props.onSubmit === undefined}
                             onClick={this.handleSubmit}
                             type="submit"
                             color="violet"
