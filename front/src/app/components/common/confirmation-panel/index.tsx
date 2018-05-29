@@ -3,10 +3,18 @@ import { Form, FormField } from 'app/components/common/form';
 import { Password } from 'app/components/common/password';
 import { IChangeParams } from 'app/components/common/types';
 import { Button } from 'app/components/common/button';
+import * as cn from 'classnames';
 
 export interface IConfirmationPanelProps extends Partial<IMessages> {
+    className?: string;
     validationMessage?: string;
-    onSubmit: (password: string) => void;
+    /**
+     * If not set, then button is disabled.
+     */
+    onSubmit?: (password: string) => void;
+    /**
+     * If not set, then button doesn't appear.
+     */
     onCancel?: () => void;
 }
 
@@ -25,31 +33,28 @@ export class ConfirmationPanel extends React.Component<
     IConfirmationPanelProps,
     IState
 > {
-    private static defaults: IState = {
+    private static defaults: IMessages = {
         header: 'Confirm operation',
         description:
             'Please, enter password for this account to confirm operation',
         cancelBtnLabel: 'Cancel',
         submitBtnLabel: 'NEXT',
-        password: '',
     };
 
     constructor(props: IConfirmationPanelProps) {
         super(props);
     }
 
-    public static getDerivedStateFromProps(
-        props: IConfirmationPanelProps,
-        state: IState,
-    ) {
+    public static getDerivedStateFromProps(props: IConfirmationPanelProps) {
         return (Object.keys(ConfirmationPanel.defaults) as Array<
             keyof IMessages
-        >).reduce((acc: Partial<IState>, key) => {
-            if (props[key] !== undefined) {
-                acc[key] = props[key];
-            }
+        >).reduce((acc: Partial<IMessages>, i) => {
+            acc[i] =
+                props[i] !== undefined
+                    ? props[i]
+                    : ConfirmationPanel.defaults[i];
             return acc;
-        }, state || ConfirmationPanel.defaults) as IState;
+        }, {});
     }
 
     protected handleChangePassword = (params: IChangeParams<string>) => {
@@ -58,12 +63,14 @@ export class ConfirmationPanel extends React.Component<
 
     protected handleSubmit = (event: React.FormEvent<any>) => {
         event.preventDefault();
-        this.props.onSubmit(this.state.password);
+        if (this.props.onSubmit) {
+            this.props.onSubmit(this.state.password);
+        }
     };
 
     public render() {
         return (
-            <div className="confirmation-panel">
+            <div className={cn('confirmation-panel', this.props.className)}>
                 <h2 className="confirmation-panel__header">
                     {this.state.header}
                 </h2>
@@ -100,6 +107,7 @@ export class ConfirmationPanel extends React.Component<
                         ) : null}
                         <Button
                             className="confirmation-panel__submit-button"
+                            disabled={this.props.onSubmit === undefined}
                             onClick={this.handleSubmit}
                             type="submit"
                             color="violet"

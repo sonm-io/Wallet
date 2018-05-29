@@ -46,12 +46,6 @@ export class Input extends React.Component<ITextInputProps, never>
         }
     };
 
-    protected handleClickPrefix = () => {
-        if (this.inputNode) {
-            this.inputNode.focus();
-        }
-    };
-
     public render() {
         const {
             type,
@@ -72,10 +66,7 @@ export class Input extends React.Component<ITextInputProps, never>
                 })}
             >
                 {prefix ? (
-                    <button
-                        onClick={this.handleClickPrefix}
-                        className="sonm-input__prefix"
-                    >
+                    <button onClick={this.focus} className="sonm-input__prefix">
                         {prefix}
                     </button>
                 ) : null}
