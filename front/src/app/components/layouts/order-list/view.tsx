@@ -47,12 +47,20 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
                     registered={p.filterRegistered}
                     identified={p.filterIdentified}
                     anonymous={p.filterAnonymous}
+                    redshiftFrom={p.filterRedshiftFrom}
+                    redshiftTo={p.filterRedshiftTo}
+                    ethFrom={p.filterEthFrom}
+                    ethTo={p.filterEthTo}
+                    zcashFrom={p.filterZCashFrom}
+                    zcashTo={p.filterZCashTo}
                     cpuCountFrom={p.filterCpuCountFrom}
                     cpuCountTo={p.filterCpuCountTo}
                     gpuCountFrom={p.filterGpuCountFrom}
                     gpuCountTo={p.filterGpuCountTo}
                     ramSizeFrom={p.filterRamSizeFrom}
                     ramSizeTo={p.filterRamSizeTo}
+                    gpuRamSizeFrom={p.filterGpuRamSizeFrom}
+                    gpuRamSizeTo={p.filterGpuRamSizeTo}
                     storageSizeFrom={p.filterStorageSizeFrom}
                     storageSizeTo={p.filterStorageSizeTo}
                 />
@@ -66,10 +74,9 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
 
     public static readonly headerProps = {
         orderKeys: {
-            cpuCount: 'CPU Count',
-            gpuCount: 'GPU Count',
-            hashrate: 'ETH hashrate',
-            ramSize: 'RAM size',
+            redshiftGPU: 'RedshiftGPU',
+            ethHashrate: 'ETH hashrate',
+            zcashHashrate: 'ZCash hashrate',
             price: 'Price',
             duration: 'Duration',
         },

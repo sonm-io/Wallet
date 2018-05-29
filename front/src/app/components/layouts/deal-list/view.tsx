@@ -4,7 +4,7 @@ import * as cn from 'classnames';
 import { ColumnProps } from 'antd/lib/table';
 import { IDeal } from 'app/api/types';
 import { Balance } from 'app/components/common/balance-view';
-import { Benchmark } from 'app/components/common/benchmark';
+import { BenchmarkShort } from 'app/components/common/benchmark-short';
 import { ProfileBrief } from 'app/components/common/profile-brief';
 import * as moment from 'moment';
 import {
@@ -30,12 +30,6 @@ interface IProps {
 }
 
 export class DealListView extends React.PureComponent<IProps, any> {
-    private static readonly propertyList: string[] = [
-        'cpuCount',
-        'ethHashrate',
-        'ramSize',
-    ];
-
     protected columns: Array<ColumnProps<IDeal>> = [
         {
             className: 'sonm-deals-list__cell__account',
@@ -90,12 +84,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
             dataIndex: 'stats',
             title: 'Resource',
             render: (price: string, record: IDeal) => {
-                return (
-                    <Benchmark
-                        data={record.benchmarkMap}
-                        keys={DealListView.propertyList}
-                    />
-                );
+                return <BenchmarkShort data={record.benchmarkMap} />;
             },
         },
         {

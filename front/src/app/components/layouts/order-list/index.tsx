@@ -94,6 +94,14 @@ export class OrderList extends React.Component<IProps, never> {
                 filterRamSizeTo={filterStore.ramSizeTo}
                 filterStorageSizeFrom={filterStore.storageSizeFrom}
                 filterStorageSizeTo={filterStore.storageSizeTo}
+                filterRedshiftFrom={filterStore.redshiftFrom}
+                filterRedshiftTo={filterStore.redshiftTo}
+                filterEthFrom={filterStore.ethFrom}
+                filterEthTo={filterStore.ethTo}
+                filterZCashFrom={filterStore.zcashFrom}
+                filterZCashTo={filterStore.zcashTo}
+                filterGpuRamSizeFrom={filterStore.gpuRamSizeFrom}
+                filterGpuRamSizeTo={filterStore.gpuRamSizeTo}
             />
         );
     }

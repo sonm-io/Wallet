@@ -6,7 +6,7 @@ import { Button } from 'app/components/common/button';
 import { IOrderFilterPanelProps } from './types';
 import { IOrderFilter, EnumOrderOwnerType } from 'app/stores/order-filter';
 import { RadioButtonGroup } from 'app/components/common/radio-button-group';
-import { ToggleButtonGroup } from 'app/components/common/toggle-button-group';
+// import { ToggleButtonGroup } from 'app/components/common/toggle-button-group';
 import { IChangeParams } from 'app/components/common/types';
 import { ITogglerChangeParams } from 'app/components/common/toggler';
 import ToggleGroup from '../../../../common/toggle-group/index';
@@ -45,27 +45,27 @@ export class OrderFilterPanel extends React.Component<
     protected handleClickApply = () => {
         this.props.onApply();
     };
-
-    private static orderOwnerTypeValues = [
-        EnumOrderOwnerType.market,
-        EnumOrderOwnerType.my,
-    ];
-
-    private static orderOwnerTypeTitles = ['market orders', 'my orders'];
     private static orderTypeValues = ['Sell', 'Buy'];
+
+    // private static orderOwnerTypeValues = [
+    //     EnumOrderOwnerType.market,
+    //     EnumOrderOwnerType.my,
+    // ];
+    //
+    // private static orderOwnerTypeTitles = ['market orders', 'my orders'];
 
     public render() {
         return (
             <div className={cn('order-filter-panel', this.props.className)}>
-                <ToggleButtonGroup
-                    cssClasses={ToggleGroup.fullWidthCssClasses}
-                    className="order-filter-panel__order-owner"
-                    name="owner"
-                    value={this.props.orderOwnerType}
-                    values={OrderFilterPanel.orderOwnerTypeValues}
-                    titlesOrDisplayIndex={OrderFilterPanel.orderOwnerTypeTitles}
-                    onChange={this.handleClickOrderOwnerType}
-                />
+                {/*<ToggleButtonGroup*/}
+                {/*cssClasses={ToggleGroup.fullWidthCssClasses}*/}
+                {/*className="order-filter-panel__order-owner"*/}
+                {/*name="owner"*/}
+                {/*value={this.props.orderOwnerType}*/}
+                {/*values={OrderFilterPanel.orderOwnerTypeValues}*/}
+                {/*titlesOrDisplayIndex={OrderFilterPanel.orderOwnerTypeTitles}*/}
+                {/*onChange={this.handleClickOrderOwnerType}*/}
+                {/*/>*/}
                 <div className="order-filter-panel__filters">
                     {/* Seller Address */}
                     <h3 className="order-filter-panel__header">
@@ -87,12 +87,12 @@ export class OrderFilterPanel extends React.Component<
                         values={OrderFilterPanel.orderTypeValues}
                         onChange={this.handleClickType}
                     />
-                    <Checkbox
-                        name="onlyActive"
-                        title="Only active"
-                        value={this.props.onlyActive}
-                        onChange={this.handleChangeCheckbox}
-                    />
+                    {/*<Checkbox*/}
+                    {/*name="onlyActive"*/}
+                    {/*title="Only active"*/}
+                    {/*value={this.props.onlyActive}*/}
+                    {/*onChange={this.handleChangeCheckbox}*/}
+                    {/*/>*/}
 
                     {/* Price */}
                     <h3 className="order-filter-panel__header">Price, USD/h</h3>
@@ -138,6 +138,69 @@ export class OrderFilterPanel extends React.Component<
                         value={this.props.anonymous}
                         onChange={this.handleChangeCheckbox}
                         className="order-filter-panel__owner-status-checkbox"
+                    />
+
+                    {/* Redshift */}
+                    <h3 className="order-filter-panel__header">Redshift</h3>
+                    <Input
+                        name="redshiftFrom"
+                        prefix="from"
+                        value={this.props.redshiftFrom}
+                        onChange={this.handleChangeInput}
+                    />
+                    <Input
+                        name="redshiftTo"
+                        prefix="to"
+                        value={this.props.redshiftTo}
+                        onChange={this.handleChangeInput}
+                    />
+                    {/* ETH */}
+                    <h3 className="order-filter-panel__header">ETH hashrate</h3>
+                    <Input
+                        name="ethFrom"
+                        prefix="from"
+                        value={this.props.ethFrom}
+                        onChange={this.handleChangeInput}
+                    />
+                    <Input
+                        name="ethTo"
+                        prefix="to"
+                        value={this.props.ethTo}
+                        onChange={this.handleChangeInput}
+                    />
+
+                    {/* Zcash */}
+                    <h3 className="order-filter-panel__header">
+                        ZCash hashrate
+                    </h3>
+                    <Input
+                        name="zcashFrom"
+                        prefix="from"
+                        value={this.props.zcashFrom}
+                        onChange={this.handleChangeInput}
+                    />
+                    <Input
+                        name="zcashTo"
+                        prefix="to"
+                        value={this.props.zcashTo}
+                        onChange={this.handleChangeInput}
+                    />
+
+                    {/* VRAM size */}
+                    <h3 className="order-filter-panel__header">
+                        GPU RAM size, GB
+                    </h3>
+                    <Input
+                        name="gpuRamSizeFrom"
+                        prefix="from"
+                        value={this.props.gpuRamSizeFrom}
+                        onChange={this.handleChangeInput}
+                    />
+                    <Input
+                        name="gpuRamSizeTo"
+                        prefix="to"
+                        value={this.props.gpuRamSizeTo}
+                        onChange={this.handleChangeInput}
                     />
 
                     {/* CPU count */}
@@ -186,21 +249,21 @@ export class OrderFilterPanel extends React.Component<
                     />
 
                     {/* Storage size */}
-                    <h3 className="order-filter-panel__header">
-                        Storage size, GB
-                    </h3>
-                    <Input
-                        name="storageSizeFrom"
-                        prefix="from"
-                        value={this.props.storageSizeFrom}
-                        onChange={this.handleChangeInput}
-                    />
-                    <Input
-                        name="storageSizeTo"
-                        prefix="to"
-                        value={this.props.storageSizeTo}
-                        onChange={this.handleChangeInput}
-                    />
+                    {/*<h3 className="order-filter-panel__header">*/}
+                    {/*Storage size, GB*/}
+                    {/*</h3>*/}
+                    {/*<Input*/}
+                    {/*name="storageSizeFrom"*/}
+                    {/*prefix="from"*/}
+                    {/*value={this.props.storageSizeFrom}*/}
+                    {/*onChange={this.handleChangeInput}*/}
+                    {/*/>*/}
+                    {/*<Input*/}
+                    {/*name="storageSizeTo"*/}
+                    {/*prefix="to"*/}
+                    {/*value={this.props.storageSizeTo}*/}
+                    {/*onChange={this.handleChangeInput}*/}
+                    {/*/>*/}
 
                     {/* Footer */}
                     <Button

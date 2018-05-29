@@ -459,8 +459,8 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         breadcrumbTitle: 'Orders',
                         action: replaceWithChild(
                             async (ctx: IContext, params: IUrlParams) => ({
-                                browserTabTitle: 'Orders',
-                                pageTitle: 'Orders',
+                                browserTabTitle: 'Market orders',
+                                pageTitle: 'Market orders',
                                 content: (
                                     <OrderList
                                         filterByAddress={
