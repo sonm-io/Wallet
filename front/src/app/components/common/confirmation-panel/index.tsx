@@ -3,8 +3,10 @@ import { Form, FormField } from 'app/components/common/form';
 import { Password } from 'app/components/common/password';
 import { IChangeParams } from 'app/components/common/types';
 import { Button } from 'app/components/common/button';
+import * as cn from 'classnames';
 
 export interface IConfirmationPanelProps extends Partial<IMessages> {
+    className?: string;
     validationMessage?: string;
     onSubmit: (password: string) => void;
     onCancel?: () => void;
@@ -60,7 +62,7 @@ export class ConfirmationPanel extends React.Component<
 
     public render() {
         return (
-            <div className="confirmation-panel">
+            <div className={cn('confirmation-panel', this.props.className)}>
                 <h2 className="confirmation-panel__header">
                     {this.state.header}
                 </h2>

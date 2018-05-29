@@ -4,13 +4,14 @@ import { observer } from 'mobx-react';
 import { autorun } from 'mobx';
 import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
-import { Form, FormField } from 'app/components/common/form';
+import { FormField } from 'app/components/common/form';
 import { SendStore } from 'app/stores/send';
 import { rootStore } from 'app/stores';
 import { ISendFormValues } from 'app/stores/types';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { AccountItem } from 'app/components/common/account-item';
 import { Input } from 'app/components/common/input';
+import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 
 interface IProps {
     className?: string;
@@ -114,10 +115,6 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         event: React.ChangeEvent<HTMLInputElement>,
     ) => this.handleChangeFormInputEvent('gasPriceGwei', event);
 
-    protected handleChangePassword = (
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) => this.handleChangeFormInputEvent('password', event);
-
     protected handleSetMaximum = () => {
         this.store.setUserInput({
             amountEther: this.store.currentBalanceMaximum,
@@ -140,11 +137,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         this.store.setUserInput({ gasPriceGwei });
     };
 
-    public handleConfrim = async (event: any) => {
-        event.preventDefault();
-
-        const password = this.store.userInput.password;
-
+    public handleConfrim = async (password: string) => {
         const isPasswordValid = await this.store.checkSelectedAccountPassword(
             password,
         );
@@ -299,37 +292,16 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         );
     }
 
-    public renderPasswordConfirmation() {
-        return !this.props.isConfirmation ? (
-            ''
-        ) : (
-            <div className="sonm-deposit-withdraw-confirm__password">
-                <h2 className="sonm-deposit-withdraw-confirm__password-header">
-                    Confirm operation
-                </h2>
-                <span className="sonm-deposit-withdraw-confirm__password-description">
-                    Please, enter password for this account to confirm operation
-                </span>
-                <Form
-                    onSubmit={this.handleConfrim}
-                    className="sonm-deposit-withdraw-confirm__password-form"
-                >
-                    <FormField
-                        label=""
-                        className="sonm-deposit-withdraw-confirm__password-field"
-                        error={this.state.validationPassword}
-                    >
-                        <Input
-                            name="password"
-                            className="sonm-deposit-withdraw-confirm__password-input"
-                            type="password"
-                            placeholder="Password"
-                            value={this.store.userInput.password}
-                            onChangeDeprecated={this.handleChangePassword}
-                        />
-                    </FormField>
-                </Form>
-            </div>
+    protected renderPasswordConfirmation() {
+        return !this.props.isConfirmation ? null : (
+            // ToDo a disabled={rootStore.mainStore.isOffline}
+            <ConfirmationPanel
+                className="sonm-deposit-withdraw__password"
+                submitBtnLabel={this.props.title.toUpperCase()}
+                onSubmit={this.handleConfrim}
+                onCancel={this.handleCancel}
+                validationMessage={this.state.validationPassword}
+            />
         );
     }
 
@@ -345,22 +317,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
             >
                 NEXT
             </Button>
-        ) : (
-            <React.Fragment>
-                <Button transparent type="button" onClick={this.handleCancel}>
-                    BACK
-                </Button>
-                <Button
-                    disabled={rootStore.mainStore.isOffline}
-                    type="submit"
-                    color="violet"
-                    onClick={this.handleConfrim}
-                    className="sonm-deposit-withdraw__button--action"
-                >
-                    {this.props.title.toUpperCase()}
-                </Button>
-            </React.Fragment>
-        );
+        ) : null;
 
         return (
             <div className="sonm-deposit-withdraw__button-ct">{buttons}</div>
