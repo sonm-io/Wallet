@@ -13,7 +13,6 @@ export interface IPasswordInputProps extends IChengableProps<string> {
 
 interface IState {
     showPassword: boolean;
-    passwordInput?: Input;
 }
 
 export class Password extends React.Component<IPasswordInputProps, IState> {
@@ -22,15 +21,18 @@ export class Password extends React.Component<IPasswordInputProps, IState> {
         this.state = { showPassword: false };
     }
 
-    protected handleClickEye = () => {
+    protected innerInput: Input | undefined;
+
+    protected handleClickEye = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
         this.setState({ showPassword: !this.state.showPassword });
-        if (this.state.passwordInput) {
-            this.state.passwordInput.focus();
+        if (this.innerInput) {
+            this.innerInput.focus();
         }
     };
 
     protected handleRefInput = (input: Input) => {
-        this.setState({ passwordInput: input });
+        this.innerInput = input;
     };
 
     protected renderEye = () => {

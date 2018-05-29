@@ -7,10 +7,6 @@
     grid-template-rows: 30px 100px 1fr 80px;
     grid-column-gap: 50px;
 
-    &__confirmation {
-        background: linear-gradient(90deg, white 50%, @color-light-gray 50%);
-    }
-
     &__header {
         grid-column: 1;
         grid-row: 1;
@@ -126,31 +122,9 @@
     }
 
     &__password {
-        background-color: @color-light-gray;
-
         grid-column: 2;
-        grid-row: 2;
-        display: flex;
-        flex-direction: column;
-        padding: 30px;
-
-        &-header {
-            flex-grow: 0;
-            width: 100%;
-            margin: 0;
-        }
-
-        &-info {
-            flex-grow: 0;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        &-form {
-            flex-grow: 1;
-            width: 100%;
-            margin-top: 50px;
-        }
+        grid-row: 2 / span 3;
+        padding: 30px 130px;
     }
 
     &__button-ct {

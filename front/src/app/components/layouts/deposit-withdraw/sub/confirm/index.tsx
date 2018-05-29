@@ -1,4 +1,4 @@
-import * as React from 'react';
+/*import * as React from 'react';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
 import { Form, FormField } from 'app/components/common/form';
@@ -211,3 +211,4 @@ export class DepositWithdrawConfirm extends React.Component<IProps, any> {
 }
 
 export default DepositWithdrawConfirm;
+*/

@@ -33,6 +33,9 @@ export class App extends React.Component<IProps, never> {
 
         return (
             <AppView
+                className={
+                    p.path.endsWith('/confirm') ? 'sonm-app--confirmation' : ''
+                }
                 path=""
                 onNavigate={p.onNavigate}
                 onExit={p.onExit}
