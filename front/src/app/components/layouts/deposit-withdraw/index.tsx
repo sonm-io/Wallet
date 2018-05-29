@@ -293,12 +293,15 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     }
 
     protected renderPasswordConfirmation() {
-        return !this.props.isConfirmation ? null : (
-            // ToDo a disabled={rootStore.mainStore.isOffline}
+        return (
             <ConfirmationPanel
-                className="sonm-deposit-withdraw__password"
+                className="sonm-deposit-withdraw__confirmation-panel"
                 submitBtnLabel={this.props.title.toUpperCase()}
-                onSubmit={this.handleConfrim}
+                onSubmit={
+                    rootStore.mainStore.isOffline
+                        ? this.handleConfrim
+                        : undefined
+                }
                 onCancel={this.handleCancel}
                 validationMessage={this.state.validationPassword}
             />
@@ -306,21 +309,20 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     }
 
     public renderButtons() {
-        const buttons = !this.props.isConfirmation ? (
-            <Button
-                onClick={this.handleSubmit}
-                type="submit"
-                color="violet"
-                disabled={
-                    !this.store.isFormValid || !this.store.hasNecessaryValues
-                }
-            >
-                NEXT
-            </Button>
-        ) : null;
-
         return (
-            <div className="sonm-deposit-withdraw__button-ct">{buttons}</div>
+            <div className="sonm-deposit-withdraw__next-button">
+                <Button
+                    onClick={this.handleSubmit}
+                    type="submit"
+                    color="violet"
+                    disabled={
+                        !this.store.isFormValid ||
+                        !this.store.hasNecessaryValues
+                    }
+                >
+                    NEXT
+                </Button>
+            </div>
         );
     }
 
@@ -331,8 +333,9 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                 {this.renderAccount()}
                 {this.renderAmount()}
                 {this.renderCommission()}
-                {this.renderPasswordConfirmation()}
-                {this.renderButtons()}
+                {this.props.isConfirmation
+                    ? this.renderPasswordConfirmation()
+                    : this.renderButtons()}
             </div>
         );
     }
