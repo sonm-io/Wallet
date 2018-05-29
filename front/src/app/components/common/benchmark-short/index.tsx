@@ -87,7 +87,9 @@ export class BenchmarkShort extends React.PureComponent<
     public render() {
         return (
             <div className={cn(this.props.className, `sonm-benchmark-short`)}>
-                {this.state.benchmarkString.map(x => <div>{x}</div>)}
+                {this.state.benchmarkString.map(x => (
+                    <React.Fragment key={x}>{x}</React.Fragment>
+                ))}
             </div>
         );
     }
