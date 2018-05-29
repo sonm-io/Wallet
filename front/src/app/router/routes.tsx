@@ -56,6 +56,7 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
+const navigateToDeals = () => navigate({ path: '/market/deals' });
 const navigateToOrdersByAddress = (creatorAddress: string) =>
     navigate({ path: `/market/orders`, query: { creatorAddress } });
 const navigateToOrder = (orderId: string, creatorAddress: string = '') =>
@@ -496,7 +497,12 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         action: async (ctx: IContext, params: IUrlParams) => ({
                             browserTabTitle: 'Deal details',
                             pageTitle: 'Deal details',
-                            content: <Deal id={params.id} />,
+                            content: (
+                                <Deal
+                                    id={params.id}
+                                    onNavigateToDeals={navigateToDeals}
+                                />
+                            ),
                         }),
                     },
                     {
