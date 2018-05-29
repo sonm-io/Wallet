@@ -18,13 +18,13 @@ export class OrderList extends React.Component<IProps, never> {
     constructor(props: IProps) {
         super(props);
         filterStore.setUserInput({
-            profileAddress: this.props.filterByAddress || '',
+            sellerAddress: props.filterByAddress || '',
         });
     }
 
     public componentWillReceiveProps(next: IProps) {
         filterStore.setUserInput({
-            profileAddress: next.filterByAddress || '',
+            sellerAddress: next.filterByAddress || '',
         });
     }
 

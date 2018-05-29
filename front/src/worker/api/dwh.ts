@@ -275,7 +275,8 @@ export class DWH {
             cpuSysbenchOne: benchmarks.values[1] || 0,
             cpuCount: benchmarks.values[2] || 0,
             ramSize: Math.round(benchmarks.values[3] / (1024 * 1024)) || 0,
-            storageSize: Math.round(benchmarks.values[4] / (1024 * 1024)) || 0,
+            storageSize:
+                Math.round(benchmarks.values[4] / (1024 * 1024 * 1024)) || 10,
             downloadNetSpeed:
                 Math.round(benchmarks.values[5] / (1024 * 1024)) || 0,
             uploadNetSpeed:
@@ -312,7 +313,7 @@ export class DWH {
     }
 
     private parseDuration(duration: number) {
-        return Math.round(100 * duration / 3600) / 100;
+        return Math.round((100 * duration) / 3600) / 100;
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {

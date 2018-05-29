@@ -148,6 +148,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                     onChange={this.props.handleChangeQuery}
                     className="sonm-deals-filter__query"
                     value={this.props.queryValue}
+                    disabled
                 />
                 <Toggler
                     className="sonm-deals-filter__active"

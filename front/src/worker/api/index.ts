@@ -136,9 +136,10 @@ class Api {
             'deal.get': wrapInResponse(dwh.getDealFull),
             'deal.list': wrapInResponse(dwh.getDeals),
 
-            'market.buyOrder': this.buyOrder,
             'market.getOrderParams': wrapInResponse(this.getOrderParams),
             'market.waitForOrderDeal': wrapInResponse(this.waitForOrderDeal),
+            'market.buyOrder': this.buyOrder,
+            'market.closeDeal': this.closeDeal,
 
             getSonmTokenAddress: this.getSonmTokenAddress,
             getTokenExchangeRate: this.getTokenExchangeRate,
@@ -844,21 +845,15 @@ class Api {
 
     public buyOrder = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address && data.id && data.password) {
-            const validation = await this.checkAccountPassword(
-                data.password,
-                data.address,
-                'private',
-            );
+            return this.getMethod('buyOrder', [data.id], 'private')(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
 
-            if (!validation.data) {
-                return validation;
-            }
-
-            const client = await this.initAccount(data.address, 'private');
-
-            return {
-                data: await client.account.buyOrder(data.id),
-            };
+    public closeDeal = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (data.address && data.id && data.password) {
+            return this.getMethod('closeDeal', [data.id], 'private')(data);
         } else {
             throw new Error('required_params_missed');
         }
@@ -1138,22 +1133,23 @@ class Api {
         };
     };
 
-    public getMethod = (method: string) => {
+    public getMethod = (method: string, params: any, key: string) => {
         return async (data: t.IPayload): Promise<t.IResponse> => {
             if (data.address && data.password) {
                 const validation = await this.checkAccountPassword(
                     data.password,
                     data.address,
+                    key,
                 );
 
                 if (!validation.data) {
                     return validation;
                 }
 
-                const client = await this.initAccount(data.address);
+                const client = await this.initAccount(data.address, key);
 
                 return {
-                    data: await client.account[method](),
+                    data: await client.account[method](...params),
                 };
             } else {
                 throw new Error('required_params_missed');
