@@ -55,7 +55,7 @@ export class DealView extends React.PureComponent<IProps, never> {
                     ? moment
                           .unix(parseInt(value, 10))
                           .format('D MMM YYYY | H:mm')
-                    : '----',
+                    : '---',
         },
         {
             name: 'Type',

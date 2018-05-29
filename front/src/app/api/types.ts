@@ -129,7 +129,7 @@ export interface IListResult<T> {
 }
 
 export interface IAccountBrief {
-    name: string;
+    name?: string;
     address: string;
     status: EnumProfileStatus;
 }
@@ -168,7 +168,7 @@ export interface IOrder {
     price: string;
     duration: number;
     orderStatus: EnumOrderStatus;
-    benchmarkMap: IBenchmarkMap;
+    benchmarkMap: Partial<IBenchmarkMap>;
 }
 
 export interface IDeal {
@@ -206,10 +206,6 @@ export interface IMarketStats {
 export interface IOrderParams {
     orderStatus: string;
     dealID: string;
-}
-
-export interface IDictionary {
-    [index: string]: string | number;
 }
 
 export interface ISender {

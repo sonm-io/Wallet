@@ -2,7 +2,7 @@ import * as React from 'react';
 import Table from 'antd/es/table';
 import * as cn from 'classnames';
 import { ColumnProps } from 'antd/lib/table';
-import { IDeal } from 'app/api/types';
+import { IBenchmarkMap, IDeal } from 'app/api/types';
 import { Balance } from 'app/components/common/balance-view';
 import { Benchmark } from 'app/components/common/benchmark';
 import { ProfileBrief } from 'app/components/common/profile-brief';
@@ -30,7 +30,7 @@ interface IProps {
 }
 
 export class DealListView extends React.PureComponent<IProps, any> {
-    private static readonly propertyList: string[] = [
+    private static readonly propertyList: Array<keyof IBenchmarkMap> = [
         'cpuCount',
         'ethHashrate',
         'ramSize',

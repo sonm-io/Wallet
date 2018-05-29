@@ -1,38 +1,48 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IDictionary } from 'app/api/types';
 
-export interface IPropertyListItem {
+export type IDictionary<T> = { [P in keyof T]?: any };
+
+export interface IPropertyItemConfig<T = string> {
     name: string;
-    key: string;
-    render?: (value: string) => string;
+    key: T;
+    render?: (value: any) => string;
 }
 
-interface IPropertyListProps {
+interface IPropertyListProps<T> {
     className?: string;
-    dataSource: IDictionary;
-    config: IPropertyListItem[];
+    dataSource: IDictionary<T>;
+    config: Array<IPropertyItemConfig<keyof T>>;
 }
 
-export function PropertyList(p: IPropertyListProps) {
-    return (
-        <div className={cn(p.className, `sonm-property-list`)}>
-            {p.config.map(({ name, key, render }, idx) => {
-                const value =
-                    p.dataSource[key as keyof IDictionary] !== undefined
-                        ? p.dataSource[key as keyof IDictionary]
-                        : '';
-                return (
-                    <React.Fragment key={name}>
-                        <div className="sonm-property-list__label">{name}</div>
-                        <div className="sonm-property-list__value">
-                            {render ? render(value.toString()) : value}
-                        </div>
-                    </React.Fragment>
-                );
-            })}
-        </div>
-    );
+export class PropertyList<T = any> extends React.Component<
+    IPropertyListProps<T>,
+    never
+> {
+    public render() {
+        const p: IPropertyListProps<T> = this.props;
+
+        return (
+            <div className={cn(p.className, `sonm-property-list`)}>
+                {p.config.map(({ name, key, render }) => {
+                    const value =
+                        p.dataSource[key] !== undefined
+                            ? p.dataSource[key]
+                            : '';
+                    return (
+                        <React.Fragment key={name}>
+                            <div className="sonm-property-list__label">
+                                {name}
+                            </div>
+                            <div className="sonm-property-list__value">
+                                {render ? render(value) : value}
+                            </div>
+                        </React.Fragment>
+                    );
+                })}
+            </div>
+        );
+    }
 }
 
 export default PropertyList;

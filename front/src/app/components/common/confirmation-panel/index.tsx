@@ -6,7 +6,6 @@ import { Button } from 'app/components/common/button';
 import * as cn from 'classnames';
 
 export interface IConfirmationPanelProps extends Partial<IMessages> {
-    className?: string;
     validationMessage?: string;
     /**
      * If not set, then button is disabled.
@@ -16,6 +15,7 @@ export interface IConfirmationPanelProps extends Partial<IMessages> {
      * If not set, then button doesn't appear.
      */
     onCancel?: () => void;
+    className: string;
 }
 
 interface IState extends IMessages {

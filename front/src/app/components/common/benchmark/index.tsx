@@ -1,42 +1,37 @@
 import * as React from 'react';
-import { IBenchmarkMap, IDictionary } from 'app/api/types';
-import { PropertyList, IPropertyListItem } from '../property-list';
+import { IBenchmarkMap } from 'app/api/types';
+import {
+    PropertyList,
+    IPropertyItemConfig,
+    IDictionary,
+} from '../property-list';
 
 interface IBenchmarkProps {
     className?: string;
-    keys: string[];
-    data: IBenchmarkMap;
+    keys?: Array<keyof IBenchmarkMap>;
+    data: Partial<IBenchmarkMap>;
 }
 
 interface IState {
-    keys: string[];
-    config: IPropertyListItem[];
-    data: IBenchmarkMap;
-    propertyList: IDictionary;
+    keys: Array<keyof IBenchmarkMap>;
+    config: Array<IPropertyItemConfig<keyof IBenchmarkMap>>;
+    data: Partial<IBenchmarkMap>;
+    propertyList: IDictionary<IBenchmarkMap>;
 }
+
+class BenchmarkList extends PropertyList<IBenchmarkMap> {}
 
 export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
     public state: IState = {
         config: Array.prototype,
         keys: Array.prototype,
-        data: {
-            cpuSysbenchMulti: 0,
-            cpuSysbenchOne: 0,
-            cpuCount: 0,
-            gpuCount: 0,
-            ethHashrate: 0,
-            ramSize: 0,
-            storageSize: 0,
-            downloadNetSpeed: 0,
-            uploadNetSpeed: 0,
-            gpuRamSize: 0,
-            zcashHashrate: 0,
-            redshiftGpu: 0,
-        },
+        data: {},
         propertyList: {},
     };
 
-    public static readonly defaultConfig: IPropertyListItem[] = [
+    public static readonly defaultConfig: Array<
+        IPropertyItemConfig<keyof IBenchmarkMap>
+    > = [
         {
             key: 'cpuSysbenchMulti',
             name: 'Benchmark multicore',
@@ -99,39 +94,34 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         nextProps: IBenchmarkProps,
         prevState: IState,
     ) {
-        const state: Partial<IState> = {};
-
         if (
             nextProps.keys !== prevState.keys ||
             nextProps.data !== prevState.data
         ) {
-            const config: IPropertyListItem[] = Benchmark.defaultConfig
-                .filter(
-                    item => nextProps.data[item.key as keyof IBenchmarkMap] > 0,
-                )
-                .filter(
-                    item =>
-                        nextProps.keys.length === 0 ||
-                        nextProps.keys.indexOf(item.key) !== -1,
-                );
+            const keys = nextProps.keys;
+            const data = nextProps.data;
+            const config = (keys !== undefined && keys.length > 0
+                ? Benchmark.defaultConfig.filter(x => keys.indexOf(x.key) > -1)
+                : Benchmark.defaultConfig
+            ).filter(x => x.key in data);
 
-            const propertyList: IDictionary = {};
-            for (const item of config) {
-                propertyList[item.key] =
-                    nextProps.data[item.key as keyof IBenchmarkMap];
-            }
-            state.config = config;
-            state.keys = nextProps.keys;
-            state.data = nextProps.data;
-            state.propertyList = propertyList;
+            return {
+                keys: nextProps.keys,
+                data: nextProps.data,
+                config,
+                propertyList: config.reduce<IDictionary<IBenchmarkMap>>(
+                    (acc, x) => ((acc[x.key] = String(data[x.key])), acc),
+                    {},
+                ),
+            };
         }
 
-        return state;
+        return null;
     }
 
     public render() {
         return (
-            <PropertyList
+            <BenchmarkList
                 className={this.props.className}
                 dataSource={this.state.propertyList}
                 config={this.state.config}
