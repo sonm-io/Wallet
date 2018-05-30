@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { ProfileStatus } from '../profile-status';
 import { IOrdersListItemProps } from './types';
-import { IdentIcon } from '../ident-icon';
 import { Balance } from '../balance-view';
 import * as cn from 'classnames';
-import { Hash } from '../hash-view';
-import { EnumProfileStatus } from 'app/api/types';
+import { ProfileBrief } from 'app/components/common/profile-brief';
+import { BenchmarkShort } from 'app/components/common/benchmark-short';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     protected handleClick = (event: any) => {
@@ -21,65 +19,28 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 href={`#order-i-${this.props.order.id}`}
                 onClick={this.handleClick}
             >
-                <div className="orders-list-item__logo">
-                    {this.props.logoUrl ? (
-                        <img src={this.props.logoUrl} />
-                    ) : (
-                        <IdentIcon address={this.props.order.creator.address} />
-                    )}
-                </div>
-
                 {/* Column 1 - Main Info */}
-                <div className="orders-list-item__main">
-                    {this.props.order.creator.name ? (
-                        <React.Fragment>
-                            <span className="orders-list-item__main-label">
-                                Name:
-                            </span>
-                            <span className="orders-list-item__main-value">
-                                {this.props.order.creator.name}
-                            </span>
-                        </React.Fragment>
-                    ) : null}
-
-                    <span className="orders-list-item__main-label">
-                        Account:
-                    </span>
-                    <Hash
-                        className="orders-list-item__main-value"
-                        hash={this.props.order.creator.address}
-                    />
-
-                    <span className="orders-list-item__main-label">
-                        Status:
-                    </span>
-                    <ProfileStatus
-                        className="orders-list-item__main-value"
-                        status={
-                            this.props.order.creator.status ||
-                            EnumProfileStatus.anon
-                        }
-                    />
-                </div>
+                <ProfileBrief
+                    className="orders-list-item__account"
+                    profile={this.props.order.creator}
+                    showBalances={false}
+                    logoSizePx={50}
+                />
 
                 {/* Column 2 - Indicators */}
-                {this.props.schemaOfCustomField.map(([key, title], idx) => (
-                    <React.Fragment key={key}>
-                        <div className="orders-list-item__indicator-name">
-                            {title}
-                        </div>
-                        <div className="orders-list-item__indicator-value">
-                            {(this.props.order as any)[key]}
-                        </div>
-                    </React.Fragment>
-                ))}
+                {
+                    <BenchmarkShort
+                        data={this.props.order.benchmarkMap}
+                        className="orders-list-item__benchmark"
+                    />
+                }
 
                 {/* Column3 - Costs */}
                 <div className="orders-list-item__cost">
                     <Balance
                         balance={this.props.order.price}
                         decimalPointOffset={18}
-                        decimalDigitAmount={2}
+                        decimalDigitAmount={4}
                         symbol="USD/h"
                     />
                 </div>

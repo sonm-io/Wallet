@@ -1,4 +1,4 @@
-import { IBenchmarkMap, IOrder } from 'app/api/types';
+import { IOrder } from 'app/api/types';
 import { IOrderFilter, EnumOrderOwnerType } from 'app/stores/order-filter';
 
 interface IFilter {
@@ -42,7 +42,6 @@ export interface IOrdersProps extends IFilter {
     onRefresh: () => void;
     className?: string;
     dataSource: Array<IOrder>;
-    schemaOfOrderItem: Array<[keyof IBenchmarkMap, string]>;
     onClickRow: (orderId: string) => void;
     onApplyFilter: () => void;
     onUpdateFilter: (

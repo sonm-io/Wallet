@@ -4,7 +4,7 @@ import { TFnGetUiText } from 'app/components/common/localized-pure-component';
 import { Details, IProfileDefinition } from './sub/details';
 import { Statistic } from './sub/statistic';
 import { ICertificateProps } from './sub/certificate';
-import { CertificatesPanel } from './sub/certificates-panel';
+// import { CertificatesPanel } from './sub/certificates-panel';
 import { Panel } from 'app/components/common/panel';
 import { EnumProfileStatus } from 'app/api/types';
 import { Button } from 'app/components/common/button';
@@ -63,11 +63,20 @@ export class ProfileView extends React.PureComponent<IProps, never> {
                     ) : null}
                 </div>
                 <div className="sonm-profile__column">
-                    <CertificatesPanel
-                        className="sonm-profile__panel"
-                        certificates={p.certificates}
-                        my={p.my}
-                    />
+                    {p.description ? (
+                        <Panel
+                            key="desc"
+                            className="sonm-profile__panel"
+                            title="Description"
+                        >
+                            {p.description}
+                        </Panel>
+                    ) : null}
+                    {/*<CertificatesPanel*/}
+                    {/*className="sonm-profile__panel"*/}
+                    {/*certificates={p.certificates}*/}
+                    {/*my={p.my}*/}
+                    {/*/>*/}
                     <Statistic
                         className="sonm-profile__panel"
                         consumerDeals={p.consumerDeals}

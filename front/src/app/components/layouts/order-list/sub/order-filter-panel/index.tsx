@@ -141,7 +141,9 @@ export class OrderFilterPanel extends React.Component<
                     />
 
                     {/* Redshift */}
-                    <h3 className="order-filter-panel__header">Redshift</h3>
+                    <h3 className="order-filter-panel__header">
+                        Redshift benchmark
+                    </h3>
                     <Input
                         name="redshiftFrom"
                         prefix="from"
@@ -272,6 +274,13 @@ export class OrderFilterPanel extends React.Component<
                         color="violet"
                     >
                         APPLY FILTERS
+                    </Button>
+                    <Button
+                        disabled
+                        className="order-filter-panel__all-filters"
+                        color="violet"
+                    >
+                        ALL FILTERS
                     </Button>
                 </div>
             </div>

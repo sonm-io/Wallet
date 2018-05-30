@@ -9,7 +9,7 @@ export type TUiText =
     | 'Deals count'
     | 'Deal average time'
     | 'Tokens overall'
-    | 'SONM Statisctic';
+    | 'SONM Statistic';
 
 interface IProps {
     className?: string;
@@ -29,7 +29,7 @@ export class Statistic extends LocalizedPureComponent<IProps, never, TUiText> {
 
         return (
             <Panel
-                title={t('SONM Statisctic')}
+                title={t('SONM Statistic')}
                 className={cn('sonm-profile-stats', this.props.className)}
             >
                 <table className="sonm-profile-stats__table">

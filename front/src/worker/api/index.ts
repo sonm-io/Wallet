@@ -165,8 +165,10 @@ class Api {
     };
 
     public getWalletList = async (): Promise<t.IResponse> => {
+        const wallets = (await this.getWallets()).data;
+
         return {
-            data: (await this.getWallets()).data,
+            data: wallets.filter((item: any) => item.chainId === 'rinkeby'),
         };
     };
 

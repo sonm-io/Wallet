@@ -20,7 +20,7 @@ export class Profile extends React.PureComponent<IProps, IState> {
     protected static readonly emptyProfile: IProfileFull = {
         attributes: [],
         name: '',
-        address: '0x0',
+        address: '0x1',
         status: EnumProfileStatus.anonimest,
         sellOrders: 0,
         buyOrders: 0,

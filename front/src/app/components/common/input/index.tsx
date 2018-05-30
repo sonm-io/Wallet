@@ -10,6 +10,7 @@ export interface ITextInputProps extends IChengableProps<string> {
     className?: string;
     placeholder?: string;
     readOnly?: boolean;
+    disabled?: boolean;
     type?: 'text' | 'password';
     allowAutoComplete?: boolean;
     postfix?: JSX.Element;
@@ -57,6 +58,7 @@ export class Input extends React.Component<ITextInputProps, never>
             placeholder,
             value,
             postfix,
+            disabled,
         } = this.props;
 
         return (
@@ -80,6 +82,7 @@ export class Input extends React.Component<ITextInputProps, never>
                     onChange={this.handleChange}
                     placeholder={placeholder}
                     readOnly={readOnly}
+                    disabled={disabled}
                 />
                 {postfix ? postfix : null}
                 <div className="sonm-input__underline" />

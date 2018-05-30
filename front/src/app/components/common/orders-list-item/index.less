@@ -2,86 +2,51 @@
 
 // Variables
 
-@ordersListItem-label-fontColor: @color-light-font;
-@ordersListItem-fontColor: @color-font-dark;
-@ordersListItem-borderColor: @color-gray-bg;
-@ordersListItem-border: 1px solid @ordersListItem-borderColor;
-@order-list-item-row-height: 25px;
+@orders-list-item-font-color: @color-font-dark;
+@orders-list-item-border-color: @color-gray-bg;
+@orders-list-item-border: 1px solid @orders-list-item-border-color;
+@orders-list-item-row-height: 25px;
 
 // Component
 
 .orders-list-item {
     display: grid;
     grid-auto-flow: column dense;
-    grid-template-columns: ~'80px 300px [labels] 200px [values] 3fr [billing] 2fr [child] auto [end]';
-    grid-auto-rows: @order-list-item-row-height;
+    grid-template-columns: ~'1fr 250px 100px [child] auto [end]';
+    grid-auto-rows: @orders-list-item-row-height;
     grid-row-gap: 5px;
     grid-column-gap: 15px;
-    border-bottom: @ordersListItem-border;
-    font-family: @ordersListItem-fontColor;
+    border-bottom: @orders-list-item-border;
+    font-family: @orders-list-item-font-color;
 
     && {
-        color: @ordersListItem-fontColor;
+        color: @orders-list-item-font-color;
         font-weight: 400;
         padding: 10px;
         text-decoration: none;
     }
 
     &:first-child {
-        border-top: @ordersListItem-border;
+        border-top: @orders-list-item-border;
     }
 
-    &__logo {
-        grid-row: 1 / span 3;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    &__account {
+        grid-column: 1;
+        grid-row: 1 / span 2;
     }
 
-    // Column1 - Main Info
-
-    &__main {
-        margin: auto 0;
-        grid-row: 1 / span 3;
-        display: grid;
-        grid-auto-flow: column dense;
-        grid-template-columns: ~'[labels] 100px [values] 1fr';
-        grid-auto-rows: @order-list-item-row-height;
-        grid-row-gap: 5px;
-        grid-column-gap: 10px;
-    }
-
-    &__main-label {
-        color: @ordersListItem-label-fontColor;
-        grid-column: labels;
-    }
-
-    &__main-value {
-        grid-column: values;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    // Column2 - Indicators
-
-    &__indicator-name {
-        color: @ordersListItem-label-fontColor;
-        grid-column: labels / values;
-    }
-
-    &__indicator-value {
-        grid-column: values / billing;
+    &__benchmark {
+        grid-column: 2;
+        grid-row: 1 / span 2;
     }
 
     // Column 3 - Cost
-
     &__cost {
-        grid-column: billing / child;
+        grid-column: 3;
     }
 
     &__child {
         grid-column: child / end;
-        grid-row: 1 / span 3;
         display: flex;
     }
 }

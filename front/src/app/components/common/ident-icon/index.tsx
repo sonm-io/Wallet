@@ -195,7 +195,7 @@ export class IdentIcon extends React.Component<IProps, any> {
     }
 
     private processCanvasRef = (canvas: HTMLCanvasElement | null) => {
-        if (canvas !== this.canvas) {
+        if (canvas !== null) {
             this.canvas = canvas;
             this.draw(this.props.address);
         }

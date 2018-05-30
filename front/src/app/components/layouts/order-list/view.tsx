@@ -24,7 +24,6 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
                 <div className="order-list__list">
                     {p.dataSource.map((order, idx) => (
                         <OrdersListItem
-                            schemaOfCustomField={p.schemaOfOrderItem}
                             order={order}
                             key={order.id}
                             className="order-list__list-item"
@@ -74,7 +73,7 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
 
     public static readonly headerProps = {
         orderKeys: {
-            redshiftGPU: 'RedshiftGPU',
+            redshiftGPU: 'Redshift Benchmark',
             ethHashrate: 'ETH hashrate',
             zcashHashrate: 'ZCash hashrate',
             price: 'Price',

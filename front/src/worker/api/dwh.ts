@@ -21,6 +21,17 @@ export class DWH {
         this.url = url;
     }
 
+    public static readonly benchmarkMap: Array<[number, string]> = [
+        [2, 'cpuCount'],
+        [7, 'gpuCount'],
+        [3, 'ramSize'],
+        [4, 'storageSize'],
+        [11, 'redshiftGPU'],
+        [10, 'zcashHashrate'],
+        [9, 'ethHashrate'],
+        [8, 'gpuRamSize'],
+    ];
+
     public static readonly mapProfile: IDictionary<t.IProfileBrief> = {
         UserID: 'address',
         IdentityLevel: 'status',
@@ -155,7 +166,7 @@ export class DWH {
         tcomb.maybe(tcomb.String)(sortBy);
         tcomb.maybe(tcomb.Boolean)(sortDesc);
 
-        let sortField = 'Id';
+        let sortField = 'id';
         switch (sortBy) {
             case 'price':
                 sortField = 'Price';
@@ -163,21 +174,19 @@ export class DWH {
             case 'duration':
                 sortField = 'Duration';
                 break;
-            case 'cpuCount':
-                sortField = 'Benchmark2';
-                break;
-            case 'gpuCount':
-                sortField = 'Benchmark7';
-                break;
-            case 'hashrate':
-                sortField = 'Benchmark9';
-                break;
-            case 'ramSize':
-                sortField = 'Benchmark11';
+            default:
+                const find = DWH.benchmarkMap.find(item => item[1] === sortBy);
+                if (find) {
+                    sortField = `Benchmark${find[0]}`;
+                }
                 break;
         }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
+        const benchmarks = this.getBenchmarksFilter(
+            mongoLikeQuery.benchmarkMap,
+        );
+
         const res = await this.fetchData('GetOrders', {
             // filter
             authorID:
@@ -189,12 +198,19 @@ export class DWH {
                 typeof mongoLikeQuery.orderType.$eq === 'number'
                     ? mongoLikeQuery.orderType.$eq
                     : null,
+            creatorIdentityLevel:
+                mongoLikeQuery.creator.status &&
+                mongoLikeQuery.creator.status.$in &&
+                mongoLikeQuery.creator.status.$in.length !== 0
+                    ? mongoLikeQuery.creator.status.$in
+                    : null,
             status:
                 typeof mongoLikeQuery.orderStatus.$eq === 'number'
                     ? mongoLikeQuery.orderStatus.$eq
                     : null,
             price: this.getMinMaxFilter(mongoLikeQuery.price),
-            benchmarks: this.getBenchmarksFilter(mongoLikeQuery.benchmarkMap),
+            benchmarks:
+                Object.keys(benchmarks).length !== 0 ? benchmarks : null,
             // end filter
             offset,
             limit,
@@ -203,6 +219,10 @@ export class DWH {
                     field: sortField,
                     order: sortDesc ? 1 : 0,
                 },
+            ],
+            counterpartyID: [
+                '0x0000000000000000000000000000000000000000',
+                mongoLikeQuery.profileAddress.$eq,
             ],
         });
         const records = [] as t.IOrder[];
@@ -223,14 +243,7 @@ export class DWH {
         types.some(i => typeof value === i);
 
     protected getBenchmarksFilter = (benchmarkMap: any) => {
-        const map: Array<[number, string]> = [
-            [2, 'cpuCount'],
-            [7, 'gpuCount'],
-            [3, 'ramSize'],
-            [4, 'storageSize'],
-        ];
-
-        return map
+        return DWH.benchmarkMap
             .map(
                 ([i, name]) =>
                     [i, name, this.getMinMaxFilter(benchmarkMap[name])] as [
@@ -318,12 +331,8 @@ export class DWH {
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
-        const response = await fetch(`${this.url}GetDealDetails`, {
-            method: 'POST',
-            body: `"${id}"`,
-        });
-        const json = await response.json();
-        return this.parseDeal(json);
+        const res = await this.fetchData('GetDealDetails', id);
+        return this.parseDeal(res);
     };
 
     public getDeals = async ({
@@ -352,6 +361,7 @@ export class DWH {
                     order: 1,
                 },
             ],
+            WithCount: true,
         });
         const records = [] as t.IDeal[];
 

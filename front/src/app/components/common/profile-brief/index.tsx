@@ -10,6 +10,7 @@ interface IProps {
     profile: IProfileBrief;
     className?: string;
     showBalances?: boolean;
+    logoSizePx?: number;
 }
 
 export function ProfileBrief(props: IProps) {
@@ -24,6 +25,7 @@ export function ProfileBrief(props: IProps) {
                 <IdentIcon
                     address={props.profile.address}
                     className="sonm-profile-brief__logo"
+                    sizePx={props.logoSizePx}
                 />
             )}
             {props.profile.name ? (

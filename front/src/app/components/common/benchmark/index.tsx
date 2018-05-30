@@ -92,7 +92,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         {
             key: 'gpuRamSize',
             name: 'GPU RAM size',
-            render: value => `${value} Gb`,
+            render: value => `${value} Mb`,
         },
         {
             key: 'zcashHashrate',

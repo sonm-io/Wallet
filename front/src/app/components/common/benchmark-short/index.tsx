@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { IBenchmarkMap } from 'app/api/types';
 import { Benchmark } from '../benchmark';
+
 import * as cn from 'classnames';
 
 interface IBenchmarkShortProps {
     className?: string;
-    data: IBenchmarkMap;
+    data: Partial<IBenchmarkMap>;
 }
 
 interface IState {
     benchmarkString: string[];
     propertyList: { [name: string]: string | number };
-    data: IBenchmarkMap;
+    data: Partial<IBenchmarkMap>;
 }
 
 export class BenchmarkShort extends React.PureComponent<
@@ -61,9 +62,9 @@ export class BenchmarkShort extends React.PureComponent<
                 const line = [];
 
                 for (const key of keys) {
-                    if (nextProps.data[key as keyof IBenchmarkMap] > 0) {
-                        const value =
-                            nextProps.data[key as keyof IBenchmarkMap];
+                    const value = nextProps.data[key as keyof IBenchmarkMap];
+
+                    if (value !== undefined && value > 0) {
                         const benchmarkElement = Benchmark.defaultConfig.find(
                             item => item.key === key,
                         );
@@ -87,9 +88,7 @@ export class BenchmarkShort extends React.PureComponent<
     public render() {
         return (
             <div className={cn(this.props.className, `sonm-benchmark-short`)}>
-                {this.state.benchmarkString.map(x => (
-                    <React.Fragment key={x}>{x}</React.Fragment>
-                ))}
+                {this.state.benchmarkString.map(x => <div key={x}>{x}</div>)}
             </div>
         );
     }

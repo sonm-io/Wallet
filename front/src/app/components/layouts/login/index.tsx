@@ -41,9 +41,9 @@ interface IRefs {
     loginBtn: Button | null;
 }
 
-const networkSelectList = [NetworkEnum.live, NetworkEnum.rinkeby].map(x =>
-    x.toString(),
-);
+// NetworkEnum.live,
+const networkSelectList = [NetworkEnum.rinkeby].map(x => x.toString());
+const defaultNetwork = NetworkEnum.rinkeby;
 
 const emptyValidation: IValidation = {};
 
@@ -70,7 +70,7 @@ const emptyForm: Pick<IState, any> = {
     newPasswordConfirmation: '',
     encodedWallet: '',
     encodedWalletFileName: '',
-    network: NetworkEnum.live,
+    network: defaultNetwork,
 };
 
 export class Login extends React.Component<IProps, IState> {
@@ -90,7 +90,7 @@ export class Login extends React.Component<IProps, IState> {
         name: '',
         pending: false,
         error: '',
-        network: NetworkEnum.live,
+        network: defaultNetwork,
         serverValidation: emptyValidation,
     };
 

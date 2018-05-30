@@ -278,8 +278,8 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
                             : { $ne: this.profileAddress },
                 status: {
                     $in: [
-                        [EnumProfileStatus.anonimest, true],
-                        [EnumProfileStatus.anon, this.anonymous],
+                        [EnumProfileStatus.anonimest, this.anonymous],
+                        // [EnumProfileStatus.anon, this.anonymous],
                         [EnumProfileStatus.ident, this.identified],
                         [EnumProfileStatus.reg, this.registered],
                         [EnumProfileStatus.pro, this.professional],
@@ -315,6 +315,9 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
                     parseFloat(this.storageSizeFrom),
                     parseFloat(this.storageSizeTo),
                 ),
+            },
+            profileAddress: {
+                $eq: this.profileAddress,
             },
         };
         return result;
