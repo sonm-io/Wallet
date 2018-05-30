@@ -49,24 +49,25 @@
     }
 
     &__values {
+        // grid item
         grid-column: 1;
         grid-row: 3;
-
+        // grid container
         display: grid;
-        grid-template-columns: 180px 180px auto;
-        grid-template-rows: 1fr 1fr;
-        margin: 20px 0px 20px 0px;
+        grid-template-columns: ~'[gas-limit] 150px [gas-price] 150px [gwei] 50px [buttons] auto [end]';
+        grid-template-rows: [amount] 1fr [gas] 1fr [end];
         grid-gap: 15px;
+        margin: 20px 0px 20px 0px;
 
         &-amount {
             &-input {
-                grid-column: 1 / span 2;
-                grid-row: 1;
+                grid-column: gas-limit / buttons;
+                grid-row: amount;
             }
 
             &-maximum {
-                grid-column: 3;
-                grid-row: 1;
+                grid-column: buttons;
+                grid-row: amount;
                 text-transform: uppercase;
                 margin-top: 25px;
                 color: @color-green;
@@ -75,18 +76,25 @@
         }
 
         &-gas-limit {
-            grid-column: 1;
-            grid-row: 2;
+            grid-column: gas-limit;
+            grid-row: gas;
         }
 
         &-gas-price {
-            grid-column: 2;
-            grid-row: 2;
+            grid-column: gas-price;
+            grid-row: gas;
+        }
+
+        &-gwei {
+            grid-column: gwei;
+            grid-row: gas;
+            display: flex;
+            align-items: center;
         }
 
         &-priority {
-            grid-column: 3;
-            grid-row: 2;
+            grid-column: buttons;
+            grid-row: gas;
             margin-top: 25px;
             text-transform: capitalize;
         }
@@ -135,11 +143,5 @@
         justify-content: flex-end;
         align-items: center;
         padding: 0 110px;
-    }
-
-    &__button {
-        &--action {
-            margin: 0 0 0 100px;
-        }
     }
 }

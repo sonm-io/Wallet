@@ -186,84 +186,77 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     }
 
     public renderAmount() {
-        const currency = rootStore.mainStore.currencyMap.get(
-            this.store.currencyAddress,
-        );
-        if (!currency) {
-            return null;
-        }
-
-        const result = [];
-        result.push(
-            <FormField
-                error={this.store.validationAmount}
-                label="Amount"
-                className="sonm-deposit-withdraw__values-amount-input"
-                key="amount"
-            >
-                <Input
-                    name="amountEther"
-                    className="sonm-send__input"
-                    onChangeDeprecated={this.handleChangeAmount}
-                    placeholder="Amount"
-                    value={this.store.userInput.amountEther}
-                    readOnly={this.props.isConfirmation}
-                />
-            </FormField>,
-            this.props.isConfirmation ? null : (
-                <Button
-                    key="amount-maximum"
-                    color="blue"
-                    transparent
-                    square
-                    onClick={this.handleSetMaximum}
-                    className="sonm-deposit-withdraw__values-amount-maximum"
+        return (
+            <div className="sonm-deposit-withdraw__values">
+                <FormField
+                    error={this.store.validationAmount}
+                    label="Amount"
+                    className="sonm-deposit-withdraw__values-amount-input"
+                    key="amount"
                 >
-                    Add maximum
-                </Button>
-            ),
-            <FormField
-                label="Gas price, Gwei"
-                error={this.store.validationGasPrice}
-                key="gas-price"
-                className="sonm-deposit-withdraw__values-gas-price"
-            >
-                <Input
-                    className="sonm-send__input"
-                    value={this.store.userInput.gasPriceGwei}
-                    onChangeDeprecated={this.handleChangeGasPrice}
-                    placeholder={this.store.gasPriceGwei}
-                    readOnly={this.props.isConfirmation}
-                    name="gasPrice"
-                />
-            </FormField>,
-            this.props.isConfirmation ? null : (
-                <PriorityInput
-                    className="sonm-deposit-withdraw__values-priority"
-                    valueList={['low', 'normal', 'high']}
-                    value={this.store.priority}
-                    onChange={this.handleChangePriority}
-                    key="gas-price-priority"
-                />
-            ),
-            <FormField
-                label="Gas limit"
-                error={this.store.validationGasLimit}
-                className="sonm-deposit-withdraw-confirm__values-gas-limit"
-                key="gas-limit"
-            >
-                <Input
-                    className="sonm-send__input"
-                    value={this.store.userInput.gasLimit}
-                    onChangeDeprecated={this.handleChangeGasLimit}
-                    placeholder={this.store.gasLimit}
-                    readOnly={this.props.isConfirmation}
-                    name="gasLimit"
-                />
-            </FormField>,
+                    <Input
+                        name="amountEther"
+                        className="sonm-send__input"
+                        onChangeDeprecated={this.handleChangeAmount}
+                        placeholder="Amount"
+                        value={this.store.userInput.amountEther}
+                        readOnly={this.props.isConfirmation}
+                    />
+                </FormField>
+                {this.props.isConfirmation ? null : (
+                    <Button
+                        key="amount-maximum"
+                        color="blue"
+                        transparent
+                        square
+                        onClick={this.handleSetMaximum}
+                        className="sonm-deposit-withdraw__values-amount-maximum"
+                    >
+                        Add maximum
+                    </Button>
+                )}
+                <FormField
+                    label="Gas price"
+                    error={this.store.validationGasPrice}
+                    key="gas-price"
+                    className="sonm-deposit-withdraw__values-gas-price"
+                >
+                    <Input
+                        className="sonm-send__input"
+                        value={this.store.userInput.gasPriceGwei}
+                        onChangeDeprecated={this.handleChangeGasPrice}
+                        placeholder={this.store.gasPriceGwei}
+                        readOnly={this.props.isConfirmation}
+                        name="gasPrice"
+                    />
+                </FormField>
+                <span className="sonm-deposit-withdraw__values-gwei">Gwei</span>
+                {this.props.isConfirmation ? null : (
+                    <PriorityInput
+                        className="sonm-deposit-withdraw__values-priority"
+                        valueList={['low', 'normal', 'high']}
+                        value={this.store.priority}
+                        onChange={this.handleChangePriority}
+                        key="gas-price-priority"
+                    />
+                )}
+                <FormField
+                    label="Gas limit"
+                    error={this.store.validationGasLimit}
+                    className="sonm-deposit-withdraw-confirm__values-gas-limit"
+                    key="gas-limit"
+                >
+                    <Input
+                        className="sonm-send__input"
+                        value={this.store.userInput.gasLimit}
+                        onChangeDeprecated={this.handleChangeGasLimit}
+                        placeholder={this.store.gasLimit}
+                        readOnly={this.props.isConfirmation}
+                        name="gasLimit"
+                    />
+                </FormField>
+            </div>
         );
-
-        return <div className="sonm-deposit-withdraw__values">{result}</div>;
     }
 
     public renderCommission() {
@@ -326,12 +319,15 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         );
     }
 
+    protected getCurrency = () =>
+        rootStore.mainStore.currencyMap.get(this.store.currencyAddress);
+
     public render() {
         const { className } = this.props;
         return (
             <div className={cn('sonm-deposit-withdraw', className)}>
                 {this.renderAccount()}
-                {this.renderAmount()}
+                {this.getCurrency() ? this.renderAmount() : null}
                 {this.renderCommission()}
                 {this.props.isConfirmation
                     ? this.renderPasswordConfirmation()
