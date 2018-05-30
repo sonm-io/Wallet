@@ -102,6 +102,14 @@ async function firstByDefault(ctx: IContext, p: any) {
     return params ? params : ctx.route.children[0].action(ctx, p);
 }
 
+function isConfirmation(path: string) {
+    return (
+        ['/market/dw/deposit/confirm', '/market/dw/withdraw/confirm'].indexOf(
+            path,
+        ) > -1
+    );
+}
+
 export const univeralRoutes: Array<IUniversalRouterItem> = [
     {
         path: '/',
@@ -115,6 +123,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
             return {
                 content: (
                     <App
+                        className={
+                            isConfirmation(ctx.pathname)
+                                ? 'sonm-app--confirmation'
+                                : undefined
+                        }
                         breadcrumbs={breadcrumbs}
                         onNavigate={navigateTo}
                         onExit={reload}
