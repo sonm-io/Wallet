@@ -15,6 +15,12 @@ interface IFilter {
     filterIdentified: boolean;
     filterAnonymous: boolean;
     // -
+    filterRedshiftFrom: string;
+    filterRedshiftTo: string;
+    filterEthFrom: string;
+    filterEthTo: string;
+    filterZCashFrom: string;
+    filterZCashTo: string;
     filterCpuCountFrom: string;
     filterCpuCountTo: string;
     filterGpuCountFrom: string;
@@ -23,6 +29,8 @@ interface IFilter {
     filterRamSizeTo: string;
     filterStorageSizeFrom: string;
     filterStorageSizeTo: string;
+    filterGpuRamSizeFrom: string;
+    filterGpuRamSizeTo: string;
 }
 
 export interface IOrdersProps extends IFilter {

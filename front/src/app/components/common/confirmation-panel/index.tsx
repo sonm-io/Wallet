@@ -15,7 +15,7 @@ export interface IConfirmationPanelProps {
      * If not set, then button doesn't appear.
      */
     onCancel?: () => void;
-    className: string;
+    className?: string;
 
     labelHeader?: string;
     labelDescription?: string;

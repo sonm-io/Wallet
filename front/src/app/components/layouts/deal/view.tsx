@@ -8,6 +8,7 @@ import { ProfileBrief } from 'app/components/common/profile-brief';
 import { Button } from 'app/components/common/button';
 import { Balance } from 'app/components/common/balance-view';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
+import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 
 interface IProps {
     className?: string;
@@ -28,9 +29,14 @@ interface IProps {
         status: number;
         supplierAddress: string;
     };
+    onFinishDeal: (password: string) => void;
+    onShowConfirmationPanel: () => void;
+    onHideConfirmationPanel: () => void;
+    showConfirmationPanel: boolean;
+    validationMessage: string;
 }
 
-export class DealView extends React.PureComponent<IProps, never> {
+export class DealView extends React.Component<IProps, never> {
     private config = [
         {
             name: 'Deal ID',
@@ -77,8 +83,8 @@ export class DealView extends React.PureComponent<IProps, never> {
         },
     ];
 
-    public handleFinishDeal = () => {
-        //this.props.onFinishDeal();
+    public handleFinishDeal = (password: string) => {
+        this.props.onFinishDeal(password);
     };
 
     public render() {
@@ -111,15 +117,29 @@ export class DealView extends React.PureComponent<IProps, never> {
                 </div>
                 <div className="sonm-deal__column-right">
                     {p.showButtons ? (
-                        <div className="sonm-deal__column-right__buttons">
-                            <Button
-                                type="submit"
-                                color="violet"
-                                onClick={this.handleFinishDeal}
-                            >
-                                Finish Deal
-                            </Button>
-                        </div>
+                        p.showConfirmationPanel ? (
+                            <div className="sonm-deal__column-right__confirmation-panel">
+                                <ConfirmationPanel
+                                    onSubmit={this.handleFinishDeal}
+                                    onCancel={
+                                        this.props.onHideConfirmationPanel
+                                    }
+                                    validationMessage={
+                                        this.props.validationMessage
+                                    }
+                                />
+                            </div>
+                        ) : (
+                            <div className="sonm-deal__column-right__buttons">
+                                <Button
+                                    type="submit"
+                                    color="violet"
+                                    onClick={this.props.onShowConfirmationPanel}
+                                >
+                                    Finish Deal
+                                </Button>
+                            </div>
+                        )
                     ) : null}
                     <div className="sonm-deal__column-right__benchmarks">
                         <div className="sonm-deal__header">

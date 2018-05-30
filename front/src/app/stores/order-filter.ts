@@ -24,6 +24,12 @@ export interface IOrderFilter {
     identified: boolean;
     anonymous: boolean;
     // -
+    redshiftFrom: string;
+    redshiftTo: string;
+    ethFrom: string;
+    ethTo: string;
+    zcashFrom: string;
+    zcashTo: string;
     cpuCountFrom: string;
     cpuCountTo: string;
     gpuCountFrom: string;
@@ -32,6 +38,8 @@ export interface IOrderFilter {
     ramSizeTo: string;
     storageSizeFrom: string;
     storageSizeTo: string;
+    gpuRamSizeFrom: string;
+    gpuRamSizeTo: string;
 }
 
 export interface IFilterStore {
@@ -54,6 +62,12 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
         identified: false,
         anonymous: false,
         // -
+        redshiftFrom: '',
+        redshiftTo: '',
+        ethFrom: '',
+        ethTo: '',
+        zcashFrom: '',
+        zcashTo: '',
         cpuCountFrom: '',
         cpuCountTo: '',
         gpuCountFrom: '',
@@ -62,6 +76,8 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
         ramSizeTo: '',
         storageSizeFrom: '',
         storageSizeTo: '',
+        gpuRamSizeFrom: '',
+        gpuRamSizeTo: '',
     };
 
     @observable
@@ -177,6 +193,16 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
     }
 
     @computed
+    public get gpuRamSizeFrom() {
+        return this.userInput.gpuRamSizeFrom;
+    }
+
+    @computed
+    public get gpuRamSizeTo() {
+        return this.userInput.gpuRamSizeTo;
+    }
+
+    @computed
     public get storageSizeFrom() {
         return this.userInput.storageSizeFrom;
     }
@@ -184,6 +210,36 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
     @computed
     public get storageSizeTo() {
         return this.userInput.storageSizeTo;
+    }
+
+    @computed
+    public get redshiftFrom() {
+        return this.userInput.redshiftFrom;
+    }
+
+    @computed
+    public get redshiftTo() {
+        return this.userInput.redshiftTo;
+    }
+
+    @computed
+    public get ethFrom() {
+        return this.userInput.ethFrom;
+    }
+
+    @computed
+    public get ethTo() {
+        return this.userInput.ethTo;
+    }
+
+    @computed
+    public get zcashFrom() {
+        return this.userInput.zcashFrom;
+    }
+
+    @computed
+    public get zcashTo() {
+        return this.userInput.zcashTo;
     }
 
     //#endregion IOrderFilter

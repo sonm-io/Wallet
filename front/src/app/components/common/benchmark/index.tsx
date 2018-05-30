@@ -77,7 +77,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         {
             key: 'storageSize',
             name: 'Storage size',
-            render: value => `${value} Mb`,
+            render: value => `${value} Gb`,
         },
         {
             key: 'downloadNetSpeed',
@@ -92,7 +92,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         {
             key: 'gpuRamSize',
             name: 'GPU RAM size',
-            render: value => `${value} Mb`,
+            render: value => `${value} Gb`,
         },
         {
             key: 'zcashHashrate',

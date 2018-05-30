@@ -54,6 +54,16 @@ export class DealApi {
             daysLeft: 0,
         } as IMarketStats);
     };
+
+    public async close(address: string, password: string, dealId: string) {
+        const { data, validation } = await this.ipc.send('market.closeDeal', {
+            address,
+            id: dealId,
+            password,
+        });
+
+        return { data, validation };
+    }
 }
 
 export default DealApi;
