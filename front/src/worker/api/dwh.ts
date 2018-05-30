@@ -275,7 +275,8 @@ export class DWH {
             cpuSysbenchOne: benchmarks.values[1] || 0,
             cpuCount: benchmarks.values[2] || 0,
             ramSize: Math.round(benchmarks.values[3] / (1024 * 1024)) || 0,
-            storageSize: Math.round(benchmarks.values[4] / (1024 * 1024)) || 0,
+            storageSize:
+                Math.round(benchmarks.values[4] / (1024 * 1024 * 1024)) || 10,
             downloadNetSpeed:
                 Math.round(benchmarks.values[5] / (1024 * 1024)) || 0,
             uploadNetSpeed:
@@ -298,6 +299,7 @@ export class DWH {
             ? this.parseDuration(order.duration)
             : 0;
         order.price = this.parsePrice(order.price);
+
         order.creator = {
             status: item.creatorIdentityLevel || EnumProfileStatus.anonimest,
             name: item.creatorName || '',
@@ -429,10 +431,7 @@ export class DWH {
     private async fetchData(method: string, params: any = {}) {
         const response = await fetch(`${this.url}${method}`, {
             method: 'POST',
-            body: JSON.stringify({
-                ...params,
-                WithCount: true,
-            }),
+            body: JSON.stringify(params),
         });
 
         if (response && response.status === 200) {

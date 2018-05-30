@@ -275,7 +275,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         return (
             <ConfirmationPanel
                 className="deposit-withdraw__confirmation-panel"
-                submitBtnLabel={this.props.title.toUpperCase()}
+                labelSubmit={this.props.title.toUpperCase()}
                 onSubmit={
                     !rootStore.mainStore.isOffline
                         ? this.handleConfrim

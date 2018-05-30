@@ -3,14 +3,18 @@ import { DealView } from './view';
 import { Api } from 'app/api/';
 import { IDeal } from 'app/api/types';
 import { rootStore } from 'app/stores';
+import { localizator } from 'app/localization';
 
 interface IProps {
     className?: string;
     id: string;
+    onNavigateToDeals: () => void;
 }
 
 interface IState {
     deal: IDeal;
+    showConfirmationPanel: boolean;
+    validationMessage: string;
 }
 
 export class Deal extends React.PureComponent<IProps, IState> {
@@ -55,6 +59,8 @@ export class Deal extends React.PureComponent<IProps, IState> {
 
     public state = {
         deal: Deal.emptyDeal,
+        showConfirmationPanel: false,
+        validationMessage: '',
     };
 
     public componentDidMount() {
@@ -67,6 +73,36 @@ export class Deal extends React.PureComponent<IProps, IState> {
             deal,
         });
     }
+
+    public handleFinishDeal = async (password: string) => {
+        const { validation } = await Api.deal.close(
+            rootStore.marketStore.marketAccountAddress,
+            password,
+            this.state.deal.id,
+        );
+
+        if (validation) {
+            this.setState({
+                validationMessage: localizator.getMessageText(
+                    validation.password,
+                ),
+            });
+        } else {
+            this.props.onNavigateToDeals();
+        }
+    };
+
+    public handleShowConfirmationPanel = () => {
+        this.setState({
+            showConfirmationPanel: true,
+        });
+    };
+
+    public handleHideConfirmationPanel = () => {
+        this.setState({
+            showConfirmationPanel: false,
+        });
+    };
 
     public render() {
         const deal = this.state.deal;
@@ -96,6 +132,11 @@ export class Deal extends React.PureComponent<IProps, IState> {
                 marketAccountAddress={marketAccount}
                 showButtons={isOwner}
                 propertyList={propertyList}
+                onFinishDeal={this.handleFinishDeal}
+                showConfirmationPanel={this.state.showConfirmationPanel}
+                onShowConfirmationPanel={this.handleShowConfirmationPanel}
+                onHideConfirmationPanel={this.handleHideConfirmationPanel}
+                validationMessage={this.state.validationMessage}
             />
         );
     }

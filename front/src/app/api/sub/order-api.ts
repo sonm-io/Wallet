@@ -18,7 +18,7 @@ export class OrderApi {
         price: '0',
         duration: 0,
         orderStatus: 0,
-        authorID: '0x',
+        authorID: '0x' + new Array(41).join('9'),
         cpuCount: 0,
         gpuCount: 0,
         hashrate: 0,
@@ -45,7 +45,7 @@ export class OrderApi {
             id,
         });
 
-        return TypeOrder({ ...response.data, ...OrderApi.defaultOrder });
+        return TypeOrder({ ...OrderApi.defaultOrder, ...response.data });
     }
 
     public async quickBuy(address: string, password: string, orderId: string) {

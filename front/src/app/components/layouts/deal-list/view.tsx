@@ -4,7 +4,7 @@ import * as cn from 'classnames';
 import { ColumnProps } from 'antd/lib/table';
 import { IDeal } from 'app/api/types';
 import { Balance } from 'app/components/common/balance-view';
-import { Benchmark } from 'app/components/common/benchmark';
+import { BenchmarkShort } from 'app/components/common/benchmark-short';
 import { ProfileBrief } from 'app/components/common/profile-brief';
 import * as moment from 'moment';
 import {
@@ -30,15 +30,9 @@ interface IProps {
 }
 
 export class DealListView extends React.PureComponent<IProps, any> {
-    private static readonly propertyList: string[] = [
-        'cpuCount',
-        'ethHashrate',
-        'ramSize',
-    ];
-
     protected columns: Array<ColumnProps<IDeal>> = [
         {
-            className: 'sonm-deals-list__cell__account',
+            className: 'sonm-deals-list-cell__account',
             dataIndex: 'address',
             title: 'Account',
             render: (address: string, record: IDeal) => {
@@ -51,7 +45,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
             },
         },
         {
-            className: 'sonm-deals-list__cell__date',
+            className: 'sonm-deals-list-cell__date',
             dataIndex: 'startTime',
             title: 'Date',
             render: (time: string, record: IDeal) => {
@@ -67,39 +61,38 @@ export class DealListView extends React.PureComponent<IProps, any> {
             },
         },
         {
-            className: 'sonm-deals-list__cell__status',
+            className: 'sonm-deals-list-cell__status',
             dataIndex: 'status',
             title: 'Type',
             render: (status: string, record: IDeal) => {
-                const type =
+                const side =
                     record.consumer.address.toLowerCase() ===
                     this.props.marketAccountAddress.toLowerCase()
                         ? 'buy'
                         : 'sell';
-                const cls = `sonm-deals-list__cell__status--${type}`;
 
                 return (
-                    <div className={cn('sonm-deals-list__cell__status', cls)}>
-                        {type}
+                    <div
+                        className={cn(
+                            'sonm-deals-list-cell__status',
+                            `sonm-deals-list-cell__status--${side}`,
+                        )}
+                    >
+                        {side}
                     </div>
                 );
             },
         },
         {
-            className: 'sonm-deals-list__cell__stats',
+            className: 'sonm-deals-list-cell__stats',
             dataIndex: 'stats',
             title: 'Resource',
             render: (price: string, record: IDeal) => {
-                return (
-                    <Benchmark
-                        data={record.benchmarkMap}
-                        keys={DealListView.propertyList}
-                    />
-                );
+                return <BenchmarkShort data={record.benchmarkMap} />;
             },
         },
         {
-            className: 'sonm-deals-list__cell__price',
+            className: 'sonm-deals-list-cell__price',
             dataIndex: 'price',
             title: 'Price',
             render: (price: string, record: IDeal) => {
@@ -114,7 +107,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                     record.timeLeft ? (
                         <div
                             key="3"
-                            className="sonm-deals-list__cell__price--green"
+                            className="sonm-deals-list-cell__price--green"
                         >
                             {record.timeLeft} hour(s) left
                         </div>
@@ -148,6 +141,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                     onChange={this.props.handleChangeQuery}
                     className="sonm-deals-filter__query"
                     value={this.props.queryValue}
+                    disabled
                 />
                 <Toggler
                     className="sonm-deals-filter__active"

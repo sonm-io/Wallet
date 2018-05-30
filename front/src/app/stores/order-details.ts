@@ -100,8 +100,6 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         } else {
             let alert;
 
-            console.log(data);
-
             if (data.status === '0x0') {
                 alert = {
                     type: AlertType.error,

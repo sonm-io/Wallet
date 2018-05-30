@@ -13,11 +13,11 @@ import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/
 import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
 import { Deal } from 'app/components/layouts/deal';
-import { QuickBuy } from 'app/components/layouts/order-list/sub/quick-buy';
+import { OrderDetails } from 'app/components/layouts/order-details';
 
 import * as React from 'react';
 
-import { navigate, navigateBack } from './navigate';
+import { navigate } from './navigate';
 
 let defaultAction;
 
@@ -45,6 +45,7 @@ const navigateToProfile = (address: string) =>
     navigate({ path: `/market/profiles/${address}` });
 const navigateToDeal = (id: string) =>
     navigate({ path: `/market/deals/${id}` });
+const navigateToDealList = () => navigate({ path: `/market/deals/` });
 const navigateToDepositSuccess = () =>
     navigate({ path: `/market/dw/deposit/success` });
 const navigateToDepositConfirm = () =>
@@ -56,6 +57,7 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
+const navigateToDeals = () => navigate({ path: '/market/deals' });
 const navigateToOrdersByAddress = (creatorAddress: string) =>
     navigate({ path: `/market/orders`, query: { creatorAddress } });
 const navigateToOrder = (orderId: string, creatorAddress: string = '') =>
@@ -471,8 +473,8 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         breadcrumbTitle: 'Orders',
                         action: replaceWithChild(
                             async (ctx: IContext, params: IUrlParams) => ({
-                                browserTabTitle: 'Orders',
-                                pageTitle: 'Orders',
+                                browserTabTitle: 'Market orders',
+                                pageTitle: 'Market orders',
                                 content: (
                                     <OrderList
                                         filterByAddress={
@@ -494,9 +496,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     browserTabTitle: 'Order details',
                                     pageTitle: 'Order details',
                                     content: (
-                                        <QuickBuy
+                                        <OrderDetails
                                             orderId={params.orderId}
-                                            onNavigateBack={navigateBack}
+                                            onNavigateToDealList={
+                                                navigateToDealList
+                                            }
                                         />
                                     ),
                                 }),
@@ -509,7 +513,12 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         action: async (ctx: IContext, params: IUrlParams) => ({
                             browserTabTitle: 'Deal details',
                             pageTitle: 'Deal details',
-                            content: <Deal id={params.id} />,
+                            content: (
+                                <Deal
+                                    id={params.id}
+                                    onNavigateToDeals={navigateToDeals}
+                                />
+                            ),
                         }),
                     },
                     {
