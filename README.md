@@ -6,7 +6,7 @@
 
 ## User guide
 
-https://docs.sonm.io/guides/sonm-wallet-guide
+https://docs.sonm.io/guides/sonm-gui-guide
 
 ## What is SONM Wallet?
 
