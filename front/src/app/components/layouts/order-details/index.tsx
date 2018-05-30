@@ -7,17 +7,21 @@ import {
     IOrder,
     EnumOrderType,
 } from 'app/api/types';
-// import { rootStore } from 'app//stores';
+import { observer } from 'mobx-react';
+import { rootStore } from 'app//stores';
+import Benchmark from '../../common/benchmark/index';
 
 interface IProps {
     className?: string;
     orderId: string;
+    onNavigateToDealList: () => {};
 }
 
 interface IState {
     order: IOrder;
 }
 
+@observer
 export class OrderDetails extends React.Component<IProps, IState> {
     public static emptyOrder: IOrder = {
         id: '0',
@@ -29,7 +33,7 @@ export class OrderDetails extends React.Component<IProps, IState> {
         price: '1',
         duration: 0,
         orderStatus: EnumOrderStatus.active,
-        benchmarkMap: {},
+        benchmarkMap: Benchmark.emptyBenchmark,
     };
 
     public state = {
@@ -43,20 +47,32 @@ export class OrderDetails extends React.Component<IProps, IState> {
     protected async fetchData() {
         const order = await Api.order.fetchById(this.props.orderId);
 
+        (window as any).__order = order;
+
         this.setState({
             order,
         });
     }
 
-    public handleSubmit(password: string) {
-        debugger;
-    }
+    public handleSubmit = async (password: string) => {
+        const orderId = this.props.orderId;
+        const orderDetailsStore = rootStore.orderDetailsStore;
+
+        orderDetailsStore.updateUserInput({ orderId, password });
+        await orderDetailsStore.submit();
+
+        if (orderDetailsStore.validationPassword === '') {
+            this.props.onNavigateToDealList();
+        }
+    };
 
     public render() {
         return (
             <OrderView
                 order={this.state.order}
-                validationPassword="ololo"
+                validationPassword={
+                    rootStore.orderDetailsStore.validationPassword
+                }
                 onSubmit={this.handleSubmit}
             />
         );

@@ -298,6 +298,7 @@ export class DWH {
             ? this.parseDuration(order.duration)
             : 0;
         order.price = this.parsePrice(order.price);
+
         order.creator = {
             status: item.creatorIdentityLevel || EnumProfileStatus.anonimest,
             name: item.creatorName || '',
@@ -429,10 +430,7 @@ export class DWH {
     private async fetchData(method: string, params: any = {}) {
         const response = await fetch(`${this.url}${method}`, {
             method: 'POST',
-            body: JSON.stringify({
-                ...params,
-                WithCount: true,
-            }),
+            body: JSON.stringify(params),
         });
 
         if (response && response.status === 200) {

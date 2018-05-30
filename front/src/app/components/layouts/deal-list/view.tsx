@@ -38,7 +38,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
 
     protected columns: Array<ColumnProps<IDeal>> = [
         {
-            className: 'sonm-deals-list__cell__account',
+            className: 'sonm-deals-list-cell__account',
             dataIndex: 'address',
             title: 'Account',
             render: (address: string, record: IDeal) => {
@@ -51,7 +51,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
             },
         },
         {
-            className: 'sonm-deals-list__cell__date',
+            className: 'sonm-deals-list-cell__date',
             dataIndex: 'startTime',
             title: 'Date',
             render: (time: string, record: IDeal) => {
@@ -67,26 +67,30 @@ export class DealListView extends React.PureComponent<IProps, any> {
             },
         },
         {
-            className: 'sonm-deals-list__cell__status',
+            className: 'sonm-deals-list-cell__status',
             dataIndex: 'status',
             title: 'Type',
             render: (status: string, record: IDeal) => {
-                const type =
+                const side =
                     record.consumer.address.toLowerCase() ===
                     this.props.marketAccountAddress.toLowerCase()
                         ? 'buy'
                         : 'sell';
-                const cls = `sonm-deals-list__cell__status--${type}`;
 
                 return (
-                    <div className={cn('sonm-deals-list__cell__status', cls)}>
-                        {type}
+                    <div
+                        className={cn(
+                            'sonm-deals-list-cell__status',
+                            `sonm-deals-list-cell__status--${side}`,
+                        )}
+                    >
+                        {side}
                     </div>
                 );
             },
         },
         {
-            className: 'sonm-deals-list__cell__stats',
+            className: 'sonm-deals-list-cell__stats',
             dataIndex: 'stats',
             title: 'Resource',
             render: (price: string, record: IDeal) => {
@@ -99,7 +103,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
             },
         },
         {
-            className: 'sonm-deals-list__cell__price',
+            className: 'sonm-deals-list-cell__price',
             dataIndex: 'price',
             title: 'Price',
             render: (price: string, record: IDeal) => {
@@ -114,7 +118,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                     record.timeLeft ? (
                         <div
                             key="3"
-                            className="sonm-deals-list__cell__price--green"
+                            className="sonm-deals-list-cell__price--green"
                         >
                             {record.timeLeft} hour(s) left
                         </div>

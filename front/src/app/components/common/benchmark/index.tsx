@@ -10,6 +10,7 @@ interface IBenchmarkProps {
     className?: string;
     keys?: Array<keyof IBenchmarkMap>;
     data: Partial<IBenchmarkMap>;
+    title?: string;
 }
 
 interface IState {
@@ -27,6 +28,21 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         keys: Array.prototype,
         data: {},
         propertyList: {},
+    };
+
+    public static readonly emptyBenchmark: IBenchmarkMap = {
+        cpuSysbenchMulti: 0,
+        cpuSysbenchOne: 0,
+        cpuCount: 0,
+        gpuCount: 0,
+        ethHashrate: 0,
+        ramSize: 0,
+        storageSize: 0,
+        downloadNetSpeed: 0,
+        uploadNetSpeed: 0,
+        gpuRamSize: 0,
+        zcashHashrate: 0,
+        redshiftGpu: 0,
     };
 
     public static readonly defaultConfig: Array<
@@ -122,6 +138,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
     public render() {
         return (
             <BenchmarkList
+                title={this.props.title}
                 className={this.props.className}
                 dataSource={this.state.propertyList}
                 config={this.state.config}

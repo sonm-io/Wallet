@@ -6,13 +6,14 @@ export type IDictionary<T> = { [P in keyof T]?: any };
 export interface IPropertyItemConfig<T = string> {
     name: string;
     key: T;
-    render?: (value: any) => string;
+    render?: (value: any) => React.ReactNode;
 }
 
 interface IPropertyListProps<T> {
     className?: string;
     dataSource: IDictionary<T>;
     config: Array<IPropertyItemConfig<keyof T>>;
+    title?: string;
 }
 
 export class PropertyList<T = any> extends React.Component<
@@ -24,6 +25,9 @@ export class PropertyList<T = any> extends React.Component<
 
         return (
             <div className={cn(p.className, `sonm-property-list`)}>
+                {p.title ? (
+                    <h4 className="sonm-property-list__header">{p.title}</h4>
+                ) : null}
                 {p.config.map(({ name, key, render }) => {
                     const value =
                         p.dataSource[key] !== undefined
@@ -35,7 +39,7 @@ export class PropertyList<T = any> extends React.Component<
                                 {name}
                             </div>
                             <div className="sonm-property-list__value">
-                                {render ? render(value) : value}
+                                {render ? render(value) : String(value)}
                             </div>
                         </React.Fragment>
                     );

@@ -5,7 +5,7 @@ import { IChangeParams } from 'app/components/common/types';
 import { Button } from 'app/components/common/button';
 import * as cn from 'classnames';
 
-export interface IConfirmationPanelProps extends Partial<IMessages> {
+export interface IConfirmationPanelProps {
     validationMessage?: string;
     /**
      * If not set, then button is disabled.
@@ -16,46 +16,32 @@ export interface IConfirmationPanelProps extends Partial<IMessages> {
      */
     onCancel?: () => void;
     className: string;
+
+    labelHeader?: string;
+    labelDescription?: string;
+    labelCancel?: string;
+    labelSubmit?: string;
 }
 
-interface IState extends IMessages {
+interface IState {
     password: string;
-}
-
-interface IMessages {
-    header: string;
-    description: string;
-    cancelBtnLabel: string;
-    submitBtnLabel: string;
 }
 
 export class ConfirmationPanel extends React.Component<
     IConfirmationPanelProps,
     IState
 > {
-    private static defaults: IMessages = {
-        header: 'Confirm operation',
-        description:
+    public static defaultProps: Partial<IConfirmationPanelProps> = {
+        labelHeader: 'Confirm operation',
+        labelDescription:
             'Please, enter password for this account to confirm operation',
-        cancelBtnLabel: 'Cancel',
-        submitBtnLabel: 'NEXT',
+        labelCancel: 'Cancel',
+        labelSubmit: 'NEXT',
     };
 
-    constructor(props: IConfirmationPanelProps) {
-        super(props);
-    }
-
-    public static getDerivedStateFromProps(props: IConfirmationPanelProps) {
-        return (Object.keys(ConfirmationPanel.defaults) as Array<
-            keyof IMessages
-        >).reduce((acc: Partial<IMessages>, i) => {
-            acc[i] =
-                props[i] !== undefined
-                    ? props[i]
-                    : ConfirmationPanel.defaults[i];
-            return acc;
-        }, {});
-    }
+    public state = {
+        password: '',
+    };
 
     protected handleChangePassword = (params: IChangeParams<string>) => {
         this.setState({ password: params.value });
@@ -69,13 +55,13 @@ export class ConfirmationPanel extends React.Component<
     };
 
     public render() {
+        const p = this.props;
+
         return (
-            <div className={cn('confirmation-panel', this.props.className)}>
-                <h2 className="confirmation-panel__header">
-                    {this.state.header}
-                </h2>
+            <div className={cn('confirmation-panel', p.className)}>
+                <h4 className="confirmation-panel__header">{p.labelHeader}</h4>
                 <span className="confirmation-panel__description">
-                    {this.state.description}
+                    {p.labelDescription}
                 </span>
                 <Form
                     onSubmit={this.handleSubmit}
@@ -84,7 +70,7 @@ export class ConfirmationPanel extends React.Component<
                     <FormField
                         label=""
                         className="confirmation-panel__field"
-                        error={this.props.validationMessage}
+                        error={p.validationMessage}
                     >
                         <Password
                             name="password"
@@ -99,20 +85,20 @@ export class ConfirmationPanel extends React.Component<
                         {this.props.onCancel ? (
                             <Button
                                 className="confirmation-panel__cancel-button"
-                                onClick={this.props.onCancel}
+                                onClick={p.onCancel}
                                 color="violet"
                             >
-                                {this.state.cancelBtnLabel}
+                                {p.labelCancel}
                             </Button>
                         ) : null}
                         <Button
                             className="confirmation-panel__submit-button"
-                            disabled={this.props.onSubmit === undefined}
+                            disabled={p.onSubmit === undefined}
                             onClick={this.handleSubmit}
                             type="submit"
                             color="violet"
                         >
-                            {this.state.submitBtnLabel}
+                            {p.labelSubmit}
                         </Button>
                     </div>
                 </Form>

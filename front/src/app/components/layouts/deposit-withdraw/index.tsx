@@ -297,7 +297,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
             // ToDo a disabled={rootStore.mainStore.isOffline}
             <ConfirmationPanel
                 className="sonm-deposit-withdraw__password"
-                submitBtnLabel={this.props.title.toUpperCase()}
+                labelSubmit={this.props.title.toUpperCase()}
                 onSubmit={this.handleConfrim}
                 onCancel={this.handleCancel}
                 validationMessage={this.state.validationPassword}
