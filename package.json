@@ -1,7 +1,7 @@
 {
     "private": false,
     "name": "sonm-wallet",
-    "version": "2.0.0-prealpha",
+    "version": "2.0.0-alpha1-pecado",
     "description": "SONM Wallet",
     "main": "main.js",
     "directories": {},

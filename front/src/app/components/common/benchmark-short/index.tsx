@@ -46,7 +46,13 @@ export class BenchmarkShort extends React.PureComponent<
             'downloadNetSpeed',
             'uploadNetSpeed',
         ],
-        ['gpuRamSize', 'redshiftGpu', 'ethHashrate', 'zcashHashrate'],
+        [
+            'gpuCount',
+            'gpuRamSize',
+            'redshiftGpu',
+            'ethHashrate',
+            'zcashHashrate',
+        ],
     ];
 
     public static getDerivedStateFromProps(
@@ -76,7 +82,7 @@ export class BenchmarkShort extends React.PureComponent<
                     }
                 }
 
-                state.benchmarkString.push(line.join('/'));
+                state.benchmarkString.push(line.join(', '));
             }
 
             state.data = nextProps.data;

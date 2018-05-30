@@ -22,14 +22,14 @@ export class DWH {
     }
 
     public static readonly benchmarkMap: Array<[number, string]> = [
-        [2, 'cpuCount'],
-        [7, 'gpuCount'],
-        [3, 'ramSize'],
-        [4, 'storageSize'],
+        [2, 'cpuCount', 1],
+        [7, 'gpuCount', 1],
+        [3, 'ramSize', 1024 * 1024],
+        [4, 'storageSize', 1024 * 1024 * 1024],
         [11, 'redshiftGPU'],
         [10, 'zcashHashrate'],
         [9, 'ethHashrate'],
-        [8, 'gpuRamSize'],
+        [8, 'gpuRamSize', 1024 * 1024],
     ];
 
     public static readonly mapProfile: IDictionary<t.IProfileBrief> = {
@@ -99,7 +99,9 @@ export class DWH {
                     : null,
             country:
                 mongoLikeFilter.country && mongoLikeFilter.country.$in.length
-                    ? mongoLikeFilter.country.$in[0].toLowerCase()
+                    ? mongoLikeFilter.country.$in.map((item: string) =>
+                          item.toLowerCase(),
+                      )
                     : null,
             identityLevel:
                 !mongoLikeFilter.status || mongoLikeFilter.status.$gte <= 1
@@ -208,7 +210,7 @@ export class DWH {
                 typeof mongoLikeQuery.orderStatus.$eq === 'number'
                     ? mongoLikeQuery.orderStatus.$eq
                     : null,
-            price: this.getMinMaxFilter(mongoLikeQuery.price),
+            price: this.getMinMaxFilter(mongoLikeQuery.price, 'price'),
             benchmarks:
                 Object.keys(benchmarks).length !== 0 ? benchmarks : null,
             // end filter
@@ -246,11 +248,11 @@ export class DWH {
         return DWH.benchmarkMap
             .map(
                 ([i, name]) =>
-                    [i, name, this.getMinMaxFilter(benchmarkMap[name])] as [
-                        number,
-                        string,
-                        any
-                    ],
+                    [
+                        i,
+                        name,
+                        this.getMinMaxFilter(benchmarkMap[name], name),
+                    ] as [number, string, any],
             )
             .filter(([i, name, value]) => value !== null)
             .reduce(
@@ -262,12 +264,33 @@ export class DWH {
             );
     };
 
-    protected getMinMaxFilter = (value: any) => {
+    protected getMinMaxFilter = (value: any, name: string) => {
         if (value) {
             const types = ['string', 'number'];
-            const min = value.$gte;
-            const max = value.$lte;
+            let min = value.$gte;
+            let max = value.$lte;
             if (this.typeIn(min, types) && this.typeIn(max, types)) {
+                switch (name) {
+                    case 'price':
+                        min = new BN(min)
+                            .mul(new BN('1000000000000000000'))
+                            .div(new BN(3600))
+                            .toString();
+                        max = new BN(max)
+                            .mul(new BN('1000000000000000000'))
+                            .div(new BN(3600))
+                            .toString();
+                        break;
+                    default:
+                        const find = DWH.benchmarkMap.find(
+                            item => item[1] === name,
+                        );
+                        if (find) {
+                            min = min * (find[2] as number);
+                            max = max * (find[2] as number);
+                        }
+                        break;
+                }
                 return {
                     min,
                     max,

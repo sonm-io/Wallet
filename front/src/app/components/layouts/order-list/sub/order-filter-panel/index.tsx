@@ -141,69 +141,52 @@ export class OrderFilterPanel extends React.Component<
                     />
 
                     {/* Redshift */}
-                    <h3 className="order-filter-panel__header">
-                        Redshift benchmark
-                    </h3>
-                    <Input
-                        name="redshiftFrom"
-                        prefix="from"
-                        value={this.props.redshiftFrom}
-                        onChange={this.handleChangeInput}
-                    />
-                    <Input
-                        name="redshiftTo"
-                        prefix="to"
-                        value={this.props.redshiftTo}
-                        onChange={this.handleChangeInput}
-                    />
-                    {/* ETH */}
-                    <h3 className="order-filter-panel__header">ETH hashrate</h3>
-                    <Input
-                        name="ethFrom"
-                        prefix="from"
-                        value={this.props.ethFrom}
-                        onChange={this.handleChangeInput}
-                    />
-                    <Input
-                        name="ethTo"
-                        prefix="to"
-                        value={this.props.ethTo}
-                        onChange={this.handleChangeInput}
-                    />
+                    {/*<h3 className="order-filter-panel__header">*/}
+                    {/*Redshift benchmark*/}
+                    {/*</h3>*/}
+                    {/*<Input*/}
+                    {/*name="redshiftFrom"*/}
+                    {/*prefix="from"*/}
+                    {/*value={this.props.redshiftFrom}*/}
+                    {/*onChange={this.handleChangeInput}*/}
+                    {/*/>*/}
+                    {/*<Input*/}
+                    {/*name="redshiftTo"*/}
+                    {/*prefix="to"*/}
+                    {/*value={this.props.redshiftTo}*/}
+                    {/*onChange={this.handleChangeInput}*/}
+                    {/*/>*/}
+                    {/*/!* ETH *!/*/}
+                    {/*<h3 className="order-filter-panel__header">ETH hashrate</h3>*/}
+                    {/*<Input*/}
+                    {/*name="ethFrom"*/}
+                    {/*prefix="from"*/}
+                    {/*value={this.props.ethFrom}*/}
+                    {/*onChange={this.handleChangeInput}*/}
+                    {/*/>*/}
+                    {/*<Input*/}
+                    {/*name="ethTo"*/}
+                    {/*prefix="to"*/}
+                    {/*value={this.props.ethTo}*/}
+                    {/*onChange={this.handleChangeInput}*/}
+                    {/*/>*/}
 
-                    {/* Zcash */}
-                    <h3 className="order-filter-panel__header">
-                        ZCash hashrate
-                    </h3>
-                    <Input
-                        name="zcashFrom"
-                        prefix="from"
-                        value={this.props.zcashFrom}
-                        onChange={this.handleChangeInput}
-                    />
-                    <Input
-                        name="zcashTo"
-                        prefix="to"
-                        value={this.props.zcashTo}
-                        onChange={this.handleChangeInput}
-                    />
-
-                    {/* VRAM size */}
-                    <h3 className="order-filter-panel__header">
-                        GPU RAM size, GB
-                    </h3>
-                    <Input
-                        name="gpuRamSizeFrom"
-                        prefix="from"
-                        value={this.props.gpuRamSizeFrom}
-                        onChange={this.handleChangeInput}
-                    />
-                    <Input
-                        name="gpuRamSizeTo"
-                        prefix="to"
-                        value={this.props.gpuRamSizeTo}
-                        onChange={this.handleChangeInput}
-                    />
+                    {/*/!* Zcash *!/*/}
+                    {/*<h3 className="order-filter-panel__header">*/}
+                    {/*ZCash hashrate*/}
+                    {/*</h3>*/}
+                    {/*<Input*/}
+                    {/*name="zcashFrom"*/}
+                    {/*prefix="from"*/}
+                    {/*value={this.props.zcashFrom}*/}
+                    {/*onChange={this.handleChangeInput}*/}
+                    {/*/>*/}
+                    {/*<Input*/}
+                    {/*name="zcashTo"*/}
+                    {/*prefix="to"*/}
+                    {/*value={this.props.zcashTo}*/}
+                    {/*onChange={this.handleChangeInput}*/}
+                    {/*/>*/}
 
                     {/* CPU count */}
                     <h3 className="order-filter-panel__header">CPU count</h3>
@@ -247,6 +230,22 @@ export class OrderFilterPanel extends React.Component<
                         name="ramSizeTo"
                         prefix="to"
                         value={this.props.ramSizeTo}
+                        onChange={this.handleChangeInput}
+                    />
+                    {/* VRAM size */}
+                    <h3 className="order-filter-panel__header">
+                        GPU RAM size, MB
+                    </h3>
+                    <Input
+                        name="gpuRamSizeFrom"
+                        prefix="from"
+                        value={this.props.gpuRamSizeFrom}
+                        onChange={this.handleChangeInput}
+                    />
+                    <Input
+                        name="gpuRamSizeTo"
+                        prefix="to"
+                        value={this.props.gpuRamSizeTo}
                         onChange={this.handleChangeInput}
                     />
 

@@ -311,6 +311,22 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
                     parseFloat(this.ramSizeFrom),
                     parseFloat(this.ramSizeTo),
                 ),
+                gpuRamSize: this.getGteLte(
+                    parseFloat(this.gpuRamSizeFrom),
+                    parseFloat(this.gpuRamSizeTo),
+                ),
+                redshiftGpu: this.getGteLte(
+                    parseFloat(this.redshiftFrom),
+                    parseFloat(this.redshiftTo),
+                ),
+                ethHashrate: this.getGteLte(
+                    parseFloat(this.ethFrom),
+                    parseFloat(this.ethTo),
+                ),
+                zcashHashrate: this.getGteLte(
+                    parseFloat(this.zcashFrom),
+                    parseFloat(this.zcashTo),
+                ),
                 storageSize: this.getGteLte(
                     parseFloat(this.storageSizeFrom),
                     parseFloat(this.storageSizeTo),
