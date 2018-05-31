@@ -6,6 +6,11 @@ Checked:
 
     <ToggleButton title="title" value={true} />
 
+Disabled:
+
+    <ToggleButton title="with true value"  value={true}  disabled />
+    <ToggleButton title="with false value" value={false} disabled />
+
 Group:
 
     <div>

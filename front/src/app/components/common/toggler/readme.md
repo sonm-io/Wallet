@@ -32,3 +32,10 @@ With title and title before in one group (try to change them):
         <Toggler groupName="toggler3" title="Novice"/> |
         <Toggler groupName="toggler3" title="Expert" titleBefore />
     </div>
+
+### Disabled
+
+Disabled with true and fable value:
+
+ <Toggler title="disabled toggler with true value" value={true}   disabled />
+<Toggler title="disabled toggler with false value" value={false} disabled />

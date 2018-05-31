@@ -21,6 +21,7 @@ export class ToggleButton extends React.Component<IToggleButtonProps, never> {
             <label className={cn('toggle-button', this.props.className)}>
                 <input
                     className="toggle-button__radio"
+                    disabled={this.props.disabled}
                     type={this.props.groupName ? 'radio' : 'checkbox'}
                     name={
                         this.props.groupName
