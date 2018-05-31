@@ -314,7 +314,7 @@ export class DWH {
     }
 
     private parseDuration(duration: number) {
-        return Math.round((100 * duration) / 3600) / 100;
+        return Math.round(100 * duration / 3600) / 100;
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
