@@ -1,3 +1,0 @@
-DepositWithdrawSuccess:
-
-    <DepositWithdrawSuccess/>;
