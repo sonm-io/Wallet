@@ -17,6 +17,7 @@ export interface IMultiSelectOptionalProps {
     className: string;
     nameIndex: string;
     filterPlaceHolder: string;
+    disabled: boolean;
 }
 
 export type IMultiSelectAllProps<T> = IMultiSelectRequiredProps<T> &

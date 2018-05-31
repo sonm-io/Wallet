@@ -19,6 +19,7 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
         className: '',
         nameIndex: '',
         filterPlaceHolder: '',
+        disabled: false,
     };
 
     public constructor(props: IMultiSelectProps<T>) {
@@ -121,6 +122,7 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
                     onButtonClick={this.handleClickButton}
                     hasBalloon
                     isExpanded={this.state.isExpanded}
+                    disabled={this.props.disabled}
                 >
                     <div className="multiselect__popup">
                         <div className="multiselect__input-container">
@@ -129,6 +131,7 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
                                 name="filter"
                                 onChange={this.handleChangeFilter}
                                 placeholder={p.filterPlaceHolder}
+                                disabled={this.props.disabled}
                             />
                         </div>
 
@@ -144,6 +147,7 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
                                         title={name}
                                         value={valueNames.indexOf(name) !== -1}
                                         onChange={this.handleChangeCheckbox}
+                                        disabled={this.props.disabled}
                                     />
                                 );
                             })}
@@ -164,6 +168,7 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
                     <button
                         className="multiselect__clear-button"
                         onClick={this.handleClickClear}
+                        disabled={this.props.disabled}
                     >
                         <Icon i="Close" className="multiselect__clear-icon" />
                     </button>
