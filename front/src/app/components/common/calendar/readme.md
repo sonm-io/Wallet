@@ -6,7 +6,11 @@ calendar:
 
     <Calendar value={new Date(2020, 0, 20)} targetDate={new Date(2020, 0, 7)} name="1" onChange={e => console.log(JSON.stringify(e))}/>
 
-calendar:
+disabled:
+
+    <Calendar disabled value={new Date(2020, 0, 20)} targetDate={new Date(2020, 0, 7)} name="1" onChange={e => console.log(JSON.stringify(e))}/>
+
+disableBefore:
 
     <Calendar
         value={new Date(2020, 0, 15)}
@@ -14,7 +18,7 @@ calendar:
         name="1"
         onChange={e => console.log(JSON.stringify(e))}/>
 
-calendar:
+disableAfter:
 
     <Calendar
         value={new Date(2020, 0, 15)}

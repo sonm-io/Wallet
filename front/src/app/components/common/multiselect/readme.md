@@ -43,6 +43,7 @@ Multiselect:
             value={toJS(state.value)}
             // events
             onChange={state.onChange}
+            disabled={false}
         />
     );
 

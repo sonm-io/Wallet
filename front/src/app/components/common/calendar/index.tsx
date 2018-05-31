@@ -120,6 +120,7 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
         targetDate: undefined,
         visibleMonth: undefined,
         visibleYear: undefined,
+        disabled: false,
         disableAfter: undefined,
         disableBefore: undefined,
     };
@@ -150,6 +151,7 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
         visibleMonth: propTypes.number,
         visibleYear: propTypes.number,
         valueToString: propTypes.func,
+        disabled: propTypes.bool,
         disableAfter: valuePropType,
         disableBefore: valuePropType,
     };
@@ -287,7 +289,11 @@ export class Calendar extends React.PureComponent<ICalendarProps, any> {
                         type="button"
                         key={monthDate}
                         value={monthDate}
-                        onClick={disabled ? undefined : this.handleClickDay}
+                        onClick={
+                            disabled || props.disabled
+                                ? undefined
+                                : this.handleClickDay
+                        }
                         className={cn(
                             cssClasses.day,
                             day,

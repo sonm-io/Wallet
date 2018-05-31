@@ -38,12 +38,14 @@ export class Toggler extends React.PureComponent<ITogglerProps, never> {
             value,
             title,
             titleBefore,
+            disabled,
             cssClasses = Toggler.defaultProps.cssClasses,
         } = this.props;
 
         const content = [
             <input
                 key="a"
+                disabled={disabled}
                 name={groupName || name}
                 type={groupName ? 'radio' : 'checkbox'}
                 className={cssClasses.input}
