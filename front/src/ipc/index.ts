@@ -28,9 +28,7 @@ export class IPC implements InterfaceIPC {
     constructor(params: IIpcCtrArguments = {}) {
         const { worker = self, errorMessageMap = {} } = params;
 
-        if (typeof Worker === 'function' && !(worker instanceof Worker)) {
-            throw new Error('worker is not IWorker implementation');
-        } else if (!worker.postMessage) {
+        if (!worker.postMessage) {
             throw new Error('worker is not IWorker implementation');
         }
 
