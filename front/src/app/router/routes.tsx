@@ -117,7 +117,9 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
             return {
                 content: (
                     <App
-                        className={params.props.className}
+                        className={
+                            params.props ? params.props.className : undefined
+                        }
                         breadcrumbs={breadcrumbs}
                         onNavigate={navigateTo}
                         onExit={reload}
