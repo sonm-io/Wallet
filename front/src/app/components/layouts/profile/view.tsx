@@ -39,8 +39,6 @@ export class ProfileView extends React.PureComponent<IProps, never> {
     public render() {
         const p = this.props;
 
-        debugger;
-
         return (
             <div className={cn('sonm-profile', p.className)} style={p.style}>
                 <div className="sonm-profile__column">

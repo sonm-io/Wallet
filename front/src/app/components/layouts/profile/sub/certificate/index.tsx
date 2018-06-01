@@ -5,7 +5,7 @@ import { ProfileStatus } from 'app/components/common/profile-status/index';
 
 export interface ICertificateProps {
     className?: string;
-    service: string;
+    serviceName: string;
     status: EnumProfileStatus;
 }
 
@@ -34,7 +34,9 @@ export class Certificate extends React.Component<ICertificateProps, any> {
                     className="sonm-certificate__status"
                     status={p.status}
                 />
-                <div className="sonm-certificate__service">by {p.service}</div>
+                <div className="sonm-certificate__service">
+                    by {p.serviceName}
+                </div>
                 <div
                     className={`sonm-certificate__logo sonm-certificate__logo--${style}`}
                 />

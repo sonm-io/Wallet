@@ -126,6 +126,7 @@ export class DWH {
         const certificates = res.Certificates
             ? JSON.parse(res.Certificates)
             : [];
+        // const certificateMap: any = {};
         const attrMap: any = {};
         const attributes = certificates
             .map((x: any) => {
@@ -152,6 +153,11 @@ export class DWH {
             ...brief,
             attributes,
             description,
+            certificates: (certificates.map((x: any) => {
+                console.log(atob(x.value));
+                debugger;
+            }),
+            []),
         };
     };
 
@@ -350,7 +356,7 @@ export class DWH {
     }
 
     private parseDuration(duration: number) {
-        return Math.round(100 * duration / 3600) / 100;
+        return Math.round((100 * duration) / 3600) / 100;
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {

@@ -13,6 +13,7 @@ import {
     IOrderParams,
     IAccountBrief,
     IBenchmarkMap,
+    ICertificate,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -67,6 +68,14 @@ export const TypeAttribute = createStruct<IAttribute>(
     'IAttribute',
 );
 
+export const TypeCertifcate = createStruct<ICertificate>(
+    {
+        serviceName: t.String,
+        status: t.Number,
+    },
+    'ICertificate',
+);
+
 export const TypeProfileFull = createStruct<IProfileFull>(
     {
         attributes: t.list(TypeAttribute),
@@ -79,6 +88,7 @@ export const TypeProfileFull = createStruct<IProfileFull>(
         country: t.String,
         logoUrl: t.String,
         description: t.String,
+        certificates: t.list(TypeCertifcate),
     },
     'IProfileFull',
 );

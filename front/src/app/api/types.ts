@@ -121,6 +121,12 @@ export interface IProfileBrief extends IAccountBrief {
 export interface IProfileFull extends IProfileBrief {
     attributes: Array<IAttribute>;
     description: string;
+    certificates: Array<ICertificate>;
+}
+
+export interface ICertificate {
+    status: EnumProfileStatus;
+    serviceName: string;
 }
 
 export interface IListResult<T> {

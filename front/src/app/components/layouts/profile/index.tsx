@@ -28,6 +28,7 @@ export class Profile extends React.PureComponent<IProps, IState> {
         country: '',
         logoUrl: '',
         description: '',
+        certificates: [],
     };
 
     public state = {
@@ -52,10 +53,10 @@ export class Profile extends React.PureComponent<IProps, IState> {
 
         return (
             <ProfileView
+                certificates={profile.certificates}
                 getUiText={returnFirstArg}
                 className={props.className}
                 definitionList={profile.attributes}
-                certificates={[]}
                 description={profile.description}
                 consumerDeals="0"
                 consumerAvgTime="1"
