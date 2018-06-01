@@ -155,7 +155,7 @@ export class DealView extends React.Component<IProps, never> {
                             className="sonm-deal__column-right__price-duration--price"
                             balance={p.price}
                             decimalPointOffset={18}
-                            decimalDigitAmount={2}
+                            decimalDigitAmount={4}
                             symbol="USD/h"
                         />
                         <div className="sonm-deal__column-right__price-duration--duration">
