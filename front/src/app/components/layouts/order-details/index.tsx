@@ -14,7 +14,7 @@ import Benchmark from '../../common/benchmark/index';
 interface IProps {
     className?: string;
     orderId: string;
-    onNavigateToDealList: () => {};
+    onCompleteBuyingOrder: () => {};
 }
 
 interface IState {
@@ -62,7 +62,7 @@ export class OrderDetails extends React.Component<IProps, IState> {
         await orderDetailsStore.submit();
 
         if (orderDetailsStore.validationPassword === '') {
-            this.props.onNavigateToDealList();
+            this.props.onCompleteBuyingOrder();
         }
     };
 

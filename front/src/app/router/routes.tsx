@@ -14,6 +14,7 @@ import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
+import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
 
 import * as React from 'react';
 
@@ -58,12 +59,16 @@ const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
 const navigateToDeals = () => navigate({ path: '/market/deals' });
+const navigateToOrders = () => navigate({ path: `/market/orders` });
 const navigateToOrdersByAddress = (creatorAddress: string) =>
     navigate({ path: `/market/orders`, query: { creatorAddress } });
 const navigateToOrder = (orderId: string, creatorAddress: string = '') =>
     navigate({
         path: `/market/orders/${orderId}`,
     });
+const navigateToOrderBuySuccess = () =>
+    navigate({ path: `/market/orders/complete-buy` });
+const navigateToMarkets = () => {};
 
 function reload() {
     window.location.reload(true);
@@ -474,6 +479,21 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         ),
                         children: [
                             {
+                                breadcrumbTitle: '',
+                                path: '/complete-buy',
+                                action: async (ctx: IContext) => ({
+                                    content: (
+                                        <OrderCompleteBuy
+                                            onClickDeals={navigateToDealList}
+                                            onClickMarket={navigateToMarkets}
+                                            onClickOrders={navigateToOrders}
+                                        />
+                                    ),
+                                    browserTabTitle: 'Order buy success',
+                                    pageTitle: 'Order buy success',
+                                }),
+                            },
+                            {
                                 breadcrumbTitle: 'Order details',
                                 path: '/:orderId',
                                 action: async (
@@ -485,8 +505,8 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     content: (
                                         <OrderDetails
                                             orderId={params.orderId}
-                                            onNavigateToDealList={
-                                                navigateToDealList
+                                            onCompleteBuyingOrder={
+                                                navigateToOrderBuySuccess
                                             }
                                         />
                                     ),
