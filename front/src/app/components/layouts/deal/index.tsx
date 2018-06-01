@@ -3,7 +3,7 @@ import { DealView } from './view';
 import { Api } from 'app/api/';
 import { IDeal } from 'app/api/types';
 import { rootStore } from 'app/stores';
-import { localizator } from 'app/localization';
+import { observer } from 'mobx-react';
 
 interface IProps {
     className?: string;
@@ -17,7 +17,8 @@ interface IState {
     validationMessage: string;
 }
 
-export class Deal extends React.PureComponent<IProps, IState> {
+@observer
+export class Deal extends React.Component<IProps, IState> {
     protected static readonly emptyDeal: IDeal = {
         id: '0',
         supplier: {
@@ -75,19 +76,13 @@ export class Deal extends React.PureComponent<IProps, IState> {
     }
 
     public handleFinishDeal = async (password: string) => {
-        const { validation } = await Api.deal.close(
-            rootStore.marketStore.marketAccountAddress,
-            password,
-            this.state.deal.id,
-        );
+        const dealId = this.props.id;
+        const dealDetailsStore = rootStore.dealDetailsStore;
 
-        if (validation) {
-            this.setState({
-                validationMessage: localizator.getMessageText(
-                    validation.password,
-                ),
-            });
-        } else {
+        dealDetailsStore.updateUserInput({ dealId, password });
+        await dealDetailsStore.submit();
+
+        if (dealDetailsStore.validationPassword === '') {
             this.props.onNavigateToDeals();
         }
     };
@@ -136,7 +131,9 @@ export class Deal extends React.PureComponent<IProps, IState> {
                 showConfirmationPanel={this.state.showConfirmationPanel}
                 onShowConfirmationPanel={this.handleShowConfirmationPanel}
                 onHideConfirmationPanel={this.handleHideConfirmationPanel}
-                validationMessage={this.state.validationMessage}
+                validationPassword={
+                    rootStore.dealDetailsStore.validationPassword
+                }
             />
         );
     }

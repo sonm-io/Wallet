@@ -149,6 +149,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                     name="deals-active"
                     value={this.props.filterStore.onlyActive}
                     onChange={this.props.handleChangeActive}
+                    disabled
                 />
                 <DealTable
                     className="sonm-deals__table"

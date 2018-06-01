@@ -33,7 +33,7 @@ interface IProps {
     onShowConfirmationPanel: () => void;
     onHideConfirmationPanel: () => void;
     showConfirmationPanel: boolean;
-    validationMessage: string;
+    validationPassword: string;
 }
 
 export class DealView extends React.Component<IProps, never> {
@@ -125,7 +125,7 @@ export class DealView extends React.Component<IProps, never> {
                                         this.props.onHideConfirmationPanel
                                     }
                                     validationMessage={
-                                        this.props.validationMessage
+                                        this.props.validationPassword
                                     }
                                 />
                             </div>
