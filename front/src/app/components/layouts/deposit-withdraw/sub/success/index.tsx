@@ -39,7 +39,7 @@ export class DepositWithdrawSuccess extends React.PureComponent<IProps, any> {
                 >
                     <div className="sonm-send-success__icon-history" />
                     <div className="sonm-send-success__label">
-                        View deposit&withdraw history
+                        View deposit & withdraw history
                     </div>
                 </button>
                 <button

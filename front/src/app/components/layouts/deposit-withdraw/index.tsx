@@ -258,7 +258,9 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                 <dl className="deposit-withdraw__you-get">
                     <dt className="deposit-withdraw__you-get-label">You get</dt>
                     <dd>
-                        {this.store.userInput.amountEther} {currency.symbol}
+                        {this.store.amount === ''
+                            ? '- - -'
+                            : `${this.store.amount} ${currency.symbol}`}
                     </dd>
                 </dl>
                 <dl className="deposit-withdraw__commission">
