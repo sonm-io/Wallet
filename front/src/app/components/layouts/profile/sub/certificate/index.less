@@ -1,2 +1,58 @@
+@import 'guide.less';
+
+@sonmCertificateBgColor: @color-white;
+@sonmCertificatePadding: 15px;
+
 .sonm-certificate {
+    margin: 0 5px 0 0;
+    padding: @sonmCertificatePadding;
+    box-shadow: @shadow;
+    min-height: 40px;
+    min-width: 100px;
+    border: 1px solid @color-border;
+    display: inline-block !important;
+    position: relative;
+    overflow-y: hidden;
+    background-color: @sonmCertificateBgColor;
+
+    --certificate-color: @color-font-gray;
+
+    &&--anon {
+        --certificate-color: @color-font-gray;
+    }
+
+    &&--reg {
+        --certificate-color: @color-orange;
+    }
+
+    &&--ident {
+        --certificate-color: @color-green;
+    }
+
+    &&--pro {
+        --certificate-color: @color-blue;
+    }
+
+    &__logo {
+        position: absolute;
+        top: 0;
+        right: @sonmCertificatePadding;
+        background-color: ~'var(--certificate-color)';
+        width: 17px;
+        height: 40px;
+
+        &:after {
+            content: '';
+            width: 25px;
+            height: 25px;
+            position: absolute;
+            bottom: -5px;
+            transform: translate(-16%, 15px) rotateZ(45deg);
+            background-color: @sonmCertificateBgColor;
+        }
+    }
+
+    &__status {
+        margin: 0 50px 10px 0;
+    }
 }
