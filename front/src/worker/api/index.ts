@@ -846,7 +846,13 @@ class Api {
     };
 
     public buyOrder = async (data: t.IPayload): Promise<t.IResponse> => {
-        if (data.address && data.id && data.password) {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.id && data.password) {
             return this.getMethod('buyOrder', [data.id], 'private')(data);
         } else {
             throw new Error('required_params_missed');
@@ -854,7 +860,13 @@ class Api {
     };
 
     public closeDeal = async (data: t.IPayload): Promise<t.IResponse> => {
-        if (data.address && data.id && data.password) {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.id && data.password) {
             return this.getMethod('closeDeal', [data.id], 'private')(data);
         } else {
             throw new Error('required_params_missed');

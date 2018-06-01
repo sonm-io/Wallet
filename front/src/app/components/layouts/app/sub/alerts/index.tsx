@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Alert } from 'app/components/common/alert';
-import { Hash } from 'app/components/common/hash-view';
 import { IAlert } from 'app/stores/types';
 
 interface IProps {
@@ -14,30 +13,6 @@ export class AlertList extends React.Component<IProps, never> {
         this.props.onCloseAlert(id);
     };
 
-    protected getText(alert: IAlert): any[] {
-        let idx = 0;
-        const msg = alert.message;
-        const result: any[] = [];
-
-        msg.replace(/0x[0-9a-zA-Z]+/gi, function(value, position) {
-            result.push(msg.slice(idx, position));
-            result.push(
-                <Hash
-                    key={value}
-                    hash={value}
-                    hasCopyButton
-                    className="sonm-alert-list__hash"
-                />,
-            );
-            idx = position + value.length;
-
-            return '';
-        });
-        result.push(msg.slice(idx, msg.length));
-
-        return result;
-    }
-
     public render() {
         return (
             <div className="sonm-alert-list__ct">
@@ -50,7 +25,7 @@ export class AlertList extends React.Component<IProps, never> {
                             id={alert.id}
                             onClosed={this.handleCloseAlert}
                         >
-                            {this.getText(alert)}
+                            {alert.message}
                         </Alert>
                     ))}
                 </div>

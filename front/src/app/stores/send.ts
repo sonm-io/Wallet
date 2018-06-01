@@ -240,7 +240,11 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     public get amount() {
-        return this.userInput.amountEther;
+        if (this.validationAmount.length === 0) {
+            return this.userInput.amountEther;
+        }
+
+        return '';
     }
 
     @computed

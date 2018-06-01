@@ -122,6 +122,9 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
             return {
                 content: (
                     <App
+                        className={
+                            params.props ? params.props.className : undefined
+                        }
                         breadcrumbs={breadcrumbs}
                         onNavigate={navigateTo}
                         onExit={reload}
@@ -416,6 +419,10 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             ),
                                             browserTabTitle: 'Withdraw',
                                             pageTitle: 'Withdraw',
+                                            props: {
+                                                className:
+                                                    'sonm-app--confirmation-bg',
+                                            },
                                         }),
                                     },
                                     {

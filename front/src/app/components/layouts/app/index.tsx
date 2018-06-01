@@ -6,6 +6,7 @@ import { AppView } from './view';
 import { IAccount } from './sub/account-select/index';
 
 interface IProps {
+    className?: string;
     children: any;
     path: string;
     onNavigate: (url: string) => void;
@@ -33,9 +34,7 @@ export class App extends React.Component<IProps, never> {
 
         return (
             <AppView
-                className={
-                    p.path.endsWith('/confirm') ? 'sonm-app--confirmation' : ''
-                }
+                className={p.className}
                 path=""
                 onNavigate={p.onNavigate}
                 onExit={p.onExit}

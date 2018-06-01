@@ -1,146 +1,100 @@
-@import 'sub/confirm/index.less';
-@import './antd.less';
+// Mixins
+.deposit-withdraw__label-font {
+    color: @color-light-font;
+    font-size: 13px;
+    font-weight: 700;
+}
 
-.sonm-deposit-withdraw {
+// Block
+.deposit-withdraw {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 30px 100px 1fr 80px;
-    grid-column-gap: 50px;
+    grid:
+        'header     header     header    header        header  header' 1fr
+        'account    account    account   account       account account'
+        'amount     amount     amount    btn-max       gap     right'
+        'gas-limit  gas-price  gwei      btn-priority  gap     right'
+        'line       line       line      line          gap     right'
+        'you-get    comission  comission comission     gap     right'
+        / 2fr 2fr 1fr 2fr 80px 7fr;
 
+    // Header
     &__header {
-        grid-column: 1;
-        grid-row: 1;
+        grid-area: header;
+        margin: 0 0 15px 0;
+        .deposit-withdraw__label-font;
     }
 
+    // Account
     &__account {
-        grid-column: 1;
-        grid-row: 2;
-        display: grid;
-        grid-template-columns: 100px min-content auto;
-        grid-template-rows: 1fr 1fr;
-        font-weight: normal;
-        padding: 10px;
-
-        &--span {
-            grid-column: 1 / span 2;
-            background-color: @color-light-gray-bg;
-        }
-
-        &-blockies {
-            margin: 10px;
-            grid-column: 1;
-            grid-row: 2 span;
-            align-self: center;
-        }
-
-        &-name {
-            font-weight: bold;
-            padding-top: 20px;
-            font-size: 20px;
-            grid-column: 2;
-            grid-row: 1;
-        }
-
-        &-addr {
-            font-size: 14px;
-            grid-column: 2;
-            grid-row: 2;
+        grid-area: account;
+        background-color: @color-gray-bg;
+        &--confirmation {
+            grid-area: account / span 7;
+            background-color: transparent;
         }
     }
 
-    &__values {
-        grid-column: 1;
-        grid-row: 3;
-
-        display: grid;
-        grid-template-columns: 180px 180px auto;
-        grid-template-rows: 1fr 1fr;
-        margin: 20px 0px 20px 0px;
-        grid-gap: 15px;
-
-        &-amount {
-            &-input {
-                grid-column: 1 / span 2;
-                grid-row: 1;
-            }
-
-            &-maximum {
-                grid-column: 3;
-                grid-row: 1;
-                text-transform: uppercase;
-                margin-top: 25px;
-                color: @color-green;
-                font-weight: bold;
-            }
-        }
-
-        &-gas-limit {
-            grid-column: 1;
-            grid-row: 2;
-        }
-
-        &-gas-price {
-            grid-column: 2;
-            grid-row: 2;
-        }
-
-        &-priority {
-            grid-column: 3;
-            grid-row: 2;
-            margin-top: 25px;
-            text-transform: capitalize;
-        }
+    //#region Amount
+    &__amount {
+        grid-area: amount;
+        margin: 45px 50px 0 0;
     }
-
-    &__commission {
-        grid-column: 1;
-        grid-row: 4;
-
-        &-grid {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            grid-template-rows: 1fr;
-            border-top: 2px solid @color-green;
-            padding-top: 20px;
-
-            dt {
-                color: @color-dark-gray;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-
-            &-left {
-                grid-column: 1;
-                grid-row: 1;
-            }
-
-            &-right {
-                grid-column: 2;
-                grid-row: 1;
-            }
-        }
+    &__btn-max {
+        grid-area: btn-max;
+        box-sizing: border-box;
+        width: 157px;
+        margin: auto 0 22px auto;
     }
+    //#endregion
 
-    &__password {
-        grid-column: 2;
-        grid-row: 2 / span 3;
-        padding: 30px 130px;
+    //#region Limit, Price, Priority
+    &__gas-limit {
+        grid-area: gas-limit;
+        margin: 0 48px 0 0;
     }
-
-    &__button-ct {
-        padding-top: 30px;
-        grid-column: 2;
-        grid-row: 4;
-        flex-grow: 1;
+    &__gas-price {
+        grid-area: gas-price;
+        margin: 0 5px 0 0;
+    }
+    &__gwei {
+        grid-area: gwei;
         display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
         align-items: center;
     }
-
-    &__button {
-        &--action {
-            margin: 0 0 0 100px;
-        }
+    &__btn-priority {
+        grid-area: btn-priority;
+        margin: auto 0 22px auto;
     }
+    //#endregion
+
+    //#region You get, Commission
+    &__line {
+        grid-area: line;
+        border-top: 2px solid @color-green;
+        margin: 62px 0 19px 0;
+    }
+    &__you-get {
+        grid-area: you-get;
+    }
+    &__you-get-label {
+        .deposit-withdraw__label-font;
+    }
+    &__commission {
+        grid-area: comission;
+    }
+    &__commission-label {
+        .deposit-withdraw__label-font;
+    }
+    //#endregion
+
+    //#region Right panel elements
+    &__next-button {
+        grid-area: right;
+        margin: auto 110px 20px auto;
+    }
+    &__confirmation-panel {
+        grid-area: amount / right / right / right;
+        padding: 20px 110px;
+    }
+    //#endregion
 }
