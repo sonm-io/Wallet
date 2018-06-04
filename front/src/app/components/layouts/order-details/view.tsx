@@ -75,6 +75,7 @@ export class OrderView extends React.Component<IProps, never> {
                         balance={p.order.price}
                         decimalPointOffset={18}
                         decimalDigitAmount={4}
+                        round
                     />
                 </div>
             </div>
