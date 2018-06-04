@@ -9,13 +9,13 @@
 .deposit-withdraw {
     display: grid;
     grid:
-        'header     header     header    header        header  header' 1fr
+        'header     header     header    header        header  header'
         'account    account    account   account       account account'
         'amount     amount     amount    btn-max       gap     right'
         'gas-limit  gas-price  gwei      btn-priority  gap     right'
         'line       line       line      line          gap     right'
-        'you-get    comission  comission comission     gap     right'
-        / 2fr 2fr 1fr 2fr 80px 7fr;
+        'you-get    comission  comission comission     gap     right' 65px
+        ~'/' 2fr 2fr 1fr 2fr 80px 7fr;
 
     // Header
     &__header {
