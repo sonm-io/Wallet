@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { DealView } from './view';
-import { Api } from 'app/api/';
-import { IDeal } from 'app/api/types';
 import { rootStore } from 'app/stores';
-import { localizator } from 'app/localization';
+import { observer } from 'mobx-react';
+import { ITogglerChangeParams } from '../../common/toggler';
 
 interface IProps {
     className?: string;
@@ -12,84 +11,40 @@ interface IProps {
 }
 
 interface IState {
-    deal: IDeal;
     showConfirmationPanel: boolean;
     validationMessage: string;
 }
 
-export class Deal extends React.PureComponent<IProps, IState> {
-    protected static readonly emptyDeal: IDeal = {
-        id: '0',
-        supplier: {
-            address: '0x1',
-            status: 1,
-            name: 'name 1',
-        },
-        consumer: {
-            address: '0x2',
-            status: 2,
-            name: 'name 2',
-        },
-        masterID: '',
-        askID: '',
-        bidID: '',
-        duration: 100,
-        price: '200',
-        status: 1,
-        blockedBalance: '200',
-        totalPayout: '100',
-        startTime: 121212,
-        endTime: 21121212,
-        timeLeft: 1.5,
-        benchmarkMap: {
-            cpuSysbenchMulti: 1000,
-            cpuSysbenchOne: 2000,
-            cpuCount: 2,
-            gpuCount: 2,
-            ethHashrate: 35,
-            ramSize: 8192,
-            storageSize: 100000,
-            downloadNetSpeed: 2.5,
-            uploadNetSpeed: 2.5,
-            gpuRamSize: 4912,
-            zcashHashrate: 12,
-            redshiftGpu: 15,
-        },
-    };
-
+@observer
+export class Deal extends React.Component<IProps, IState> {
     public state = {
-        deal: Deal.emptyDeal,
         showConfirmationPanel: false,
         validationMessage: '',
     };
 
     public componentDidMount() {
-        this.fetchData();
-    }
+        const dealDetailsStore = rootStore.dealDetailsStore;
 
-    protected async fetchData() {
-        const deal = await Api.deal.fetchById(this.props.id);
-        this.setState({
-            deal,
-        });
+        dealDetailsStore.updateUserInput({ dealId: this.props.id });
+        dealDetailsStore.fetchData();
     }
 
     public handleFinishDeal = async (password: string) => {
-        const { validation } = await Api.deal.close(
-            rootStore.marketStore.marketAccountAddress,
-            password,
-            this.state.deal.id,
-        );
+        const dealId = this.props.id;
+        const dealDetailsStore = rootStore.dealDetailsStore;
 
-        if (validation) {
-            this.setState({
-                validationMessage: localizator.getMessageText(
-                    validation.password,
-                ),
-            });
-        } else {
+        dealDetailsStore.updateUserInput({ dealId, password });
+        await dealDetailsStore.submit();
+
+        if (dealDetailsStore.validationPassword === '') {
             this.props.onNavigateToDeals();
         }
+    };
+
+    public handleChangeCheckbox = (params: ITogglerChangeParams) => {
+        rootStore.dealDetailsStore.updateUserInput({
+            isBlacklisted: params.value,
+        });
     };
 
     public handleShowConfirmationPanel = () => {
@@ -105,7 +60,8 @@ export class Deal extends React.PureComponent<IProps, IState> {
     };
 
     public render() {
-        const deal = this.state.deal;
+        const dealDetailsStore = rootStore.dealDetailsStore;
+        const deal = dealDetailsStore.dealBrief;
         const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
         const isOwner =
             deal.supplier.address.toLowerCase() === marketAccount ||
@@ -136,7 +92,11 @@ export class Deal extends React.PureComponent<IProps, IState> {
                 showConfirmationPanel={this.state.showConfirmationPanel}
                 onShowConfirmationPanel={this.handleShowConfirmationPanel}
                 onHideConfirmationPanel={this.handleHideConfirmationPanel}
-                validationMessage={this.state.validationMessage}
+                validationPassword={
+                    rootStore.dealDetailsStore.validationPassword
+                }
+                isBlacklisted={dealDetailsStore.isBlacklisted}
+                onChangeCheckbox={this.handleChangeCheckbox}
             />
         );
     }
