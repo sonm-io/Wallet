@@ -34,19 +34,23 @@
             grid-column: 1 / span 2;
         }
 
-        &__price-duration {
+        &__blacklist-checkbox {
+            padding-top: 20px;
+            grid-column: 1 / span 2;
             text-align: center;
-
-            &--price {
-                font-size: 25px;
-                margin-bottom: 10px;
-            }
-
-            &--duration {
-                font-size: 22px;
-                color: @color-font-gray;
-            }
         }
+    }
+
+    &--price {
+        text-align: center;
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+
+    &--duration {
+        font-size: 22px;
+        text-align: center;
+        color: @color-font-gray;
     }
 
     &__header {

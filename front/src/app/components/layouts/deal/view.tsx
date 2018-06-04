@@ -7,8 +7,10 @@ import * as moment from 'moment';
 import { ProfileBrief } from 'app/components/common/profile-brief';
 import { Button } from 'app/components/common/button';
 import { Balance } from 'app/components/common/balance-view';
+import { Checkbox } from 'app/components/common/checkbox';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
+import { ITogglerChangeParams } from '../../common/toggler';
 
 interface IProps {
     className?: string;
@@ -32,8 +34,10 @@ interface IProps {
     onFinishDeal: (password: string) => void;
     onShowConfirmationPanel: () => void;
     onHideConfirmationPanel: () => void;
+    onChangeCheckbox: (value: ITogglerChangeParams) => void;
     showConfirmationPanel: boolean;
     validationPassword: string;
+    isBlacklisted: boolean;
 }
 
 export class DealView extends React.Component<IProps, never> {
@@ -94,21 +98,21 @@ export class DealView extends React.Component<IProps, never> {
             <div className={cn('sonm-deal', p.className)}>
                 <div className="sonm-deal__column-left">
                     <div className="sonm-deal__column-left__consumer">
-                        <div className="sonm-deal__header">Consumer</div>
+                        <header className="sonm-deal__header">Consumer</header>
                         <ProfileBrief
                             profile={p.consumer}
                             showBalances={false}
                         />
                     </div>
                     <div className="sonm-deal__colum-left__supplier">
-                        <div className="sonm-deal__header">Supplier</div>
+                        <header className="sonm-deal__header">Supplier</header>
                         <ProfileBrief
                             profile={p.supplier}
                             showBalances={false}
                         />
                     </div>
                     <div className="sonm-deal__column-left__details">
-                        <div className="sonm-deal__header">Details</div>
+                        <header className="sonm-deal__header">Details</header>
                         <PropertyList
                             dataSource={p.propertyList}
                             config={this.config}
@@ -128,6 +132,15 @@ export class DealView extends React.Component<IProps, never> {
                                         this.props.validationPassword
                                     }
                                 />
+                                <div className="sonm-deal__column-right__blacklist-checkbox">
+                                    <Checkbox
+                                        title="Add user to blacklist"
+                                        titleBefore
+                                        name="isBlacklisted"
+                                        onChange={this.props.onChangeCheckbox}
+                                        value={this.props.isBlacklisted}
+                                    />
+                                </div>
                             </div>
                         ) : (
                             <div className="sonm-deal__column-right__buttons">
@@ -142,23 +155,23 @@ export class DealView extends React.Component<IProps, never> {
                         )
                     ) : null}
                     <div className="sonm-deal__column-right__benchmarks">
-                        <div className="sonm-deal__header">
+                        <header className="sonm-deal__header">
                             Resource parameters
-                        </div>
+                        </header>
                         <Benchmark data={p.benchmarkMap} keys={[]} />
                     </div>
                     <div className="sonm-deal__column-right__price-duration">
-                        <div className="sonm-deal__header">
+                        <header className="sonm-deal__header">
                             Price and duration
-                        </div>
+                        </header>
                         <Balance
-                            className="sonm-deal__column-right__price-duration--price"
+                            className="sonm-deal__price"
                             balance={p.price}
                             decimalPointOffset={18}
                             decimalDigitAmount={4}
                             symbol="USD/h"
                         />
-                        <div className="sonm-deal__column-right__price-duration--duration">
+                        <div className="sonm-deal__duration">
                             {p.duration} hour(s)
                         </div>
                     </div>
