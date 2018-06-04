@@ -7,7 +7,7 @@ import {
     EnumOrderType,
 } from 'app/api/types';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app//stores';
+import { rootStore } from 'app/stores';
 import Benchmark from '../../common/benchmark/index';
 
 const orderDetailsStore = rootStore.orderDetailsStore;
@@ -15,7 +15,7 @@ const orderDetailsStore = rootStore.orderDetailsStore;
 interface IProps {
     className?: string;
     orderId: string;
-    onCompleteBuyingOrder: (order: IOrder) => {};
+    onCompleteBuyingOrder: () => {};
 }
 
 @observer
@@ -49,7 +49,7 @@ export class OrderDetails extends React.Component<IProps, never> {
         await orderDetailsStore.submit();
 
         if (orderDetailsStore.validationPassword === '') {
-            this.props.onCompleteBuyingOrder(this.order);
+            this.props.onCompleteBuyingOrder();
         }
     };
 

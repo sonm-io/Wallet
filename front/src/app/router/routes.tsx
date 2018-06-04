@@ -58,17 +58,17 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
-const navigateToDeals = () => navigate({ path: '/market/deals' });
 const navigateToOrders = () => navigate({ path: `/market/orders` });
+const navigateToOrdersSaveFilter = () =>
+    navigate({ path: `/market/orders`, query: { doNotResetFilter: true } });
 const navigateToOrdersByAddress = (creatorAddress: string) =>
     navigate({ path: `/market/orders`, query: { creatorAddress } });
 const navigateToOrder = (orderId: string, creatorAddress: string = '') =>
     navigate({
         path: `/market/orders/${orderId}`,
     });
-const navigateToOrderBuySuccess = () =>
-    navigate({ path: `/market/orders/complete-buy` });
-const navigateToMarkets = () => {};
+const navigateToCompleteBuyingOrder = () =>
+    navigate({ path: '/market/orders/complete-buy' });
 
 function reload() {
     window.location.reload(true);
@@ -479,6 +479,9 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                         filterByAddress={
                                             ctx.query.creatorAddress
                                         }
+                                        doNotResetFilter={
+                                            ctx.query.doNotResetFilter
+                                        }
                                         onNavigateToOrder={navigateToOrder}
                                     />
                                 ),
@@ -488,17 +491,23 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             {
                                 breadcrumbTitle: '',
                                 path: '/complete-buy',
-                                action: async (ctx: IContext) => ({
-                                    content: (
-                                        <OrderCompleteBuy
-                                            onClickDeals={navigateToDealList}
-                                            onClickMarket={navigateToMarkets}
-                                            onClickOrders={navigateToOrders}
-                                        />
-                                    ),
-                                    browserTabTitle: 'Order buy success',
-                                    pageTitle: 'Order buy success',
-                                }),
+                                action: async (ctx: IContext) => {
+                                    return {
+                                        content: (
+                                            <OrderCompleteBuy
+                                                onClickDeals={
+                                                    navigateToDealList
+                                                }
+                                                onClickMarket={
+                                                    navigateToOrdersSaveFilter
+                                                }
+                                                onClickOrders={navigateToOrders}
+                                            />
+                                        ),
+                                        browserTabTitle: 'Order buy success',
+                                        pageTitle: '',
+                                    };
+                                },
                             },
                             {
                                 breadcrumbTitle: 'Order details',
@@ -513,7 +522,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                         <OrderDetails
                                             orderId={params.orderId}
                                             onCompleteBuyingOrder={
-                                                navigateToOrderBuySuccess
+                                                navigateToCompleteBuyingOrder
                                             }
                                         />
                                     ),
@@ -530,7 +539,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             content: (
                                 <Deal
                                     id={params.id}
-                                    onNavigateToDeals={navigateToDeals}
+                                    onNavigateToDeals={navigateToDealList}
                                 />
                             ),
                         }),

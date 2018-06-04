@@ -8,6 +8,7 @@ const store = rootStore.ordersListStore;
 const filterStore = rootStore.orderFilterStore;
 
 interface IProps {
+    doNotResetFilter?: boolean;
     filterByAddress?: string;
     onNavigateToOrder: (orderId: string) => void;
 }
@@ -16,14 +17,23 @@ interface IProps {
 export class OrderList extends React.Component<IProps, never> {
     constructor(props: IProps) {
         super(props);
-        filterStore.setUserInput({
+        this.setOrUpdateFilter(props);
+    }
+
+    protected setOrUpdateFilter(props: IProps) {
+        const filter = {
             sellerAddress: props.filterByAddress || '',
             profileAddress: rootStore.marketStore.marketAccountAddress,
-        });
+        };
+        if (!props.doNotResetFilter) {
+            filterStore.setUserInput(filter);
+        } else {
+            filterStore.updateUserInput(filter);
+        }
     }
 
     public componentWillReceiveProps(next: IProps) {
-        filterStore.setUserInput({
+        filterStore.updateUserInput({
             sellerAddress: next.filterByAddress || '',
         });
     }
