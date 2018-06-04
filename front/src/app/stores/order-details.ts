@@ -1,16 +1,18 @@
 import { observable, computed, action } from 'mobx';
 import { OnlineStore, IErrorProcessor } from './online-store';
 import { ILocalizator } from 'app/localization';
-const { pending } = OnlineStore;
+const { pending, catchErrors } = OnlineStore;
 import { updateUserInput } from './utils/update-user-input';
 import { asyncAction } from 'mobx-utils';
 import { AlertType } from './types';
-import { IOrderParams } from 'app/api/types';
+import { IOrder, IOrderParams } from 'app/api/types';
 import { RootStore } from './';
+import { Api } from 'app/api';
 
 export interface IOrderDetailsInput {
     password: string;
     orderId: string;
+    order?: IOrder;
 }
 
 export interface IOrderDetailsStoreServices {
@@ -66,6 +68,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     public userInput: IOrderDetailsInput = {
         password: '',
         orderId: '',
+        order: undefined,
     };
 
     @observable
@@ -78,6 +81,19 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     public updateUserInput(values: Partial<IOrderDetailsInput>) {
         updateUserInput<IOrderDetailsInput>(this, values);
         this.serverValidation.password = '';
+        if (
+            this.orderId &&
+            (this.order === undefined || this.order.id !== this.orderId)
+        ) {
+            this.fetchOrder();
+        }
+    }
+
+    @catchErrors({ restart: false })
+    @asyncAction
+    public *fetchOrder() {
+        const order = yield Api.order.fetchById(this.orderId);
+        this.updateUserInput({ order });
     }
 
     @pending
@@ -170,6 +186,11 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     @computed
     public get orderId() {
         return this.userInput.orderId || '';
+    }
+
+    @computed
+    public get order() {
+        return this.userInput.order;
     }
 
     @computed

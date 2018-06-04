@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { OrderView } from './view';
-import { Api } from 'app/api';
 import {
     EnumOrderStatus,
     EnumProfileStatus,
@@ -11,18 +10,21 @@ import { observer } from 'mobx-react';
 import { rootStore } from 'app//stores';
 import Benchmark from '../../common/benchmark/index';
 
+const orderDetailsStore = rootStore.orderDetailsStore;
+
 interface IProps {
     className?: string;
     orderId: string;
-    onCompleteBuyingOrder: () => {};
-}
-
-interface IState {
-    order: IOrder;
+    onCompleteBuyingOrder: (order: IOrder) => {};
 }
 
 @observer
-export class OrderDetails extends React.Component<IProps, IState> {
+export class OrderDetails extends React.Component<IProps, never> {
+    constructor(props: IProps) {
+        super(props);
+        orderDetailsStore.updateUserInput({ orderId: this.props.orderId });
+    }
+
     public static emptyOrder: IOrder = {
         id: '0',
         orderType: EnumOrderType.any,
@@ -36,43 +38,26 @@ export class OrderDetails extends React.Component<IProps, IState> {
         benchmarkMap: Benchmark.emptyBenchmark,
     };
 
-    public state = {
-        order: OrderDetails.emptyOrder,
-    };
-
-    public componentDidMount() {
-        this.fetchData();
-    }
-
-    protected async fetchData() {
-        const order = await Api.order.fetchById(this.props.orderId);
-
-        (window as any).__order = order;
-
-        this.setState({
-            order,
-        });
+    protected get order() {
+        return orderDetailsStore.order || OrderDetails.emptyOrder;
     }
 
     public handleSubmit = async (password: string) => {
         const orderId = this.props.orderId;
-        const orderDetailsStore = rootStore.orderDetailsStore;
 
         orderDetailsStore.updateUserInput({ orderId, password });
         await orderDetailsStore.submit();
 
         if (orderDetailsStore.validationPassword === '') {
-            this.props.onCompleteBuyingOrder();
+            this.props.onCompleteBuyingOrder(this.order);
         }
     };
 
     public render() {
         return (
             <OrderView
-                order={this.state.order}
-                validationPassword={
-                    rootStore.orderDetailsStore.validationPassword
-                }
+                order={this.order}
+                validationPassword={orderDetailsStore.validationPassword}
                 onSubmit={this.handleSubmit}
             />
         );
