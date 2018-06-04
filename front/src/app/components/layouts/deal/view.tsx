@@ -98,21 +98,21 @@ export class DealView extends React.Component<IProps, never> {
             <div className={cn('sonm-deal', p.className)}>
                 <div className="sonm-deal__column-left">
                     <div className="sonm-deal__column-left__consumer">
-                        <header className="sonm-deal__header">Consumer</header>
+                        <h4 className="sonm-deal__header">Consumer</h4>
                         <ProfileBrief
                             profile={p.consumer}
                             showBalances={false}
                         />
                     </div>
                     <div className="sonm-deal__colum-left__supplier">
-                        <header className="sonm-deal__header">Supplier</header>
+                        <h4 className="sonm-deal__header">Supplier</h4>
                         <ProfileBrief
                             profile={p.supplier}
                             showBalances={false}
                         />
                     </div>
                     <div className="sonm-deal__column-left__details">
-                        <header className="sonm-deal__header">Details</header>
+                        <h4 className="sonm-deal__header">Details</h4>
                         <PropertyList
                             dataSource={p.propertyList}
                             config={this.config}
@@ -155,15 +155,15 @@ export class DealView extends React.Component<IProps, never> {
                         )
                     ) : null}
                     <div className="sonm-deal__column-right__benchmarks">
-                        <header className="sonm-deal__header">
+                        <h4 className="sonm-deal__header">
                             Resource parameters
-                        </header>
+                        </h4>
                         <Benchmark data={p.benchmarkMap} keys={[]} />
                     </div>
                     <div className="sonm-deal__column-right__price-duration">
-                        <header className="sonm-deal__header">
+                        <h4 className="sonm-deal__header">
                             Price and duration
-                        </header>
+                        </h4>
                         <Balance
                             className="sonm-deal__price"
                             balance={p.price}
