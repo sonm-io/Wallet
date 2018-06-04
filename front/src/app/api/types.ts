@@ -155,6 +155,11 @@ export enum EnumOrderType {
     ask = 2,
 }
 
+export enum EnumTransactionStatus {
+    fail = '0x0',
+    success = '0x1',
+}
+
 export enum EnumOrderStatus {
     unknown = 0,
     inactive = 1,

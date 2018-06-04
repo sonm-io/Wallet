@@ -26,7 +26,7 @@ describe('Api', async function() {
     });
 
     it('should get market profiles', async function() {
-        const response = await Api.profile.fetchList({});
+        const response = await Api.profile.fetchList({ limit: 20, offset: 0 });
         expect(response).to.have.nested.property('records');
         expect(response).to.have.nested.property('total');
 
@@ -40,7 +40,7 @@ describe('Api', async function() {
     });
 
     it('should get market orders', async function() {
-        const response = await Api.order.fetchList({});
+        const response = await Api.order.fetchList({ limit: 20, offset: 0 });
         expect(response).to.have.nested.property('records');
 
         if (response.records) {
