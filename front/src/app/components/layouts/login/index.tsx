@@ -163,14 +163,14 @@ export class Login extends React.Component<IProps, IState> {
     }
 
     protected async fastLogin() {
-        // if (window.localStorage.getItem('sonm-4ever')) {
-        //     const { data } = await Api.unlockWallet('2', '2');
-        //     if (data) {
-        //         const wallet = this.findWalletByName('2');
-        //
-        //         this.props.onLogin(wallet);
-        //     }
-        // }
+        if (window.localStorage.getItem('sonm-4ever')) {
+            const { data } = await Api.unlockWallet('2', '2');
+            if (data) {
+                const wallet = this.findWalletByName('2');
+
+                this.props.onLogin(wallet);
+            }
+        }
     }
 
     protected openDialog(
