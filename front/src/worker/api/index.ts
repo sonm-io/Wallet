@@ -867,7 +867,11 @@ class Api {
                 },
             };
         } else if (data.address && data.id && data.password) {
-            return this.getMethod('closeDeal', [data.id], 'private')(data);
+            return this.getMethod(
+                'closeDeal',
+                [data.id, data.isBlacklisted || false],
+                'private',
+            )(data);
         } else {
             throw new Error('required_params_missed');
         }

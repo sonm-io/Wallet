@@ -85,6 +85,12 @@ export const en: ILocalizationDictionary = {
         `Order #${id} is matched. Deal #${dealId}.`,
 
     tx_buy_order_match_failed: ([id]: string[]) => `Order #${id} match failed`,
+
+    deal_finish_failed: ([id, hash]: string[]) =>
+        `Finish deal #${id} is failed. TxHash ${hash}.`,
+
+    deal_finish_success: ([id, hash]: string[]) =>
+        `Deal #${id} is finished. TxHash ${hash}.`,
 };
 
 export default en;

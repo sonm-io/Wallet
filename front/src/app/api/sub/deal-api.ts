@@ -55,11 +55,17 @@ export class DealApi {
         } as IMarketStats);
     };
 
-    public async close(address: string, password: string, dealId: string) {
+    public async close(
+        address: string,
+        password: string,
+        dealId: string,
+        isBlacklisted: boolean,
+    ) {
         const { data, validation } = await this.ipc.send('market.closeDeal', {
             address,
             id: dealId,
             password,
+            isBlacklisted,
         });
 
         return { data, validation };
