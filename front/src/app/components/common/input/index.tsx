@@ -90,9 +90,9 @@ export class Input extends React.Component<ITextInputProps, never>
         );
     }
 
-    public focus() {
+    public focus = () => {
         if (this.inputNode) {
             this.inputNode.focus();
         }
-    }
+    };
 }

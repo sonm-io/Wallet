@@ -28,20 +28,26 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
     public static roundLastNumberPosition(num: string, justCutOff?: boolean) {
         let result = num;
 
-        const lastIdx = num.length - 1;
-        if (justCutOff) {
-            result = num.slice(0, lastIdx);
-        } else {
-            const last = Number(num[lastIdx]);
-            if (last < 5) {
+        if (num.indexOf('.') > 0) {
+            const lastIdx = num.length - 1;
+            if (justCutOff || num[lastIdx] === '0') {
                 result = num.slice(0, lastIdx);
             } else {
-                const last2 = Number(num[lastIdx - 1]);
-                if (last2 === 9) {
-                    const last3 = Number(num[lastIdx - 2]);
-                    result = num.slice(0, lastIdx - 2) + String(last3 + 1);
+                const last = Number(num[lastIdx]);
+                if (last < 5) {
+                    result = num.slice(0, lastIdx);
                 } else {
-                    result = num.slice(0, lastIdx - 1) + Number(last2 + 1);
+                    const penult = Number(num[lastIdx - 1]);
+                    if (penult === 9) {
+                        let idx = lastIdx - 1;
+                        while (num[idx] === '9' || num[idx] === '.') {
+                            --idx;
+                        }
+                        const digit = Number(num[idx]);
+                        result = num.slice(0, idx) + Number(digit + 1);
+                    } else {
+                        result = num.slice(0, lastIdx - 1) + Number(penult + 1);
+                    }
                 }
             }
         }
@@ -61,14 +67,11 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
         let num = '';
 
         if (balance) {
-            num = moveDecimalPoint(balance + '0', -decimalPointOffset - 1);
-
+            num = moveDecimalPoint(balance, -decimalPointOffset);
             num = Balance.limitDecimalDigitAmount(num, decimalDigitAmount + 1);
         }
 
-        if (num.indexOf('.') > 0) {
-            num = Balance.roundLastNumberPosition(num, !round);
-        }
+        num = Balance.roundLastNumberPosition(num, !round);
 
         return (
             <div className={cn('sonm-balance', className)}>

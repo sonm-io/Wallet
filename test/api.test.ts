@@ -17,7 +17,8 @@ before(async function() {
     this.timeout(+Infinity);
     localStorage.clear();
 });
-describe('Api', async function() {
+
+xdescribe('Api', async function() {
     this.timeout(+Infinity);
 
     it('should ping', async function() {
