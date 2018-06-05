@@ -1,7 +1,7 @@
 import { observable, action, computed, when } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
-import { Api } from 'app/api';
+import { Api } from 'app/api'; // TODO pass to ctr
 import { WalletApiError } from './types';
 import { ILocalizator } from 'app/localization';
 
