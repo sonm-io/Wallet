@@ -44,7 +44,7 @@ export class OrderCompleteBuy extends React.Component<
     protected handleMarketClick = () => {
         const order = orderDetailsStore.order;
         if (order !== undefined) {
-            const filter = this.getFilterByOrder(order || {});
+            const filter = this.getFilterByOrder(order);
             orderFilterStore.updateUserInput(filter);
         }
         this.props.onClickMarket();

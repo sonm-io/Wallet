@@ -32,9 +32,9 @@ export class OrderList extends React.Component<IProps, never> {
         }
     }
 
-    public componentWillReceiveProps(next: IProps) {
+    public componentDidUpdate(prevProps: IProps) {
         filterStore.updateUserInput({
-            sellerAddress: next.filterByAddress || '',
+            sellerAddress: prevProps.filterByAddress || '',
         });
     }
 

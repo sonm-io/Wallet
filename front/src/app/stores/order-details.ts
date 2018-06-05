@@ -18,7 +18,6 @@ import { Api } from 'app/api/';
 export interface IOrderDetailsInput {
     password: string;
     orderId: string;
-    order?: IOrder;
 }
 
 export interface IOrderDetailsStoreServices {
@@ -80,7 +79,6 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     public userInput: IOrderDetailsInput = {
         password: '',
         orderId: '',
-        order: undefined,
     };
 
     @observable
