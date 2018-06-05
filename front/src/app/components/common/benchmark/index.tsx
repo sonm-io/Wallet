@@ -43,6 +43,9 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         gpuRamSize: 0,
         zcashHashrate: 0,
         redshiftGpu: 0,
+        networkOverlay: false,
+        networkOutbound: false,
+        networkIncoming: false,
     };
 
     public static readonly defaultConfig: Array<
@@ -104,6 +107,21 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
             name: 'Redshift',
             render: value => `${value}`,
         },
+        {
+            key: 'networkOverlay',
+            name: 'Overlay is allowed',
+            render: PropertyList.renders.booleanYesNo,
+        },
+        {
+            key: 'networkOutbound',
+            name: 'Outbound connection is allowed',
+            render: PropertyList.renders.booleanYesNo,
+        },
+        {
+            key: 'networkIncoming',
+            name: 'Incoming connection is allowed',
+            render: PropertyList.renders.booleanYesNo,
+        },
     ];
 
     public static getDerivedStateFromProps(
@@ -126,7 +144,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
                 data: nextProps.data,
                 config,
                 propertyList: config.reduce<IDictionary<IBenchmarkMap>>(
-                    (acc, x) => ((acc[x.key] = String(data[x.key])), acc),
+                    (acc, x) => ((acc[x.key] = data[x.key]), acc),
                     {},
                 ),
             };

@@ -147,6 +147,9 @@ export interface IBenchmarkMap {
     gpuRamSize: number;
     zcashHashrate: number;
     redshiftGpu: number;
+    networkOverlay: boolean;
+    networkOutbound: boolean;
+    networkIncoming: boolean;
 }
 
 export enum EnumOrderType {
