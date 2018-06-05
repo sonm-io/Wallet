@@ -14,6 +14,10 @@ interface IDictionary<T> {
 
 const ATTRIBUTE_DESCRIPTION = 1103;
 
+const NETWORK_OVERLAY = 0x1;
+const NETWORK_OUTBOUND = 0x2;
+const NETWORK_INCOMING = 0x4;
+
 export class DWH {
     private url: string;
 
@@ -305,7 +309,10 @@ export class DWH {
         return this.parseOrder(res);
     };
 
-    private parseBenchmarks(benchmarks: any): IBenchmarkMap {
+    private parseBenchmarks(
+        benchmarks: any,
+        netflags: number = 0,
+    ): IBenchmarkMap {
         return {
             cpuSysbenchMulti: benchmarks.values[0] || 0,
             cpuSysbenchOne: benchmarks.values[1] || 0,
@@ -322,6 +329,9 @@ export class DWH {
             ethHashrate: benchmarks.values[9] || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
+            networkOverlay: netflags & NETWORK_OVERLAY ? 1 : 0,
+            networkOutbound: netflags & NETWORK_OUTBOUND ? 1 : 0,
+            networkIncoming: netflags & NETWORK_INCOMING ? 1 : 0,
         };
     }
 
@@ -330,7 +340,10 @@ export class DWH {
             ...item.order,
         };
 
-        order.benchmarkMap = this.parseBenchmarks(item.order.benchmarks);
+        order.benchmarkMap = this.parseBenchmarks(
+            item.order.benchmarks,
+            item.netflags,
+        );
         order.duration = order.duration
             ? this.parseDuration(order.duration)
             : 0;
@@ -350,7 +363,7 @@ export class DWH {
     }
 
     private parseDuration(duration: number) {
-        return Math.round(100 * duration / 3600) / 100;
+        return Math.round((100 * duration) / 3600) / 100;
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
@@ -426,13 +439,15 @@ export class DWH {
     private parseDeal(item: any): t.IDeal {
         const deal = {
             ...item.deal,
-            ...this.parseBenchmarks(item.deal.benchmarks),
         };
 
         const consumer = this.parseCertificate(item.consumerCertificates);
         const supplier = this.parseCertificate(item.supplierCertificates);
 
-        deal.benchmarkMap = this.parseBenchmarks(item.deal.benchmarks);
+        deal.benchmarkMap = this.parseBenchmarks(
+            item.deal.benchmarks,
+            item.netflags,
+        );
         deal.supplier = {
             address: deal.supplierID,
             status: supplier.status || EnumProfileStatus.anonimest,
@@ -457,7 +472,6 @@ export class DWH {
             deal.endTime && now < deal.endTime
                 ? Math.round((deal.endTime - now) / 3600)
                 : 0;
-
         return deal;
     }
 

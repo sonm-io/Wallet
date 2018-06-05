@@ -128,6 +128,9 @@ export const TypeBenchmarkMap = createStruct<IBenchmarkMap>(
         zcashHashrate: t.Number,
         redshiftGpu: t.Number,
         gpuRamSize: t.Number,
+        networkOverlay: t.Number,
+        networkOutbound: t.Number,
+        networkIncoming: t.Number,
     },
     'IBenchmarkMap',
 );

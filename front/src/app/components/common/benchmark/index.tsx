@@ -43,6 +43,9 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         gpuRamSize: 0,
         zcashHashrate: 0,
         redshiftGpu: 0,
+        networkOverlay: 0,
+        networkOutbound: 0,
+        networkIncoming: 0,
     };
 
     public static readonly defaultConfig: Array<
@@ -103,6 +106,21 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
             key: 'redshiftGpu',
             name: 'Redshift',
             render: value => `${value}`,
+        },
+        {
+            key: 'networkOverlay',
+            name: 'Overlay is allowed',
+            render: value => (value > 0 ? 'Yes' : 'No'),
+        },
+        {
+            key: 'networkOutbound',
+            name: 'Outbound connection is allowed',
+            render: value => (value > 0 ? 'Yes' : 'No'),
+        },
+        {
+            key: 'networkIncoming',
+            name: 'Incoming connection is allowed',
+            render: value => (value > 0 ? 'Yes' : 'No'),
         },
     ];
 
