@@ -43,9 +43,9 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         gpuRamSize: 0,
         zcashHashrate: 0,
         redshiftGpu: 0,
-        networkOverlay: 0,
-        networkOutbound: 0,
-        networkIncoming: 0,
+        networkOverlay: false,
+        networkOutbound: false,
+        networkIncoming: false,
     };
 
     public static readonly defaultConfig: Array<
@@ -110,17 +110,17 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         {
             key: 'networkOverlay',
             name: 'Overlay is allowed',
-            render: value => (value > 0 ? 'Yes' : 'No'),
+            render: PropertyList.renders.booleanYesNo,
         },
         {
             key: 'networkOutbound',
             name: 'Outbound connection is allowed',
-            render: value => (value > 0 ? 'Yes' : 'No'),
+            render: PropertyList.renders.booleanYesNo,
         },
         {
             key: 'networkIncoming',
             name: 'Incoming connection is allowed',
-            render: value => (value > 0 ? 'Yes' : 'No'),
+            render: PropertyList.renders.booleanYesNo,
         },
     ];
 
@@ -144,7 +144,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
                 data: nextProps.data,
                 config,
                 propertyList: config.reduce<IDictionary<IBenchmarkMap>>(
-                    (acc, x) => ((acc[x.key] = String(data[x.key])), acc),
+                    (acc, x) => ((acc[x.key] = data[x.key]), acc),
                     {},
                 ),
             };

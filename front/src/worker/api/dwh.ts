@@ -329,9 +329,9 @@ export class DWH {
             ethHashrate: benchmarks.values[9] || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
-            networkOverlay: netflags & NETWORK_OVERLAY ? 1 : 0,
-            networkOutbound: netflags & NETWORK_OUTBOUND ? 1 : 0,
-            networkIncoming: netflags & NETWORK_INCOMING ? 1 : 0,
+            networkOverlay: !!(netflags & NETWORK_OVERLAY),
+            networkOutbound: !!(netflags & NETWORK_OUTBOUND),
+            networkIncoming: !!(netflags & NETWORK_INCOMING),
         };
     }
 
@@ -472,6 +472,7 @@ export class DWH {
             deal.endTime && now < deal.endTime
                 ? Math.round((deal.endTime - now) / 3600)
                 : 0;
+
         return deal;
     }
 

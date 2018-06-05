@@ -73,9 +73,9 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
             gpuRamSize: 0,
             zcashHashrate: 0,
             redshiftGpu: 0,
-            networkOverlay: 0,
-            networkOutbound: 0,
-            networkIncoming: 0,
+            networkOverlay: false,
+            networkOutbound: false,
+            networkIncoming: false,
         },
     };
 
