@@ -68,6 +68,11 @@ export class DealView extends React.Component<IProps, never> {
                     : '---',
         },
         {
+            name: 'Time left',
+            key: 'timeLeft',
+            render: (value: any) => (value ? `${value} hours` : '---'),
+        },
+        {
             name: 'Type',
             key: 'supplierAddress',
             render: (value: any) =>
@@ -79,11 +84,6 @@ export class DealView extends React.Component<IProps, never> {
             name: 'Executed payment',
             key: 'blockedBalance',
             render: (value: any) => `${moveDecimalPoint(value, 18, 2)} SNM`,
-        },
-        {
-            name: 'Time left',
-            key: 'timeLeft',
-            render: (value: any) => `${value} hours`,
         },
     ];
 
@@ -158,9 +158,9 @@ export class DealView extends React.Component<IProps, never> {
                         <h4 className="sonm-deal__header">
                             Resource parameters
                         </h4>
-                        <Benchmark data={p.benchmarkMap} keys={[]} />
+                        <Benchmark data={p.benchmarkMap} />
                     </div>
-                    <div className="sonm-deal__column-right__price-duration">
+                    <div className="sonm-deal__price-duration">
                         <h4 className="sonm-deal__header">
                             Price and duration
                         </h4>
@@ -170,9 +170,14 @@ export class DealView extends React.Component<IProps, never> {
                             decimalPointOffset={18}
                             decimalDigitAmount={4}
                             symbol="USD/h"
+                            round
                         />
                         <div className="sonm-deal__duration">
-                            {p.duration} hour(s)
+                            {p.duration ? (
+                                <React.Fragment>
+                                    {p.duration} hour(s)
+                                </React.Fragment>
+                            ) : null}
                         </div>
                     </div>
                 </div>

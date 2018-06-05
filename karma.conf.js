@@ -10,19 +10,19 @@ module.exports = function(config) {
         ],
 
         preprocessors: {
-            './test/**/*.ts': ['webpack'],
+            './**/*.test.ts': ['webpack'],
         },
 
         reporters: ['progress'],
         browsers: ['Chrome', 'ChromeHeadless'],
         singleRun: false,
 
-        files: ['./test/*.test.ts'],
+        files: ['./front/src/**/*.test.ts', './test/**/*.test.ts'],
 
         mime: {
             'text/x-typescript': ['ts', 'tsx'],
         },
 
-        webpack: require('./front/config/webpack.config'),
+        webpack: require('./front/config/webpack.base-config'),
     });
 };

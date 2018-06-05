@@ -21,6 +21,7 @@ export interface ISelectProps<T> {
     hasBalloon?: boolean;
     onChange: (params: ISelectChangeParams<T>) => void;
     compareValues?: (a: T, b: T) => boolean;
+    disabled?: boolean;
 }
 
 export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
@@ -110,6 +111,7 @@ export class FixedSelect<T> extends React.PureComponent<ISelectProps<T>, any> {
                 isExpanded={this.state.expanded}
                 hasBalloon={hasBalloon}
                 ref={this.saveRef}
+                disabled={this.props.disabled}
             >
                 {options.map((x: ISelectItem<T>, idx: number) => {
                     return (

@@ -237,6 +237,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
                         hasBalloon
                         compareValues={FixedSelect.compareAsJson}
                         onChange={this.handleChangeFilter}
+                        disabled
                     />
                     <Input
                         name="query"

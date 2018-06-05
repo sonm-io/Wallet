@@ -20,6 +20,10 @@ export class PropertyList<T = any> extends React.Component<
     IPropertyListProps<T>,
     never
 > {
+    public static readonly renders = {
+        booleanYesNo: (value: boolean): string => (value ? 'Yes' : 'No'),
+    };
+
     public render() {
         const p: IPropertyListProps<T> = this.props;
 
