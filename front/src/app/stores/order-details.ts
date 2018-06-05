@@ -1,13 +1,19 @@
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, autorun } from 'mobx';
 import { OnlineStore, IErrorProcessor } from './online-store';
 import { ILocalizator } from 'app/localization';
 const { pending, catchErrors } = OnlineStore;
 import { updateUserInput } from './utils/update-user-input';
 import { asyncAction } from 'mobx-utils';
 import { AlertType } from './types';
-import { IOrder, IOrderParams } from 'app/api/types';
 import { RootStore } from './';
-import { Api } from 'app/api';
+import {
+    IOrderParams,
+    EnumOrderStatus,
+    EnumProfileStatus,
+    IOrder,
+    EnumOrderType,
+} from 'app/api/types';
+import { Api } from 'app/api/';
 
 export interface IOrderDetailsInput {
     password: string;
@@ -62,6 +68,12 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         this.localizator = params.localizator;
         this.errorProcessor = params.errorProcessor;
         this.rootStore = rootStore;
+
+        autorun(() => {
+            if (this.userInput.orderId !== '') {
+                this.fetchData();
+            }
+        });
     }
 
     @observable
@@ -77,23 +89,12 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         orderId: '',
     };
 
+    @observable.ref public order: IOrder = OrderDetails.emptyOrder;
+
     @action.bound
     public updateUserInput(values: Partial<IOrderDetailsInput>) {
         updateUserInput<IOrderDetailsInput>(this, values);
         this.serverValidation.password = '';
-        if (
-            this.orderId &&
-            (this.order === undefined || this.order.id !== this.orderId)
-        ) {
-            this.fetchOrder();
-        }
-    }
-
-    @catchErrors({ restart: false })
-    @asyncAction
-    public *fetchOrder() {
-        const order = yield Api.order.fetchById(this.orderId);
-        this.updateUserInput({ order });
     }
 
     @pending
@@ -185,23 +186,38 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
     @computed
     public get orderId() {
-        return this.userInput.orderId || '';
-    }
-
-    @computed
-    public get order() {
-        return this.userInput.order;
+        return this.userInput.orderId;
     }
 
     @computed
     public get password() {
-        return this.userInput.password || '';
+        return this.userInput.password;
     }
 
     @computed
     public get validationPassword() {
-        return this.serverValidation.password || '';
+        return this.serverValidation.password;
     }
+
+    @pending
+    @catchErrors({ restart: true })
+    @asyncAction
+    protected *fetchData() {
+        this.order = yield Api.order.fetchById(this.userInput.orderId);
+    }
+
+    public static emptyOrder: IOrder = {
+        id: '0',
+        orderType: EnumOrderType.any,
+        creator: {
+            address: '0x1234567890123456789012345678901234567890',
+            status: EnumProfileStatus.anon,
+        },
+        price: '1',
+        duration: 0,
+        orderStatus: EnumOrderStatus.active,
+        benchmarkMap: {},
+    };
 }
 
 export default OrderDetails;

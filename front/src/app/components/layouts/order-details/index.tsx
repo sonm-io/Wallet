@@ -1,14 +1,7 @@
 import * as React from 'react';
 import { OrderView } from './view';
-import {
-    EnumOrderStatus,
-    EnumProfileStatus,
-    IOrder,
-    EnumOrderType,
-} from 'app/api/types';
 import { observer } from 'mobx-react';
 import { rootStore } from 'app/stores';
-import Benchmark from '../../common/benchmark/index';
 
 const orderDetailsStore = rootStore.orderDetailsStore;
 
@@ -22,30 +15,19 @@ interface IProps {
 export class OrderDetails extends React.Component<IProps, never> {
     constructor(props: IProps) {
         super(props);
-        orderDetailsStore.updateUserInput({ orderId: this.props.orderId });
+        this.fetch(props.orderId);
     }
 
-    public static emptyOrder: IOrder = {
-        id: '0',
-        orderType: EnumOrderType.any,
-        creator: {
-            address: '0x1234567890123456789012345678901234567890',
-            status: EnumProfileStatus.anon,
-        },
-        price: '1',
-        duration: 0,
-        orderStatus: EnumOrderStatus.active,
-        benchmarkMap: Benchmark.emptyBenchmark,
-    };
+    public componentDidUpdate() {
+        this.fetch(this.props.orderId);
+    }
 
-    protected get order() {
-        return orderDetailsStore.order || OrderDetails.emptyOrder;
+    public fetch(orderId: string) {
+        orderDetailsStore.updateUserInput({ orderId });
     }
 
     public handleSubmit = async (password: string) => {
-        const orderId = this.props.orderId;
-
-        orderDetailsStore.updateUserInput({ orderId, password });
+        orderDetailsStore.updateUserInput({ password });
         await orderDetailsStore.submit();
 
         if (orderDetailsStore.validationPassword === '') {
@@ -56,7 +38,7 @@ export class OrderDetails extends React.Component<IProps, never> {
     public render() {
         return (
             <OrderView
-                order={this.order}
+                order={orderDetailsStore.order}
                 validationPassword={orderDetailsStore.validationPassword}
                 onSubmit={this.handleSubmit}
             />
