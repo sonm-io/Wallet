@@ -3,7 +3,7 @@
 .sonm-deal {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-column-gap: 20px;
+    grid-column-gap: 10px;
 
     &__column-left {
         grid-column: 1;
@@ -41,15 +41,17 @@
         }
     }
 
-    &--price {
+    &__price-duration {
         text-align: center;
+    }
+
+    &__price {
         font-size: 25px;
         margin-bottom: 10px;
     }
 
-    &--duration {
+    &__duration {
         font-size: 22px;
-        text-align: center;
         color: @color-font-gray;
     }
 

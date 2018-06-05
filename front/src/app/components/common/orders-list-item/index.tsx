@@ -42,6 +42,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                         decimalPointOffset={18}
                         decimalDigitAmount={4}
                         symbol="USD/h"
+                        round
                     />
                 </div>
 
