@@ -1,36 +1,44 @@
 @import 'guide.less';
 
 .confirmation-panel {
-    height: 100%;
     display: flex;
-    flex-direction: column;
-
-    &__header {
-    }
-
-    &__description {
-    }
-
-    &__form {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    &__field {
-    }
-
-    &__input {
-    }
-
-    &__buttons {
-        margin-top: auto;
-    }
 
     &__cancel-button {
-    }
+        color: @color-violet;
+        font-size: 15px;
+        font-weight: 500;
 
-    &__submit-button {
-        float: right;
+        &:hover,
+        &:focus {
+            color: @color-violet;
+        }
+        white-space: nowrap;
+    }
+}
+
+.confirmation-panel--full-height {
+    flex-direction: column;
+    height: 100%;
+    &__buttons {
+        margin: auto 0 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .confirmation-panel__submit-button {
+        margin-left: auto;
+    }
+}
+
+.confirmation-panel--one-line {
+    flex-direction: row;
+    &__field {
+        width: 100%;
+    }
+    .confirmation-panel__cancel-button {
+        margin: auto 31px 25px 0;
+    }
+    .confirmation-panel__submit-button {
+        margin: auto 0 17px 31px;
     }
 }

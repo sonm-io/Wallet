@@ -4,6 +4,12 @@ import { Password } from 'app/components/common/password';
 import { IChangeParams } from 'app/components/common/types';
 import { Button } from 'app/components/common/button';
 import * as cn from 'classnames';
+import { Icon } from '../icon';
+
+export enum EnumConfirmationDisplay {
+    OneLine = 'one-line',
+    FullHeight = 'full-height',
+}
 
 export interface IConfirmationPanelProps {
     validationMessage?: string;
@@ -16,6 +22,7 @@ export interface IConfirmationPanelProps {
      */
     onCancel?: () => void;
     className?: string;
+    displayMode?: EnumConfirmationDisplay;
 
     labelHeader?: string;
     labelDescription?: string;
@@ -54,55 +61,113 @@ export class ConfirmationPanel extends React.Component<
         }
     };
 
-    public render() {
-        const p = this.props;
+    //#region Render Block
 
+    public renderHeader = () => {
+        const p = this.props;
         return (
-            <div className={cn('confirmation-panel', p.className)}>
+            <React.Fragment>
                 <h4 className="confirmation-panel__header">{p.labelHeader}</h4>
                 <span className="confirmation-panel__description">
                     {p.labelDescription}
                 </span>
-                <Form
-                    onSubmit={this.handleSubmit}
-                    className="confirmation-panel__form"
-                >
-                    <FormField
-                        label=""
-                        className="confirmation-panel__field"
-                        error={p.validationMessage}
-                    >
-                        <Password
-                            name="password"
-                            className="confirmation-panel__input"
-                            placeholder="Password"
-                            value={this.state.password}
-                            onChange={this.handleChangePassword}
-                        />
-                    </FormField>
-
-                    <div className="confirmation-panel__buttons">
-                        {this.props.onCancel ? (
-                            <Button
-                                className="confirmation-panel__cancel-button"
-                                onClick={p.onCancel}
-                                color="violet"
-                            >
-                                {p.labelCancel}
-                            </Button>
-                        ) : null}
-                        <Button
-                            className="confirmation-panel__submit-button"
-                            disabled={p.onSubmit === undefined}
-                            onClick={this.handleSubmit}
-                            type="submit"
-                            color="violet"
-                        >
-                            {p.labelSubmit}
-                        </Button>
-                    </div>
-                </Form>
-            </div>
+            </React.Fragment>
         );
+    };
+
+    public renderInput = () => {
+        const p = this.props;
+        return (
+            <FormField
+                label=""
+                className="confirmation-panel__field"
+                error={p.validationMessage}
+            >
+                <Password
+                    name="password"
+                    className="confirmation-panel__input"
+                    placeholder="Password"
+                    value={this.state.password}
+                    onChange={this.handleChangePassword}
+                />
+            </FormField>
+        );
+    };
+
+    public renderCancel = () => {
+        const p = this.props;
+        return p.onCancel ? (
+            <a
+                className="confirmation-panel__cancel-button"
+                onClick={p.onCancel}
+                color="violet"
+            >
+                <Icon i="ArrowBack" /> {p.labelCancel}
+            </a>
+        ) : null;
+    };
+
+    public renderNext = () => {
+        const p = this.props;
+        return (
+            <Button
+                className="confirmation-panel__submit-button"
+                disabled={p.onSubmit === undefined}
+                onClick={this.handleSubmit}
+                type="submit"
+                color="violet"
+            >
+                {p.labelSubmit}
+            </Button>
+        );
+    };
+
+    //#endregion
+
+    public renderOneLine() {
+        const p = this.props;
+        return (
+            <Form
+                onSubmit={this.handleSubmit}
+                className={cn(
+                    'confirmation-panel confirmation-panel--one-line',
+                    p.className,
+                )}
+            >
+                {this.renderCancel()}
+                <div className="confirmation-panel--one-line__field">
+                    {this.renderHeader()}
+                    {this.renderInput()}
+                </div>
+                {this.renderNext()}
+            </Form>
+        );
+    }
+
+    public renderFullHeight() {
+        const p = this.props;
+        return (
+            <Form
+                onSubmit={this.handleSubmit}
+                className={cn(
+                    'confirmation-panel confirmation-panel--full-height',
+                    p.className,
+                )}
+            >
+                {this.renderHeader()}
+                {this.renderInput()}
+                <div className="confirmation-panel--full-height__buttons">
+                    {this.renderCancel()}
+                    {this.renderNext()}
+                </div>
+            </Form>
+        );
+    }
+
+    public render() {
+        const p = this.props;
+        return p.displayMode === EnumConfirmationDisplay.OneLine
+            ? this.renderOneLine()
+            : this.renderFullHeight();
     }
 }

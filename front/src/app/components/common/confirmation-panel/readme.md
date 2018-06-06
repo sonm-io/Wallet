@@ -75,3 +75,24 @@ ConfirmationPanel fills its container.
 ### No cancel button, Next button is disabled
 
     <ConfirmationPanel />
+
+### OneLine
+
+One line panel stretches to container width.
+
+    const containerStyle = {
+        width: '550px',
+        height: '200px',
+        background: '#fafafa',
+    };
+
+    <div style={containerStyle}>
+        <ConfirmationPanel
+            displayMode="one-line"
+            labelHeader="Please, enter account password."
+            labelDescription=""
+            labelCancel="BACK"
+            onSubmit={() => {}}
+            onCancel={() => {}}
+        />
+    </div>
