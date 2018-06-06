@@ -138,6 +138,7 @@ class Api {
 
             'market.getOrderParams': wrapInResponse(this.getOrderParams),
             'market.waitForOrderDeal': wrapInResponse(this.waitForOrderDeal),
+            'market.getValidators': wrapInResponse(dwh.getValidators),
             'market.buyOrder': this.buyOrder,
             'market.closeDeal': this.closeDeal,
 

@@ -12,6 +12,7 @@ import {
     ISettings,
     IWalletListItem,
     ISender,
+    IValidator,
 } from './types';
 import { TypeAccountInfoList } from './runtime-types';
 
@@ -147,6 +148,10 @@ class AllApi {
         address: string,
     ): Promise<IResult<string>> => {
         return this.ipc.send('account.getMarketBalance', { address });
+    };
+
+    public getValidators = async (): Promise<IResult<IValidator[]>> => {
+        return this.ipc.send('market.getValidators');
     };
 
     public async getTokenExchangeRate(): Promise<IResult<string>> {

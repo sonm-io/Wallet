@@ -476,6 +476,23 @@ export class DWH {
         return deal;
     }
 
+    public getValidators = async (): Promise<t.IValidator[]> => {
+        const res = await this.fetchData('GetValidators');
+        const data = [] as t.IValidator[];
+
+        for (const item of res.validators) {
+            data.push({
+                id: item.id,
+                name: item.name,
+                level: item.level,
+                fee: item.fee,
+                url: item.url,
+            });
+        }
+
+        return data;
+    };
+
     private async fetchData(method: string, params: any = {}) {
         const response = await fetch(`${this.url}${method}`, {
             method: 'POST',
