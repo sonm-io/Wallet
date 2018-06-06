@@ -14,6 +14,7 @@ import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
+import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
 
 import * as React from 'react';
 
@@ -57,13 +58,17 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
-const navigateToDeals = () => navigate({ path: '/market/deals' });
+const navigateToOrders = () => navigate({ path: `/market/orders` });
+const navigateToOrdersSaveFilter = () =>
+    navigate({ path: `/market/orders`, query: { doNotResetFilter: true } });
 const navigateToOrdersByAddress = (creatorAddress: string) =>
     navigate({ path: `/market/orders`, query: { creatorAddress } });
 const navigateToOrder = (orderId: string, creatorAddress: string = '') =>
     navigate({
         path: `/market/orders/${orderId}`,
     });
+const navigateToCompleteBuyingOrder = () =>
+    navigate({ path: '/market/orders/complete-buy' });
 
 function reload() {
     window.location.reload(true);
@@ -474,12 +479,36 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                         filterByAddress={
                                             ctx.query.creatorAddress
                                         }
+                                        doNotResetFilter={
+                                            ctx.query.doNotResetFilter
+                                        }
                                         onNavigateToOrder={navigateToOrder}
                                     />
                                 ),
                             }),
                         ),
                         children: [
+                            {
+                                breadcrumbTitle: '',
+                                path: '/complete-buy',
+                                action: async (ctx: IContext) => {
+                                    return {
+                                        content: (
+                                            <OrderCompleteBuy
+                                                onClickDeals={
+                                                    navigateToDealList
+                                                }
+                                                onClickMarket={
+                                                    navigateToOrdersSaveFilter
+                                                }
+                                                onClickOrders={navigateToOrders}
+                                            />
+                                        ),
+                                        browserTabTitle: 'Order buy success',
+                                        pageTitle: '',
+                                    };
+                                },
+                            },
                             {
                                 breadcrumbTitle: 'Order details',
                                 path: '/:orderId',
@@ -492,8 +521,8 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     content: (
                                         <OrderDetails
                                             orderId={params.orderId}
-                                            onNavigateToDealList={
-                                                navigateToDealList
+                                            onCompleteBuyingOrder={
+                                                navigateToCompleteBuyingOrder
                                             }
                                         />
                                     ),
@@ -510,7 +539,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             content: (
                                 <Deal
                                     id={params.id}
-                                    onNavigateToDeals={navigateToDeals}
+                                    onNavigateToDeals={navigateToDealList}
                                 />
                             ),
                         }),
