@@ -197,6 +197,14 @@ export interface IDeal {
     timeLeft: number;
 }
 
+export interface IValidator {
+    id: string;
+    level: number;
+    name: string;
+    url: string;
+    fee: string;
+}
+
 export interface IOrderListFilter {
     authorID?: string;
 }

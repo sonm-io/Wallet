@@ -6,7 +6,7 @@ const { catchErrors } = OnlineStore;
 import { RootStore } from './';
 // import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { ILocalizator } from 'app/localization';
-import { IMarketStats } from 'app/api/types';
+import { IMarketStats, IValidator } from 'app/api/types';
 
 const emptyForm: ISendFormValues = {
     fromAddress: '',
@@ -22,6 +22,7 @@ Object.freeze(emptyForm);
 export interface IMarketStoreApi {
     fetchMarketBalance(addr: string): Promise<string>;
     fetchMarketStats(addr: string): Promise<IMarketStats>;
+    fetchValidators(): Promise<IValidator[]>;
 }
 
 export interface IMarketStoreServices {
@@ -58,6 +59,8 @@ export class MarketStore extends OnlineStore {
                     this.marketAccountViewList[0].address,
                 );
             }
+
+            this.updateValidators();
         });
     }
 
@@ -73,6 +76,7 @@ export class MarketStore extends OnlineStore {
         dealsPrice: '0',
         daysLeft: 0,
     };
+    @observable public marketValidators: IValidator[] = [];
 
     @catchErrors({ restart: true })
     @asyncAction
@@ -90,6 +94,12 @@ export class MarketStore extends OnlineStore {
         this.marketStats = yield this.services.api.fetchMarketStats(
             this.marketAccountAddress,
         );
+    }
+
+    @catchErrors({ restart: true })
+    @asyncAction
+    public *updateValidators() {
+        this.marketValidators = yield this.services.api.fetchValidators();
     }
 
     @action
@@ -131,6 +141,11 @@ export class MarketStore extends OnlineStore {
     @computed
     public get marketAccountViewList(): IAccountItemView[] {
         return this.rootStore.mainStore.accountList;
+    }
+
+    @computed
+    public get validators(): IValidator[] {
+        return this.marketValidators;
     }
 }
 
