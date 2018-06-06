@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import { Send } from 'app/components/layouts/send';
 import { Wallets } from 'app/components/layouts/account-list';
 import { App } from 'app/components/layouts/app';
@@ -15,7 +17,14 @@ import { DealList } from 'app/components/layouts/deal-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
 
-import * as React from 'react';
+import {
+    IRouterResult,
+    IContext,
+    IUniversalRouterItem,
+    IUrlParams,
+} from './types';
+import { reload, firstByDefault, replaceWithChild } from './utils';
+import { loader } from './loader';
 
 import { navigate } from './navigate';
 
@@ -64,45 +73,6 @@ const navigateToOrder = (orderId: string, creatorAddress: string = '') =>
     navigate({
         path: `/market/orders/${orderId}`,
     });
-
-function reload() {
-    window.location.reload(true);
-}
-
-function replaceWithChild(action: TFnAction): TFnAction {
-    return async (ctx: IContext, p: any): Promise<IRouterResult> => {
-        const child: IRouterResult = await ctx.next();
-
-        if (child) {
-            return child;
-        } else {
-            return action(ctx, p);
-        }
-    };
-}
-
-// function appendChild(action: TFnAction): TFnAction {
-//     return async (ctx: IContext, p: any): Promise<IRouterResult> => {
-//         const [me, child] = await Promise.all([action(ctx, p), ctx.next()]);
-//
-//         return {
-//             content: (
-//                 <React.Fragment>
-//                     {me.content}
-//                     {child ? child.content : null}
-//                 </React.Fragment>
-//             ),
-//             browserTabTitle: child ? child.browserTabTitle : me.browserTabTitle,
-//             pageTitle: child ? child.pageTitle : me.pageTitle,
-//         };
-//     };
-// }
-
-async function firstByDefault(ctx: IContext, p: any) {
-    const params: IRouterResult = await ctx.next();
-
-    return params ? params : ctx.route.children[0].action(ctx, p);
-}
 
 export const univeralRoutes: Array<IUniversalRouterItem> = [
     {
@@ -336,6 +306,10 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             ),
                                             browserTabTitle: 'Deposit',
                                             pageTitle: 'Deposit',
+                                            props: {
+                                                className:
+                                                    'sonm-app--confirmation-bg',
+                                            },
                                         }),
                                     },
                                     {
@@ -486,18 +460,21 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 action: async (
                                     ctx: IContext,
                                     params: IUrlParams,
-                                ) => ({
-                                    browserTabTitle: 'Order details',
-                                    pageTitle: 'Order details',
-                                    content: (
-                                        <OrderDetails
-                                            orderId={params.orderId}
-                                            onNavigateToDealList={
-                                                navigateToDealList
-                                            }
-                                        />
-                                    ),
-                                }),
+                                ) => {
+                                    loader.loadOrder(params.orderId);
+
+                                    return {
+                                        browserTabTitle: 'Order details',
+                                        pageTitle: 'Order details',
+                                        content: (
+                                            <OrderDetails
+                                                onNavigateToDealList={
+                                                    navigateToDealList
+                                                }
+                                            />
+                                        ),
+                                    };
+                                },
                             },
                         ],
                     },
@@ -533,40 +510,5 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
         ],
     },
 ];
-
-export interface IUrlParams {
-    [key: string]: string;
-}
-
-export interface IContext {
-    query: any;
-    route: any;
-    pathname: string;
-    params?: IRouterResult;
-    next: () => IRouterResult;
-    breadcrumbs: Array<IBreadcrumb>;
-}
-
-type TFnAction = (ctx: IContext, params: any) => Promise<IRouterResult>;
-
-export interface IBreadcrumb {
-    path: string;
-    title: string;
-}
-
-interface IUniversalRouterItem {
-    path: string | RegExp;
-    action?: TFnAction;
-    children?: Array<IUniversalRouterItem>;
-    breadcrumbTitle?: string;
-}
-
-interface IRouterResult {
-    content?: React.ReactNode;
-    browserTabTitle?: string;
-    pageTitle?: string;
-    props?: any;
-    pathKey?: string;
-}
 
 export default univeralRoutes;

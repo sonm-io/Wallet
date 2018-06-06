@@ -8,26 +8,11 @@ const store = rootStore.ordersListStore;
 const filterStore = rootStore.orderFilterStore;
 
 interface IProps {
-    filterByAddress?: string;
     onNavigateToOrder: (orderId: string) => void;
 }
 
 @observer
 export class OrderList extends React.Component<IProps, never> {
-    constructor(props: IProps) {
-        super(props);
-        filterStore.setUserInput({
-            sellerAddress: props.filterByAddress || '',
-            profileAddress: rootStore.marketStore.marketAccountAddress,
-        });
-    }
-
-    public componentWillReceiveProps(next: IProps) {
-        filterStore.setUserInput({
-            sellerAddress: next.filterByAddress || '',
-        });
-    }
-
     protected handleChangeLimit = (limit: number) => {
         store.updateUserInput({ limit });
     };
@@ -57,7 +42,6 @@ export class OrderList extends React.Component<IProps, never> {
     ) => {
         const values: Partial<IOrderFilter> = {};
         values[key] = value;
-        // console.log(`key=${key}, value=${value}`);
         filterStore.updateUserInput(values);
     };
 
@@ -75,8 +59,8 @@ export class OrderList extends React.Component<IProps, never> {
                 onApplyFilter={this.handleApplyFilter}
                 onUpdateFilter={this.handleUpdateFilter}
                 filterOrderOwnerType={filterStore.orderOwnerType}
-                filterProfileAddress={filterStore.profileAddress}
-                filterSellerAddress={filterStore.sellerAddress}
+                filterProfileAddress={filterStore.myAddress}
+                filterSellerAddress={filterStore.creatorAddress}
                 filterType={filterStore.type}
                 filterOnlyActive={filterStore.onlyActive}
                 filterPriceFrom={filterStore.priceFrom}

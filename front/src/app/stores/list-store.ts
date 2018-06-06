@@ -5,7 +5,7 @@ import { IErrorProcessor, OnlineStore } from './online-store';
 import { ILocalizator } from '../localization/types';
 import { IListQuery } from '../api';
 
-const { pending } = OnlineStore;
+const { pending, catchErrors } = OnlineStore;
 
 interface IFetchListResult<T> {
     records: Array<T>;
@@ -121,6 +121,7 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
     }
 
     @pending
+    @catchErrors({ restart: true })
     @asyncAction
     public *update() {
         const { page, limit, sortBy, filter, sortDesc } = this.userInput;
