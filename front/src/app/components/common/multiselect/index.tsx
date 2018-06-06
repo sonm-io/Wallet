@@ -114,7 +114,13 @@ export class MultiSelect<T> extends React.Component<IMultiSelectProps<T>, any> {
         const valueNames = p.value.map(this.getName);
 
         return (
-            <div className={cn('multiselect', p.className)}>
+            <div
+                className={cn(
+                    'multiselect',
+                    p.disabled ? 'multiselect--disabled' : null,
+                    p.className,
+                )}
+            >
                 <DropdownInput
                     className="multiselect__dropdown-wrapper"
                     valueString={`${p.label}: ${this.getLabelValue()}`}

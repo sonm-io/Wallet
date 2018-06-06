@@ -17,6 +17,7 @@ export interface IDateRangeOptionalProps {
     leftPickerProps: IDatePickerProps | undefined;
     rightPickerProps: IDatePickerProps | undefined;
     valueToString: (value: IDateRangeProps['value']) => string;
+    disabled?: boolean;
 }
 
 export type IDateRangeProps = IDateRequredRangeProps &
