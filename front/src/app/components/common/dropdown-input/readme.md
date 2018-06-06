@@ -1,4 +1,4 @@
-date range:
+Without baloon:
 
     const { observable, action, useStrict } = mobx;
     const { observer } = mobxReact;
@@ -28,7 +28,7 @@ date range:
 
     <Container />
 
-date range:
+With baloon:
 
     const { observable, action, useStrict } = mobx;
     const { observer } = mobxReact;
@@ -58,3 +58,12 @@ date range:
     );
 
     <Container />
+
+Disabled
+
+        <DropdownInput
+            valueString='Dropdown input'
+            disabled
+        >
+            <div>DROPDOWN CONTENT</div>
+        </DropdownInput>

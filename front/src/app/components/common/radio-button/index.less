@@ -70,4 +70,14 @@
     &:hover &__input + &__cradle {
         background-color: @color-gray-bg;
     }
+
+    &--disabled {
+        background-color: @color-selection;
+        opacity: @opacity-disabled;
+        cursor: default;
+
+        &:hover .sonm-radio-button__input + .sonm-radio-button__cradle {
+            background-color: @color-selection;
+        }
+    }
 }

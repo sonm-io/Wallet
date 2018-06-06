@@ -81,4 +81,18 @@
             transition: transform 100ms;
         }
     }
+
+    &--disabled {
+        .dropdown-input__button {
+            cursor: default;
+            background-color: @color-selection;
+            opacity: @opacity-disabled;
+            &:hover,
+            &:focus,
+            &:active {
+                border: 1px solid @color-border;
+                box-shadow: 0 0;
+            }
+        }
+    }
 }

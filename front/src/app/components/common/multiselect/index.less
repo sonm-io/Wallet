@@ -97,4 +97,21 @@
     &__popup {
         min-width: 200px;
     }
+
+    &--disabled {
+        background-color: @color-selection;
+        opacity: @opacity-disabled;
+        --dropdown-input-button-bg-color: transparent;
+        cursor: default;
+
+        .multiselect__clear-button {
+            &:focus,
+            &:hover,
+            &:active {
+                border: 1px solid @color-border;
+                box-shadow: 0 0;
+                cursor: default;
+            }
+        }
+    }
 }

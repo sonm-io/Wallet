@@ -37,5 +37,5 @@ With title and title before in one group (try to change them):
 
 Disabled with true and fable value:
 
- <Toggler title="disabled toggler with true value" value={true}   disabled />
-<Toggler title="disabled toggler with false value" value={false} disabled />
+    <Toggler title="disabled toggler with true value" value={true}   disabled />
+    <Toggler title="disabled toggler with false value" value={false} disabled />

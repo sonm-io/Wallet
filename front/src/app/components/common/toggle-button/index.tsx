@@ -17,23 +17,24 @@ export class ToggleButton extends React.Component<IToggleButtonProps, never> {
     };
 
     public render() {
+        const p = this.props;
         return (
-            <label className={cn('toggle-button', this.props.className)}>
+            <label
+                className={cn(
+                    'toggle-button',
+                    p.disabled ? 'toggle-button--disabled' : null,
+                    p.className,
+                )}
+            >
                 <input
                     className="toggle-button__radio"
-                    disabled={this.props.disabled}
-                    type={this.props.groupName ? 'radio' : 'checkbox'}
-                    name={
-                        this.props.groupName
-                            ? this.props.groupName
-                            : this.props.name
-                    }
-                    checked={this.props.value}
+                    disabled={p.disabled}
+                    type={p.groupName ? 'radio' : 'checkbox'}
+                    name={p.groupName ? p.groupName : p.name}
+                    checked={p.value}
                     onChange={this.handleChageInput}
                 />
-                <span className="toggle-button__button">
-                    {this.props.title}
-                </span>
+                <span className="toggle-button__button">{p.title}</span>
             </label>
         );
     }

@@ -16,6 +16,12 @@
     white-space: nowrap;
     user-select: none;
 
+    &--disabled {
+        background-color: @color-selection;
+        opacity: @opacity-disabled;
+        cursor: default;
+    }
+
     &__input {
         display: none;
     }
