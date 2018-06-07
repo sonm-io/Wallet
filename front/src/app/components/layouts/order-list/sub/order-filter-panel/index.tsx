@@ -123,7 +123,9 @@ export class OrderFilterPanel extends React.PureComponent<
                         />
                     </FormField>
 
-                    <h3 className="order-filter-panel__header">Owner status</h3>
+                    <h3 className="order-filter-panel__header">
+                        Owner status:
+                    </h3>
                     <Checkbox
                         name="professional"
                         title="Professional"
