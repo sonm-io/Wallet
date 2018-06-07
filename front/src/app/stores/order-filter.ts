@@ -13,10 +13,12 @@ export enum EnumOrderOwnerType {
     my,
 }
 
+const VALIDATION_MSG = 'incorrect';
+
 export interface IOrderFilter {
     orderOwnerType: EnumOrderOwnerType;
     creatorAddress: string;
-    type: string;
+    type: string; // TODO rename
     onlyActive: boolean;
     priceFrom: string;
     priceTo: string;
@@ -30,8 +32,8 @@ export interface IOrderFilter {
     redshiftTo: string;
     ethFrom: string;
     ethTo: string;
-    zcashFrom: string;
-    zcashTo: string;
+    zCashFrom: string;
+    zCashTo: string;
     cpuCountFrom: string;
     cpuCountTo: string;
     gpuCountFrom: string;
@@ -44,12 +46,19 @@ export interface IOrderFilter {
     gpuRamSizeTo: string;
 }
 
+export type IOrderFilterValidation = Partial<
+    { [P in keyof IOrderFilter]: string }
+>;
+
 export interface IFilterStore {
     readonly filter: any;
     readonly filterAsString: string;
 }
 
 export class OrderFilterStore implements IFilterStore {
+    private static validateNumber = (value: string) =>
+        value === '' ? '' : validatePositiveNumber(value).join(', ');
+
     private static defaultUserInput: IOrderFilter = {
         orderOwnerType: EnumOrderOwnerType.market,
         creatorAddress: '',
@@ -67,8 +76,8 @@ export class OrderFilterStore implements IFilterStore {
         redshiftTo: '',
         ethFrom: '',
         ethTo: '',
-        zcashFrom: '',
-        zcashTo: '',
+        zCashFrom: '',
+        zCashTo: '',
         cpuCountFrom: '',
         cpuCountTo: '',
         gpuCountFrom: '',
@@ -79,6 +88,27 @@ export class OrderFilterStore implements IFilterStore {
         storageSizeTo: '',
         gpuRamSizeFrom: '',
         gpuRamSizeTo: '',
+    };
+
+    protected static emptyValidation: IOrderFilterValidation = {
+        redshiftFrom: '',
+        redshiftTo: '',
+        ethFrom: '',
+        ethTo: '',
+        zCashFrom: '',
+        zCashTo: '',
+        cpuCountFrom: '',
+        cpuCountTo: '',
+        gpuCountTo: '',
+        gpuCountFrom: '',
+        ramSizeFrom: '',
+        ramSizeTo: '',
+        storageSizeFrom: '',
+        storageSizeTo: '',
+        gpuRamSizeFrom: '',
+        gpuRamSizeTo: '',
+        priceFrom: '',
+        priceTo: '',
     };
 
     protected rootStore: RootStore;
@@ -100,7 +130,6 @@ export class OrderFilterStore implements IFilterStore {
     @action
     public updateUserInput(values: Partial<IOrderFilter>) {
         const keys = Object.keys(values) as Array<keyof IOrderFilter>;
-        // console.log(values);
         keys.forEach(key => {
             if (!(key in this.userInput)) {
                 throw new Error(`Unknown user input ${key}`);
@@ -112,7 +141,22 @@ export class OrderFilterStore implements IFilterStore {
         });
     }
 
-    //#region IOrderFilter
+    protected readonly validationFixedRef: IOrderFilterValidation = {
+        ...OrderFilterStore.emptyValidation,
+    };
+    @computed
+    get validation() {
+        for (const key in OrderFilterStore.emptyValidation) {
+            const k = key as keyof IOrderFilter;
+            this.validationFixedRef[k] =
+                OrderFilterStore.validateNumber(String(this.userInput[k])) &&
+                VALIDATION_MSG;
+        }
+
+        this.validationFixedRef.creatorAddress = this.validationCreatorAddress;
+
+        return this.validationFixedRef;
+    }
 
     @computed
     public get orderOwnerType() {
@@ -143,10 +187,12 @@ export class OrderFilterStore implements IFilterStore {
     public get validationCreatorAddress(): string {
         let result = '';
 
-        try {
-            TypeNotStrictEthereumAddress(this.userInput.creatorAddress);
-        } catch (e) {
-            result = 'Incorrect ethereum address'; // TODO use localizator
+        if (this.userInput.creatorAddress !== '') {
+            try {
+                TypeNotStrictEthereumAddress(this.userInput.creatorAddress);
+            } catch (e) {
+                result = 'incorrect ethereum address'; // TODO use localizator
+            }
         }
 
         return result;
@@ -162,38 +208,18 @@ export class OrderFilterStore implements IFilterStore {
         return this.userInput.onlyActive;
     }
 
-    protected processNumber(input: string): [string | undefined, string] {
-        let result;
-        let validation = '';
-        const validationAsArray = validatePositiveNumber(input);
-
-        if (validationAsArray.length === 0) {
-            validation = validationAsArray.join(' ');
-        } else {
-            result = input;
-        }
-
-        return [result, validation];
+    protected getTextInputValue(key: keyof IOrderFilter): string | undefined {
+        return this.validation[key] ? undefined : String(this.userInput[key]);
     }
 
-    @observable public validationPriceFrom: string = '';
     @computed
     public get priceFrom(): string | undefined {
-        let result;
-        [result, this.validationPriceFrom] = this.processNumber(
-            this.userInput.priceFrom,
-        );
-        return result === undefined ? undefined : String(result); // TODO validate as price string
+        return this.getTextInputValue('priceFrom');
     }
 
-    @observable public validationPriceTo: string = '';
     @computed
     public get priceTo(): string | undefined {
-        let result;
-        [result, this.validationPriceTo] = this.processNumber(
-            this.userInput.priceFrom,
-        );
-        return result === undefined ? undefined : String(result); // TODO validate as price string
+        return this.getTextInputValue('priceTo');
     }
 
     @computed
@@ -216,167 +242,85 @@ export class OrderFilterStore implements IFilterStore {
         return this.userInput.anonymous;
     }
 
-    @observable public validationCpuCountFrom: string = '';
     @computed
     public get cpuCountFrom(): string | undefined {
-        let result;
-        [result, this.validationCpuCountFrom] = this.processNumber(
-            this.userInput.cpuCountFrom,
-        );
-        return result;
+        return this.getTextInputValue('cpuCountFrom');
     }
 
-    @observable public validationCpuCountTo: string = '';
     @computed
     public get cpuCountTo(): string | undefined {
-        let result;
-        [result, this.validationCpuCountTo] = this.processNumber(
-            this.userInput.cpuCountTo,
-        );
-        return result;
+        return this.getTextInputValue('cpuCountTo');
     }
 
-    @observable public validationGpuCountFrom: string = '';
     @computed
     public get gpuCountFrom(): string | undefined {
-        let result;
-        [result, this.validationGpuCountFrom] = this.processNumber(
-            this.userInput.gpuCountFrom,
-        );
-        return result;
+        return this.getTextInputValue('gpuCountFrom');
     }
 
-    @observable public validationGpuCountTo: string = '';
     @computed
     public get gpuCountTo(): string | undefined {
-        let result;
-        [result, this.validationGpuCountTo] = this.processNumber(
-            this.userInput.gpuCountTo,
-        );
-        return result;
+        return this.getTextInputValue('gpuCountTo');
     }
 
-    @observable public validationRamSizeFrom: string = '';
     @computed
     public get ramSizeFrom(): string | undefined {
-        let result;
-        [result, this.validationRamSizeFrom] = this.processNumber(
-            this.userInput.ramSizeFrom,
-        );
-        return result;
+        return this.getTextInputValue('ramSizeFrom');
     }
 
-    @observable public validationRamSizeTo: string = '';
     @computed
     public get ramSizeTo(): string | undefined {
-        let result;
-        [result, this.validationRamSizeTo] = this.processNumber(
-            this.userInput.ramSizeTo,
-        );
-        return result;
+        return this.getTextInputValue('ramSizeTo');
     }
 
-    @observable public validationGpuRamSizeFrom: string = '';
     @computed
     public get gpuRamSizeFrom(): string | undefined {
-        let result;
-        [result, this.validationGpuRamSizeFrom] = this.processNumber(
-            this.userInput.gpuRamSizeFrom,
-        );
-        return result;
+        return this.getTextInputValue('gpuRamSizeFrom');
     }
 
-    @observable public validationGpuRamSizeTo: string = '';
     @computed
     public get gpuRamSizeTo(): string | undefined {
-        let result;
-        [result, this.validationPriceFrom] = this.processNumber(
-            this.userInput.gpuRamSizeTo,
-        );
-        return result;
+        return this.getTextInputValue('gpuRamSizeTo');
     }
 
-    @observable public validationStorageSizeFrom: string = '';
     @computed
     public get storageSizeFrom(): string | undefined {
-        let result;
-        [result, this.validationPriceFrom] = this.processNumber(
-            this.userInput.storageSizeFrom,
-        );
-        return result;
+        return this.getTextInputValue('storageSizeFrom');
     }
 
-    @observable public validationStorageSizeTo: string = '';
     @computed
     public get storageSizeTo(): string | undefined {
-        let result;
-        [result, this.validationPriceFrom] = this.processNumber(
-            this.userInput.storageSizeTo,
-        );
-        return result;
+        return this.getTextInputValue('storageSizeTo');
     }
 
-    @observable public validationRedshiftFrom: string = '';
     @computed
     public get redshiftFrom(): string | undefined {
-        let result;
-        [result, this.validationRedshiftFrom] = this.processNumber(
-            this.userInput.redshiftFrom,
-        );
-        return result;
+        return this.getTextInputValue('redshiftFrom');
     }
 
-    @observable public validationRedshiftTo: string = '';
     @computed
     public get redshiftTo(): string | undefined {
-        let result;
-        [result, this.validationRedshiftTo] = this.processNumber(
-            this.userInput.redshiftTo,
-        );
-        return result;
+        return this.getTextInputValue('redshiftTo');
     }
 
-    @observable public validationEthFrom: string = '';
     @computed
     public get ethFrom(): string | undefined {
-        let result;
-        [result, this.validationEthFrom] = this.processNumber(
-            this.userInput.ethFrom,
-        );
-        return result;
+        return this.getTextInputValue('ethFrom');
     }
 
-    @observable public validationEthTo: string = '';
     @computed
     public get ethTo(): string | undefined {
-        let result;
-        [result, this.validationEthTo] = this.processNumber(
-            this.userInput.ethTo,
-        );
-        return result;
+        return this.getTextInputValue('ethTo');
     }
 
-    @observable public validationZcashFrom: string = '';
     @computed
-    public get zcashFrom(): string | undefined {
-        let result;
-        [result, this.validationZcashFrom] = this.processNumber(
-            this.userInput.zcashFrom,
-        );
-        return result;
+    public get zСashFrom(): string | undefined {
+        return this.getTextInputValue('zCashFrom');
     }
 
-    @observable public validationZcashTo: string = '';
     @computed
-    public get zcashTo(): string | undefined {
-        let result;
-        [result, this.validationZcashTo] = this.processNumber(
-            this.userInput.zcashTo,
-        );
-        return result;
+    public get zСashTo(): string | undefined {
+        return this.getTextInputValue('zCashTo');
     }
-
-    //#endregion IOrderFilter
 
     @computed
     public get filter(): any {
@@ -422,7 +366,7 @@ export class OrderFilterStore implements IFilterStore {
                 },
                 redshiftGpu: { $gte: this.redshiftFrom, $lte: this.redshiftTo },
                 ethHashrate: { $gte: this.ethFrom, $lte: this.ethTo },
-                zcashHashrate: { $gte: this.zcashFrom, $lte: this.zcashTo },
+                zcashHashrate: { $gte: this.zСashFrom, $lte: this.zСashTo },
                 storageSize: {
                     $gte: this.storageSizeFrom,
                     $lte: this.storageSizeTo,
@@ -434,14 +378,12 @@ export class OrderFilterStore implements IFilterStore {
         };
     }
 
-    protected getFilterAsString = () => JSON.stringify(this.filter);
-
     @action
     public applyFilter() {
-        this.filterAsString = this.getFilterAsString();
+        this.filterAsString = JSON.stringify(this.filter);
     }
 
-    @observable public filterAsString: string = this.getFilterAsString();
+    @observable public filterAsString: string = '';
 }
 
 export default OrderFilterStore;

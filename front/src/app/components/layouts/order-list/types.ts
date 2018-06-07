@@ -1,39 +1,7 @@
+import { ReactElement } from 'react';
 import { IOrder } from 'app/api/types';
-import { IOrderFilter, EnumOrderOwnerType } from 'app/stores/order-filter';
 
-interface IFilter {
-    filterOrderOwnerType: EnumOrderOwnerType;
-    filterProfileAddress: string;
-    filterSellerAddress: string;
-    filterType: string;
-    filterOnlyActive: boolean;
-    filterPriceFrom: string;
-    filterPriceTo: string;
-    // owner status:
-    filterProfessional: boolean;
-    filterRegistered: boolean;
-    filterIdentified: boolean;
-    filterAnonymous: boolean;
-    // -
-    filterRedshiftFrom: string;
-    filterRedshiftTo: string;
-    filterEthFrom: string;
-    filterEthTo: string;
-    filterZCashFrom: string;
-    filterZCashTo: string;
-    filterCpuCountFrom: string;
-    filterCpuCountTo: string;
-    filterGpuCountFrom: string;
-    filterGpuCountTo: string;
-    filterRamSizeFrom: string;
-    filterRamSizeTo: string;
-    filterStorageSizeFrom: string;
-    filterStorageSizeTo: string;
-    filterGpuRamSizeFrom: string;
-    filterGpuRamSizeTo: string;
-}
-
-export interface IOrdersProps extends IFilter {
+export interface IOrdersProps {
     orderBy: string;
     orderDesc: boolean;
     pageLimit: number;
@@ -43,9 +11,6 @@ export interface IOrdersProps extends IFilter {
     className?: string;
     dataSource: Array<IOrder>;
     onClickRow: (orderId: string) => void;
-    onApplyFilter: () => void;
-    onUpdateFilter: (
-        key: keyof IOrderFilter,
-        value: IOrderFilter[keyof IOrderFilter],
-    ) => void;
+
+    filterPanel: ReactElement<any>;
 }

@@ -445,9 +445,6 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 pageTitle: 'Market orders',
                                 content: (
                                     <OrderList
-                                        filterByAddress={
-                                            ctx.query.creatorAddress
-                                        }
                                         onNavigateToOrder={navigateToOrder}
                                     />
                                 ),

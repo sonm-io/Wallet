@@ -114,7 +114,7 @@ export class RootStore implements IHasLocalizator {
             },
         );
 
-        this.orderFilterStore = new OrderFilterStore();
+        this.orderFilterStore = new OrderFilterStore(this);
 
         this.ordersListStore = new OrdersList(
             {

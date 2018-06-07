@@ -1,6 +1,7 @@
-import { IOrderFilter } from 'app/stores/order-filter';
+import { IOrderFilter, IOrderFilterValidation } from 'app/stores/order-filter';
 
 export interface IOrderFilterPanelProps extends IOrderFilter {
+    validation: IOrderFilterValidation;
     className?: string;
     onApply: () => void;
     onUpdateFilter: (
