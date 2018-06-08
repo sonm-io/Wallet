@@ -40,6 +40,13 @@ export class KYC extends React.Component<IProps, any> {
             this.setState({
                 link,
             });
+
+            // const win = window.open(`http://185.186.245.196:8080/${link}`, '_blank');
+            // if (win) {
+            //     win.focus();
+            // }
+            //
+            // this.props.onClose();
         } else {
             this.setState({
                 validationPassword:
