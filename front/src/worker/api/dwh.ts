@@ -342,7 +342,7 @@ export class DWH {
 
         order.benchmarkMap = this.parseBenchmarks(
             item.order.benchmarks,
-            item.netflags,
+            item.order.netflags,
         );
         order.duration = order.duration
             ? this.parseDuration(order.duration)
