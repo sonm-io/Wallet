@@ -7,6 +7,7 @@ import { RootStore } from './';
 // import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { ILocalizator } from 'app/localization';
 import { IMarketStats, IValidator } from 'app/api/types';
+import { BN } from 'bn.js';
 
 const emptyForm: ISendFormValues = {
     fromAddress: '',
@@ -61,6 +62,7 @@ export class MarketStore extends OnlineStore {
             }
 
             this.updateValidators();
+            this.updateTotalBalance();
         });
     }
 
@@ -76,7 +78,9 @@ export class MarketStore extends OnlineStore {
         dealsPrice: '0',
         daysLeft: 0,
     };
+
     @observable public marketValidators: IValidator[] = [];
+    @observable public marketAllBalance: string = '0';
 
     @catchErrors({ restart: true })
     @asyncAction
@@ -86,6 +90,20 @@ export class MarketStore extends OnlineStore {
         );
 
         this.marketBalance = balance;
+    }
+
+    @catchErrors({ restart: true })
+    @asyncAction
+    public *updateTotalBalance() {
+        let balance = new BN(0);
+        for (const account of this.marketAccountViewList) {
+            const accountBalance = yield this.services.api.fetchMarketBalance(
+                account.address,
+            );
+            balance = balance.add(new BN(accountBalance));
+        }
+
+        this.marketAllBalance = balance.toString(10);
     }
 
     @catchErrors({ restart: true })
