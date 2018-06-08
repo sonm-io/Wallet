@@ -7,6 +7,7 @@ import * as tcomb from 'tcomb';
 import { BN } from 'bn.js';
 import { EnumProfileStatus, IBenchmarkMap } from '../../app/api/types';
 import * as moment from 'moment';
+import * as get from 'lodash/fp/get';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -25,14 +26,18 @@ export class DWH {
         this.url = url;
     }
 
-    public static readonly benchmarkMap: Array<[number, string]> = [
+    public static readonly emptyFilter = {};
+
+    public static readonly benchmarkMap: Array<
+        [number /*code*/, string, number /*multiplier*/]
+    > = [
         [2, 'cpuCount', 1],
         [7, 'gpuCount', 1],
         [3, 'ramSize', 1024 * 1024],
         [4, 'storageSize', 1024 * 1024 * 1024],
-        [11, 'redshiftGPU'],
-        [10, 'zcashHashrate'],
-        [9, 'ethHashrate'],
+        [11, 'redshiftGPU', 1],
+        [10, 'zcashHashrate', 1],
+        [9, 'ethHashrate', 1],
         [8, 'gpuRamSize', 1024 * 1024],
     ];
 
@@ -159,6 +164,13 @@ export class DWH {
         };
     };
 
+    public static recalculatePriceOut(price: string) {
+        return new BN(price)
+            .mul(new BN('1000000000000000000'))
+            .div(new BN('3600'))
+            .toString();
+    }
+
     public getOrders = async ({
         limit,
         offset,
@@ -188,36 +200,20 @@ export class DWH {
                 break;
         }
 
-        const mongoLikeQuery = filter ? JSON.parse(filter) : {};
-        const benchmarks = this.getBenchmarksFilter(
-            mongoLikeQuery.benchmarkMap,
-        );
+        const mongoLikeQuery = filter ? JSON.parse(filter) : DWH.emptyFilter;
+        const benchmarks = DWH.getBenchmarksFilter(mongoLikeQuery.benchmarkMap);
 
-        const res = await this.fetchData('GetOrders', {
-            // filter
-            authorID:
-                mongoLikeQuery.creator.address &&
-                mongoLikeQuery.creator.address.$eq
-                    ? mongoLikeQuery.creator.address.$eq
-                    : null,
-            type:
-                typeof mongoLikeQuery.orderType.$eq === 'number'
-                    ? mongoLikeQuery.orderType.$eq
-                    : null,
-            creatorIdentityLevel:
-                mongoLikeQuery.creator.status &&
-                mongoLikeQuery.creator.status.$in &&
-                mongoLikeQuery.creator.status.$in.length !== 0
-                    ? mongoLikeQuery.creator.status.$in
-                    : null,
-            status:
-                typeof mongoLikeQuery.orderStatus.$eq === 'number'
-                    ? mongoLikeQuery.orderStatus.$eq
-                    : null,
-            price: this.getMinMaxFilter(mongoLikeQuery.price, 'price'),
+        const request = {
+            authorID: get('creator.address.$eq', mongoLikeQuery),
+            type: get('orderSide.$eq', mongoLikeQuery),
+            creatorIdentityLevel: get('creator.status.$in', mongoLikeQuery),
+            status: get('orderStatus.$eq', mongoLikeQuery),
+            price: DWH.getMinMaxFilter(
+                get('mongoLikeQuery.price', mongoLikeQuery),
+                DWH.recalculatePriceOut,
+            ),
             benchmarks:
                 Object.keys(benchmarks).length !== 0 ? benchmarks : null,
-            // end filter
             offset,
             limit,
             sortings: [
@@ -228,88 +224,62 @@ export class DWH {
             ],
             counterpartyID: [
                 '0x0000000000000000000000000000000000000000',
-                mongoLikeQuery.profileAddress.$eq,
+                get('mongoLikeQuery.creator.$eq', mongoLikeQuery),
             ],
-        });
-        const records = [] as t.IOrder[];
+        };
 
-        if (res && res.orders) {
-            for (const item of res.orders) {
-                records.push(this.parseOrder(item));
-            }
-        }
+        const response = await this.fetchData('GetOrders', request);
+
+        const records = response.orders
+            ? response.orders.map(DWH.parseOrder)
+            : [];
 
         return {
             records,
-            total: res && res.count ? res.count : 0,
+            total: response.count ? response.count : 0,
         };
     };
 
-    protected typeIn = (value: any, types: Array<string>) =>
-        types.some(i => typeof value === i);
-
-    protected getBenchmarksFilter = (benchmarkMap: any) => {
+    protected static getBenchmarksFilter = (benchmarkRanges: {
+        [k: string]: { $gte?: string; $lte?: string };
+    }) => {
         return DWH.benchmarkMap
-            .map(
-                ([i, name]) =>
-                    [
-                        i,
-                        name,
-                        this.getMinMaxFilter(benchmarkMap[name], name),
-                    ] as [number, string, any],
-            )
-            .filter(([i, name, value]) => value !== null)
+            .map(([code, name, multiplier]) => [
+                code,
+                name,
+                DWH.getMinMaxFilter(benchmarkRanges[name], (x: any) =>
+                    String(Number(x) * multiplier),
+                ),
+            ])
+            .filter(([code, name, value]) => value)
             .reduce(
-                (acc, [i, name, value]) => {
-                    acc[i] = value;
+                (acc, [code, name, value]) => {
+                    acc[String(code)] = value;
                     return acc;
                 },
                 {} as any,
             );
     };
 
-    protected getMinMaxFilter = (value: any, name: string) => {
-        if (value) {
-            const types = ['string', 'number'];
-            let min = value.$gte;
-            let max = value.$lte;
-            if (this.typeIn(min, types) && this.typeIn(max, types)) {
-                switch (name) {
-                    case 'price':
-                        min = new BN(min)
-                            .mul(new BN('1000000000000000000'))
-                            .div(new BN(3600))
-                            .toString();
-                        max = new BN(max)
-                            .mul(new BN('1000000000000000000'))
-                            .div(new BN(3600))
-                            .toString();
-                        break;
-                    default:
-                        const find = DWH.benchmarkMap.find(
-                            item => item[1] === name,
-                        );
-                        if (find) {
-                            min = min * (find[2] as number);
-                            max = max * (find[2] as number);
-                        }
-                        break;
-                }
-                return {
-                    min,
-                    max,
-                };
-            }
+    public static readonly getMinMaxFilter = (
+        value: { $gte?: string; $lte?: string },
+        converter: (a: string) => string = x => x,
+    ) => {
+        if (value && ('$gte' in value || '$lte' in value)) {
+            return {
+                min: value.$gte === undefined ? 0 : converter(value.$gte),
+                max: value.$lte === undefined ? 0 : converter(value.$lte),
+            };
         }
-        return null;
+        return undefined;
     };
 
     public getOrderFull = async ({ id }: any): Promise<t.IOrder> => {
         const res = await this.fetchData('GetOrderDetails', id);
-        return this.parseOrder(res);
+        return DWH.parseOrder(res);
     };
 
-    private parseBenchmarks(
+    public static parseBenchmarks(
         benchmarks: any,
         netflags: number = 0,
     ): IBenchmarkMap {
@@ -329,25 +299,23 @@ export class DWH {
             ethHashrate: benchmarks.values[9] || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
-            networkOverlay: !!(netflags & NETWORK_OVERLAY),
-            networkOutbound: !!(netflags & NETWORK_OUTBOUND),
-            networkIncoming: !!(netflags & NETWORK_INCOMING),
+            networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
+            networkOutbound: Boolean(netflags & NETWORK_OUTBOUND),
+            networkIncoming: Boolean(netflags & NETWORK_INCOMING),
         };
     }
 
-    private parseOrder(item: any): t.IOrder {
+    public static parseOrder(item: any): t.IOrder {
         const order = {
             ...item.order,
         };
 
-        order.benchmarkMap = this.parseBenchmarks(
+        order.benchmarkMap = DWH.parseBenchmarks(
             item.order.benchmarks,
             item.netflags,
         );
-        order.duration = order.duration
-            ? this.parseDuration(order.duration)
-            : 0;
-        order.price = this.parsePrice(order.price);
+        order.duration = order.duration ? DWH.parseDuration(order.duration) : 0;
+        order.price = DWH.recalculatePriceIn(order.price);
 
         order.creator = {
             status: item.creatorIdentityLevel || EnumProfileStatus.anonimest,
@@ -358,11 +326,11 @@ export class DWH {
         return order;
     }
 
-    private parsePrice(price: number) {
-        return new BN(price).mul(new BN(3600)).toString();
+    public static recalculatePriceIn(price: number) {
+        return String(new BN(price).mul(new BN(3600)));
     }
 
-    private parseDuration(duration: number) {
+    public static parseDuration(duration: number) {
         return Math.round((100 * duration) / 3600) / 100;
     }
 
@@ -444,7 +412,7 @@ export class DWH {
         const consumer = this.parseCertificate(item.consumerCertificates);
         const supplier = this.parseCertificate(item.supplierCertificates);
 
-        deal.benchmarkMap = this.parseBenchmarks(
+        deal.benchmarkMap = DWH.parseBenchmarks(
             item.deal.benchmarks,
             item.netflags,
         );
@@ -458,8 +426,8 @@ export class DWH {
             status: consumer.status || EnumProfileStatus.anonimest,
             name: consumer.name || '',
         };
-        deal.duration = deal.duration ? this.parseDuration(deal.duration) : 0;
-        deal.price = this.parsePrice(deal.price) || 0;
+        deal.duration = deal.duration ? DWH.parseDuration(deal.duration) : 0;
+        deal.price = DWH.recalculatePriceIn(deal.price);
         deal.startTime =
             deal.startTime && deal.startTime.seconds
                 ? deal.startTime.seconds

@@ -4,13 +4,12 @@ import { Checkbox } from 'app/components/common/checkbox';
 import { Input } from 'app/components/common/input';
 import { Button } from 'app/components/common/button';
 import { IOrderFilterPanelProps } from './types';
-import { IOrderFilter, EnumOrderOwnerType } from 'app/stores/order-filter';
+import { IOrderFilter } from 'app/stores/order-filter';
 import { RadioButtonGroup } from 'app/components/common/radio-button-group';
 import { FormField } from 'app/components/common/form';
 // import { ToggleButtonGroup } from 'app/components/common/toggle-button-group';
 import { IChangeParams } from 'app/components/common/types';
-import { ITogglerChangeParams } from 'app/components/common/toggler';
-import ToggleGroup from '../../../../common/toggle-group/index';
+import ToggleGroup from 'app/components/common/toggle-group/index';
 
 export class OrderFilterPanel extends React.PureComponent<
     IOrderFilterPanelProps,
@@ -20,32 +19,12 @@ export class OrderFilterPanel extends React.PureComponent<
         super(props);
     }
 
-    protected handleClickType = (params: IChangeParams<string>) => {
-        this.props.onUpdateFilter('type', params.value);
-    };
-
-    protected handleClickOrderOwnerType = (
-        params: IChangeParams<EnumOrderOwnerType>,
-    ) => {
-        this.props.onUpdateFilter('orderOwnerType', params.value);
-    };
-
-    protected handleChangeInput = (params: IChangeParams<string>) => {
+    protected handleChangeInput = (params: IChangeParams<boolean | string>) => {
         const key = params.name as keyof IOrderFilter;
         const value: IOrderFilter[keyof IOrderFilter] = params.value;
         this.props.onUpdateFilter(key, value);
     };
 
-    protected handleChangeCheckbox = (params: ITogglerChangeParams) => {
-        this.props.onUpdateFilter(
-            params.name as keyof IOrderFilter,
-            params.value,
-        );
-    };
-
-    protected handleClickApply = () => {
-        this.props.onApply();
-    };
     private static orderTypeValues = ['Sell', 'Buy'];
 
     // private static orderOwnerTypeValues = [
@@ -61,6 +40,10 @@ export class OrderFilterPanel extends React.PureComponent<
                 .map(x => validation[x])
                 .filter(Boolean).length > 0
         );
+    }
+
+    protected handleResetFilter() {
+        this.props.onResetFilter();
     }
 
     public render() {
@@ -96,10 +79,10 @@ export class OrderFilterPanel extends React.PureComponent<
                     >
                         <RadioButtonGroup
                             cssClasses={ToggleGroup.radioRowCssClasses}
-                            name="orderType"
-                            value={p.type}
+                            name="side"
+                            value={p.side}
                             values={OrderFilterPanel.orderTypeValues}
-                            onChange={this.handleClickType}
+                            onChange={this.handleChangeInput}
                         />
                     </FormField>
 
@@ -130,28 +113,28 @@ export class OrderFilterPanel extends React.PureComponent<
                         name="professional"
                         title="Professional"
                         value={p.professional}
-                        onChange={this.handleChangeCheckbox}
+                        onChange={this.handleChangeInput}
                         className="order-filter-panel__owner-status-checkbox"
                     />
                     <Checkbox
                         name="registered"
                         title="Registered"
                         value={p.registered}
-                        onChange={this.handleChangeCheckbox}
+                        onChange={this.handleChangeInput}
                         className="order-filter-panel__owner-status-checkbox"
                     />
                     <Checkbox
                         name="identified"
                         title="Identified"
                         value={p.identified}
-                        onChange={this.handleChangeCheckbox}
+                        onChange={this.handleChangeInput}
                         className="order-filter-panel__owner-status-checkbox"
                     />
                     <Checkbox
                         name="anonymous"
                         title="Anonymous"
                         value={p.anonymous}
-                        onChange={this.handleChangeCheckbox}
+                        onChange={this.handleChangeInput}
                         className="order-filter-panel__owner-status-checkbox"
                     />
                     <div className="order-filter-panel__row-gap" />
@@ -234,21 +217,12 @@ export class OrderFilterPanel extends React.PureComponent<
                             onChange={this.handleChangeInput}
                         />
                     </FormField>
-
                     <Button
-                        onClick={this.handleClickApply}
-                        className="order-filter-panel__apply"
-                        color="violet"
-                        disabled={this.isFormValid(p.validation)}
-                    >
-                        APPLY FILTERS
-                    </Button>
-                    <Button
-                        disabled
+                        onClick={this.handleResetFilter}
                         className="order-filter-panel__all-filters"
                         color="violet"
                     >
-                        ALL FILTERS
+                        RESET FILTERS
                     </Button>
                 </div>
             </div>

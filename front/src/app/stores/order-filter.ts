@@ -18,7 +18,7 @@ const VALIDATION_MSG = 'incorrect';
 export interface IOrderFilter {
     orderOwnerType: EnumOrderOwnerType;
     creatorAddress: string;
-    type: string; // TODO rename
+    side: string; // TODO rename
     onlyActive: boolean;
     priceFrom: string;
     priceTo: string;
@@ -62,7 +62,7 @@ export class OrderFilterStore implements IFilterStore {
     private static defaultUserInput: IOrderFilter = {
         orderOwnerType: EnumOrderOwnerType.market,
         creatorAddress: '',
-        type: 'Sell',
+        side: 'Sell',
         onlyActive: false,
         priceFrom: '',
         priceTo: '',
@@ -124,7 +124,6 @@ export class OrderFilterStore implements IFilterStore {
     public setUserInput(values: Partial<IOrderFilter>) {
         this.userInput = OrderFilterStore.defaultUserInput;
         this.updateUserInput(values);
-        this.applyFilter();
     }
 
     @action
@@ -169,12 +168,14 @@ export class OrderFilterStore implements IFilterStore {
     }
 
     @computed
-    public get creatorAddress() {
-        let result = '';
+    public get creatorAddress(): string | undefined {
+        let result;
 
-        if (this.validationCreatorAddress === '') {
+        if (
+            this.userInput.creatorAddress !== '' &&
+            this.validationCreatorAddress !== ''
+        ) {
             result = this.userInput.creatorAddress;
-
             if (!result.startsWith('0x')) {
                 result = '0x' + result;
             }
@@ -199,8 +200,8 @@ export class OrderFilterStore implements IFilterStore {
     }
 
     @computed
-    public get type() {
-        return this.userInput.type;
+    public get side() {
+        return this.userInput.side;
     }
 
     @computed
@@ -209,7 +210,8 @@ export class OrderFilterStore implements IFilterStore {
     }
 
     protected getTextInputValue(key: keyof IOrderFilter): string | undefined {
-        return this.validation[key] ? undefined : String(this.userInput[key]);
+        const result = this.validation[key] ? '' : String(this.userInput[key]);
+        return result === '' ? undefined : result;
     }
 
     @computed
@@ -327,7 +329,7 @@ export class OrderFilterStore implements IFilterStore {
         return {
             creator: {
                 address:
-                    this.creatorAddress !== ''
+                    this.creatorAddress !== undefined
                         ? { $eq: this.creatorAddress }
                         : this.orderOwnerType === EnumOrderOwnerType.my
                             ? { $eq: this.myAddress }
@@ -343,9 +345,9 @@ export class OrderFilterStore implements IFilterStore {
                         .map(([n]) => n),
                 },
             },
-            orderType: {
+            orderSide: {
                 $eq:
-                    this.type === 'Buy' ? EnumOrderType.bid : EnumOrderType.ask,
+                    this.side === 'Buy' ? EnumOrderType.bid : EnumOrderType.ask,
             },
             orderStatus: {
                 $eq: this.onlyActive
@@ -378,12 +380,18 @@ export class OrderFilterStore implements IFilterStore {
         };
     }
 
-    @action
-    public applyFilter() {
-        this.filterAsString = JSON.stringify(this.filter);
+    @computed
+    get isFormValid() {
+        const vs: any = this.validation;
+        return Object.keys(vs)
+            .map(x => vs[x])
+            .some(Boolean);
     }
 
-    @observable public filterAsString: string = '';
+    @computed
+    public get filterAsString() {
+        return this.isFormValid ? JSON.stringify(this.filter) : '';
+    }
 }
 
 export default OrderFilterStore;

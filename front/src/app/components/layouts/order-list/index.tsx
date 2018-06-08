@@ -33,10 +33,6 @@ export class OrderList extends React.Component<IProps, never> {
         this.props.onNavigateToOrder(orderId);
     };
 
-    protected handleApplyFilter = () => {
-        filterStore.applyFilter();
-    };
-
     protected handleUpdateFilter = (
         key: keyof IOrderFilter,
         value: IOrderFilter[keyof IOrderFilter],
@@ -59,11 +55,10 @@ export class OrderList extends React.Component<IProps, never> {
                 onRefresh={this.handleRefresh}
                 filterPanel={
                     <OrderFilterPanel
-                        onApply={this.handleApplyFilter}
                         onUpdateFilter={this.handleUpdateFilter}
                         creatorAddress={filterStore.userInput.creatorAddress}
                         orderOwnerType={filterStore.userInput.orderOwnerType}
-                        type={filterStore.userInput.type}
+                        side={filterStore.userInput.side}
                         onlyActive={filterStore.userInput.onlyActive}
                         priceFrom={filterStore.userInput.priceFrom}
                         priceTo={filterStore.userInput.priceTo}
@@ -88,6 +83,7 @@ export class OrderList extends React.Component<IProps, never> {
                         gpuRamSizeFrom={filterStore.userInput.gpuRamSizeFrom}
                         gpuRamSizeTo={filterStore.userInput.gpuRamSizeTo}
                         validation={filterStore.validation}
+                        onResetFilter={() => {}}
                     />
                 }
             />
