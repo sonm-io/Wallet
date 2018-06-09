@@ -1109,6 +1109,10 @@ class Api {
 
             const client = await this.initAccount(fromAddress, network);
 
+            console.log(client);
+            console.log(action);
+            console.log(transaction);
+
             try {
                 let txResult;
                 if (action === 'wallet') {
