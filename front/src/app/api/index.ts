@@ -154,6 +154,20 @@ class AllApi {
         return this.ipc.send('market.getValidators');
     };
 
+    public getKYCLink = async (
+        password: string,
+        address: string,
+        kycAddress: string,
+        fee: string,
+    ): Promise<IResult<string>> => {
+        return this.ipc.send('getKYCLink', {
+            password,
+            address,
+            kycAddress,
+            fee,
+        });
+    };
+
     public async getTokenExchangeRate(): Promise<IResult<string>> {
         return this.ipc.send('getTokenExchangeRate');
     }
