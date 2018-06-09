@@ -146,14 +146,14 @@ module.exports = {
                 ? new HtmlWebpackInlineSourcePlugin()
                 : null,
 
-            // isDev
-            //     ? null
-            //     : new MinifyPlugin(
-            //           {},
-            //           {
-            //               sourceMap: sourceMap,
-            //           },
-            //       ),
+            isDev
+                ? null
+                : new MinifyPlugin(
+                      {},
+                      {
+                          sourceMap: sourceMap,
+                      },
+                  ),
 
             new webpack.NoEmitOnErrorsPlugin(),
 
