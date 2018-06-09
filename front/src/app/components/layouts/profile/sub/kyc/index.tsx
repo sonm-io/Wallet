@@ -32,7 +32,7 @@ export class KYC extends React.Component<IProps, any> {
         const link = await rootStore.mainStore.getKYCLink(
             password,
             this.props.address,
-            '0x5db024c6469634f4b307135cb76e8e6806f007b3',
+            '0xF9c176c276dC8C04ee9f01166F70Fd238e5a16Cf',
             '20',
         );
 
