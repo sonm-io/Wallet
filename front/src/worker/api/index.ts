@@ -1161,10 +1161,15 @@ class Api {
                     );
                 }
 
-                transaction.hash = await txResult.getHash();
+                if (txResult) {
+                    transaction.hash = await txResult.getHash();
 
-                await this.saveData();
-                await this.proceedTx(transaction, txResult);
+                    await this.saveData();
+                    await this.proceedTx(transaction, txResult);
+                } else {
+                    transaction.status = 'failed';
+                    transaction.hash = '';
+                }
 
                 return {
                     data: transaction,

@@ -195,7 +195,7 @@ export class DWH {
 
         const res = await this.fetchData('GetOrders', {
             // filter
-            authorID:
+            masterID:
                 mongoLikeQuery.creator.address &&
                 mongoLikeQuery.creator.address.$eq
                     ? mongoLikeQuery.creator.address.$eq
