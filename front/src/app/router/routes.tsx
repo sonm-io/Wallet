@@ -22,7 +22,7 @@ import { navigate } from './navigate';
 
 let defaultAction;
 
-const navigateToSend = () => navigate({ path: '/market/send' });
+const navigateToSend = () => navigate({ path: '/wallet/send' });
 const navigateToHistory = (
     accountAddress: string = '',
     currencyAddress: string = '',
