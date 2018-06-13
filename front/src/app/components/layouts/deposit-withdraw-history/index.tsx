@@ -11,15 +11,15 @@ import { rootStore } from 'app/stores';
 import { ISendTransactionResult } from 'app/api';
 import { ColumnProps } from 'antd/lib/table';
 import * as moment from 'moment';
-import * as debounce from 'lodash/fp/debounce';
 import { Balance } from 'app/components/common/balance-view';
 import { Hash } from 'app/components/common/hash-view';
 import { Button } from 'app/components/common/button';
 import { Icon } from 'app/components/common/icon';
 
-const Option = Select.Option;
+const filterStore = rootStore.dwHistoryFilterStore;
+const listStore = rootStore.dwHistoryListStore;
 
-const debounce500 = debounce(500);
+const Option = Select.Option;
 
 class TxTable extends Table<ISendTransactionResult> {}
 
@@ -31,7 +31,7 @@ interface IProps {
 
 @observer
 export class DepositWithdrawHistory extends React.Component<IProps, any> {
-    protected columns: Array<ColumnProps<ISendTransactionResult>> = [
+    protected static columns: Array<ColumnProps<ISendTransactionResult>> = [
         {
             className: 'sonm-dw-tx-list__cell-time sonm-dw-tx-list__cell',
             dataIndex: 'timestamp',
@@ -143,83 +143,68 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         },
     ];
 
-    public state = {
-        query: '',
-    };
+    protected static operations = [
+        {
+            name: 'All operations',
+            value: '',
+        },
+        {
+            name: 'Deposits',
+            value: 'deposit',
+        },
+        {
+            name: 'Withdraws',
+            value: 'withdraw',
+        },
+    ];
 
     constructor(props: IProps) {
         super(props);
-        rootStore.dwHistoryStore.update();
+        listStore.update();
     }
 
     protected handleChangeTime = (params: IDateRangeChangeParams) => {
-        rootStore.dwHistoryStore.setFilterTime(
-            params.value[0].valueOf(),
-            params.value[1].valueOf(),
-        );
+        filterStore.updateUserInput({
+            timeStart: params.value[0].valueOf(),
+            timeEnd: params.value[1].valueOf(),
+        });
     };
-
-    protected handlePageChange = (page: number) => {
-        rootStore.dwHistoryStore.setPage(page);
-    };
-
-    protected handleChangeQuery = (event: any) => {
-        const query = event.target.value;
-
-        this.setState({ query });
-        this.setQueryDebonced(query);
-    };
-
-    protected setQueryDebonced = debounce500((query: string) => {
-        rootStore.dwHistoryStore.setQuery(query);
-    });
 
     protected handleSelectOperation = (value: any) => {
-        rootStore.dwHistoryStore.setFilterOperation(value as string);
+        filterStore.updateUserInput({ operation: value as string });
     };
+
+    public handleChangePage(page: number) {
+        listStore.updateUserInput({ page });
+    }
 
     public render() {
         const { className } = this.props;
 
         const pagination = {
-            total: rootStore.dwHistoryStore.total,
-            defaultPageSize: rootStore.dwHistoryStore.perPage,
-            current: rootStore.dwHistoryStore.page,
-            onChange: this.handlePageChange,
+            total: listStore.total,
+            defaultPageSize: listStore.limit,
+            current: listStore.page,
+            onChange: this.handleChangePage,
         };
-
-        const operations = [
-            {
-                name: 'All operations',
-                value: '',
-            },
-            {
-                name: 'Deposits',
-                value: 'deposit',
-            },
-            {
-                name: 'Withdraws',
-                value: 'withdraw',
-            },
-        ];
 
         return (
             <div className={cn('sonm-dw-history', className)}>
                 <DateRangeDropdown
                     className="sonm-dw-history__date-range"
                     value={[
-                        new Date(rootStore.dwHistoryStore.timeStart),
-                        new Date(rootStore.dwHistoryStore.timeEnd),
+                        new Date(filterStore.timeStart),
+                        new Date(filterStore.timeEnd),
                     ]}
                     name="date-range-history"
                     onChange={this.handleChangeTime}
                 />
                 <Select
                     onChange={this.handleSelectOperation}
-                    value={rootStore.dwHistoryStore.operation}
+                    value={filterStore.operation}
                     className="sonm-dw-history__select-operation"
                 >
-                    {operations.map(x => (
+                    {DepositWithdrawHistory.operations.map(x => (
                         <Option key={x.value} value={x.value} title={x.name}>
                             {x.name}
                         </Option>
@@ -247,8 +232,8 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
 
                 <TxTable
                     className="sonm-dw-history__table sonm-dw-tx-list"
-                    dataSource={rootStore.dwHistoryStore.currentList}
-                    columns={this.columns}
+                    dataSource={listStore.records}
+                    columns={DepositWithdrawHistory.columns}
                     pagination={pagination}
                     rowKey="hash"
                 />

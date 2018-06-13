@@ -28,7 +28,6 @@ export interface ISendTransactionResult extends ISendTransaction {
     fee?: string;
     confirmCount: number;
     status: TransactionStatus;
-    timestamp: number;
     hash: string;
 }
 

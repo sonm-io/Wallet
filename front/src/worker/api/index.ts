@@ -127,7 +127,8 @@ class Api {
             'account.requestTestTokens': this.requestTestTokens,
             'account.getPrivateKey': this.getPrivateKey,
 
-            'transaction.list': this.getTransactionList,
+            'transaction.list': this.getTransactionList, // ToDo a
+            'transaction.list2': wrapInResponse(this.getTransactionList2),
 
             'profile.get': wrapInResponse(dwh.getProfileFull),
             'profile.list': wrapInResponse(dwh.getProfiles),
@@ -1247,6 +1248,70 @@ class Api {
 
         return {
             data: [filtered, total],
+        };
+    };
+
+    public getTransactionList2 = async (
+        data: t.IPayload,
+    ): Promise<t.IListResult<t.ISendTransactionResult>> => {
+        let { filter, limit, offset } = data;
+        filter = filter ? JSON.parse(filter) : {};
+        limit = limit || 10;
+        offset = offset || 0;
+        filter.source = filter.source || 'wallet';
+
+        let filtered = [];
+        for (const item of this.storage.transactions) {
+            const sidechainAction = item.fromAddress === item.toAddress;
+
+            let ok = true;
+
+            // filter transaction by source
+            if (filter.source === 'wallet' && sidechainAction) {
+                ok = false;
+            } else if (filter.source === 'market' && !sidechainAction) {
+                ok = false;
+            }
+
+            if (Object.keys(filter).length) {
+                for (const type of ['fromAddress', 'currencyAddress']) {
+                    if (filter[type] && item[type] !== filter[type]) {
+                        ok = false;
+                    }
+                }
+
+                if (
+                    filter.query &&
+                    !item.toAddress.includes(filter.query) &&
+                    !item.hash.includes(filter.query)
+                ) {
+                    ok = false;
+                }
+
+                if (filter.timeStart && item.timestamp < filter.timeStart) {
+                    ok = false;
+                }
+
+                if (filter.timeEnd && item.timestamp > filter.timeEnd) {
+                    ok = false;
+                }
+
+                if (filter.operation && item.action !== filter.operation) {
+                    ok = false;
+                }
+            }
+
+            if (ok === true) {
+                filtered.push(item);
+            }
+        }
+
+        const total = filtered.length;
+        filtered = filtered.slice(offset, offset + limit);
+
+        return {
+            records: filtered,
+            total,
         };
     };
 
