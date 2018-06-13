@@ -2,6 +2,7 @@ import { observable, computed, action } from 'mobx';
 import { updateUserInput } from './utils/update-user-input';
 import { EnumHistorySourceMode } from 'app/stores/types';
 import * as moment from 'moment';
+import { IFilterStore } from './filter-base';
 
 export interface IHistoryFilter {
     query: string;
@@ -10,12 +11,6 @@ export interface IHistoryFilter {
     timeEnd: number;
     fromAddress: string;
     operation: string;
-}
-
-// ToDo a extract as common interface
-export interface IFilterStore {
-    readonly filter: any;
-    readonly filterAsString: string;
 }
 
 export class HistoryFilterStore implements IHistoryFilter, IFilterStore {

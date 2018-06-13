@@ -4,6 +4,7 @@ import {
     EnumOrderType,
     EnumOrderStatus,
 } from 'app/api/types';
+import { IFilterStore } from './filter-base';
 
 export enum EnumOrderOwnerType {
     market,
@@ -40,11 +41,6 @@ export interface IOrderFilter {
     storageSizeTo: string;
     gpuRamSizeFrom: string;
     gpuRamSizeTo: string;
-}
-
-export interface IFilterStore {
-    readonly filter: any;
-    readonly filterAsString: string;
 }
 
 export class OrderFilterStore implements IOrderFilter, IFilterStore {

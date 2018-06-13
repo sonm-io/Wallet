@@ -1,5 +1,6 @@
 import { observable, computed, action } from 'mobx';
 import * as moment from 'moment';
+import { IFilterStore } from './filter-base';
 
 export interface IDealFilter {
     address: string;
@@ -7,11 +8,6 @@ export interface IDealFilter {
     dateFrom: number;
     dateTo: number;
     onlyActive: boolean;
-}
-
-export interface IFilterStore {
-    readonly filter: any;
-    readonly filterAsString: string;
 }
 
 export class DealFilterStore implements IDealFilter, IFilterStore {

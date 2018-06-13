@@ -1,5 +1,6 @@
 import { observable, computed, action } from 'mobx';
 import { EnumProfileStatus, EnumProfileRole } from '../api/types';
+import { IFilterStore } from './filter-base';
 
 export interface IOrderFilter {
     status: EnumProfileStatus;
@@ -7,11 +8,6 @@ export interface IOrderFilter {
     country: Array<string>;
     minDeals: number | undefined;
     query: string;
-}
-
-export interface IFilterStore {
-    readonly filter: any;
-    readonly filterAsString: string;
 }
 
 export class ProfileFilterStore implements IOrderFilter, IFilterStore {
