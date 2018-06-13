@@ -127,8 +127,7 @@ class Api {
             'account.requestTestTokens': this.requestTestTokens,
             'account.getPrivateKey': this.getPrivateKey,
 
-            'transaction.list': this.getTransactionList, // ToDo a
-            'transaction.list2': wrapInResponse(this.getTransactionList2),
+            'transaction.list': wrapInResponse(this.getTransactionList2),
 
             'profile.get': wrapInResponse(dwh.getProfileFull),
             'profile.list': wrapInResponse(dwh.getProfiles),

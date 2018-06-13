@@ -1,6 +1,5 @@
 import { useStrict } from 'mobx';
 import { IProfileBrief, IOrder, IDeal } from 'app/api/types';
-import { HistoryStore } from './history';
 import { HistoryListStore } from './history-list';
 import { HistoryFilterStore } from './history-filter';
 import { MainStore } from './main';
@@ -31,12 +30,10 @@ import { DealDetails } from './deal-details';
 useStrict(true);
 
 export class RootStore implements IHasLocalizator {
-    public readonly historyStore: HistoryStore;
     public readonly walletHistoryListStore: HistoryListStore;
     public readonly walletHistoryFilterStore: HistoryFilterStore;
     public readonly dwHistoryListStore: HistoryListStore;
     public readonly dwHistoryFilterStore: HistoryFilterStore;
-    public readonly dwHistoryStore: HistoryStore; // ToDo a remove
     public readonly mainStore: MainStore;
     public readonly sendStore: SendStore;
     public readonly depositStore: SendStore;
@@ -58,18 +55,6 @@ export class RootStore implements IHasLocalizator {
 
         // should be first cause used in all stores;
         this.uiStore = new UiStore();
-
-        this.historyStore = new HistoryStore(
-            this,
-            this.localizator,
-            EnumHistorySourceMode.wallet,
-        );
-
-        this.dwHistoryStore = new HistoryStore(
-            this,
-            this.localizator,
-            EnumHistorySourceMode.market,
-        );
 
         this.walletHistoryFilterStore = new HistoryFilterStore(
             EnumHistorySourceMode.wallet,
@@ -206,8 +191,6 @@ export class RootStore implements IHasLocalizator {
             'isPending',
             this.walletHistoryListStore,
             this.dwHistoryListStore,
-            this.historyStore, // ToDo a remove
-            this.dwHistoryStore, // ToDo a remove
             this.mainStore,
             this.sendStore,
             this.depositStore,
@@ -221,13 +204,11 @@ export class RootStore implements IHasLocalizator {
     public get isOffline() {
         return OnlineStore.getAccumulatedFlag(
             'isOffline',
-            this.historyStore, // ToDo a remove
             this.walletHistoryListStore,
             this.dwHistoryListStore,
             this.mainStore,
             this.sendStore,
             this.addTokenStore,
-            this.dwHistoryStore, // ToDo a remove
             this.depositStore,
             this.withdrawStore,
         );

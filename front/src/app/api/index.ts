@@ -9,7 +9,6 @@ import {
     ICurrencyInfo,
     ISendTransaction,
     IResult,
-    ITxListFilter,
     ISettings,
     IWalletListItem,
     ISender,
@@ -180,20 +179,6 @@ class AllApi {
     ): Promise<IResult<ISendTransactionResult>> => {
         return this.ipc.send('account.withdraw', { ...tx, password });
     };
-
-    public async getSendTransactionList(
-        source?: string,
-        filters?: ITxListFilter,
-        limit?: number,
-        offset?: number,
-    ): Promise<IResult<[ISendTransactionResult[], number]>> {
-        return this.ipc.send('transaction.list', {
-            filters,
-            limit,
-            offset,
-            source,
-        });
-    }
 
     public async getGasPrice(): Promise<IResult<string>> {
         return this.ipc.send('account.getGasPrice');

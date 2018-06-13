@@ -15,7 +15,7 @@ export class HistoryApi {
     public async fetchList(
         query: IListQuery<string>,
     ): Promise<IListResult<ISendTransactionResult>> {
-        const response = await this.ipc.send('transaction.list2', query);
+        const response = await this.ipc.send('transaction.list', query);
         return response.data;
     }
 }

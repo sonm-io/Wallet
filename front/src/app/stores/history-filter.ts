@@ -20,7 +20,6 @@ export class HistoryFilterStore implements IHistoryFilter, IFilterStore {
 
     protected source: EnumHistorySourceMode;
 
-    // ToDo a: check store/utils/updateUserInput, may be we can remove it
     @observable
     public userInput: Partial<IHistoryFilter> = {
         query: undefined,
