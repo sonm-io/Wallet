@@ -164,11 +164,11 @@ export class DWH {
         };
     };
 
+    protected static priceMultiplierOut = new BN('1000000000000000000').div(
+        new BN('3600'),
+    );
     public static recalculatePriceOut(price: string) {
-        return new BN(price)
-            .mul(new BN('1000000000000000000'))
-            .div(new BN('3600'))
-            .toString();
+        return String(new BN(price).mul(DWH.priceMultiplierOut));
     }
 
     public getOrders = async ({
@@ -247,8 +247,9 @@ export class DWH {
             .map(([code, name, multiplier]) => [
                 code,
                 name,
-                DWH.getMinMaxFilter(benchmarkRanges[name], (x: any) =>
-                    String(Number(x) * multiplier),
+                DWH.getMinMaxFilter(
+                    benchmarkRanges[name],
+                    (x: any) => Number(x) * multiplier,
                 ),
             ])
             .filter(([code, name, value]) => value)
@@ -263,7 +264,7 @@ export class DWH {
 
     public static readonly getMinMaxFilter = (
         value: { $gte?: string; $lte?: string },
-        converter: (a: string) => string = x => x,
+        converter: (a: string) => number | string | boolean = Number,
     ) => {
         if (value && ('$gte' in value || '$lte' in value)) {
             return {

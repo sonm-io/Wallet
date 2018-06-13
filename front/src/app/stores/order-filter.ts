@@ -140,21 +140,21 @@ export class OrderFilterStore implements IFilterStore {
         });
     }
 
-    protected readonly validationFixedRef: IOrderFilterValidation = {
-        ...OrderFilterStore.emptyValidation,
-    };
     @computed
     get validation() {
+        const result = {
+            ...OrderFilterStore.emptyValidation,
+            creatorAddress: this.validationCreatorAddress,
+        };
+
         for (const key in OrderFilterStore.emptyValidation) {
             const k = key as keyof IOrderFilter;
-            this.validationFixedRef[k] =
+            result[k] =
                 OrderFilterStore.validateNumber(String(this.userInput[k])) &&
                 VALIDATION_MSG;
         }
 
-        this.validationFixedRef.creatorAddress = this.validationCreatorAddress;
-
-        return this.validationFixedRef;
+        return result;
     }
 
     @computed
@@ -383,7 +383,7 @@ export class OrderFilterStore implements IFilterStore {
     @computed
     get isFormValid() {
         const vs: any = this.validation;
-        return Object.keys(vs)
+        return !Object.keys(vs)
             .map(x => vs[x])
             .some(Boolean);
     }
