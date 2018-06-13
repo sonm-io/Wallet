@@ -4,6 +4,9 @@ import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import { IProfileBrief } from 'app/api/types';
+import * as debounce from 'lodash/fp/debounce';
+
+const debounce300 = debounce(300);
 
 interface IProps {
     className?: string;
@@ -21,9 +24,9 @@ export class ProfileList extends React.Component<IProps, any> {
         this.props.onNavigate(record.address);
     };
 
-    public handleChangeFilter = (key: string, value: any) => {
+    public handleChangeFilter = debounce300((key: string, value: any) => {
         rootStore.profileFilterStore.updateUserInput({ [key]: value });
-    };
+    });
 
     public handleChangePage(page: number) {
         rootStore.profileListStore.updateUserInput({ page });
