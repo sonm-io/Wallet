@@ -69,9 +69,12 @@ export class Toggler extends React.PureComponent<ITogglerProps, never> {
             }
         }
 
-        return (
-            <label className={cn(className, cssClasses.label)}>{content}</label>
+        const css = cn(
+            className,
+            cssClasses.label,
+            disabled ? `${cssClasses.label}--disabled` : null,
         );
+        return <label className={css}>{content}</label>;
     }
 
     protected handleChange = (event: any) => {

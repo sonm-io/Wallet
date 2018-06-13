@@ -42,10 +42,6 @@ export class OrderFilterPanel extends React.PureComponent<
         );
     }
 
-    protected handleResetFilter() {
-        this.props.onResetFilter();
-    }
-
     public render() {
         const p = this.props;
 
@@ -218,7 +214,7 @@ export class OrderFilterPanel extends React.PureComponent<
                         />
                     </FormField>
                     <Button
-                        onClick={this.handleResetFilter}
+                        onClick={this.props.onResetFilter}
                         className="order-filter-panel__all-filters"
                         color="violet"
                     >

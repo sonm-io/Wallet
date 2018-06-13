@@ -138,8 +138,10 @@ class Api {
 
             'market.getOrderParams': wrapInResponse(this.getOrderParams),
             'market.waitForOrderDeal': wrapInResponse(this.waitForOrderDeal),
+            'market.getValidators': wrapInResponse(dwh.getValidators),
             'market.buyOrder': this.buyOrder,
             'market.closeDeal': this.closeDeal,
+            getKYCLink: this.getKYCLink,
 
             getSonmTokenAddress: this.getSonmTokenAddress,
             getTokenExchangeRate: this.getTokenExchangeRate,
@@ -244,7 +246,7 @@ class Api {
             };
         }
 
-        address = utils.add0x(address);
+        address = utils.add0x(address).toLowerCase();
 
         const client = await this.initAccount(address, network);
 
@@ -787,6 +789,8 @@ class Api {
     }
 
     private async initAccount(address: string, key = 'main') {
+        address = address.toLowerCase();
+
         if (!this.accounts[key]) {
             this.accounts[key] = {};
         }
@@ -854,6 +858,29 @@ class Api {
             };
         } else if (data.address && data.id && data.password) {
             return this.getMethod('buyOrder', [data.id], 'private')(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public getKYCLink = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (
+            data.address &&
+            data.kycAddress &&
+            data.password &&
+            data.fee
+        ) {
+            return this.getMethod(
+                'getKYCLink',
+                [parseInt(data.fee, 10), data.kycAddress],
+                'private',
+            )(data);
         } else {
             throw new Error('required_params_missed');
         }
@@ -1134,10 +1161,15 @@ class Api {
                     );
                 }
 
-                transaction.hash = await txResult.getHash();
+                if (txResult) {
+                    transaction.hash = await txResult.getHash();
 
-                await this.saveData();
-                await this.proceedTx(transaction, txResult);
+                    await this.saveData();
+                    await this.proceedTx(transaction, txResult);
+                } else {
+                    transaction.status = 'failed';
+                    transaction.hash = '';
+                }
 
                 return {
                     data: transaction,

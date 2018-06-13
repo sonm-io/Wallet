@@ -83,7 +83,7 @@ export class OrderList extends React.Component<IProps, never> {
                         gpuRamSizeFrom={filterStore.userInput.gpuRamSizeFrom}
                         gpuRamSizeTo={filterStore.userInput.gpuRamSizeTo}
                         validation={filterStore.validation}
-                        onResetFilter={() => {}}
+                        onResetFilter={filterStore.resetFilter}
                     />
                 }
             />

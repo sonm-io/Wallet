@@ -13,6 +13,7 @@ import {
     IOrderParams,
     IAccountBrief,
     IBenchmarkMap,
+    IValidator,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -185,6 +186,17 @@ export const TypeDeal = createStruct<IDeal>(
         timeLeft: t.Number,
     },
     'IDeal',
+);
+
+export const TypeValidator = createStruct<IValidator>(
+    {
+        id: TypeEthereumAddress,
+        level: t.Number,
+        name: t.String,
+        url: t.String,
+        fee: t.String,
+    },
+    'IValidator',
 );
 
 export const TypeDealStats = createStruct<IMarketStats>(

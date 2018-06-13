@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 
-const icons: any = {
+// To get more icons go to: https://material.io/icons/
+export const icons: any = {
     Exit: require('./exit.svg').default,
     Export: require('./export.svg').default,
     Import: require('./import.svg').default,
@@ -13,6 +14,7 @@ const icons: any = {
     Download: require('./download.svg').default,
     Info: require('./info.svg').default,
     Close: require('./close.svg').default,
+    ArrowBack: require('./arrow-back.svg').default,
     ArrowRight: require('./arrow-right.svg').default,
     Refresh: require('./refresh.svg').default,
     Sync: require('./sync.svg').default,

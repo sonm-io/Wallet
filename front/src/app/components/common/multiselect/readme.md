@@ -59,3 +59,18 @@ Multiselect:
         <StateInfo />
         <Container />
     </div>
+
+Disabled
+
+    <MultiSelect
+        label="City"
+        filterPlaceHolder='Type to search'
+        hasClearButton
+        // data
+        nameIndex="name"
+        list={[{name: 'aaa', value: 1}]}
+        value={[]}
+        // events
+        onChange={() => {}}
+        disabled={true}
+    />

@@ -5,7 +5,7 @@ import { rootStore } from 'app//stores';
 
 interface IProps {
     className?: string;
-    onNavigateToDealList: () => {};
+    onCompleteBuyingOrder: () => {};
 }
 
 @observer
@@ -17,7 +17,7 @@ export class OrderDetails extends React.Component<IProps, never> {
         await orderDetailsStore.submit();
 
         if (orderDetailsStore.validationPassword === '') {
-            this.props.onNavigateToDealList();
+            this.props.onCompleteBuyingOrder();
         }
     };
 

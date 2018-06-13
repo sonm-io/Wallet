@@ -1,0 +1,50 @@
+.order-complete-buy {
+    &__buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    &__button {
+        outline: none;
+        outline-offset: 3px;
+        background: none transparent;
+        border: 0 solid transparent;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        margin: 30px;
+
+        &:focus,
+        &:active {
+            outline: @outline;
+        }
+    }
+
+    &__icon-deals,
+    &__icon-market,
+    &__icon-orders {
+        background-size: cover;
+        height: 140px;
+        width: 140px;
+        display: inline-block;
+    }
+
+    &__icon-deals {
+        background: url('./icon-deals.svg') no-repeat center;
+    }
+    &__icon-market {
+        background: url('./icon-market.svg') no-repeat center;
+    }
+    &__icon-orders {
+        background: url('./icon-orders.svg') no-repeat center;
+    }
+
+    &__label {
+        margin: 30px 0 0 0;
+    }
+
+    &__header {
+        text-align: center;
+    }
+}

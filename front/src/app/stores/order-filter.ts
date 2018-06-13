@@ -122,8 +122,13 @@ export class OrderFilterStore implements IFilterStore {
 
     @action
     public setUserInput(values: Partial<IOrderFilter>) {
-        this.userInput = OrderFilterStore.defaultUserInput;
+        this.resetFilter();
         this.updateUserInput(values);
+    }
+
+    @action.bound
+    public resetFilter() {
+        this.userInput = OrderFilterStore.defaultUserInput;
     }
 
     @action
