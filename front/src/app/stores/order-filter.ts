@@ -52,8 +52,12 @@ export type IOrderFilterValidation = Partial<
 >;
 
 export class OrderFilterStore implements IFilterStore {
-    private static validateNumber = (value: string) =>
-        value === '' ? '' : validatePositiveNumber(value).join(', ');
+    private static validateNumber = (value: string) => {
+        if (value === '0' || value === '') {
+            return '';
+        }
+        return validatePositiveNumber(value).join(', ');
+    };
 
     private static defaultUserInput: IOrderFilter = {
         orderOwnerType: EnumOrderOwnerType.market,
