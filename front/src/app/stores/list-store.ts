@@ -3,7 +3,6 @@ import { asyncAction } from 'mobx-utils';
 import { Status } from './types';
 import { IErrorProcessor, OnlineStore } from './online-store';
 import { ILocalizator } from '../localization/types';
-import { IListQuery } from '../api';
 
 const { pending } = OnlineStore;
 
@@ -13,7 +12,7 @@ interface IFetchListResult<T> {
 }
 
 export interface IListStoreApi<TItem> {
-    fetchList: (params: IListQuery<string>) => Promise<IFetchListResult<TItem>>;
+    fetchList: (params: IListQuery) => Promise<IFetchListResult<TItem>>;
 }
 
 export interface IUserInput {
@@ -22,6 +21,11 @@ export interface IUserInput {
     sortBy: string;
     filter: string;
     sortDesc: boolean;
+}
+
+export interface IFilterStore {
+    readonly filter: any;
+    readonly filterAsString: string;
 }
 
 export interface IListStore<T> {
@@ -40,20 +44,31 @@ export interface IListStore<T> {
     updateUserInput: (input: Partial<IUserInput>) => any;
 }
 
+export interface IListQuery {
+    limit: number;
+    offset: number;
+    sortBy?: string;
+    sortDesc?: boolean;
+    filter?: string;
+}
+
 export interface IListStoreServices<TItem> {
     errorProcessor: IErrorProcessor;
     localizator: ILocalizator;
     api: IListStoreApi<TItem>;
 }
 
-export interface IListStoreStores {
+export interface IReactiveDependecies {
     filter: {
         filterAsString: any;
     };
 }
 
 export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
-    constructor(stores: IListStoreStores, services: IListStoreServices<TItem>) {
+    constructor(
+        stores: IReactiveDependecies,
+        services: IListStoreServices<TItem>,
+    ) {
         super(services);
 
         this.services = services;
@@ -129,7 +144,7 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
         this.status = Status.PENDING;
 
-        const query: IListQuery<string> = {
+        const query: IListQuery = {
             offset,
             limit,
             sortDesc: Boolean(sortDesc),

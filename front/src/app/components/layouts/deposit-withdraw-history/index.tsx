@@ -4,7 +4,7 @@ import {
     DateRangeDropdown,
     IDateRangeChangeParams,
 } from 'app/components/common/date-range-dropdown';
-import Select from 'antd/es/select';
+import Select from 'antd/es/select'; // TODO replace with common component
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
 import { rootStore } from 'app/stores';
@@ -28,6 +28,8 @@ interface IProps {
     onClickDeposit: () => void;
     onClickWithdraw: () => void;
 }
+
+// TODO create pure component view.tsx
 
 @observer
 export class DepositWithdrawHistory extends React.Component<IProps, any> {

@@ -16,6 +16,7 @@ export class HistoryApi {
         query: IListQuery<string>,
     ): Promise<IListResult<ISendTransactionResult>> {
         const response = await this.ipc.send('transaction.list', query);
+        // TODO add json scheme validation
         return response.data;
     }
 }

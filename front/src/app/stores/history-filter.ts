@@ -1,6 +1,7 @@
 import { observable, computed, action } from 'mobx';
 import { updateUserInput } from './utils/update-user-input';
 import { EnumHistorySourceMode } from 'app/stores/types';
+// TODO remove moment dependency
 import * as moment from 'moment';
 import { IFilterStore } from './filter-base';
 
@@ -43,6 +44,7 @@ export class HistoryFilterStore implements IHistoryFilter, IFilterStore {
     @computed
     public get timeStart() {
         return (
+            // TODO remove moment dependency
             this.userInput.timeStart || moment('20171201', 'YYYYMMDD').valueOf()
         );
     }
