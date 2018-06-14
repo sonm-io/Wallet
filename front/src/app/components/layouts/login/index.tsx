@@ -21,6 +21,7 @@ import {
 import shortString from 'app/utils/short-string';
 import { Disclaimer } from './sub/disclaimer/index';
 import { localizator } from 'app/localization';
+import { IChangeParams } from 'app/components/common/types';
 
 interface IProps {
     className?: string;
@@ -377,16 +378,15 @@ export class Login extends React.Component<IProps, IState> {
         return valid;
     }
 
-    protected handleChangeInput = (params: any) => {
+    protected handleChangeInput = (params: IChangeParams<string>) => {
         const name = params.name;
-
         this.setState({
             serverValidation: {
                 ...(this.state.serverValidation as any),
                 [name]: '',
             },
             [name]: params.value,
-        });
+        } as any);
     };
 
     protected handleChangeSelect = (params: any) => {
@@ -528,7 +528,7 @@ export class Login extends React.Component<IProps, IState> {
                             <Input
                                 className="sonm-login__input"
                                 name="newName"
-                                onChangeDeprecated={this.handleChangeInput}
+                                onChange={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -542,7 +542,7 @@ export class Login extends React.Component<IProps, IState> {
                                 type="password"
                                 className="sonm-login__input"
                                 name="password"
-                                onChangeDeprecated={this.handleChangeInput}
+                                onChange={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>
