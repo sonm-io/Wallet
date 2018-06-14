@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 import { IdentIcon } from 'app/components/common/ident-icon';
-import { Hash } from 'app/components/common/hash-view';
 import { Balance } from 'app/components/common/balance-view';
 
 export interface IAccount {
@@ -63,10 +62,6 @@ export class MarketAccountSelect extends React.PureComponent<
                         sizePx={18}
                         className="sonm-market-select-item__icon"
                         address={p.address}
-                    />
-                    <Hash
-                        className="sonm-market-select-item__addr"
-                        hash={p.address}
                     />
                     <div className="sonm-market-select-item__name">
                         {p.name}

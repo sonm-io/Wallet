@@ -30,6 +30,14 @@ export const TypeEthereumAddress = t.refinement(
     'EthereumAddress',
 );
 
+export const TypeNotStrictEthereumAddress = t.refinement(
+    t.String,
+    (s: string) =>
+        (s.length === 42 && s.startsWith('0x') && isHexDeximal(s)) ||
+        (s.length === 40 && isHexDeximal(s)),
+    'EthereumAddress',
+);
+
 export const TypeCurrencyAddress = t.refinement(
     t.String,
     (s: string) => s === '0x' || s === '0x1' || Boolean(TypeEthereumAddress(s)),

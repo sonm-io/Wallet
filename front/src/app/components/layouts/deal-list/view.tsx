@@ -101,8 +101,9 @@ export class DealListView extends React.PureComponent<IProps, any> {
                         key="1"
                         balance={price}
                         decimalPointOffset={18}
-                        decimalDigitAmount={2}
+                        decimalDigitAmount={4}
                         symbol="USD/h"
+                        round
                     />,
                     record.timeLeft ? (
                         <div
@@ -135,6 +136,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                     ]}
                     name="deals-date-range-history"
                     onChange={this.props.handleChangeTime}
+                    disabled
                 />
                 <Input
                     placeholder="Search by address"

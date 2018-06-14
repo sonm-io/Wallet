@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { OrdersListItem } from 'app/components/common/orders-list-item';
 import { ListHeader } from 'app/components/common/list-header';
-import { OrderFilterPanel } from 'app/components/layouts/order-list/sub/order-filter-panel';
 import { IOrdersProps } from './types';
 import { IOrder } from 'app/api/types';
 
@@ -31,38 +30,7 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
                         />
                     ))}
                 </div>
-                <OrderFilterPanel
-                    className="order-list__filter-panel"
-                    onApply={p.onApplyFilter}
-                    onUpdateFilter={p.onUpdateFilter}
-                    orderOwnerType={p.filterOrderOwnerType}
-                    profileAddress={p.filterProfileAddress}
-                    sellerAddress={p.filterSellerAddress}
-                    type={p.filterType}
-                    onlyActive={p.filterOnlyActive}
-                    priceFrom={p.filterPriceFrom}
-                    priceTo={p.filterPriceTo}
-                    professional={p.filterProfessional}
-                    registered={p.filterRegistered}
-                    identified={p.filterIdentified}
-                    anonymous={p.filterAnonymous}
-                    redshiftFrom={p.filterRedshiftFrom}
-                    redshiftTo={p.filterRedshiftTo}
-                    ethFrom={p.filterEthFrom}
-                    ethTo={p.filterEthTo}
-                    zcashFrom={p.filterZCashFrom}
-                    zcashTo={p.filterZCashTo}
-                    cpuCountFrom={p.filterCpuCountFrom}
-                    cpuCountTo={p.filterCpuCountTo}
-                    gpuCountFrom={p.filterGpuCountFrom}
-                    gpuCountTo={p.filterGpuCountTo}
-                    ramSizeFrom={p.filterRamSizeFrom}
-                    ramSizeTo={p.filterRamSizeTo}
-                    gpuRamSizeFrom={p.filterGpuRamSizeFrom}
-                    gpuRamSizeTo={p.filterGpuRamSizeTo}
-                    storageSizeFrom={p.filterStorageSizeFrom}
-                    storageSizeTo={p.filterStorageSizeTo}
-                />
+                <div className="order-list__filter-panel">{p.filterPanel}</div>
             </div>
         );
     }

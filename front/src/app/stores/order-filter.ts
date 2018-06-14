@@ -4,18 +4,22 @@ import {
     EnumOrderType,
     EnumOrderStatus,
 } from 'app/api/types';
-import { IFilterStore } from './filter-base';
+import { RootStore } from 'app/stores';
+import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
+import { validatePositiveNumber } from '../utils/validation/validate-positive-number';
+import { IFilterStore } from './list-store';
 
 export enum EnumOrderOwnerType {
     market,
     my,
 }
 
+const VALIDATION_MSG = 'incorrect';
+
 export interface IOrderFilter {
     orderOwnerType: EnumOrderOwnerType;
-    profileAddress: string;
-    sellerAddress: string;
-    type: string;
+    creatorAddress: string;
+    side: string; // TODO rename
     onlyActive: boolean;
     priceFrom: string;
     priceTo: string;
@@ -29,8 +33,8 @@ export interface IOrderFilter {
     redshiftTo: string;
     ethFrom: string;
     ethTo: string;
-    zcashFrom: string;
-    zcashTo: string;
+    zCashFrom: string;
+    zCashTo: string;
     cpuCountFrom: string;
     cpuCountTo: string;
     gpuCountFrom: string;
@@ -43,12 +47,18 @@ export interface IOrderFilter {
     gpuRamSizeTo: string;
 }
 
-export class OrderFilterStore implements IOrderFilter, IFilterStore {
+export type IOrderFilterValidation = Partial<
+    { [P in keyof IOrderFilter]: string }
+>;
+
+export class OrderFilterStore implements IFilterStore {
+    private static validateNumber = (value: string) =>
+        value === '' ? '' : validatePositiveNumber(value).join(', ');
+
     private static defaultUserInput: IOrderFilter = {
         orderOwnerType: EnumOrderOwnerType.market,
-        profileAddress: '',
-        sellerAddress: '',
-        type: 'Sell',
+        creatorAddress: '',
+        side: 'Sell',
         onlyActive: false,
         priceFrom: '',
         priceTo: '',
@@ -62,8 +72,8 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
         redshiftTo: '',
         ethFrom: '',
         ethTo: '',
-        zcashFrom: '',
-        zcashTo: '',
+        zCashFrom: '',
+        zCashTo: '',
         cpuCountFrom: '',
         cpuCountTo: '',
         gpuCountFrom: '',
@@ -76,20 +86,50 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
         gpuRamSizeTo: '',
     };
 
+    protected static emptyValidation: IOrderFilterValidation = {
+        redshiftFrom: '',
+        redshiftTo: '',
+        ethFrom: '',
+        ethTo: '',
+        zCashFrom: '',
+        zCashTo: '',
+        cpuCountFrom: '',
+        cpuCountTo: '',
+        gpuCountTo: '',
+        gpuCountFrom: '',
+        ramSizeFrom: '',
+        ramSizeTo: '',
+        storageSizeFrom: '',
+        storageSizeTo: '',
+        gpuRamSizeFrom: '',
+        gpuRamSizeTo: '',
+        priceFrom: '',
+        priceTo: '',
+    };
+
+    protected rootStore: RootStore;
+
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
+    }
+
     @observable
     public userInput: IOrderFilter = OrderFilterStore.defaultUserInput;
 
     @action
     public setUserInput(values: Partial<IOrderFilter>) {
-        this.userInput = OrderFilterStore.defaultUserInput;
+        this.resetFilter();
         this.updateUserInput(values);
-        this.applyFilter();
+    }
+
+    @action.bound
+    public resetFilter() {
+        this.userInput = OrderFilterStore.defaultUserInput;
     }
 
     @action
     public updateUserInput(values: Partial<IOrderFilter>) {
         const keys = Object.keys(values) as Array<keyof IOrderFilter>;
-        // console.log(values);
         keys.forEach(key => {
             if (!(key in this.userInput)) {
                 throw new Error(`Unknown user input ${key}`);
@@ -101,7 +141,22 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
         });
     }
 
-    //#region IOrderFilter
+    @computed
+    get validation() {
+        const result = {
+            ...OrderFilterStore.emptyValidation,
+            creatorAddress: this.validationCreatorAddress,
+        };
+
+        for (const key in OrderFilterStore.emptyValidation) {
+            const k = key as keyof IOrderFilter;
+            result[k] =
+                OrderFilterStore.validateNumber(String(this.userInput[k])) &&
+                VALIDATION_MSG;
+        }
+
+        return result;
+    }
 
     @computed
     public get orderOwnerType() {
@@ -109,18 +164,45 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
     }
 
     @computed
-    public get profileAddress() {
-        return this.userInput.profileAddress;
+    public get myAddress() {
+        return this.rootStore.marketStore.marketAccountAddress;
     }
 
     @computed
-    public get sellerAddress() {
-        return this.userInput.sellerAddress;
+    public get creatorAddress(): string | undefined {
+        let result;
+
+        if (
+            this.userInput.creatorAddress !== '' &&
+            this.validationCreatorAddress !== ''
+        ) {
+            result = this.userInput.creatorAddress;
+            if (!result.startsWith('0x')) {
+                result = '0x' + result;
+            }
+        }
+
+        return result;
     }
 
     @computed
-    public get type() {
-        return this.userInput.type;
+    public get validationCreatorAddress(): string {
+        let result = '';
+
+        if (this.userInput.creatorAddress !== '') {
+            try {
+                TypeNotStrictEthereumAddress(this.userInput.creatorAddress);
+            } catch (e) {
+                result = 'incorrect ethereum address'; // TODO use localizator
+            }
+        }
+
+        return result;
+    }
+
+    @computed
+    public get side() {
+        return this.userInput.side;
     }
 
     @computed
@@ -128,14 +210,19 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
         return this.userInput.onlyActive;
     }
 
-    @computed
-    public get priceFrom() {
-        return this.userInput.priceFrom;
+    protected getTextInputValue(key: keyof IOrderFilter): string | undefined {
+        const result = this.validation[key] ? '' : String(this.userInput[key]);
+        return result === '' ? undefined : result;
     }
 
     @computed
-    public get priceTo() {
-        return this.userInput.priceTo;
+    public get priceFrom(): string | undefined {
+        return this.getTextInputValue('priceFrom');
+    }
+
+    @computed
+    public get priceTo(): string | undefined {
+        return this.getTextInputValue('priceTo');
     }
 
     @computed
@@ -159,190 +246,153 @@ export class OrderFilterStore implements IOrderFilter, IFilterStore {
     }
 
     @computed
-    public get cpuCountFrom() {
-        return this.userInput.cpuCountFrom;
+    public get cpuCountFrom(): string | undefined {
+        return this.getTextInputValue('cpuCountFrom');
     }
 
     @computed
-    public get cpuCountTo() {
-        return this.userInput.cpuCountTo;
+    public get cpuCountTo(): string | undefined {
+        return this.getTextInputValue('cpuCountTo');
     }
 
     @computed
-    public get gpuCountFrom() {
-        return this.userInput.gpuCountFrom;
+    public get gpuCountFrom(): string | undefined {
+        return this.getTextInputValue('gpuCountFrom');
     }
 
     @computed
-    public get gpuCountTo() {
-        return this.userInput.gpuCountTo;
+    public get gpuCountTo(): string | undefined {
+        return this.getTextInputValue('gpuCountTo');
     }
 
     @computed
-    public get ramSizeFrom() {
-        return this.userInput.ramSizeFrom;
+    public get ramSizeFrom(): string | undefined {
+        return this.getTextInputValue('ramSizeFrom');
     }
 
     @computed
-    public get ramSizeTo() {
-        return this.userInput.ramSizeTo;
+    public get ramSizeTo(): string | undefined {
+        return this.getTextInputValue('ramSizeTo');
     }
 
     @computed
-    public get gpuRamSizeFrom() {
-        return this.userInput.gpuRamSizeFrom;
+    public get gpuRamSizeFrom(): string | undefined {
+        return this.getTextInputValue('gpuRamSizeFrom');
     }
 
     @computed
-    public get gpuRamSizeTo() {
-        return this.userInput.gpuRamSizeTo;
+    public get gpuRamSizeTo(): string | undefined {
+        return this.getTextInputValue('gpuRamSizeTo');
     }
 
     @computed
-    public get storageSizeFrom() {
-        return this.userInput.storageSizeFrom;
+    public get storageSizeFrom(): string | undefined {
+        return this.getTextInputValue('storageSizeFrom');
     }
 
     @computed
-    public get storageSizeTo() {
-        return this.userInput.storageSizeTo;
+    public get storageSizeTo(): string | undefined {
+        return this.getTextInputValue('storageSizeTo');
     }
 
     @computed
-    public get redshiftFrom() {
-        return this.userInput.redshiftFrom;
+    public get redshiftFrom(): string | undefined {
+        return this.getTextInputValue('redshiftFrom');
     }
 
     @computed
-    public get redshiftTo() {
-        return this.userInput.redshiftTo;
+    public get redshiftTo(): string | undefined {
+        return this.getTextInputValue('redshiftTo');
     }
 
     @computed
-    public get ethFrom() {
-        return this.userInput.ethFrom;
+    public get ethFrom(): string | undefined {
+        return this.getTextInputValue('ethFrom');
     }
 
     @computed
-    public get ethTo() {
-        return this.userInput.ethTo;
+    public get ethTo(): string | undefined {
+        return this.getTextInputValue('ethTo');
     }
 
     @computed
-    public get zcashFrom() {
-        return this.userInput.zcashFrom;
+    public get zСashFrom(): string | undefined {
+        return this.getTextInputValue('zCashFrom');
     }
 
     @computed
-    public get zcashTo() {
-        return this.userInput.zcashTo;
+    public get zСashTo(): string | undefined {
+        return this.getTextInputValue('zCashTo');
     }
-
-    //#endregion IOrderFilter
-
-    private isValueDefined = (value: string | number | undefined) =>
-        value !== undefined && value !== '' && !isNaN(value as number);
-
-    private getGteLte = (
-        gte: string | number | undefined,
-        lte: string | number | undefined,
-    ) => {
-        if (this.isValueDefined(gte) && this.isValueDefined(lte)) {
-            return {
-                $gte: gte,
-                $lte: lte,
-            };
-        }
-        return null;
-    };
-
-    private getSellerAddress = () => {
-        return this.sellerAddress !== '' && !this.sellerAddress.startsWith('0x')
-            ? '0x' + this.sellerAddress
-            : this.sellerAddress;
-    };
 
     @computed
     public get filter(): any {
-        const result: any = {
+        return {
             creator: {
                 address:
-                    this.sellerAddress !== ''
-                        ? { $eq: this.getSellerAddress() }
+                    this.creatorAddress !== undefined
+                        ? { $eq: this.creatorAddress }
                         : this.orderOwnerType === EnumOrderOwnerType.my
-                            ? { $eq: this.profileAddress }
-                            : { $ne: this.profileAddress },
+                            ? { $eq: this.myAddress }
+                            : { $ne: this.myAddress },
                 status: {
                     $in: [
                         [EnumProfileStatus.anonimest, this.anonymous],
-                        // [EnumProfileStatus.anon, this.anonymous],
                         [EnumProfileStatus.ident, this.identified],
                         [EnumProfileStatus.reg, this.registered],
                         [EnumProfileStatus.pro, this.professional],
                     ]
                         .filter(([n, isEnabled]) => isEnabled)
-                        .map(([n, isEnabled]) => n),
+                        .map(([n]) => n),
                 },
             },
-            orderType: {
+            orderSide: {
                 $eq:
-                    this.type === 'Buy' ? EnumOrderType.bid : EnumOrderType.ask,
+                    this.side === 'Buy' ? EnumOrderType.bid : EnumOrderType.ask,
             },
             orderStatus: {
                 $eq: this.onlyActive
                     ? EnumOrderStatus.active
                     : EnumOrderStatus.unknown,
             },
-            price: this.getGteLte(this.priceFrom, this.priceTo),
+            price: {
+                $gte: this.priceFrom,
+                $lte: this.priceTo,
+            },
             benchmarkMap: {
-                cpuCount: this.getGteLte(
-                    parseFloat(this.cpuCountFrom),
-                    parseFloat(this.cpuCountTo),
-                ),
-                gpuCount: this.getGteLte(
-                    parseFloat(this.gpuCountFrom),
-                    parseFloat(this.gpuCountTo),
-                ),
-                ramSize: this.getGteLte(
-                    parseFloat(this.ramSizeFrom),
-                    parseFloat(this.ramSizeTo),
-                ),
-                gpuRamSize: this.getGteLte(
-                    parseFloat(this.gpuRamSizeFrom),
-                    parseFloat(this.gpuRamSizeTo),
-                ),
-                redshiftGpu: this.getGteLte(
-                    parseFloat(this.redshiftFrom),
-                    parseFloat(this.redshiftTo),
-                ),
-                ethHashrate: this.getGteLte(
-                    parseFloat(this.ethFrom),
-                    parseFloat(this.ethTo),
-                ),
-                zcashHashrate: this.getGteLte(
-                    parseFloat(this.zcashFrom),
-                    parseFloat(this.zcashTo),
-                ),
-                storageSize: this.getGteLte(
-                    parseFloat(this.storageSizeFrom),
-                    parseFloat(this.storageSizeTo),
-                ),
+                cpuCount: { $gte: this.cpuCountFrom, $lte: this.cpuCountTo },
+                gpuCount: { $gte: this.gpuCountFrom, $lte: this.gpuCountTo },
+                ramSize: { $gte: this.ramSizeFrom, $lte: this.ramSizeTo },
+                gpuRamSize: {
+                    $gte: this.gpuRamSizeFrom,
+                    $lte: this.gpuRamSizeTo,
+                },
+                redshiftGpu: { $gte: this.redshiftFrom, $lte: this.redshiftTo },
+                ethHashrate: { $gte: this.ethFrom, $lte: this.ethTo },
+                zcashHashrate: { $gte: this.zСashFrom, $lte: this.zСashTo },
+                storageSize: {
+                    $gte: this.storageSizeFrom,
+                    $lte: this.storageSizeTo,
+                },
             },
             profileAddress: {
-                $eq: this.profileAddress,
+                $eq: this.myAddress,
             },
         };
-        return result;
     }
 
-    protected getFilterAsString = () => JSON.stringify(this.filter);
-
-    @action
-    public applyFilter() {
-        this.filterAsString = this.getFilterAsString();
+    @computed
+    get isFormValid() {
+        const vs: any = this.validation;
+        return !Object.keys(vs)
+            .map(x => vs[x])
+            .some(Boolean);
     }
 
-    @observable public filterAsString: string = this.getFilterAsString();
+    @computed
+    public get filterAsString() {
+        return this.isFormValid ? JSON.stringify(this.filter) : '';
+    }
 }
 
 export default OrderFilterStore;
