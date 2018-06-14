@@ -174,7 +174,7 @@ export class OrderFilterStore implements IFilterStore {
 
         if (
             this.userInput.creatorAddress !== '' &&
-            this.validationCreatorAddress !== ''
+            this.creatorAddressIsValid
         ) {
             result = this.userInput.creatorAddress;
             if (!result.startsWith('0x')) {
@@ -198,6 +198,11 @@ export class OrderFilterStore implements IFilterStore {
         }
 
         return result;
+    }
+
+    @computed
+    public get creatorAddressIsValid(): boolean {
+        return this.validationCreatorAddress === '';
     }
 
     @computed
