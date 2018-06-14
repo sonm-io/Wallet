@@ -6,7 +6,7 @@ import {
 } from 'app/api/types';
 import { RootStore } from 'app/stores';
 import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
-import { validatePositiveNumber } from '../utils/validation/validate-positive-number';
+import { validatePositiveInteger } from '../utils/validation/validate-positive-integer';
 import { IFilterStore } from './list-store';
 
 export enum EnumOrderOwnerType {
@@ -56,7 +56,7 @@ export class OrderFilterStore implements IFilterStore {
         if (value === '0' || value === '') {
             return '';
         }
-        return validatePositiveNumber(value).join(', ');
+        return validatePositiveInteger(value).join(', ');
     };
 
     private static defaultUserInput: IOrderFilter = {
@@ -331,12 +331,15 @@ export class OrderFilterStore implements IFilterStore {
 
     @computed
     public get filter(): any {
+        const owner = this.orderOwnerType;
+        const creator = this.creatorAddress;
+
         return {
             creator: {
                 address:
-                    this.creatorAddress !== undefined
-                        ? { $eq: this.creatorAddress }
-                        : this.orderOwnerType === EnumOrderOwnerType.my
+                    creator !== undefined
+                        ? { $eq: creator }
+                        : owner === EnumOrderOwnerType.my
                             ? { $eq: this.myAddress }
                             : { $ne: this.myAddress },
                 status: {
