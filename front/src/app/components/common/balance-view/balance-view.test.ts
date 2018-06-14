@@ -3,6 +3,31 @@ import { expect } from 'chai';
 
 describe('Balance view', async function() {
     describe('roundLastNumberPosition', async function() {
+        it('should round down, no trailing point', async function() {
+            expect(Balance.roundLastNumberPosition('1.4')).to.equal('1');
+        });
+        it('should round up integer int, no trailing point', async function() {
+            expect(Balance.roundLastNumberPosition('1.5')).to.equal('2');
+        });
+        it('should round up decimal part', async function() {
+            expect(Balance.roundLastNumberPosition('1.19')).to.equal('1.2');
+        });
+        it('should round up decimal part', async function() {
+            expect(Balance.roundLastNumberPosition('1.199')).to.equal('1.2');
+        });
+        it('should round up int part when decimals are nines', async function() {
+            expect(Balance.roundLastNumberPosition('1.999')).to.equal('2');
+        });
+        it('should reset to zeros integer part after increased digit', async function() {
+            expect(Balance.roundLastNumberPosition('199.99')).to.equal('200');
+        });
+        it('should add integer digit when all digits are nines', async function() {
+            expect(Balance.roundLastNumberPosition('9.999')).to.equal('10');
+        });
+        it('should add integer digit when all digits are nines', async function() {
+            expect(Balance.roundLastNumberPosition('999.99')).to.equal('1000');
+        });
+
         it('should return rounded down value', async function() {
             const a = '11.444';
             expect(Balance.roundLastNumberPosition(a)).to.equal('11.44');

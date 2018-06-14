@@ -25,6 +25,26 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
             : num;
     }
 
+    protected static removeTrailingPoint(str: string) {
+        const len = str.length;
+        return str[len - 1] === '.' ? str.slice(0, len - 1) : str;
+    }
+
+    protected static increaseInteger(n: string) {
+        let i = n.length - 1;
+        while (i >= 0 && n[i] === '9') {
+            i--;
+        }
+        if (i === -1) {
+            return '1' + '0'.repeat(n.length);
+        }
+        return (
+            n.substr(0, i - 1) +
+            (Number(n[i]) + 1) +
+            '0'.repeat(n.length - i - 1)
+        );
+    }
+
     public static roundLastNumberPosition(num: string, justCutOff?: boolean) {
         let result = num;
 
@@ -35,18 +55,17 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
             } else {
                 const last = Number(num[lastIdx]);
                 if (last < 5) {
-                    result = num.slice(0, lastIdx);
+                    result = Balance.removeTrailingPoint(num.slice(0, lastIdx));
                 } else {
-                    const penult = Number(num[lastIdx - 1]);
-                    if (penult === 9) {
-                        let idx = lastIdx - 1;
-                        while (num[idx] === '9' || num[idx] === '.') {
-                            --idx;
-                        }
+                    let idx = lastIdx - 1;
+                    while (num[idx] === '9') {
+                        --idx;
+                    }
+                    if (num[idx] === '.') {
+                        result = Balance.increaseInteger(num.slice(0, idx));
+                    } else {
                         const digit = Number(num[idx]);
                         result = num.slice(0, idx) + Number(digit + 1);
-                    } else {
-                        result = num.slice(0, lastIdx - 1) + Number(penult + 1);
                     }
                 }
             }
