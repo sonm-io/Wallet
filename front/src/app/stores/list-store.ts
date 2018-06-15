@@ -73,14 +73,18 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
         this.services = services;
 
-        autorun(() => {
+        autorun(this.filterReaction, { delay: 500 });
+
+        this.filterReaction = () => {
             if (stores.filter.filterAsString) {
                 this.updateUserInput({
                     filter: stores.filter.filterAsString,
                 });
             }
-        });
+        };
     }
+
+    protected filterReaction = Function.prototype as () => void;
 
     protected services: IListStoreServices<TItem>;
 

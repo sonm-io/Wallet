@@ -4,7 +4,7 @@ import { IOrder } from 'app/api/types';
 
 const str = (x: any) => (x === undefined ? '' : String(x));
 
-class DataLoader {
+export class DataLoader {
     public loadOrder(orderId: string) {
         if (orderId !== '' && rootStore.orderDetailsStore.orderId !== orderId) {
             rootStore.orderDetailsStore.setOrderId(orderId);
@@ -30,6 +30,8 @@ class DataLoader {
         });
     }
 }
+
+export type IDataLoader = { [P in keyof DataLoader]: DataLoader[P] };
 
 export const loader = new DataLoader();
 

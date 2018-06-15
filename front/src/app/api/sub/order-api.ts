@@ -37,7 +37,9 @@ export class OrderApi {
     ): Promise<IListResult<IOrder>> {
         const response = await this.ipc.send('order.list', query);
 
-        return TypeOrderList({ ...response.data, ...OrderApi.defaultOrder });
+        debugger;
+
+        return TypeOrderList({ ...response.data });
     }
 
     public async fetchById(id: string): Promise<IOrder> {
