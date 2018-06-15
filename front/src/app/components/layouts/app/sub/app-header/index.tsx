@@ -21,6 +21,7 @@ export interface IAppHeaderProps {
     snmBalance: string;
     etherBalance: string;
     marketBalance: string;
+    disableAccountSelect?: boolean;
 }
 
 let sendPath = '';
@@ -81,6 +82,7 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                 />
                 {p.account && p.hasMarketAccountSelect ? (
                     <MarketAccountSelect
+                        disabled={p.disableAccountSelect}
                         value={p.account}
                         accounts={p.accountList}
                         onChange={p.onChangeAccount}

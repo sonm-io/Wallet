@@ -12,6 +12,7 @@ interface IProps {
     onNavigate: (url: string) => void;
     onExit: () => void;
     title?: string;
+    disableAccountSelect?: boolean;
 }
 
 @observer
@@ -54,6 +55,7 @@ export class App extends React.Component<IProps, never> {
                 snmBalance={rootStore.mainStore.primaryTokenBalance}
                 etherBalance={rootStore.mainStore.etherBalance}
                 title={p.title}
+                disableAccountSelect={p.disableAccountSelect}
             >
                 {p.children}
             </AppView>
