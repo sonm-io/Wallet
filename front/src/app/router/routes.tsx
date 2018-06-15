@@ -17,6 +17,7 @@ import { DealList } from 'app/components/layouts/deal-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
 import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
+import { TMenuItem } from 'app/components/layouts/app/sub/nav-menu-dropdown';
 
 import {
     IRouterResult,
@@ -57,7 +58,7 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
-const navigateToOrdersByAddress = (creatorAddress: string) => {
+const navigateToOrdersByAddress = (creatorAddress?: string) => {
     loader.loadOrderList({ creatorAddress });
     navigate({ path: '/market/orders' });
 };
@@ -73,6 +74,30 @@ const navigateToFullOrderList = () => {
     loader.loadOrderList(Object.prototype);
     navigate({ path: '/market/orders' });
 };
+
+const headerMenu: Array<TMenuItem> = [
+    [
+        'Wallet',
+        undefined,
+        [
+            ['Accounts', () => navigateTo('/wallet/accounts'), undefined],
+            ['History', navigateToWalletHistory, undefined],
+            ['Send', () => navigateTo('/wallet/send'), undefined],
+        ],
+    ],
+    [
+        'Market',
+        undefined,
+        [
+            ['Profiles', () => navigateTo('/market/profiles'), undefined],
+            ['Orders', navigateToOrdersByAddress, undefined],
+            ['Deals', navigateToDealList, undefined],
+            ['Deposit', navigateToDeposit, undefined],
+            ['Withdraw', navigateToWithdraw, undefined],
+            ['History', navigateToDWHistory, undefined],
+        ],
+    ],
+];
 
 export const univeralRoutes: Array<IUniversalRouterItem> = [
     {
@@ -91,10 +116,10 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             params.props ? params.props.className : undefined
                         }
                         breadcrumbs={breadcrumbs}
-                        onNavigate={navigateTo}
                         onExit={reload}
                         path={ctx.pathname}
                         title={params.pageTitle}
+                        headerMenu={headerMenu}
                         {...params.props}
                     >
                         {params.content}

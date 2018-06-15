@@ -1,26 +1,27 @@
 nav menu:
 
+    const alertFac = (name) => { return () => { alert(name) } };
+
     <NavMenuDropdown
         {...{
             disabled: '/accounts',
-            onChange: url => alert(url),
             url: '/send',
             items: [
                 [
-                    'Wallet', '/send',
+                    'Wallet', undefined,
                     [
-                        ['Accounts', '/accounts', undefined],
-                        ['History', '/history', undefined],
-                        ['Send', '/send', undefined],
+                        ['Accounts', alertFac('Accounts'), undefined],
+                        ['History', alertFac('History'), undefined],
+                        ['Send', alertFac('Send'), undefined],
                     ],
                 ],
                 [
-                    'Market', '/deals',
+                    'Market', undefined,
                     [
-                        ['Search', '/search', undefined],
-                        ['Profiles', '/profile-list', undefined],
-                        ['Deals', '/deals', undefined],
-                        ['Send', '/send', undefined],
+                        ['Search', alertFac('Search'), undefined],
+                        ['Profiles', alertFac('Profiles'), undefined],
+                        ['Deals', alertFac('Deals'), undefined],
+                        ['Send', alertFac('Send'), undefined],
                     ],
                 ],
             ],
