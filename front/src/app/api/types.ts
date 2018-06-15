@@ -196,7 +196,7 @@ export interface IDeal {
     timeLeft: number;
 }
 
-export interface IValidator {
+export interface IKycValidator {
     id: string;
     level: number;
     name: string;

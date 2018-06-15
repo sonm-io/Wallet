@@ -445,9 +445,9 @@ export class DWH {
         return deal;
     }
 
-    public getValidators = async (): Promise<t.IValidator[]> => {
+    public getValidators = async (): Promise<t.IKycValidator[]> => {
         const res = await this.fetchData('GetValidators');
-        const data = [] as t.IValidator[];
+        const data = [] as t.IKycValidator[];
 
         for (const item of res.validators) {
             data.push({

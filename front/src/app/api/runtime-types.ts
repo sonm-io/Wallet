@@ -13,7 +13,7 @@ import {
     IOrderParams,
     IAccountBrief,
     IBenchmarkMap,
-    IValidator,
+    IKycValidator,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -188,7 +188,7 @@ export const TypeDeal = createStruct<IDeal>(
     'IDeal',
 );
 
-export const TypeValidator = createStruct<IValidator>(
+export const TypeKycValidator = createStruct<IKycValidator>(
     {
         id: TypeEthereumAddress,
         level: t.Number,
@@ -196,7 +196,7 @@ export const TypeValidator = createStruct<IValidator>(
         url: t.String,
         fee: t.String,
     },
-    'IValidator',
+    'IKycValidator',
 );
 
 export const TypeDealStats = createStruct<IMarketStats>(

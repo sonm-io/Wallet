@@ -6,7 +6,7 @@ const { catchErrors } = OnlineStore;
 import { RootStore } from './';
 // import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { ILocalizator } from 'app/localization';
-import { IMarketStats, IValidator } from 'app/api/types';
+import { IMarketStats, IKycValidator } from 'app/api/types';
 import { BN } from 'bn.js';
 
 const emptyForm: ISendFormValues = {
@@ -23,7 +23,7 @@ Object.freeze(emptyForm);
 export interface IMarketStoreApi {
     fetchMarketBalance(addr: string): Promise<string>;
     fetchMarketStats(addr: string): Promise<IMarketStats>;
-    fetchValidators(): Promise<IValidator[]>;
+    fetchValidators(): Promise<IKycValidator[]>;
 }
 
 export interface IMarketStoreServices {
@@ -79,7 +79,7 @@ export class MarketStore extends OnlineStore {
         daysLeft: 0,
     };
 
-    @observable public marketValidators: IValidator[] = [];
+    @observable public marketValidators: IKycValidator[] = [];
     @observable public marketAllBalance: string = '0';
 
     @catchErrors({ restart: true })
@@ -162,7 +162,7 @@ export class MarketStore extends OnlineStore {
     }
 
     @computed
-    public get validators(): IValidator[] {
+    public get validators(): IKycValidator[] {
         return this.marketValidators;
     }
 }
