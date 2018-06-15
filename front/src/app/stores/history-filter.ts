@@ -15,14 +15,7 @@ export interface IHistoryFilter {
 }
 
 export class HistoryFilterStore implements IHistoryFilter, IFilterStore {
-    constructor(source: EnumHistorySourceMode) {
-        this.source = source;
-    }
-
-    protected source: EnumHistorySourceMode;
-
-    @observable
-    public userInput: Partial<IHistoryFilter> = {
+    protected static defaultUserInput: Partial<IHistoryFilter> = {
         query: undefined,
         currencyAddress: undefined,
         timeStart: undefined,
@@ -30,6 +23,17 @@ export class HistoryFilterStore implements IHistoryFilter, IFilterStore {
         fromAddress: undefined,
         operation: undefined,
     };
+
+    constructor(source: EnumHistorySourceMode) {
+        this.source = source;
+    }
+
+    protected source: EnumHistorySourceMode;
+
+    @observable
+    public userInput: Partial<
+        IHistoryFilter
+    > = HistoryFilterStore.defaultUserInput;
 
     @computed
     public get query() {
@@ -67,6 +71,17 @@ export class HistoryFilterStore implements IHistoryFilter, IFilterStore {
     @computed
     public get operation() {
         return this.userInput.operation || '';
+    }
+
+    @action.bound
+    public resetFilter() {
+        this.userInput = HistoryFilterStore.defaultUserInput;
+    }
+
+    @action
+    public setUserInput(values: Partial<IHistoryFilter>) {
+        this.resetFilter();
+        this.updateUserInput(values);
     }
 
     @action.bound

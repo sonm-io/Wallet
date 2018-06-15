@@ -33,20 +33,9 @@ import { IOrder } from '../api/types';
 let defaultAction;
 
 const navigateToSend = () => navigate({ path: '/wallet/send' });
-const navigateToHistory = (
-    accountAddress: string = '',
-    currencyAddress: string = '',
-) => {
-    navigate({
-        path: '/wallet/history',
-        query:
-            accountAddress || currencyAddress
-                ? {
-                      address: accountAddress,
-                      currency: currencyAddress,
-                  }
-                : undefined,
-    });
+const navigateToWalletHistory = (accountAddress?: string) => {
+    loader.loadWalletHistory(accountAddress);
+    navigate({ path: '/wallet/history' });
 };
 const navigateToConfirmation = () => navigate({ path: '/wallet/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/wallet/send/success' });
@@ -167,7 +156,9 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     pageTitle: 'Transaction has been sent',
                                     content: (
                                         <SendSuccess
-                                            onClickHistory={navigateToHistory}
+                                            onClickHistory={
+                                                navigateToWalletHistory
+                                            }
                                             onClickSend={navigateToSend}
                                         />
                                     ),
@@ -181,12 +172,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         action: async (ctx: IContext, params: IUrlParams) => ({
                             browserTabTitle: 'History',
                             pageTitle: 'History',
-                            content: (
-                                <History
-                                    initialAddress={ctx.query.address}
-                                    initialCurrency={ctx.query.currency}
-                                />
-                            ),
+                            content: <History />,
                         }),
                     },
                     {
@@ -210,6 +196,9 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     content: (
                                         <Account
                                             initialAddress={params.address}
+                                            onClickHistory={
+                                                navigateToWalletHistory
+                                            }
                                         />
                                     ),
                                     browserTabTitle: 'Account',
