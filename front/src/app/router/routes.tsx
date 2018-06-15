@@ -464,7 +464,7 @@ export const createRoutes = (
                                                     n.toSimilarOrders
                                                 }
                                                 onClickOrders={
-                                                    navigation.toFullOrderList
+                                                    n.toFullOrderList
                                                 }
                                             />
                                         ),
@@ -480,7 +480,7 @@ export const createRoutes = (
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => {
-                                    loader.loadOrder(params.orderId);
+                                    l.loadOrder(params.orderId);
 
                                     return {
                                         browserTabTitle: 'Order details',
@@ -530,4 +530,6 @@ export const createRoutes = (
     },
 ];
 
-export default (univeralRoutes = createRoutes(loader, navigation));
+const univeralRoutes = createRoutes(loader, navigation);
+
+export default univeralRoutes;
