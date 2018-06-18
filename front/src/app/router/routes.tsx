@@ -19,6 +19,7 @@ import { OrderDetails } from 'app/components/layouts/order-details';
 import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
 
 import {
+    LazyInterface,
     IRouterResult,
     IContext,
     IUniversalRouterItem,
@@ -86,12 +87,12 @@ export class Navigation {
     };
 }
 
-export type INavigation = { [P in keyof Navigation]: Navigation[P] }; // i am to lazy, sorry
+export type INavigation = LazyInterface<Navigation>;
 
 const navigation: INavigation = new Navigation(loader, navigate);
 
 export const createRoutes = (
-    l: DataLoader,
+    l: IDataLoader,
     n: INavigation,
 ): Array<IUniversalRouterItem> => [
     {
@@ -185,11 +186,6 @@ export const createRoutes = (
                         path: '/history',
                         breadcrumbTitle: 'History',
                         action: async (ctx: IContext, params: IUrlParams) => {
-                            l.loadHistory(
-                                ctx.query.address,
-                                ctx.query.currency,
-                            );
-
                             return {
                                 browserTabTitle: 'History',
                                 pageTitle: 'History',
@@ -530,6 +526,6 @@ export const createRoutes = (
     },
 ];
 
-const univeralRoutes = createRoutes(loader, navigation);
+export const univeralRoutes = createRoutes(loader, navigation);
 
 export default univeralRoutes;

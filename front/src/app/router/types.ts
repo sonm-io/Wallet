@@ -33,3 +33,5 @@ export interface IRouterResult {
     pathKey?: string;
     loader?: () => never;
 }
+
+export type LazyInterface<T> = { [P in keyof T]: T[P] } & any;

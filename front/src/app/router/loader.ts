@@ -1,6 +1,7 @@
 import { rootStore } from 'app/stores';
 import { IOrderFilter } from 'app/stores/order-filter';
 import { IOrder } from 'app/api/types';
+import { LazyInterface } from './types';
 
 const str = (x: any) => (x === undefined ? '' : String(x));
 
@@ -29,9 +30,26 @@ export class DataLoader {
             gpuRamSizeFrom: str(order.benchmarkMap.gpuRamSize),
         });
     }
+
+    public loadHistory(fromAddress: string, currencyAddress: string) {
+        if (
+            rootStore.walletHistoryFilterStore.userInput.fromAddress !==
+            fromAddress
+        ) {
+            rootStore.walletHistoryFilterStore.updateUserInput({ fromAddress });
+        }
+        if (
+            rootStore.walletHistoryFilterStore.userInput.currencyAddress !==
+            currencyAddress
+        ) {
+            rootStore.walletHistoryFilterStore.updateUserInput({
+                currencyAddress,
+            });
+        }
+    }
 }
 
-export type IDataLoader = { [P in keyof DataLoader]: DataLoader[P] };
+export type IDataLoader = LazyInterface<DataLoader>;
 
 export const loader = new DataLoader();
 

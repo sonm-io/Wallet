@@ -78,9 +78,11 @@ export interface IApiSend {
 }
 
 export enum Status {
+    UPDATED,
+    CREATED,
     PENDING,
     ERROR,
-    DONE,
+    LOADED,
 }
 
 export interface IAccountItemView {

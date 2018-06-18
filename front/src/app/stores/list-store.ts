@@ -1,4 +1,4 @@
-import { observable, computed, autorun } from 'mobx';
+import { observable, computed, autorun, action, toJS } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Status } from './types';
 import { IErrorProcessor, OnlineStore } from './online-store';
@@ -40,7 +40,7 @@ export interface IListStore<T> {
     totalPage: number;
     hasPrevPage: boolean;
     hasNextPage: boolean;
-    update: () => any;
+    update: () => void;
     updateUserInput: (input: Partial<IUserInput>) => any;
 }
 
@@ -72,23 +72,30 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         super(services);
 
         this.services = services;
+        this.reactiveDeps = stores;
 
-        autorun(this.filterReaction, { delay: 500 });
-
-        this.filterReaction = () => {
-            if (stores.filter.filterAsString) {
-                this.updateUserInput({
-                    filter: stores.filter.filterAsString,
-                });
-            }
-        };
+        autorun(this.reactionOnFilter);
+        autorun(this.reactionOnUserInput, { delay: 500 });
     }
 
-    protected filterReaction = Function.prototype as () => void;
+    protected reactionOnFilter = () => {
+        const filter = String(this.reactiveDeps.filter.filterAsString);
+
+        this.updateUserInput({ filter });
+    };
+
+    protected reactionOnUserInput = () => {
+        const userInput = toJS(this.userInput);
+        if (userInput !== undefined) {
+            this.update();
+        }
+    };
 
     protected services: IListStoreServices<TItem>;
 
-    @observable public status: Status = Status.PENDING;
+    protected reactiveDeps: IReactiveDependecies;
+
+    @observable public status: Status = Status.CREATED;
 
     @observable public error = '';
 
@@ -143,11 +150,11 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
     @catchErrors({ restart: true })
     @asyncAction
     public *update() {
+        this.status = Status.PENDING;
+
         const { page, limit, sortBy, filter, sortDesc } = this.userInput;
 
         const offset = (page - 1) * limit;
-
-        this.status = Status.PENDING;
 
         const query: IListQuery = {
             offset,
@@ -170,7 +177,7 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
             this.limit = limit;
             this.records = response.records;
             this.total = response.total;
-            this.status = Status.DONE;
+            this.status = Status.LOADED;
         } catch (e) {
             this.error = e.message;
             this.status = Status.ERROR;
@@ -179,9 +186,9 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         }
     }
 
-    @asyncAction
-    public *updateUserInput(input: Partial<IUserInput>) {
-        const changes = Object.keys(input).filter(k => {
+    @action
+    public updateUserInput(input: Partial<IUserInput>) {
+        Object.keys(input).filter(k => {
             const key = k as keyof IUserInput;
             const result = input[key] !== this.userInput[key];
 
@@ -196,11 +203,7 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
             this.userInput.page = 1;
         }
 
-        if (changes.length === 0) {
-            return;
-        }
-
-        yield this.update();
+        this.status = Status.UPDATED;
     }
 }
 
