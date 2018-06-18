@@ -16,6 +16,7 @@ interface IProps {
     onNavigate: (url: string) => void;
     onExit: () => void;
     breadcrumbs: any;
+    disableAccountSelect?: boolean;
 
     hasMarketAccountSelect: boolean;
     onChangeMarketAccount: (account: IAccount) => void;
@@ -59,6 +60,7 @@ export class AppView extends React.PureComponent<IProps, any> {
                         snmBalance={p.snmBalance}
                         etherBalance={p.etherBalance}
                         onExit={p.onExit}
+                        disableAccountSelect={p.disableAccountSelect}
                     />
                     <div className="sonm-app__alert-group">
                         {p.networkError ? (
