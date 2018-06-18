@@ -120,6 +120,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         className={
                             params.props ? params.props.className : undefined
                         }
+                        disableAccountSelect={
+                            params.props
+                                ? params.props.disableAccountSelect
+                                : undefined
+                        }
                         breadcrumbs={breadcrumbs}
                         onExit={reload}
                         path={ctx.pathname}
@@ -339,6 +344,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             props: {
                                                 className:
                                                     'sonm-app--confirmation-bg',
+                                                disableAccountSelect: true,
                                             },
                                         }),
                                     },
@@ -421,6 +427,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             props: {
                                                 className:
                                                     'sonm-app--confirmation-bg',
+                                                disableAccountSelect: true,
                                             },
                                         }),
                                     },

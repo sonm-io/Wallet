@@ -13,6 +13,7 @@ interface IProps {
     onExit: () => void;
     title?: string;
     headerMenu: Array<TMenuItem>;
+    disableAccountSelect?: boolean;
 }
 
 @observer
@@ -55,6 +56,7 @@ export class App extends React.Component<IProps, never> {
                 etherBalance={rootStore.mainStore.etherBalance}
                 title={p.title}
                 headerMenu={p.headerMenu}
+                disableAccountSelect={p.disableAccountSelect}
             >
                 {p.children}
             </AppView>

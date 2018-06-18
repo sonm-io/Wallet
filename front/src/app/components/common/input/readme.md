@@ -18,3 +18,9 @@ With postfix:
     const Postfix = <Icon i="Eye" />;
 
     <Input postfix={Postfix} />
+
+In form, submit test (type and press enter, form should submit):
+
+    <form>
+        <Input />
+    </form>

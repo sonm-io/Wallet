@@ -21,6 +21,7 @@ export interface IAppHeaderProps {
     etherBalance: string;
     marketBalance: string;
     menu: Array<TMenuItem>;
+    disableAccountSelect?: boolean;
 }
 
 export class AppHeader extends React.Component<IAppHeaderProps, any> {
@@ -47,6 +48,7 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                 />
                 {p.account && p.hasMarketAccountSelect ? (
                     <MarketAccountSelect
+                        disabled={p.disableAccountSelect}
                         value={p.account}
                         accounts={p.accountList}
                         onChange={p.onChangeAccount}

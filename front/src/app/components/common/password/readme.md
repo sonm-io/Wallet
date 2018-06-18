@@ -29,3 +29,9 @@ Password:
         <StateInfo />
         <Container />
     </div>
+
+In form, submit test (type and press enter, form should submit):
+
+    <form>
+        <Password />
+    </form>
