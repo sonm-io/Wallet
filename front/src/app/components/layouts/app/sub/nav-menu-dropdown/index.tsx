@@ -104,10 +104,7 @@ export class NavMenuDropdown extends React.PureComponent<
                                             return (
                                                 <button
                                                     key={subTitle}
-                                                    value={[
-                                                        index.toString(),
-                                                        childIndex.toString(),
-                                                    ]}
+                                                    value={`${index},${childIndex}`}
                                                     type="button"
                                                     className="sonm-nav-menu__sub-item"
                                                     onClick={
