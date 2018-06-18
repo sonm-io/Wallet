@@ -55,7 +55,7 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
             } else {
                 const last = Number(num[lastIdx]);
                 if (last < 5) {
-                    result = Balance.removeTrailingPoint(num.slice(0, lastIdx));
+                    result = num.slice(0, lastIdx);
                 } else {
                     let idx = lastIdx - 1;
                     while (num[idx] === '9') {
@@ -69,6 +69,7 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
                     }
                 }
             }
+            result = Balance.removeTrailingPoint(result);
         }
 
         return result;
