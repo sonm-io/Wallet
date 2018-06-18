@@ -14,6 +14,7 @@ import { rootStore } from 'app/stores';
 interface IProps {
     className?: string;
     initialAddress: string;
+    onClickHistory: (fromAddress?: string) => void;
 }
 
 enum Dialogs {
@@ -41,13 +42,8 @@ export class Account extends React.Component<IProps, any> {
         });
     };
 
-    protected handleHistoryClick = () => {
-        navigate({
-            path: '/wallet/history',
-            query: {
-                address: rootStore.sendStore.fromAddress,
-            },
-        });
+    protected handleClickHistory = () => {
+        this.props.onClickHistory(rootStore.sendStore.fromAddress);
     };
 
     protected handleSendClick = (event: any) => {
@@ -89,7 +85,7 @@ export class Account extends React.Component<IProps, any> {
 
                 <button
                     className="sonm-account__go-to-history"
-                    onClick={this.handleHistoryClick}
+                    onClick={this.handleClickHistory}
                 >
                     View operation history
                 </button>

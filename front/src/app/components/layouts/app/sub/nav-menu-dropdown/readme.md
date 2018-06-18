@@ -1,28 +1,37 @@
 nav menu:
 
-    <NavMenuDropdown
-        {...{
-            disabled: '/accounts',
-            onChange: url => alert(url),
-            url: '/send',
-            items: [
+```js
+const alertFactory = name => {
+    return () => {
+        alert(name);
+    };
+};
+
+<NavMenuDropdown
+    {...{
+        disabled: '/accounts',
+        url: '/send',
+        items: [
+            [
+                'Wallet',
+                undefined,
                 [
-                    'Wallet', '/send',
-                    [
-                        ['Accounts', '/accounts', undefined],
-                        ['History', '/history', undefined],
-                        ['Send', '/send', undefined],
-                    ],
-                ],
-                [
-                    'Market', '/deals',
-                    [
-                        ['Search', '/search', undefined],
-                        ['Profiles', '/profile-list', undefined],
-                        ['Deals', '/deals', undefined],
-                        ['Send', '/send', undefined],
-                    ],
+                    ['Accounts', alertFactory('Accounts'), undefined],
+                    ['History', alertFactory('History'), undefined],
+                    ['Send', alertFactory('Send'), undefined],
                 ],
             ],
-        }}
-    />
+            [
+                'Market',
+                undefined,
+                [
+                    ['Search', alertFactory('Search'), undefined],
+                    ['Profiles', alertFactory('Profiles'), undefined],
+                    ['Deals', alertFactory('Deals'), undefined],
+                    ['Send', alertFactory('Send'), undefined],
+                ],
+            ],
+        ],
+    }}
+/>;
+```

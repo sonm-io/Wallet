@@ -26,8 +26,6 @@ class TxTable extends Table<ISendTransactionResult> {}
 
 interface IProps {
     className?: string;
-    initialAddress?: string;
-    initialCurrency?: string;
 }
 
 @observer
