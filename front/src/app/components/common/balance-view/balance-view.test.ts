@@ -106,4 +106,10 @@ describe('Balance view', async function() {
             expect(Balance.roundLastNumberPosition(a, true)).to.equal('18.1');
         });
     });
+
+    describe('roundOrCrop', async function() {
+        it('should return the same number if decimal part length <= decimalDigitAmount', async function() {
+            expect(Balance.roundOrCrop('0.1234', 4)).to.equal('0.1234');
+        });
+    });
 });
