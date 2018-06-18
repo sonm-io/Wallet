@@ -33,6 +33,8 @@ import { IOrder } from '../api/types';
 
 let defaultAction;
 
+const navigateTo = (path: string) => navigate({ path });
+
 const navigateToSend = () => navigate({ path: '/wallet/send' });
 const navigateToWalletHistory = (accountAddress?: string) => {
     loader.loadWalletHistory(accountAddress);
@@ -41,7 +43,6 @@ const navigateToWalletHistory = (accountAddress?: string) => {
 const navigateToConfirmation = () => navigate({ path: '/wallet/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/wallet/send/success' });
 const navigateToMain = () => navigate({ path: '/wallet/accounts' });
-const navigateTo = (path: string) => navigate({ path });
 const navigateToProfile = (address: string) =>
     navigate({ path: `/market/profiles/${address}` });
 const navigateToDeal = (id: string) =>
@@ -58,9 +59,13 @@ const navigateToWithdrawConfirm = () =>
 const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
 const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
-const navigateToOrdersByAddress = (creatorAddress?: string) => {
+const navigateToOrdersByAddress = (creatorAddress: string) => {
     loader.loadOrderList({ creatorAddress });
-    navigate({ path: '/market/orders' });
+    navigateTo('/market/orders');
+};
+const navigateToOrders = () => {
+    loader.loadOrderList({});
+    navigateTo('/market/orders');
 };
 const navigateToOrder = (orderId: string) =>
     navigate({ path: `/market/orders/${orderId}` });
@@ -90,7 +95,7 @@ const headerMenu: Array<TMenuItem> = [
         undefined,
         [
             ['Profiles', () => navigateTo('/market/profiles'), undefined],
-            ['Orders', navigateToOrdersByAddress, undefined],
+            ['Orders', navigateToOrders, undefined],
             ['Deals', navigateToDealList, undefined],
             ['Deposit', navigateToDeposit, undefined],
             ['Withdraw', navigateToWithdraw, undefined],

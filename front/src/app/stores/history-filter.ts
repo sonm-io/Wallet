@@ -31,9 +31,9 @@ export class HistoryFilterStore implements IHistoryFilter, IFilterStore {
     protected source: EnumHistorySourceMode;
 
     @observable
-    public userInput: Partial<
-        IHistoryFilter
-    > = HistoryFilterStore.defaultUserInput;
+    public userInput: Partial<IHistoryFilter> = {
+        ...HistoryFilterStore.defaultUserInput,
+    };
 
     @computed
     public get query() {
@@ -75,7 +75,7 @@ export class HistoryFilterStore implements IHistoryFilter, IFilterStore {
 
     @action.bound
     public resetFilter() {
-        this.userInput = HistoryFilterStore.defaultUserInput;
+        this.userInput = { ...HistoryFilterStore.defaultUserInput };
     }
 
     @action
