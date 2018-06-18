@@ -27,6 +27,9 @@ describe('Balance view', async function() {
         it('should add integer digit when all digits are nines', async function() {
             expect(Balance.roundLastNumberPosition('999.99')).to.equal('1000');
         });
+        it('should cutOff, no trailing point', async function() {
+            expect(Balance.roundLastNumberPosition('0.7', true)).to.equal('0');
+        });
 
         it('should return rounded down value', async function() {
             const a = '11.444';
