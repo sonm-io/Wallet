@@ -3,13 +3,100 @@ import { IOrdersListItemProps } from './types';
 import { Balance } from '../balance-view';
 import * as cn from 'classnames';
 import { ProfileBrief } from 'app/components/common/profile-brief';
-import { BenchmarkShort } from 'app/components/common/benchmark-short';
+import {
+    IPropertyItemConfig,
+    PropertyList,
+    IPropertyListCssClasses,
+} from 'app/components/common/property-list';
+import { IBenchmarkMap } from '../../../api';
+import Icon from '../icon';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     protected handleClick = (event: any) => {
         event.preventDefault();
 
         this.props.onClick(this.props.order);
+    };
+
+    protected static dash = (
+        <span className="orders-list-item__dash">&mdash;</span>
+    );
+
+    protected static benchmarksConfig: Array<
+        IPropertyItemConfig<keyof IBenchmarkMap | undefined, IBenchmarkMap>
+    > = [
+        {
+            name: 'CPU',
+            key: undefined,
+            render: (_: any, data: Partial<IBenchmarkMap>) =>
+                `${data.cpuSysbenchMulti} (${data.cpuCount} threads)`,
+        },
+        {
+            name: 'Network speed',
+            key: undefined,
+            render: (_: number, data: Partial<IBenchmarkMap>) =>
+                data.uploadNetSpeed === 0 && data.downloadNetSpeed === 0 ? (
+                    OrdersListItem.dash
+                ) : (
+                    <div className="orders-list-item__network-speed">
+                        {data.uploadNetSpeed}
+                        <Icon i="ArrowUp" /> {data.downloadNetSpeed}
+                        <Icon i="ArrowDown" /> Mbps
+                    </div>
+                ),
+        },
+        {
+            name: 'Redshift benchmark',
+            key: 'redshiftGpu',
+            render: (value: number) =>
+                value === 0 ? OrdersListItem.dash : `${value} K/Ex. time in s`,
+        },
+        {
+            name: 'RAM',
+            key: 'ramSize',
+            render: (value: number) =>
+                value === 0 ? OrdersListItem.dash : `${value} Mb`,
+        },
+        {
+            name: 'GPU #',
+            key: 'gpuCount',
+            render: (value: number) =>
+                value === 0
+                    ? OrdersListItem.dash
+                    : value === 1
+                        ? `${value} unit`
+                        : `${value} units`,
+        },
+        {
+            name: 'Etherium HashRate',
+            key: 'ethHashrate',
+            render: (value: number) =>
+                value === 0 ? OrdersListItem.dash : `${value} MH/s`,
+        },
+        {
+            name: 'Storage',
+            key: 'storageSize',
+            render: (value: number) =>
+                value === 0 ? OrdersListItem.dash : `${value} Gb`,
+        },
+        {
+            name: 'GPU RAM',
+            key: 'gpuRamSize',
+            render: (value: number) =>
+                value === 0 ? OrdersListItem.dash : `${value} Mb`,
+        },
+        {
+            name: 'ZCash hashrate',
+            key: 'zcashHashrate',
+            render: (value: number) =>
+                value === 0 ? OrdersListItem.dash : `${value} sol/s`,
+        },
+    ];
+
+    protected static benchmarksCssClasses: Partial<IPropertyListCssClasses> = {
+        root: 'orders-list-item__benchmarks',
+        label: 'orders-list-item__benchmark-label',
+        value: 'orders-list-item__benchmark-value',
     };
 
     public render() {
@@ -27,15 +114,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                     logoSizePx={50}
                 />
 
-                {/* Column 2 - Indicators */}
-                {
-                    <BenchmarkShort
-                        data={this.props.order.benchmarkMap}
-                        className="orders-list-item__benchmark"
-                    />
-                }
-
-                {/* Column3 - Costs */}
+                {/* Column 2 - Costs */}
                 <div className="orders-list-item__cost">
                     <Balance
                         balance={this.props.order.price}
@@ -45,16 +124,26 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                         round
                     />
                 </div>
-
                 {this.props.order.duration ? (
                     <div className="orders-list-item__cost">
                         {this.props.order.duration} hour(s)
                     </div>
                 ) : null}
 
-                <div className="orders-list-item__child">
-                    {this.props.children}
-                </div>
+                {/* Optional Column 3 - Children */}
+                {this.props.children !== undefined ? (
+                    <div className="orders-list-item__child">
+                        {this.props.children}
+                    </div>
+                ) : null}
+
+                {/* Benchmarks */}
+                <PropertyList
+                    className="orders-list-item__benchmarks"
+                    cssClasses={OrdersListItem.benchmarksCssClasses}
+                    config={OrdersListItem.benchmarksConfig}
+                    dataSource={this.props.order.benchmarkMap}
+                />
             </a>
         );
     }

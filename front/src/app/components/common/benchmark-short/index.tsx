@@ -76,7 +76,10 @@ export class BenchmarkShort extends React.PureComponent<
                         );
                         line.push(
                             benchmarkElement && benchmarkElement.render
-                                ? benchmarkElement.render(String(value))
+                                ? benchmarkElement.render(
+                                      String(value),
+                                      nextProps.data,
+                                  )
                                 : value,
                         );
                     }
