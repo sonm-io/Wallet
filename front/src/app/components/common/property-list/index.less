@@ -3,13 +3,14 @@
 @property-list-label-font-color: @color-light-font;
 @property-list-row-height: 25px;
 
-.sonm-property-list {
+:root {
+    --property-list__columns: 210px 1fr;
+}
+
+.property-list {
     margin: 0;
-    grid-row: 1;
-    grid-column: 2;
     display: grid;
-    grid-auto-flow: column dense;
-    grid-template-columns: ~'[labels] 210px [values] 1fr';
+    grid-template-columns: var(--property-list__columns);
     grid-auto-rows: @property-list-row-height;
     grid-row-gap: 5px;
     grid-column-gap: 20px;
@@ -17,17 +18,15 @@
 
     &__label {
         color: @property-list-label-font-color;
-        grid-column: labels;
     }
 
     &__value {
-        grid-column: values;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     &__header {
-        grid-column: 1 / span 2;
+        grid-column: ~'1 / -1';
         grid-row: 1;
         font-weight: 500;
         color: @color-font-gray;
