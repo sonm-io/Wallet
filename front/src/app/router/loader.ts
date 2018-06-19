@@ -29,6 +29,10 @@ class DataLoader {
             gpuRamSizeFrom: str(order.benchmarkMap.gpuRamSize),
         });
     }
+
+    public loadWalletHistory(fromAddress?: string) {
+        rootStore.walletHistoryFilterStore.setUserInput({ fromAddress });
+    }
 }
 
 export const loader = new DataLoader();

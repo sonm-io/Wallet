@@ -118,7 +118,7 @@ export class OrderFilterStore implements IFilterStore {
     }
 
     @observable
-    public userInput: IOrderFilter = OrderFilterStore.defaultUserInput;
+    public userInput: IOrderFilter = { ...OrderFilterStore.defaultUserInput };
 
     @action
     public setUserInput(values: Partial<IOrderFilter>) {
@@ -128,7 +128,7 @@ export class OrderFilterStore implements IFilterStore {
 
     @action.bound
     public resetFilter() {
-        this.userInput = OrderFilterStore.defaultUserInput;
+        this.userInput = { ...OrderFilterStore.defaultUserInput };
     }
 
     @action
