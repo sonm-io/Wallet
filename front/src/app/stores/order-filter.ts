@@ -118,7 +118,7 @@ export class OrderFilterStore implements IFilterStore {
     }
 
     @observable
-    public userInput: IOrderFilter = OrderFilterStore.defaultUserInput;
+    public userInput: IOrderFilter = { ...OrderFilterStore.defaultUserInput };
 
     @action
     public setUserInput(values: Partial<IOrderFilter>) {
@@ -128,7 +128,7 @@ export class OrderFilterStore implements IFilterStore {
 
     @action.bound
     public resetFilter() {
-        this.userInput = OrderFilterStore.defaultUserInput;
+        this.userInput = { ...OrderFilterStore.defaultUserInput };
     }
 
     @action
@@ -324,12 +324,12 @@ export class OrderFilterStore implements IFilterStore {
     }
 
     @computed
-    public get zСashFrom(): string | undefined {
+    public get zCashFrom(): string | undefined {
         return this.getTextInputValue('zCashFrom');
     }
 
     @computed
-    public get zСashTo(): string | undefined {
+    public get zCashTo(): string | undefined {
         return this.getTextInputValue('zCashTo');
     }
 
@@ -380,7 +380,7 @@ export class OrderFilterStore implements IFilterStore {
                 },
                 redshiftGpu: { $gte: this.redshiftFrom, $lte: this.redshiftTo },
                 ethHashrate: { $gte: this.ethFrom, $lte: this.ethTo },
-                zcashHashrate: { $gte: this.zСashFrom, $lte: this.zСashTo },
+                zcashHashrate: { $gte: this.zCashFrom, $lte: this.zCashTo },
                 storageSize: {
                     $gte: this.storageSizeFrom,
                     $lte: this.storageSizeTo,

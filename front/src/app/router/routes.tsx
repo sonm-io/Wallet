@@ -17,6 +17,7 @@ import { DealList } from 'app/components/layouts/deal-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
 import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
+import { TMenuItem } from 'app/components/layouts/app/sub/nav-menu-dropdown';
 
 import {
     IRouterResult,
@@ -29,29 +30,20 @@ import { loader } from './loader';
 
 import { navigate } from './navigate';
 import { IOrder } from '../api/types';
+import { rootStore } from '../stores';
 
 let defaultAction;
 
+const navigateTo = (path: string) => navigate({ path });
+
 const navigateToSend = () => navigate({ path: '/wallet/send' });
-const navigateToHistory = (
-    accountAddress: string = '',
-    currencyAddress: string = '',
-) => {
-    navigate({
-        path: '/wallet/history',
-        query:
-            accountAddress || currencyAddress
-                ? {
-                      address: accountAddress,
-                      currency: currencyAddress,
-                  }
-                : undefined,
-    });
+const navigateToWalletHistory = (accountAddress?: string) => {
+    loader.loadWalletHistory(accountAddress);
+    navigate({ path: '/wallet/history' });
 };
 const navigateToConfirmation = () => navigate({ path: '/wallet/send/confirm' });
 const navigateToSuccess = () => navigate({ path: '/wallet/send/success' });
 const navigateToMain = () => navigate({ path: '/wallet/accounts' });
-const navigateTo = (path: string) => navigate({ path });
 const navigateToProfile = (address: string) =>
     navigate({ path: `/market/profiles/${address}` });
 const navigateToDeal = (id: string) =>
@@ -70,7 +62,11 @@ const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
 const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
 const navigateToOrdersByAddress = (creatorAddress: string) => {
     loader.loadOrderList({ creatorAddress });
-    navigate({ path: '/market/orders' });
+    navigateTo('/market/orders');
+};
+const navigateToOrders = () => {
+    loader.loadOrderList({});
+    navigateTo('/market/orders');
 };
 const navigateToOrder = (orderId: string) =>
     navigate({ path: `/market/orders/${orderId}` });
@@ -84,6 +80,42 @@ const navigateToFullOrderList = () => {
     loader.loadOrderList(Object.prototype);
     navigate({ path: '/market/orders' });
 };
+
+const headerMenu: Array<TMenuItem> = [
+    [
+        'Wallet',
+        Boolean,
+        undefined,
+        [
+            [
+                'Accounts',
+                Boolean,
+                () => navigateTo('/wallet/accounts'),
+                undefined,
+            ],
+            ['History', Boolean, navigateToWalletHistory, undefined],
+            ['Send', Boolean, () => navigateTo('/wallet/send'), undefined],
+        ],
+    ],
+    [
+        'Market',
+        () => rootStore.marketStore.marketAccountViewList.length === 0, // is disabled
+        undefined,
+        [
+            [
+                'Profiles',
+                Boolean,
+                () => navigateTo('/market/profiles'),
+                undefined,
+            ],
+            ['Orders', Boolean, navigateToOrders, undefined],
+            ['Deals', Boolean, navigateToDealList, undefined],
+            ['Deposit', Boolean, navigateToDeposit, undefined],
+            ['Withdraw', Boolean, navigateToWithdraw, undefined],
+            ['History', Boolean, navigateToDWHistory, undefined],
+        ],
+    ],
+];
 
 export const univeralRoutes: Array<IUniversalRouterItem> = [
     {
@@ -101,11 +133,16 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         className={
                             params.props ? params.props.className : undefined
                         }
+                        disableAccountSelect={
+                            params.props
+                                ? params.props.disableAccountSelect
+                                : undefined
+                        }
                         breadcrumbs={breadcrumbs}
-                        onNavigate={navigateTo}
                         onExit={reload}
                         path={ctx.pathname}
                         title={params.pageTitle}
+                        headerMenu={headerMenu}
                         {...params.props}
                     >
                         {params.content}
@@ -167,7 +204,9 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     pageTitle: 'Transaction has been sent',
                                     content: (
                                         <SendSuccess
-                                            onClickHistory={navigateToHistory}
+                                            onClickHistory={
+                                                navigateToWalletHistory
+                                            }
                                             onClickSend={navigateToSend}
                                         />
                                     ),
@@ -181,12 +220,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         action: async (ctx: IContext, params: IUrlParams) => ({
                             browserTabTitle: 'History',
                             pageTitle: 'History',
-                            content: (
-                                <History
-                                    initialAddress={ctx.query.address}
-                                    initialCurrency={ctx.query.currency}
-                                />
-                            ),
+                            content: <History />,
                         }),
                     },
                     {
@@ -210,6 +244,9 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     content: (
                                         <Account
                                             initialAddress={params.address}
+                                            onClickHistory={
+                                                navigateToWalletHistory
+                                            }
                                         />
                                     ),
                                     browserTabTitle: 'Account',
@@ -320,6 +357,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             props: {
                                                 className:
                                                     'sonm-app--confirmation-bg',
+                                                disableAccountSelect: true,
                                             },
                                         }),
                                     },
@@ -402,6 +440,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             props: {
                                                 className:
                                                     'sonm-app--confirmation-bg',
+                                                disableAccountSelect: true,
                                             },
                                         }),
                                     },

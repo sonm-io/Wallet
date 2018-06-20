@@ -11,7 +11,6 @@ export interface IAppHeaderProps {
     isTestNet: boolean;
     gethNodeUrl: string;
     sonmNodeUrl: string;
-    onNavigate: (url: string) => void;
     onExit: () => void;
     onChangeAccount: (account: IAccount) => void;
     hasMarketAccountSelect: boolean;
@@ -21,44 +20,15 @@ export interface IAppHeaderProps {
     snmBalance: string;
     etherBalance: string;
     marketBalance: string;
+    menu: Array<TMenuItem>;
+    disableAccountSelect?: boolean;
 }
 
-let sendPath = '';
-let marketPath = '';
-
 export class AppHeader extends React.Component<IAppHeaderProps, any> {
-    protected static menuConfig: Array<TMenuItem> = [
-        [
-            'Wallet',
-            (sendPath = '/wallet/send'),
-            [
-                ['Accounts', '/wallet/accounts', undefined],
-                ['History', '/wallet/history', undefined],
-                ['Send', '/wallet/send', undefined],
-            ],
-        ],
-        [
-            'Market',
-            (marketPath = '/market/deals'),
-            [
-                ['Profiles', '/market/profiles', undefined],
-                ['Orders', '/market/orders', undefined],
-                ['Deals', '/market/deals', undefined],
-                ['Deposit', '/market/dw/deposit', undefined],
-                ['Withdraw', '/market/dw/withdraw', undefined],
-                ['History', '/market/dw/history', undefined],
-            ],
-        ],
-    ];
-
     protected handleExit = (event: any) => {
         event.preventDefault();
 
         this.props.onExit();
-    };
-
-    protected handleChangePath = (path: string) => {
-        this.props.onNavigate(path);
     };
 
     public render() {
@@ -73,14 +43,12 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                 <div className="sonm-app-header__logo sonm-app-header__item" />
                 <NavMenuDropdown
                     className="sonm-app-header__menu sonm-app-header__item"
-                    topMenuActiveItem={
-                        p.hasMarketAccountSelect ? marketPath : sendPath
-                    }
-                    items={AppHeader.menuConfig}
-                    onChange={this.handleChangePath}
+                    topMenuActiveItem={p.hasMarketAccountSelect ? 1 : 0}
+                    items={p.menu}
                 />
                 {p.account && p.hasMarketAccountSelect ? (
                     <MarketAccountSelect
+                        disabled={p.disableAccountSelect}
                         value={p.account}
                         accounts={p.accountList}
                         onChange={p.onChangeAccount}

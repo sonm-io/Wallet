@@ -55,7 +55,7 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
             } else {
                 const last = Number(num[lastIdx]);
                 if (last < 5) {
-                    result = Balance.removeTrailingPoint(num.slice(0, lastIdx));
+                    result = num.slice(0, lastIdx);
                 } else {
                     let idx = lastIdx - 1;
                     while (num[idx] === '9') {
@@ -69,8 +69,27 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
                     }
                 }
             }
+            result = Balance.removeTrailingPoint(result);
         }
+        return result;
+    }
 
+    public static roundOrCrop(
+        num: string,
+        decimalDigitAmount: number,
+        round?: boolean,
+    ) {
+        let result = Balance.limitDecimalDigitAmount(
+            num,
+            decimalDigitAmount + 1,
+        );
+        const pointIndex = result.indexOf('.');
+        if (
+            pointIndex > -1 &&
+            result.substr(pointIndex + 1).length > decimalDigitAmount
+        ) {
+            result = Balance.roundLastNumberPosition(result, !round);
+        }
         return result;
     }
 
@@ -87,10 +106,8 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
 
         if (balance) {
             num = moveDecimalPoint(balance, -decimalPointOffset);
-            num = Balance.limitDecimalDigitAmount(num, decimalDigitAmount + 1);
+            num = Balance.roundOrCrop(num, decimalDigitAmount, round);
         }
-
-        num = Balance.roundLastNumberPosition(num, !round);
 
         return (
             <div className={cn('sonm-balance', className)}>

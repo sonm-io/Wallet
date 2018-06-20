@@ -16,6 +16,7 @@ export interface IMarketAccountSelectProps {
     onChange: (account: IAccount) => void;
     className?: string;
     value?: IAccount;
+    disabled?: boolean;
 }
 
 export interface IMarketAccountSelectItemProps extends IAccount {
@@ -102,6 +103,7 @@ export class MarketAccountSelect extends React.PureComponent<
 
         return (
             <DropdownInput
+                disabled={p.disabled}
                 className={cn(p.className, 'sonm-market-account', {
                     'sonm-market-account--opened': this.state.opened,
                 })}

@@ -2,14 +2,18 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 
-type TItem<T> = [string, string, T[] | undefined]; // Title, Path. children
+type TItem<T> = [
+    string, // Title
+    () => boolean, // idDisabled
+    (() => void) | undefined, // Callback
+    T[] | undefined // Children
+];
 
 export type TMenuItem = TItem<TItem<undefined>>;
 
 export interface INavMenuDropdownProps {
     items: Array<TMenuItem>;
-    topMenuActiveItem: string;
-    onChange: (url: string) => void;
+    topMenuActiveItem: number;
     className?: string;
 }
 
@@ -29,10 +33,19 @@ export class NavMenuDropdown extends React.PureComponent<
     };
 
     protected handleClickUrl = (event: any) => {
-        const path = event.target.value;
+        const [index, childIndex] = event.target.value
+            .split(',')
+            .map((i: string) => Number(i)) as Array<number>;
+        const item = this.props.items[index];
+        const children = item[3];
 
-        this.props.onChange(path);
-
+        if (children !== undefined) {
+            const childItem = children[childIndex];
+            const cb = childItem[2];
+            if (cb !== undefined) {
+                cb();
+            }
+        }
         this.handleCloseTopMenu();
     };
 
@@ -60,8 +73,8 @@ export class NavMenuDropdown extends React.PureComponent<
     public render() {
         return (
             <div className={cn(this.props.className, 'sonm-nav-menu')}>
-                {this.props.items.map((item: TMenuItem) => {
-                    const [title, path, children] = item;
+                {this.props.items.map((item: TMenuItem, index) => {
+                    const [title, disabled, , children] = item;
 
                     return (
                         <DropdownInput
@@ -69,13 +82,14 @@ export class NavMenuDropdown extends React.PureComponent<
                                 'sonm-nav-menu__item--opened':
                                     this.state.opened === title,
                                 'sonm-nav-menu__item--active':
-                                    this.props.topMenuActiveItem === path,
+                                    this.props.topMenuActiveItem === index,
                             })}
                             key={title}
                             valueString={title}
                             isExpanded={this.state.opened === title}
                             onButtonClick={this.getBindedTopMenuHandler(title)}
                             onRequireClose={this.handleCloseTopMenu}
+                            disabled={disabled()}
                             dropdownCssClasses={
                                 NavMenuDropdown.dropdownCssClasses
                             }
@@ -83,15 +97,22 @@ export class NavMenuDropdown extends React.PureComponent<
                             <div className="sonm-nav-menu__popup">
                                 {children &&
                                     children.map(
-                                        (subItem: TItem<undefined>) => {
-                                            const [subTitle, subPath] = subItem;
+                                        (
+                                            subItem: TItem<undefined>,
+                                            childIndex,
+                                        ) => {
+                                            const [
+                                                subTitle,
+                                                disableChild,
+                                            ] = subItem;
 
                                             return (
                                                 <button
                                                     key={subTitle}
-                                                    value={subPath}
+                                                    value={`${index},${childIndex}`}
                                                     type="button"
                                                     className="sonm-nav-menu__sub-item"
+                                                    disabled={disableChild()}
                                                     onClick={
                                                         this.handleClickUrl
                                                     }
