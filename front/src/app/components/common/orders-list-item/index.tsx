@@ -117,6 +117,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 {/* Column 2 - Costs */}
                 <div className="orders-list-item__cost">
                     <Balance
+                        className="orders-list-item__price"
                         balance={this.props.order.price}
                         decimalPointOffset={18}
                         decimalDigitAmount={4}
@@ -124,7 +125,9 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                         round
                     />
                     {this.props.order.duration ? (
-                        <div>{this.props.order.duration} hour(s)</div>
+                        <div className="orders-list-item__duration">
+                            {this.props.order.duration} hour(s)
+                        </div>
                     ) : null}
                 </div>
 
