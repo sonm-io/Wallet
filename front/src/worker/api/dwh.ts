@@ -131,37 +131,54 @@ export class DWH {
         TypeEthereumAddress(address);
 
         const res = await this.fetchData('GetProfileInfo', { Id: address });
-        const brief = this.processProfile(res);
-        const certificates = res.Certificates
-            ? JSON.parse(res.Certificates)
-            : [];
-        const attrMap: any = {};
-        const attributes = certificates
-            .map((x: any) => {
-                attrMap[x.attribute] = x;
+        if (res) {
+            const brief = this.processProfile(res);
+            const certificates = res.Certificates
+                ? JSON.parse(res.Certificates)
+                : [];
+            const attrMap: any = {};
+            const attributes = certificates
+                .map((x: any) => {
+                    attrMap[x.attribute] = x;
 
-                if (x.attribute in DWH.mapAttributes) {
-                    const [label, converter] = DWH.mapAttributes[x.attribute];
+                    if (x.attribute in DWH.mapAttributes) {
+                        const [label, converter] = DWH.mapAttributes[
+                            x.attribute
+                        ];
 
-                    return {
-                        value: converter(x.value),
-                        label,
-                    };
-                }
-                return undefined;
-            })
-            .filter(Boolean);
+                        return {
+                            value: converter(x.value),
+                            label,
+                        };
+                    }
+                    return undefined;
+                })
+                .filter(Boolean);
 
-        const description =
-            ATTRIBUTE_DESCRIPTION in attrMap
-                ? self.atob(attrMap[ATTRIBUTE_DESCRIPTION].value)
-                : '';
+            const description =
+                ATTRIBUTE_DESCRIPTION in attrMap
+                    ? self.atob(attrMap[ATTRIBUTE_DESCRIPTION].value)
+                    : '';
 
-        return {
-            ...brief,
-            attributes,
-            description,
-        };
+            return {
+                ...brief,
+                attributes,
+                description,
+            };
+        } else {
+            return {
+                address,
+                status: EnumProfileStatus.anonimest,
+                attributes: [],
+                description: '',
+                name: '',
+                sellOrders: 0,
+                buyOrders: 0,
+                deals: 0,
+                country: '',
+                logoUrl: '',
+            };
+        }
     };
 
     protected static priceMultiplierOut = new BN('1000000000000000000').div(
