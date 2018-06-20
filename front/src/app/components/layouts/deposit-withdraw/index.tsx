@@ -126,7 +126,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
 
         if (isPasswordValid) {
             (this.store.confirmTransaction(password) as any).then(() =>
-                rootStore.dwHistoryStore.update(),
+                rootStore.dwHistoryListStore.update(),
             );
 
             this.store.resetUserInput();

@@ -7,12 +7,17 @@ import * as tcomb from 'tcomb';
 import { BN } from 'bn.js';
 import { EnumProfileStatus, IBenchmarkMap } from '../../app/api/types';
 import * as moment from 'moment';
+import * as get from 'lodash/fp/get';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
 }
 
 const ATTRIBUTE_DESCRIPTION = 1103;
+
+const NETWORK_OVERLAY = 0x1;
+const NETWORK_OUTBOUND = 0x2;
+const NETWORK_INCOMING = 0x4;
 
 export class DWH {
     private url: string;
@@ -21,14 +26,18 @@ export class DWH {
         this.url = url;
     }
 
-    public static readonly benchmarkMap: Array<[number, string]> = [
+    public static readonly emptyFilter = {};
+
+    public static readonly benchmarkMap: Array<
+        [number /*code*/, string, number /*multiplier*/]
+    > = [
         [2, 'cpuCount', 1],
         [7, 'gpuCount', 1],
         [3, 'ramSize', 1024 * 1024],
         [4, 'storageSize', 1024 * 1024 * 1024],
-        [11, 'redshiftGPU'],
-        [10, 'zcashHashrate'],
-        [9, 'ethHashrate'],
+        [11, 'redshiftGPU', 1],
+        [10, 'zcashHashrate', 1],
+        [9, 'ethHashrate', 1],
         [8, 'gpuRamSize', 1024 * 1024],
     ];
 
@@ -57,14 +66,13 @@ export class DWH {
     };
 
     public static readonly mapAttributes: any = {
-        1201: ['KYC 2', self.atob],
         1202: ['Website', self.atob],
         2201: ['Telephone', self.atob],
         2202: ['E-mail', self.atob],
         2203: ['Service link', self.atob],
     };
 
-    public static readonly mapParseAttributes: any = {
+    public static readonly mapKycAttributes: any = {
         1102: ['name', self.atob],
         1201: ['kyc2', self.atob],
         1301: ['kyc3', self.atob],
@@ -122,44 +130,58 @@ export class DWH {
         TypeEthereumAddress(address);
 
         const res = await this.fetchData('GetProfileInfo', { Id: address });
-        const brief = this.processProfile(res);
-        const certificates = res.Certificates
-            ? JSON.parse(res.Certificates)
-            : [];
-        // const certificateMap: any = {};
-        const attrMap: any = {};
-        const attributes = certificates
-            .map((x: any) => {
-                attrMap[x.attribute] = x;
+        if (res) {
+            const brief = this.processProfile(res);
+            const certificates = res.Certificates
+                ? JSON.parse(res.Certificates)
+                : [];
+            const attrMap: any = {};
+            const attributes = certificates
+                .map((x: any) => {
+                    attrMap[x.attribute] = x;
 
-                if (x.attribute in DWH.mapAttributes) {
-                    const [label, converter] = DWH.mapAttributes[x.attribute];
+                    if (x.attribute in DWH.mapAttributes) {
+                        const [label, converter] = DWH.mapAttributes[
+                            x.attribute
+                        ];
 
-                    return {
-                        value: converter(x.value),
-                        label,
-                    };
-                }
-                return undefined;
-            })
-            .filter(Boolean);
+                        return {
+                            value: converter(x.value),
+                            label,
+                        };
+                    }
+                    return undefined;
+                })
+                .filter(Boolean);
 
-        const description =
-            ATTRIBUTE_DESCRIPTION in attrMap
-                ? self.atob(attrMap[ATTRIBUTE_DESCRIPTION].value)
-                : '';
+            const description =
+                ATTRIBUTE_DESCRIPTION in attrMap
+                    ? self.atob(attrMap[ATTRIBUTE_DESCRIPTION].value)
+                    : '';
 
-        return {
-            ...brief,
-            attributes,
-            description,
-            certificates: (certificates.map((x: any) => {
-                console.log(atob(x.value));
-                debugger;
-            }),
-            []),
-        };
+            return {
+                ...brief,
+                attributes,
+                description,
+                certificates: this.parseCertificate(certificates),
+            };
+        } else {
+            return {
+                address,
+                certificates: [],
+                attributes: [],
+                description: '',
+                ...DWH.defaultProfile,
+            };
+        }
     };
+
+    protected static priceMultiplierOut = new BN('1000000000000000000').div(
+        new BN('3600'),
+    );
+    public static recalculatePriceOut(price: string) {
+        return String(new BN(price).mul(DWH.priceMultiplierOut));
+    }
 
     public getOrders = async ({
         limit,
@@ -190,36 +212,20 @@ export class DWH {
                 break;
         }
 
-        const mongoLikeQuery = filter ? JSON.parse(filter) : {};
-        const benchmarks = this.getBenchmarksFilter(
-            mongoLikeQuery.benchmarkMap,
-        );
+        const mongoLikeQuery = filter ? JSON.parse(filter) : DWH.emptyFilter;
+        const benchmarks = DWH.getBenchmarksFilter(mongoLikeQuery.benchmarkMap);
 
-        const res = await this.fetchData('GetOrders', {
-            // filter
-            authorID:
-                mongoLikeQuery.creator.address &&
-                mongoLikeQuery.creator.address.$eq
-                    ? mongoLikeQuery.creator.address.$eq
-                    : null,
-            type:
-                typeof mongoLikeQuery.orderType.$eq === 'number'
-                    ? mongoLikeQuery.orderType.$eq
-                    : null,
-            creatorIdentityLevel:
-                mongoLikeQuery.creator.status &&
-                mongoLikeQuery.creator.status.$in &&
-                mongoLikeQuery.creator.status.$in.length !== 0
-                    ? mongoLikeQuery.creator.status.$in
-                    : null,
-            status:
-                typeof mongoLikeQuery.orderStatus.$eq === 'number'
-                    ? mongoLikeQuery.orderStatus.$eq
-                    : null,
-            price: this.getMinMaxFilter(mongoLikeQuery.price, 'price'),
+        const request = {
+            masterID: get('creator.address.$eq', mongoLikeQuery),
+            type: get('orderSide.$eq', mongoLikeQuery),
+            creatorIdentityLevel: get('creator.status.$in', mongoLikeQuery),
+            status: get('orderStatus.$eq', mongoLikeQuery),
+            price: DWH.getMinMaxFilter(
+                get('mongoLikeQuery.price', mongoLikeQuery),
+                DWH.recalculatePriceOut,
+            ),
             benchmarks:
                 Object.keys(benchmarks).length !== 0 ? benchmarks : null,
-            // end filter
             offset,
             limit,
             sortings: [
@@ -230,88 +236,66 @@ export class DWH {
             ],
             counterpartyID: [
                 '0x0000000000000000000000000000000000000000',
-                mongoLikeQuery.profileAddress.$eq,
+                get('mongoLikeQuery.creator.$eq', mongoLikeQuery),
             ],
-        });
-        const records = [] as t.IOrder[];
+        };
 
-        if (res && res.orders) {
-            for (const item of res.orders) {
-                records.push(this.parseOrder(item));
-            }
-        }
+        const response = await this.fetchData('GetOrders', request);
+
+        const records = response.orders
+            ? response.orders.map(DWH.parseOrder)
+            : [];
 
         return {
             records,
-            total: res && res.count ? res.count : 0,
+            total: response.count ? response.count : 0,
         };
     };
 
-    protected typeIn = (value: any, types: Array<string>) =>
-        types.some(i => typeof value === i);
-
-    protected getBenchmarksFilter = (benchmarkMap: any) => {
+    protected static getBenchmarksFilter = (benchmarkRanges: {
+        [k: string]: { $gte?: string; $lte?: string };
+    }) => {
         return DWH.benchmarkMap
-            .map(
-                ([i, name]) =>
-                    [
-                        i,
-                        name,
-                        this.getMinMaxFilter(benchmarkMap[name], name),
-                    ] as [number, string, any],
-            )
-            .filter(([i, name, value]) => value !== null)
+            .map(([code, name, multiplier]) => [
+                code,
+                name,
+                DWH.getMinMaxFilter(
+                    benchmarkRanges[name],
+                    (x: any) => Number(x) * multiplier,
+                ),
+            ])
+            .filter(([code, name, value]) => value)
             .reduce(
-                (acc, [i, name, value]) => {
-                    acc[i] = value;
+                (acc, [code, name, value]) => {
+                    acc[String(code)] = value;
                     return acc;
                 },
                 {} as any,
             );
     };
 
-    protected getMinMaxFilter = (value: any, name: string) => {
-        if (value) {
-            const types = ['string', 'number'];
-            let min = value.$gte;
-            let max = value.$lte;
-            if (this.typeIn(min, types) && this.typeIn(max, types)) {
-                switch (name) {
-                    case 'price':
-                        min = new BN(min)
-                            .mul(new BN('1000000000000000000'))
-                            .div(new BN(3600))
-                            .toString();
-                        max = new BN(max)
-                            .mul(new BN('1000000000000000000'))
-                            .div(new BN(3600))
-                            .toString();
-                        break;
-                    default:
-                        const find = DWH.benchmarkMap.find(
-                            item => item[1] === name,
-                        );
-                        if (find) {
-                            min = min * (find[2] as number);
-                            max = max * (find[2] as number);
-                        }
-                        break;
-                }
-                return {
-                    min,
-                    max,
-                };
-            }
+    public static readonly getMinMaxFilter = (
+        value: { $gte?: string; $lte?: string },
+        converter: (a: string) => number | string | boolean = Number,
+    ) => {
+        if (value && ('$gte' in value || '$lte' in value)) {
+            return {
+                min: value.$gte === undefined ? 0 : converter(value.$gte),
+                max: value.$lte === undefined ? 0 : converter(value.$lte),
+            };
         }
-        return null;
+        return undefined;
     };
 
     public getOrderFull = async ({ id }: any): Promise<t.IOrder> => {
         const res = await this.fetchData('GetOrderDetails', id);
-        return this.parseOrder(res);
+        return DWH.parseOrder(res);
     };
 
-    private parseBenchmarks(benchmarks: any): IBenchmarkMap {
+    public static parseBenchmarks(
+        benchmarks: any,
+        netflags: number = 0,
+    ): IBenchmarkMap {
         return {
             cpuSysbenchMulti: benchmarks.values[0] || 0,
             cpuSysbenchOne: benchmarks.values[1] || 0,
@@ -328,19 +312,23 @@ export class DWH {
             ethHashrate: benchmarks.values[9] || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
+            networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
+            networkOutbound: Boolean(netflags & NETWORK_OUTBOUND),
+            networkIncoming: Boolean(netflags & NETWORK_INCOMING),
         };
     }
 
-    private parseOrder(item: any): t.IOrder {
+    public static parseOrder(item: any): t.IOrder {
         const order = {
             ...item.order,
         };
 
-        order.benchmarkMap = this.parseBenchmarks(item.order.benchmarks);
-        order.duration = order.duration
-            ? this.parseDuration(order.duration)
-            : 0;
-        order.price = this.parsePrice(order.price);
+        order.benchmarkMap = DWH.parseBenchmarks(
+            item.order.benchmarks,
+            item.order.netflags,
+        );
+        order.duration = order.duration ? DWH.parseDuration(order.duration) : 0;
+        order.price = DWH.recalculatePriceIn(order.price);
 
         order.creator = {
             status: item.creatorIdentityLevel || EnumProfileStatus.anonimest,
@@ -351,11 +339,11 @@ export class DWH {
         return order;
     }
 
-    private parsePrice(price: number) {
-        return new BN(price).mul(new BN(3600)).toString();
+    public static recalculatePriceIn(price: number) {
+        return String(new BN(price).mul(new BN(3600)));
     }
 
-    private parseDuration(duration: number) {
+    public static parseDuration(duration: number) {
         return Math.round((100 * duration) / 3600) / 100;
     }
 
@@ -410,9 +398,9 @@ export class DWH {
         const attrMap = {} as any;
 
         try {
-            JSON.parse(self.atob(data)).map((x: any) => {
-                if (x.attribute in DWH.mapParseAttributes) {
-                    const [label, converter] = DWH.mapParseAttributes[
+            JSON.parse(window.atob(data)).map((x: any) => {
+                if (x.attribute in DWH.mapKycAttributes) {
+                    const [label, converter] = DWH.mapKycAttributes[
                         x.attribute
                     ];
                     attrMap[label] = converter(x.value);
@@ -429,16 +417,20 @@ export class DWH {
         return attrMap;
     }
 
+    protected getKycCertificates() {}
+
     private parseDeal(item: any): t.IDeal {
         const deal = {
             ...item.deal,
-            ...this.parseBenchmarks(item.deal.benchmarks),
         };
 
         const consumer = this.parseCertificate(item.consumerCertificates);
         const supplier = this.parseCertificate(item.supplierCertificates);
 
-        deal.benchmarkMap = this.parseBenchmarks(item.deal.benchmarks);
+        deal.benchmarkMap = DWH.parseBenchmarks(
+            item.deal.benchmarks,
+            item.netflags,
+        );
         deal.supplier = {
             address: deal.supplierID,
             status: supplier.status || EnumProfileStatus.anonimest,
@@ -449,8 +441,8 @@ export class DWH {
             status: consumer.status || EnumProfileStatus.anonimest,
             name: consumer.name || '',
         };
-        deal.duration = deal.duration ? this.parseDuration(deal.duration) : 0;
-        deal.price = this.parsePrice(deal.price) || 0;
+        deal.duration = deal.duration ? DWH.parseDuration(deal.duration) : 0;
+        deal.price = DWH.recalculatePriceIn(deal.price);
         deal.startTime =
             deal.startTime && deal.startTime.seconds
                 ? deal.startTime.seconds
@@ -466,6 +458,23 @@ export class DWH {
 
         return deal;
     }
+
+    public getValidators = async (): Promise<t.IKycValidator[]> => {
+        const res = await this.fetchData('GetValidators');
+        const data = [] as t.IKycValidator[];
+
+        for (const item of res.validators) {
+            data.push({
+                id: item.id,
+                name: item.name,
+                level: item.level,
+                fee: item.fee,
+                url: item.url,
+            });
+        }
+
+        return data;
+    };
 
     private async fetchData(method: string, params: any = {}) {
         const response = await fetch(`${this.url}${method}`, {

@@ -3,7 +3,7 @@
 .sonm-deal {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-column-gap: 20px;
+    grid-column-gap: 10px;
 
     &__column-left {
         grid-column: 1;
@@ -34,19 +34,25 @@
             grid-column: 1 / span 2;
         }
 
-        &__price-duration {
+        &__blacklist-checkbox {
+            padding-top: 20px;
+            grid-column: 1 / span 2;
             text-align: center;
-
-            &--price {
-                font-size: 25px;
-                margin-bottom: 10px;
-            }
-
-            &--duration {
-                font-size: 22px;
-                color: @color-font-gray;
-            }
         }
+    }
+
+    &__price-duration {
+        text-align: center;
+    }
+
+    &__price {
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+
+    &__duration {
+        font-size: 22px;
+        color: @color-font-gray;
     }
 
     &__header {

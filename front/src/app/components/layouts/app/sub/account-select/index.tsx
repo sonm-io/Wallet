@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 import { IdentIcon } from 'app/components/common/ident-icon';
-import { Hash } from 'app/components/common/hash-view';
 import { Balance } from 'app/components/common/balance-view';
 
 export interface IAccount {
@@ -17,6 +16,7 @@ export interface IMarketAccountSelectProps {
     onChange: (account: IAccount) => void;
     className?: string;
     value?: IAccount;
+    disabled?: boolean;
 }
 
 export interface IMarketAccountSelectItemProps extends IAccount {
@@ -56,6 +56,7 @@ export class MarketAccountSelect extends React.PureComponent<
 
             return (
                 <Tag
+                    {...{ 'data-display-id': `market-account-select-item` }}
                     className={cn('sonm-market-select-item', p.className)}
                     onClick={this.handleClick}
                 >
@@ -63,10 +64,6 @@ export class MarketAccountSelect extends React.PureComponent<
                         sizePx={18}
                         className="sonm-market-select-item__icon"
                         address={p.address}
-                    />
-                    <Hash
-                        className="sonm-market-select-item__addr"
-                        hash={p.address}
                     />
                     <div className="sonm-market-select-item__name">
                         {p.name}
@@ -107,6 +104,7 @@ export class MarketAccountSelect extends React.PureComponent<
 
         return (
             <DropdownInput
+                disabled={p.disabled}
                 className={cn(p.className, 'sonm-market-account', {
                     'sonm-market-account--opened': this.state.opened,
                 })}

@@ -1,5 +1,5 @@
 module.exports = {
-    webpackConfig: require('./front/config/webpack.config'),
+    webpackConfig: require('./front/config/webpack.base-config'),
     skipComponentsWithoutExample: true,
     components: 'front/src/app/components/**/*.tsx',
     context: {

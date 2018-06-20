@@ -50,8 +50,9 @@ export const en: ILocalizationDictionary = {
     ]: string[]) =>
         `Transaction is completed successfully. ${amount} ${currencyName} has been sent to the address ${toAddress}. TxHash ${hash}.`,
     tx_has_been_failed: ([toAddress, hash]: string[]) =>
-        `Transaction to the address ${toAddress} was failed. TxHash ${hash ||
-            undefined}.`,
+        `Transaction to the address ${toAddress} was failed. ${
+            hash !== '' ? 'TxHash ' + hash + '.' : ''
+        }`,
     destination_must_be_differ:
         'The destination address must differ the sender address',
     too_many_decimal_digits: ([decimalPointOffset]: string[]) =>
@@ -85,6 +86,12 @@ export const en: ILocalizationDictionary = {
         `Order #${id} is matched. Deal #${dealId}.`,
 
     tx_buy_order_match_failed: ([id]: string[]) => `Order #${id} match failed`,
+
+    deal_finish_failed: ([id, hash]: string[]) =>
+        `Finish deal #${id} is failed. TxHash ${hash}.`,
+
+    deal_finish_success: ([id, hash]: string[]) =>
+        `Deal #${id} is finished. TxHash ${hash}.`,
 };
 
 export default en;

@@ -14,6 +14,7 @@ import {
     IAccountBrief,
     IBenchmarkMap,
     ICertificate,
+    IKycValidator,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -27,6 +28,14 @@ const isDigits = (x: string) => digitsRegex.test(x);
 export const TypeEthereumAddress = t.refinement(
     t.String,
     (s: string) => s.length === 42 && s.startsWith('0x') && isHexDeximal(s),
+    'EthereumAddress',
+);
+
+export const TypeNotStrictEthereumAddress = t.refinement(
+    t.String,
+    (s: string) =>
+        (s.length === 42 && s.startsWith('0x') && isHexDeximal(s)) ||
+        (s.length === 40 && isHexDeximal(s)),
     'EthereumAddress',
 );
 
@@ -138,6 +147,9 @@ export const TypeBenchmarkMap = createStruct<IBenchmarkMap>(
         zcashHashrate: t.Number,
         redshiftGpu: t.Number,
         gpuRamSize: t.Number,
+        networkOverlay: t.Boolean,
+        networkOutbound: t.Boolean,
+        networkIncoming: t.Boolean,
     },
     'IBenchmarkMap',
 );
@@ -184,6 +196,17 @@ export const TypeDeal = createStruct<IDeal>(
         timeLeft: t.Number,
     },
     'IDeal',
+);
+
+export const TypeKycValidator = createStruct<IKycValidator>(
+    {
+        id: TypeEthereumAddress,
+        level: t.Number,
+        name: t.String,
+        url: t.String,
+        fee: t.String,
+    },
+    'IKycValidator',
 );
 
 export const TypeDealStats = createStruct<IMarketStats>(

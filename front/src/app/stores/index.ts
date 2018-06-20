@@ -1,6 +1,7 @@
 import { useStrict } from 'mobx';
 import { IProfileBrief, IOrder, IDeal } from 'app/api/types';
-import { HistoryStore } from './history';
+import { HistoryListStore } from './history-list';
+import { HistoryFilterStore } from './history-filter';
 import { MainStore } from './main';
 import { SendStore } from './send';
 import { WithdrawStore } from './withdraw';
@@ -20,16 +21,19 @@ import { ProfileList } from './profile-list';
 import { OrdersList } from './orders-list';
 import { DealList } from './deal-list';
 import { Api } from 'app/api';
-import { THistorySourceMode } from './types';
+import { EnumHistorySourceMode } from './types';
 import { IListStore } from './list-store';
 import { unwrapApiResult } from '../api/utils/unwrap-api-result';
 import { OrderDetails } from './order-details';
+import { DealDetails } from './deal-details';
 
 useStrict(true);
 
 export class RootStore implements IHasLocalizator {
-    public readonly historyStore: HistoryStore;
-    public readonly dwHistoryStore: HistoryStore;
+    public readonly walletHistoryListStore: HistoryListStore;
+    public readonly walletHistoryFilterStore: HistoryFilterStore;
+    public readonly dwHistoryListStore: HistoryListStore;
+    public readonly dwHistoryFilterStore: HistoryFilterStore;
     public readonly mainStore: MainStore;
     public readonly sendStore: SendStore;
     public readonly depositStore: SendStore;
@@ -44,6 +48,7 @@ export class RootStore implements IHasLocalizator {
     public readonly dealFilterStore: DealFilterStore;
     public readonly orderFilterStore: OrderFilterStore;
     public readonly orderDetailsStore: OrderDetails;
+    public readonly dealDetailsStore: DealDetails;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -51,15 +56,32 @@ export class RootStore implements IHasLocalizator {
         // should be first cause used in all stores;
         this.uiStore = new UiStore();
 
-        this.historyStore = new HistoryStore(
-            this,
-            this.localizator,
-            THistorySourceMode.wallet,
+        this.walletHistoryFilterStore = new HistoryFilterStore(
+            EnumHistorySourceMode.wallet,
         );
-        this.dwHistoryStore = new HistoryStore(
-            this,
-            this.localizator,
-            THistorySourceMode.market,
+        this.walletHistoryListStore = new HistoryListStore(
+            {
+                filter: this.walletHistoryFilterStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
+                api: Api.history,
+            },
+        );
+
+        this.dwHistoryFilterStore = new HistoryFilterStore(
+            EnumHistorySourceMode.market,
+        );
+        this.dwHistoryListStore = new HistoryListStore(
+            {
+                filter: this.dwHistoryFilterStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
+                api: Api.history,
+            },
         );
 
         this.mainStore = new MainStore(this, { localizator: this.localizator });
@@ -94,6 +116,7 @@ export class RootStore implements IHasLocalizator {
             errorProcessor: this.uiStore,
             api: {
                 fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
+                fetchValidators: unwrapApiResult(Api.getValidators),
                 fetchMarketStats: Api.deal.fetchStats,
             },
         });
@@ -112,7 +135,7 @@ export class RootStore implements IHasLocalizator {
             },
         );
 
-        this.orderFilterStore = new OrderFilterStore();
+        this.orderFilterStore = new OrderFilterStore(this);
 
         this.ordersListStore = new OrdersList(
             {
@@ -149,30 +172,43 @@ export class RootStore implements IHasLocalizator {
                 api: Api.order,
             },
         );
+
+        this.dealDetailsStore = new DealDetails(
+            this,
+            {
+                market: this.marketStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
+                api: Api.deal,
+            },
+        );
     }
 
     public get isPending() {
         return OnlineStore.getAccumulatedFlag(
             'isPending',
-            this.historyStore,
-            this.dwHistoryStore,
+            this.walletHistoryListStore,
+            this.dwHistoryListStore,
             this.mainStore,
             this.sendStore,
             this.depositStore,
             this.withdrawStore,
             this.addTokenStore,
             this.orderDetailsStore,
+            this.dealDetailsStore,
         );
     }
 
     public get isOffline() {
         return OnlineStore.getAccumulatedFlag(
             'isOffline',
-            this.historyStore,
+            this.walletHistoryListStore,
+            this.dwHistoryListStore,
             this.mainStore,
             this.sendStore,
             this.addTokenStore,
-            this.dwHistoryStore,
             this.depositStore,
             this.withdrawStore,
         );

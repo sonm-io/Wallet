@@ -24,7 +24,7 @@ export class SendConfirm extends React.Component<IProps, any> {
 
     public handleConfrim = async (event: any) => {
         const sendStore = rootStore.sendStore;
-        const historyStore = rootStore.historyStore;
+        const historyStore = rootStore.walletHistoryListStore;
 
         event.preventDefault();
 

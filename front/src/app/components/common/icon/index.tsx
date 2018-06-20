@@ -1,23 +1,27 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 
-const icons: any = {
+// To get more icons go to: https://material.io/icons/
+export const icons: any = {
+    ArrowBack: require('./arrow-back.svg').default,
+    ArrowDown: require('./arrow-down.svg').default,
+    ArrowRight: require('./arrow-right.svg').default,
+    ArrowUp: require('./arrow-up.svg').default,
+    Close: require('./close.svg').default,
+    Copy: require('./copy.svg').default,
+    Default: require('./default.svg').default,
+    Download: require('./download.svg').default,
     Exit: require('./exit.svg').default,
     Export: require('./export.svg').default,
-    Import: require('./import.svg').default,
     Eye: require('./eye.svg').default,
     EyeOff: require('./eye-off.svg').default,
-    Pencil: require('./pencil.svg').default,
-    Default: require('./default.svg').default,
-    Copy: require('./copy.svg').default,
-    Download: require('./download.svg').default,
+    Import: require('./import.svg').default,
     Info: require('./info.svg').default,
-    Close: require('./close.svg').default,
-    ArrowRight: require('./arrow-right.svg').default,
-    Refresh: require('./refresh.svg').default,
-    Sync: require('./sync.svg').default,
     OrderAsc: require('./order-asc.svg').default,
     OrderDesc: require('./order-desc.svg').default,
+    Pencil: require('./pencil.svg').default,
+    Refresh: require('./refresh.svg').default,
+    Sync: require('./sync.svg').default,
 };
 
 interface IAny {

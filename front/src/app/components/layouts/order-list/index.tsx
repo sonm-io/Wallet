@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 import { OrderListView } from './view';
+import { OrderFilterPanel } from './sub/order-filter-panel';
 import { rootStore } from 'app/stores';
 import { IOrderFilter } from 'app/stores/order-filter';
 
@@ -8,26 +9,11 @@ const store = rootStore.ordersListStore;
 const filterStore = rootStore.orderFilterStore;
 
 interface IProps {
-    filterByAddress?: string;
     onNavigateToOrder: (orderId: string) => void;
 }
 
 @observer
 export class OrderList extends React.Component<IProps, never> {
-    constructor(props: IProps) {
-        super(props);
-        filterStore.setUserInput({
-            sellerAddress: props.filterByAddress || '',
-            profileAddress: rootStore.marketStore.marketAccountAddress,
-        });
-    }
-
-    public componentWillReceiveProps(next: IProps) {
-        filterStore.setUserInput({
-            sellerAddress: next.filterByAddress || '',
-        });
-    }
-
     protected handleChangeLimit = (limit: number) => {
         store.updateUserInput({ limit });
     };
@@ -47,17 +33,12 @@ export class OrderList extends React.Component<IProps, never> {
         this.props.onNavigateToOrder(orderId);
     };
 
-    protected handleApplyFilter = () => {
-        filterStore.applyFilter();
-    };
-
     protected handleUpdateFilter = (
         key: keyof IOrderFilter,
         value: IOrderFilter[keyof IOrderFilter],
     ) => {
         const values: Partial<IOrderFilter> = {};
         values[key] = value;
-        // console.log(`key=${key}, value=${value}`);
         filterStore.updateUserInput(values);
     };
 
@@ -67,40 +48,44 @@ export class OrderList extends React.Component<IProps, never> {
                 orderBy={store.sortBy}
                 orderDesc={store.sortDesc}
                 pageLimit={store.limit}
+                dataSource={store.records}
+                onClickRow={this.handleClickRow}
                 onChangeLimit={this.handleChangeLimit}
                 onChangeOrder={this.handleChangeOrder}
                 onRefresh={this.handleRefresh}
-                dataSource={store.records}
-                onClickRow={this.handleClickRow}
-                onApplyFilter={this.handleApplyFilter}
-                onUpdateFilter={this.handleUpdateFilter}
-                filterOrderOwnerType={filterStore.orderOwnerType}
-                filterProfileAddress={filterStore.profileAddress}
-                filterSellerAddress={filterStore.sellerAddress}
-                filterType={filterStore.type}
-                filterOnlyActive={filterStore.onlyActive}
-                filterPriceFrom={filterStore.priceFrom}
-                filterPriceTo={filterStore.priceTo}
-                filterProfessional={filterStore.professional}
-                filterRegistered={filterStore.registered}
-                filterIdentified={filterStore.identified}
-                filterAnonymous={filterStore.anonymous}
-                filterCpuCountFrom={filterStore.cpuCountFrom}
-                filterCpuCountTo={filterStore.cpuCountTo}
-                filterGpuCountFrom={filterStore.gpuCountFrom}
-                filterGpuCountTo={filterStore.gpuCountTo}
-                filterRamSizeFrom={filterStore.ramSizeFrom}
-                filterRamSizeTo={filterStore.ramSizeTo}
-                filterStorageSizeFrom={filterStore.storageSizeFrom}
-                filterStorageSizeTo={filterStore.storageSizeTo}
-                filterRedshiftFrom={filterStore.redshiftFrom}
-                filterRedshiftTo={filterStore.redshiftTo}
-                filterEthFrom={filterStore.ethFrom}
-                filterEthTo={filterStore.ethTo}
-                filterZCashFrom={filterStore.zcashFrom}
-                filterZCashTo={filterStore.zcashTo}
-                filterGpuRamSizeFrom={filterStore.gpuRamSizeFrom}
-                filterGpuRamSizeTo={filterStore.gpuRamSizeTo}
+                filterPanel={
+                    <OrderFilterPanel
+                        onUpdateFilter={this.handleUpdateFilter}
+                        creatorAddress={filterStore.userInput.creatorAddress}
+                        orderOwnerType={filterStore.userInput.orderOwnerType}
+                        side={filterStore.userInput.side}
+                        onlyActive={filterStore.userInput.onlyActive}
+                        priceFrom={filterStore.userInput.priceFrom}
+                        priceTo={filterStore.userInput.priceTo}
+                        professional={filterStore.userInput.professional}
+                        registered={filterStore.userInput.registered}
+                        identified={filterStore.userInput.identified}
+                        anonymous={filterStore.userInput.anonymous}
+                        cpuCountFrom={filterStore.userInput.cpuCountFrom}
+                        cpuCountTo={filterStore.userInput.cpuCountTo}
+                        gpuCountFrom={filterStore.userInput.gpuCountFrom}
+                        gpuCountTo={filterStore.userInput.gpuCountTo}
+                        ramSizeFrom={filterStore.userInput.ramSizeFrom}
+                        ramSizeTo={filterStore.userInput.ramSizeTo}
+                        storageSizeFrom={filterStore.userInput.storageSizeFrom}
+                        storageSizeTo={filterStore.userInput.storageSizeTo}
+                        redshiftFrom={filterStore.userInput.redshiftFrom}
+                        redshiftTo={filterStore.userInput.redshiftTo}
+                        ethFrom={filterStore.userInput.ethFrom}
+                        ethTo={filterStore.userInput.ethTo}
+                        zCashFrom={filterStore.userInput.zCashFrom}
+                        zCashTo={filterStore.userInput.zCashTo}
+                        gpuRamSizeFrom={filterStore.userInput.gpuRamSizeFrom}
+                        gpuRamSizeTo={filterStore.userInput.gpuRamSizeTo}
+                        validation={filterStore.validation}
+                        onResetFilter={filterStore.resetFilter}
+                    />
+                }
             />
         );
     }

@@ -64,7 +64,8 @@ export class AppBalance extends React.PureComponent<IAppBalanceProps, any> {
                                 balance={p.marketDealsPrice}
                                 decimalPointOffset={18}
                                 symbol="USD/h"
-                                decimalDigitAmount={2}
+                                decimalDigitAmount={4}
+                                round
                             />
                         </span>
                     </div>

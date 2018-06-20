@@ -1,16 +1,22 @@
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, autorun } from 'mobx';
 import { OnlineStore, IErrorProcessor } from './online-store';
 import { ILocalizator } from 'app/localization';
-const { pending } = OnlineStore;
+const { pending, catchErrors } = OnlineStore;
 import { updateUserInput } from './utils/update-user-input';
 import { asyncAction } from 'mobx-utils';
 import { AlertType } from './types';
-import { IOrderParams } from 'app/api/types';
 import { RootStore } from './';
+import {
+    IOrderParams,
+    EnumOrderStatus,
+    EnumProfileStatus,
+    IOrder,
+    EnumOrderType,
+} from 'app/api/types';
+import { Api } from 'app/api/';
 
 export interface IOrderDetailsInput {
     password: string;
-    orderId: string;
 }
 
 export interface IOrderDetailsStoreServices {
@@ -21,12 +27,7 @@ export interface IOrderDetailsStoreServices {
 
 export interface IOrderDetailsStoreApi {
     quickBuy: (accountAddress: string, password: string, orderId: string) => {};
-    waitForDeal: (
-        accountAddress: string,
-        id: string,
-        delay: number,
-        retries: number,
-    ) => Promise<IOrderParams>;
+    waitForDeal: (accountAddress: string, id: string) => Promise<IOrderParams>;
 }
 
 export interface IOrderDetailsStoreExternal {
@@ -34,9 +35,6 @@ export interface IOrderDetailsStoreExternal {
         marketAccountAddress: string;
     };
 }
-
-const ORDER_CHECK_RETRY_COUNT = 30;
-const ORDER_CHECK_DELAY = 1000;
 
 export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     protected rootStore: RootStore;
@@ -60,19 +58,25 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         this.localizator = params.localizator;
         this.errorProcessor = params.errorProcessor;
         this.rootStore = rootStore;
+
+        autorun(() => {
+            if (this.orderId !== '') {
+                this.fetchData();
+            }
+        });
     }
 
     @observable
     public userInput: IOrderDetailsInput = {
         password: '',
-        orderId: '',
     };
 
     @observable
     public serverValidation: { [K in keyof IOrderDetailsInput]: string } = {
         password: '',
-        orderId: '',
     };
+
+    @observable.ref public order: IOrder = OrderDetails.emptyOrder;
 
     @action.bound
     public updateUserInput(values: Partial<IOrderDetailsInput>) {
@@ -80,107 +84,124 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         this.serverValidation.password = '';
     }
 
+    protected showProcessingSuccess(
+        orderId: string,
+        transactionHash: string,
+    ): string {
+        return this.rootStore.uiStore.addAlert({
+            type: AlertType.warning,
+            message: this.localizator.getMessageText([
+                'tx_buy_order_matching',
+                [orderId, transactionHash],
+            ]),
+        });
+    }
+
+    protected showDealSuccess(orderId: string, dealId: string) {
+        return this.rootStore.uiStore.addAlert({
+            type: AlertType.success,
+            message: this.localizator.getMessageText([
+                'tx_buy_order_matched',
+                [orderId, dealId],
+            ]),
+        });
+    }
+
+    protected showFail(orderId: string) {
+        return this.rootStore.uiStore.addAlert({
+            type: AlertType.error,
+            message: this.localizator.getMessageText([
+                'tx_buy_order_matched_failed',
+                [orderId],
+            ]),
+        });
+    }
+
+    protected resetServerValidation() {
+        this.serverValidation.password = '';
+    }
+
     @pending
+    @catchErrors({ restart: false })
     @asyncAction
     public *submit() {
         const password = this.password;
-        const id = this.orderId;
+        const orderId = this.orderId;
         const accountAddress = this.externalStores.market.marketAccountAddress;
 
         const { data, validation } = yield this.api.quickBuy(
             accountAddress,
             password,
-            id,
+            orderId,
         );
 
-        if (validation && validation.password) {
+        if (validation !== undefined && validation.password) {
             this.serverValidation.password = this.services.localizator.getMessageText(
                 validation.password,
             );
         } else {
-            let alert;
+            if (data.status !== '0x0') {
+                const alertId = this.showProcessingSuccess(
+                    orderId,
+                    data.transactionHash,
+                );
 
-            if (data.status === '0x0') {
-                alert = {
-                    type: AlertType.error,
-                    message: this.localizator.getMessageText([
-                        'tx_buy_order_failed',
-                        [id, data.transactionHash],
-                    ]),
-                };
+                yield this.waitForDeal(accountAddress, orderId);
+
+                this.rootStore.uiStore.closeAlert(alertId);
             } else {
-                alert = {
-                    type: AlertType.warning,
-                    message: this.localizator.getMessageText([
-                        'tx_buy_order_matching',
-                        [id, data.transactionHash],
-                    ]),
-                };
-            }
-
-            this.serverValidation.password = '';
-            const alertId = this.rootStore.uiStore.addAlert(alert);
-
-            if (alert.type === AlertType.warning) {
-                this.api
-                    .waitForDeal(
-                        accountAddress,
-                        id,
-                        ORDER_CHECK_RETRY_COUNT,
-                        ORDER_CHECK_DELAY,
-                    )
-                    .then((orderParams: IOrderParams) => {
-                        if (orderParams && orderParams.dealID !== '0') {
-                            alert = {
-                                type: AlertType.success,
-                                message: this.localizator.getMessageText([
-                                    'tx_buy_order_matched',
-                                    [id, orderParams.dealID],
-                                ]),
-                            };
-                        } else {
-                            alert = {
-                                type: AlertType.error,
-                                message: this.localizator.getMessageText([
-                                    'tx_buy_order_match_failed',
-                                    [id],
-                                ]),
-                            };
-                        }
-
-                        this.rootStore.uiStore.closeAlert(alertId);
-                        this.rootStore.uiStore.addAlert(alert);
-                    })
-                    .catch((err: Error) => {
-                        alert = {
-                            type: AlertType.error,
-                            message: this.localizator.getMessageText([
-                                'tx_buy_order_match_failed',
-                                [id],
-                            ]),
-                        };
-
-                        this.rootStore.uiStore.closeAlert(alertId);
-                        this.rootStore.uiStore.addAlert(alert);
-                    });
+                this.showFail(orderId);
             }
         }
     }
 
-    @computed
-    public get orderId() {
-        return this.userInput.orderId || '';
+    @catchErrors({ restart: true })
+    @asyncAction
+    protected *waitForDeal(accountAddress: string, orderId: string) {
+        const dealResult: IOrderParams = yield this.api.waitForDeal(
+            accountAddress,
+            orderId,
+        );
+
+        this.showDealSuccess(orderId, dealResult.dealID);
+    }
+
+    @observable public orderId: string = '';
+
+    @action.bound
+    public setOrderId(orderId: string) {
+        this.orderId = orderId;
     }
 
     @computed
     public get password() {
-        return this.userInput.password || '';
+        return this.userInput.password;
     }
 
     @computed
     public get validationPassword() {
-        return this.serverValidation.password || '';
+        return this.serverValidation.password;
     }
+
+    @pending
+    @catchErrors({ restart: true })
+    @asyncAction
+    protected *fetchData() {
+        this.order = yield Api.order.fetchById(this.orderId);
+    }
+
+    public static emptyOrder: IOrder = {
+        id: '0',
+        orderType: EnumOrderType.any,
+        creator: {
+            address: '0x1234567890123456789012345678901234567890',
+            status: EnumProfileStatus.anon,
+        },
+        price: '1',
+        duration: 0,
+        orderStatus: EnumOrderStatus.active,
+        benchmarkMap: {},
+    };
 }
 
 export default OrderDetails;

@@ -6,7 +6,8 @@ const { catchErrors } = OnlineStore;
 import { RootStore } from './';
 // import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { ILocalizator } from 'app/localization';
-import { IMarketStats } from 'app/api/types';
+import { IMarketStats, IKycValidator } from 'app/api/types';
+import { BN } from 'bn.js';
 
 const emptyForm: ISendFormValues = {
     fromAddress: '',
@@ -22,6 +23,7 @@ Object.freeze(emptyForm);
 export interface IMarketStoreApi {
     fetchMarketBalance(addr: string): Promise<string>;
     fetchMarketStats(addr: string): Promise<IMarketStats>;
+    fetchValidators(): Promise<IKycValidator[]>;
 }
 
 export interface IMarketStoreServices {
@@ -58,6 +60,9 @@ export class MarketStore extends OnlineStore {
                     this.marketAccountViewList[0].address,
                 );
             }
+
+            this.updateValidators();
+            this.updateTotalBalance();
         });
     }
 
@@ -74,6 +79,9 @@ export class MarketStore extends OnlineStore {
         daysLeft: 0,
     };
 
+    @observable public marketValidators: IKycValidator[] = [];
+    @observable public marketAllBalance: string = '0';
+
     @catchErrors({ restart: true })
     @asyncAction
     public *updatePublicBalance() {
@@ -86,10 +94,30 @@ export class MarketStore extends OnlineStore {
 
     @catchErrors({ restart: true })
     @asyncAction
+    public *updateTotalBalance() {
+        let balance = new BN(0);
+        for (const account of this.marketAccountViewList) {
+            const accountBalance = yield this.services.api.fetchMarketBalance(
+                account.address,
+            );
+            balance = balance.add(new BN(accountBalance));
+        }
+
+        this.marketAllBalance = balance.toString(10);
+    }
+
+    @catchErrors({ restart: true })
+    @asyncAction
     public *updateMarketStats() {
         this.marketStats = yield this.services.api.fetchMarketStats(
             this.marketAccountAddress,
         );
+    }
+
+    @catchErrors({ restart: true })
+    @asyncAction
+    public *updateValidators() {
+        this.marketValidators = yield this.services.api.fetchValidators();
     }
 
     @action
@@ -131,6 +159,11 @@ export class MarketStore extends OnlineStore {
     @computed
     public get marketAccountViewList(): IAccountItemView[] {
         return this.rootStore.mainStore.accountList;
+    }
+
+    @computed
+    public get validators(): IKycValidator[] {
+        return this.marketValidators;
     }
 }
 

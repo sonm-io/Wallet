@@ -28,7 +28,6 @@ export interface ISendTransactionResult extends ISendTransaction {
     fee?: string;
     confirmCount: number;
     status: TransactionStatus;
-    timestamp: number;
     hash: string;
 }
 
@@ -153,12 +152,20 @@ export interface IBenchmarkMap {
     gpuRamSize: number;
     zcashHashrate: number;
     redshiftGpu: number;
+    networkOverlay: boolean;
+    networkOutbound: boolean;
+    networkIncoming: boolean;
 }
 
 export enum EnumOrderType {
     any = 0,
     bid = 1,
     ask = 2,
+}
+
+export enum EnumTransactionStatus {
+    fail = '0x0',
+    success = '0x1',
 }
 
 export enum EnumOrderStatus {
@@ -193,6 +200,14 @@ export interface IDeal {
     endTime: number;
     benchmarkMap: IBenchmarkMap;
     timeLeft: number;
+}
+
+export interface IKycValidator {
+    id: string;
+    level: number;
+    name: string;
+    url: string;
+    fee: string;
 }
 
 export interface IOrderListFilter {

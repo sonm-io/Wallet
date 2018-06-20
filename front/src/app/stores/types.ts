@@ -67,7 +67,7 @@ export interface IAlert {
     message: string;
 }
 
-export enum THistorySourceMode {
+export enum EnumHistorySourceMode {
     wallet = 'wallet',
     market = 'market',
 }

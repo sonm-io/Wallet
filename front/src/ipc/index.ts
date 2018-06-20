@@ -156,8 +156,9 @@ export class IPC implements InterfaceIPC {
                     });
                 } else {
                     /* tslint:disable */
-                    console.error(response);
                     console.error(`method ${method} error: ${response.error}`);
+                    console.error(payload);
+                    console.error(response);
                     /* tslint:enable */
 
                     reject(response.error || 'request failed');

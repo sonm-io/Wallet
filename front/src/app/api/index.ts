@@ -2,16 +2,17 @@ import { ipc as IPC } from './ipc';
 import { ProfileApi } from './sub/profile-api';
 import { OrderApi } from './sub/order-api';
 import { DealApi } from './sub/deal-api';
+import { HistoryApi } from './sub/history-api';
 import {
     ISendTransactionResult,
     IAccountInfo,
     ICurrencyInfo,
     ISendTransaction,
     IResult,
-    ITxListFilter,
     ISettings,
     IWalletListItem,
     ISender,
+    IKycValidator,
 } from './types';
 import { TypeAccountInfoList } from './runtime-types';
 
@@ -23,6 +24,7 @@ class AllApi {
     public profile = new ProfileApi(this.ipc);
     public order = new OrderApi(this.ipc);
     public deal = new DealApi(this.ipc);
+    public history = new HistoryApi(this.ipc);
 
     public async createWallet(
         password: string,
@@ -149,6 +151,24 @@ class AllApi {
         return this.ipc.send('account.getMarketBalance', { address });
     };
 
+    public getValidators = async (): Promise<IResult<IKycValidator[]>> => {
+        return this.ipc.send('market.getValidators');
+    };
+
+    public getKYCLink = async (
+        password: string,
+        address: string,
+        kycAddress: string,
+        fee: string,
+    ): Promise<IResult<string>> => {
+        return this.ipc.send('getKYCLink', {
+            password,
+            address,
+            kycAddress,
+            fee,
+        });
+    };
+
     public async getTokenExchangeRate(): Promise<IResult<string>> {
         return this.ipc.send('getTokenExchangeRate');
     }
@@ -173,20 +193,6 @@ class AllApi {
     ): Promise<IResult<ISendTransactionResult>> => {
         return this.ipc.send('account.withdraw', { ...tx, password });
     };
-
-    public async getSendTransactionList(
-        source?: string,
-        filters?: ITxListFilter,
-        limit?: number,
-        offset?: number,
-    ): Promise<IResult<[ISendTransactionResult[], number]>> {
-        return this.ipc.send('transaction.list', {
-            filters,
-            limit,
-            offset,
-            source,
-        });
-    }
 
     public async getGasPrice(): Promise<IResult<string>> {
         return this.ipc.send('account.getGasPrice');

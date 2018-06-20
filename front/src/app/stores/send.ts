@@ -464,7 +464,6 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         this.userInput.amountEther = '';
 
         const { data } = yield this.api.send(tx, password);
-
         const result = data as ISendTransactionResult;
 
         let alert;

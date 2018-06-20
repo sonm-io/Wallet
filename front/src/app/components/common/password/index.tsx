@@ -40,6 +40,7 @@ export class Password extends React.Component<IPasswordInputProps, IState> {
             <Icon
                 className="password__eye-button"
                 tag="button"
+                type="button"
                 i={this.state.showPassword ? 'EyeOff' : 'Eye'}
                 onClick={this.handleClickEye}
             />

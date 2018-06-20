@@ -21,6 +21,7 @@ import {
 import shortString from 'app/utils/short-string';
 import { Disclaimer } from './sub/disclaimer/index';
 import { localizator } from 'app/localization';
+import { IChangeParams } from 'app/components/common/types';
 
 interface IProps {
     className?: string;
@@ -377,16 +378,15 @@ export class Login extends React.Component<IProps, IState> {
         return valid;
     }
 
-    protected handleChangeInput = (event: any) => {
-        const name = event.target.name;
-
+    protected handleChangeInput = (params: IChangeParams<string>) => {
+        const name = params.name;
         this.setState({
             serverValidation: {
                 ...(this.state.serverValidation as any),
                 [name]: '',
             },
-            [name]: event.target.value,
-        });
+            [name]: params.value,
+        } as any);
     };
 
     protected handleChangeSelect = (params: any) => {
@@ -528,7 +528,7 @@ export class Login extends React.Component<IProps, IState> {
                             <Input
                                 className="sonm-login__input"
                                 name="newName"
-                                onChangeDeprecated={this.handleChangeInput}
+                                onChange={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -542,7 +542,7 @@ export class Login extends React.Component<IProps, IState> {
                                 type="password"
                                 className="sonm-login__input"
                                 name="password"
-                                onChangeDeprecated={this.handleChangeInput}
+                                onChange={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -563,9 +563,10 @@ export class Login extends React.Component<IProps, IState> {
 
         return (
             <Dialog onClickCross={this.handleReturn} color="dark">
-                <form
+                <Form
                     className="sonm-login__popup-content"
                     onSubmit={this.handleSubmitLogin}
+                    theme="dark"
                 >
                     <h3 className="sonm-login__popup-header">
                         {localizator.getMessageText('enter_password')}
@@ -577,8 +578,7 @@ export class Login extends React.Component<IProps, IState> {
                         <span className="sonm-login__label-error">
                             {this.state.serverValidation.password}
                         </span>
-                        <input
-                            autoComplete="off"
+                        <Input
                             ref={setFocus}
                             type="password"
                             className="sonm-login__input"
@@ -589,7 +589,7 @@ export class Login extends React.Component<IProps, IState> {
                     <Button className="sonm-login__create" type="submit">
                         {localizator.getMessageText('login')}
                     </Button>
-                </form>
+                </Form>
             </Dialog>
         );
     }
@@ -601,9 +601,10 @@ export class Login extends React.Component<IProps, IState> {
 
         return (
             <Dialog onClickCross={this.handleReturn} color="dark">
-                <form
+                <Form
                     className="sonm-login__popup-content"
                     onSubmit={this.handleSubmitCreate}
+                    theme="dark"
                 >
                     <h3 className="sonm-login__popup-header">
                         {localizator.getMessageText('new_wallet')}
@@ -615,8 +616,7 @@ export class Login extends React.Component<IProps, IState> {
                         <span className="sonm-login__label-error">
                             {this.state.serverValidation.newName}
                         </span>
-                        <input
-                            autoComplete="off"
+                        <Input
                             ref={setFocus}
                             type="text"
                             className="sonm-login__input"
@@ -631,8 +631,7 @@ export class Login extends React.Component<IProps, IState> {
                         <span className="sonm-login__label-error">
                             {this.state.serverValidation.newPassword}
                         </span>
-                        <input
-                            autoComplete="off"
+                        <Input
                             type="password"
                             className="sonm-login__input"
                             name="newPassword"
@@ -649,8 +648,7 @@ export class Login extends React.Component<IProps, IState> {
                                     .newPasswordConfirmation
                             }
                         </span>
-                        <input
-                            autoComplete="off"
+                        <Input
                             type="password"
                             className="sonm-login__input"
                             name="newPasswordConfirmation"
@@ -672,7 +670,7 @@ export class Login extends React.Component<IProps, IState> {
                     <Button className="sonm-login__create" type="submit">
                         {localizator.getMessageText('create_wallet')}
                     </Button>
-                </form>
+                </Form>
             </Dialog>
         );
     }

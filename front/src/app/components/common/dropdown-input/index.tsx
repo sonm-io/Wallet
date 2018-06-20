@@ -98,12 +98,19 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
 
         return (
             <div
-                className={cn(this.props.className, s.root, {
-                    [s.expanded]: this.props.isExpanded,
-                })}
+                data-display-id="dropdown"
+                className={cn(
+                    this.props.className,
+                    s.root,
+                    props.disabled ? `${s.root}--disabled` : null,
+                    {
+                        [s.expanded]: this.props.isExpanded,
+                    },
+                )}
                 ref={this.saveRef}
             >
                 <button
+                    data-display-id="dropdown-button"
                     type="button"
                     className={cn(s.button)}
                     onClick={this.props.onButtonClick}

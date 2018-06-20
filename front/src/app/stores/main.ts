@@ -456,6 +456,36 @@ export class MainStore extends OnlineStore {
 
     @pending
     @asyncAction
+    public *getKYCLink(
+        password: string,
+        address: string,
+        kycAddress: string,
+        fee: string,
+    ) {
+        const { data: link, validation } = yield Api.getKYCLink(
+            password,
+            address,
+            kycAddress,
+            fee,
+        );
+
+        let result;
+        if (validation) {
+            this.serverValidation = {
+                ...this.services.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
+        } else {
+            result = link;
+            this.resetServerValidation();
+        }
+
+        return result;
+    }
+
+    @pending
+    @asyncAction
     protected *exportWallet() {
         const { data: text } = yield Api.exportWallet();
 
