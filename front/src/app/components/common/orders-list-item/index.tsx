@@ -123,12 +123,10 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                         symbol="USD/h"
                         round
                     />
+                    {this.props.order.duration ? (
+                        <div>{this.props.order.duration} hour(s)</div>
+                    ) : null}
                 </div>
-                {this.props.order.duration ? (
-                    <div className="orders-list-item__cost">
-                        {this.props.order.duration} hour(s)
-                    </div>
-                ) : null}
 
                 {/* Optional Column 3 - Children */}
                 {this.props.children !== undefined ? (
