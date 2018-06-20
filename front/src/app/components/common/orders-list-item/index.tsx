@@ -118,21 +118,24 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 {/* Column 2 - Costs */}
                 <div className="orders-list-item__cost">
                     <Balance
+                        className="orders-list-item__price"
                         balance={this.props.order.price}
                         decimalPointOffset={18}
                         decimalDigitAmount={4}
                         symbol="USD/h"
                         round
                     />
+                    {this.props.order.duration ? (
+                        <div
+                            {...{
+                                'data-display-id': `orders-list-item-duration`,
+                            }}
+                            className="orders-list-item__duration"
+                        >
+                            {this.props.order.duration} hour(s)
+                        </div>
+                    ) : null}
                 </div>
-                {this.props.order.duration ? (
-                    <div
-                        {...{ 'data-display-id': `orders-list-item-duration` }}
-                        className="orders-list-item__cost"
-                    >
-                        {this.props.order.duration} hour(s)
-                    </div>
-                ) : null}
 
                 {/* Optional Column 3 - Children */}
                 {this.props.children !== undefined ? (
