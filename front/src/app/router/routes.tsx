@@ -30,6 +30,7 @@ import { loader } from './loader';
 
 import { navigate } from './navigate';
 import { IOrder } from '../api/types';
+import { rootStore } from '../stores';
 
 let defaultAction;
 
@@ -83,23 +84,35 @@ const navigateToFullOrderList = () => {
 const headerMenu: Array<TMenuItem> = [
     [
         'Wallet',
+        Boolean,
         undefined,
         [
-            ['Accounts', () => navigateTo('/wallet/accounts'), undefined],
-            ['History', navigateToWalletHistory, undefined],
-            ['Send', () => navigateTo('/wallet/send'), undefined],
+            [
+                'Accounts',
+                Boolean,
+                () => navigateTo('/wallet/accounts'),
+                undefined,
+            ],
+            ['History', Boolean, navigateToWalletHistory, undefined],
+            ['Send', Boolean, () => navigateTo('/wallet/send'), undefined],
         ],
     ],
     [
         'Market',
+        () => rootStore.marketStore.marketAccountViewList.length === 0, // is disabled
         undefined,
         [
-            ['Profiles', () => navigateTo('/market/profiles'), undefined],
-            ['Orders', navigateToOrders, undefined],
-            ['Deals', navigateToDealList, undefined],
-            ['Deposit', navigateToDeposit, undefined],
-            ['Withdraw', navigateToWithdraw, undefined],
-            ['History', navigateToDWHistory, undefined],
+            [
+                'Profiles',
+                Boolean,
+                () => navigateTo('/market/profiles'),
+                undefined,
+            ],
+            ['Orders', Boolean, navigateToOrders, undefined],
+            ['Deals', Boolean, navigateToDealList, undefined],
+            ['Deposit', Boolean, navigateToDeposit, undefined],
+            ['Withdraw', Boolean, navigateToWithdraw, undefined],
+            ['History', Boolean, navigateToDWHistory, undefined],
         ],
     ],
 ];

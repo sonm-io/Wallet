@@ -4,6 +4,7 @@ import { DropdownInput } from 'app/components/common/dropdown-input';
 
 type TItem<T> = [
     string, // Title
+    () => boolean, // idDisabled
     (() => void) | undefined, // Callback
     T[] | undefined // Children
 ];
@@ -36,11 +37,11 @@ export class NavMenuDropdown extends React.PureComponent<
             .split(',')
             .map((i: string) => Number(i)) as Array<number>;
         const item = this.props.items[index];
-        const children = item[2];
+        const children = item[3];
 
         if (children !== undefined) {
             const childItem = children[childIndex];
-            const cb = childItem[1];
+            const cb = childItem[2];
             if (cb !== undefined) {
                 cb();
             }
@@ -73,7 +74,7 @@ export class NavMenuDropdown extends React.PureComponent<
         return (
             <div className={cn(this.props.className, 'sonm-nav-menu')}>
                 {this.props.items.map((item: TMenuItem, index) => {
-                    const [title, , children] = item;
+                    const [title, disabled, , children] = item;
 
                     return (
                         <DropdownInput
@@ -88,6 +89,7 @@ export class NavMenuDropdown extends React.PureComponent<
                             isExpanded={this.state.opened === title}
                             onButtonClick={this.getBindedTopMenuHandler(title)}
                             onRequireClose={this.handleCloseTopMenu}
+                            disabled={disabled()}
                             dropdownCssClasses={
                                 NavMenuDropdown.dropdownCssClasses
                             }
@@ -99,7 +101,10 @@ export class NavMenuDropdown extends React.PureComponent<
                                             subItem: TItem<undefined>,
                                             childIndex,
                                         ) => {
-                                            const [subTitle] = subItem;
+                                            const [
+                                                subTitle,
+                                                disableChild,
+                                            ] = subItem;
 
                                             return (
                                                 <button
@@ -107,6 +112,7 @@ export class NavMenuDropdown extends React.PureComponent<
                                                     value={`${index},${childIndex}`}
                                                     type="button"
                                                     className="sonm-nav-menu__sub-item"
+                                                    disabled={disableChild()}
                                                     onClick={
                                                         this.handleClickUrl
                                                     }
