@@ -84,17 +84,17 @@ const navigateToFullOrderList = () => {
 const headerMenu: Array<TMenuItem> = [
     [
         'Wallet',
-        () => false,
+        Boolean,
         undefined,
         [
             [
                 'Accounts',
-                () => false,
+                Boolean,
                 () => navigateTo('/wallet/accounts'),
                 undefined,
             ],
-            ['History', () => false, navigateToWalletHistory, undefined],
-            ['Send', () => false, () => navigateTo('/wallet/send'), undefined],
+            ['History', Boolean, navigateToWalletHistory, undefined],
+            ['Send', Boolean, () => navigateTo('/wallet/send'), undefined],
         ],
     ],
     [
@@ -104,15 +104,15 @@ const headerMenu: Array<TMenuItem> = [
         [
             [
                 'Profiles',
-                () => false,
+                Boolean,
                 () => navigateTo('/market/profiles'),
                 undefined,
             ],
-            ['Orders', () => false, navigateToOrders, undefined],
-            ['Deals', () => false, navigateToDealList, undefined],
-            ['Deposit', () => false, navigateToDeposit, undefined],
-            ['Withdraw', () => false, navigateToWithdraw, undefined],
-            ['History', () => false, navigateToDWHistory, undefined],
+            ['Orders', Boolean, navigateToOrders, undefined],
+            ['Deals', Boolean, navigateToDealList, undefined],
+            ['Deposit', Boolean, navigateToDeposit, undefined],
+            ['Withdraw', Boolean, navigateToWithdraw, undefined],
+            ['History', Boolean, navigateToDWHistory, undefined],
         ],
     ],
 ];
