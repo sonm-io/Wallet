@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 
+const h = React.createElement;
+
 type TItem<T> = [
     string, // Title
     () => boolean, // idDisabled
@@ -106,20 +108,17 @@ export class NavMenuDropdown extends React.PureComponent<
                                                 disableChild,
                                             ] = subItem;
 
-                                            return (
-                                                <button
-                                                    key={subTitle}
-                                                    value={`${index},${childIndex}`}
-                                                    type="button"
-                                                    className="sonm-nav-menu__sub-item"
-                                                    disabled={disableChild()}
-                                                    onClick={
-                                                        this.handleClickUrl
-                                                    }
-                                                >
-                                                    {subTitle}
-                                                </button>
-                                            );
+                                            return h('button', {
+                                                'data-display-id': `nav-menu-item-${subTitle.toLowerCase()}`,
+                                                key: subTitle,
+                                                value: `${index},${childIndex}`,
+                                                type: 'button',
+                                                className:
+                                                    'sonm-nav-menu__sub-item',
+                                                disabled: disableChild(),
+                                                onClick: this.handleClickUrl,
+                                                children: subTitle,
+                                            });
                                         },
                                     )}
                             </div>
