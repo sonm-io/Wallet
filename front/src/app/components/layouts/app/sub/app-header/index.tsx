@@ -36,6 +36,7 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
 
         return (
             <div
+                {...{ 'data-display-id': `app-header` }}
                 className={`sonm-app-header sonm-app-header--${
                     p.isTestNet ? 'rinkeby' : 'livenet'
                 }`}

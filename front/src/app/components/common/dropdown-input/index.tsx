@@ -98,6 +98,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
 
         return (
             <div
+                {...{ 'data-display-id': `dropdown` }}
                 className={cn(
                     this.props.className,
                     s.root,

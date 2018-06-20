@@ -2,8 +2,6 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 
-const h = React.createElement;
-
 type TItem<T> = [
     string, // Title
     () => boolean, // idDisabled
@@ -74,7 +72,10 @@ export class NavMenuDropdown extends React.PureComponent<
 
     public render() {
         return (
-            <div className={cn(this.props.className, 'sonm-nav-menu')}>
+            <div
+                className={cn(this.props.className, 'sonm-nav-menu')}
+                {...{ 'data-display-id': `nav-menu` }}
+            >
                 {this.props.items.map((item: TMenuItem, index) => {
                     const [title, disabled, , children] = item;
 
@@ -108,17 +109,25 @@ export class NavMenuDropdown extends React.PureComponent<
                                                 disableChild,
                                             ] = subItem;
 
-                                            return h('button', {
-                                                'data-display-id': `nav-menu-item-${subTitle.toLowerCase()}`,
-                                                key: subTitle,
-                                                value: `${index},${childIndex}`,
-                                                type: 'button',
-                                                className:
-                                                    'sonm-nav-menu__sub-item',
-                                                disabled: disableChild(),
-                                                onClick: this.handleClickUrl,
-                                                children: subTitle,
-                                            });
+                                            return (
+                                                <button
+                                                    {...{
+                                                        'data-display-id': `nav-menu-sub-item`,
+                                                    }}
+                                                    key={subTitle}
+                                                    value={`${index},${childIndex}`}
+                                                    type={'button'}
+                                                    className={
+                                                        'sonm-nav-menu__sub-item'
+                                                    }
+                                                    disabled={disableChild()}
+                                                    onClick={
+                                                        this.handleClickUrl
+                                                    }
+                                                >
+                                                    subTitle
+                                                </button>
+                                            );
                                         },
                                     )}
                             </div>
