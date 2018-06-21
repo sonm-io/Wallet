@@ -1,0 +1,64 @@
+.kyc-list-item {
+    display: grid;
+    grid-template-areas:
+        'icon title title  title title'
+        'icon descr status price btn'
+        'icon line  line   line  .';
+
+    grid-column-gap: 33px;
+
+    // Grid cells layout
+    &__icon {
+        grid-area: icon;
+    }
+    &__title {
+        grid-area: title;
+    }
+    &__descr {
+        grid-area: descr;
+    }
+    &__status {
+        grid-area: status;
+    }
+    &__price {
+        grid-area: price;
+    }
+    &__btn {
+        grid-area: btn;
+    }
+    &__icon {
+        grid-area: icon;
+    }
+    &__line {
+        grid-area: line;
+    }
+
+    // Elements style
+    &__title {
+        color: @color-font-dark;
+        font-size: 20px;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+    &__descr {
+        color: @color-font-dark;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 24px;
+
+        text-align: justify;
+    }
+    &__status,
+    &__price {
+        display: flex;
+        flex-direction: column;
+    }
+    &__label {
+        color: @color-light-font;
+        font-size: 13px;
+        font-weight: 700;
+    }
+    &__line {
+        border-top: 1px solid @color-border;
+    }
+}
