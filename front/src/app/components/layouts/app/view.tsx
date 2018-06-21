@@ -18,6 +18,7 @@ interface IProps {
     breadcrumbs: any;
     headerMenu: Array<TMenuItem>;
     disableAccountSelect?: boolean;
+    onClickMyProfile: () => void;
 
     hasMarketAccountSelect: boolean;
     onChangeMarketAccount: (account: IAccount) => void;
@@ -65,6 +66,7 @@ export class AppView extends React.PureComponent<IProps, any> {
                         onExit={p.onExit}
                         menu={p.headerMenu}
                         disableAccountSelect={p.disableAccountSelect}
+                        onClickMyProfile={this.props.onClickMyProfile}
                     />
                     <div className="sonm-app__alert-group">
                         {p.networkError ? (

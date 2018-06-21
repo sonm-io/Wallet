@@ -80,6 +80,9 @@ const navigateToFullOrderList = () => {
     loader.loadOrderList(Object.prototype);
     navigate({ path: '/market/orders' });
 };
+const navigateToMyProfile = () => {
+    navigateToProfile(rootStore.marketStore.marketAccountAddress);
+};
 
 const headerMenu: Array<TMenuItem> = [
     [
@@ -138,6 +141,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 ? params.props.disableAccountSelect
                                 : undefined
                         }
+                        onClickMyProfile={navigateToMyProfile}
                         breadcrumbs={breadcrumbs}
                         onExit={reload}
                         path={ctx.pathname}

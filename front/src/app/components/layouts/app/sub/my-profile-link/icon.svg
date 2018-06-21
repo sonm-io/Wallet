@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" 
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="37" height="38" viewBox="0 0 37 38">
+    <defs>
+        <path id="6ltga" d="M865.5 55.52a18.5 18.5 0 1 1 0 37 18.5 18.5 0 0 1 0-37z"/>
+        <clipPath id="6ltgb">
+            <use fill="#fff" xlink:href="#6ltga"/>
+        </clipPath>
+    </defs>
+    <g>
+        <g transform="translate(-847 -55)">
+            <g fill="#15987a" font-family="'Material-Design-Icons','Material-Design-Icons'" font-size="26" font-style="none" font-weight="400">
+                <text dominant-baseline="text-before-edge" font-family="Helvetica, Arial, sans-serif" transform="translate(859 67)">
+                    <tspan style="font-kerning:normal"></tspan>
+                </text>
+            </g>
+        </g>
+        <g transform="translate(-847 -55)">
+            <use fill="#fff" fill-opacity="0" stroke="#15987a" stroke-miterlimit="50" stroke-width="2" clip-path="url(&quot;#6ltgb&quot;)" xlink:href="#6ltga"/>
+        </g>
+    </g>
+</svg>
