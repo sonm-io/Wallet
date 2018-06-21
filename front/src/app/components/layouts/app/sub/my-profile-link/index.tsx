@@ -6,10 +6,10 @@ export interface IMyProfileLinkProps {
     onClick: () => void;
 }
 
-export function MyProfileLink(props: IMyProfileLinkProps) {
+export const MyProfileLink = (props: IMyProfileLinkProps) => {
     return (
         <a className="my-profile-link" onClick={props.onClick}>
             <Svg />
         </a>
     );
-}
+};
