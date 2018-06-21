@@ -125,7 +125,7 @@ export class NavMenuDropdown extends React.PureComponent<
                                                         this.handleClickUrl
                                                     }
                                                 >
-                                                    subTitle
+                                                    {subTitle}
                                                 </button>
                                             );
                                         },
