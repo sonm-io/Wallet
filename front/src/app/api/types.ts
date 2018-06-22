@@ -204,6 +204,11 @@ export interface IKycValidator {
     fee: string;
 }
 
+export interface IWorker {
+    slaveId: string;
+    confirmed: boolean;
+}
+
 export interface IOrderListFilter {
     authorID?: string;
 }

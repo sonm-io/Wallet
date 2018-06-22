@@ -58,7 +58,7 @@ export class AppBalance extends React.PureComponent<IAppBalanceProps, any> {
                             Market stat:{' '}
                         </span>
                         <span className="app-balance__value">
-                            {p.marketDealsCount} deals,{' '}
+                            {p.marketDealsCount} deals,
                             <Balance
                                 className="app-balance__value"
                                 balance={p.marketDealsPrice}
