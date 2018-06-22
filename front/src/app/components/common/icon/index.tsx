@@ -55,4 +55,8 @@ export class Icon extends React.PureComponent<IIconProps, any> {
     }
 }
 
+export const IconButton = (props: IIconProps) => (
+    <Icon {...props} tag="button" />
+);
+
 export default Icon;
