@@ -99,17 +99,12 @@ const headerMenu: Array<TMenuItem> = [
         'Market',
         undefined,
         [
-            [
-                'Profiles',
-                Boolean,
-                () => navigateTo('/market/profiles'),
-                undefined,
-            ],
-            ['Orders', Boolean, navigateToOrders, undefined],
-            ['Deals', Boolean, navigateToDealList, undefined],
-            ['Deposit', Boolean, navigateToDeposit, undefined],
-            ['Withdraw', Boolean, navigateToWithdraw, undefined],
-            ['History', Boolean, navigateToDWHistory, undefined],
+            ['Profiles', () => navigateTo('/market/profiles')],
+            ['Orders', navigateToOrders],
+            ['Deals', navigateToDealList],
+            ['Deposit', navigateToDeposit],
+            ['Withdraw', navigateToWithdraw],
+            ['History', navigateToDWHistory],
             ['Workers', Boolean, navigateToWorkerList, undefined],
         ],
         () => rootStore.marketStore.marketAccountViewList.length === 0, // is disabled
