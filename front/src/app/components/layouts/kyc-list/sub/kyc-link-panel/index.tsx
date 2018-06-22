@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { IconButton } from 'app/components/common/icon';
 import { copyToClipboard } from '../../../../../utils/clipboard-helper';
+import * as cn from 'classnames';
 
 export interface IKycLinkPanelProps {
+    className?: string;
     value: string;
     onClose: () => void;
 }
@@ -14,7 +16,7 @@ export class KycLinkPanel extends React.Component<IKycLinkPanelProps, never> {
 
     public render() {
         return (
-            <div className="kyc-link-panel">
+            <div className={cn('kyc-link-panel', this.props.className)}>
                 <IconButton
                     className="kyc-link-panel__close-button"
                     i="Close"
