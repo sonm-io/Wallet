@@ -20,6 +20,7 @@ export interface INavMenuDropdownProps {
 
 interface ISubItemProps {
     onClick: () => void;
+    onClose: () => void;
     isDisabled: boolean;
     title: string;
 }
@@ -30,6 +31,7 @@ class SubMenuItem extends React.Component<ISubItemProps, never> {
 
         if (!this.props.isDisabled) {
             this.props.onClick();
+            this.props.onClose();
         }
     };
 
@@ -154,6 +156,7 @@ export class NavMenuDropdown extends React.PureComponent<
                                             title={subItemTitle}
                                             isDisabled={isSubDisabled}
                                             onClick={handleClick as () => void}
+                                            onClose={this.handleCloseTopMenu}
                                         />
                                     );
                                 })}
