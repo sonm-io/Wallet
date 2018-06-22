@@ -487,28 +487,32 @@ export class DWH {
         tcomb.maybe(tcomb.String)(filter);
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
-        const res = await this.fetchData('GetWorkers', {
-            masterID: get('address.$eq', mongoLikeQuery) || null,
-            limit,
-            offset,
-            WithCount: true,
-        });
+        const address = get('address.$eq', mongoLikeQuery);
 
-        const data = [] as t.IWorker[];
+        if (address) {
+            const res = await this.fetchData('GetWorkers', {
+                masterID: address,
+                limit,
+                offset,
+                WithCount: true,
+            });
 
-        if (res && res.workers) {
-            for (const item of res.workers) {
-                data.push({
-                    slaveId: item.slaveID,
-                    confirmed: !!item.confirmed,
-                });
-            }
+            const workers = 'workers' in res ? res.workers : [];
+            return {
+                records: workers.map(
+                    ({ slaveID, confirmed }: any): t.IWorker => ({
+                        slaveId: slaveID,
+                        confirmed: !!confirmed,
+                    }),
+                ),
+                total: 'count' in res ? res.count : 0,
+            };
+        } else {
+            return {
+                records: [],
+                total: 0,
+            };
         }
-
-        return {
-            records: data,
-            total: res && res.count ? res.count : 0,
-        };
     };
 
     private async fetchData(method: string, params: any = {}) {

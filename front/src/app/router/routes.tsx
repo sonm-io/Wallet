@@ -105,7 +105,7 @@ const headerMenu: Array<TMenuItem> = [
             ['Deposit', navigateToDeposit],
             ['Withdraw', navigateToWithdraw],
             ['History', navigateToDWHistory],
-            ['Workers', Boolean, navigateToWorkerList, undefined],
+            ['Workers', navigateToWorkerList],
         ],
         () => rootStore.marketStore.marketAccountViewList.length === 0, // is disabled
     ],
