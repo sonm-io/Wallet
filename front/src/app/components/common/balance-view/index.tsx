@@ -110,7 +110,10 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
         }
 
         return (
-            <div className={cn('sonm-balance', className)}>
+            <div
+                className={cn('sonm-balance', className)}
+                {...{ 'data-display-id': `balance` }}
+            >
                 <span className="sonm-balance__number">
                     {prefix ? `${prefix} ` : null}
                     {num}

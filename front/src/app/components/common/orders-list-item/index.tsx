@@ -102,6 +102,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     public render() {
         return (
             <a
+                {...{ 'data-display-id': `orders-list-item` }}
                 className={cn('orders-list-item', this.props.className)}
                 href={`#order-i-${this.props.order.id}`}
                 onClick={this.handleClick}
@@ -125,7 +126,12 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                         round
                     />
                     {this.props.order.duration ? (
-                        <div className="orders-list-item__duration">
+                        <div
+                            {...{
+                                'data-display-id': `orders-list-item-duration`,
+                            }}
+                            className="orders-list-item__duration"
+                        >
                             {this.props.order.duration} hour(s)
                         </div>
                     ) : null}

@@ -56,6 +56,7 @@ export class MarketAccountSelect extends React.PureComponent<
 
             return (
                 <Tag
+                    {...{ 'data-display-id': `market-account-select-item` }}
                     className={cn('sonm-market-select-item', p.className)}
                     onClick={this.handleClick}
                 >

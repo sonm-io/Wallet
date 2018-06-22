@@ -44,7 +44,10 @@ export class AppView extends React.PureComponent<IProps, any> {
         const p = this.props;
 
         return (
-            <div className={cn('sonm-app', p.className)}>
+            <div
+                className={cn('sonm-app', p.className)}
+                {...{ 'data-display-id': `sonm-app` }}
+            >
                 <LoadMask white visible={p.isPending}>
                     <AppHeader
                         onChangeAccount={p.onChangeMarketAccount}

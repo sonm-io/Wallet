@@ -88,22 +88,15 @@ const navigateToFullOrderList = () => {
 const headerMenu: Array<TMenuItem> = [
     [
         'Wallet',
-        Boolean,
         undefined,
         [
-            [
-                'Accounts',
-                Boolean,
-                () => navigateTo('/wallet/accounts'),
-                undefined,
-            ],
-            ['History', Boolean, navigateToWalletHistory, undefined],
-            ['Send', Boolean, () => navigateTo('/wallet/send'), undefined],
+            ['Accounts', () => navigateTo('/wallet/accounts')],
+            ['History', navigateToWalletHistory],
+            ['Send', () => navigateTo('/wallet/send')],
         ],
     ],
     [
         'Market',
-        () => rootStore.marketStore.marketAccountViewList.length === 0, // is disabled
         undefined,
         [
             [
@@ -119,8 +112,9 @@ const headerMenu: Array<TMenuItem> = [
             ['History', Boolean, navigateToDWHistory, undefined],
             ['Workers', Boolean, navigateToWorkerList, undefined],
         ],
+        () => rootStore.marketStore.marketAccountViewList.length === 0, // is disabled
     ],
-];
+] as Array<TMenuItem>; // Force cast, cause 2 last parameter can be undefined
 
 export const univeralRoutes: Array<IUniversalRouterItem> = [
     {
