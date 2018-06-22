@@ -461,19 +461,17 @@ export class DWH {
 
     public getValidators = async (): Promise<t.IKycValidator[]> => {
         const res = await this.fetchData('GetValidators');
-        const data = [] as t.IKycValidator[];
+        const validators = 'validators' in res ? res.validators : [];
 
-        for (const item of res.validators) {
-            data.push({
-                id: item.id,
-                name: item.name,
-                level: item.level,
-                fee: item.fee,
-                url: item.url,
-            });
-        }
-
-        return data;
+        return validators.map(
+            ({ id, name, level, fee, url }: any): t.IKycValidator => ({
+                id,
+                name,
+                level,
+                fee,
+                url,
+            }),
+        );
     };
 
     private async fetchData(method: string, params: any = {}) {
