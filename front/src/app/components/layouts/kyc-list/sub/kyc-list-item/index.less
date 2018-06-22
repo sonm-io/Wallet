@@ -1,11 +1,22 @@
 .kyc-list-item {
     display: grid;
     grid-template-areas:
-        'icon title title  title title'
-        'icon descr status price btn'
-        'icon line  line   line  .';
+        'icon  title   title   title'
+        'icon  descr   status  price'
+        'icon  bottom  .  .'
+        'icon  line    line    line';
 
     grid-column-gap: 33px;
+
+    padding: 30px;
+
+    &:hover,
+    &--selected {
+        background-color: @color-gray-bg;
+    }
+    &--selected {
+        cursor: default;
+    }
 
     // Grid cells layout
     &__icon {
@@ -23,11 +34,11 @@
     &__price {
         grid-area: price;
     }
-    &__btn {
-        grid-area: btn;
-    }
     &__icon {
         grid-area: icon;
+    }
+    &__bottom {
+        grid-area: bottom;
     }
     &__line {
         grid-area: line;
@@ -40,6 +51,7 @@
         font-weight: 500;
         text-transform: uppercase;
     }
+
     &__descr {
         color: @color-font-dark;
         font-size: 15px;
@@ -48,17 +60,28 @@
 
         text-align: justify;
     }
+
     &__status,
     &__price {
         display: flex;
         flex-direction: column;
     }
+
     &__label {
         color: @color-light-font;
         font-size: 13px;
         font-weight: 700;
     }
+
+    &__bottom {
+        margin: 58px 0 0 0;
+    }
+
     &__line {
         border-top: 1px solid @color-border;
+        margin: 29px 0 0 0;
+    }
+    &:hover &__line {
+        border-top: 1px solid transparent;
     }
 }

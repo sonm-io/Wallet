@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { IKycListItemProps } from './types';
+import { IKycListItemProps, EnumKycListItemState } from './types';
 import ProfileStatus from 'app/components/common/profile-status';
 import Balance from 'app/components/common/balance-view';
-import Button from 'app/components/common/button';
 import * as cn from 'classnames';
+import { ConfirmationPanel } from '../../../../common/confirmation-panel';
+import { KycLinkPanel } from '../kyc-link-panel';
 
 const Status = ({ status }: any) => (
     <div className="kyc-list-item__status">
@@ -31,13 +32,39 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
     protected static imgPrefix = 'data:image/png;base64,';
 
     protected handleClickSelect = () => {
-        alert(1);
+        this.props.onClickSelect(this.props.id);
     };
+
+    // ToDo GUI-179: may be we can extract one generic method for all that takes id.
+
+    protected handleSubmitPasword = (password: string) => {
+        this.props.onSubmitPassword(this.props.id, password);
+    };
+
+    protected handleCancelPasword = () => {
+        this.props.onCancelPassword(this.props.id);
+    };
+
+    protected handleCloseLink = () => {
+        this.props.onCloseLink(this.props.id);
+    };
+
+    private get isSelected() {
+        return (
+            this.props.state === EnumKycListItemState.PasswordRequest ||
+            this.props.state === EnumKycListItemState.ShowLink
+        );
+    }
 
     public render() {
         const p = this.props;
         return (
-            <div className={cn('kyc-list-item', p.className)}>
+            <a
+                className={cn('kyc-list-item', p.className, {
+                    'kyc-list-item--selected': this.isSelected,
+                })}
+                onClick={this.handleClickSelect}
+            >
                 <img
                     className="kyc-list-item__icon"
                     src={KycListItem.imgPrefix + p.iconBase64}
@@ -46,14 +73,24 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                 <div className="kyc-list-item__descr">{p.description}</div>
                 <Status status={p.profileStatus} />
                 <Price price={p.price} />
-                <Button
-                    className="kyc-list-item__btn"
-                    onClick={this.handleClickSelect}
-                >
-                    Select
-                </Button>
-                <span className="kyc-list-item__line" />
-            </div>
+
+                {p.state === EnumKycListItemState.PasswordRequest ? (
+                    <ConfirmationPanel
+                        className="kyc-list-item__bottom"
+                        onSubmit={this.handleSubmitPasword}
+                        onCancel={this.handleClickSelect}
+                        validationMessage={p.validationMessage}
+                    />
+                ) : p.state === EnumKycListItemState.ShowLink ? (
+                    <KycLinkPanel
+                        className="kyc-list-item__bottom"
+                        value={p.kycLink || ''}
+                        onClose={this.handleCloseLink}
+                    />
+                ) : (
+                    <span className="kyc-list-item__line" />
+                )}
+            </a>
         );
     }
 }
