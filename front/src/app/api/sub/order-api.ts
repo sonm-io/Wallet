@@ -49,13 +49,13 @@ export class OrderApi {
     }
 
     public async quickBuy(address: string, password: string, orderId: string) {
-        const { data, validation } = await this.ipc.send('market.buyOrder', {
+        const { data, validation } = await this.ipc.send('order.buy', {
             address,
             id: orderId,
             password,
         });
 
-        debugger; // TODO define and check returned value
+        //debugger; // TODO define and check returned value
 
         return { data, validation };
     }
@@ -64,7 +64,7 @@ export class OrderApi {
         address: string,
         id: string,
     ): Promise<IOrderParams> {
-        const response = await this.ipc.send('market.getOrderParams', {
+        const response = await this.ipc.send('order.getParams', {
             address,
             id,
         });
@@ -75,7 +75,7 @@ export class OrderApi {
         address: string,
         id: string,
     ): Promise<IOrderParams> {
-        const response = await this.ipc.send('market.waitForOrderDeal', {
+        const response = await this.ipc.send('order.waitForDeal', {
             address,
             id,
         });

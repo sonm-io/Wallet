@@ -14,6 +14,7 @@ import { Deposit, Withdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
 import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
+import { WorkerList } from 'app/components/layouts/worker-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
 import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
@@ -76,6 +77,9 @@ const navigateToSimilarOrders = (orderId: IOrder) => {
     loader.loadOrderListByOrder(orderId);
     navigate({ path: '/market/orders' });
 };
+const navigateToWorkerList = () => {
+    navigate({ path: '/market/workers' });
+};
 const navigateToFullOrderList = () => {
     loader.loadOrderList(Object.prototype);
     navigate({ path: '/market/orders' });
@@ -113,6 +117,7 @@ const headerMenu: Array<TMenuItem> = [
             ['Deposit', Boolean, navigateToDeposit, undefined],
             ['Withdraw', Boolean, navigateToWithdraw, undefined],
             ['History', Boolean, navigateToDWHistory, undefined],
+            ['Workers', Boolean, navigateToWorkerList, undefined],
         ],
     ],
 ];
@@ -569,6 +574,15 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             browserTabTitle: 'Deals',
                             pageTitle: 'Deals',
                             content: <DealList onNavigate={navigateToDeal} />,
+                        }),
+                    },
+                    {
+                        path: '/workers',
+                        breadcrumbTitle: 'Workers',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'Workers',
+                            pageTitle: 'Workers',
+                            content: <WorkerList />,
                         }),
                     },
                 ],

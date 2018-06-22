@@ -1,0 +1,29 @@
+@import 'guide.less';
+
+// Variables
+
+@deal-list-item-label-fontColor: @color-light-font;
+@deal-list-item-row-height: 25px;
+
+.sonm-workers-list-cell {
+    &__date {
+        width: 200px;
+    }
+
+    &__stats {
+        width: 270px;
+    }
+
+    &__status {
+        width: 100px;
+        text-transform: uppercase;
+    }
+
+    &__price {
+        width: 150px;
+
+        &--green {
+            color: @color-green;
+        }
+    }
+}
