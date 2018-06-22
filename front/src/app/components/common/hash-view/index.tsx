@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Icon } from '../icon';
+import { copyToClipboard } from 'app/utils/clipboard-helper'
 
 const LAST_SYMBOL_AMOUNT = 6;
 
@@ -16,15 +17,18 @@ interface IBalanceViewProps {
 import * as cn from 'classnames';
 
 export class Hash extends React.PureComponent<IBalanceViewProps, any> {
-    protected static copyInput = createInput();
+    // protected static copyInput = createInput();
 
     protected handleClickCopy = (event: any) => {
         event.preventDefault();
         event.stopPropagation();
 
-        Hash.copyInput.value = this.props.hash;
-        Hash.copyInput.select();
-        document.execCommand('Copy');
+        copyToClipboard(this.props.hash);
+
+
+        // Hash.copyInput.value = this.props.hash;
+        // Hash.copyInput.select();
+        // document.execCommand('Copy');
     };
 
     public render() {
@@ -82,20 +86,6 @@ export class Hash extends React.PureComponent<IBalanceViewProps, any> {
             </div>
         );
     }
-}
-
-function createInput() {
-    const copyInput: HTMLInputElement = document.createElement('input');
-
-    copyInput.style.position = 'fixed';
-    copyInput.style.left = '-1000px';
-    copyInput.style.top = '0';
-
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.appendChild(copyInput);
-    });
-
-    return copyInput;
 }
 
 export default Hash;
