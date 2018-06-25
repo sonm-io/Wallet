@@ -26,6 +26,11 @@ xdescribe('Api', async function() {
         expect(response).to.have.nested.property('data.pong');
     });
 
+    it('should get validators', async function() {
+        const response = await Api.getValidators();
+        expect(response.data).not.equal(null);
+    });
+
     it('should get market profiles', async function() {
         const response = await Api.profile.fetchList({ limit: 20, offset: 0 });
         expect(response).to.have.nested.property('records');
