@@ -22,7 +22,7 @@ export interface IKycListItemProps extends IKycListItem {
     validationMessage?: string;
     kycLink?: string;
 
-    onClickSelect: (id: string) => void;
+    onClick: (id: string) => void;
     onSubmitPassword: (id: string, password: string) => void;
     onCancelPassword: (id: string) => void;
     onCloseLink: (id: string) => void;

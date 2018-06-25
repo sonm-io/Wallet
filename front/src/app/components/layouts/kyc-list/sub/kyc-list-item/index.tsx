@@ -32,7 +32,7 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
     protected static imgPrefix = 'data:image/png;base64,';
 
     protected handleClickSelect = () => {
-        this.props.onClickSelect(this.props.id);
+        this.props.onClick(this.props.id);
     };
 
     // ToDo GUI-179: may be we can extract one generic method for all that takes id.
