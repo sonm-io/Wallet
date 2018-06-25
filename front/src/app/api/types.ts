@@ -202,6 +202,8 @@ export interface IKycValidator {
     name: string;
     url: string;
     fee: string;
+    logo: string;
+    description: string;
 }
 
 export interface IWorker {

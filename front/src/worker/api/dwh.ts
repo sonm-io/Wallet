@@ -470,12 +470,22 @@ export class DWH {
         const validators = 'validators' in res ? res.validators : [];
 
         return validators.map(
-            ({ id, name, level, fee, url }: any): t.IKycValidator => ({
-                id,
+            ({
+                validator,
                 name,
                 level,
-                fee,
+                price,
                 url,
+                description,
+                logo,
+            }: any): t.IKycValidator => ({
+                id: validator.id,
+                level: validator.level,
+                name,
+                description,
+                fee: price,
+                url,
+                logo,
             }),
         );
     };
