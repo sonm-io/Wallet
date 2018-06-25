@@ -218,7 +218,10 @@ export class DWH {
         }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : DWH.emptyFilter;
-        const benchmarks = DWH.getBenchmarksFilter(mongoLikeQuery.benchmarkMap);
+        const benchmarks =
+            'benchmarkMap' in mongoLikeQuery
+                ? DWH.getBenchmarksFilter(mongoLikeQuery.benchmarkMap)
+                : {};
 
         const request = {
             masterID: get('creator.address.$eq', mongoLikeQuery),

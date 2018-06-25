@@ -15,7 +15,7 @@ import { DWH } from './dwh';
 
 const { createSonmFactory, utils } = sonmApi;
 
-const STORAGE_VERSION = 2;
+const STORAGE_VERSION = 3;
 const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
 
@@ -171,10 +171,8 @@ class Api {
     };
 
     public getWalletList = async (): Promise<t.IResponse> => {
-        const wallets = (await this.getWallets()).data;
-
         return {
-            data: wallets.filter((item: any) => item.chainId === 'rinkeby'),
+            data: (await this.getWallets()).data,
         };
     };
 
