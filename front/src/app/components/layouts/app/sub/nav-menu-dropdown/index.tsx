@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
+import * as invariant from 'fbjs/lib/invariant';
 
 type TItem<T> = [
     string, // Title
-    () => boolean, // idDisabled
     (() => void) | undefined, // Callback
-    T[] | undefined // Children
+    T[] | undefined, // Children
+    (() => boolean) | undefined // idDisabled
 ];
 
 export type TMenuItem = TItem<TItem<undefined>>;
@@ -15,6 +16,46 @@ export interface INavMenuDropdownProps {
     items: Array<TMenuItem>;
     topMenuActiveItem: number;
     className?: string;
+}
+
+interface ISubItemProps {
+    onClick: () => void;
+    onClose: () => void;
+    isDisabled: boolean;
+    title: string;
+}
+
+class SubMenuItem extends React.Component<ISubItemProps, never> {
+    protected handleClick = (event: any) => {
+        event.preventDefault();
+
+        if (!this.props.isDisabled) {
+            this.props.onClick();
+            this.props.onClose();
+        }
+    };
+
+    public render() {
+        const p = this.props;
+
+        return (
+            <li
+                className={cn('sonm-nav-menu__sub-item', {
+                    'sonm-nav-menu__sub-item--disabled': p.isDisabled,
+                })}
+            >
+                <a
+                    data-display-id="nav-menu-sub-item"
+                    key={p.title}
+                    className="sonm-nav-menu__sub-item-link"
+                    href={p.title.toLowerCase()}
+                    onClick={this.handleClick}
+                >
+                    {p.title}
+                </a>
+            </li>
+        );
+    }
 }
 
 export class NavMenuDropdown extends React.PureComponent<
@@ -30,23 +71,6 @@ export class NavMenuDropdown extends React.PureComponent<
         button: 'sonm-nav-menu-dropdown__button',
         popup: 'sonm-nav-menu-dropdown__popup',
         expanded: 'sonm-nav-menu-dropdown--expanded',
-    };
-
-    protected handleClickUrl = (event: any) => {
-        const [index, childIndex] = event.target.value
-            .split(',')
-            .map((i: string) => Number(i)) as Array<number>;
-        const item = this.props.items[index];
-        const children = item[3];
-
-        if (children !== undefined) {
-            const childItem = children[childIndex];
-            const cb = childItem[2];
-            if (cb !== undefined) {
-                cb();
-            }
-        }
-        this.handleCloseTopMenu();
     };
 
     protected handleCloseTopMenu = () => {
@@ -73,15 +97,25 @@ export class NavMenuDropdown extends React.PureComponent<
     public render() {
         return (
             <div
+                data-display-id="nav-menu"
                 className={cn(this.props.className, 'sonm-nav-menu')}
-                {...{ 'data-display-id': `nav-menu` }}
             >
                 {this.props.items.map((item: TMenuItem, index) => {
-                    const [title, disabled, , children] = item;
+                    const [
+                        title,
+                        ,
+                        children = Array.prototype,
+                        checkDisabled,
+                    ] = item;
+                    const isDisabled =
+                        typeof checkDisabled === 'function'
+                            ? checkDisabled()
+                            : false;
 
                     return (
                         <DropdownInput
                             className={cn('sonm-nav-menu__item', {
+                                'sonm-nav-menu__item--disabled': isDisabled,
                                 'sonm-nav-menu__item--opened':
                                     this.state.opened === title,
                                 'sonm-nav-menu__item--active':
@@ -92,45 +126,41 @@ export class NavMenuDropdown extends React.PureComponent<
                             isExpanded={this.state.opened === title}
                             onButtonClick={this.getBindedTopMenuHandler(title)}
                             onRequireClose={this.handleCloseTopMenu}
-                            disabled={disabled()}
+                            disabled={isDisabled}
                             dropdownCssClasses={
                                 NavMenuDropdown.dropdownCssClasses
                             }
                         >
-                            <div className="sonm-nav-menu__popup">
-                                {children &&
-                                    children.map(
-                                        (
-                                            subItem: TItem<undefined>,
-                                            childIndex,
-                                        ) => {
-                                            const [
-                                                subTitle,
-                                                disableChild,
-                                            ] = subItem;
+                            <ul className="sonm-nav-menu__sub-item-list">
+                                {children.map(subItem => {
+                                    const [
+                                        subItemTitle,
+                                        handleClick,
+                                        ,
+                                        checkSubDisabled,
+                                    ] = subItem;
+                                    const isSubDisabled: boolean =
+                                        typeof checkSubDisabled === 'function'
+                                            ? checkSubDisabled()
+                                            : false;
 
-                                            return (
-                                                <button
-                                                    {...{
-                                                        'data-display-id': `nav-menu-sub-item`,
-                                                    }}
-                                                    key={subTitle}
-                                                    value={`${index},${childIndex}`}
-                                                    type={'button'}
-                                                    className={
-                                                        'sonm-nav-menu__sub-item'
-                                                    }
-                                                    disabled={disableChild()}
-                                                    onClick={
-                                                        this.handleClickUrl
-                                                    }
-                                                >
-                                                    {subTitle}
-                                                </button>
-                                            );
-                                        },
-                                    )}
-                            </div>
+                                    invariant(
+                                        handleClick !== undefined,
+                                        'There is no handler for menu item %s',
+                                        subItemTitle,
+                                    );
+
+                                    return (
+                                        <SubMenuItem
+                                            key={subItemTitle}
+                                            title={subItemTitle}
+                                            isDisabled={isSubDisabled}
+                                            onClick={handleClick as () => void}
+                                            onClose={this.handleCloseTopMenu}
+                                        />
+                                    );
+                                })}
+                            </ul>
                         </DropdownInput>
                     );
                 })}

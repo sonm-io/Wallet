@@ -14,6 +14,7 @@ import { Deposit, Withdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
 import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
+import { WorkerList } from 'app/components/layouts/worker-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
 import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
@@ -76,6 +77,9 @@ const navigateToSimilarOrders = (orderId: IOrder) => {
     loader.loadOrderListByOrder(orderId);
     navigate({ path: '/market/orders' });
 };
+const navigateToWorkerList = () => {
+    navigate({ path: '/market/workers' });
+};
 const navigateToFullOrderList = () => {
     loader.loadOrderList(Object.prototype);
     navigate({ path: '/market/orders' });
@@ -87,38 +91,28 @@ const navigateToMyProfile = () => {
 const headerMenu: Array<TMenuItem> = [
     [
         'Wallet',
-        Boolean,
         undefined,
         [
-            [
-                'Accounts',
-                Boolean,
-                () => navigateTo('/wallet/accounts'),
-                undefined,
-            ],
-            ['History', Boolean, navigateToWalletHistory, undefined],
-            ['Send', Boolean, () => navigateTo('/wallet/send'), undefined],
+            ['Accounts', () => navigateTo('/wallet/accounts')],
+            ['History', navigateToWalletHistory],
+            ['Send', () => navigateTo('/wallet/send')],
         ],
     ],
     [
         'Market',
-        () => rootStore.marketStore.marketAccountViewList.length === 0, // is disabled
         undefined,
         [
-            [
-                'Profiles',
-                Boolean,
-                () => navigateTo('/market/profiles'),
-                undefined,
-            ],
-            ['Orders', Boolean, navigateToOrders, undefined],
-            ['Deals', Boolean, navigateToDealList, undefined],
-            ['Deposit', Boolean, navigateToDeposit, undefined],
-            ['Withdraw', Boolean, navigateToWithdraw, undefined],
-            ['History', Boolean, navigateToDWHistory, undefined],
+            ['Profiles', () => navigateTo('/market/profiles')],
+            ['Orders', navigateToOrders],
+            ['Deals', navigateToDealList],
+            ['Deposit', navigateToDeposit],
+            ['Withdraw', navigateToWithdraw],
+            ['History', navigateToDWHistory],
+            ['Workers', navigateToWorkerList],
         ],
+        () => rootStore.marketStore.marketAccountViewList.length === 0, // is disabled
     ],
-];
+] as Array<TMenuItem>; // Force cast, cause 2 last parameter can be undefined
 
 export const univeralRoutes: Array<IUniversalRouterItem> = [
     {
@@ -573,6 +567,15 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             browserTabTitle: 'Deals',
                             pageTitle: 'Deals',
                             content: <DealList onNavigate={navigateToDeal} />,
+                        }),
+                    },
+                    {
+                        path: '/workers',
+                        breadcrumbTitle: 'Workers',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'Workers',
+                            pageTitle: 'Workers',
+                            content: <WorkerList />,
                         }),
                     },
                 ],

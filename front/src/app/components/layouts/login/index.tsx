@@ -43,7 +43,9 @@ interface IRefs {
 }
 
 // NetworkEnum.live,
-const networkSelectList = [NetworkEnum.rinkeby].map(x => x.toString());
+const networkSelectList = [NetworkEnum.live, NetworkEnum.rinkeby].map(x =>
+    x.toString(),
+);
 const defaultNetwork = NetworkEnum.rinkeby;
 
 const emptyValidation: IValidation = {};

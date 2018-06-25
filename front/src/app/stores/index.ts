@@ -1,5 +1,5 @@
 import { useStrict } from 'mobx';
-import { IProfileBrief, IOrder, IDeal } from 'app/api/types';
+import { IProfileBrief, IOrder, IDeal, IWorker } from 'app/api/types';
 import { HistoryListStore } from './history-list';
 import { HistoryFilterStore } from './history-filter';
 import { MainStore } from './main';
@@ -20,6 +20,8 @@ import {
 import { ProfileList } from './profile-list';
 import { OrdersList } from './orders-list';
 import { DealList } from './deal-list';
+import { WorkerList } from './worker-list';
+import { WorkerFilterStore } from './worker-filter';
 import { Api } from 'app/api';
 import { EnumHistorySourceMode } from './types';
 import { IListStore } from './list-store';
@@ -42,6 +44,8 @@ export class RootStore implements IHasLocalizator {
     public readonly addTokenStore: AddTokenStore;
     public readonly profileListStore: IListStore<IProfileBrief>;
     public readonly dealListStore: IListStore<IDeal>;
+    public readonly workerListStore: IListStore<IWorker>;
+    public readonly workerFilterStore: WorkerFilterStore;
     public readonly ordersListStore: IListStore<IOrder>;
     public readonly marketStore: MarketStore;
     public readonly profileFilterStore: ProfileFilterStore;
@@ -158,6 +162,19 @@ export class RootStore implements IHasLocalizator {
                 localizator,
                 errorProcessor: this.uiStore,
                 api: Api.deal,
+            },
+        );
+
+        this.workerFilterStore = new WorkerFilterStore();
+
+        this.workerListStore = new WorkerList(
+            {
+                filter: this.workerFilterStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
+                api: Api.worker,
             },
         );
 
