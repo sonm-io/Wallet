@@ -196,6 +196,8 @@ export const TypeKycValidator = createStruct<IKycValidator>(
         name: t.String,
         url: t.String,
         fee: t.String,
+        logo: t.String,
+        description: t.String,
     },
     'IKycValidator',
 );
