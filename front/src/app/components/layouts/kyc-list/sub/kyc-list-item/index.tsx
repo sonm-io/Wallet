@@ -77,6 +77,8 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                 {p.state === EnumKycListItemState.PasswordRequest ? (
                     <ConfirmationPanel
                         className="kyc-list-item__bottom"
+                        labelHeader="Please, enter account password."
+                        labelDescription=""
                         onSubmit={this.handleSubmitPasword}
                         onCancel={this.handleClickSelect}
                         validationMessage={p.validationMessage}
