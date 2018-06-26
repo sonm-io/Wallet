@@ -32,6 +32,7 @@ import { loader } from './loader';
 import { navigate } from './navigate';
 import { IOrder } from '../api/types';
 import { rootStore } from '../stores';
+import { KycList } from 'app/components/layouts/kyc-list';
 
 let defaultAction;
 
@@ -86,6 +87,9 @@ const navigateToFullOrderList = () => {
 };
 const navigateToMyProfile = () => {
     navigateToProfile(rootStore.marketStore.marketAccountAddress);
+};
+const navigateToKyc = () => {
+    navigateTo('/market/kyc');
 };
 
 const headerMenu: Array<TMenuItem> = [
@@ -289,6 +293,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             onNavigateToOrders={
                                                 navigateToOrdersByAddress
                                             }
+                                            onNavigateToKyc={navigateToKyc}
                                         />
                                     ),
                                     browserTabTitle: 'Profile',
@@ -576,6 +581,15 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             browserTabTitle: 'Workers',
                             pageTitle: 'Workers',
                             content: <WorkerList />,
+                        }),
+                    },
+                    {
+                        path: '/kyc',
+                        breadcrumbTitle: 'KYC providers',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'KYC providers',
+                            pageTitle: 'KYC providers',
+                            content: <KycList />,
                         }),
                     },
                 ],

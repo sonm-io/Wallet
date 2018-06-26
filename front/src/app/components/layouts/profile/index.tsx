@@ -8,6 +8,7 @@ interface IProps {
     className?: string;
     address: string;
     onNavigateToOrders: (address: string) => void;
+    onNavigateToKyc: () => void;
 }
 
 interface IState {
@@ -49,9 +50,11 @@ export class Profile extends React.PureComponent<IProps, IState> {
     }
 
     protected handleClickKYC = async () => {
-        this.setState({
-            showDialogKYC: true,
-        });
+        // ToDo GUI-179
+        this.props.onNavigateToKyc();
+        // this.setState({
+        //     showDialogKYC: true,
+        // });
     };
 
     protected handleCloseKYC = () => {

@@ -3,7 +3,7 @@ import * as cn from 'classnames';
 import { TFnGetUiText } from 'app/components/common/localized-pure-component';
 import { Details, IProfileDefinition } from './sub/details';
 import { Statistic } from './sub/statistic';
-import { KYC } from './sub/kyc';
+// import { KYC } from './sub/kyc';
 import { ICertificateProps } from './sub/certificate';
 // import { CertificatesPanel } from './sub/certificates-panel';
 import { Panel } from 'app/components/common/panel';
@@ -68,9 +68,10 @@ export class ProfileView extends React.PureComponent<IProps, never> {
                     ) : null}
                 </div>
                 <div className="sonm-profile__column">
-                    {p.showDialogKYC ? (
+                    {/* {p.showDialogKYC ? (
+                        ToDo GUI-179 remove
                         <KYC onClose={p.onCloseKYC} address={p.address} />
-                    ) : null}
+                    ) : null} */}
                     {p.description ? (
                         <Panel
                             key="desc"
