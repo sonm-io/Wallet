@@ -9,7 +9,7 @@ export interface IErrorProcessor {
     processError: (err: Error) => void;
 }
 
-interface IOnlineStoreServices {
+export interface IOnlineStoreServices {
     errorProcessor: IErrorProcessor;
     localizator: ILocalizator;
 }

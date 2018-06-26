@@ -28,6 +28,7 @@ import { IListStore } from './list-store';
 import { unwrapApiResult } from '../api/utils/unwrap-api-result';
 import { OrderDetails } from './order-details';
 import { DealDetails } from './deal-details';
+import { KycListStore } from './kyc-list';
 
 useStrict(true);
 
@@ -53,6 +54,7 @@ export class RootStore implements IHasLocalizator {
     public readonly orderFilterStore: OrderFilterStore;
     public readonly orderDetailsStore: OrderDetails;
     public readonly dealDetailsStore: DealDetails;
+    public readonly kycListStore: KycListStore;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -199,6 +201,18 @@ export class RootStore implements IHasLocalizator {
                 localizator,
                 errorProcessor: this.uiStore,
                 api: Api.deal,
+            },
+        );
+
+        this.kycListStore = new KycListStore(
+            this,
+            {
+                main: this.mainStore,
+                market: this.marketStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
             },
         );
     }

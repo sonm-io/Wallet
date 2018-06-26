@@ -2,15 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { KycListItem } from './sub/kyc-list-item';
 import { IKycValidator } from 'app/api';
-
-export interface IKycDataItem {
-    kycLink?: string;
-    validationMessage?: string;
-}
-
-export interface IKycData {
-    [id: string]: IKycDataItem;
-}
+import { IKycData, IKycDataItem } from 'app/stores/kyc-list';
 
 export interface IKycListViewProps {
     className?: string;
@@ -28,30 +20,15 @@ export interface IKycListViewProps {
     onSubmitPassword: (itemIndex: number, password: string) => void;
 }
 
-// interface IState {
-//     selectedIndex?: number;
-// }
-
 export class KycListView extends React.Component<IKycListViewProps, never> {
     constructor(props: IKycListViewProps) {
         super(props);
-        // this.state = {
-        //     selectedIndex: undefined,
-        // }
     }
 
     protected static emptyData: IKycDataItem = {
         kycLink: undefined,
         validationMessage: undefined,
     };
-
-    // protected handleClick = (index: number) => {
-    //     this.setState({ selectedIndex: index });
-    // }
-
-    // protected handleCancel = () => {
-    //     this.setState({ selectedIndex: undefined });
-    // }
 
     protected getDataItem = (id: string) => {
         const dataItem = this.props.data[id];
