@@ -19,7 +19,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     };
 
     protected static dash = (
-        <span className="orders-list-item__dash">&#x2e3a;</span>
+        <span className="orders-list-item__dash">&mdash;&mdash;</span>
     );
 
     protected static benchmarksConfig: Array<
