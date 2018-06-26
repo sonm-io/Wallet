@@ -56,8 +56,16 @@ export class ConfirmationPanel extends React.Component<
 
     protected handleSubmit = (event: React.FormEvent<any>) => {
         event.preventDefault();
+        event.stopPropagation();
         if (this.props.onSubmit) {
             this.props.onSubmit(this.state.password);
+        }
+    };
+
+    protected handleCancel = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.stopPropagation();
+        if (this.props.onCancel) {
+            this.props.onCancel();
         }
     };
 
@@ -99,7 +107,7 @@ export class ConfirmationPanel extends React.Component<
         return p.onCancel ? (
             <a
                 className="confirmation-panel__cancel-button"
-                onClick={p.onCancel}
+                onClick={this.handleCancel}
                 color="violet"
             >
                 <Icon i="ArrowBack" /> {p.labelCancel}
