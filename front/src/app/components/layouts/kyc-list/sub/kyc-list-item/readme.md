@@ -20,8 +20,8 @@ const Container = observer(() => (
     <div>
         {data.map(i => (
             <KycListItem
-                {...i}
-                state={0}
+                validator={i}
+                isSelected={false}
                 onClickSelect={emptyFn}
                 onSubmitPasword={emptyFn}
             />
@@ -49,26 +49,25 @@ const StateInfo = observer(() => (
 ## KycListItem states demo
 
 ```js
-const { EnumKycListItemState } = require('./types');
-const data = require('./mock-data.js');
+const d = require('./mock-data.js');
 const emptyFn = () => {};
 
 <div>
     <KycListItem
-        {...data[0]}
-        state={EnumKycListItemState.Default}
+        validator={d[0]}
+        isSelected={false}
         onClickSelect={emptyFn}
         onSubmitPasword={emptyFn}
     />
     <KycListItem
-        {...data[1]}
-        state={EnumKycListItemState.PasswordRequest}
+        validator={d[1]}
+        isSelected={true}
         onClickSelect={emptyFn}
         onSubmitPasword={emptyFn}
     />
     <KycListItem
-        {...data[2]}
-        state={EnumKycListItemState.ShowLink}
+        validator={d[2]}
+        isSelected={true}
         kycLink="http://www.typescriptlang.org/docs/handbook/advanced-types.html"
         onClickSelect={emptyFn}
         onSubmitPasword={emptyFn}

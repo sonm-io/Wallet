@@ -1,29 +1,14 @@
-import { EnumProfileStatus } from 'app/api/types';
+import { IKycValidator } from 'app/api/types';
 
-export enum EnumKycListItemState {
-    Default = 0,
-    PasswordRequest,
-    ShowLink,
-}
-
-export interface IKycListItem {
-    id: string;
-    title: string;
-    iconBase64: string;
-    description: string;
-    profileStatus: EnumProfileStatus;
-    price: string;
-    kycAddress: string;
-}
-
-export interface IKycListItemProps extends IKycListItem {
+export interface IKycListItemProps {
     className?: string;
-    state: EnumKycListItemState;
-    validationMessage?: string;
+    index: number;
+    validator: IKycValidator;
     kycLink?: string;
-
-    onClick: (id: string) => void;
-    onSubmitPassword: (id: string, password: string) => void;
-    onCancelPassword: (id: string) => void;
-    onCloseLink: (id: string) => void;
+    validationMessage?: string;
+    isSelected: boolean;
+    onClick: (index: number) => void;
+    onSubmitPassword: (index: number, password: string) => void;
+    onCancelPassword: (index: number) => void;
+    onCloseLink: (index: number) => void;
 }
