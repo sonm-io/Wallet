@@ -234,7 +234,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
                     dataSource={listStore.records}
                     columns={DepositWithdrawHistory.columns}
                     pagination={pagination}
-                    rowKey="hash"
+                    rowKey="timestamp"
                 />
             </div>
         );
