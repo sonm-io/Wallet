@@ -16,11 +16,7 @@ const Status = ({ status }: any) => (
 const Price = ({ price }: any) => (
     <div className="kyc-list-item__price">
         <div className="kyc-list-item__label">Price</div>
-        <Balance
-            balance={price}
-            decimalPointOffset={0} // ToDo GUI-179
-            symbol="USD"
-        />
+        <Balance balance={price} decimalPointOffset={0} symbol="USD" />
     </div>
 );
 
@@ -30,8 +26,6 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
     }
 
     protected static imgPrefix = 'data:image/png;base64,';
-
-    // ToDo GUI-179: may be we can extract one generic method for all that takes id.
 
     protected handleClickSelect = () => {
         this.props.onClick(this.props.index);
@@ -72,7 +66,7 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                     p.kycLink !== undefined ? (
                         <KycLinkPanel
                             className="kyc-list-item__bottom"
-                            value={p.kycLink || ''}
+                            value={(v.url || '') + (p.kycLink || '')}
                             onClose={this.handleCloseLink}
                         />
                     ) : (
