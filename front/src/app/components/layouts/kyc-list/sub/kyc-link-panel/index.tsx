@@ -14,13 +14,18 @@ export class KycLinkPanel extends React.Component<IKycLinkPanelProps, never> {
         copyToClipboard(this.props.value);
     };
 
+    protected handleClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        this.props.onClose();
+    };
+
     public render() {
         return (
             <div className={cn('kyc-link-panel', this.props.className)}>
                 <IconButton
                     className="kyc-link-panel__close-button"
                     i="Close"
-                    onClick={this.props.onClose}
+                    onClick={this.handleClose}
                 />
                 <h4 className="kyc-link-panel__header">
                     Excellent. Here's your link!
