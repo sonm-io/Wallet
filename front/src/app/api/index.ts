@@ -2,6 +2,7 @@ import { ipc as IPC } from './ipc';
 import { ProfileApi } from './sub/profile-api';
 import { OrderApi } from './sub/order-api';
 import { DealApi } from './sub/deal-api';
+import { WorkerApi } from './sub/worker-api';
 import { HistoryApi } from './sub/history-api';
 import {
     ISendTransactionResult,
@@ -13,6 +14,7 @@ import {
     IWalletListItem,
     ISender,
     IKycValidator,
+    IWorker,
 } from './types';
 import { TypeAccountInfoList } from './runtime-types';
 
@@ -25,6 +27,7 @@ class AllApi {
     public order = new OrderApi(this.ipc);
     public deal = new DealApi(this.ipc);
     public history = new HistoryApi(this.ipc);
+    public worker = new WorkerApi(this.ipc);
 
     public async createWallet(
         password: string,
@@ -117,7 +120,7 @@ class AllApi {
         address: string,
         id: number,
     ): Promise<IResult<boolean>> {
-        return this.ipc.send('market.buyOrder', {
+        return this.ipc.send('order.buy', {
             password,
             address,
             id,
@@ -153,6 +156,12 @@ class AllApi {
 
     public getValidators = async (): Promise<IResult<IKycValidator[]>> => {
         return this.ipc.send('market.getValidators');
+    };
+
+    public getWorkers = async (
+        address: string,
+    ): Promise<IResult<IWorker[]>> => {
+        return this.ipc.send('worker.list', { address });
     };
 
     public getKYCLink = async (

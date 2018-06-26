@@ -213,7 +213,10 @@ export class DWH {
         }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : DWH.emptyFilter;
-        const benchmarks = DWH.getBenchmarksFilter(mongoLikeQuery.benchmarkMap);
+        const benchmarks =
+            'benchmarkMap' in mongoLikeQuery
+                ? DWH.getBenchmarksFilter(mongoLikeQuery.benchmarkMap)
+                : {};
 
         const request = {
             masterID: get('creator.address.$eq', mongoLikeQuery),
@@ -464,14 +467,62 @@ export class DWH {
         const validators = 'validators' in res ? res.validators : [];
 
         return validators.map(
-            ({ id, name, level, fee, url }: any): t.IKycValidator => ({
-                id,
+            ({
+                validator,
                 name,
                 level,
-                fee,
+                price,
                 url,
+                description,
+                logo,
+            }: any): t.IKycValidator => ({
+                id: validator.id,
+                level: validator.level,
+                name,
+                description,
+                fee: price,
+                url,
+                logo,
             }),
         );
+    };
+
+    public getWorkers = async ({
+        limit,
+        offset,
+        filter,
+    }: t.IListQuery): Promise<t.IListResult<t.IWorker>> => {
+        tcomb.Number(limit);
+        tcomb.Number(offset);
+        tcomb.maybe(tcomb.String)(filter);
+
+        const mongoLikeQuery = filter ? JSON.parse(filter) : {};
+        const address = get('address.$eq', mongoLikeQuery);
+
+        if (address) {
+            const res = await this.fetchData('GetWorkers', {
+                masterID: address,
+                limit,
+                offset,
+                WithCount: true,
+            });
+
+            const workers = 'workers' in res ? res.workers : [];
+            return {
+                records: workers.map(
+                    ({ slaveID, confirmed }: any): t.IWorker => ({
+                        slaveId: slaveID,
+                        confirmed: !!confirmed,
+                    }),
+                ),
+                total: 'count' in res ? res.count : 0,
+            };
+        } else {
+            return {
+                records: [],
+                total: 0,
+            };
+        }
     };
 
     private async fetchData(method: string, params: any = {}) {

@@ -15,6 +15,7 @@ import {
     IBenchmarkMap,
     ICertificate,
     IKycValidator,
+    IWorker,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -205,6 +206,8 @@ export const TypeKycValidator = createStruct<IKycValidator>(
         name: t.String,
         url: t.String,
         fee: t.String,
+        logo: t.String,
+        description: t.String,
     },
     'IKycValidator',
 );
@@ -232,4 +235,20 @@ export const TypeDealList = createStruct<IListResult<IDeal>>(
         total: t.Number,
     },
     'IListResult<IDeal>',
+);
+
+export const TypeWorker = createStruct<IWorker>(
+    {
+        slaveId: t.String,
+        confirmed: t.Boolean,
+    },
+    'IWorker',
+);
+
+export const TypeWorkerList = createStruct<IListResult<IWorker>>(
+    {
+        records: t.list(TypeWorker),
+        total: t.Number,
+    },
+    'IListResult<IWorker>',
 );

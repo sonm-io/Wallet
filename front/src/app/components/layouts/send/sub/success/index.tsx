@@ -1,16 +1,21 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import { toJS } from 'mobx';
+
+import rootStore from 'app/stores';
 
 interface IProps {
     className?: string;
-    onClickHistory: () => void;
+    onClickHistory: (accountAddress: string) => void;
     onClickSend: () => void;
 }
 
 // TODO replace DIV and SPAN with A
 
 export class SendSuccess extends React.PureComponent<IProps, any> {
-    protected handleClickHistory = this.props.onClickHistory.bind(undefined);
+    protected handleClickHistory = () => {
+        this.props.onClickHistory(toJS(rootStore.sendStore.fromAddress));
+    };
 
     public render() {
         return (

@@ -486,6 +486,30 @@ export class MainStore extends OnlineStore {
 
     @pending
     @asyncAction
+    public *confirmWorker(password: string, address: string, slaveId: string) {
+        const { data: link, validation } = yield Api.worker.confirm(
+            password,
+            address,
+            slaveId,
+        );
+
+        let result;
+        if (validation) {
+            this.serverValidation = {
+                ...this.services.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
+        } else {
+            result = link;
+            this.resetServerValidation();
+        }
+
+        return result;
+    }
+
+    @pending
+    @asyncAction
     protected *exportWallet() {
         const { data: text } = yield Api.exportWallet();
 
