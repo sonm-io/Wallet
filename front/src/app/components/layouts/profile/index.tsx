@@ -13,7 +13,6 @@ interface IProps {
 
 interface IState {
     profile: IProfileFull;
-    showDialogKYC: boolean;
 }
 
 const returnFirstArg = (...as: any[]) => String(as[0]);
@@ -34,7 +33,6 @@ export class Profile extends React.PureComponent<IProps, IState> {
 
     public state = {
         profile: Profile.emptyProfile,
-        showDialogKYC: false,
     };
 
     public componentDidMount() {
@@ -48,20 +46,6 @@ export class Profile extends React.PureComponent<IProps, IState> {
             profile,
         });
     }
-
-    protected handleClickKYC = async () => {
-        // ToDo GUI-179
-        this.props.onNavigateToKyc();
-        // this.setState({
-        //     showDialogKYC: true,
-        // });
-    };
-
-    protected handleCloseKYC = () => {
-        this.setState({
-            showDialogKYC: false,
-        });
-    };
 
     public render() {
         const props = this.props;
@@ -90,9 +74,7 @@ export class Profile extends React.PureComponent<IProps, IState> {
                 userStatus={profile.status || 0}
                 address={profile.address}
                 onNavigateToOrders={props.onNavigateToOrders}
-                showDialogKYC={this.state.showDialogKYC}
-                onClickKYC={this.handleClickKYC}
-                onCloseKYC={this.handleCloseKYC}
+                onClickKYC={this.props.onNavigateToKyc}
             />
         );
     }
