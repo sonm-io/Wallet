@@ -44,4 +44,22 @@ export class Response<T> implements IResponse<T> {
     }
 }
 
+export enum EnumAttributes {
+    Kyc2 = 1201,
+    Kyc3 = 1301,
+    Kyc4 = 1401,
+    Logo = 1302,
+    Name = 1102,
+    Website = 1202,
+    Phone = 2201,
+    Country = 1303,
+    Email = 2202,
+    SocNet = 2203,
+    IsCorporation = 1304,
+    Description = 1103,
+    KycUrl = 1104,
+    KycIcon = 1105,
+    KycPrice = 1106,
+}
+
 export * from 'app/api/types';

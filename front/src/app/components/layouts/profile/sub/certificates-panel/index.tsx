@@ -28,7 +28,10 @@ export class CertificatesPanel extends React.Component<IProps, any> {
                     ))}
                 </div>
                 {p.my && (
-                    <Button className="sonm-certificates__get-button">
+                    <Button
+                        className="sonm-certificates__get-button"
+                        color="violet"
+                    >
                         GET CERTIFICATION
                     </Button>
                 )}

@@ -13,7 +13,6 @@ import {
     IOrder,
     EnumOrderType,
 } from 'app/api/types';
-import { Api } from 'app/api/';
 
 export interface IOrderDetailsInput {
     password: string;
@@ -26,6 +25,7 @@ export interface IOrderDetailsStoreServices {
 }
 
 export interface IOrderDetailsStoreApi {
+    fetchById: (id: string) => Promise<IOrder>;
     quickBuy: (
         accountAddress: string,
         password: string,
@@ -200,7 +200,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     @catchErrors({ restart: true })
     @asyncAction
     protected *fetchData() {
-        this.order = yield Api.order.fetchById(this.orderId);
+        this.order = yield this.api.fetchById(this.orderId);
         this.setDuration(this.order.duration);
     }
 

@@ -66,17 +66,23 @@ export class DWH {
     };
 
     public static readonly mapAttributes: any = {
-        1202: ['Website', self.atob],
-        2201: ['Telephone', self.atob],
-        2202: ['E-mail', self.atob],
-        2203: ['Service link', self.atob],
+        [t.EnumAttributes.Website]: ['Website', self.atob],
+        [t.EnumAttributes.Phone]: ['Telephone', self.atob],
+        [t.EnumAttributes.Email]: ['E-mail', self.atob],
+        [t.EnumAttributes.SocNet]: ['Service link', self.atob],
     };
 
     public static readonly mapKycAttributes: any = {
-        1102: ['name', self.atob],
-        1201: ['kyc2', self.atob],
-        1301: ['kyc3', self.atob],
-        1401: ['kyc4', self.atob],
+        [t.EnumAttributes.Name]: ['name', self.atob],
+        [t.EnumAttributes.Kyc2]: ['kyc2', self.atob],
+        [t.EnumAttributes.Kyc3]: ['kyc3', self.atob],
+        [t.EnumAttributes.Kyc4]: ['kyc4', self.atob],
+    };
+
+    public static kycAttributesToStatus = {
+        [t.EnumAttributes.Kyc2]: t.EnumProfileStatus.reg,
+        [t.EnumAttributes.Kyc3]: t.EnumProfileStatus.ident,
+        [t.EnumAttributes.Kyc4]: t.EnumProfileStatus.ident,
     };
 
     private processProfile(item: any): t.IProfileBrief {
@@ -163,15 +169,15 @@ export class DWH {
                 ...brief,
                 attributes,
                 description,
-                certificates: this.parseCertificate(certificates),
+                certificates: this.getKycCertificates(certificates),
             };
         } else {
             return {
+                ...DWH.defaultProfile,
                 address,
                 certificates: [],
                 attributes: [],
                 description: '',
-                ...DWH.defaultProfile,
             };
         }
     };
@@ -420,7 +426,14 @@ export class DWH {
         return attrMap;
     }
 
-    protected getKycCertificates() {}
+    protected getKycCertificates(certificates: any[]): t.ICertificate[] {
+        return certificates
+            .filter(x => x.attribute in DWH.kycAttributesToStatus)
+            .map(x => ({
+                status: (DWH.kycAttributesToStatus as any)[x.attribute],
+                address: x.validatorID,
+            }));
+    }
 
     private parseDeal(item: any): t.IDeal {
         const deal = {

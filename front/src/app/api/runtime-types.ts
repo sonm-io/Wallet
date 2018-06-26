@@ -80,7 +80,7 @@ export const TypeAttribute = createStruct<IAttribute>(
 
 export const TypeCertifcate = createStruct<ICertificate>(
     {
-        serviceName: t.String,
+        address: TypeEthereumAddress,
         status: t.Number,
     },
     'ICertificate',

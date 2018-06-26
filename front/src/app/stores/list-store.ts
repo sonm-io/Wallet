@@ -74,13 +74,15 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         this.services = services;
 
         autorun(() => {
-            if (stores.filter.filterAsString) {
+            if (this.allowFetch && stores.filter.filterAsString) {
                 this.updateUserInput({
                     filter: stores.filter.filterAsString,
                 });
             }
         });
     }
+
+    protected allowFetch = false;
 
     protected services: IListStoreServices<TItem>;
 
@@ -139,6 +141,8 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
     @catchErrors({ restart: true })
     @asyncAction
     public *update() {
+        this.allowFetch = true;
+
         const { page, limit, sortBy, filter, sortDesc } = this.userInput;
 
         const offset = (page - 1) * limit;

@@ -125,7 +125,7 @@ export interface IProfileFull extends IProfileBrief {
 
 export interface ICertificate {
     status: EnumProfileStatus;
-    serviceName: string;
+    address: string;
 }
 
 export interface IListResult<T> {
