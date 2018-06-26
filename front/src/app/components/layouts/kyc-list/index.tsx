@@ -5,6 +5,7 @@ import { IKycValidator } from '../../../api';
 
 interface IState {
     data: IKycData;
+    selectedIndex?: number;
 }
 
 export class KycList extends React.Component<any, IState> {
@@ -14,6 +15,7 @@ export class KycList extends React.Component<any, IState> {
         super(props);
         this.state = {
             data: {},
+            selectedIndex: undefined,
         };
     }
 
@@ -21,15 +23,16 @@ export class KycList extends React.Component<any, IState> {
         password: string,
         validator: IKycValidator,
     ) => {
-        const link = await rootStore.mainStore.getKYCLink(
+        const link = (await rootStore.mainStore.getKYCLink(
             password,
             rootStore.marketStore.marketAccountAddress,
             validator.id,
             validator.fee,
-        );
+        )) as any;
+
         if (link) {
             return {
-                kycLink: 'asd',
+                kycLink: link as string,
             };
         } else {
             return {
@@ -37,6 +40,26 @@ export class KycList extends React.Component<any, IState> {
                     rootStore.mainStore.serverValidation.password,
             };
         }
+    };
+
+    protected clearValidationMessage = () => {
+        const data = this.state.data;
+        Object.keys(data).forEach(function(id) {
+            data[id].validationMessage = undefined;
+        });
+        this.setState({ data: { ...data } });
+    };
+
+    protected handleClickItem = (index: number) => {
+        if (this.state.selectedIndex !== index) {
+            this.clearValidationMessage();
+        }
+        this.setState({ selectedIndex: index });
+    };
+
+    protected handleCloseBottom = () => {
+        this.setState({ selectedIndex: undefined });
+        this.clearValidationMessage();
     };
 
     protected handleSubmitPasword = async (
@@ -55,9 +78,10 @@ export class KycList extends React.Component<any, IState> {
             <KycListView
                 list={rootStore.marketStore.validators}
                 data={this.state.data}
+                selectedIndex={this.state.selectedIndex}
                 onSubmitPassword={this.handleSubmitPasword}
-                onClickItem={() => {}}
-                onCloseBottom={() => {}}
+                onClickItem={this.handleClickItem}
+                onCloseBottom={this.handleCloseBottom}
             />
         );
     }
