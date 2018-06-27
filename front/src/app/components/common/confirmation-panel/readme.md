@@ -26,6 +26,7 @@
 
     const Container = observer(() =>
         <ConfirmationPanel
+            showCloseButton
             onSubmit={state.onSubmit}
             onCancel={state.onCancel}
             validationMessage={state.validationMessage}
@@ -57,7 +58,7 @@ ConfirmationPanel fills its container.
     };
 
     <div style={containerStyle}>
-        <ConfirmationPanel onSubmit={() => {}} onCancel={() => {}} />
+        <ConfirmationPanel showCloseButton onSubmit={() => {}} onCancel={() => {}} />
     </div>
 
 ### Custom labels
@@ -67,6 +68,7 @@ ConfirmationPanel fills its container.
         description="Text Text Text Text Text Text Text Text Text Text Text Text Text Text"
         cancelBtnLabel="CustomCancel"
         submitBtnLabel="CustomSubmit"
+        showCloseButton
 
         onSubmit={() => {}}
         onCancel={() => {}}
