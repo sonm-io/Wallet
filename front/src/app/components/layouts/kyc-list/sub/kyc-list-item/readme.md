@@ -19,12 +19,7 @@ const emptyFn = () => {};
 const Container = observer(() => (
     <div>
         {data.map(i => (
-            <KycListItem
-                validator={i}
-                isSelected={false}
-                onClickSelect={emptyFn}
-                onSubmitPasword={emptyFn}
-            />
+            <KycListItem validator={i} isSelected={false} onClick={emptyFn} />
         ))}
     </div>
 ));
@@ -56,21 +51,27 @@ const emptyFn = () => {};
     <KycListItem
         validator={d[0]}
         isSelected={false}
-        onClickSelect={emptyFn}
-        onSubmitPasword={emptyFn}
+        onClick={emptyFn}
+        onSubmitPassword={emptyFn}
+        onCancelPassword={emptyFn}
+        onCloseLink={emptyFn}
     />
     <KycListItem
         validator={d[1]}
         isSelected={true}
-        onClickSelect={emptyFn}
-        onSubmitPasword={emptyFn}
+        onClick={emptyFn}
+        onSubmitPassword={emptyFn}
+        onCancelPassword={emptyFn}
+        onCloseLink={emptyFn}
     />
     <KycListItem
         validator={d[2]}
         isSelected={true}
         kycLink="http://www.typescriptlang.org/docs/handbook/advanced-types.html"
-        onClickSelect={emptyFn}
-        onSubmitPasword={emptyFn}
+        onClick={emptyFn}
+        onSubmitPassword={emptyFn}
+        onCancelPassword={emptyFn}
+        onCloseLink={emptyFn}
     />
 </div>;
 ```
