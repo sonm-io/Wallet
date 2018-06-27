@@ -14,9 +14,11 @@ import { Deposit, Withdraw } from 'app/components/layouts/deposit-withdraw';
 import { DepositWithdrawSuccess } from 'app/components/layouts/deposit-withdraw/sub/success';
 import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
+import { WorkerList } from 'app/components/layouts/worker-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
 import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
+import { TMenuItem } from 'app/components/layouts/app/sub/nav-menu-dropdown';
 
 import {
     LazyInterface,
@@ -30,6 +32,8 @@ import { loader, DataLoader, IDataLoader } from './loader';
 
 import { navigate, INavigateArgument } from './navigate';
 import { IOrder } from '../api/types';
+import { rootStore } from '../stores';
+import { KycList } from 'app/components/layouts/kyc-list';
 
 let defaultAction;
 
@@ -47,7 +51,6 @@ export class Navigation {
         accountAddress: string = '',
         currencyAddress: string = '',
     ) => {
-        this.l.loadHistory(accountAddress, currencyAddress);
         this.n({ path: '/wallet/history' });
     };
     public toConfirmation = () => this.n({ path: '/wallet/send/confirm' });
@@ -110,11 +113,18 @@ export const createRoutes = (
                         className={
                             params.props ? params.props.className : undefined
                         }
+                        disableAccountSelect={
+                            params.props
+                                ? params.props.disableAccountSelect
+                                : undefined
+                        }
+                        onClickMyProfile={navigateToMyProfile}
                         breadcrumbs={breadcrumbs}
-                        onNavigate={navigation.to}
+                        onNavigate={navigateTo}
                         onExit={reload}
                         path={ctx.pathname}
                         title={params.pageTitle}
+                        headerMenu={headerMenu}
                         {...params.props}
                     >
                         {params.content}
@@ -174,7 +184,7 @@ export const createRoutes = (
                                     pageTitle: 'Transaction has been sent',
                                     content: (
                                         <SendSuccess
-                                            onClickHistory={n.toHistory}
+                                            onClickHistory={n.toWalletHistory}
                                             onClickSend={n.toSend}
                                         />
                                     ),
@@ -214,6 +224,9 @@ export const createRoutes = (
                                     content: (
                                         <Account
                                             initialAddress={params.address}
+                                            onClickHistory={
+                                                navigateToWalletHistory
+                                            }
                                         />
                                     ),
                                     browserTabTitle: 'Account',
@@ -249,18 +262,22 @@ export const createRoutes = (
                                 action: async (
                                     ctx: IContext,
                                     params: IUrlParams,
-                                ) => ({
-                                    content: (
-                                        <Profile
-                                            address={params.address}
-                                            onNavigateToOrders={
-                                                n.toOrdersByAddress
-                                            }
-                                        />
-                                    ),
-                                    browserTabTitle: 'Profile',
-                                    pageTitle: 'Profile',
-                                }),
+                                ) => {
+                                    loader.loadProfileDetails(params.address);
+
+                                    return {
+                                        content: (
+                                            <Profile
+                                                onNavigateToOrders={
+                                                    n.toOrdersByAddress
+                                                }
+                                                onNavigateToKyc={navigateToKyc}
+                                            />
+                                        ),
+                                        browserTabTitle: 'Profile',
+                                        pageTitle: 'Profile',
+                                    };
+                                },
                             },
                         ],
                     },
@@ -318,6 +335,7 @@ export const createRoutes = (
                                             props: {
                                                 className:
                                                     'sonm-app--confirmation-bg',
+                                                disableAccountSelect: true,
                                             },
                                         }),
                                     },
@@ -392,6 +410,7 @@ export const createRoutes = (
                                             props: {
                                                 className:
                                                     'sonm-app--confirmation-bg',
+                                                disableAccountSelect: true,
                                             },
                                         }),
                                     },
@@ -514,6 +533,24 @@ export const createRoutes = (
                             browserTabTitle: 'Deals',
                             pageTitle: 'Deals',
                             content: <DealList onNavigate={n.toDeal} />,
+                        }),
+                    },
+                    {
+                        path: '/workers',
+                        breadcrumbTitle: 'Workers',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'Workers',
+                            pageTitle: 'Workers',
+                            content: <WorkerList />,
+                        }),
+                    },
+                    {
+                        path: '/kyc',
+                        breadcrumbTitle: 'KYC providers',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'KYC providers',
+                            pageTitle: 'KYC providers',
+                            content: <KycList />,
                         }),
                     },
                 ],

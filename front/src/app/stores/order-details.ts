@@ -13,7 +13,6 @@ import {
     IOrder,
     EnumOrderType,
 } from 'app/api/types';
-import { Api } from 'app/api/';
 
 export interface IOrderDetailsInput {
     password: string;
@@ -26,7 +25,13 @@ export interface IOrderDetailsStoreServices {
 }
 
 export interface IOrderDetailsStoreApi {
-    quickBuy: (accountAddress: string, password: string, orderId: string) => {};
+    fetchById: (id: string) => Promise<IOrder>;
+    quickBuy: (
+        accountAddress: string,
+        password: string,
+        orderId: string,
+        duration: number,
+    ) => {};
     waitForDeal: (accountAddress: string, id: string) => Promise<IOrderParams>;
 }
 
@@ -111,7 +116,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         return this.rootStore.uiStore.addAlert({
             type: AlertType.error,
             message: this.localizator.getMessageText([
-                'tx_buy_order_matched_failed',
+                'tx_buy_order_match_failed',
                 [orderId],
             ]),
         });
@@ -127,12 +132,14 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     public *submit() {
         const password = this.password;
         const orderId = this.orderId;
+        const duration = this.duration;
         const accountAddress = this.externalStores.market.marketAccountAddress;
 
         const { data, validation } = yield this.api.quickBuy(
             accountAddress,
             password,
             orderId,
+            duration,
         );
 
         if (validation !== undefined && validation.password) {
@@ -167,10 +174,16 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     }
 
     @observable public orderId: string = '';
+    @observable public duration: number = 0;
 
     @action.bound
     public setOrderId(orderId: string) {
         this.orderId = orderId;
+    }
+
+    @action.bound
+    public setDuration(duration: number) {
+        this.duration = duration;
     }
 
     @computed
@@ -187,7 +200,8 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     @catchErrors({ restart: true })
     @asyncAction
     protected *fetchData() {
-        this.order = yield Api.order.fetchById(this.orderId);
+        this.order = yield this.api.fetchById(this.orderId);
+        this.setDuration(this.order.duration);
     }
 
     public static emptyOrder: IOrder = {

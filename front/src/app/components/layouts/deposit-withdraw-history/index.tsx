@@ -51,10 +51,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
 
                 return (
                     <React.Fragment>
-                        <Icon
-                            i="ArrowRight"
-                            className={cn('sonm-dw-tx-list__cell-action', cls)}
-                        />
+                        <Icon i="ArrowRight" className={cls} />
                         <div className="sonm-dw-tx-list__cell-action--label">
                             {record.action}
                         </div>
@@ -237,7 +234,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
                     dataSource={listStore.records}
                     columns={DepositWithdrawHistory.columns}
                     pagination={pagination}
-                    rowKey="hash"
+                    rowKey="timestamp"
                 />
             </div>
         );

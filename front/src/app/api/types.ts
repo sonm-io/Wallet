@@ -120,6 +120,12 @@ export interface IProfileBrief extends IAccountBrief {
 export interface IProfileFull extends IProfileBrief {
     attributes: Array<IAttribute>;
     description: string;
+    certificates: Array<ICertificate>;
+}
+
+export interface ICertificate {
+    status: EnumProfileStatus;
+    address: string;
 }
 
 export interface IListResult<T> {
@@ -202,6 +208,13 @@ export interface IKycValidator {
     name: string;
     url: string;
     fee: string;
+    logo: string;
+    description: string;
+}
+
+export interface IWorker {
+    slaveId: string;
+    confirmed: boolean;
 }
 
 export interface IOrderListFilter {

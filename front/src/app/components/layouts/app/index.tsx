@@ -4,14 +4,17 @@ import { observer } from 'mobx-react';
 import { rootStore } from 'app/stores/index';
 import { AppView } from './view';
 import { IAccount } from './sub/account-select/index';
+import { TMenuItem } from './sub/nav-menu-dropdown';
 
 interface IProps {
     className?: string;
     children: any;
     path: string;
-    onNavigate: (url: string) => void;
     onExit: () => void;
     title?: string;
+    headerMenu: Array<TMenuItem>;
+    disableAccountSelect?: boolean;
+    onClickMyProfile: () => void;
 }
 
 @observer
@@ -36,7 +39,6 @@ export class App extends React.Component<IProps, never> {
             <AppView
                 className={p.className}
                 path=""
-                onNavigate={p.onNavigate}
                 onExit={p.onExit}
                 breadcrumbs={[]}
                 hasMarketAccountSelect={p.path.startsWith('/market')}
@@ -54,6 +56,9 @@ export class App extends React.Component<IProps, never> {
                 snmBalance={rootStore.mainStore.primaryTokenBalance}
                 etherBalance={rootStore.mainStore.etherBalance}
                 title={p.title}
+                headerMenu={p.headerMenu}
+                disableAccountSelect={p.disableAccountSelect}
+                onClickMyProfile={p.onClickMyProfile}
             >
                 {p.children}
             </AppView>

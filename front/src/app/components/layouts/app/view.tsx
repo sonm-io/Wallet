@@ -8,14 +8,17 @@ import { Header } from 'app/components/common/header';
 // import { BreadCrumbs } from 'app/components/common/breadcrumbs';
 import { IAlert } from 'app/stores/types';
 import { IMarketStats } from 'app/api/types';
+import { TMenuItem } from './sub/nav-menu-dropdown';
 
 interface IProps {
     className?: string;
     children: any;
     path: string;
-    onNavigate: (url: string) => void;
     onExit: () => void;
     breadcrumbs: any;
+    headerMenu: Array<TMenuItem>;
+    disableAccountSelect?: boolean;
+    onClickMyProfile: () => void;
 
     hasMarketAccountSelect: boolean;
     onChangeMarketAccount: (account: IAccount) => void;
@@ -42,7 +45,10 @@ export class AppView extends React.PureComponent<IProps, any> {
         const p = this.props;
 
         return (
-            <div className={cn('sonm-app', p.className)}>
+            <div
+                className={cn('sonm-app', p.className)}
+                {...{ 'data-display-id': `sonm-app` }}
+            >
                 <LoadMask white visible={p.isPending}>
                     <AppHeader
                         onChangeAccount={p.onChangeMarketAccount}
@@ -54,11 +60,13 @@ export class AppView extends React.PureComponent<IProps, any> {
                         isTestNet={true}
                         gethNodeUrl="infura.com"
                         sonmNodeUrl="dwh.sonm.com"
-                        onNavigate={p.onNavigate}
                         hasMarketAccountSelect={p.hasMarketAccountSelect}
                         snmBalance={p.snmBalance}
                         etherBalance={p.etherBalance}
                         onExit={p.onExit}
+                        menu={p.headerMenu}
+                        disableAccountSelect={p.disableAccountSelect}
+                        onClickMyProfile={this.props.onClickMyProfile}
                     />
                     <div className="sonm-app__alert-group">
                         {p.networkError ? (

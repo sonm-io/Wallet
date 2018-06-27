@@ -8,6 +8,8 @@ import {
 } from 'app/components/common/property-list';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel/index';
 import { Balance } from 'app/components/common/balance-view/index';
+import * as moment from 'moment';
+import 'moment-duration-format';
 
 interface IProps {
     className?: string;
@@ -31,7 +33,12 @@ export class OrderView extends React.Component<IProps, never> {
         {
             key: 'duration',
             name: 'Duration',
-            render: (seconds: string) => `${seconds} sec`,
+            render: (seconds: string) =>
+                moment
+                    .duration(seconds, 'seconds')
+                    .format('d [days], h [hours], m [minutes]', {
+                        trim: 'all',
+                    }),
         },
         {
             key: 'orderStatus',

@@ -1,5 +1,5 @@
 import { useStrict } from 'mobx';
-import { IProfileBrief, IOrder, IDeal } from 'app/api/types';
+import { IProfileBrief, IOrder, IDeal, IWorker } from 'app/api/types';
 import { HistoryListStore } from './history-list';
 import { HistoryFilterStore } from './history-filter';
 import { MainStore } from './main';
@@ -20,12 +20,16 @@ import {
 import { ProfileList } from './profile-list';
 import { OrdersList } from './orders-list';
 import { DealList } from './deal-list';
+import { WorkerList } from './worker-list';
+import { WorkerFilterStore } from './worker-filter';
 import { Api } from 'app/api';
 import { EnumHistorySourceMode } from './types';
 import { IListStore } from './list-store';
 import { unwrapApiResult } from '../api/utils/unwrap-api-result';
 import { OrderDetails } from './order-details';
 import { DealDetails } from './deal-details';
+import { KycListStore } from './kyc-list';
+import { ProfileDetails } from './profile-details';
 
 useStrict(true);
 
@@ -42,6 +46,8 @@ export class RootStore implements IHasLocalizator {
     public readonly addTokenStore: AddTokenStore;
     public readonly profileListStore: IListStore<IProfileBrief>;
     public readonly dealListStore: IListStore<IDeal>;
+    public readonly workerListStore: IListStore<IWorker>;
+    public readonly workerFilterStore: WorkerFilterStore;
     public readonly ordersListStore: IListStore<IOrder>;
     public readonly marketStore: MarketStore;
     public readonly profileFilterStore: ProfileFilterStore;
@@ -49,6 +55,8 @@ export class RootStore implements IHasLocalizator {
     public readonly orderFilterStore: OrderFilterStore;
     public readonly orderDetailsStore: OrderDetails;
     public readonly dealDetailsStore: DealDetails;
+    public readonly kycListStore: KycListStore;
+    public readonly profileDetailsStore: ProfileDetails;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -68,11 +76,13 @@ export class RootStore implements IHasLocalizator {
                 errorProcessor: this.uiStore,
                 api: Api.history,
             },
+            true,
         );
 
         this.dwHistoryFilterStore = new HistoryFilterStore(
             EnumHistorySourceMode.market,
         );
+
         this.dwHistoryListStore = new HistoryListStore(
             {
                 filter: this.dwHistoryFilterStore,
@@ -82,6 +92,7 @@ export class RootStore implements IHasLocalizator {
                 errorProcessor: this.uiStore,
                 api: Api.history,
             },
+            true,
         );
 
         this.mainStore = new MainStore(this, { localizator: this.localizator });
@@ -161,6 +172,19 @@ export class RootStore implements IHasLocalizator {
             },
         );
 
+        this.workerFilterStore = new WorkerFilterStore();
+
+        this.workerListStore = new WorkerList(
+            {
+                filter: this.workerFilterStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
+                api: Api.worker,
+            },
+        );
+
         this.orderDetailsStore = new OrderDetails(
             this,
             {
@@ -184,6 +208,24 @@ export class RootStore implements IHasLocalizator {
                 api: Api.deal,
             },
         );
+
+        this.kycListStore = new KycListStore(
+            this,
+            {
+                main: this.mainStore,
+                market: this.marketStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
+            },
+        );
+
+        this.profileDetailsStore = new ProfileDetails(this, {
+            localizator,
+            errorProcessor: this.uiStore,
+            api: Api.profile,
+        });
     }
 
     public get isPending() {

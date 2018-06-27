@@ -61,7 +61,7 @@ export class DealApi {
         dealId: string,
         isBlacklisted: boolean,
     ) {
-        const { data, validation } = await this.ipc.send('market.closeDeal', {
+        const { data, validation } = await this.ipc.send('deal.close', {
             address,
             id: dealId,
             password,

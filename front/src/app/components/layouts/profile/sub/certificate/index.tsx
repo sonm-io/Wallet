@@ -1,30 +1,45 @@
 import * as React from 'react';
 import * as cn from 'classnames';
+import { EnumProfileStatus } from 'app/api/types';
+import { ProfileStatus } from 'app/components/common/profile-status/index';
 
 export interface ICertificateProps {
     className?: string;
-    status: string;
-    service: any;
-    style: 'blue' | 'gold' | 'silver';
+    serviceName: string;
+    status: EnumProfileStatus;
 }
 
 export class Certificate extends React.Component<ICertificateProps, any> {
+    public static mapStatusToStyle: { [key: string]: string } = {
+        [String(EnumProfileStatus.anonimest)]: 'anon',
+        [String(EnumProfileStatus.anon)]: 'anon',
+        [String(EnumProfileStatus.reg)]: 'reg',
+        [String(EnumProfileStatus.ident)]: 'ident',
+        [String(EnumProfileStatus.pro)]: 'pro',
+    };
+
     public render() {
         const p = this.props;
+        const style = Certificate.mapStatusToStyle[String(p.status)];
 
         return (
             <div
                 className={cn(
                     p.className,
                     'sonm-certificate',
-                    `sonm-certificate__${p.style}`,
+                    `sonm-certificate--${style}`,
                 )}
             >
-                <span className="sonm-certificate__status">{p.status}</span>
-                <span className="sonm-certificate__service">
-                    by {p.service}
-                </span>
-                <div className="sonm-certificate__logo" />
+                <ProfileStatus
+                    className="sonm-certificate__status"
+                    status={p.status}
+                />
+                <div className="sonm-certificate__service">
+                    by {p.serviceName}
+                </div>
+                <div
+                    className={`sonm-certificate__logo sonm-certificate__logo--${style}`}
+                />
             </div>
         );
     }

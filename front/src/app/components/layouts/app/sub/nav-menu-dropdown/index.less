@@ -1,10 +1,11 @@
 @import 'guide.less';
 
 @navMenuBgColor: @color-brand-bg;
-@navMenuBgColorActive: lighten(@color-brand-bg, 1%);
+@navMenuBgColorActive: #122734;
 @navMenuTextColor: @color-white;
 @navMenuTextColorActive: var(--color-nav-menu-selection);
-@navMenuLeftPadding: 12px;
+@navMenuLeftPadding: 24px;
+@navMenuTopPadding: 11px;
 @navMenuZIndex: @z-everest;
 
 .sonm-nav-menu-dropdown {
@@ -24,7 +25,7 @@
         outline: none;
         border: none;
         background: none transparent;
-        cursor: pointer;
+        cursor: inherit;
 
         &:active,
         &:focus {
@@ -60,6 +61,7 @@
         background: none transparent;
         border: none;
         padding: 0 @navMenuLeftPadding;
+        cursor: pointer;
 
         &--opened {
             background-color: @navMenuBgColorActive;
@@ -82,6 +84,11 @@
                 background-color: var(--color-nav-menu-selection);
             }
         }
+
+        &--disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     }
 
     &__sub-item {
@@ -91,18 +98,31 @@
         background: none @navMenuBgColorActive;
         border: 0 solid @navMenuBgColor;
         border-bottom-width: 1px;
-        color: @navMenuTextColor;
         font-weight: 100;
-        min-width: 115px;
+        min-width: 145px;
         margin: 0;
-        padding: 5px @navMenuLeftPadding;
-        cursor: pointer;
+        padding: 0;
 
-        &:hover,
-        &:active,
-        &:focus {
-            outline: none;
-            color: @navMenuTextColorActive;
+        &-link {
+            color: @navMenuTextColor;
+            transition: color ease 200ms;
+            cursor: pointer;
+            display: block;
+            padding: @navMenuTopPadding @navMenuLeftPadding;
+
+            &:hover,
+            &:active,
+            &:focus {
+                text-decoration: none;
+                outline: none;
+                color: @navMenuTextColorActive;
+            }
+        }
+
+        &-list {
+            margin: 0;
+            padding: 0;
+            background: none;
         }
     }
 }

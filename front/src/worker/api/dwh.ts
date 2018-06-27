@@ -66,18 +66,23 @@ export class DWH {
     };
 
     public static readonly mapAttributes: any = {
-        1201: ['KYC 2', self.atob],
-        1202: ['Website', self.atob],
-        2201: ['Telephone', self.atob],
-        2202: ['E-mail', self.atob],
-        2203: ['Service link', self.atob],
+        [t.EnumAttributes.Website]: ['Website', self.atob],
+        [t.EnumAttributes.Phone]: ['Telephone', self.atob],
+        [t.EnumAttributes.Email]: ['E-mail', self.atob],
+        [t.EnumAttributes.SocNet]: ['Service link', self.atob],
     };
 
-    public static readonly mapParseAttributes: any = {
-        1102: ['name', self.atob],
-        1201: ['kyc2', self.atob],
-        1301: ['kyc3', self.atob],
-        1401: ['kyc4', self.atob],
+    public static readonly mapKycAttributes: any = {
+        [t.EnumAttributes.Name]: ['name', self.atob],
+        [t.EnumAttributes.Kyc2]: ['kyc2', self.atob],
+        [t.EnumAttributes.Kyc3]: ['kyc3', self.atob],
+        [t.EnumAttributes.Kyc4]: ['kyc4', self.atob],
+    };
+
+    public static kycAttributesToStatus = {
+        [t.EnumAttributes.Kyc2]: t.EnumProfileStatus.reg,
+        [t.EnumAttributes.Kyc3]: t.EnumProfileStatus.ident,
+        [t.EnumAttributes.Kyc4]: t.EnumProfileStatus.ident,
     };
 
     private processProfile(item: any): t.IProfileBrief {
@@ -131,37 +136,50 @@ export class DWH {
         TypeEthereumAddress(address);
 
         const res = await this.fetchData('GetProfileInfo', { Id: address });
-        const brief = this.processProfile(res);
-        const certificates = res.Certificates
-            ? JSON.parse(res.Certificates)
-            : [];
-        const attrMap: any = {};
-        const attributes = certificates
-            .map((x: any) => {
-                attrMap[x.attribute] = x;
+        if (res) {
+            const brief = this.processProfile(res);
+            const certificates = res.Certificates
+                ? JSON.parse(res.Certificates)
+                : [];
+            const attrMap: any = {};
+            const attributes = certificates
+                .map((x: any) => {
+                    attrMap[x.attribute] = x;
 
-                if (x.attribute in DWH.mapAttributes) {
-                    const [label, converter] = DWH.mapAttributes[x.attribute];
+                    if (x.attribute in DWH.mapAttributes) {
+                        const [label, converter] = DWH.mapAttributes[
+                            x.attribute
+                        ];
 
-                    return {
-                        value: converter(x.value),
-                        label,
-                    };
-                }
-                return undefined;
-            })
-            .filter(Boolean);
+                        return {
+                            value: converter(x.value),
+                            label,
+                        };
+                    }
+                    return undefined;
+                })
+                .filter(Boolean);
 
-        const description =
-            ATTRIBUTE_DESCRIPTION in attrMap
-                ? self.atob(attrMap[ATTRIBUTE_DESCRIPTION].value)
-                : '';
+            const description =
+                ATTRIBUTE_DESCRIPTION in attrMap
+                    ? self.atob(attrMap[ATTRIBUTE_DESCRIPTION].value)
+                    : '';
 
-        return {
-            ...brief,
-            attributes,
-            description,
-        };
+            return {
+                ...brief,
+                attributes,
+                description,
+                certificates: this.getKycCertificates(certificates),
+            };
+        } else {
+            return {
+                ...DWH.defaultProfile,
+                address,
+                certificates: [],
+                attributes: [],
+                description: '',
+            };
+        }
     };
 
     protected static priceMultiplierOut = new BN('1000000000000000000').div(
@@ -201,7 +219,10 @@ export class DWH {
         }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : DWH.emptyFilter;
-        const benchmarks = DWH.getBenchmarksFilter(mongoLikeQuery.benchmarkMap);
+        const benchmarks =
+            'benchmarkMap' in mongoLikeQuery
+                ? DWH.getBenchmarksFilter(mongoLikeQuery.benchmarkMap)
+                : {};
 
         const request = {
             masterID: get('creator.address.$eq', mongoLikeQuery),
@@ -224,7 +245,7 @@ export class DWH {
             ],
             counterpartyID: [
                 '0x0000000000000000000000000000000000000000',
-                get('mongoLikeQuery.creator.$eq', mongoLikeQuery),
+                get('profileAddress.$eq', mongoLikeQuery),
             ],
         };
 
@@ -297,7 +318,7 @@ export class DWH {
                 Math.round(benchmarks.values[6] / (1024 * 1024)) || 0,
             gpuCount: benchmarks.values[7] || 0,
             gpuRamSize: Math.round(benchmarks.values[8] / (1024 * 1024)) || 0,
-            ethHashrate: benchmarks.values[9] || 0,
+            ethHashrate: Math.round(benchmarks.values[9] / (1024 * 1024)) || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
@@ -313,7 +334,7 @@ export class DWH {
 
         order.benchmarkMap = DWH.parseBenchmarks(
             item.order.benchmarks,
-            item.order.netflags,
+            item.order.netflags.flags,
         );
         order.duration = order.duration ? DWH.parseDuration(order.duration) : 0;
         order.price = DWH.recalculatePriceIn(order.price);
@@ -332,7 +353,7 @@ export class DWH {
     }
 
     public static parseDuration(duration: number) {
-        return Math.round((100 * duration) / 3600) / 100;
+        return duration;
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
@@ -387,8 +408,8 @@ export class DWH {
 
         try {
             JSON.parse(self.atob(data)).map((x: any) => {
-                if (x.attribute in DWH.mapParseAttributes) {
-                    const [label, converter] = DWH.mapParseAttributes[
+                if (x.attribute in DWH.mapKycAttributes) {
+                    const [label, converter] = DWH.mapKycAttributes[
                         x.attribute
                     ];
                     attrMap[label] = converter(x.value);
@@ -403,6 +424,15 @@ export class DWH {
         } catch {}
 
         return attrMap;
+    }
+
+    protected getKycCertificates(certificates: any[]): t.ICertificate[] {
+        return certificates
+            .filter(x => x.attribute in DWH.kycAttributesToStatus)
+            .map(x => ({
+                status: (DWH.kycAttributesToStatus as any)[x.attribute],
+                address: x.validatorID,
+            }));
     }
 
     private parseDeal(item: any): t.IDeal {
@@ -438,28 +468,72 @@ export class DWH {
 
         const now = moment().unix();
         deal.timeLeft =
-            deal.endTime && now < deal.endTime
-                ? Math.round((deal.endTime - now) / 3600)
-                : 0;
+            deal.endTime && now < deal.endTime ? deal.endTime - now : 0;
 
         return deal;
     }
 
     public getValidators = async (): Promise<t.IKycValidator[]> => {
         const res = await this.fetchData('GetValidators');
-        const data = [] as t.IKycValidator[];
+        const validators = 'validators' in res ? res.validators : [];
 
-        for (const item of res.validators) {
-            data.push({
-                id: item.id,
-                name: item.name,
-                level: item.level,
-                fee: item.fee,
-                url: item.url,
+        return validators.map(
+            ({
+                validator,
+                name,
+                level,
+                price,
+                url,
+                description,
+                logo,
+            }: any): t.IKycValidator => ({
+                id: validator.id,
+                level: validator.level,
+                name,
+                description,
+                fee: price,
+                url,
+                logo,
+            }),
+        );
+    };
+
+    public getWorkers = async ({
+        limit,
+        offset,
+        filter,
+    }: t.IListQuery): Promise<t.IListResult<t.IWorker>> => {
+        tcomb.Number(limit);
+        tcomb.Number(offset);
+        tcomb.maybe(tcomb.String)(filter);
+
+        const mongoLikeQuery = filter ? JSON.parse(filter) : {};
+        const address = get('address.$eq', mongoLikeQuery);
+
+        if (address) {
+            const res = await this.fetchData('GetWorkers', {
+                masterID: address,
+                limit,
+                offset,
+                WithCount: true,
             });
-        }
 
-        return data;
+            const workers = 'workers' in res ? res.workers : [];
+            return {
+                records: workers.map(
+                    ({ slaveID, confirmed }: any): t.IWorker => ({
+                        slaveId: slaveID,
+                        confirmed: !!confirmed,
+                    }),
+                ),
+                total: 'count' in res ? res.count : 0,
+            };
+        } else {
+            return {
+                records: [],
+                total: 0,
+            };
+        }
     };
 
     private async fetchData(method: string, params: any = {}) {

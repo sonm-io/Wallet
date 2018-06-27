@@ -15,7 +15,7 @@ import { DWH } from './dwh';
 
 const { createSonmFactory, utils } = sonmApi;
 
-const STORAGE_VERSION = 2;
+const STORAGE_VERSION = 3;
 const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
 
@@ -30,9 +30,10 @@ const DWH_URL = 'https://dwh-testnet.sonm.com:15022/DWHServer/';
 const DEFAULT_NODES: t.INodes = {
     default: 'https://mainnet.infura.io',
     livenet: 'https://mainnet.infura.io',
+    livenet_private: 'https://mainnet.infura.io',
     rinkeby: 'https://rinkeby.infura.io',
+    rinkeby_private: 'https://sidechain-dev.sonm.com',
     testrpc: 'http://localhost:8545',
-    private: 'https://sidechain-dev.sonm.com',
 };
 
 const ZERO_ADDRESS = Array(41).join('0');
@@ -127,7 +128,7 @@ class Api {
             'account.requestTestTokens': this.requestTestTokens,
             'account.getPrivateKey': this.getPrivateKey,
 
-            'transaction.list': wrapInResponse(this.getTransactionList2),
+            'transaction.list': wrapInResponse(this.getTransactionList),
 
             'profile.get': wrapInResponse(dwh.getProfileFull),
             'profile.list': wrapInResponse(dwh.getProfiles),
@@ -135,12 +136,15 @@ class Api {
             'order.list': wrapInResponse(dwh.getOrders),
             'deal.get': wrapInResponse(dwh.getDealFull),
             'deal.list': wrapInResponse(dwh.getDeals),
+            'worker.list': wrapInResponse(dwh.getWorkers),
+            'worker.confirm': this.confirmWorker,
+            'order.buy': this.buyOrder,
+            'deal.close': this.closeDeal,
+            'order.getParams': wrapInResponse(this.getOrderParams),
+            'order.waitForDeal': wrapInResponse(this.waitForOrderDeal),
 
-            'market.getOrderParams': wrapInResponse(this.getOrderParams),
-            'market.waitForOrderDeal': wrapInResponse(this.waitForOrderDeal),
             'market.getValidators': wrapInResponse(dwh.getValidators),
-            'market.buyOrder': this.buyOrder,
-            'market.closeDeal': this.closeDeal,
+
             getKYCLink: this.getKYCLink,
 
             getSonmTokenAddress: this.getSonmTokenAddress,
@@ -167,10 +171,8 @@ class Api {
     };
 
     public getWalletList = async (): Promise<t.IResponse> => {
-        const wallets = (await this.getWallets()).data;
-
         return {
-            data: wallets.filter((item: any) => item.chainId === 'rinkeby'),
+            data: (await this.getWallets()).data,
         };
     };
 
@@ -236,7 +238,7 @@ class Api {
     private async checkAccountPassword(
         password: string,
         address: string,
-        network: string = 'main',
+        privateChain: boolean = false,
     ): Promise<t.IResponse> {
         if (!password) {
             return {
@@ -248,7 +250,7 @@ class Api {
 
         address = utils.add0x(address).toLowerCase();
 
-        const client = await this.initAccount(address, network);
+        const client = await this.initAccount(address, privateChain);
 
         if (client && client.password) {
             if (client.password !== password) {
@@ -528,7 +530,7 @@ class Api {
 
         const requests = [];
         const marketRequests = [];
-        const tokenList = await this.getTokenList('private');
+        const tokenList = await this.getTokenList(true);
 
         for (const address of Object.keys(accounts)) {
             requests.push(this.getCurrencyBalances(address));
@@ -769,26 +771,27 @@ class Api {
         }
     };
 
-    private getFactory(key = 'main') {
-        const chainId = key === 'main' ? this.storage.settings.chainId : key;
+    private getFactory(privateChain = false) {
+        const chainId = this.storage.settings.chainId;
         const nodeUrl =
-            key === 'main'
-                ? this.storage.settings.nodeUrl
-                : DEFAULT_NODES[chainId];
+            DEFAULT_NODES[chainId + (privateChain ? '_private' : '')];
 
-        return createSonmFactory(nodeUrl, chainId);
+        return createSonmFactory(nodeUrl, chainId, privateChain);
     }
 
-    private async getTokenList(key = 'main') {
+    private async getTokenList(privateChain = false) {
+        const key = privateChain ? 'main' : 'private';
+
         if (!this.tokenList[key]) {
-            const factory = this.getFactory(key);
+            const factory = this.getFactory(privateChain);
             this.tokenList[key] = await factory.createTokenList();
         }
 
         return this.tokenList[key];
     }
 
-    private async initAccount(address: string, key = 'main') {
+    private async initAccount(address: string, privateChain = false) {
+        const key = privateChain ? 'main' : 'private';
         address = address.toLowerCase();
 
         if (!this.accounts[key]) {
@@ -796,7 +799,7 @@ class Api {
         }
 
         if (!this.accounts[key][address]) {
-            const factory = this.getFactory(key);
+            const factory = this.getFactory(privateChain);
 
             this.accounts[key][address] = {
                 factory,
@@ -812,7 +815,7 @@ class Api {
         data: t.IPayload,
     ): Promise<t.IResponse> => {
         if (data.address) {
-            const tokenList = await this.getTokenList('private');
+            const tokenList = await this.getTokenList(true);
             const balancies = await tokenList.getBalances(data.address);
 
             return {
@@ -842,7 +845,7 @@ class Api {
     };
 
     public getTokenExchangeRate = async (): Promise<t.IResponse> => {
-        const client = await this.initAccount(ZERO_ADDRESS, 'private');
+        const client = await this.initAccount(ZERO_ADDRESS, true);
 
         return {
             data: await client.account.getTokenExchangeRate(),
@@ -857,7 +860,21 @@ class Api {
                 },
             };
         } else if (data.address && data.id && data.password) {
-            return this.getMethod('buyOrder', [data.id], 'private')(data);
+            return this.getMethod('buyOrder', [data.id], true)(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public confirmWorker = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.slaveId && data.password) {
+            return this.getMethod('confirmWorker', [data.slaveId], true)(data);
         } else {
             throw new Error('required_params_missed');
         }
@@ -878,8 +895,8 @@ class Api {
         ) {
             return this.getMethod(
                 'getKYCLink',
-                [parseInt(data.fee, 10), data.kycAddress],
-                'private',
+                [data.fee, data.kycAddress],
+                true,
             )(data);
         } else {
             throw new Error('required_params_missed');
@@ -897,7 +914,7 @@ class Api {
             return this.getMethod(
                 'closeDeal',
                 [data.id, data.isBlacklisted || false],
-                'private',
+                true,
             )(data);
         } else {
             throw new Error('required_params_missed');
@@ -911,7 +928,7 @@ class Api {
         tcomb.String(address);
         tcomb.String(id);
 
-        const client = await this.initAccount(address, 'private');
+        const client = await this.initAccount(address, true);
         return client.account.getOrderParams(id);
     };
 
@@ -926,7 +943,7 @@ class Api {
         tcomb.Number(retryDelay);
         tcomb.Number(retries);
 
-        const client = await this.initAccount(address, 'private');
+        const client = await this.initAccount(address, true);
         let orderParams;
 
         while (retries >= 0) {
@@ -1101,11 +1118,11 @@ class Api {
                 gasPrice,
             } = data;
 
-            const network = action === 'withdraw' ? 'private' : 'main';
+            const privateChain = action === 'withdraw' ? true : false;
             const validation = await this.checkAccountPassword(
                 password,
                 fromAddress,
-                network,
+                privateChain,
             );
 
             if (!validation.data) {
@@ -1133,7 +1150,7 @@ class Api {
 
             transactions.unshift(transaction);
 
-            const client = await this.initAccount(fromAddress, network);
+            const client = await this.initAccount(fromAddress, privateChain);
 
             try {
                 let txResult;
@@ -1183,20 +1200,27 @@ class Api {
         };
     };
 
-    public getMethod = (method: string, params: any, key: string) => {
+    public getMethod = (
+        method: string,
+        params: any,
+        privateChain: boolean = false,
+    ) => {
         return async (data: t.IPayload): Promise<t.IResponse> => {
             if (data.address && data.password) {
                 const validation = await this.checkAccountPassword(
                     data.password,
                     data.address,
-                    key,
+                    privateChain,
                 );
 
                 if (!validation.data) {
                     return validation;
                 }
 
-                const client = await this.initAccount(data.address, key);
+                const client = await this.initAccount(
+                    data.address,
+                    privateChain,
+                );
 
                 return {
                     data: await client.account[method](...params),
@@ -1219,73 +1243,10 @@ class Api {
 
     public getTransactionList = async (
         data: t.IPayload,
-    ): Promise<t.IResponse> => {
-        let { filters, limit, offset, source } = data;
-
-        filters = filters || {};
-        limit = limit || 10;
-        offset = offset || 0;
-        source = source || 'wallet';
-
-        let filtered = [];
-        for (const item of this.storage.transactions) {
-            const sidechainAction = item.fromAddress === item.toAddress;
-
-            let ok = true;
-
-            // filter transaction by source
-            if (source === 'wallet' && sidechainAction) {
-                ok = false;
-            } else if (source === 'market' && !sidechainAction) {
-                ok = false;
-            }
-
-            if (Object.keys(filters).length) {
-                for (const type of ['fromAddress', 'currencyAddress']) {
-                    if (filters[type] && item[type] !== filters[type]) {
-                        ok = false;
-                    }
-                }
-
-                if (
-                    filters.query &&
-                    !item.toAddress.includes(filters.query) &&
-                    !item.hash.includes(filters.query)
-                ) {
-                    ok = false;
-                }
-
-                if (filters.timeStart && item.timestamp < filters.timeStart) {
-                    ok = false;
-                }
-
-                if (filters.timeEnd && item.timestamp > filters.timeEnd) {
-                    ok = false;
-                }
-
-                if (filters.operation && item.action !== filters.operation) {
-                    ok = false;
-                }
-            }
-
-            if (ok === true) {
-                filtered.push(item);
-            }
-        }
-
-        const total = filtered.length;
-        filtered = filtered.slice(offset, offset + limit);
-
-        return {
-            data: [filtered, total],
-        };
-    };
-
-    public getTransactionList2 = async (
-        data: t.IPayload,
     ): Promise<t.IListResult<t.ISendTransactionResult>> => {
         let { filter, limit, offset } = data;
         filter = filter ? JSON.parse(filter) : {};
+
         limit = limit || 10;
         offset = offset || 0;
         filter.source = filter.source || 'wallet';

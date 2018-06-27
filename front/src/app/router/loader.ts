@@ -2,6 +2,7 @@ import { rootStore } from 'app/stores';
 import { IOrderFilter } from 'app/stores/order-filter';
 import { IOrder } from 'app/api/types';
 import { LazyInterface } from './types';
+import { TEthereumAddress } from '../entities/types';
 
 const str = (x: any) => (x === undefined ? '' : String(x));
 
@@ -31,21 +32,20 @@ export class DataLoader {
         });
     }
 
-    public loadHistory(fromAddress: string, currencyAddress: string) {
-        if (
-            rootStore.walletHistoryFilterStore.userInput.fromAddress !==
-            fromAddress
-        ) {
-            rootStore.walletHistoryFilterStore.updateUserInput({ fromAddress });
-        }
-        if (
-            rootStore.walletHistoryFilterStore.userInput.currencyAddress !==
-            currencyAddress
-        ) {
-            rootStore.walletHistoryFilterStore.updateUserInput({
-                currencyAddress,
-            });
-        }
+    public loadWalletHistory() {
+        rootStore.walletHistoryListStore.update();
+    }
+
+    public resetKycListState() {
+        rootStore.kycListStore.reset();
+    }
+
+    public loadProfileDetails(address: TEthereumAddress) {
+        rootStore.profileDetailsStore.setAddress(address);
+    }
+
+    public loadDwhHistory() {
+        rootStore.dwHistoryListStore.update();
     }
 }
 

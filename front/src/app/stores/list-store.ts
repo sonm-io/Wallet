@@ -68,11 +68,13 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
     constructor(
         stores: IReactiveDependecies,
         services: IListStoreServices<TItem>,
+        allowFetch: boolean = false,
     ) {
         super(services);
 
         this.services = services;
         this.reactiveDeps = stores;
+        this.allowFetch = allowFetch;
 
         autorun(this.reactionOnFilter);
         autorun(this.reactionOnUserInput, { delay: 500 });
@@ -90,6 +92,8 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
             this.update();
         }
     };
+
+    protected allowFetch: boolean;
 
     protected services: IListStoreServices<TItem>;
 
@@ -150,6 +154,8 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
     @catchErrors({ restart: true })
     @asyncAction
     public *update() {
+        this.allowFetch = true;
+
         this.status = Status.PENDING;
 
         const { page, limit, sortBy, filter, sortDesc } = this.userInput;

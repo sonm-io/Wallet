@@ -8,6 +8,7 @@ interface IProps {
     className?: string;
     certificates: ICertificateProps[];
     my: boolean;
+    onNavigateToKyc: () => void;
 }
 
 export class CertificatesPanel extends React.Component<IProps, any> {
@@ -28,7 +29,11 @@ export class CertificatesPanel extends React.Component<IProps, any> {
                     ))}
                 </div>
                 {p.my && (
-                    <Button className="sonm-certificates__get-button">
+                    <Button
+                        className="sonm-certificates__get-button"
+                        color="violet"
+                        onClick={p.onNavigateToKyc}
+                    >
                         GET CERTIFICATION
                     </Button>
                 )}

@@ -4,7 +4,7 @@ import { Password } from 'app/components/common/password';
 import { IChangeParams } from 'app/components/common/types';
 import { Button } from 'app/components/common/button';
 import * as cn from 'classnames';
-import { Icon } from '../icon';
+import { Icon, IconButton } from '../icon';
 
 export enum EnumConfirmationDisplay {
     OneLine = 'one-line',
@@ -28,6 +28,8 @@ export interface IConfirmationPanelProps {
     labelDescription?: string;
     labelCancel?: string;
     labelSubmit?: string;
+
+    showCloseButton?: boolean;
 }
 
 interface IState {
@@ -56,8 +58,17 @@ export class ConfirmationPanel extends React.Component<
 
     protected handleSubmit = (event: React.FormEvent<any>) => {
         event.preventDefault();
+        event.stopPropagation();
         if (this.props.onSubmit) {
             this.props.onSubmit(this.state.password);
+        }
+    };
+
+    protected handleCancel = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (this.props.onCancel) {
+            this.props.onCancel();
         }
     };
 
@@ -67,7 +78,16 @@ export class ConfirmationPanel extends React.Component<
         const p = this.props;
         return (
             <React.Fragment>
-                <h4 className="confirmation-panel__header">{p.labelHeader}</h4>
+                <h4 className="confirmation-panel__header">
+                    {p.showCloseButton ? (
+                        <IconButton
+                            className="confirmation-panel__close-button"
+                            i="Close"
+                            onClick={this.handleCancel}
+                        />
+                    ) : null}
+                    {p.labelHeader}
+                </h4>
                 <span className="confirmation-panel__description">
                     {p.labelDescription}
                 </span>
@@ -99,7 +119,7 @@ export class ConfirmationPanel extends React.Component<
         return p.onCancel ? (
             <a
                 className="confirmation-panel__cancel-button"
-                onClick={p.onCancel}
+                onClick={this.handleCancel}
                 color="violet"
             >
                 <Icon i="ArrowBack" /> {p.labelCancel}

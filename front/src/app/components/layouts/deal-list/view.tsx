@@ -6,7 +6,6 @@ import { IDeal } from 'app/api/types';
 import { Balance } from 'app/components/common/balance-view';
 import { BenchmarkShort } from 'app/components/common/benchmark-short';
 import { ProfileBrief } from 'app/components/common/profile-brief';
-import * as moment from 'moment';
 import {
     DateRangeDropdown,
     IDateRangeChangeParams,
@@ -14,6 +13,8 @@ import {
 import Input from 'antd/es/input';
 import { Toggler, ITogglerChangeParams } from 'app/components/common/toggler';
 import DealFilterStore from 'app/stores/deal-filter';
+import * as moment from 'moment';
+import 'moment-duration-format';
 
 class DealTable extends Table<IDeal> {}
 
@@ -110,7 +111,16 @@ export class DealListView extends React.PureComponent<IProps, any> {
                             key="3"
                             className="sonm-deals-list-cell__price--green"
                         >
-                            {record.timeLeft} hour(s) left
+                            {moment
+                                .duration(record.timeLeft, 'seconds')
+                                .format(
+                                    'd [days], h [hours], m [minutes], s [seconds]',
+                                    {
+                                        largest: 2,
+                                        trim: 'all',
+                                    },
+                                )}{' '}
+                            left
                         </div>
                     ) : null,
                 ];

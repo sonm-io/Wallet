@@ -5,15 +5,13 @@
 @orders-list-item-font-color: @color-font-dark;
 @orders-list-item-border-color: @color-gray-bg;
 @orders-list-item-border: 1px solid @orders-list-item-border-color;
-@orders-list-item-row-height: 25px;
 
 // Component
 
 .orders-list-item {
     display: grid;
     grid-auto-flow: column dense;
-    grid-template-columns: ~'1fr 250px 100px [child] auto [end]';
-    grid-auto-rows: @orders-list-item-row-height;
+    grid-template-columns: ~'1fr 100px [child] auto [end]';
     grid-row-gap: 5px;
     grid-column-gap: 15px;
     border-bottom: @orders-list-item-border;
@@ -26,25 +24,68 @@
         text-decoration: none;
     }
 
-    &:first-child {
-        border-top: @orders-list-item-border;
-    }
-
     &__account {
         grid-column: 1;
         grid-row: 1 / span 2;
     }
 
-    &__benchmark {
+    // Cost
+    &__cost {
         grid-column: 2;
         grid-row: 1 / span 2;
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+    }
+    &__price {
+        color: @color-font-dark;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    &__duration {
+        color: @color-light-font;
+        font-size: 16px;
+        font-weight: 400;
     }
 
-    // Column 3 - Cost
-    &__cost {
-        grid-column: 3;
+    // Benchmarks block
+
+    &__benchmarks {
+        display: grid;
+        grid-template-columns: repeat(3, max-content 1fr);
+        grid-row-gap: 0px;
+        grid-column-gap: 22px;
+
+        font-size: 14px;
+        padding-left: 60px;
+
+        grid-column: ~'1 / -1';
+        grid-row: 3;
+    }
+    &__benchmark-label {
+        color: @color-light-font;
     }
 
+    &__benchmark-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    // Benchmark items
+    &__dash {
+        color: @color-border;
+    }
+    &__network-speed {
+        display: flex;
+        align-items: center;
+    }
+
+    // Childs
+    &:first-child {
+        border-top: @orders-list-item-border;
+    }
     &__child {
         grid-column: child / end;
         display: flex;
