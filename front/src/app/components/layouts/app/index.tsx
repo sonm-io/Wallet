@@ -5,6 +5,8 @@ import { rootStore } from 'app/stores/index';
 import { AppView } from './view';
 import { IAccount } from './sub/account-select/index';
 import { TMenuItem } from './sub/nav-menu-dropdown';
+import { TEthereumAddress } from '../../../entities/types';
+import { INavigator } from '../../../router/types';
 
 interface IProps {
     className?: string;
@@ -12,9 +14,9 @@ interface IProps {
     path: string;
     onExit: () => void;
     title?: string;
-    headerMenu: Array<TMenuItem>;
     disableAccountSelect?: boolean;
-    onClickMyProfile: () => void;
+    navigateToProfile: (profileAddress: TEthereumAddress) => void;
+    navigator: INavigator;
 }
 
 @observer
@@ -28,6 +30,14 @@ export class App extends React.Component<IProps, never> {
     protected handleChangeMarketAccount = (account: IAccount) => {
         rootStore.marketStore.setMarketAccountAddress(account.address);
     };
+
+    protected handleClickMyProfile = () => {
+        this.props.navigateToProfile(
+            rootStore.marketStore.marketAccountAddress,
+        );
+    };
+
+    protected headerMenuConfig: Array<TMenuItem> = Array.prototype;
 
     public render() {
         const p = this.props;
@@ -56,9 +66,9 @@ export class App extends React.Component<IProps, never> {
                 snmBalance={rootStore.mainStore.primaryTokenBalance}
                 etherBalance={rootStore.mainStore.etherBalance}
                 title={p.title}
-                headerMenu={p.headerMenu}
+                headerMenu={this.headerMenuConfig}
                 disableAccountSelect={p.disableAccountSelect}
-                onClickMyProfile={p.onClickMyProfile}
+                onClickMyProfile={this.handleClickMyProfile}
             >
                 {p.children}
             </AppView>

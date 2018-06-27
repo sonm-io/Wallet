@@ -37,7 +37,7 @@ export class DealList extends React.Component<IProps, any> {
 
     public componentDidMount() {
         if (rootStore.mainStore.accountAddressList.length === 0) {
-            //this.props.onNotAvailable();
+            // this.props.onNotAvailable();
         } else {
             rootStore.dealListStore.update();
             rootStore.marketStore.updateMarketStats();

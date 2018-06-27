@@ -1,3 +1,6 @@
+import { DataLoader } from './loader';
+import { Navigator } from './navigator';
+
 export interface IUrlParams {
     [key: string]: string;
 }
@@ -34,4 +37,8 @@ export interface IRouterResult {
     loader?: () => never;
 }
 
-export type LazyInterface<T> = { [P in keyof T]: T[P] } & any;
+export type LazyInterface<T> = { [P in keyof T]: T[P] };
+
+export type IDataLoader = LazyInterface<DataLoader>;
+
+export type INavigator = LazyInterface<Navigator>;

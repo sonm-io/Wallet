@@ -18,85 +18,24 @@ import { WorkerList } from 'app/components/layouts/worker-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
 import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
-import { TMenuItem } from 'app/components/layouts/app/sub/nav-menu-dropdown';
+import { KycList } from 'app/components/layouts/kyc-list';
 
 import {
-    LazyInterface,
     IRouterResult,
     IContext,
     IUniversalRouterItem,
     IUrlParams,
+    IDataLoader,
+    INavigator,
 } from './types';
-import { reload, firstByDefault, replaceWithChild } from './utils';
-import { loader, DataLoader, IDataLoader } from './loader';
 
-import { navigate, INavigateArgument } from './navigate';
-import { IOrder } from '../api/types';
-import { rootStore } from '../stores';
-import { KycList } from 'app/components/layouts/kyc-list';
+import { reload, firstByDefault, replaceWithChild } from './utils';
 
 let defaultAction;
 
-export class Navigation {
-    private readonly l: DataLoader;
-    private readonly n: (params: INavigateArgument) => void;
-
-    public constructor(l: IDataLoader, n: (params: INavigateArgument) => void) {
-        this.l = l;
-        this.n = n;
-    }
-
-    public toSend = () => this.n({ path: '/wallet/send' });
-    public toHistory = (
-        accountAddress: string = '',
-        currencyAddress: string = '',
-    ) => {
-        this.n({ path: '/wallet/history' });
-    };
-    public toConfirmation = () => this.n({ path: '/wallet/send/confirm' });
-    public toSuccess = () => this.n({ path: '/wallet/send/success' });
-    public toMain = () => this.n({ path: '/wallet/accounts' });
-    public to = (path: string) => this.n({ path });
-    public toProfile = (address: string) =>
-        this.n({ path: `/market/profiles/${address}` });
-    public toDeal = (id: string) => this.n({ path: `/market/deals/${id}` });
-    public toDealList = () => this.n({ path: `/market/deals/` });
-    public toDepositSuccess = () =>
-        this.n({ path: `/market/dw/deposit/success` });
-    public toDepositConfirm = () =>
-        this.n({ path: `/market/dw/deposit/confirm` });
-    public toWithdrawSuccess = () =>
-        this.n({ path: `/market/dw/withdraw/success` });
-    public toWithdrawConfirm = () =>
-        this.n({ path: `/market/dw/withdraw/confirm` });
-    public toDWHistory = () => this.n({ path: '/market/dw/history' });
-    public toDeposit = () => this.n({ path: '/market/dw/deposit' });
-    public toWithdraw = () => this.n({ path: '/market/dw/withdraw' });
-    public toOrdersByAddress = (creatorAddress: string) => {
-        this.l.loadOrderList({ creatorAddress });
-        this.n({ path: '/market/orders' });
-    };
-    public toOrder = (orderId: string) =>
-        this.n({ path: `/market/orders/${orderId}` });
-    public toCompleteBuyingOrder = () =>
-        this.n({ path: '/market/orders/complete-buy' });
-    public toSimilarOrders = (orderId: IOrder) => {
-        this.l.loadOrderListByOrder(orderId);
-        this.n({ path: '/market/orders' });
-    };
-    public toFullOrderList = () => {
-        this.l.loadOrderList(Object.prototype);
-        this.n({ path: '/market/orders' });
-    };
-}
-
-export type INavigation = LazyInterface<Navigation>;
-
-const navigation: INavigation = new Navigation(loader, navigate);
-
 export const createRoutes = (
     l: IDataLoader,
-    n: INavigation,
+    n: INavigator,
 ): Array<IUniversalRouterItem> => [
     {
         path: '/',
@@ -118,13 +57,12 @@ export const createRoutes = (
                                 ? params.props.disableAccountSelect
                                 : undefined
                         }
-                        onClickMyProfile={navigateToMyProfile}
+                        navigateToProfile={n.toProfile}
                         breadcrumbs={breadcrumbs}
-                        onNavigate={navigateTo}
                         onExit={reload}
                         path={ctx.pathname}
                         title={params.pageTitle}
-                        headerMenu={headerMenu}
+                        navigator={n}
                         {...params.props}
                     >
                         {params.content}
@@ -224,9 +162,8 @@ export const createRoutes = (
                                     content: (
                                         <Account
                                             initialAddress={params.address}
-                                            onClickHistory={
-                                                navigateToWalletHistory
-                                            }
+                                            onClickHistory={n.toWalletHistory}
+                                            onClickSend={n.toWalletHistory}
                                         />
                                     ),
                                     browserTabTitle: 'Account',
@@ -263,7 +200,7 @@ export const createRoutes = (
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => {
-                                    loader.loadProfileDetails(params.address);
+                                    l.loadProfileDetails(params.address);
 
                                     return {
                                         content: (
@@ -271,7 +208,7 @@ export const createRoutes = (
                                                 onNavigateToOrders={
                                                     n.toOrdersByAddress
                                                 }
-                                                onNavigateToKyc={navigateToKyc}
+                                                onNavigateToKyc={n.toKyc}
                                             />
                                         ),
                                         browserTabTitle: 'Profile',
@@ -295,9 +232,7 @@ export const createRoutes = (
                                         content: (
                                             <Deposit
                                                 isConfirmation={false}
-                                                onNotAvailable={
-                                                    navigation.toMain
-                                                }
+                                                onNotAvailable={n.toMain}
                                                 onSuccess={n.toDepositSuccess}
                                                 onConfirm={n.toDepositConfirm}
                                                 onBack={n.toDepositSuccess}
@@ -325,9 +260,7 @@ export const createRoutes = (
                                                     onConfirm={
                                                         n.toDepositConfirm
                                                     }
-                                                    onBack={
-                                                        navigation.toDeposit
-                                                    }
+                                                    onBack={n.toDeposit}
                                                 />
                                             ),
                                             browserTabTitle: 'Deposit',
@@ -347,7 +280,7 @@ export const createRoutes = (
                                             content: (
                                                 <DepositWithdrawSuccess
                                                     onClickHistory={
-                                                        n.toDWHistory
+                                                        n.toDwHistory
                                                     }
                                                     onClickDeposit={n.toDeposit}
                                                     onClickWithdraw={
@@ -371,9 +304,7 @@ export const createRoutes = (
                                         content: (
                                             <Withdraw
                                                 isConfirmation={false}
-                                                onNotAvailable={
-                                                    navigation.toMain
-                                                }
+                                                onNotAvailable={n.toMain}
                                                 onSuccess={n.toWithdrawSuccess}
                                                 onConfirm={n.toWithdrawConfirm}
                                                 onBack={n.toWithdrawSuccess}
@@ -422,7 +353,7 @@ export const createRoutes = (
                                             content: (
                                                 <DepositWithdrawSuccess
                                                     onClickHistory={
-                                                        n.toDWHistory
+                                                        n.toDwHistory
                                                     }
                                                     onClickDeposit={n.toDeposit}
                                                     onClickWithdraw={
@@ -562,7 +493,3 @@ export const createRoutes = (
         ],
     },
 ];
-
-export const univeralRoutes = createRoutes(loader, navigation);
-
-export default univeralRoutes;

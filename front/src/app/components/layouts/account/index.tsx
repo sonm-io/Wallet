@@ -4,17 +4,18 @@ import { observer } from 'mobx-react';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { Header } from 'app/components/common/header';
 import { IdentIcon } from 'app/components/common/ident-icon';
-import { navigate } from 'app/router';
 import { Button } from 'app/components/common/button';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
 import { Balance } from 'app/components/common/balance-view';
 import { rootStore } from 'app/stores';
+import { TEthereumAddress } from 'app/entities/types';
 
 interface IProps {
     className?: string;
     initialAddress: string;
-    onClickHistory: (fromAddress?: string) => void;
+    onClickHistory: (fromAddress?: TEthereumAddress) => void;
+    onClickSend: (currencyAddress: TEthereumAddress) => void;
 }
 
 enum Dialogs {
@@ -49,12 +50,7 @@ export class Account extends React.Component<IProps, any> {
     protected handleSendClick = (event: any) => {
         const currencyAddress = event.target.name;
 
-        navigate({
-            path: '/wallet/send',
-            query: {
-                currency: currencyAddress,
-            },
-        });
+        this.props.onClickSend(currencyAddress);
     };
 
     protected handleGiveMeMore = async (event: any) => {

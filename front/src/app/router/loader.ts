@@ -1,7 +1,6 @@
 import { rootStore } from 'app/stores';
 import { IOrderFilter } from 'app/stores/order-filter';
 import { IOrder } from 'app/api/types';
-import { LazyInterface } from './types';
 import { TEthereumAddress } from '../entities/types';
 
 const str = (x: any) => (x === undefined ? '' : String(x));
@@ -32,8 +31,18 @@ export class DataLoader {
         });
     }
 
-    public loadWalletHistory() {
-        rootStore.walletHistoryListStore.update();
+    public loadWalletHistory(
+        fromAddress?: TEthereumAddress,
+        currencyAddress?: TEthereumAddress,
+    ) {
+        if (fromAddress || currencyAddress) {
+            rootStore.walletHistoryFilterStore.updateUserInput({
+                fromAddress,
+                currencyAddress,
+            });
+        } else {
+            rootStore.walletHistoryListStore.update();
+        }
     }
 
     public resetKycListState() {
@@ -48,9 +57,3 @@ export class DataLoader {
         rootStore.dwHistoryListStore.update();
     }
 }
-
-export type IDataLoader = LazyInterface<DataLoader>;
-
-export const loader = new DataLoader();
-
-export default loader; // TODO think about The prefix for all singletons
