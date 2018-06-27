@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ProfileView } from './view';
 import rootStore from 'app/stores';
+import { observer } from 'mobx-react';
 
 interface IProps {
     className?: string;
@@ -9,6 +10,7 @@ interface IProps {
 
 const returnFirstArg = (...as: any[]) => String(as[0]);
 
+@observer
 export class Profile extends React.PureComponent<IProps, never> {
     protected handleClickKYC = async () => {
         // TODO redirect to kyc
@@ -42,7 +44,7 @@ export class Profile extends React.PureComponent<IProps, never> {
                 userStatus={profile.status || 0}
                 address={profile.address}
                 onNavigateToOrders={props.onNavigateToOrders}
-                onClickKYC={this.handleClickKYC}
+                onClickKyc={this.handleClickKYC}
             />
         );
     }

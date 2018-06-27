@@ -4,7 +4,7 @@ import { ILocalizator } from 'app/localization';
 const { pending, catchErrors } = OnlineStore;
 import { asyncAction } from 'mobx-utils';
 import { RootStore } from './';
-import { IProfileFull, EnumProfileStatus } from 'app/api/types';
+import { IProfileFull, EnumProfileStatus, IKycValidator } from 'app/api/types';
 import { TEthereumAddress } from '../entities/types';
 
 export interface IOrderDetails {
@@ -69,6 +69,15 @@ export class ProfileDetails extends OnlineStore implements IOrderDetails {
         this.profile = yield this.api.fetchByAddress(this.address);
     }
 
+    public static getValidatorName(
+        validator: IKycValidator | undefined,
+        defaultName: string,
+    ) {
+        return validator !== undefined && validator.name
+            ? validator.name
+            : defaultName;
+    }
+
     @computed
     get certificates(): IKycCertificate[] {
         const validators = this.rootStore.marketStore.validators;
@@ -77,7 +86,10 @@ export class ProfileDetails extends OnlineStore implements IOrderDetails {
             const validator = validators.find(z => z.id === x.address);
 
             return {
-                serviceName: validator !== undefined ? validator.id : x.address,
+                serviceName: ProfileDetails.getValidatorName(
+                    validator,
+                    x.address,
+                ),
                 status: x.status,
             };
         });

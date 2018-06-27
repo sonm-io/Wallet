@@ -30,7 +30,7 @@ interface IProps {
     style?: any;
     onNavigateToOrders: (address: string) => void;
 
-    onClickKYC: () => void;
+    onClickKyc: () => void;
 }
 
 export class ProfileView extends React.PureComponent<IProps, never> {
