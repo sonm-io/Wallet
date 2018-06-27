@@ -3,9 +3,8 @@ import * as cn from 'classnames';
 import { TFnGetUiText } from 'app/components/common/localized-pure-component';
 import { Details, IProfileDefinition } from './sub/details';
 import { Statistic } from './sub/statistic';
-import { KYC } from './sub/kyc';
 import { ICertificateProps } from './sub/certificate';
-// import { CertificatesPanel } from './sub/certificates-panel';
+import { CertificatesPanel } from './sub/certificates-panel';
 import { Panel } from 'app/components/common/panel';
 import { EnumProfileStatus } from 'app/api/types';
 import { Button } from 'app/components/common/button';
@@ -31,9 +30,7 @@ interface IProps {
     style?: any;
     onNavigateToOrders: (address: string) => void;
 
-    onClickKYC: () => void;
-    onCloseKYC: () => void;
-    showDialogKYC: boolean;
+    onClickKyc: () => void;
 }
 
 export class ProfileView extends React.PureComponent<IProps, never> {
@@ -68,31 +65,13 @@ export class ProfileView extends React.PureComponent<IProps, never> {
                     ) : null}
                 </div>
                 <div className="sonm-profile__column">
-                    {p.showDialogKYC ? (
-                        <KYC onClose={p.onCloseKYC} address={p.address} />
-                    ) : null}
-                    {p.description ? (
-                        <Panel
-                            key="desc"
+                    {p.certificates.length > 0 ? (
+                        <CertificatesPanel
                             className="sonm-profile__panel"
-                            title="Description"
-                        >
-                            {p.description}
-                        </Panel>
+                            certificates={p.certificates}
+                            my={p.my}
+                        />
                     ) : null}
-                    {p.my ? (
-                        <Button
-                            className="sonm-profile__kyc"
-                            onClick={p.onClickKYC}
-                        >
-                            Pass certification
-                        </Button>
-                    ) : null}
-                    {/*<CertificatesPanel*/}
-                    {/*className="sonm-profile__panel"*/}
-                    {/*certificates={p.certificates}*/}
-                    {/*my={p.my}*/}
-                    {/*/>*/}
                     <Statistic
                         className="sonm-profile__panel"
                         consumerDeals={p.consumerDeals}

@@ -1,6 +1,7 @@
 import { rootStore } from 'app/stores';
 import { IOrderFilter } from 'app/stores/order-filter';
 import { IOrder } from 'app/api/types';
+import { TEthereumAddress } from '../entities/types';
 
 const str = (x: any) => (x === undefined ? '' : String(x));
 
@@ -30,8 +31,12 @@ class DataLoader {
         });
     }
 
-    public loadWalletHistory(fromAddress?: string) {
+    public loadWalletHistory(fromAddress?: TEthereumAddress) {
         rootStore.walletHistoryFilterStore.setUserInput({ fromAddress });
+    }
+
+    public loadProfileDetails(address: TEthereumAddress) {
+        rootStore.profileDetailsStore.setAddress(address);
     }
 }
 

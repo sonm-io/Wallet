@@ -278,18 +278,21 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 action: async (
                                     ctx: IContext,
                                     params: IUrlParams,
-                                ) => ({
-                                    content: (
-                                        <Profile
-                                            address={params.address}
-                                            onNavigateToOrders={
-                                                navigateToOrdersByAddress
-                                            }
-                                        />
-                                    ),
-                                    browserTabTitle: 'Profile',
-                                    pageTitle: 'Profile',
-                                }),
+                                ) => {
+                                    loader.loadProfileDetails(params.address);
+
+                                    return {
+                                        content: (
+                                            <Profile
+                                                onNavigateToOrders={
+                                                    navigateToOrdersByAddress
+                                                }
+                                            />
+                                        ),
+                                        browserTabTitle: 'Profile',
+                                        pageTitle: 'Profile',
+                                    };
+                                },
                             },
                         ],
                     },

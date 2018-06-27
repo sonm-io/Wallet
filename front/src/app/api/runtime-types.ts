@@ -13,6 +13,7 @@ import {
     IOrderParams,
     IAccountBrief,
     IBenchmarkMap,
+    ICertificate,
     IKycValidator,
     IWorker,
 } from './types';
@@ -77,6 +78,14 @@ export const TypeAttribute = createStruct<IAttribute>(
     'IAttribute',
 );
 
+export const TypeCertifcate = createStruct<ICertificate>(
+    {
+        address: TypeEthereumAddress,
+        status: t.Number,
+    },
+    'ICertificate',
+);
+
 export const TypeProfileFull = createStruct<IProfileFull>(
     {
         attributes: t.list(TypeAttribute),
@@ -89,6 +98,7 @@ export const TypeProfileFull = createStruct<IProfileFull>(
         country: t.String,
         logoUrl: t.String,
         description: t.String,
+        certificates: t.list(TypeCertifcate),
     },
     'IProfileFull',
 );
