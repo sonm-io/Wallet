@@ -1,11 +1,15 @@
-ProfileStatus:
+ProfileStatus
 
-    <ProfileStatus status={0} />
+```js
+const { EnumProfileStatus } = require('app/api/types');
 
-ProfileStatus:
+const keysCount = Object.keys(EnumProfileStatus).length / 2; // this is specific to typescript Enums.
 
-    <ProfileStatus status={1} />
-
-ProfileStatus:
-
-    <ProfileStatus status={2} />
+<React.Fragment>
+    {Array.from(Array(keysCount).keys()).map(i => (
+        <div>
+            <ProfileStatus status={i} /> (key={EnumProfileStatus[i]})
+        </div>
+    ))}
+</React.Fragment>;
+```

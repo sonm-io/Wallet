@@ -14,6 +14,7 @@ interface IProps {
     title?: string;
     headerMenu: Array<TMenuItem>;
     disableAccountSelect?: boolean;
+    onClickMyProfile: () => void;
 }
 
 @observer
@@ -57,6 +58,7 @@ export class App extends React.Component<IProps, never> {
                 title={p.title}
                 headerMenu={p.headerMenu}
                 disableAccountSelect={p.disableAccountSelect}
+                onClickMyProfile={p.onClickMyProfile}
             >
                 {p.children}
             </AppView>

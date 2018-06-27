@@ -13,4 +13,3 @@ certificate:
 certificate:
 
     <Certificate status={4} service="First KYC" />
-

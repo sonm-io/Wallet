@@ -5,6 +5,7 @@ import { MarketAccountSelect, IAccount } from '../account-select';
 import { AppBalance } from '../balance';
 export { IAccount } from '../account-select';
 import { IMarketStats } from 'app/api/types';
+import { MyProfileLink } from '../my-profile-link';
 
 export interface IAppHeaderProps {
     className?: string;
@@ -22,6 +23,7 @@ export interface IAppHeaderProps {
     marketBalance: string;
     menu: Array<TMenuItem>;
     disableAccountSelect?: boolean;
+    onClickMyProfile: () => void;
 }
 
 export class AppHeader extends React.Component<IAppHeaderProps, any> {
@@ -47,6 +49,7 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                     topMenuActiveItem={p.hasMarketAccountSelect ? 1 : 0}
                     items={p.menu}
                 />
+                <MyProfileLink onClick={this.props.onClickMyProfile} />
                 {p.account && p.hasMarketAccountSelect ? (
                     <MarketAccountSelect
                         disabled={p.disableAccountSelect}

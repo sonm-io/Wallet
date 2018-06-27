@@ -895,7 +895,7 @@ class Api {
         ) {
             return this.getMethod(
                 'getKYCLink',
-                [parseInt(data.fee, 10), data.kycAddress],
+                [data.fee, data.kycAddress],
                 true,
             )(data);
         } else {

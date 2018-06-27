@@ -6,16 +6,13 @@ import { observer } from 'mobx-react';
 interface IProps {
     className?: string;
     onNavigateToOrders: (address: string) => void;
+    onNavigateToKyc: () => void;
 }
 
 const returnFirstArg = (...as: any[]) => String(as[0]);
 
 @observer
 export class Profile extends React.PureComponent<IProps, never> {
-    protected handleClickKYC = async () => {
-        // TODO redirect to kyc
-    };
-
     public render() {
         const props = this.props;
         const store = rootStore.profileDetailsStore;
@@ -44,7 +41,7 @@ export class Profile extends React.PureComponent<IProps, never> {
                 userStatus={profile.status || 0}
                 address={profile.address}
                 onNavigateToOrders={props.onNavigateToOrders}
-                onClickKyc={this.handleClickKYC}
+                onClickKYC={this.props.onNavigateToKyc}
             />
         );
     }

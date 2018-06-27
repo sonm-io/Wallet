@@ -32,6 +32,7 @@ import { loader } from './loader';
 import { navigate } from './navigate';
 import { IOrder } from '../api/types';
 import { rootStore } from '../stores';
+import { KycList } from 'app/components/layouts/kyc-list';
 
 let defaultAction;
 
@@ -84,6 +85,13 @@ const navigateToFullOrderList = () => {
     loader.loadOrderList(Object.prototype);
     navigate({ path: '/market/orders' });
 };
+const navigateToMyProfile = () => {
+    navigateToProfile(rootStore.marketStore.marketAccountAddress);
+};
+const navigateToKyc = () => {
+    loader.resetKycListState();
+    navigateTo('/market/kyc');
+};
 
 const headerMenu: Array<TMenuItem> = [
     [
@@ -132,6 +140,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 ? params.props.disableAccountSelect
                                 : undefined
                         }
+                        onClickMyProfile={navigateToMyProfile}
                         breadcrumbs={breadcrumbs}
                         onExit={reload}
                         path={ctx.pathname}
@@ -287,6 +296,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                                 onNavigateToOrders={
                                                     navigateToOrdersByAddress
                                                 }
+                                                onNavigateToKyc={navigateToKyc}
                                             />
                                         ),
                                         browserTabTitle: 'Profile',
@@ -575,6 +585,15 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                             browserTabTitle: 'Workers',
                             pageTitle: 'Workers',
                             content: <WorkerList />,
+                        }),
+                    },
+                    {
+                        path: '/kyc',
+                        breadcrumbTitle: 'KYC providers',
+                        action: async (ctx: IContext, params: IUrlParams) => ({
+                            browserTabTitle: 'KYC providers',
+                            pageTitle: 'KYC providers',
+                            content: <KycList />,
                         }),
                     },
                 ],

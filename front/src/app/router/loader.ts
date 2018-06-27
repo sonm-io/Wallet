@@ -35,6 +35,10 @@ class DataLoader {
         rootStore.walletHistoryFilterStore.setUserInput({ fromAddress });
     }
 
+    public resetKycListState() {
+        rootStore.kycListStore.reset();
+    }
+
     public loadProfileDetails(address: TEthereumAddress) {
         rootStore.profileDetailsStore.setAddress(address);
     }
