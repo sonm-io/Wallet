@@ -1,4 +1,5 @@
 .kyc-list-item {
+    // grid layout
     display: grid;
     grid-template-areas:
         'icon  title   title   title'
@@ -9,7 +10,9 @@
     grid-template-columns: 195px repeat(3, auto);
     grid-column-gap: 33px;
 
+    // other styles
     padding: 30px;
+    cursor: pointer;
 
     &:hover,
     &--selected {

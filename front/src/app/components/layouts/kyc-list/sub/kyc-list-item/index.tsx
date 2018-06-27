@@ -47,7 +47,7 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
         const p = this.props;
         const v = p.validator;
         return (
-            <a
+            <div
                 className={cn('kyc-list-item', p.className, {
                     'kyc-list-item--selected': this.props.isSelected,
                 })}
@@ -83,7 +83,7 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                 ) : (
                     <span className="kyc-list-item__line" />
                 )}
-            </a>
+            </div>
         );
     }
 }
