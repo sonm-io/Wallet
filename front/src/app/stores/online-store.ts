@@ -119,13 +119,8 @@ export class OnlineStore {
                 return await method.apply(store, args);
             } catch (err) {
                 if (typeof err !== 'string') {
-                    console.error(
-                        `Unexpected exception from wallet API; Exception ${err}`,
-                    );
+                    console.error(`Unexpected exception from wallet API`, err);
                 }
-
-                console.error(err);
-                debugger;
 
                 store.handleError(
                     new WalletApiError(

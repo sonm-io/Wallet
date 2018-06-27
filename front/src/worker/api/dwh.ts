@@ -407,7 +407,7 @@ export class DWH {
         const attrMap = {} as any;
 
         try {
-            JSON.parse(window.atob(data)).map((x: any) => {
+            JSON.parse(self.atob(data)).map((x: any) => {
                 if (x.attribute in DWH.mapKycAttributes) {
                     const [label, converter] = DWH.mapKycAttributes[
                         x.attribute
