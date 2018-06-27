@@ -41,7 +41,7 @@ export class Profile extends React.PureComponent<IProps, never> {
                 userStatus={profile.status || 0}
                 address={profile.address}
                 onNavigateToOrders={props.onNavigateToOrders}
-                onClickKYC={this.props.onNavigateToKyc}
+                onNavigateToKyc={this.props.onNavigateToKyc}
             />
         );
     }

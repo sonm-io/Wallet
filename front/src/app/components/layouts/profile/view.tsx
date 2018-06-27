@@ -29,7 +29,7 @@ interface IProps {
     address: string;
     style?: any;
     onNavigateToOrders: (address: string) => void;
-    onClickKYC: () => void;
+    onNavigateToKyc: () => void;
 }
 
 export class ProfileView extends React.PureComponent<IProps, never> {
@@ -69,6 +69,7 @@ export class ProfileView extends React.PureComponent<IProps, never> {
                             className="sonm-profile__panel"
                             certificates={p.certificates}
                             my={p.my}
+                            onNavigateToKyc={p.onNavigateToKyc}
                         />
                     ) : null}
                     <Statistic
