@@ -244,7 +244,7 @@ export class DWH {
             ],
             counterpartyID: [
                 '0x0000000000000000000000000000000000000000',
-                get('creator.address.$eq', mongoLikeQuery),
+                get('profileAddress.$eq', mongoLikeQuery),
             ],
         };
 
