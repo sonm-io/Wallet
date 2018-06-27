@@ -46,6 +46,7 @@ export class KycLinkPanel extends React.Component<IKycLinkPanelProps, never> {
                 <div className="kyc-link-panel__input-wrapper">
                     <input
                         className="kyc-link-panel__input"
+                        readOnly
                         value={this.props.value}
                     />
                 </div>
