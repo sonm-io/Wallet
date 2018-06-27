@@ -16,7 +16,7 @@ const Status = ({ status }: any) => (
 const Price = ({ price }: any) => (
     <div className="kyc-list-item__price">
         <div className="kyc-list-item__label">Price</div>
-        <Balance balance={price} decimalPointOffset={0} symbol="USD" />
+        <Balance balance={price} decimalPointOffset={18} symbol="SNM" />
     </div>
 );
 
