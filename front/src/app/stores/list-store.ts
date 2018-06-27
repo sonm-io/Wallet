@@ -68,10 +68,12 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
     constructor(
         stores: IReactiveDependecies,
         services: IListStoreServices<TItem>,
+        allowFetch: boolean = false,
     ) {
         super(services);
 
         this.services = services;
+        this.allowFetch = allowFetch;
 
         autorun(() => {
             if (this.allowFetch && stores.filter.filterAsString) {
@@ -82,7 +84,7 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         });
     }
 
-    protected allowFetch = false;
+    protected allowFetch: boolean;
 
     protected services: IListStoreServices<TItem>;
 

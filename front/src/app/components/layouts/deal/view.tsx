@@ -3,7 +3,6 @@ import * as cn from 'classnames';
 import { IAccountBrief, IBenchmarkMap } from 'app/api/types';
 import { Benchmark } from 'app/components/common/benchmark';
 import { PropertyList } from 'app/components/common/property-list';
-import * as moment from 'moment';
 import { ProfileBrief } from 'app/components/common/profile-brief';
 import { Button } from 'app/components/common/button';
 import { Balance } from 'app/components/common/balance-view';
@@ -11,6 +10,8 @@ import { Checkbox } from 'app/components/common/checkbox';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 import { ITogglerChangeParams } from '../../common/toggler';
+import * as moment from 'moment';
+import 'moment-duration-format';
 
 interface IProps {
     className?: string;
@@ -70,7 +71,14 @@ export class DealView extends React.Component<IProps, never> {
         {
             name: 'Time left',
             key: 'timeLeft',
-            render: (value: any) => (value ? `${value} hours` : '---'),
+            render: (value: any) =>
+                value
+                    ? moment
+                          .duration(value, 'seconds')
+                          .format('d [days], h [hours], m [minutes]', {
+                              trim: 'all',
+                          }) + 'left'
+                    : '---',
         },
         {
             name: 'Type',

@@ -25,7 +25,10 @@ export class Deal extends React.Component<IProps, IState> {
     public componentDidMount() {
         const dealDetailsStore = rootStore.dealDetailsStore;
 
-        dealDetailsStore.updateUserInput({ dealId: this.props.id });
+        dealDetailsStore.updateUserInput({
+            dealId: this.props.id,
+            isBlacklisted: false,
+        });
         dealDetailsStore.fetchData();
     }
 
