@@ -14,6 +14,10 @@ interface IProps {
 
 @observer
 export class OrderList extends React.Component<IProps, never> {
+    public componentDidMount() {
+        store.update();
+    }
+
     protected handleChangeLimit = (limit: number) => {
         store.updateUserInput({ limit });
     };

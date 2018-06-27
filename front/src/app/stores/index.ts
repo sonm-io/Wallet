@@ -76,11 +76,13 @@ export class RootStore implements IHasLocalizator {
                 errorProcessor: this.uiStore,
                 api: Api.history,
             },
+            true,
         );
 
         this.dwHistoryFilterStore = new HistoryFilterStore(
             EnumHistorySourceMode.market,
         );
+
         this.dwHistoryListStore = new HistoryListStore(
             {
                 filter: this.dwHistoryFilterStore,
@@ -90,6 +92,7 @@ export class RootStore implements IHasLocalizator {
                 errorProcessor: this.uiStore,
                 api: Api.history,
             },
+            true,
         );
 
         this.mainStore = new MainStore(this, { localizator: this.localizator });

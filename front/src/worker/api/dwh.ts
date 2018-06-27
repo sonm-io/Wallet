@@ -318,7 +318,7 @@ export class DWH {
                 Math.round(benchmarks.values[6] / (1024 * 1024)) || 0,
             gpuCount: benchmarks.values[7] || 0,
             gpuRamSize: Math.round(benchmarks.values[8] / (1024 * 1024)) || 0,
-            ethHashrate: benchmarks.values[9] || 0,
+            ethHashrate: Math.round(benchmarks.values[9] / (1024 * 1024)) || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
@@ -334,7 +334,7 @@ export class DWH {
 
         order.benchmarkMap = DWH.parseBenchmarks(
             item.order.benchmarks,
-            item.order.netflags,
+            item.order.netflags.flags,
         );
         order.duration = order.duration ? DWH.parseDuration(order.duration) : 0;
         order.price = DWH.recalculatePriceIn(order.price);
@@ -353,7 +353,7 @@ export class DWH {
     }
 
     public static parseDuration(duration: number) {
-        return Math.round((100 * duration) / 3600) / 100;
+        return duration;
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
@@ -468,9 +468,7 @@ export class DWH {
 
         const now = moment().unix();
         deal.timeLeft =
-            deal.endTime && now < deal.endTime
-                ? Math.round((deal.endTime - now) / 3600)
-                : 0;
+            deal.endTime && now < deal.endTime ? deal.endTime - now : 0;
 
         return deal;
     }

@@ -10,6 +10,8 @@ import {
 } from 'app/components/common/property-list';
 import { IBenchmarkMap } from '../../../api';
 import Icon from '../icon';
+import * as moment from 'moment';
+import 'moment-duration-format';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     protected handleClick = (event: any) => {
@@ -132,7 +134,11 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                             }}
                             className="orders-list-item__duration"
                         >
-                            {this.props.order.duration} hour(s)
+                            {moment
+                                .duration(this.props.order.duration, 'seconds')
+                                .format('d [days], h [hours], m [minutes]', {
+                                    trim: 'all',
+                                })}
                         </div>
                     ) : null}
                 </div>
