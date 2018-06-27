@@ -28,12 +28,12 @@ export class Profile extends React.PureComponent<IProps, never> {
                 className={props.className}
                 definitionList={profile.attributes}
                 description={profile.description}
-                consumerDeals="0"
-                consumerAvgTime="1"
-                consumerToken="2"
-                supplierDeals="3"
-                supplierAvgTime="4"
-                supplierToken="5"
+                consumerDeals="--"
+                consumerAvgTime="--"
+                consumerToken="--"
+                supplierDeals="--"
+                supplierAvgTime="--"
+                supplierToken="--"
                 my={
                     profile.address.toLowerCase() ===
                     rootStore.marketStore.marketAccountAddress.toLowerCase()

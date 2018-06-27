@@ -128,7 +128,7 @@ class Api {
             'account.requestTestTokens': this.requestTestTokens,
             'account.getPrivateKey': this.getPrivateKey,
 
-            'transaction.list': wrapInResponse(this.getTransactionList2),
+            'transaction.list': wrapInResponse(this.getTransactionList),
 
             'profile.get': wrapInResponse(dwh.getProfileFull),
             'profile.list': wrapInResponse(dwh.getProfiles),
@@ -1243,73 +1243,10 @@ class Api {
 
     public getTransactionList = async (
         data: t.IPayload,
-    ): Promise<t.IResponse> => {
-        let { filters, limit, offset, source } = data;
-
-        filters = filters || {};
-        limit = limit || 10;
-        offset = offset || 0;
-        source = source || 'wallet';
-
-        let filtered = [];
-        for (const item of this.storage.transactions) {
-            const sidechainAction = item.fromAddress === item.toAddress;
-
-            let ok = true;
-
-            // filter transaction by source
-            if (source === 'wallet' && sidechainAction) {
-                ok = false;
-            } else if (source === 'market' && !sidechainAction) {
-                ok = false;
-            }
-
-            if (Object.keys(filters).length) {
-                for (const type of ['fromAddress', 'currencyAddress']) {
-                    if (filters[type] && item[type] !== filters[type]) {
-                        ok = false;
-                    }
-                }
-
-                if (
-                    filters.query &&
-                    !item.toAddress.includes(filters.query) &&
-                    !item.hash.includes(filters.query)
-                ) {
-                    ok = false;
-                }
-
-                if (filters.timeStart && item.timestamp < filters.timeStart) {
-                    ok = false;
-                }
-
-                if (filters.timeEnd && item.timestamp > filters.timeEnd) {
-                    ok = false;
-                }
-
-                if (filters.operation && item.action !== filters.operation) {
-                    ok = false;
-                }
-            }
-
-            if (ok === true) {
-                filtered.push(item);
-            }
-        }
-
-        const total = filtered.length;
-        filtered = filtered.slice(offset, offset + limit);
-
-        return {
-            data: [filtered, total],
-        };
-    };
-
-    public getTransactionList2 = async (
-        data: t.IPayload,
     ): Promise<t.IListResult<t.ISendTransactionResult>> => {
         let { filter, limit, offset } = data;
         filter = filter ? JSON.parse(filter) : {};
+
         limit = limit || 10;
         offset = offset || 0;
         filter.source = filter.source || 'wallet';
