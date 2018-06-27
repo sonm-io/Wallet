@@ -72,6 +72,7 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                     ) : (
                         <ConfirmationPanel
                             className="kyc-list-item__bottom"
+                            showCloseButton
                             labelHeader="Please, enter account password."
                             labelDescription=""
                             onSubmit={this.handleSubmitPassword}

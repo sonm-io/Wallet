@@ -34,7 +34,7 @@ const state = observable({
     handleSubmitPassword: action.bound(function(itemIndex, password) {
         const dataItem = {};
         if (password === correctPassword) {
-            dataItem.kycLink = 'https://link/to/service';
+            dataItem.kycLink = '/link/to/service';
         } else {
             dataItem.validationMessage = 'Invalid password.';
         }
