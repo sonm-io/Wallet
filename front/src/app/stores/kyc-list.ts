@@ -3,6 +3,7 @@ import { observable, action, computed } from 'mobx';
 import { IKycValidator } from 'app/api';
 import { RootStore } from 'app/stores';
 import { asyncAction } from 'mobx-utils';
+const { pending, catchErrors } = OnlineStore;
 
 export interface IKycDataItem {
     kycLink?: string;
@@ -94,6 +95,8 @@ export class KycListStore extends OnlineStore implements IKycListInput {
         this.clearValidationMessage();
     }
 
+    @pending
+    @catchErrors({ restart: false })
     @asyncAction
     public *fetchKycLink(itemIndex: number, password: string) {
         const target = this.externalStores.market.validators[itemIndex];
