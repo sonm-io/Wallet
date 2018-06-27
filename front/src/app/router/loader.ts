@@ -33,6 +33,10 @@ class DataLoader {
     public loadWalletHistory(fromAddress?: string) {
         rootStore.walletHistoryFilterStore.setUserInput({ fromAddress });
     }
+
+    public resetKycListState() {
+        rootStore.kycListStore.reset();
+    }
 }
 
 export const loader = new DataLoader();

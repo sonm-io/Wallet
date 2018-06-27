@@ -35,11 +35,13 @@ export class KycListStore extends OnlineStore implements IKycListInput {
     protected rootStore: RootStore;
     protected externalStores: IKycListStoreExternal;
 
-    @observable
-    protected userInput: IKycListInput = {
+    protected static defaultUserInput: IKycListInput = {
         data: {},
         selectedIndex: undefined,
     };
+
+    @observable
+    protected userInput: IKycListInput = { ...KycListStore.defaultUserInput };
 
     constructor(
         rootStore: RootStore,
@@ -82,6 +84,11 @@ export class KycListStore extends OnlineStore implements IKycListInput {
     };
 
     @action.bound
+    public reset() {
+        this.userInput = { ...KycListStore.defaultUserInput };
+    }
+
+    @action.bound
     public select(index: number) {
         if (this.selectedIndex !== index) {
             this.clearValidationMessage();
@@ -107,7 +114,9 @@ export class KycListStore extends OnlineStore implements IKycListInput {
 
     @computed
     public get validators() {
-        return this.externalStores.market.validators;
+        return this.externalStores.market.validators.filter(
+            i => i.id === '0xF9c176c276dC8C04ee9f01166F70Fd238e5a16Cf',
+        );
     }
 
     @computed

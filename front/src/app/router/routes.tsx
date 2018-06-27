@@ -89,6 +89,7 @@ const navigateToMyProfile = () => {
     navigateToProfile(rootStore.marketStore.marketAccountAddress);
 };
 const navigateToKyc = () => {
+    loader.resetKycListState();
     navigateTo('/market/kyc');
 };
 
