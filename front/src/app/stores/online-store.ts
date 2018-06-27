@@ -117,19 +117,15 @@ export class OnlineStore {
 
             try {
                 return await method.apply(store, args);
-            } catch (errorStringCode) {
-                if (typeof errorStringCode !== 'string') {
-                    alert(
-                        `Unexpected exception from wallet API; Exception ${errorStringCode}`,
-                    );
+            } catch (err) {
+                if (typeof err !== 'string') {
+                    console.error(`Unexpected exception from wallet API`, err);
                 }
 
                 store.handleError(
                     new WalletApiError(
-                        errorStringCode,
-                        store.services.localizator.getMessageText(
-                            errorStringCode,
-                        ),
+                        err,
+                        store.services.localizator.getMessageText(err),
                         store,
                         descriptor.value,
                         args,

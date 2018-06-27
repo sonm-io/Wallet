@@ -98,7 +98,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
 
         return (
             <div
-                {...{ 'data-display-id': `dropdown` }}
+                data-display-id="dropdown"
                 className={cn(
                     this.props.className,
                     s.root,
@@ -110,6 +110,7 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
                 ref={this.saveRef}
             >
                 <button
+                    data-display-id="dropdown-button"
                     type="button"
                     className={cn(s.button)}
                     onClick={this.props.onButtonClick}
