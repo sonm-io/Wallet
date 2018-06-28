@@ -29,20 +29,21 @@ export class WorkerListView extends React.PureComponent<IProps, any> {
     protected columns: Array<ColumnProps<IWorker>> = [
         {
             className: 'sonm-workers-list-cell__account',
-            dataIndex: 'address',
+            dataIndex: 'slaveId',
             title: 'Account',
             render: (address: string, record: IWorker) => {
                 return (
                     <ProfileBrief
                         profile={{ address: record.slaveId, status: 0 }}
                         showBalances={false}
+                        key={record.slaveId}
                     />
                 );
             },
         },
         {
             className: 'sonm-workers-list-cell__buttons',
-            dataIndex: 'address',
+            dataIndex: 'button',
             title: '',
             render: (address: string, record: IWorker) => {
                 return !record.confirmed ? (

@@ -58,8 +58,8 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
     public static readonly headerProps = {
         orderKeys: {
             redshiftGPU: 'Redshift Benchmark',
-            ethHashrate: 'ETH hashrate',
-            zcashHashrate: 'ZCash hashrate',
+            ethHashrate: 'GPU Ethash',
+            zcashHashrate: 'GPU Equihash',
             price: 'Price',
             duration: 'Duration',
         },

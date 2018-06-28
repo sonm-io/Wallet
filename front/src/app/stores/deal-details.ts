@@ -125,7 +125,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @asyncAction
     public *setDealId(dealId: string) {
         if (this.dealId !== dealId) {
-            this.deal = yield this.api.fetchById(this.dealId);
+            this.deal = yield this.api.fetchById(dealId);
         }
     }
 

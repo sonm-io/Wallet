@@ -13,6 +13,7 @@ import {
 import Input from 'antd/es/input';
 import { Toggler, ITogglerChangeParams } from 'app/components/common/toggler';
 import DealFilterStore from 'app/stores/deal-filter';
+import formatSeconds from 'app/utils/format-seconds';
 import * as moment from 'moment';
 
 class DealTable extends Table<IDeal> {}
@@ -110,9 +111,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                             key="3"
                             className="sonm-deals-list-cell__price--green"
                         >
-                            {moment().to(
-                                moment().add(record.timeLeft, 'seconds'),
-                            )}
+                            {formatSeconds(record.timeLeft)} left
                         </div>
                     ) : null,
                 ];

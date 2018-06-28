@@ -48,11 +48,14 @@ export class Deal extends React.Component<IProps, IState> {
         this.setState({
             showConfirmationPanel: false,
         });
+
+        rootStore.dealDetailsStore.updateUserInput({
+            isBlacklisted: false,
+        });
     };
 
     public render() {
-        const dealDetailsStore = rootStore.dealDetailsStore;
-        const deal = dealDetailsStore.deal;
+        const deal = rootStore.dealDetailsStore.deal;
         const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
         const isOwner =
             deal.supplier.address.toLowerCase() === marketAccount ||
@@ -86,7 +89,7 @@ export class Deal extends React.Component<IProps, IState> {
                 validationPassword={
                     rootStore.dealDetailsStore.validationPassword
                 }
-                isBlacklisted={dealDetailsStore.isBlacklisted}
+                isBlacklisted={rootStore.dealDetailsStore.isBlacklisted}
                 onChangeCheckbox={this.handleChangeCheckbox}
             />
         );

@@ -10,7 +10,7 @@ import {
 } from 'app/components/common/property-list';
 import { IBenchmarkMap } from '../../../api';
 import Icon from '../icon';
-import * as moment from 'moment';
+import formatSeconds from 'app/utils/format-seconds';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     protected handleClick = (event: any) => {
@@ -69,7 +69,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                         : `${value} units`,
         },
         {
-            name: 'Etherium HashRate',
+            name: 'GPU Ethash',
             key: 'ethHashrate',
             render: (value: number) =>
                 value === 0 ? OrdersListItem.dash : `${value} MH/s`,
@@ -87,7 +87,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 value === 0 ? OrdersListItem.dash : `${value} Mb`,
         },
         {
-            name: 'ZCash hashrate',
+            name: 'GPU Equihash',
             key: 'zcashHashrate',
             render: (value: number) =>
                 value === 0 ? OrdersListItem.dash : `${value} sol/s`,
@@ -131,12 +131,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                             data-display-id="orders-list-item-duration"
                             className="orders-list-item__duration"
                         >
-                            {moment().to(
-                                moment().add(
-                                    this.props.order.duration,
-                                    'seconds',
-                                ),
-                            )}
+                            {formatSeconds(this.props.order.duration)}
                         </div>
                     ) : null}
                 </div>

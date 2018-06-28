@@ -8,7 +8,9 @@ import {
 } from 'app/components/common/property-list';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel/index';
 import { Balance } from 'app/components/common/balance-view/index';
-import * as moment from 'moment';
+import formatSeconds from 'app/utils/format-seconds';
+import { EnumOrderType } from '../../../api/types';
+import { EnumOrderStatus } from '../../../api';
 
 interface IProps {
     className?: string;
@@ -26,20 +28,21 @@ export class OrderView extends React.Component<IProps, never> {
             name: 'ID',
         },
         {
-            key: 'orderType',
-            name: 'Side',
-        },
-        {
             key: 'duration',
             name: 'Duration',
-            render: (seconds: string) =>
-                moment().to(moment().add(seconds, 'seconds')),
+            render: (seconds: number) => formatSeconds(seconds),
+        },
+        {
+            key: 'orderType',
+            name: 'Type',
+            render: (orderType: number) =>
+                orderType === EnumOrderType.bid ? 'Sell' : 'Buy',
         },
         {
             key: 'orderStatus',
             name: 'Status',
-            // TODO order status component
-            render: (status: string) => status,
+            render: (status: number) =>
+                status === EnumOrderStatus.active ? 'Active' : 'Not Active',
         },
     ];
 

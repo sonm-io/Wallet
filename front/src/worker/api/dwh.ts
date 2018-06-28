@@ -318,7 +318,9 @@ export class DWH {
                 Math.round(benchmarks.values[6] / (1024 * 1024)) || 0,
             gpuCount: benchmarks.values[7] || 0,
             gpuRamSize: Math.round(benchmarks.values[8] / (1024 * 1024)) || 0,
-            ethHashrate: Math.round(benchmarks.values[9] / (1024 * 1024)) || 0,
+            ethHashrate:
+                Math.round((100 * benchmarks.values[9]) / (1024 * 1024)) /
+                    100 || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
