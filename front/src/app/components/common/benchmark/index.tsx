@@ -69,7 +69,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         },
         {
             key: 'ethHashrate',
-            name: 'Ethereum HashRate',
+            name: 'GPU Ethash',
             render: value => `${value} MH/s`,
         },
         {
@@ -99,7 +99,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         },
         {
             key: 'zcashHashrate',
-            name: 'ZCash hashrate',
+            name: 'GPU Equihash',
             render: value => `${value} h/sol`,
         },
         {

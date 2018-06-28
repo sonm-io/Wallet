@@ -69,7 +69,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                         : `${value} units`,
         },
         {
-            name: 'Etherium HashRate',
+            name: 'GPU Ethash',
             key: 'ethHashrate',
             render: (value: number) =>
                 value === 0 ? OrdersListItem.dash : `${value} MH/s`,
@@ -87,7 +87,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 value === 0 ? OrdersListItem.dash : `${value} Mb`,
         },
         {
-            name: 'ZCash hashrate',
+            name: 'GPU Equihash',
             key: 'zcashHashrate',
             render: (value: number) =>
                 value === 0 ? OrdersListItem.dash : `${value} sol/s`,
