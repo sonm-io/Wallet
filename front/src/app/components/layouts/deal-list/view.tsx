@@ -13,8 +13,8 @@ import {
 import Input from 'antd/es/input';
 import { Toggler, ITogglerChangeParams } from 'app/components/common/toggler';
 import DealFilterStore from 'app/stores/deal-filter';
+import formatSeconds from 'app/utils/format-seconds';
 import * as moment from 'moment';
-import 'moment-duration-format';
 
 class DealTable extends Table<IDeal> {}
 
@@ -111,16 +111,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
                             key="3"
                             className="sonm-deals-list-cell__price--green"
                         >
-                            {moment
-                                .duration(record.timeLeft, 'seconds')
-                                .format(
-                                    'd [days], h [hours], m [minutes], s [seconds]',
-                                    {
-                                        largest: 2,
-                                        trim: 'all',
-                                    },
-                                )}{' '}
-                            left
+                            {formatSeconds(record.timeLeft)} left
                         </div>
                     ) : null,
                 ];

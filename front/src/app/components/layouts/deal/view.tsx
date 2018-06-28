@@ -11,7 +11,7 @@ import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 import { ITogglerChangeParams } from '../../common/toggler';
 import * as moment from 'moment';
-import 'moment-duration-format';
+import formatSeconds from 'app/utils/format-seconds';
 
 interface IProps {
     className?: string;
@@ -71,14 +71,7 @@ export class DealView extends React.Component<IProps, never> {
         {
             name: 'Time left',
             key: 'timeLeft',
-            render: (value: any) =>
-                value
-                    ? moment
-                          .duration(value, 'seconds')
-                          .format('d [days], h [hours], m [minutes]', {
-                              trim: 'all',
-                          }) + 'left'
-                    : '---',
+            render: (value: number) => (value ? `${value} left` : '---'),
         },
         {
             name: 'Type',
@@ -183,7 +176,7 @@ export class DealView extends React.Component<IProps, never> {
                         <div className="sonm-deal__duration">
                             {p.duration ? (
                                 <React.Fragment>
-                                    {p.duration} hour(s)
+                                    {formatSeconds(p.duration)}
                                 </React.Fragment>
                             ) : null}
                         </div>
