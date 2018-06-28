@@ -16,10 +16,7 @@ export class Navigator implements INavigator {
     }
 
     public toSend = () => this.n({ path: '/wallet/send' });
-    public toHistory = (
-        accountAddress: string = '',
-        currencyAddress: string = '',
-    ) => {
+    public toHistory = () => {
         this.n({ path: '/wallet/history' });
     };
     public toConfirmation = () => this.n({ path: '/wallet/send/confirm' });
@@ -39,17 +36,20 @@ export class Navigator implements INavigator {
     public toWithdrawConfirm = () =>
         this.n({ path: `/market/dw/withdraw/confirm` });
     public toDwHistory = () => this.n({ path: '/market/dw/history' });
-    public toWalletHistory = (
-        account?: TEthereumAddress,
-        currency?: TEthereumAddress,
+    public toWalletHistory = () => {
+        this.n({ path: '/wallet/history' });
+    };
+    public toWalletHistoryByParams = (
+        account: TEthereumAddress,
+        currency: TEthereumAddress,
     ) => {
-        this.l.loadWalletHistory(account, currency);
+        this.l.loadWalletHistoryByParams(account, currency);
         this.n({ path: '/wallet/history' });
     };
     public toDeposit = () => this.n({ path: '/market/dw/deposit' });
     public toWithdraw = () => this.n({ path: '/market/dw/withdraw' });
-    public toOrdersByAddress = (creatorAddress: string) => {
-        this.l.loadOrderList({ creatorAddress });
+    public toOrderListByAddress = (creatorAddress?: string) => {
+        this.l.loadOrderListByParams({ creatorAddress });
         this.n({ path: '/market/orders' });
     };
     public toOrder = (orderId: string) =>
@@ -61,10 +61,19 @@ export class Navigator implements INavigator {
         this.n({ path: '/market/orders' });
     };
     public toFullOrderList = () => {
-        this.l.loadOrderList(Object.prototype);
+        this.l.loadFullOrderList();
         this.n({ path: '/market/orders' });
     };
     public toKyc = () => {
         this.n({ path: '/market/kyc' });
+    };
+    public toOrders = () => {
+        this.n({ path: '/market/orders' });
+    };
+    public toDeals = () => {
+        this.n({ path: '/market/deals' });
+    };
+    public toWorkers = () => {
+        this.n({ path: '/market/workers' });
     };
 }

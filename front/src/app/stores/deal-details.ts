@@ -10,7 +10,6 @@ import { RootStore } from './';
 
 export interface IDealDetailsInput {
     password: string;
-    dealId: string;
     isBlacklisted: boolean;
 }
 
@@ -85,7 +84,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     protected localizator: ILocalizator;
     protected errorProcessor: IErrorProcessor;
 
-    @observable.ref protected deal: IDeal;
+    @observable.ref public deal: IDeal;
 
     constructor(
         rootStore: RootStore,
@@ -108,15 +107,12 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @observable
     public userInput: IDealDetailsInput = {
         password: '',
-        dealId: '',
         isBlacklisted: false,
     };
 
     @observable
-    public serverValidation: IDealDetailsInput = {
+    public serverValidation = {
         password: '',
-        dealId: '',
-        isBlacklisted: false,
     };
 
     @action.bound
@@ -127,8 +123,10 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
 
     @pending
     @asyncAction
-    public *fetchData() {
-        this.deal = yield this.api.fetchById(this.dealId);
+    public *setDealId(dealId: string) {
+        if (this.dealId !== dealId) {
+            this.deal = yield this.api.fetchById(this.dealId);
+        }
     }
 
     @pending
@@ -176,29 +174,21 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         }
     }
 
-    @computed
-    public get dealId() {
-        return this.userInput.dealId || '';
-    }
+    @observable public dealId: string = '';
 
     @computed
     public get password() {
-        return this.userInput.password || '';
+        return this.userInput.password;
     }
 
     @computed
     public get isBlacklisted() {
-        return this.userInput.isBlacklisted || false;
+        return this.userInput.isBlacklisted;
     }
 
     @computed
     public get validationPassword() {
         return this.serverValidation.password || '';
-    }
-
-    @computed
-    public get dealBrief() {
-        return this.deal;
     }
 }
 

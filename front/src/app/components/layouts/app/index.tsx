@@ -5,8 +5,7 @@ import { rootStore } from 'app/stores/index';
 import { AppView } from './view';
 import { IAccount } from './sub/account-select/index';
 import { TMenuItem } from './sub/nav-menu-dropdown';
-import { TEthereumAddress } from '../../../entities/types';
-import { INavigator } from '../../../router/types';
+import { INavigator } from 'app/router/types';
 
 interface IProps {
     className?: string;
@@ -15,12 +14,41 @@ interface IProps {
     onExit: () => void;
     title?: string;
     disableAccountSelect?: boolean;
-    navigateToProfile: (profileAddress: TEthereumAddress) => void;
     navigator: INavigator;
 }
 
 @observer
 export class App extends React.Component<IProps, never> {
+    constructor(props: IProps) {
+        super(props);
+
+        const n = props.navigator;
+        this.headerMenuConfig = [
+            [
+                'Wallet',
+                undefined,
+                [
+                    ['Accounts', () => n.to('/wallet/accounts'), undefined],
+                    ['History', n.toWalletHistory, undefined],
+                    ['Send', () => n.to('/wallet/send'), undefined],
+                ],
+            ],
+            [
+                'Market',
+                undefined,
+                [
+                    ['Profiles', () => n.to('/market/profiles'), undefined],
+                    ['Orders', n.toOrders, undefined],
+                    ['Deals', n.toDeals, undefined],
+                    ['Deposit', n.toDeposit, undefined],
+                    ['Withdraw', n.toWithdraw, undefined],
+                    ['History', n.toDwHistory, undefined],
+                    ['Workers', n.toWorkers, undefined],
+                ],
+            ],
+        ];
+    }
+
     protected handleExit = (event: any) => {
         event.preventDefault();
 
@@ -32,7 +60,7 @@ export class App extends React.Component<IProps, never> {
     };
 
     protected handleClickMyProfile = () => {
-        this.props.navigateToProfile(
+        this.props.navigator.toProfile(
             rootStore.marketStore.marketAccountAddress,
         );
     };

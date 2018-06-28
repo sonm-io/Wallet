@@ -2,14 +2,12 @@ import * as React from 'react';
 import { WorkerListView } from './view';
 import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
-import { autorun, toJS } from 'mobx';
+import { toJS } from 'mobx';
 
 interface IProps {
     className?: string;
     filterByAddress?: string;
 }
-
-const filterStore = rootStore.workerFilterStore;
 
 @observer
 export class WorkerList extends React.Component<IProps, any> {
@@ -17,22 +15,6 @@ export class WorkerList extends React.Component<IProps, any> {
         showConfirm: false,
         slaveId: '',
     };
-
-    constructor(props: IProps) {
-        super(props);
-    }
-
-    protected syncStores() {
-        autorun(() => {
-            const fromAddress = rootStore.marketStore.marketAccountAddress;
-            filterStore.updateUserInput({ address: fromAddress });
-        });
-    }
-
-    public componentDidMount() {
-        rootStore.workerListStore.update();
-        this.syncStores();
-    }
 
     public handleChangePage(page: number) {
         rootStore.workerListStore.updateUserInput({ page });

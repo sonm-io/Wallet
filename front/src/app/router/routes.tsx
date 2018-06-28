@@ -134,6 +134,8 @@ export const createRoutes = (
                         path: '/history',
                         breadcrumbTitle: 'History',
                         action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadWalletHistory();
+
                             return {
                                 browserTabTitle: 'History',
                                 pageTitle: 'History',
@@ -183,14 +185,18 @@ export const createRoutes = (
                         path: '/profiles',
                         breadcrumbTitle: 'Profiles',
                         action: replaceWithChild(
-                            async (ctx: IContext, params: IUrlParams) => ({
-                                pathKey: '/profiles',
-                                browserTabTitle: 'Profiles',
-                                pageTitle: 'Profiles',
-                                content: (
-                                    <ProfileList onNavigate={n.toProfile} />
-                                ),
-                            }),
+                            async (ctx: IContext, params: IUrlParams) => {
+                                l.loadProfileList();
+
+                                return {
+                                    pathKey: '/profiles',
+                                    browserTabTitle: 'Profiles',
+                                    pageTitle: 'Profiles',
+                                    content: (
+                                        <ProfileList onNavigate={n.toProfile} />
+                                    ),
+                                };
+                            },
                         ),
                         children: [
                             {
@@ -206,7 +212,7 @@ export const createRoutes = (
                                         content: (
                                             <Profile
                                                 onNavigateToOrders={
-                                                    n.toOrdersByAddress
+                                                    n.toOrderListByAddress
                                                 }
                                                 onNavigateToKyc={n.toKyc}
                                             />
@@ -372,16 +378,20 @@ export const createRoutes = (
                                 action: async (
                                     ctx: IContext,
                                     params: IUrlParams,
-                                ) => ({
-                                    content: (
-                                        <DepositWithdrawHistory
-                                            onClickDeposit={n.toDeposit}
-                                            onClickWithdraw={n.toWithdraw}
-                                        />
-                                    ),
-                                    browserTabTitle: 'D & W History',
-                                    pageTitle: 'D & W History',
-                                }),
+                                ) => {
+                                    l.loadDwhHistory();
+
+                                    return {
+                                        content: (
+                                            <DepositWithdrawHistory
+                                                onClickDeposit={n.toDeposit}
+                                                onClickWithdraw={n.toWithdraw}
+                                            />
+                                        ),
+                                        browserTabTitle: 'D & W History',
+                                        pageTitle: 'D & W History',
+                                    };
+                                },
                             },
                         ],
                     },
@@ -389,13 +399,19 @@ export const createRoutes = (
                         path: '/orders',
                         breadcrumbTitle: 'Orders',
                         action: replaceWithChild(
-                            async (ctx: IContext, params: IUrlParams) => ({
-                                browserTabTitle: 'Market orders',
-                                pageTitle: 'Market orders',
-                                content: (
-                                    <OrderList onNavigateToOrder={n.toOrder} />
-                                ),
-                            }),
+                            async (ctx: IContext, params: IUrlParams) => {
+                                l.loadOrderList();
+
+                                return {
+                                    browserTabTitle: 'Market orders',
+                                    pageTitle: 'Market orders',
+                                    content: (
+                                        <OrderList
+                                            onNavigateToOrder={n.toOrder}
+                                        />
+                                    ),
+                                };
+                            },
                         ),
                         children: [
                             {
@@ -444,45 +460,58 @@ export const createRoutes = (
                         ],
                     },
                     {
-                        path: '/deals/:id',
+                        path: '/deals/:dealId',
                         breadcrumbTitle: 'Deals',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'Deal details',
-                            pageTitle: 'Deal details',
-                            content: (
-                                <Deal
-                                    id={params.id}
-                                    onNavigateToDeals={n.toDealList}
-                                />
-                            ),
-                        }),
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadDeal(params.dealId);
+
+                            return {
+                                browserTabTitle: 'Deal details',
+                                pageTitle: 'Deal details',
+                                content: (
+                                    <Deal onNavigateToDeals={n.toDealList} />
+                                ),
+                            };
+                        },
                     },
                     {
                         path: '/deals',
                         breadcrumbTitle: 'Deals',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'Deals',
-                            pageTitle: 'Deals',
-                            content: <DealList onNavigate={n.toDeal} />,
-                        }),
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadDealList();
+
+                            return {
+                                browserTabTitle: 'Deals',
+                                pageTitle: 'Deals',
+                                content: <DealList onClickDeal={n.toDeal} />,
+                            };
+                        },
                     },
                     {
                         path: '/workers',
                         breadcrumbTitle: 'Workers',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'Workers',
-                            pageTitle: 'Workers',
-                            content: <WorkerList />,
-                        }),
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadWorkerList();
+
+                            return {
+                                browserTabTitle: 'Workers',
+                                pageTitle: 'Workers',
+                                content: <WorkerList />,
+                            };
+                        },
                     },
                     {
                         path: '/kyc',
                         breadcrumbTitle: 'KYC providers',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'KYC providers',
-                            pageTitle: 'KYC providers',
-                            content: <KycList />,
-                        }),
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadKycList();
+
+                            return {
+                                browserTabTitle: 'KYC providers',
+                                pageTitle: 'KYC providers',
+                                content: <KycList />,
+                            };
+                        },
                     },
                 ],
             },

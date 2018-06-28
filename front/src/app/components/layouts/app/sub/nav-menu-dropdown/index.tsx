@@ -6,8 +6,7 @@ import * as invariant from 'fbjs/lib/invariant';
 type TItem<T> = [
     string, // Title
     (() => void) | undefined, // Callback
-    T[] | undefined, // Children
-    (() => boolean) | undefined // idDisabled
+    T[] | undefined // Children
 ];
 
 export type TMenuItem = TItem<TItem<undefined>>;
@@ -95,22 +94,16 @@ export class NavMenuDropdown extends React.PureComponent<
     };
 
     public render() {
+        const disabledItems: string[] = [];
+
         return (
             <div
                 data-display-id="nav-menu"
                 className={cn(this.props.className, 'sonm-nav-menu')}
             >
                 {this.props.items.map((item: TMenuItem, index) => {
-                    const [
-                        title,
-                        ,
-                        children = Array.prototype,
-                        checkDisabled,
-                    ] = item;
-                    const isDisabled =
-                        typeof checkDisabled === 'function'
-                            ? checkDisabled()
-                            : false;
+                    const [title, , children = Array.prototype] = item;
+                    const isDisabled = disabledItems.indexOf(title) > 0;
 
                     return (
                         <DropdownInput

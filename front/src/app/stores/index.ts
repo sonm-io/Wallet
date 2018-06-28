@@ -172,7 +172,7 @@ export class RootStore implements IHasLocalizator {
             },
         );
 
-        this.workerFilterStore = new WorkerFilterStore();
+        this.workerFilterStore = new WorkerFilterStore(this);
 
         this.workerListStore = new WorkerList(
             {

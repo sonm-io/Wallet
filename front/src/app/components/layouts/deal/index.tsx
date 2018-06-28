@@ -6,7 +6,6 @@ import { ITogglerChangeParams } from '../../common/toggler';
 
 interface IProps {
     className?: string;
-    id: string;
     onNavigateToDeals: () => void;
 }
 
@@ -22,21 +21,10 @@ export class Deal extends React.Component<IProps, IState> {
         validationMessage: '',
     };
 
-    public componentDidMount() {
-        const dealDetailsStore = rootStore.dealDetailsStore;
-
-        dealDetailsStore.updateUserInput({
-            dealId: this.props.id,
-            isBlacklisted: false,
-        });
-        dealDetailsStore.fetchData();
-    }
-
     public handleFinishDeal = async (password: string) => {
-        const dealId = this.props.id;
         const dealDetailsStore = rootStore.dealDetailsStore;
 
-        dealDetailsStore.updateUserInput({ dealId, password });
+        dealDetailsStore.updateUserInput({ password });
         await dealDetailsStore.submit();
 
         if (dealDetailsStore.validationPassword === '') {
@@ -64,7 +52,7 @@ export class Deal extends React.Component<IProps, IState> {
 
     public render() {
         const dealDetailsStore = rootStore.dealDetailsStore;
-        const deal = dealDetailsStore.dealBrief;
+        const deal = dealDetailsStore.deal;
         const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
         const isOwner =
             deal.supplier.address.toLowerCase() === marketAccount ||

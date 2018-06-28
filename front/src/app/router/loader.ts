@@ -7,17 +7,15 @@ const str = (x: any) => (x === undefined ? '' : String(x));
 
 export class DataLoader {
     public loadOrder(orderId: string) {
-        if (orderId !== '' && rootStore.orderDetailsStore.orderId !== orderId) {
-            rootStore.orderDetailsStore.setOrderId(orderId);
-        }
+        rootStore.orderDetailsStore.setOrderId(orderId);
     }
 
-    public loadOrderList(filter: Partial<IOrderFilter>) {
+    public loadOrderListByParams(filter: Partial<IOrderFilter>) {
         rootStore.orderFilterStore.setUserInput(filter);
     }
 
     public loadOrderListByOrder(order: IOrder) {
-        this.loadOrderList({
+        this.loadOrderListByParams({
             side: 'Sell',
             priceFrom: str(order.price),
             redshiftFrom: str(order.benchmarkMap.redshiftGpu),
@@ -31,22 +29,14 @@ export class DataLoader {
         });
     }
 
-    public loadWalletHistory(
-        fromAddress?: TEthereumAddress,
-        currencyAddress?: TEthereumAddress,
+    public loadWalletHistoryByParams(
+        fromAddress: TEthereumAddress,
+        currencyAddress: TEthereumAddress,
     ) {
-        if (fromAddress || currencyAddress) {
-            rootStore.walletHistoryFilterStore.updateUserInput({
-                fromAddress,
-                currencyAddress,
-            });
-        } else {
-            rootStore.walletHistoryListStore.update();
-        }
-    }
-
-    public resetKycListState() {
-        rootStore.kycListStore.reset();
+        rootStore.walletHistoryFilterStore.updateUserInput({
+            fromAddress,
+            currencyAddress,
+        });
     }
 
     public loadProfileDetails(address: TEthereumAddress) {
@@ -56,4 +46,34 @@ export class DataLoader {
     public loadDwhHistory() {
         rootStore.dwHistoryListStore.update();
     }
+
+    public loadWalletHistory() {
+        rootStore.dwHistoryListStore.update();
+    }
+
+    public loadDeal(dealId: string) {
+        rootStore.dealDetailsStore.setDealId(dealId);
+    }
+
+    public loadDealList() {
+        rootStore.dealListStore.update();
+    }
+
+    public loadProfileList() {
+        rootStore.profileListStore.update();
+    }
+
+    public loadOrderList() {
+        rootStore.ordersListStore.update();
+    }
+
+    public loadFullOrderList() {
+        rootStore.orderFilterStore.resetFilters();
+    }
+
+    public loadWorkerList() {
+        rootStore.workerListStore.update();
+    }
+
+    public loadKycList() {}
 }

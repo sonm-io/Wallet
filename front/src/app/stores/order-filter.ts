@@ -404,6 +404,11 @@ export class OrderFilterStore implements IFilterStore {
     public get filterAsString() {
         return this.isFormValid ? JSON.stringify(this.filter) : '';
     }
+
+    @action
+    public resetFilters() {
+        this.setUserInput(OrderFilterStore.defaultUserInput);
+    }
 }
 
 export default OrderFilterStore;

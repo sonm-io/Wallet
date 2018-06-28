@@ -1,10 +1,10 @@
 import { observable, computed, autorun, action, toJS } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Status } from './types';
-import { IErrorProcessor, OnlineStore } from './online-store';
+import { IErrorProcessor, OnlineStore, IOnlineStore } from './online-store';
 import { ILocalizator } from '../localization/types';
 
-const { pending, catchErrors } = OnlineStore;
+const { pending, catchErrors, debounced } = OnlineStore;
 
 interface IFetchListResult<T> {
     records: Array<T>;
@@ -28,7 +28,7 @@ export interface IFilterStore {
     readonly filterAsString: string;
 }
 
-export interface IListStore<T> {
+export interface IListStore<T> extends IOnlineStore {
     status: Status;
     total: number;
     offset: number;
@@ -41,7 +41,7 @@ export interface IListStore<T> {
     hasPrevPage: boolean;
     hasNextPage: boolean;
     update: () => void;
-    updateUserInput: (input: Partial<IUserInput>) => any;
+    updateUserInput: (input: Partial<IUserInput>) => void;
 }
 
 export interface IListQuery {
@@ -77,7 +77,7 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         this.allowFetch = allowFetch;
 
         autorun(this.reactionOnFilter);
-        autorun(this.reactionOnUserInput, { delay: 500 });
+        autorun(this.reactionOnUserInput);
     }
 
     protected reactionOnFilter = () => {
@@ -150,6 +150,7 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         return this.offset + this.limit < this.total;
     }
 
+    @debounced
     @pending
     @catchErrors({ restart: true })
     @asyncAction
