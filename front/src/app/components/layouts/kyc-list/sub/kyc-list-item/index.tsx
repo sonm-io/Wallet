@@ -66,7 +66,7 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                     p.kycLink !== undefined ? (
                         <KycLinkPanel
                             className="kyc-list-item__bottom"
-                            value={(v.url || '') + (p.kycLink || '')}
+                            value={(v.url || '') + '/' + (p.kycLink || '')}
                             onClose={this.handleCloseLink}
                         />
                     ) : (
