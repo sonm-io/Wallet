@@ -15,6 +15,8 @@ interface IState {
     validationMessage: string;
 }
 
+const dealDetailsStore = rootStore.dealDetailsStore;
+
 @observer
 export class Deal extends React.Component<IProps, IState> {
     public state = {
@@ -23,8 +25,6 @@ export class Deal extends React.Component<IProps, IState> {
     };
 
     public componentDidMount() {
-        const dealDetailsStore = rootStore.dealDetailsStore;
-
         dealDetailsStore.updateUserInput({
             dealId: this.props.id,
             isBlacklisted: false,
@@ -60,10 +60,13 @@ export class Deal extends React.Component<IProps, IState> {
         this.setState({
             showConfirmationPanel: false,
         });
+
+        dealDetailsStore.updateUserInput({
+            isBlacklisted: false,
+        });
     };
 
     public render() {
-        const dealDetailsStore = rootStore.dealDetailsStore;
         const deal = dealDetailsStore.dealBrief;
         const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
         const isOwner =
