@@ -29,6 +29,7 @@ interface IProps {
     filter: string;
     onChangePage: (page: number) => void;
     onChangeFilter: (name: string, value: any) => void;
+    onTableChange: (pagination: any, filters: any, sorter: any) => void;
     onClickRow: (record: IProfileBrief) => void;
     filterRole: EnumProfileRole;
     filterStatus: EnumProfileStatus;
@@ -52,6 +53,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             className: 'sonm-cell-address sonm-profiles__cell',
             dataIndex: 'address',
             title: 'User',
+            sorter: true,
             render: (address: string, record: IProfileBrief) => {
                 return (
                     <React.Fragment>
@@ -85,6 +87,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             className: 'sonm-cell-status sonm-profiles__cell',
             dataIndex: 'status',
             title: 'Status',
+            sorter: true,
             render: (status: EnumProfileStatus, record: IProfileBrief) => {
                 return <ProfileStatus status={status} />;
             },
@@ -93,6 +96,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             className: 'sonm-cell-buy-orders sonm-profiles__cell',
             dataIndex: 'buyOrders',
             title: 'Buy orders',
+            sorter: true,
             render: (buyOrders: number, record: IProfileBrief) => {
                 return buyOrders;
             },
@@ -101,6 +105,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             className: 'sonm-cell-sell-orders sonm-profiles__cell',
             dataIndex: 'sellOrders',
             title: 'Sell orders',
+            sorter: true,
             render: (sellOrders: number, record: IProfileBrief) => {
                 return sellOrders;
             },
@@ -109,6 +114,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             className: 'sonm-cell-country sonm-profile-list__cell',
             dataIndex: 'country',
             title: 'Country',
+            sorter: true,
             render: (contry: string, record: IProfileBrief) => {
                 return <Country flagHeightPx={20} abCode2={contry} hasName />;
             },
@@ -251,6 +257,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
                     pagination={pagination}
                     rowKey="address"
                     onRow={this.getRowProps}
+                    onChange={p.onTableChange}
                 />
             </div>
         );

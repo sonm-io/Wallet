@@ -29,6 +29,15 @@ export class ProfileList extends React.Component<IProps, any> {
         rootStore.profileListStore.updateUserInput({ page });
     }
 
+    public handleTableChange = (pagination: any, filters: any, sorter: any) => {
+        if (sorter.field) {
+            rootStore.profileListStore.updateUserInput({
+                sortBy: sorter.field,
+                sortDesc: sorter.order === 'descend',
+            });
+        }
+    };
+
     public render() {
         const listStore = rootStore.profileListStore;
         const filterStore = rootStore.profileFilterStore;
@@ -43,6 +52,7 @@ export class ProfileList extends React.Component<IProps, any> {
                 filter={ProfileListView.defaultFilter}
                 onChangePage={this.handleChangePage}
                 onChangeFilter={this.handleChangeFilter}
+                onTableChange={this.handleTableChange}
                 onClickRow={this.handleRowClick}
                 filterCountry={filterStore.country}
                 filterQuery={''}
