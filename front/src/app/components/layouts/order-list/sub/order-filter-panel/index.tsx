@@ -213,6 +213,67 @@ export class OrderFilterPanel extends React.PureComponent<
                             onChange={this.handleChangeInput}
                         />
                     </FormField>
+
+                    <FormField
+                        error={p.validation.ethFrom}
+                        label="GPU Ethash, MH/s"
+                    >
+                        <Input
+                            name="ethFrom"
+                            prefix="from"
+                            value={p.ethFrom}
+                            onChange={this.handleChangeInput}
+                        />
+                    </FormField>
+                    <FormField error={p.validation.ethTo}>
+                        <Input
+                            name="ethTo"
+                            prefix="to"
+                            value={p.ethTo}
+                            onChange={this.handleChangeInput}
+                        />
+                    </FormField>
+
+                    <FormField
+                        error={p.validation.zCashFrom}
+                        label="GPU Equihash, sol/s"
+                    >
+                        <Input
+                            name="zCashFrom"
+                            prefix="from"
+                            value={p.zCashFrom}
+                            onChange={this.handleChangeInput}
+                        />
+                    </FormField>
+                    <FormField error={p.validation.zCashTo}>
+                        <Input
+                            name="zCashTo"
+                            prefix="to"
+                            value={p.zCashTo}
+                            onChange={this.handleChangeInput}
+                        />
+                    </FormField>
+
+                    <FormField
+                        error={p.validation.redshiftFrom}
+                        label="Redshift, K/Ex. time in s"
+                    >
+                        <Input
+                            name="redshiftFrom"
+                            prefix="from"
+                            value={p.redshiftFrom}
+                            onChange={this.handleChangeInput}
+                        />
+                    </FormField>
+                    <FormField error={p.validation.redshiftTo}>
+                        <Input
+                            name="redshiftTo"
+                            prefix="to"
+                            value={p.redshiftTo}
+                            onChange={this.handleChangeInput}
+                        />
+                    </FormField>
+
                     <Button
                         onClick={this.props.onResetFilter}
                         className="order-filter-panel__all-filters"
