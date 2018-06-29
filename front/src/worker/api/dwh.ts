@@ -144,7 +144,7 @@ export class DWH {
         const res = await this.fetchData('GetProfiles', {
             offset,
             limit,
-            name:
+            identifier:
                 mongoLikeFilter.query && mongoLikeFilter.query.$like
                     ? `%${mongoLikeFilter.query.$like}%`
                     : null,
