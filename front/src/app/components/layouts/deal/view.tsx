@@ -31,6 +31,7 @@ interface IProps {
         blockedBalance: string;
         status: number;
         supplierAddress: string;
+        consumerAddress: string;
     };
     onFinishDeal: (password: string) => void;
     onShowConfirmationPanel: () => void;
@@ -77,10 +78,11 @@ export class DealView extends React.Component<IProps, never> {
         {
             name: 'Type',
             key: 'consumerAddress',
-            render: (value: any) =>
-                this.props.marketAccountAddress.toLowerCase() === value
-                    ? 'BUY'
-                    : 'SELL',
+            render: (value: string) =>
+                this.props.marketAccountAddress.toLowerCase() ===
+                value.toLowerCase()
+                    ? 'Buy'
+                    : 'Sell',
         },
         {
             name: 'Executed payment',

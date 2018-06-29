@@ -69,6 +69,7 @@ export class Deal extends React.Component<IProps, IState> {
             endTime: deal.endTime,
             timeLeft: deal.timeLeft,
             supplierAddress: deal.supplier.address,
+            consumerAddress: deal.consumer.address,
         };
 
         return (
