@@ -19,11 +19,20 @@ const NETWORK_OVERLAY = 0x1;
 const NETWORK_OUTBOUND = 0x2;
 const NETWORK_INCOMING = 0x4;
 
+const DEFAULT_NODES: t.INodes = {
+    livenet: 'https://dwh.livenet.sonm.com/',
+    rinkeby: 'https://dwh-testnet.sonm.com:15022/DWHServer/',
+};
+
 export class DWH {
     private url: string;
 
-    constructor(url: string) {
-        this.url = url;
+    constructor(network: string = 'rinkeby') {
+        this.setNetworkURL(network);
+    }
+
+    public setNetworkURL(network: string) {
+        this.url = DEFAULT_NODES[network];
     }
 
     public static readonly emptyFilter = {};

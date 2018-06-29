@@ -30,7 +30,8 @@ export class OrderView extends React.Component<IProps, never> {
         {
             key: 'duration',
             name: 'Duration',
-            render: (seconds: number) => formatSeconds(seconds),
+            render: (seconds: number) =>
+                seconds ? formatSeconds(seconds) : '--',
         },
         {
             key: 'orderType',

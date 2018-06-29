@@ -26,11 +26,10 @@ async function ipcSend(type: string, payload?: any): Promise<any> {
     return res.data || null;
 }
 
-const DWH_URL = 'https://dwh-testnet.sonm.com:15022/DWHServer/';
 const DEFAULT_NODES: t.INodes = {
     default: 'https://mainnet.infura.io',
     livenet: 'https://mainnet.infura.io',
-    livenet_private: 'https://mainnet.infura.io',
+    livenet_private: 'https://sidechain.livenet.sonm.com',
     rinkeby: 'https://rinkeby.infura.io',
     rinkeby_private: 'https://sidechain-dev.sonm.com',
     testrpc: 'http://localhost:8545',
@@ -97,7 +96,11 @@ class Api {
         [index: string]: any;
     } = {};
 
+    private dwh: DWH;
+
     constructor(dwh: DWH) {
+        this.dwh = dwh;
+
         this.routes = {
             ping: this.ping,
             getWalletList: this.getWalletList,
@@ -361,6 +364,8 @@ class Api {
 
             await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
 
+            this.dwh.setNetworkURL(chainId);
+
             return {
                 data: wallet,
             };
@@ -615,7 +620,13 @@ class Api {
                     ? this.decrypt(dataFromStorage)
                     : JSON.parse(dataFromStorage);
 
-                return await this.checkStorageVersion(key, data);
+                const storage = await this.checkStorageVersion(key, data);
+
+                if (key === 'wallet') {
+                    this.dwh.setNetworkURL(storage.settings.chainId);
+                }
+
+                return storage;
             } catch (err) {
                 // console.log(err);
                 return false;
@@ -1315,4 +1326,4 @@ class Api {
     }
 }
 
-export const api = new Api(new DWH(DWH_URL));
+export const api = new Api(new DWH());

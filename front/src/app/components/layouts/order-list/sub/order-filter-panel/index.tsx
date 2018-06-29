@@ -70,7 +70,7 @@ export class OrderFilterPanel extends React.PureComponent<
                     </FormField>
 
                     <FormField
-                        label="Side"
+                        label="Type"
                         className="order-filter-panel__order-side"
                     >
                         <RadioButtonGroup
