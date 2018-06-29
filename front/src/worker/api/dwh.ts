@@ -97,12 +97,36 @@ export class DWH {
         filter,
         limit,
         offset,
+        sortBy,
+        sortDesc,
     }: t.IListQuery): Promise<t.IListResult<t.IProfileBrief>> => {
         tcomb.maybe(tcomb.String)(filter);
         tcomb.Number(limit);
         tcomb.Number(offset);
+        tcomb.maybe(tcomb.String)(sortBy);
+        tcomb.maybe(tcomb.Boolean)(sortDesc);
 
         const mongoLikeFilter = filter ? JSON.parse(filter) : {};
+        let sortField = 'userId';
+        switch (sortBy) {
+            case 'address':
+                sortField = 'UserID';
+                break;
+            case 'status':
+                sortField = 'IdentityLevel';
+                break;
+            case 'buyOrders':
+                sortField = 'activeBids';
+                break;
+            case 'sellOrders':
+                sortField = 'activeAsks';
+                break;
+            case 'country':
+                sortField = sortBy;
+                break;
+            default:
+                break;
+        }
 
         const res = await this.fetchData('GetProfiles', {
             offset,
@@ -122,6 +146,12 @@ export class DWH {
                     ? 0
                     : mongoLikeFilter.status.$gte,
             role: mongoLikeFilter.role ? mongoLikeFilter.role.$eq : 0,
+            sortings: [
+                {
+                    field: sortField,
+                    order: sortDesc ? 1 : 0,
+                },
+            ],
         });
 
         return {
