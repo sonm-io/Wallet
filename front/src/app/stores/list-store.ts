@@ -1,10 +1,10 @@
-import { observable, computed, autorun } from 'mobx';
+import { observable, computed, autorun, action, toJS } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Status } from './types';
-import { IErrorProcessor, OnlineStore } from './online-store';
+import { IErrorProcessor, OnlineStore, IOnlineStore } from './online-store';
 import { ILocalizator } from '../localization/types';
 
-const { pending, catchErrors } = OnlineStore;
+const { pending, catchErrors, debounced } = OnlineStore;
 
 interface IFetchListResult<T> {
     records: Array<T>;
@@ -28,7 +28,7 @@ export interface IFilterStore {
     readonly filterAsString: string;
 }
 
-export interface IListStore<T> {
+export interface IListStore<T> extends IOnlineStore {
     status: Status;
     total: number;
     offset: number;
@@ -40,8 +40,8 @@ export interface IListStore<T> {
     totalPage: number;
     hasPrevPage: boolean;
     hasNextPage: boolean;
-    update: () => any;
-    updateUserInput: (input: Partial<IUserInput>) => any;
+    update: () => void;
+    updateUserInput: (input: Partial<IUserInput>) => void;
 }
 
 export interface IListQuery {
@@ -73,22 +73,33 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         super(services);
 
         this.services = services;
+        this.reactiveDeps = stores;
         this.allowFetch = allowFetch;
 
-        autorun(() => {
-            if (this.allowFetch && stores.filter.filterAsString) {
-                this.updateUserInput({
-                    filter: stores.filter.filterAsString,
-                });
-            }
-        });
+        autorun(this.reactionOnFilter);
+        autorun(this.reactionOnUserInput);
     }
+
+    protected reactionOnFilter = () => {
+        const filter = String(this.reactiveDeps.filter.filterAsString);
+
+        this.updateUserInput({ filter });
+    };
+
+    protected reactionOnUserInput = () => {
+        const userInput = toJS(this.userInput);
+        if (userInput !== undefined) {
+            this.update();
+        }
+    };
 
     protected allowFetch: boolean;
 
     protected services: IListStoreServices<TItem>;
 
-    @observable public status: Status = Status.PENDING;
+    protected reactiveDeps: IReactiveDependecies;
+
+    @observable public status: Status = Status.CREATED;
 
     @observable public error = '';
 
@@ -139,17 +150,18 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         return this.offset + this.limit < this.total;
     }
 
+    @debounced
     @pending
     @catchErrors({ restart: true })
     @asyncAction
     public *update() {
         this.allowFetch = true;
 
+        this.status = Status.PENDING;
+
         const { page, limit, sortBy, filter, sortDesc } = this.userInput;
 
         const offset = (page - 1) * limit;
-
-        this.status = Status.PENDING;
 
         const query: IListQuery = {
             offset,
@@ -172,7 +184,7 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
             this.limit = limit;
             this.records = response.records;
             this.total = response.total;
-            this.status = Status.DONE;
+            this.status = Status.LOADED;
         } catch (e) {
             this.error = e.message;
             this.status = Status.ERROR;
@@ -181,9 +193,9 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         }
     }
 
-    @asyncAction
-    public *updateUserInput(input: Partial<IUserInput>) {
-        const changes = Object.keys(input).filter(k => {
+    @action
+    public updateUserInput(input: Partial<IUserInput>) {
+        Object.keys(input).filter(k => {
             const key = k as keyof IUserInput;
             const result = input[key] !== this.userInput[key];
 
@@ -198,11 +210,7 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
             this.userInput.page = 1;
         }
 
-        if (changes.length === 0) {
-            return;
-        }
-
-        yield this.update();
+        this.status = Status.UPDATED;
     }
 }
 

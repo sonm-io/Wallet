@@ -4,6 +4,7 @@ import { delay } from 'app/utils/async-delay';
 import { Api } from 'app/api'; // TODO pass to ctr
 import { WalletApiError } from './types';
 import { ILocalizator } from 'app/localization';
+import * as debounce from 'lodash/fp/debounce';
 
 export interface IErrorProcessor {
     processError: (err: Error) => void;
@@ -14,8 +15,13 @@ export interface IOnlineStoreServices {
     localizator: ILocalizator;
 }
 
+export interface IOnlineStore {
+    isPending: boolean;
+    isOffline: boolean;
+}
+
 // TODO use delegating instead inherit
-export class OnlineStore {
+export class OnlineStore implements IOnlineStore {
     constructor(params: IOnlineStoreServices) {
         this.services = { ...params };
     }
@@ -105,6 +111,16 @@ export class OnlineStore {
         };
     }
 
+    public static debounced(
+        target: OnlineStore,
+        propertyKey: string,
+        descriptor: PropertyDescriptor,
+    ) {
+        const method = descriptor.value;
+
+        descriptor.value = debounce(500)(method);
+    }
+
     public static catchErrors = ({ restart = false }) => (
         target: OnlineStore,
         propertyKey: string,
@@ -119,7 +135,7 @@ export class OnlineStore {
                 return await method.apply(store, args);
             } catch (err) {
                 if (typeof err !== 'string') {
-                    console.error(`Unexpected exception from wallet API`, err);
+                    console.log(`Unexpected exception from wallet API`, err);
                 }
 
                 store.handleError(

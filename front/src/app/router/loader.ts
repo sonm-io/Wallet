@@ -5,19 +5,17 @@ import { TEthereumAddress } from '../entities/types';
 
 const str = (x: any) => (x === undefined ? '' : String(x));
 
-class DataLoader {
+export class DataLoader {
     public loadOrder(orderId: string) {
-        if (orderId !== '' && rootStore.orderDetailsStore.orderId !== orderId) {
-            rootStore.orderDetailsStore.setOrderId(orderId);
-        }
+        rootStore.orderDetailsStore.setOrderId(orderId);
     }
 
-    public loadOrderList(filter: Partial<IOrderFilter>) {
+    public loadOrderListByParams(filter: Partial<IOrderFilter>) {
         rootStore.orderFilterStore.setUserInput(filter);
     }
 
     public loadOrderListByOrder(order: IOrder) {
-        this.loadOrderList({
+        this.loadOrderListByParams({
             side: 'Sell',
             priceFrom: str(order.price),
             redshiftFrom: str(order.benchmarkMap.redshiftGpu),
@@ -31,19 +29,51 @@ class DataLoader {
         });
     }
 
-    public loadWalletHistory(fromAddress?: TEthereumAddress) {
-        rootStore.walletHistoryFilterStore.setUserInput({ fromAddress });
-    }
-
-    public resetKycListState() {
-        rootStore.kycListStore.reset();
+    public loadWalletHistoryByParams(
+        fromAddress: TEthereumAddress,
+        currencyAddress: TEthereumAddress,
+    ) {
+        rootStore.walletHistoryFilterStore.updateUserInput({
+            fromAddress,
+            currencyAddress,
+        });
     }
 
     public loadProfileDetails(address: TEthereumAddress) {
         rootStore.profileDetailsStore.setAddress(address);
     }
+
+    public loadDwhHistory() {
+        rootStore.dwHistoryListStore.update();
+    }
+
+    public loadWalletHistory() {
+        rootStore.dwHistoryListStore.update();
+    }
+
+    public loadDeal(dealId: string) {
+        rootStore.dealDetailsStore.setDealId(dealId);
+    }
+
+    public loadDealList() {
+        rootStore.dealListStore.update();
+    }
+
+    public loadProfileList() {
+        rootStore.profileListStore.update();
+    }
+
+    public loadOrderList() {
+        rootStore.ordersListStore.update();
+    }
+
+    public loadFullOrderList() {
+        rootStore.orderFilterStore.resetFilters();
+    }
+
+    public loadWorkerList() {
+        rootStore.workerListStore.update();
+    }
+
+    public loadKycList() {}
 }
-
-export const loader = new DataLoader();
-
-export default loader; // TODO think about The prefix for all singletons

@@ -18,107 +18,25 @@ import { WorkerList } from 'app/components/layouts/worker-list';
 import { Deal } from 'app/components/layouts/deal';
 import { OrderDetails } from 'app/components/layouts/order-details';
 import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
-import { TMenuItem } from 'app/components/layouts/app/sub/nav-menu-dropdown';
+import { KycList } from 'app/components/layouts/kyc-list';
 
 import {
     IRouterResult,
     IContext,
     IUniversalRouterItem,
     IUrlParams,
+    IDataLoader,
+    INavigator,
 } from './types';
-import { reload, firstByDefault, replaceWithChild } from './utils';
-import { loader } from './loader';
 
-import { navigate } from './navigate';
-import { IOrder } from '../api/types';
-import { rootStore } from '../stores';
-import { KycList } from 'app/components/layouts/kyc-list';
+import { reload, firstByDefault, replaceWithChild } from './utils';
 
 let defaultAction;
 
-const navigateTo = (path: string) => navigate({ path });
-
-const navigateToSend = () => navigate({ path: '/wallet/send' });
-const navigateToWalletHistory = (accountAddress?: string) => {
-    loader.loadWalletHistory(accountAddress);
-    navigate({ path: '/wallet/history' });
-};
-const navigateToConfirmation = () => navigate({ path: '/wallet/send/confirm' });
-const navigateToSuccess = () => navigate({ path: '/wallet/send/success' });
-const navigateToMain = () => navigate({ path: '/wallet/accounts' });
-const navigateToProfile = (address: string) =>
-    navigate({ path: `/market/profiles/${address}` });
-const navigateToDeal = (id: string) =>
-    navigate({ path: `/market/deals/${id}` });
-const navigateToDealList = () => navigate({ path: `/market/deals/` });
-const navigateToDepositSuccess = () =>
-    navigate({ path: `/market/dw/deposit/success` });
-const navigateToDepositConfirm = () =>
-    navigate({ path: `/market/dw/deposit/confirm` });
-const navigateToWithdrawSuccess = () =>
-    navigate({ path: `/market/dw/withdraw/success` });
-const navigateToWithdrawConfirm = () =>
-    navigate({ path: `/market/dw/withdraw/confirm` });
-const navigateToDWHistory = () => navigate({ path: '/market/dw/history' });
-const navigateToDeposit = () => navigate({ path: '/market/dw/deposit' });
-const navigateToWithdraw = () => navigate({ path: '/market/dw/withdraw' });
-const navigateToOrdersByAddress = (creatorAddress: string) => {
-    loader.loadOrderList({ creatorAddress });
-    navigateTo('/market/orders');
-};
-const navigateToOrders = () => {
-    loader.loadOrderList({});
-    navigateTo('/market/orders');
-};
-const navigateToOrder = (orderId: string) =>
-    navigate({ path: `/market/orders/${orderId}` });
-const navigateToCompleteBuyingOrder = () =>
-    navigate({ path: '/market/orders/complete-buy' });
-const navigateToSimilarOrders = (orderId: IOrder) => {
-    loader.loadOrderListByOrder(orderId);
-    navigate({ path: '/market/orders' });
-};
-const navigateToWorkerList = () => {
-    navigate({ path: '/market/workers' });
-};
-const navigateToFullOrderList = () => {
-    loader.loadOrderList(Object.prototype);
-    navigate({ path: '/market/orders' });
-};
-const navigateToMyProfile = () => {
-    navigateToProfile(rootStore.marketStore.marketAccountAddress);
-};
-const navigateToKyc = () => {
-    loader.resetKycListState();
-    navigateTo('/market/kyc');
-};
-
-const headerMenu: Array<TMenuItem> = [
-    [
-        'Wallet',
-        undefined,
-        [
-            ['Accounts', () => navigateTo('/wallet/accounts')],
-            ['History', navigateToWalletHistory],
-            ['Send', () => navigateTo('/wallet/send')],
-        ],
-    ],
-    [
-        'Market',
-        undefined,
-        [
-            ['Profiles', () => navigateTo('/market/profiles')],
-            ['Orders', navigateToOrders],
-            ['Deals', navigateToDealList],
-            ['Deposit', navigateToDeposit],
-            ['Withdraw', navigateToWithdraw],
-            ['History', navigateToDWHistory],
-            ['Workers', navigateToWorkerList],
-        ],
-    ],
-] as Array<TMenuItem>; // Force cast, cause 2 last parameter can be undefined
-
-export const univeralRoutes: Array<IUniversalRouterItem> = [
+export const createRoutes = (
+    l: IDataLoader,
+    n: INavigator,
+): Array<IUniversalRouterItem> => [
     {
         path: '/',
         action: async (ctx: IContext, _: IUrlParams) => {
@@ -139,12 +57,12 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 ? params.props.disableAccountSelect
                                 : undefined
                         }
-                        onClickMyProfile={navigateToMyProfile}
+                        navigateToProfile={n.toProfile}
                         breadcrumbs={breadcrumbs}
                         onExit={reload}
                         path={ctx.pathname}
                         title={params.pageTitle}
-                        headerMenu={headerMenu}
+                        navigator={n}
                         {...params.props}
                     >
                         {params.content}
@@ -168,12 +86,10 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 pageTitle: 'Send',
                                 content: (
                                     <Send
-                                        onNotAvailable={navigateToMain}
+                                        onNotAvailable={n.toMain}
                                         initialAddress={ctx.query.address}
                                         initialCurrency={ctx.query.currency}
-                                        onRequireConfirmation={
-                                            navigateToConfirmation
-                                        }
+                                        onRequireConfirmation={n.toConfirmation}
                                     />
                                 ),
                             }),
@@ -189,8 +105,8 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     pageTitle: 'Transfer confirmation',
                                     content: (
                                         <SendConfirm
-                                            onBack={navigateToSend}
-                                            onSuccess={navigateToSuccess}
+                                            onBack={n.toSend}
+                                            onSuccess={n.toSuccess}
                                         />
                                     ),
                                 }),
@@ -206,10 +122,8 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     pageTitle: 'Transaction has been sent',
                                     content: (
                                         <SendSuccess
-                                            onClickHistory={
-                                                navigateToWalletHistory
-                                            }
-                                            onClickSend={navigateToSend}
+                                            onClickHistory={n.toWalletHistory}
+                                            onClickSend={n.toSend}
                                         />
                                     ),
                                 }),
@@ -219,11 +133,15 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                     {
                         path: '/history',
                         breadcrumbTitle: 'History',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'History',
-                            pageTitle: 'History',
-                            content: <History />,
-                        }),
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadWalletHistory();
+
+                            return {
+                                browserTabTitle: 'History',
+                                pageTitle: 'History',
+                                content: <History />,
+                            };
+                        },
                     },
                     {
                         path: '/accounts',
@@ -246,9 +164,8 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     content: (
                                         <Account
                                             initialAddress={params.address}
-                                            onClickHistory={
-                                                navigateToWalletHistory
-                                            }
+                                            onClickHistory={n.toWalletHistory}
+                                            onClickSend={n.toWalletHistory}
                                         />
                                     ),
                                     browserTabTitle: 'Account',
@@ -268,16 +185,18 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         path: '/profiles',
                         breadcrumbTitle: 'Profiles',
                         action: replaceWithChild(
-                            async (ctx: IContext, params: IUrlParams) => ({
-                                pathKey: '/profiles',
-                                browserTabTitle: 'Profiles',
-                                pageTitle: 'Profiles',
-                                content: (
-                                    <ProfileList
-                                        onNavigate={navigateToProfile}
-                                    />
-                                ),
-                            }),
+                            async (ctx: IContext, params: IUrlParams) => {
+                                l.loadProfileList();
+
+                                return {
+                                    pathKey: '/profiles',
+                                    browserTabTitle: 'Profiles',
+                                    pageTitle: 'Profiles',
+                                    content: (
+                                        <ProfileList onNavigate={n.toProfile} />
+                                    ),
+                                };
+                            },
                         ),
                         children: [
                             {
@@ -287,15 +206,15 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => {
-                                    loader.loadProfileDetails(params.address);
+                                    l.loadProfileDetails(params.address);
 
                                     return {
                                         content: (
                                             <Profile
                                                 onNavigateToOrders={
-                                                    navigateToOrdersByAddress
+                                                    n.toOrderListByAddress
                                                 }
-                                                onNavigateToKyc={navigateToKyc}
+                                                onNavigateToKyc={n.toKyc}
                                             />
                                         ),
                                         browserTabTitle: 'Profile',
@@ -319,16 +238,10 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                         content: (
                                             <Deposit
                                                 isConfirmation={false}
-                                                onNotAvailable={navigateToMain}
-                                                onSuccess={
-                                                    navigateToDepositSuccess
-                                                }
-                                                onConfirm={
-                                                    navigateToDepositConfirm
-                                                }
-                                                onBack={
-                                                    navigateToDepositSuccess
-                                                }
+                                                onNotAvailable={n.toMain}
+                                                onSuccess={n.toDepositSuccess}
+                                                onConfirm={n.toDepositConfirm}
+                                                onBack={n.toDepositSuccess}
                                             />
                                         ),
                                         browserTabTitle: 'Deposit',
@@ -346,16 +259,14 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             content: (
                                                 <Deposit
                                                     isConfirmation={true}
-                                                    onNotAvailable={
-                                                        navigateToMain
-                                                    }
+                                                    onNotAvailable={n.toMain}
                                                     onSuccess={
-                                                        navigateToDepositSuccess
+                                                        n.toDepositSuccess
                                                     }
                                                     onConfirm={
-                                                        navigateToDepositConfirm
+                                                        n.toDepositConfirm
                                                     }
-                                                    onBack={navigateToDeposit}
+                                                    onBack={n.toDeposit}
                                                 />
                                             ),
                                             browserTabTitle: 'Deposit',
@@ -375,13 +286,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             content: (
                                                 <DepositWithdrawSuccess
                                                     onClickHistory={
-                                                        navigateToDWHistory
+                                                        n.toDwHistory
                                                     }
-                                                    onClickDeposit={
-                                                        navigateToDeposit
-                                                    }
+                                                    onClickDeposit={n.toDeposit}
                                                     onClickWithdraw={
-                                                        navigateToWithdraw
+                                                        n.toWithdraw
                                                     }
                                                 />
                                             ),
@@ -401,16 +310,10 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                         content: (
                                             <Withdraw
                                                 isConfirmation={false}
-                                                onNotAvailable={navigateToMain}
-                                                onSuccess={
-                                                    navigateToWithdrawSuccess
-                                                }
-                                                onConfirm={
-                                                    navigateToWithdrawConfirm
-                                                }
-                                                onBack={
-                                                    navigateToWithdrawSuccess
-                                                }
+                                                onNotAvailable={n.toMain}
+                                                onSuccess={n.toWithdrawSuccess}
+                                                onConfirm={n.toWithdrawConfirm}
+                                                onBack={n.toWithdrawSuccess}
                                             />
                                         ),
                                         browserTabTitle: 'Withdraw',
@@ -429,16 +332,14 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             content: (
                                                 <Withdraw
                                                     isConfirmation={true}
-                                                    onNotAvailable={
-                                                        navigateToMain
-                                                    }
+                                                    onNotAvailable={n.toMain}
                                                     onSuccess={
-                                                        navigateToWithdrawSuccess
+                                                        n.toWithdrawSuccess
                                                     }
                                                     onConfirm={
-                                                        navigateToWithdrawConfirm
+                                                        n.toWithdrawConfirm
                                                     }
-                                                    onBack={navigateToWithdraw}
+                                                    onBack={n.toWithdraw}
                                                 />
                                             ),
                                             browserTabTitle: 'Withdraw',
@@ -458,13 +359,11 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                             content: (
                                                 <DepositWithdrawSuccess
                                                     onClickHistory={
-                                                        navigateToDWHistory
+                                                        n.toDwHistory
                                                     }
-                                                    onClickDeposit={
-                                                        navigateToDeposit
-                                                    }
+                                                    onClickDeposit={n.toDeposit}
                                                     onClickWithdraw={
-                                                        navigateToWithdraw
+                                                        n.toWithdraw
                                                     }
                                                 />
                                             ),
@@ -479,16 +378,20 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                 action: async (
                                     ctx: IContext,
                                     params: IUrlParams,
-                                ) => ({
-                                    content: (
-                                        <DepositWithdrawHistory
-                                            onClickDeposit={navigateToDeposit}
-                                            onClickWithdraw={navigateToWithdraw}
-                                        />
-                                    ),
-                                    browserTabTitle: 'D & W History',
-                                    pageTitle: 'D & W History',
-                                }),
+                                ) => {
+                                    l.loadDwhHistory();
+
+                                    return {
+                                        content: (
+                                            <DepositWithdrawHistory
+                                                onClickDeposit={n.toDeposit}
+                                                onClickWithdraw={n.toWithdraw}
+                                            />
+                                        ),
+                                        browserTabTitle: 'D & W History',
+                                        pageTitle: 'D & W History',
+                                    };
+                                },
                             },
                         ],
                     },
@@ -496,15 +399,19 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         path: '/orders',
                         breadcrumbTitle: 'Orders',
                         action: replaceWithChild(
-                            async (ctx: IContext, params: IUrlParams) => ({
-                                browserTabTitle: 'Market orders',
-                                pageTitle: 'Market orders',
-                                content: (
-                                    <OrderList
-                                        onNavigateToOrder={navigateToOrder}
-                                    />
-                                ),
-                            }),
+                            async (ctx: IContext, params: IUrlParams) => {
+                                l.loadOrderList();
+
+                                return {
+                                    browserTabTitle: 'Market orders',
+                                    pageTitle: 'Market orders',
+                                    content: (
+                                        <OrderList
+                                            onNavigateToOrder={n.toOrder}
+                                        />
+                                    ),
+                                };
+                            },
                         ),
                         children: [
                             {
@@ -514,14 +421,12 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     return {
                                         content: (
                                             <OrderCompleteBuy
-                                                onClickDeals={
-                                                    navigateToDealList
-                                                }
+                                                onClickDeals={n.toDealList}
                                                 onClickMarket={
-                                                    navigateToSimilarOrders
+                                                    n.toSimilarOrders
                                                 }
                                                 onClickOrders={
-                                                    navigateToFullOrderList
+                                                    n.toFullOrderList
                                                 }
                                             />
                                         ),
@@ -537,7 +442,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                     ctx: IContext,
                                     params: IUrlParams,
                                 ) => {
-                                    loader.loadOrder(params.orderId);
+                                    l.loadOrder(params.orderId);
 
                                     return {
                                         browserTabTitle: 'Order details',
@@ -545,7 +450,7 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                                         content: (
                                             <OrderDetails
                                                 onCompleteBuyingOrder={
-                                                    navigateToCompleteBuyingOrder
+                                                    n.toCompleteBuyingOrder
                                                 }
                                             />
                                         ),
@@ -555,45 +460,58 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
                         ],
                     },
                     {
-                        path: '/deals/:id',
+                        path: '/deals/:dealId',
                         breadcrumbTitle: 'Deals',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'Deal details',
-                            pageTitle: 'Deal details',
-                            content: (
-                                <Deal
-                                    id={params.id}
-                                    onNavigateToDeals={navigateToDealList}
-                                />
-                            ),
-                        }),
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadDeal(params.dealId);
+
+                            return {
+                                browserTabTitle: 'Deal details',
+                                pageTitle: 'Deal details',
+                                content: (
+                                    <Deal onNavigateToDeals={n.toDealList} />
+                                ),
+                            };
+                        },
                     },
                     {
                         path: '/deals',
                         breadcrumbTitle: 'Deals',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'Deals',
-                            pageTitle: 'Deals',
-                            content: <DealList onNavigate={navigateToDeal} />,
-                        }),
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadDealList();
+
+                            return {
+                                browserTabTitle: 'Deals',
+                                pageTitle: 'Deals',
+                                content: <DealList onClickDeal={n.toDeal} />,
+                            };
+                        },
                     },
                     {
                         path: '/workers',
                         breadcrumbTitle: 'Workers',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'Workers',
-                            pageTitle: 'Workers',
-                            content: <WorkerList />,
-                        }),
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadWorkerList();
+
+                            return {
+                                browserTabTitle: 'Workers',
+                                pageTitle: 'Workers',
+                                content: <WorkerList />,
+                            };
+                        },
                     },
                     {
                         path: '/kyc',
                         breadcrumbTitle: 'KYC providers',
-                        action: async (ctx: IContext, params: IUrlParams) => ({
-                            browserTabTitle: 'KYC providers',
-                            pageTitle: 'KYC providers',
-                            content: <KycList />,
-                        }),
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadKycList();
+
+                            return {
+                                browserTabTitle: 'KYC providers',
+                                pageTitle: 'KYC providers',
+                                content: <KycList />,
+                            };
+                        },
                     },
                 ],
             },
@@ -604,5 +522,3 @@ export const univeralRoutes: Array<IUniversalRouterItem> = [
         ],
     },
 ];
-
-export default univeralRoutes;

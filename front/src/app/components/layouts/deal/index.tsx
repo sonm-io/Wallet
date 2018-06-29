@@ -6,7 +6,6 @@ import { ITogglerChangeParams } from '../../common/toggler';
 
 interface IProps {
     className?: string;
-    id: string;
     onNavigateToDeals: () => void;
 }
 
@@ -15,8 +14,6 @@ interface IState {
     validationMessage: string;
 }
 
-const dealDetailsStore = rootStore.dealDetailsStore;
-
 @observer
 export class Deal extends React.Component<IProps, IState> {
     public state = {
@@ -24,19 +21,10 @@ export class Deal extends React.Component<IProps, IState> {
         validationMessage: '',
     };
 
-    public componentDidMount() {
-        dealDetailsStore.updateUserInput({
-            dealId: this.props.id,
-            isBlacklisted: false,
-        });
-        dealDetailsStore.fetchData();
-    }
-
     public handleFinishDeal = async (password: string) => {
-        const dealId = this.props.id;
         const dealDetailsStore = rootStore.dealDetailsStore;
 
-        dealDetailsStore.updateUserInput({ dealId, password });
+        dealDetailsStore.updateUserInput({ password });
         await dealDetailsStore.submit();
 
         if (dealDetailsStore.validationPassword === '') {
@@ -61,13 +49,13 @@ export class Deal extends React.Component<IProps, IState> {
             showConfirmationPanel: false,
         });
 
-        dealDetailsStore.updateUserInput({
+        rootStore.dealDetailsStore.updateUserInput({
             isBlacklisted: false,
         });
     };
 
     public render() {
-        const deal = dealDetailsStore.dealBrief;
+        const deal = rootStore.dealDetailsStore.deal;
         const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
         const isOwner =
             deal.supplier.address.toLowerCase() === marketAccount ||
@@ -101,7 +89,7 @@ export class Deal extends React.Component<IProps, IState> {
                 validationPassword={
                     rootStore.dealDetailsStore.validationPassword
                 }
-                isBlacklisted={dealDetailsStore.isBlacklisted}
+                isBlacklisted={rootStore.dealDetailsStore.isBlacklisted}
                 onChangeCheckbox={this.handleChangeCheckbox}
             />
         );

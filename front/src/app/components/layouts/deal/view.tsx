@@ -71,7 +71,8 @@ export class DealView extends React.Component<IProps, never> {
         {
             name: 'Time left',
             key: 'timeLeft',
-            render: (value: number) => (value ? `${value} left` : '---'),
+            render: (value: number) =>
+                value ? `${formatSeconds(value)} left` : '---',
         },
         {
             name: 'Type',

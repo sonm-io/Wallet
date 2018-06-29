@@ -5,7 +5,7 @@ import { rootStore } from 'app//stores';
 
 interface IProps {
     className?: string;
-    onCompleteBuyingOrder: () => {};
+    onCompleteBuyingOrder: () => void;
 }
 
 @observer

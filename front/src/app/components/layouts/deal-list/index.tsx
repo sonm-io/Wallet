@@ -13,7 +13,7 @@ const debounce500 = debounce(500);
 interface IProps {
     className?: string;
     filterByAddress?: string;
-    onNavigate: (id: string) => void;
+    onClickDeal: (dealId: string) => void;
 }
 
 const filterStore = rootStore.dealFilterStore;
@@ -37,7 +37,7 @@ export class DealList extends React.Component<IProps, any> {
 
     public componentDidMount() {
         if (rootStore.mainStore.accountAddressList.length === 0) {
-            //this.props.onNotAvailable();
+            // this.props.onNotAvailable();
         } else {
             rootStore.dealListStore.update();
             rootStore.marketStore.updateMarketStats();
@@ -72,7 +72,7 @@ export class DealList extends React.Component<IProps, any> {
     };
 
     public handleRowClick = (record: IDeal) => {
-        this.props.onNavigate(record.id);
+        this.props.onClickDeal(record.id);
     };
 
     public render() {

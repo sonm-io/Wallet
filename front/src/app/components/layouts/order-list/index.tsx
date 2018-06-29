@@ -49,6 +49,7 @@ export class OrderList extends React.Component<IProps, never> {
     public render() {
         return (
             <OrderListView
+                isListPending={store.isPending}
                 orderBy={store.sortBy}
                 orderDesc={store.sortDesc}
                 pageLimit={store.limit}

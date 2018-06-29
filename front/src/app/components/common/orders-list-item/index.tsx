@@ -128,9 +128,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                     />
                     {this.props.order.duration ? (
                         <div
-                            {...{
-                                'data-display-id': `orders-list-item-duration`,
-                            }}
+                            data-display-id="orders-list-item-duration"
                             className="orders-list-item__duration"
                         >
                             {formatSeconds(this.props.order.duration)}
