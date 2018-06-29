@@ -76,11 +76,11 @@ export class DealView extends React.Component<IProps, never> {
         },
         {
             name: 'Type',
-            key: 'supplierAddress',
+            key: 'consumerAddress',
             render: (value: any) =>
                 this.props.marketAccountAddress.toLowerCase() === value
-                    ? 'SELL'
-                    : 'BUY',
+                    ? 'BUY'
+                    : 'SELL',
         },
         {
             name: 'Executed payment',

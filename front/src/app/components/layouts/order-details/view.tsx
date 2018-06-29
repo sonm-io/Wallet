@@ -62,13 +62,15 @@ export class OrderView extends React.Component<IProps, never> {
                     dataSource={p.order}
                     config={OrderView.orderViewConfig}
                 />
-                <ConfirmationPanel
-                    className="order-view__confirmation"
-                    onSubmit={p.onSubmit}
-                    validationMessage={p.validationPassword}
-                    labelSubmit="Buy"
-                    labelHeader="Accept order"
-                />
+                {p.order.orderType === EnumOrderType.bid ? (
+                    <ConfirmationPanel
+                        className="order-view__confirmation"
+                        onSubmit={p.onSubmit}
+                        validationMessage={p.validationPassword}
+                        labelSubmit="Buy"
+                        labelHeader="Accept order"
+                    />
+                ) : null}
                 <Benchmark
                     title="Resource parameters"
                     className="order-view__benchmark"

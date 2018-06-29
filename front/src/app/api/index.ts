@@ -15,6 +15,7 @@ import {
     ISender,
     IKycValidator,
     IWorker,
+    IConnectionInfo,
 } from './types';
 import { TypeAccountInfoList } from './runtime-types';
 
@@ -50,6 +51,10 @@ class AllApi {
         file: string,
     ): Promise<IResult<IWalletListItem>> {
         return this.ipc.send('importWallet', { password, walletName, file });
+    }
+
+    public async getConnectionInfo(): Promise<IResult<IConnectionInfo>> {
+        return this.ipc.send('getConnectionInfo');
     }
 
     public async exportWallet(): Promise<IResult<string>> {

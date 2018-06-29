@@ -20,7 +20,7 @@ const NETWORK_OUTBOUND = 0x2;
 const NETWORK_INCOMING = 0x4;
 
 const DEFAULT_NODES: t.INodes = {
-    livenet: 'https://dwh.livenet.sonm.com/',
+    livenet: 'https://dwh.livenet.sonm.com:15022/DWHServer/',
     rinkeby: 'https://dwh-testnet.sonm.com:15022/DWHServer/',
 };
 
@@ -33,6 +33,10 @@ export class DWH {
 
     public setNetworkURL(network: string) {
         this.url = DEFAULT_NODES[network];
+    }
+
+    public getUrl() {
+        return this.url;
     }
 
     public static readonly emptyFilter = {};
@@ -140,7 +144,7 @@ export class DWH {
         const res = await this.fetchData('GetProfiles', {
             offset,
             limit,
-            name:
+            identifier:
                 mongoLikeFilter.query && mongoLikeFilter.query.$like
                     ? `%${mongoLikeFilter.query.$like}%`
                     : null,
@@ -414,13 +418,9 @@ export class DWH {
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
         const res = await this.fetchData('GetDeals', {
             offset,
-            consumerID: mongoLikeQuery.address
+            anyUserID: mongoLikeQuery.address
                 ? mongoLikeQuery.address.$eq
                 : null,
-            supplierID:
-                mongoLikeQuery.query && mongoLikeQuery.query.$like
-                    ? `${mongoLikeQuery.query.$like}`
-                    : null,
             limit,
             sortings: [
                 {
