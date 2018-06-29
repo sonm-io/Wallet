@@ -6,6 +6,8 @@ import { rootStore } from 'app//stores';
 interface IProps {
     className?: string;
     onCompleteBuyingOrder: () => void;
+    onNavigateBack: () => void;
+    onNavigateDeposit: () => void;
 }
 
 @observer
@@ -22,6 +24,7 @@ export class OrderDetails extends React.Component<IProps, never> {
     };
 
     public render() {
+        const p = this.props;
         return (
             <OrderView
                 order={rootStore.orderDetailsStore.order}
@@ -29,6 +32,8 @@ export class OrderDetails extends React.Component<IProps, never> {
                     rootStore.orderDetailsStore.validationPassword
                 }
                 onSubmit={this.handleSubmit}
+                onNavigateBack={p.onNavigateBack}
+                onNavigateDeposit={p.onNavigateDeposit}
             />
         );
     }
