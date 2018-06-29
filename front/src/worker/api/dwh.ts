@@ -414,13 +414,9 @@ export class DWH {
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
         const res = await this.fetchData('GetDeals', {
             offset,
-            consumerID: mongoLikeQuery.address
+            anyUserID: mongoLikeQuery.address
                 ? mongoLikeQuery.address.$eq
                 : null,
-            supplierID:
-                mongoLikeQuery.query && mongoLikeQuery.query.$like
-                    ? `${mongoLikeQuery.query.$like}`
-                    : null,
             limit,
             sortings: [
                 {
