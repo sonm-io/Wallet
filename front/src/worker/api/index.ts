@@ -636,7 +636,7 @@ class Api {
 
                 const storage = await this.checkStorageVersion(key, data);
 
-                if (key === 'wallet') {
+                if (key !== KEY_WALLETS_LIST) {
                     this.dwh.setNetworkURL(storage.settings.chainId);
                 }
 

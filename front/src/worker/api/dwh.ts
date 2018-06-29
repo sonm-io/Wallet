@@ -20,7 +20,7 @@ const NETWORK_OUTBOUND = 0x2;
 const NETWORK_INCOMING = 0x4;
 
 const DEFAULT_NODES: t.INodes = {
-    livenet: 'https://dwh.livenet.sonm.com/',
+    livenet: 'https://dwh.livenet.sonm.com:15022/DWHServer/',
     rinkeby: 'https://dwh-testnet.sonm.com:15022/DWHServer/',
 };
 
