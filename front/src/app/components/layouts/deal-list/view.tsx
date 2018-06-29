@@ -69,8 +69,8 @@ export class DealListView extends React.PureComponent<IProps, any> {
                 const side =
                     record.consumer.address.toLowerCase() ===
                     this.props.marketAccountAddress.toLowerCase()
-                        ? 'buy'
-                        : 'sell';
+                        ? 'Buy'
+                        : 'Sell';
 
                 return (
                     <div

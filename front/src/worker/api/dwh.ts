@@ -144,7 +144,7 @@ export class DWH {
         const res = await this.fetchData('GetProfiles', {
             offset,
             limit,
-            name:
+            identifier:
                 mongoLikeFilter.query && mongoLikeFilter.query.$like
                     ? `%${mongoLikeFilter.query.$like}%`
                     : null,
@@ -273,7 +273,7 @@ export class DWH {
             creatorIdentityLevel: get('creator.status.$in', mongoLikeQuery),
             status: get('orderStatus.$eq', mongoLikeQuery),
             price: DWH.getMinMaxFilter(
-                get('mongoLikeQuery.price', mongoLikeQuery),
+                get('price', mongoLikeQuery),
                 DWH.recalculatePriceOut,
             ),
             benchmarks:
@@ -332,8 +332,8 @@ export class DWH {
     ) => {
         if (value && ('$gte' in value || '$lte' in value)) {
             return {
-                min: value.$gte === undefined ? 0 : converter(value.$gte),
-                max: value.$lte === undefined ? 0 : converter(value.$lte),
+                min: value.$gte === undefined ? '0' : converter(value.$gte),
+                max: value.$lte === undefined ? '0' : converter(value.$lte),
             };
         }
         return undefined;
@@ -362,8 +362,8 @@ export class DWH {
             gpuCount: benchmarks.values[7] || 0,
             gpuRamSize: Math.round(benchmarks.values[8] / (1024 * 1024)) || 0,
             ethHashrate:
-                Math.round((100 * benchmarks.values[9]) / (1024 * 1024)) /
-                    100 || 0,
+                Math.round(100 * benchmarks.values[9] / (1024 * 1024)) / 100 ||
+                0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),

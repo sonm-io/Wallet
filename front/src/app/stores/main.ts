@@ -39,6 +39,14 @@ const emptyForm: IMainFormValues = {
     json: '',
 };
 
+const emptyCurrencyInfo = {
+    symbol: '',
+    decimalPointOffset: 2,
+    name: '',
+    address: '',
+    balance: '',
+};
+
 interface IMainStoreServices {
     localizator: ILocalizator;
 }
@@ -157,14 +165,7 @@ export class MainStore extends OnlineStore {
     @computed
     public get primaryTokenInfo(): ICurrencyInfo {
         const result = this.currencyMap.get(this.primaryTokenAddress);
-
-        if (!result) {
-            throw new Error(
-                `Second token ${this.primaryTokenAddress} not found`,
-            );
-        }
-
-        return result;
+        return result || emptyCurrencyInfo;
     }
 
     @computed
