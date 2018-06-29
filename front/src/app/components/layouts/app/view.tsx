@@ -38,6 +38,10 @@ interface IProps {
     snmBalance: string;
     etherBalance: string;
     marketBalance: string;
+
+    isTestNet: boolean;
+    ethNodeURL: string;
+    snmNodeURL: string;
 }
 
 export class AppView extends React.PureComponent<IProps, any> {
@@ -57,9 +61,9 @@ export class AppView extends React.PureComponent<IProps, any> {
                         marketStats={p.marketStats}
                         marketBalance={p.marketBalance}
                         className="sonm-app__header"
-                        isTestNet={true}
-                        gethNodeUrl="infura.com"
-                        sonmNodeUrl="dwh.sonm.com"
+                        isTestNet={p.isTestNet}
+                        gethNodeUrl={p.ethNodeURL}
+                        sonmNodeUrl={p.snmNodeURL}
                         hasMarketAccountSelect={p.hasMarketAccountSelect}
                         snmBalance={p.snmBalance}
                         etherBalance={p.etherBalance}

@@ -35,6 +35,10 @@ export class DWH {
         this.url = DEFAULT_NODES[network];
     }
 
+    public getUrl() {
+        return this.url;
+    }
+
     public static readonly emptyFilter = {};
 
     public static readonly benchmarkMap: Array<

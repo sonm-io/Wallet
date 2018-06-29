@@ -114,6 +114,8 @@ class Api {
             importWallet: this.importWallet,
             exportWallet: this.exportWallet,
 
+            getConnectionInfo: this.getConnectionInfo,
+
             'account.add': this.addAccount,
             'account.create': this.createAccount,
             'account.createFromPrivateKey': this.createAccountFromPrivateKey,
@@ -145,11 +147,9 @@ class Api {
             'deal.close': this.closeDeal,
             'order.getParams': wrapInResponse(this.getOrderParams),
             'order.waitForDeal': wrapInResponse(this.waitForOrderDeal),
-
             'market.getValidators': wrapInResponse(dwh.getValidators),
 
             getKYCLink: this.getKYCLink,
-
             getSonmTokenAddress: this.getSonmTokenAddress,
             getTokenExchangeRate: this.getTokenExchangeRate,
 
@@ -198,6 +198,20 @@ class Api {
     public getSettings = async (): Promise<t.IResponse> => {
         return {
             data: this.storage.settings,
+        };
+    };
+
+    public getConnectionInfo = async (): Promise<t.IResponse> => {
+        const chainId = this.storage.settings.chainId;
+        return {
+            data: {
+                ethNodeURL: DEFAULT_NODES[chainId].replace('https://', ''),
+                snmNodeURL: DEFAULT_NODES[`${chainId}_private`].replace(
+                    'https://',
+                    '',
+                ),
+                isTest: chainId !== 'livenet',
+            },
         };
     };
 

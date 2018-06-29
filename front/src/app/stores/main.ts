@@ -1,7 +1,7 @@
 import { observable, action, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as sortBy from 'lodash/fp/sortBy';
-import { Api, IAccountInfo, ICurrencyInfo } from 'app/api';
+import { Api, IAccountInfo, IConnectionInfo, ICurrencyInfo } from 'app/api';
 import { AlertType, IAccountItemView, ICurrencyItemView } from './types';
 import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore } from './online-store';
@@ -54,6 +54,12 @@ export class MainStore extends OnlineStore {
 
         this.rootStore = rootStore;
 
+        this.connectionInfo = {
+            isTest: true,
+            ethNodeURL: '',
+            snmNodeURL: '',
+        };
+
         autorun(() => {
             if (Array.from(this.currencyMap.keys()).length > 0) {
                 this.update();
@@ -66,6 +72,7 @@ export class MainStore extends OnlineStore {
     protected rootStore: RootStore;
 
     @observable.ref protected walletInfo?: IWalletListItem;
+    @observable.ref public connectionInfo: IConnectionInfo;
 
     @computed
     get firstAccountAddress(): IAccountInfo {
@@ -302,6 +309,8 @@ export class MainStore extends OnlineStore {
             currencyList.map(normalizeCurrencyInfo),
             this.currencyMap,
         );
+
+        this.connectionInfo = (yield Api.getConnectionInfo()).data;
     }
 
     @action
