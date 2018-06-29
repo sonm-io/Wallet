@@ -62,7 +62,7 @@ export class RootStore implements IHasLocalizator {
         this.localizator = localizator;
 
         // should be first cause used in all stores;
-        this.uiStore = new UiStore();
+        this.uiStore = new UiStore(this);
 
         this.walletHistoryFilterStore = new HistoryFilterStore(
             EnumHistorySourceMode.wallet,

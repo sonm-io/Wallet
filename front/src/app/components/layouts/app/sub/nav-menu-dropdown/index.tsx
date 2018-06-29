@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 import * as invariant from 'fbjs/lib/invariant';
+import { observer } from 'mobx-react';
+import rootStore from 'app/stores';
 
 type TItem<T> = [
     string, // Title
@@ -57,6 +59,7 @@ class SubMenuItem extends React.Component<ISubItemProps, never> {
     }
 }
 
+@observer
 export class NavMenuDropdown extends React.PureComponent<
     INavMenuDropdownProps,
     any
@@ -94,8 +97,6 @@ export class NavMenuDropdown extends React.PureComponent<
     };
 
     public render() {
-        const disabledItems: string[] = [];
-
         return (
             <div
                 data-display-id="nav-menu"
@@ -103,7 +104,9 @@ export class NavMenuDropdown extends React.PureComponent<
             >
                 {this.props.items.map((item: TMenuItem, index) => {
                     const [title, , children = Array.prototype] = item;
-                    const isDisabled = disabledItems.indexOf(title) > 0;
+                    const isDisabled =
+                        rootStore.uiStore.disabledMenuItems.indexOf(item[0]) >
+                        -1;
 
                     return (
                         <DropdownInput
