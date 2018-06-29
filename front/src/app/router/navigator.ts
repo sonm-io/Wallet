@@ -15,7 +15,8 @@ export class Navigator implements INavigator {
         this.n = navigateFn;
     }
 
-    public toSend = () => this.n({ path: '/wallet/send' });
+    public toSend = (address?: string) =>
+        this.n({ path: `/wallet/send/${address}` });
     public toHistory = () => {
         this.n({ path: '/wallet/history' });
     };

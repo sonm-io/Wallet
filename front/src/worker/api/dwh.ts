@@ -228,8 +228,15 @@ export class DWH {
     protected static priceMultiplierOut = new BN('1000000000000000000').div(
         new BN('3600'),
     );
+
     public static recalculatePriceOut(price: string) {
-        return String(new BN(price).mul(DWH.priceMultiplierOut));
+        const multiplier = 1000000;
+
+        return String(
+            new BN(String(parseFloat(price) * multiplier))
+                .mul(DWH.priceMultiplierOut)
+                .div(new BN(multiplier)),
+        );
     }
 
     public getOrders = async ({
@@ -332,8 +339,8 @@ export class DWH {
     ) => {
         if (value && ('$gte' in value || '$lte' in value)) {
             return {
-                min: value.$gte === undefined ? '0' : converter(value.$gte),
-                max: value.$lte === undefined ? '0' : converter(value.$lte),
+                min: value.$gte === undefined ? null : converter(value.$gte),
+                max: value.$lte === undefined ? null : converter(value.$lte),
             };
         }
         return undefined;
