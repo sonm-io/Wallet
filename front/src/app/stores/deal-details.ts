@@ -85,6 +85,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     protected errorProcessor: IErrorProcessor;
 
     @observable.ref public deal: IDeal;
+    @observable public dealId: string = '';
 
     constructor(
         rootStore: RootStore,
@@ -124,7 +125,8 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @pending
     @asyncAction
     public *setDealId(dealId: string) {
-        if (!this.deal || this.deal.id !== dealId) {
+        if (this.dealId !== dealId) {
+            this.dealId = dealId;
             this.deal = yield this.api.fetchById(dealId);
         }
     }
@@ -133,7 +135,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @asyncAction
     public *submit() {
         const password = this.password;
-        const id = this.deal.id;
+        const id = this.dealId;
         const isBlacklisted = this.isBlacklisted;
         const accountAddress = this.externalStores.market.marketAccountAddress;
 
