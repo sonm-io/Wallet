@@ -49,7 +49,9 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                     topMenuActiveItem={p.hasMarketAccountSelect ? 1 : 0}
                     items={p.menu}
                 />
-                <MyProfileLink onClick={this.props.onClickMyProfile} />
+                {p.hasMarketAccountSelect ? (
+                    <MyProfileLink onClick={this.props.onClickMyProfile} />
+                ) : null}
                 {p.account && p.hasMarketAccountSelect ? (
                     <MarketAccountSelect
                         disabled={p.disableAccountSelect}
