@@ -1,4 +1,4 @@
-import { observable, computed, action, autorun } from 'mobx';
+import { observable, computed, action, reaction } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { ISendFormValues, IAccountItemView } from './types';
 import { OnlineStore, IErrorProcessor } from './online-store';
@@ -51,20 +51,25 @@ export class MarketStore extends OnlineStore {
 
         this.services = { ...services };
 
-        autorun(() => {
-            if (
-                this.userInput.marketAccountAddress === '' &&
-                this.marketAccountViewList.length > 0
-            ) {
-                this.setMarketAccountAddress(
-                    this.marketAccountViewList[0].address,
-                );
-            }
-
-            this.updateValidators();
-            this.updateTotalBalance();
+        reaction(() => this.marketAccountViewList.length, this.update, {
+            fireImmediately: true,
+            name: 'reaction marketAccountViewList',
+        });
+        reaction(() => this.userInput.marketAccountAddress, this.update, {
+            name: 'reaction marketAccountAddress',
         });
     }
+
+    protected update = () => {
+        if (
+            this.userInput.marketAccountAddress === '' &&
+            this.marketAccountViewList.length > 0
+        ) {
+            this.setMarketAccountAddress(this.marketAccountViewList[0].address);
+        }
+        this.updateValidators();
+        this.updateTotalBalance();
+    };
 
     @observable
     private userInput: IMarketStoreForm = {

@@ -181,8 +181,8 @@ export class MainStore extends OnlineStore {
         address: string,
     ) {
         const item = fullList.find(x => x.address === address);
-
-        return item ? item.balance : '';
+        const balance = item ? item.balance : '';
+        return balance || '0';
     }
 
     @computed
