@@ -124,7 +124,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @pending
     @asyncAction
     public *setDealId(dealId: string) {
-        if (this.dealId !== dealId) {
+        if (!this.deal || this.deal.id !== dealId) {
             this.deal = yield this.api.fetchById(dealId);
         }
     }
@@ -133,7 +133,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @asyncAction
     public *submit() {
         const password = this.password;
-        const id = this.dealId;
+        const id = this.deal.id;
         const isBlacklisted = this.isBlacklisted;
         const accountAddress = this.externalStores.market.marketAccountAddress;
 
@@ -173,8 +173,6 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
             this.rootStore.uiStore.addAlert(alert);
         }
     }
-
-    @observable public dealId: string = '';
 
     @computed
     public get password() {
