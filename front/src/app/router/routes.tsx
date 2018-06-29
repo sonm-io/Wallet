@@ -115,7 +115,6 @@ const headerMenu: Array<TMenuItem> = [
             ['History', navigateToDWHistory],
             ['Workers', navigateToWorkerList],
         ],
-        () => rootStore.marketStore.marketAccountViewList.length === 0, // is disabled
     ],
 ] as Array<TMenuItem>; // Force cast, cause 2 last parameter can be undefined
 

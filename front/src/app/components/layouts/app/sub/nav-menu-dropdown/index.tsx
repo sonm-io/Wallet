@@ -2,12 +2,13 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 import * as invariant from 'fbjs/lib/invariant';
+import { observer } from 'mobx-react';
+import rootStore from 'app/stores';
 
 type TItem<T> = [
     string, // Title
     (() => void) | undefined, // Callback
-    T[] | undefined, // Children
-    (() => boolean) | undefined // idDisabled
+    T[] | undefined // Children
 ];
 
 export type TMenuItem = TItem<TItem<undefined>>;
@@ -58,6 +59,7 @@ class SubMenuItem extends React.Component<ISubItemProps, never> {
     }
 }
 
+@observer
 export class NavMenuDropdown extends React.PureComponent<
     INavMenuDropdownProps,
     any
@@ -101,16 +103,10 @@ export class NavMenuDropdown extends React.PureComponent<
                 className={cn(this.props.className, 'sonm-nav-menu')}
             >
                 {this.props.items.map((item: TMenuItem, index) => {
-                    const [
-                        title,
-                        ,
-                        children = Array.prototype,
-                        checkDisabled,
-                    ] = item;
+                    const [title, , children = Array.prototype] = item;
                     const isDisabled =
-                        typeof checkDisabled === 'function'
-                            ? checkDisabled()
-                            : false;
+                        rootStore.uiStore.disabledMenuItems.indexOf(item[0]) >
+                        -1;
 
                     return (
                         <DropdownInput

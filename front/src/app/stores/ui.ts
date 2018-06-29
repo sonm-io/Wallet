@@ -1,8 +1,16 @@
 import { observable, action, computed } from 'mobx';
 import { IAlert, AlertType } from './types';
+import { RootStore } from 'app/stores';
 
 export class UiStore {
     protected static alertIdx = 0;
+
+    protected rootStore: RootStore;
+
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
+    }
+
     @observable public mapIdToAlert: Map<string, IAlert> = new Map();
 
     protected getNextId() {
@@ -43,6 +51,15 @@ export class UiStore {
     @computed
     get alertList() {
         return Array.from(this.mapIdToAlert.values());
+    }
+
+    @computed
+    public get disabledMenuItems() {
+        const result = [];
+        if (this.rootStore.marketStore.marketAccountViewList.length === 0) {
+            result.push('Market');
+        }
+        return result;
     }
 }
 
