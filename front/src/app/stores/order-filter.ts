@@ -8,6 +8,7 @@ import { RootStore } from 'app/stores';
 import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
 import { validatePositiveInteger } from '../utils/validation/validate-positive-integer';
 import { IFilterStore } from './list-store';
+import validatePositiveNumber from '../utils/validation/validate-positive-number';
 
 export enum EnumOrderOwnerType {
     market,
@@ -52,11 +53,18 @@ export type IOrderFilterValidation = Partial<
 >;
 
 export class OrderFilterStore implements IFilterStore {
-    private static validateNumber = (value: string) => {
+    private static validateInteger = (value: string) => {
         if (value === '0' || value === '') {
             return '';
         }
         return validatePositiveInteger(value).join(', ');
+    };
+
+    private static validateFloat = (value: string) => {
+        if (value === '0' || value === '') {
+            return '';
+        }
+        return validatePositiveNumber(value).join(', ');
     };
 
     private static defaultUserInput: IOrderFilter = {
@@ -107,8 +115,6 @@ export class OrderFilterStore implements IFilterStore {
         storageSizeTo: '',
         gpuRamSizeFrom: '',
         gpuRamSizeTo: '',
-        priceFrom: '',
-        priceTo: '',
     };
 
     protected rootStore: RootStore;
@@ -155,9 +161,16 @@ export class OrderFilterStore implements IFilterStore {
         for (const key in OrderFilterStore.emptyValidation) {
             const k = key as keyof IOrderFilter;
             result[k] =
-                OrderFilterStore.validateNumber(String(this.userInput[k])) &&
+                OrderFilterStore.validateInteger(String(this.userInput[k])) &&
                 VALIDATION_MSG;
         }
+
+        result.priceFrom =
+            OrderFilterStore.validateFloat(String(this.userInput.priceFrom)) &&
+            VALIDATION_MSG;
+        result.priceTo =
+            OrderFilterStore.validateFloat(String(this.userInput.priceTo)) &&
+            VALIDATION_MSG;
 
         return result;
     }

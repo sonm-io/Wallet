@@ -269,7 +269,7 @@ export class DWH {
             creatorIdentityLevel: get('creator.status.$in', mongoLikeQuery),
             status: get('orderStatus.$eq', mongoLikeQuery),
             price: DWH.getMinMaxFilter(
-                get('mongoLikeQuery.price', mongoLikeQuery),
+                get('price', mongoLikeQuery),
                 DWH.recalculatePriceOut,
             ),
             benchmarks:
@@ -328,8 +328,8 @@ export class DWH {
     ) => {
         if (value && ('$gte' in value || '$lte' in value)) {
             return {
-                min: value.$gte === undefined ? 0 : converter(value.$gte),
-                max: value.$lte === undefined ? 0 : converter(value.$lte),
+                min: value.$gte === undefined ? '0' : converter(value.$gte),
+                max: value.$lte === undefined ? '0' : converter(value.$lte),
             };
         }
         return undefined;
