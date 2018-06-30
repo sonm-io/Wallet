@@ -1,0 +1,55 @@
+@import 'guide.less';
+
+.confirmation-panel {
+    display: flex;
+
+    &__close-button {
+        float: right;
+        // reset button
+        line-height: 0;
+        padding: 0;
+        margin: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    &__cancel-button {
+        color: @color-violet;
+        font-size: 15px;
+        font-weight: 500;
+
+        &:hover,
+        &:focus {
+            color: @color-violet;
+        }
+        white-space: nowrap;
+    }
+}
+
+.confirmation-panel--full-height {
+    flex-direction: column;
+    height: 100%;
+    &__buttons {
+        margin: auto 0 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .confirmation-panel__submit-button {
+        margin-left: auto;
+    }
+}
+
+.confirmation-panel--one-line {
+    flex-direction: row;
+    &__field {
+        width: 100%;
+    }
+    .confirmation-panel__cancel-button {
+        margin: auto 31px 25px 0;
+    }
+    .confirmation-panel__submit-button {
+        margin: auto 0 17px 31px;
+    }
+}

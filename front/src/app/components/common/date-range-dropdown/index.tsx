@@ -29,7 +29,7 @@ export class DateRangeDropdown extends React.PureComponent<
     }
 
     public render() {
-        const { value, className, valueToString } = this.getProps();
+        const { value, className, valueToString, disabled } = this.getProps();
 
         return (
             <DropdownInput
@@ -38,8 +38,9 @@ export class DateRangeDropdown extends React.PureComponent<
                 onRequireClose={this.handleClose}
                 onButtonClick={this.handleButtonClick}
                 isExpanded={this.state.expanded}
+                disabled={disabled}
             >
-                <DateRange {...this.props} />
+                <DateRange {...this.props} className="" />
             </DropdownInput>
         );
     }

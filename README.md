@@ -1,11 +1,12 @@
 # SONM Wallet
 
+### https://sonm-io.github.io/gui/
 
-### https://sonm-io.github.io/wallet-web/
 ### [Download the Latest Release](https://github.com/sonm-io/Wallet/releases/latest)
 
 ## User guide
-https://docs.sonm.io/guides/sonm-wallet-guide
+
+https://docs.sonm.io/guides/sonm-gui-guide
 
 ## What is SONM Wallet?
 
@@ -13,16 +14,16 @@ SONM Wallet is SONM GUI, a software program that stores private and public keys 
 
 SONM Wallet provides the following functions:
 
-* Manage user Ethereum accounts, support multiaccounts, create new account, export/import keystore files (UTC/JSON)
-* Send and receive Ether, SNM tokens and custom ERC20 tokens
-* View local transaction history
-* Manage user profile (SONM network profile), support multiprofiles (this and mentioned below bullet-list features are planned as part of MVP-livenet wallet release)
-* View orders in SONM Marketplace
-* Place Consumer's BID orders
-* Manage Supplier's resource slots for ASK orders
-* View deals
-* Run and track tasks
-* SONM Wallet is a desktop application that should be downloaded and installed on a PC or laptop. It is only accessible from the single computer in which they are downloaded. SONM Wallet is implemented in TypeScript. Wallet is one html file for all operation systems (view SONM Wallet Guide).
+-   Manage user Ethereum accounts, support multiaccounts, create new account, export/import keystore files (UTC/JSON)
+-   Send and receive Ether, SNM tokens and custom ERC20 tokens
+-   View local transaction history
+-   Manage user profile (SONM network profile), support multiprofiles (this and mentioned below bullet-list features are planned as part of MVP-livenet wallet release)
+-   View orders in SONM Marketplace
+-   Place Consumer's BID orders
+-   Manage Supplier's resource slots for ASK orders
+-   View deals
+-   Run and track tasks
+-   SONM Wallet is a desktop application that should be downloaded and installed on a PC or laptop. It is only accessible from the single computer in which they are downloaded. SONM Wallet is implemented in TypeScript. Wallet is one html file for all operation systems (view SONM Wallet Guide).
 
 Hosted SONM wallet version will be provided as well.
 
@@ -43,6 +44,7 @@ Switching between wallets are avaliable when the application starts or refreshes
 You may include any quantity of Ethereum accounts into one wallet. To include account or make a trensaction you shoul enter the account password.
 
 Local settings for each wallet (account key files, list of accounts and tokens, transaction history) are stored in the local SONM Wallet storage on the user's PC. The settings file is encrypted with the wallet password.
+
 ## Developers part
 
 #### Before start:
@@ -58,8 +60,9 @@ npm run webpack # run app in dev mode
 ```
 
 #### Build:
+
 ```bash
-npm run webpack:one # build app with index.html and app.bundled.js into ./dist 
+npm run webpack:one # build app with index.html and app.bundled.js into ./dist
 npm run webpack:web # build app for web into ./docs
 ```
 

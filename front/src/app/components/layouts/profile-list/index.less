@@ -1,0 +1,111 @@
+@import 'guide.less';
+
+@profilesCellPadding: 5px;
+
+.sonm-profiles {
+    &__filters {
+        display: flex;
+        align-items: baseline;
+        column-gap: 10xp;
+        padding: 0;
+        margin: 0 0 10px 0;
+    }
+
+    &__filter {
+        &-role {
+            width: 100px;
+            margin: 0 10px 0 0;
+        }
+
+        &-deals {
+            margin: 0 10px 0 0;
+            width: 200px;
+        }
+
+        &-pro {
+            margin: 0 10px 0 0;
+            flex: auto 0;
+        }
+
+        &-cloud {
+            margin: 0 10px 0 0;
+            flex: auto 0;
+        }
+
+        &-status {
+            margin: 0 10px 0 0;
+            width: 200px;
+            font-weight: 400;
+        }
+
+        &-country {
+            margin: 0 10px 0 0;
+            width: 350px;
+        }
+    }
+
+    &__status {
+        &--reg {
+            color: @color-orange;
+        }
+
+        &--anon {
+            color: @color-font-dark;
+        }
+
+        &--ident {
+            color: @color-green;
+        }
+    }
+
+    &__cell {
+        margin: 0;
+        padding: @profilesCellPadding;
+        font-size: 15px;
+    }
+}
+
+.sonm-cell {
+    &-address {
+        position: relative;
+        line-height: 120%;
+        font-size: 12px;
+
+        &__name {
+            margin: 0 0 0 30px;
+            color: @color-font-dark;
+            font-weight: bold;
+
+            &:empty {
+                &:before {
+                    content: '\00a0';
+                }
+            }
+        }
+
+        &__img {
+            position: absolute;
+            top: 50%;
+            left: @profilesCellPadding;
+            transform: translateY(-50%);
+        }
+
+        &__hex {
+            margin: 0 0 0 30px;
+        }
+    }
+
+    &-buy-orders {
+        color: @color-dark-gray;
+    }
+
+    &-sell-orders {
+        color: @color-dark-gray;
+    }
+
+    &-deals {
+    }
+
+    &-country {
+    }
+}

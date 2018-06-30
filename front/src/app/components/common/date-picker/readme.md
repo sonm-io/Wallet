@@ -1,6 +1,6 @@
 calendar:
 
-    <DatePicker value={Date.now() + 24*60*60*1000} name="1" onChange={e => console.log(JSON.stringify(e))}/>
+    <DatePicker value={new Date(Date.now() + 24*60*60*1000)} name="1" onChange={e => console.log(JSON.stringify(e))}/>
 
 calendar:
 

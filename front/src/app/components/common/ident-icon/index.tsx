@@ -6,7 +6,7 @@ export interface IProps {
     address: string;
     onlyGeneratedIcon?: boolean;
     className?: string;
-    width?: number;
+    sizePx?: number;
 }
 
 export class IdentIcon extends React.Component<IProps, any> {
@@ -16,11 +16,12 @@ export class IdentIcon extends React.Component<IProps, any> {
         '0': 'ether',
         '0x0000000000000000000000000000000000000000': 'ether',
         '0x06bda3cf79946e8b32a0bb6a3daa174b577c55b5': 'sonm',
+        '0xa2498b16a8fe7cd997f278d2419e3aa3b2b5854c': 'sonm',
         '0x983F6d60db79ea8cA4eB9968C6aFf8cfA04B3c63': 'sonm',
     };
 
     public static defaultProps: Partial<IProps> = {
-        width: 75,
+        sizePx: 75,
     };
 
     public componentWillMount() {
@@ -37,7 +38,7 @@ export class IdentIcon extends React.Component<IProps, any> {
         if (
             props === null ||
             props.address !== address ||
-            props.width !== nextProps.width
+            props.sizePx !== nextProps.sizePx
         ) {
             this.draw(address);
         }
@@ -195,7 +196,7 @@ export class IdentIcon extends React.Component<IProps, any> {
     }
 
     private processCanvasRef = (canvas: HTMLCanvasElement | null) => {
-        if (canvas !== this.canvas) {
+        if (canvas !== null) {
             this.canvas = canvas;
             this.draw(this.props.address);
         }
@@ -206,42 +207,48 @@ export class IdentIcon extends React.Component<IProps, any> {
     }
 
     private getCanvasSize(): number {
-        const x = (this.props.width as number) / ICON_PIXEL_SIZE;
+        const x = (this.props.sizePx as number) / ICON_PIXEL_SIZE;
 
         return Math.ceil(x) * ICON_PIXEL_SIZE;
     }
 
     public render() {
-        const { className, width, address, onlyGeneratedIcon } = this.props;
+        const { className, sizePx, address, onlyGeneratedIcon } = this.props;
         const canvasSize = this.getCanvasSize();
 
-        const correction = `-${(canvasSize - (width as number)) / 2}px`;
+        const correction = `-${(canvasSize - (sizePx as number)) / 2}px`;
 
         return (
-            <div
-                className={cn(
-                    className,
-                    'sonm-ident-icon__wrapper',
-                    !onlyGeneratedIcon && IdentIcon.icons[address]
-                        ? `sonm-ident-icon__icon-${IdentIcon.icons[address]}`
-                        : undefined,
-                )}
-                style={{ width: width as number, height: width as number }}
-            >
-                {IdentIcon.icons[address] ? null : (
-                    <canvas
-                        className="sonm-ident-icon__canvas"
-                        ref={this.processCanvasRef}
-                        width={canvasSize}
-                        height={canvasSize}
-                        style={{
-                            width: canvasSize,
-                            height: canvasSize,
-                            marginTop: correction,
-                            marginLeft: correction,
-                        }}
-                    />
-                )}
+            <div className={cn(className, 'sonm-ident-icon')}>
+                <div
+                    className={cn(
+                        'sonm-ident-icon__wrapper',
+                        !onlyGeneratedIcon && IdentIcon.icons[address]
+                            ? `sonm-ident-icon__icon-${
+                                  IdentIcon.icons[address]
+                              }`
+                            : undefined,
+                    )}
+                    style={{
+                        width: sizePx as number,
+                        height: sizePx as number,
+                    }}
+                >
+                    {IdentIcon.icons[address] ? null : (
+                        <canvas
+                            className="sonm-ident-icon__canvas"
+                            ref={this.processCanvasRef}
+                            width={canvasSize}
+                            height={canvasSize}
+                            style={{
+                                width: canvasSize,
+                                height: canvasSize,
+                                marginTop: correction,
+                                marginLeft: correction,
+                            }}
+                        />
+                    )}
+                </div>
             </div>
         );
     }

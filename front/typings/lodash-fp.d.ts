@@ -1,5 +1,7 @@
 declare module 'lodash/fp/get' {
     function get(path: string): (obj: any) => any;
+
+    function get(path: string, obj: any): any;
     namespace get {
 
     }
@@ -28,4 +30,24 @@ declare module 'lodash/fp/capitalize' {
 
     }
     export = capitalize;
+}
+
+declare module 'lodash/fp/mapKeys' {
+    function mapKeys(
+        mapper: any,
+    ): (item: { [key: string]: any }) => { [key: string]: any };
+    namespace mapKeys {
+
+    }
+    export = mapKeys;
+}
+
+declare module 'lodash/fp/pick' {
+    function pick(
+        keys: string[],
+    ): (map: { [key: string]: any }) => { [key: string]: any };
+    namespace pick {
+
+    }
+    export = pick;
 }

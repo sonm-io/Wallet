@@ -7,11 +7,13 @@
     flex-grow: 1;
 
     &__icon-send,
-    &__icon-history {
+    &__icon-history,
+    &__icon-deposit,
+    &__icon-withdraw {
         background-size: cover;
-        border-radius: 50%;
-        height: 200px;
-        width: 200px;
+        height: 140px;
+        width: 140px;
+        display: inline-block;
     }
 
     &__icon-send {
@@ -20,6 +22,14 @@
 
     &__icon-history {
         background: url('./icon-history.svg') no-repeat center;
+    }
+
+    &__icon-deposit {
+        background: url('./icon-deposit.svg') no-repeat center;
+    }
+
+    &__icon-withdraw {
+        background: url('./icon-withdraw.svg') no-repeat center;
     }
 
     &__button {

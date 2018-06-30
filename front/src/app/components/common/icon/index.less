@@ -8,22 +8,22 @@
     position: relative;
     vertical-align: baseline;
     -webkit-appearance: none !important;
-
-    a&:focus,
-    a&:visited,
-    a&:active,
-    a&:hover {
-        text-decoration: none;
-    }
+    min-width: 1em;
+    min-height: 1em;
 
     &:focus,
-    &:active {
-        outline: @outline;
+    &:visited,
+    &:active,
+    &:hover {
+        text-decoration: none;
+        outline: none;
     }
 
-    &:before {
-        font-size: 0.8em;
-        content: '  ';
+    button&:focus,
+    button&:active,
+    a&:focus,
+    a&:active {
+        outline: @outline;
     }
 
     & svg {

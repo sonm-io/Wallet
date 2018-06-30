@@ -1,24 +1,46 @@
 @import 'guide.less';
 
 :root {
-    --color-input-underline: @color-blue;
+    --color-input-active-border: @color-violet;
     --color-input-text: @color-font-dark;
+    --color-input-border: @color-border;
+    --color-prefix: @color-font-gray;
+}
+
+.sonm-input--in-the-dark {
+    --color-input-active-border: @color-blue;
+    --color-input-text: @color-white;
+    --color-input-border: @color-blue;
+    --color-prefix: @color-blue;
 }
 
 .sonm-input {
     position: relative;
     margin: 5px 0;
+    padding: 2px 0;
+    font-weight: 400;
+    font-size: 16px;
+    height: 36px;
+    line-height: 1.5;
+
+    display: flex;
+    align-items: flex-end;
+
+    &__prefix {
+        margin: 0 5px 0 0;
+        padding: 0;
+        color: var(--color-prefix);
+        background: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+    }
 
     &__input {
-        font-size: 16px;
         color: var(--color-input-text);
-        font-weight: 400;
-        line-height: 36px;
-        height: 36px;
-        box-sizing: padding-box;
+        box-sizing: border-box;
         background-color: transparent;
         width: 100%;
-        transition: border-bottom-width;
         padding: 0;
         margin: 0;
         border: 0;
@@ -35,10 +57,15 @@
         left: 0;
         right: 0;
         height: 1px;
-        background-color: var(--color-input-underline);
+        background-color: var(--color-input-border);
     }
 
-    &__input:focus + &__underline {
+    *:focus ~ &__underline {
+        background-color: var(--color-input-active-border);
         height: 2px;
+    }
+
+    &--readonly &__underline {
+        display: none;
     }
 }

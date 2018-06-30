@@ -1,0 +1,86 @@
+@import 'guide.less';
+
+// External variables
+
+@listHeader-fontColor: @color-light-font;
+@listHeader-fontFamily: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue',
+    Helvetica, Arial, sans-serif;
+@listHeader-selectedItemColor: @color-violet;
+
+// Mixins
+
+.list-header__flexRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.list-header__font {
+    color: @listHeader-fontColor;
+    font-family: @listHeader-fontFamily;
+    font-weight: 700;
+}
+
+.list-header__noButton {
+    border: none;
+    background: transparent;
+    &:focus {
+        outline: 1px dotted @listHeader-selectedItemColor;
+    }
+}
+
+// Component
+
+.list-header {
+    .list-header__flexRow;
+
+    // Sortings block
+
+    &__sortings {
+        .list-header__flexRow;
+        .list-header__font;
+        white-space: nowrap;
+    }
+    &__sortings-container {
+        .list-header__flexRow;
+    }
+    &__sortings-container-item {
+        .list-header__font;
+        .list-header__noButton;
+        margin: 0 5px;
+        cursor: pointer;
+        user-select: none;
+
+        &--selected {
+            color: @listHeader-selectedItemColor;
+        }
+    }
+    &__sortings-container-icon {
+        margin-left: 3px;
+    }
+
+    // PageSize block
+
+    &__pageSize {
+        .list-header__flexRow;
+        .list-header__font;
+        margin-left: auto;
+    }
+    &__pageSize-button {
+        .list-header__noButton;
+    }
+    &__pageSize-button-label {
+        .list-header__font;
+        margin: 0 5px;
+        cursor: pointer;
+        user-select: none;
+
+        &--selected {
+            text-decoration: underline;
+        }
+    }
+    &__pageSize-refresh {
+        .list-header__noButton;
+        cursor: pointer;
+    }
+}

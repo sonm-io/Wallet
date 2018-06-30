@@ -4,16 +4,18 @@ import { observer } from 'mobx-react';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { Header } from 'app/components/common/header';
 import { IdentIcon } from 'app/components/common/ident-icon';
-import { navigate } from 'app/router';
 import { Button } from 'app/components/common/button';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
 import { Balance } from 'app/components/common/balance-view';
 import { rootStore } from 'app/stores';
+import { TEthereumAddress } from 'app/entities/types';
 
 interface IProps {
     className?: string;
     initialAddress: string;
+    onClickHistory: (fromAddress?: TEthereumAddress) => void;
+    onClickSend: (currencyAddress: TEthereumAddress) => void;
 }
 
 enum Dialogs {
@@ -41,24 +43,14 @@ export class Account extends React.Component<IProps, any> {
         });
     };
 
-    protected handleHistoryClick = () => {
-        navigate({
-            path: '/history',
-            query: {
-                address: rootStore.sendStore.fromAddress,
-            },
-        });
+    protected handleClickHistory = () => {
+        this.props.onClickHistory(rootStore.sendStore.fromAddress);
     };
 
     protected handleSendClick = (event: any) => {
         const currencyAddress = event.target.name;
 
-        navigate({
-            path: '/send',
-            query: {
-                currency: currencyAddress,
-            },
-        });
+        this.props.onClickSend(currencyAddress);
     };
 
     protected handleGiveMeMore = async (event: any) => {
@@ -77,10 +69,7 @@ export class Account extends React.Component<IProps, any> {
 
         const testEtherUrl = 'https://faucet.rinkeby.io/';
 
-        return [
-            <Header className="sonm-account__header" key="header">
-                Account
-            </Header>,
+        return (
             <div className={cn('sonm-account', className)} key="account">
                 <AccountBigSelect
                     className="sonm-account__account-select"
@@ -92,7 +81,7 @@ export class Account extends React.Component<IProps, any> {
 
                 <button
                     className="sonm-account__go-to-history"
-                    onClick={this.handleHistoryClick}
+                    onClick={this.handleClickHistory}
                 >
                     View operation history
                 </button>
@@ -117,7 +106,7 @@ export class Account extends React.Component<IProps, any> {
                                     >
                                         <IdentIcon
                                             address={address}
-                                            width={40}
+                                            sizePx={40}
                                             className="sonm-account-token-list__currency-blockies"
                                         />
                                         <div className="sonm-account-token-list__currency-name">
@@ -192,7 +181,7 @@ export class Account extends React.Component<IProps, any> {
                         </div>
                     </form>
                 ) : null}
-            </div>,
-        ];
+            </div>
+        );
     }
 }

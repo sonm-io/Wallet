@@ -3,61 +3,42 @@ import * as AES from 'crypto-js/aes';
 import * as SHA256 from 'crypto-js/sha256';
 import * as Utf8 from 'crypto-js/enc-utf8';
 import * as Hex from 'crypto-js/enc-hex';
-import * as t from 'app/api/types';
+import * as t from './types';
+import { delay } from 'app/utils/async-delay';
+import * as tcomb from 'tcomb';
+import { BN } from 'bn.js';
+
+import { wrapInResponse } from './utils';
 
 import { migrate } from '../migrations';
+import { DWH } from './dwh';
 
 const { createSonmFactory, utils } = sonmApi;
 
-const STORAGE_VERSION = 2;
+const STORAGE_VERSION = 3;
 const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
 
 import ipc from '../ipc';
-
-interface INodes {
-    [index: string]: string;
-}
-
-interface ITokens {
-    [index: string]: t.ICurrencyInfo[];
-}
-
-interface IPayload {
-    [index: string]: any;
-}
-
-interface IWalletJson {
-    address: string;
-    crypto: object;
-}
-
-interface IAccounts {
-    [address: string]: {
-        json: IWalletJson;
-        name: string;
-        address: string;
-    };
-}
-
-interface IResponse {
-    data?: any;
-    validation?: object;
-}
 
 async function ipcSend(type: string, payload?: any): Promise<any> {
     const res = await ipc.send(type, payload);
     return res.data || null;
 }
 
-const DEFAULT_NODES: INodes = {
+const DEFAULT_NODES: t.INodes = {
     default: 'https://mainnet.infura.io',
     livenet: 'https://mainnet.infura.io',
+    livenet_private: 'https://sidechain.livenet.sonm.com',
     rinkeby: 'https://rinkeby.infura.io',
+    rinkeby_private: 'https://sidechain-dev.sonm.com',
     testrpc: 'http://localhost:8545',
 };
 
-const DEFAULT_TOKENS: ITokens = {
+const ZERO_ADDRESS = Array(41).join('0');
+const WEI_PRECISION = Array(19).join('0');
+
+const DEFAULT_TOKENS: t.ITokens = {
     livenet: [
         {
             name: 'STORJ',
@@ -88,24 +69,37 @@ const DEFAULT_TOKENS: ITokens = {
 };
 
 class Api {
-    private routes: {
+    protected routes: {
         [index: string]: any;
     };
 
     private accounts: {
         [index: string]: any;
-    };
+    } = {};
 
     private storage: {
         [index: string]: any;
+    } = {
+        accounts: {},
+        transactions: [],
+        tokens: [],
+        settings: {
+            chainId: null,
+            nodeUrl: null,
+        },
     };
 
     private secretKey: string = '';
     private hash: string = '';
-    private tokenList: any;
 
-    private constructor() {
-        this.accounts = {};
+    private tokenList: {
+        [index: string]: any;
+    } = {};
+
+    private dwh: DWH;
+
+    constructor(dwh: DWH) {
+        this.dwh = dwh;
 
         this.routes = {
             ping: this.ping,
@@ -120,6 +114,8 @@ class Api {
             importWallet: this.importWallet,
             exportWallet: this.exportWallet,
 
+            getConnectionInfo: this.getConnectionInfo,
+
             'account.add': this.addAccount,
             'account.create': this.createAccount,
             'account.createFromPrivateKey': this.createAccountFromPrivateKey,
@@ -129,29 +125,38 @@ class Api {
             'account.getGasPrice': this.getGasPrice,
             'account.getCurrencyBalances': this.getCurrencyBalances,
             'account.getCurrencies': this.getCurrencies,
-            'account.send': this.send,
+            'account.getMarketBalance': this.getMarketBalance,
+            'account.send': this.transaction('wallet'),
+            'account.deposit': this.transaction('deposit'),
+            'account.withdraw': this.transaction('withdraw'),
             'account.list': this.getAccountList,
             'account.requestTestTokens': this.requestTestTokens,
             'account.getPrivateKey': this.getPrivateKey,
 
-            'transaction.list': this.getTransactionList,
+            'transaction.list': wrapInResponse(this.getTransactionList),
 
+            'profile.get': wrapInResponse(dwh.getProfileFull),
+            'profile.list': wrapInResponse(dwh.getProfiles),
+            'order.get': wrapInResponse(dwh.getOrderFull),
+            'order.list': wrapInResponse(dwh.getOrders),
+            'deal.get': wrapInResponse(dwh.getDealFull),
+            'deal.list': wrapInResponse(dwh.getDeals),
+            'worker.list': wrapInResponse(dwh.getWorkers),
+            'worker.confirm': this.confirmWorker,
+            'order.buy': this.buyOrder,
+            'deal.close': this.closeDeal,
+            'order.getParams': wrapInResponse(this.getOrderParams),
+            'order.waitForDeal': wrapInResponse(this.waitForOrderDeal),
+            'market.getValidators': wrapInResponse(dwh.getValidators),
+
+            getKYCLink: this.getKYCLink,
             getSonmTokenAddress: this.getSonmTokenAddress,
+            getTokenExchangeRate: this.getTokenExchangeRate,
 
             addToken: this.addToken,
             removeToken: this.removeToken,
             getTokenInfo: this.getTokenInfo,
             getPresetTokenList: this.getPresetTokenList,
-        };
-
-        this.storage = {
-            accounts: {},
-            transactions: [],
-            tokens: [],
-            settings: {
-                chainId: null,
-                nodeUrl: null,
-            },
         };
     }
 
@@ -168,7 +173,7 @@ class Api {
         ).toString();
     };
 
-    public getWalletList = async (): Promise<IResponse> => {
+    public getWalletList = async (): Promise<t.IResponse> => {
         return {
             data: (await this.getWallets()).data,
         };
@@ -190,13 +195,27 @@ class Api {
         }
     };
 
-    public getSettings = async (): Promise<IResponse> => {
+    public getSettings = async (): Promise<t.IResponse> => {
         return {
             data: this.storage.settings,
         };
     };
 
-    public setSettings = async (data: IPayload): Promise<IResponse> => {
+    public getConnectionInfo = async (): Promise<t.IResponse> => {
+        const chainId = this.storage.settings.chainId;
+        return {
+            data: {
+                ethNodeURL: DEFAULT_NODES[chainId].replace('https://', ''),
+                snmNodeURL: DEFAULT_NODES[`${chainId}_private`].replace(
+                    'https://',
+                    '',
+                ),
+                isTest: chainId !== 'livenet',
+            },
+        };
+    };
+
+    public setSettings = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.settings) {
             this.storage.settings = data.settings;
             await this.saveData();
@@ -209,7 +228,7 @@ class Api {
         }
     };
 
-    public checkConnection = async (): Promise<IResponse> => {
+    public checkConnection = async (): Promise<t.IResponse> => {
         try {
             await this.getGasPrice();
 
@@ -223,7 +242,7 @@ class Api {
         }
     };
 
-    public getPrivateKey = async (data: IPayload): Promise<IResponse> => {
+    public getPrivateKey = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             const { address, password } = data;
 
@@ -236,7 +255,8 @@ class Api {
     private async checkAccountPassword(
         password: string,
         address: string,
-    ): Promise<IResponse> {
+        privateChain: boolean = false,
+    ): Promise<t.IResponse> {
         if (!password) {
             return {
                 validation: {
@@ -245,9 +265,9 @@ class Api {
             };
         }
 
-        address = utils.add0x(address);
+        address = utils.add0x(address).toLowerCase();
 
-        const client = await this.initAccount(address);
+        const client = await this.initAccount(address, privateChain);
 
         if (client && client.password) {
             if (client.password !== password) {
@@ -286,7 +306,7 @@ class Api {
         }
     }
 
-    private createAccount = async (data: IPayload): Promise<IResponse> => {
+    private createAccount = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.password) {
             return {
                 data: JSON.stringify(utils.newAccount(data.password)),
@@ -297,8 +317,8 @@ class Api {
     };
 
     private createAccountFromPrivateKey = async (
-        data: IPayload,
-    ): Promise<IResponse> => {
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
         if (data.password && data.privateKey) {
             try {
                 return {
@@ -322,7 +342,7 @@ class Api {
         this.hash = `sonm_${SHA256(name).toString(Hex)}`;
     }
 
-    public createWallet = async (data: IPayload): Promise<IResponse> => {
+    public createWallet = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.password && data.walletName && data.chainId) {
             this.setWalletHash(data.walletName);
             this.secretKey = data.password;
@@ -358,6 +378,8 @@ class Api {
 
             await this.saveDataToStorage(KEY_WALLETS_LIST, walletList, false);
 
+            this.dwh.setNetworkURL(chainId);
+
             return {
                 data: wallet,
             };
@@ -374,7 +396,7 @@ class Api {
         }
     };
 
-    public importWallet = async (data: IPayload): Promise<IResponse> => {
+    public importWallet = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.password && data.file && data.walletName) {
             if (data.file.substr(0, 4) === 'sonm') {
                 try {
@@ -446,7 +468,7 @@ class Api {
         }
     };
 
-    public unlockWallet = async (data: IPayload): Promise<IResponse> => {
+    public unlockWallet = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.password && data.walletName) {
             this.setWalletHash(data.walletName);
             this.secretKey = data.password;
@@ -497,13 +519,13 @@ class Api {
         }
     };
 
-    public exportWallet = async (): Promise<IResponse> => {
+    public exportWallet = async (): Promise<t.IResponse> => {
         return {
             data: 'sonm' + this.encrypt(this.storage),
         };
     };
 
-    public getAccountList = async (): Promise<IResponse> => {
+    public getAccountList = async (): Promise<t.IResponse> => {
         const accounts = (await this.getAccounts()) || {};
         const addresses = Object.keys(accounts);
 
@@ -526,29 +548,57 @@ class Api {
         } catch (err) {}
 
         const requests = [];
+        const marketRequests = [];
+        const tokenList = await this.getTokenList(true);
+
         for (const address of Object.keys(accounts)) {
             requests.push(this.getCurrencyBalances(address));
+            marketRequests.push(tokenList.getBalances(address));
         }
 
-        let balancies;
+        let balancies, rateResponse, marketBalancies;
         try {
-            balancies = await Promise.all(requests);
+            [rateResponse, balancies, marketBalancies] = await Promise.all([
+                this.getTokenExchangeRate(),
+                Promise.all(requests),
+                Promise.all(marketRequests),
+            ]);
         } catch (err) {
             //console.log(err);
         }
+
+        const rate =
+            rateResponse && rateResponse.data ? rateResponse.data : undefined;
 
         const list = [] as t.IAccountInfo[];
         for (let i = 0; i < addresses.length; i++) {
             const address = addresses[i];
 
             if (accounts[address]) {
-                list.push({
+                const item = {
                     address,
+                    marketBalance: '0',
+                    marketUsdBalance: '0',
                     name: accounts[address].name,
                     json: JSON.stringify(accounts[address].json),
                     currencyBalanceMap:
                         balancies && balancies[i] ? balancies[i] : {},
-                });
+                };
+
+                if (marketBalancies && marketBalancies[i]) {
+                    const marketBalance = marketBalancies[i];
+
+                    item.marketBalance =
+                        marketBalance[Object.keys(marketBalance)[1]];
+                    item.marketUsdBalance =
+                        parseInt(rate, 10) > 0
+                            ? new BN(item.marketBalance + WEI_PRECISION)
+                                  .div(new BN(rate))
+                                  .toString()
+                            : '0';
+                }
+
+                list.push(item);
             }
         }
 
@@ -584,7 +634,13 @@ class Api {
                     ? this.decrypt(dataFromStorage)
                     : JSON.parse(dataFromStorage);
 
-                return await this.checkStorageVersion(key, data);
+                const storage = await this.checkStorageVersion(key, data);
+
+                if (key !== KEY_WALLETS_LIST) {
+                    this.dwh.setNetworkURL(storage.settings.chainId);
+                }
+
+                return storage;
             } catch (err) {
                 // console.log(err);
                 return false;
@@ -615,11 +671,11 @@ class Api {
         return data;
     };
 
-    private getAccounts = async (): Promise<IAccounts | null> => {
+    private getAccounts = async (): Promise<t.IAccounts | null> => {
         return this.storage.accounts || null;
     };
 
-    public async ping(): Promise<IResponse> {
+    public async ping(): Promise<t.IResponse> {
         return {
             data: {
                 pong: true,
@@ -665,31 +721,10 @@ class Api {
         }
     }
 
-    private async initAccount(address: string) {
-        if (!this.accounts[address]) {
-            const factory = createSonmFactory(
-                this.storage.settings.nodeUrl,
-                this.storage.settings.chainId,
-            );
-
-            this.accounts[address] = {
-                factory,
-                account: await factory.createAccount(address),
-                password: null,
-            };
-        }
-
-        return this.accounts[address];
-    }
-
     public getCurrencyBalances = async (address: string): Promise<any> => {
         if (address) {
             const tokenList = await this.getTokenList();
             const balancies = await tokenList.getBalances(address);
-
-            for (const key of Object.keys(balancies)) {
-                balancies[key] = balancies[key];
-            }
 
             return balancies;
         } else {
@@ -697,7 +732,7 @@ class Api {
         }
     };
 
-    public addToken = async (data: IPayload): Promise<IResponse> => {
+    public addToken = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             try {
                 const tokenList = await this.getTokenList();
@@ -721,7 +756,7 @@ class Api {
         }
     };
 
-    public removeToken = async (data: IPayload): Promise<IResponse> => {
+    public removeToken = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             const tokenList = await this.getTokenList();
             await tokenList.remove(data.address);
@@ -737,7 +772,7 @@ class Api {
         }
     };
 
-    public getTokenInfo = async (data: IPayload): Promise<IResponse> => {
+    public getTokenInfo = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             try {
                 const tokenList = await this.getTokenList();
@@ -761,25 +796,68 @@ class Api {
         }
     };
 
-    private async getTokenList() {
-        if (!this.tokenList) {
-            const factory = createSonmFactory(
-                this.storage.settings.nodeUrl,
-                this.storage.settings.chainId,
-            );
-            this.tokenList = await factory.createTokenList();
-        }
+    private getFactory(privateChain = false) {
+        const chainId = this.storage.settings.chainId;
+        const nodeUrl =
+            DEFAULT_NODES[chainId + (privateChain ? '_private' : '')];
 
-        return this.tokenList;
+        return createSonmFactory(nodeUrl, chainId, privateChain);
     }
 
-    public getCurrencies = async (data: IPayload): Promise<IResponse> => {
+    private async getTokenList(privateChain = false) {
+        const key = privateChain ? 'main' : 'private';
+
+        if (!this.tokenList[key]) {
+            const factory = this.getFactory(privateChain);
+            this.tokenList[key] = await factory.createTokenList();
+        }
+
+        return this.tokenList[key];
+    }
+
+    private async initAccount(address: string, privateChain = false) {
+        const key = privateChain ? 'main' : 'private';
+        address = address.toLowerCase();
+
+        if (!this.accounts[key]) {
+            this.accounts[key] = {};
+        }
+
+        if (!this.accounts[key][address]) {
+            const factory = this.getFactory(privateChain);
+
+            this.accounts[key][address] = {
+                factory,
+                account: await factory.createAccount(address),
+                password: null,
+            };
+        }
+
+        return this.accounts[key][address];
+    }
+
+    public getMarketBalance = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
+        if (data.address) {
+            const tokenList = await this.getTokenList(true);
+            const balancies = await tokenList.getBalances(data.address);
+
+            return {
+                data: balancies[Object.keys(balancies)[1]],
+            };
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public getCurrencies = async (data: t.IPayload): Promise<t.IResponse> => {
         return {
             data: this.storage.tokens,
         };
     };
 
-    public getGasPrice = async (): Promise<IResponse> => {
+    public getGasPrice = async (): Promise<t.IResponse> => {
         const factory = createSonmFactory(
             this.storage.settings.nodeUrl,
             this.storage.settings.chainId,
@@ -791,7 +869,123 @@ class Api {
         };
     };
 
-    public getSonmTokenAddress = async (): Promise<IResponse> => {
+    public getTokenExchangeRate = async (): Promise<t.IResponse> => {
+        const client = await this.initAccount(ZERO_ADDRESS, true);
+
+        return {
+            data: await client.account.getTokenExchangeRate(),
+        };
+    };
+
+    public buyOrder = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.id && data.password) {
+            return this.getMethod('buyOrder', [data.id], true)(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public confirmWorker = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.slaveId && data.password) {
+            return this.getMethod('confirmWorker', [data.slaveId], true)(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public getKYCLink = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (
+            data.address &&
+            data.kycAddress &&
+            data.password &&
+            data.fee
+        ) {
+            return this.getMethod(
+                'getKYCLink',
+                [data.fee, data.kycAddress],
+                true,
+            )(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public closeDeal = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.id && data.password) {
+            return this.getMethod(
+                'closeDeal',
+                [data.id, data.isBlacklisted || false],
+                true,
+            )(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public getOrderParams = async ({
+        address,
+        id,
+    }: any): Promise<t.IOrderParams> => {
+        tcomb.String(address);
+        tcomb.String(id);
+
+        const client = await this.initAccount(address, true);
+        return client.account.getOrderParams(id);
+    };
+
+    public waitForOrderDeal = async ({
+        address,
+        id,
+        retryDelay = 1000,
+        retries = 30,
+    }: any): Promise<t.IOrderParams> => {
+        tcomb.String(address);
+        tcomb.String(id);
+        tcomb.Number(retryDelay);
+        tcomb.Number(retries);
+
+        const client = await this.initAccount(address, true);
+        let orderParams;
+
+        while (retries >= 0) {
+            orderParams = await client.account.getOrderParams(id);
+
+            if (orderParams && orderParams.dealID !== '0') {
+                return orderParams;
+            }
+
+            await delay(retryDelay);
+            retries--;
+        }
+
+        return orderParams;
+    };
+
+    public getSonmTokenAddress = async (): Promise<t.IResponse> => {
         const factory = createSonmFactory(
             this.storage.settings.nodeUrl,
             this.storage.settings.chainId,
@@ -802,7 +996,7 @@ class Api {
         };
     };
 
-    public addAccount = async (data: IPayload): Promise<IResponse> => {
+    public addAccount = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.json && data.password && data.name) {
             try {
                 const json = JSON.parse(data.json.toLowerCase());
@@ -857,7 +1051,7 @@ class Api {
         }
     };
 
-    public renameAccount = async (data: IPayload): Promise<IResponse> => {
+    public renameAccount = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address && data.name) {
             const accounts = (await this.getAccounts()) || {};
             if (accounts[data.address]) {
@@ -875,7 +1069,7 @@ class Api {
         }
     };
 
-    public removeAccount = async (data: IPayload): Promise<IResponse> => {
+    public removeAccount = async (data: t.IPayload): Promise<t.IResponse> => {
         if (data.address) {
             const address = data.address;
             const accounts = (await this.getAccounts()) || {};
@@ -895,7 +1089,9 @@ class Api {
         }
     };
 
-    public requestTestTokens = async (data: IPayload): Promise<IResponse> => {
+    public requestTestTokens = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
         if (data.address && data.password) {
             const validation = await this.checkAccountPassword(
                 data.password,
@@ -926,83 +1122,138 @@ class Api {
         }
     };
 
-    public getPresetTokenList = async (data: IPayload): Promise<IResponse> => {
+    public getPresetTokenList = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
         return {
             data: DEFAULT_TOKENS[this.storage.settings.chainId],
         };
     };
 
-    public send = async (data: IPayload): Promise<IResponse> => {
-        const {
-            fromAddress,
-            toAddress,
-            currencyAddress,
-            password,
-            gasLimit,
-            timestamp,
-            amount,
-            gasPrice,
-        } = data;
+    public transaction = (action: string) => {
+        return async (data: t.IPayload): Promise<t.IResponse> => {
+            const {
+                fromAddress,
+                toAddress,
+                currencyAddress,
+                password,
+                gasLimit,
+                timestamp,
+                amount,
+                gasPrice,
+            } = data;
 
-        const validation = await this.checkAccountPassword(
-            password,
-            fromAddress,
-        );
+            const privateChain = action === 'withdraw' ? true : false;
+            const validation = await this.checkAccountPassword(
+                password,
+                fromAddress,
+                privateChain,
+            );
 
-        if (!validation.data) {
-            return validation;
-        }
+            if (!validation.data) {
+                return validation;
+            }
 
-        const client = await this.initAccount(fromAddress);
-        const transactions = this.storage.transactions;
-        const token = this.storage.tokens.find(
-            (item: t.ICurrencyInfo) => item.address === currencyAddress,
-        );
+            const transactions = this.storage.transactions;
+            const token = this.storage.tokens.find(
+                (item: t.ICurrencyInfo) => item.address === currencyAddress,
+            );
 
-        const transaction = {
-            timestamp,
-            fromAddress,
-            toAddress,
-            amount,
-            currencyAddress,
-            currencySymbol: token.symbol,
-            decimalPointOffset: token.decimals,
-            hash: PENDING_HASH,
-            fee: null,
-            status: 'pending',
-        };
-
-        transactions.unshift(transaction);
-
-        try {
-            const txResult =
-                currencyAddress === '0x'
-                    ? await client.account.sendEther(
-                          toAddress,
-                          amount,
-                          gasLimit,
-                          gasPrice,
-                      )
-                    : await client.account.sendTokens(
-                          toAddress,
-                          amount,
-                          currencyAddress,
-                          gasLimit,
-                          gasPrice,
-                      );
-
-            transaction.hash = await txResult.getHash();
-
-            await this.saveData();
-            await this.proceedTx(transaction, txResult);
-
-            return {
-                data: transaction,
+            const transaction = {
+                action,
+                timestamp,
+                fromAddress,
+                toAddress,
+                amount,
+                currencyAddress,
+                currencySymbol: token.symbol,
+                decimalPointOffset: token.decimals,
+                hash: PENDING_HASH,
+                fee: null,
+                status: 'pending',
             };
-        } catch (err) {
-            transactions.shift();
-            throw err;
-        }
+
+            transactions.unshift(transaction);
+
+            const client = await this.initAccount(fromAddress, privateChain);
+
+            try {
+                let txResult;
+                if (action === 'wallet') {
+                    txResult =
+                        currencyAddress === '0x'
+                            ? await client.account.sendEther(
+                                  toAddress,
+                                  amount,
+                                  gasLimit,
+                                  gasPrice,
+                              )
+                            : await client.account.sendTokens(
+                                  toAddress,
+                                  amount,
+                                  currencyAddress,
+                                  gasLimit,
+                                  gasPrice,
+                              );
+                } else {
+                    txResult = await client.account.migrateToken(
+                        amount,
+                        gasLimit,
+                        gasPrice,
+                    );
+                }
+
+                if (txResult) {
+                    transaction.hash = await txResult.getHash();
+
+                    await this.saveData();
+                    await this.proceedTx(transaction, txResult);
+                } else {
+                    transaction.status = 'failed';
+                    transaction.hash = '';
+                }
+
+                return {
+                    data: transaction,
+                };
+            } catch (err) {
+                console.log(err);
+
+                transactions.shift();
+                throw err;
+            }
+        };
+    };
+
+    public getMethod = (
+        method: string,
+        params: any,
+        privateChain: boolean = false,
+    ) => {
+        return async (data: t.IPayload): Promise<t.IResponse> => {
+            if (data.address && data.password) {
+                const validation = await this.checkAccountPassword(
+                    data.password,
+                    data.address,
+                    privateChain,
+                );
+
+                if (!validation.data) {
+                    return validation;
+                }
+
+                const client = await this.initAccount(
+                    data.address,
+                    privateChain,
+                );
+
+                return {
+                    data: await client.account[method](...params),
+                };
+            } else {
+                throw new Error('required_params_missed');
+            }
+        };
     };
 
     private async proceedTx(transaction: any, txResult: any) {
@@ -1015,37 +1266,53 @@ class Api {
         await this.saveData();
     }
 
-    public getTransactionList = async (data: IPayload): Promise<IResponse> => {
-        let { filters, limit, offset } = data;
+    public getTransactionList = async (
+        data: t.IPayload,
+    ): Promise<t.IListResult<t.ISendTransactionResult>> => {
+        let { filter, limit, offset } = data;
+        filter = filter ? JSON.parse(filter) : {};
 
-        filters = filters || {};
         limit = limit || 10;
         offset = offset || 0;
+        filter.source = filter.source || 'wallet';
 
         let filtered = [];
         for (const item of this.storage.transactions) {
+            const sidechainAction = item.fromAddress === item.toAddress;
+
             let ok = true;
 
-            if (Object.keys(filters).length) {
+            // filter transaction by source
+            if (filter.source === 'wallet' && sidechainAction) {
+                ok = false;
+            } else if (filter.source === 'market' && !sidechainAction) {
+                ok = false;
+            }
+
+            if (Object.keys(filter).length) {
                 for (const type of ['fromAddress', 'currencyAddress']) {
-                    if (filters[type] && item[type] !== filters[type]) {
+                    if (filter[type] && item[type] !== filter[type]) {
                         ok = false;
                     }
                 }
 
                 if (
-                    filters.query &&
-                    !item.toAddress.includes(filters.query) &&
-                    !item.hash.includes(filters.query)
+                    filter.query &&
+                    !item.toAddress.includes(filter.query) &&
+                    !item.hash.includes(filter.query)
                 ) {
                     ok = false;
                 }
 
-                if (filters.timeStart && item.timestamp < filters.timeStart) {
+                if (filter.timeStart && item.timestamp < filter.timeStart) {
                     ok = false;
                 }
 
-                if (filters.timeEnd && item.timestamp > filters.timeEnd) {
+                if (filter.timeEnd && item.timestamp > filter.timeEnd) {
+                    ok = false;
+                }
+
+                if (filter.operation && item.action !== filter.operation) {
                     ok = false;
                 }
             }
@@ -1059,19 +1326,18 @@ class Api {
         filtered = filtered.slice(offset, offset + limit);
 
         return {
-            data: [filtered, total],
+            records: filtered,
+            total,
         };
     };
 
-    public async resolve(type: string, payload: any): Promise<IResponse> {
+    public async resolve(type: string, payload: any): Promise<t.IResponse> {
         if (this.routes[type]) {
             return this.routes[type](payload);
         } else {
             throw new Error('route_not_exists');
         }
     }
-
-    public static instance = new Api();
 }
 
-export const api = Api.instance;
+export const api = new Api(new DWH());

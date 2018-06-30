@@ -1,36 +1,53 @@
 import * as React from 'react';
-import { Alert } from 'app/components/common/alert';
-import * as cn from 'classnames';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores';
-import { Balance } from 'app/components/common/balance-view';
-import { LoadMask } from 'app/components/common/load-mask';
-import { AlertList } from './sub/alerts';
-import { NavMenu } from './sub/nav-menu/index';
-import { Icon } from 'app/components/common/icon';
+// import { toJS } from 'mobx';
+import { rootStore } from 'app/stores/index';
+import { AppView } from './view';
+import { IAccount } from './sub/account-select/index';
+import { TMenuItem } from './sub/nav-menu-dropdown';
+import { INavigator } from 'app/router/types';
 
 interface IProps {
     className?: string;
     children: any;
-    error: string;
-    selectedNavMenuItem: string;
-    onNavigate: (url: string) => void;
+    path: string;
     onExit: () => void;
+    title?: string;
+    disableAccountSelect?: boolean;
+    navigator: INavigator;
 }
 
 @observer
-export class App extends React.Component<IProps, any> {
-    protected static menuConfig = [
-        {
-            title: rootStore.localizator.getMessageText('accounts'),
-            url: '/accounts',
-        },
-        { title: rootStore.localizator.getMessageText('send'), url: '/send' },
-        {
-            title: rootStore.localizator.getMessageText('history'),
-            url: '/history',
-        },
-    ];
+export class App extends React.Component<IProps, never> {
+    constructor(props: IProps) {
+        super(props);
+
+        const n = props.navigator;
+        this.headerMenuConfig = [
+            [
+                'Wallet',
+                undefined,
+                [
+                    ['Accounts', () => n.to('/wallet/accounts'), undefined],
+                    ['History', n.toWalletHistory, undefined],
+                    ['Send', () => n.to('/wallet/send'), undefined],
+                ],
+            ],
+            [
+                'Market',
+                undefined,
+                [
+                    ['Profiles', () => n.to('/market/profiles'), undefined],
+                    ['Orders', n.toOrders, undefined],
+                    ['Deals', n.toDeals, undefined],
+                    ['Deposit', n.toDeposit, undefined],
+                    ['Withdraw', n.toWithdraw, undefined],
+                    ['History', n.toDwHistory, undefined],
+                    ['Workers', n.toWorkers, undefined],
+                ],
+            ],
+        ];
+    }
 
     protected handleExit = (event: any) => {
         event.preventDefault();
@@ -38,106 +55,54 @@ export class App extends React.Component<IProps, any> {
         this.props.onExit();
     };
 
+    protected handleChangeMarketAccount = (account: IAccount) => {
+        rootStore.marketStore.setMarketAccountAddress(account.address);
+    };
+
+    protected handleClickMyProfile = () => {
+        this.props.navigator.toProfile(
+            rootStore.marketStore.marketAccountAddress,
+        );
+    };
+
+    protected headerMenuConfig: Array<TMenuItem> = Array.prototype;
+
     public render() {
-        const mainStore = rootStore.mainStore;
-
-        const { className, selectedNavMenuItem, children } = this.props;
-
-        const {
-            etherBalance,
-            primaryTokenBalance,
-            primaryTokenInfo,
-            accountMap,
-        } = mainStore;
-
-        const disabledMenu =
-            rootStore.isOffline || accountMap.size === 0 ? '/send' : '';
+        const p = this.props;
+        const t = rootStore.localizator.getMessageText;
+        const marketStore = rootStore.marketStore;
+        const uiStore = rootStore.uiStore;
 
         return (
-            <div className={cn('sonm-app', className)}>
-                <LoadMask white visible={rootStore.isPending}>
-                    <div className="sonm-app__nav">
-                        <div
-                            className={`sonm-nav sonm-nav--${
-                                mainStore.networkName
-                            }`}
-                        >
-                            <div className="sonm-nav__logo" />
-                            <NavMenu
-                                url={selectedNavMenuItem}
-                                items={App.menuConfig}
-                                disabled={disabledMenu}
-                                onChange={this.props.onNavigate}
-                            />
-                            <div className="sonm-nav__right-group">
-                                <div className="sonm-nav__total">
-                                    <Balance
-                                        className="sonm-nav__total-item"
-                                        balance={etherBalance}
-                                        symbol="Ether"
-                                        fontSizePx={18}
-                                        decimalPointOffset={18}
-                                        decimalDigitAmount={2}
-                                    />
-                                    <Balance
-                                        className="sonm-nav__total-item"
-                                        balance={primaryTokenBalance}
-                                        symbol={primaryTokenInfo.symbol}
-                                        fontSizePx={18}
-                                        decimalPointOffset={
-                                            primaryTokenInfo.decimalPointOffset
-                                        }
-                                        decimalDigitAmount={2}
-                                    />
-                                </div>
-                                <div className="sonm-nav__network">
-                                    <div className="sonm-nav__network-type">
-                                        {mainStore.networkName === 'livenet'
-                                            ? rootStore.localizator.getMessageText(
-                                                  'livenet',
-                                              )
-                                            : rootStore.localizator.getMessageText(
-                                                  'testnet',
-                                              )}
-                                    </div>
-                                    <div className="sonm-nav__network-url">
-                                        {mainStore.nodeUrl.replace(
-                                            'https://',
-                                            '',
-                                        )}
-                                    </div>
-                                </div>
-                                <Icon
-                                    title="logout"
-                                    href="#exit"
-                                    tag="a"
-                                    i="Exit"
-                                    onClick={this.handleExit}
-                                    className="sonm-nav__exit-icon"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="sonm-app__alert-group">
-                        {rootStore.isOffline ? (
-                            <Alert type="error" id="no-connect">
-                                {rootStore.localizator.getMessageText(
-                                    'sonmapi_network_error',
-                                )}
-                            </Alert>
-                        ) : null}
-                        <AlertList
-                            className="sonm-app__alert-list"
-                            rootStore={rootStore}
-                        />
-                    </div>
-                    <div className="sonm-app__content">
-                        <div className="sonm-app__content-scroll-ct">
-                            {children}
-                        </div>
-                    </div>
-                </LoadMask>
-            </div>
+            <AppView
+                className={p.className}
+                path=""
+                onExit={p.onExit}
+                breadcrumbs={[]}
+                hasMarketAccountSelect={p.path.startsWith('/market')}
+                onChangeMarketAccount={this.handleChangeMarketAccount}
+                marketAccountList={marketStore.marketAccountViewList}
+                marketAccount={marketStore.marketAccountView}
+                marketBalance={marketStore.marketAllBalance}
+                marketStats={marketStore.marketStats}
+                networkError={
+                    rootStore.isOffline ? t('sonmapi_network_error') : ''
+                }
+                isPending={rootStore.isPending}
+                alerts={uiStore.alertList}
+                onCloseAlert={uiStore.closeAlert}
+                snmBalance={rootStore.mainStore.primaryTokenBalance}
+                etherBalance={rootStore.mainStore.etherBalance}
+                title={p.title}
+                headerMenu={this.headerMenuConfig}
+                disableAccountSelect={p.disableAccountSelect}
+                onClickMyProfile={this.handleClickMyProfile}
+                isTestNet={rootStore.mainStore.connectionInfo.isTest}
+                ethNodeURL={rootStore.mainStore.connectionInfo.ethNodeURL}
+                snmNodeURL={rootStore.mainStore.connectionInfo.snmNodeURL}
+            >
+                {p.children}
+            </AppView>
         );
     }
 }

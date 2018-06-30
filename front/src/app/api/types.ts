@@ -22,18 +22,20 @@ export interface ISendTransaction {
 }
 
 export interface ISendTransactionResult extends ISendTransaction {
+    action?: string;
     currencySymbol: string;
     decimalPointOffset: number;
     fee?: string;
     confirmCount: number;
     status: TransactionStatus;
-    timestamp: number;
     hash: string;
 }
 
 export interface IAccountInfo {
     name: string;
     address: string;
+    marketBalance: string;
+    marketUsdBalance: string;
     currencyBalanceMap: ICurrencyBalanceMap;
     json: string;
 }
@@ -59,6 +61,14 @@ export interface ITxListFilter {
     query?: string;
 }
 
+export interface IListQuery<T = string> {
+    limit: number;
+    offset: number;
+    sortBy?: string;
+    sortDesc?: boolean;
+    filter?: T;
+}
+
 export interface ISettings {
     chainId: string;
     nodeUrl: string;
@@ -79,6 +89,161 @@ export interface IWalletList {
 export enum NetworkEnum {
     live = 'livenet',
     rinkeby = 'rinkeby',
+}
+
+export enum EnumProfileStatus {
+    anonimest = 0,
+    anon = 1,
+    reg = 2,
+    ident = 3,
+    pro = 4,
+}
+
+export enum EnumProfileRole {
+    customer = 2,
+    supplier = 1,
+}
+
+export interface IAttribute {
+    label: string;
+    value: string;
+}
+
+export interface IProfileBrief extends IAccountBrief {
+    sellOrders: number;
+    buyOrders: number;
+    deals: number;
+    country: string;
+    logoUrl: string;
+}
+
+export interface IProfileFull extends IProfileBrief {
+    attributes: Array<IAttribute>;
+    description: string;
+    certificates: Array<ICertificate>;
+}
+
+export interface ICertificate {
+    status: EnumProfileStatus;
+    address: string;
+}
+
+export interface IListResult<T> {
+    records: Array<T>;
+    total: number;
+}
+
+export interface IAccountBrief {
+    name?: string;
+    address: string;
+    status: EnumProfileStatus;
+}
+
+export interface IBenchmarkMap {
+    cpuSysbenchMulti: number;
+    cpuSysbenchOne: number;
+    cpuCount: number;
+    gpuCount: number;
+    ethHashrate: number;
+    ramSize: number;
+    storageSize: number;
+    downloadNetSpeed: number;
+    uploadNetSpeed: number;
+    gpuRamSize: number;
+    zcashHashrate: number;
+    redshiftGpu: number;
+    networkOverlay: boolean;
+    networkOutbound: boolean;
+    networkIncoming: boolean;
+}
+
+export enum EnumOrderType {
+    any = 0,
+    bid = 1,
+    ask = 2,
+}
+
+export enum EnumTransactionStatus {
+    fail = '0x0',
+    success = '0x1',
+}
+
+export enum EnumOrderStatus {
+    unknown = 0,
+    inactive = 1,
+    active = 2,
+}
+
+export interface IOrder {
+    id: string;
+    orderType: EnumOrderType;
+    creator: IAccountBrief;
+    price: string;
+    duration: number;
+    orderStatus: EnumOrderStatus;
+    benchmarkMap: Partial<IBenchmarkMap>;
+}
+
+export interface IDeal {
+    id: string;
+    supplier: IAccountBrief;
+    consumer: IAccountBrief;
+    masterID: string;
+    askID: string;
+    bidID: string;
+    duration: number;
+    price: string;
+    status: number;
+    blockedBalance: string;
+    totalPayout: string;
+    startTime: number;
+    endTime: number;
+    benchmarkMap: IBenchmarkMap;
+    timeLeft: number;
+}
+
+export interface IKycValidator {
+    id: string;
+    level: number;
+    name: string;
+    url: string;
+    fee: string;
+    logo: string;
+    description: string;
+}
+
+export interface IWorker {
+    slaveId: string;
+    confirmed: boolean;
+}
+
+export interface IOrderListFilter {
+    authorID?: string;
+}
+
+export interface IDealListFilter {
+    suppliedID?: string;
+}
+
+export interface IMarketStats {
+    dealsCount: number;
+    dealsPrice: string;
+    daysLeft: number;
+}
+
+export interface IOrderParams {
+    orderStatus: string;
+    dealID: string;
+}
+
+export interface IConnectionInfo {
+    ethNodeURL: string;
+    snmNodeURL: string;
+    isTest: boolean;
+}
+
+export interface ISender {
+    send: (messageType: string, payload?: any) => any;
 }
 
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

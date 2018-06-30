@@ -20,6 +20,7 @@ export interface ICalendarOptionalProps {
     calendarCssClasses: ICalendarCssClasses;
     className: string;
     targetDate: Date | undefined;
+    disabled: boolean;
     disableAfter: Date | undefined;
     disableBefore: Date | undefined;
     visibleMonth: number | undefined;

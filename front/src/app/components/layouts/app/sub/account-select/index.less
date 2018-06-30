@@ -1,0 +1,141 @@
+@import 'guide.less';
+
+@accountSelectBgColor: @color-brand-bg;
+@accountSelectBgColorActive: lighten(@color-brand-bg, 5%);
+@accountSelectTextColor: @color-font-gray;
+@accountSelectTextColorActive: @color-white;
+@accountSelectTextColorMarked: @color-green;
+@accountSelectPaddingLeft: 20px;
+
+.sonm-market-account {
+    --color-nav-menu-selection: @accountSelectTextColorActive;
+    background-color: @accountSelectBgColor;
+
+    &__title {
+        color: @accountSelectTextColorActive;
+        font-size: 15px;
+        text-align: left;
+        padding: 0 @accountSelectPaddingLeft;
+        margin: 8px 0 0;
+        line-height: 1;
+        position: relative;
+
+        &:after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            position: absolute;
+            border: solid @accountSelectTextColorActive 1px;
+            border-right-width: 0;
+            border-bottom-width: 0;
+            top: 50%;
+            right: @accountSelectPaddingLeft;
+            transform: translate(0, -4px) rotateZ(225deg);
+            transition: transform 100ms;
+        }
+    }
+
+    &--expanded &__title {
+        &:after {
+            transform: translate(0, -1px) rotateZ(45deg);
+        }
+    }
+
+    &__button {
+        height: 100%;
+        -webkit-appearance: none;
+        outline: none;
+        background: none transparent;
+        cursor: pointer;
+        overflow: hidden;
+        padding: 0;
+        border: 1px solid @accountSelectBgColor;
+
+        &:active,
+        &:focus {
+            outline: none;
+        }
+    }
+
+    &__popup {
+        margin: 0;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+        left: 0;
+        right: 0;
+        top: 100%;
+        background-color: @accountSelectBgColorActive;
+        z-index: @z-k2;
+    }
+
+    &__wrapper {
+        display: inline-block;
+        position: relative;
+        vertical-align: top;
+        margin: 0;
+        height: 100%;
+        color: @accountSelectTextColor;
+        border: none;
+        padding: 0;
+        overflow: visible;
+    }
+
+    & &__select-item {
+        border: 1px solid @accountSelectBgColor;
+        border-top-width: 0;
+        padding: 14px @accountSelectPaddingLeft;
+        box-sizing: border-box;
+
+        &:hover {
+            color: @accountSelectTextColorActive;
+        }
+    }
+}
+
+.sonm-market-select-item {
+    display: flex;
+    -webkit-appearance: none;
+    outline: none;
+    border: none;
+    background: none transparent;
+    color: @accountSelectTextColor;
+    margin: 0;
+    cursor: pointer;
+    position: relative;
+    font-size: 12px;
+    padding: 6px @accountSelectPaddingLeft;
+    width: 360px;
+
+    &:hover,
+    &:active,
+    &:focus {
+        outline: none;
+    }
+
+    &__icon {
+        margin: 0;
+    }
+
+    &__addr {
+        width: 100px;
+        margin: 0 6px;
+    }
+
+    &__name {
+        flex-grow: 1;
+        margin: 0 6px;
+        text-align: left;
+    }
+
+    &__balance {
+        width: 200px;
+        margin: 0 6px;
+        color: @accountSelectTextColorMarked;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+    }
+}

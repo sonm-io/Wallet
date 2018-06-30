@@ -8,48 +8,58 @@ import {
 } from './types';
 import { TJsPropTypes } from '../types';
 import * as propTypes from 'prop-types';
+import { Balloon } from '../balloon';
 
 export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     public static readonly getDefaultCssClasses = (
         rootClassName: string,
     ): IDropdownCssClasses => ({
-        root: `${rootClassName}-input`,
-        expanded: `${rootClassName}-input--expanded`,
-        button: `${rootClassName}-input__button`,
-        popup: `${rootClassName}-input__popup`,
+        root: `${rootClassName}`,
+        expanded: `${rootClassName}--expanded`,
+        button: `${rootClassName}__button`,
+        popup: `${rootClassName}__popup`,
     });
 
     public static readonly defaultProps: IDropdownOptionalInputProps = {
         className: '',
-        dropdownCssClasses: DropdownInput.getDefaultCssClasses('dropdown'),
+        dropdownCssClasses: DropdownInput.getDefaultCssClasses(
+            'dropdown-input',
+        ),
+        hasBalloon: false,
+        disabled: false,
     };
 
     public static propTypes: TJsPropTypes<IDropdownAllProps> = {
-        valueString: propTypes.string,
+        valueString: propTypes.node,
         isExpanded: propTypes.bool,
         onButtonClick: propTypes.func,
         onRequireClose: propTypes.func,
         children: propTypes.node,
         className: propTypes.string,
+        hasBalloon: propTypes.bool,
         dropdownCssClasses: propTypes.shape({
             root: propTypes.string,
             button: propTypes.string,
             popup: propTypes.string,
         }),
+        disabled: propTypes.bool,
     };
 
     protected handleBodyClick = (event: any) => {
-        const children = this.node && this.node.children;
         if (
-            children &&
-            (children[0].contains(event.target) ||
-                (children[1] && children[1].contains(event.target)))
+            this.props.isExpanded &&
+            (this.rootNodeRef && !this.rootNodeRef.contains(event.target))
         ) {
-            return;
+            this.props.onRequireClose();
         }
-
-        this.props.onRequireClose();
     };
+
+    public focus() {
+        this.rootNodeRef &&
+            this.rootNodeRef.children &&
+            this.rootNodeRef.children[0] &&
+            (this.rootNodeRef.children[0] as HTMLButtonElement).focus();
+    }
 
     public componentDidMount() {
         if (typeof window !== 'undefined') {
@@ -69,11 +79,11 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
         }
     }
 
-    protected node?: HTMLDivElement;
+    public rootNodeRef?: HTMLDivElement;
 
     protected saveRef = (ref: HTMLDivElement | null) => {
-        if (ref && ref !== this.node) {
-            this.node = ref;
+        if (ref && ref !== this.rootNodeRef) {
+            this.rootNodeRef = ref;
         }
     };
 
@@ -84,23 +94,32 @@ export class DropdownInput extends React.Component<IDropdownInputProps, any> {
     public render() {
         const props = this.getProps();
         const s = props.dropdownCssClasses;
+        const Tag = props.hasBalloon ? Balloon : 'div';
 
         return (
             <div
-                className={cn(this.props.className, s.root, {
-                    [s.expanded]: this.props.isExpanded,
-                })}
+                data-display-id="dropdown"
+                className={cn(
+                    this.props.className,
+                    s.root,
+                    props.disabled ? `${s.root}--disabled` : null,
+                    {
+                        [s.expanded]: this.props.isExpanded,
+                    },
+                )}
                 ref={this.saveRef}
             >
                 <button
+                    data-display-id="dropdown-button"
                     type="button"
-                    className={s.button}
+                    className={cn(s.button)}
                     onClick={this.props.onButtonClick}
+                    disabled={this.props.disabled}
                 >
                     {this.props.valueString}
                 </button>
                 {this.props.isExpanded ? (
-                    <div className={s.popup}>{this.props.children}</div>
+                    <Tag className={s.popup}>{this.props.children}</Tag>
                 ) : null}
             </div>
         );

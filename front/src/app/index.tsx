@@ -5,8 +5,6 @@ import { resolve } from './router';
 import { history } from './router/history';
 import { rootStore } from './stores';
 import { Login } from './components/layouts/login';
-import LocaleProvider from 'antd/es/locale-provider';
-import * as enUS from 'antd/lib/locale-provider/en_US';
 import { IWalletListItem } from 'app/api/types';
 
 interface ILocationParams {
@@ -20,25 +18,18 @@ interface ILocationParams {
  */
 async function renderByPath({ pathname, search }: ILocationParams) {
     const query = queryStr.parse(search);
-    const { content, title } = await resolve({ pathname, query });
+    const { content, browserTabTitle } = await resolve({ pathname, query });
 
-    window.document.title = title;
+    window.document.title = browserTabTitle;
 
-    render(
-        <LocaleProvider locale={enUS as any}>{content}</LocaleProvider>,
-        window.document.querySelector('#root'),
-    );
+    render(content, window.document.querySelector('#root'));
 }
 
 async function handleLogin(wallet: IWalletListItem) {
     history.listen(renderByPath);
 
-    await Promise.all([
-        rootStore.mainStore.init(wallet),
-        rootStore.historyStore.init(),
-    ]);
+    await Promise.all([rootStore.mainStore.init(wallet)]);
 
-    history.replace('/accounts');
     renderByPath((history as any).location);
 }
 

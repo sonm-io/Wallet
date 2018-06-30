@@ -1,0 +1,3 @@
+InsuficcientFunds panel:
+
+    <InsuficcientFunds />

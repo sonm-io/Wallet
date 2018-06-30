@@ -50,8 +50,9 @@ export const en: ILocalizationDictionary = {
     ]: string[]) =>
         `Transaction is completed successfully. ${amount} ${currencyName} has been sent to the address ${toAddress}. TxHash ${hash}.`,
     tx_has_been_failed: ([toAddress, hash]: string[]) =>
-        `Transaction to the address ${toAddress} was failed. TxHash ${hash ||
-            undefined}.`,
+        `Transaction to the address ${toAddress} was failed. ${
+            hash !== '' ? 'TxHash ' + hash + '.' : ''
+        }`,
     destination_must_be_differ:
         'The destination address must differ the sender address',
     too_many_decimal_digits: ([decimalPointOffset]: string[]) =>
@@ -70,6 +71,27 @@ export const en: ILocalizationDictionary = {
     should_be_hex: ([length]: any[]) =>
         `Should be hex string with length ${length}`,
     privatekey_not_valid: 'Private key not valid',
+
+    'status-anon': 'ANONYMOUS',
+    'status-reg': 'REGISTERED',
+    'status-ident': 'IDENTIFIED',
+
+    tx_buy_order_failed: ([id, hash]: string[]) =>
+        `Buy order #${id} is failed. TxHash ${hash}.`,
+
+    tx_buy_order_matching: ([id, hash]: string[]) =>
+        `Order #${id} is matching. TxHash ${hash}.`,
+
+    tx_buy_order_matched: ([id, dealId]: string[]) =>
+        `Order #${id} is matched. Deal #${dealId}.`,
+
+    tx_buy_order_match_failed: ([id]: string[]) => `Order #${id} match failed`,
+
+    deal_finish_failed: ([id, hash]: string[]) =>
+        `Finish deal #${id} is failed. TxHash ${hash}.`,
+
+    deal_finish_success: ([id, hash]: string[]) =>
+        `Deal #${id} is finished. TxHash ${hash}.`,
 };
 
 export default en;

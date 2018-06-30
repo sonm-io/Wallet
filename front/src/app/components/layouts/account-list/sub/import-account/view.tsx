@@ -96,7 +96,7 @@ export class ImportAccountView extends React.PureComponent<IProps, never> {
                                 ref={this.saveNameInputNode}
                                 type="text"
                                 name="name"
-                                onChange={props.onChangeInput}
+                                onChangeDeprecated={props.onChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -109,7 +109,7 @@ export class ImportAccountView extends React.PureComponent<IProps, never> {
                             <Input
                                 type="password"
                                 name="password"
-                                onChange={props.onChangeInput}
+                                onChangeDeprecated={props.onChangeInput}
                             />
                         </FormField>
                     </FormRow>

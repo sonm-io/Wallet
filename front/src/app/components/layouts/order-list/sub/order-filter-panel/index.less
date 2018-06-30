@@ -1,0 +1,57 @@
+@import 'guide.less';
+
+.order-filter-panel {
+    margin: 0;
+    padding: 0;
+
+    &__filters {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-auto-rows: min-content;
+        grid-column-gap: 10px;
+        grid-row-gap: 5px;
+        margin: 0;
+        padding: 30px;
+        background-color: @color-gray-bg;
+    }
+
+    &__order-owner {
+        grid-column: 1 / span 2;
+    }
+
+    &__header {
+        grid-column: 1 / span 2;
+        font-size: 14px;
+        font-weight: 500;
+        color: @color-font-gray;
+        margin: 0;
+    }
+
+    &__all-filters {
+        width: 170px;
+        text-align: center;
+        grid-column: 1 / span 2;
+        margin: 20px 20px 0 45px;
+    }
+
+    &__apply {
+        width: 170px;
+        text-align: center;
+        grid-column: 1 / span 2;
+        margin: 20px 0 0 45px;
+    }
+
+    &__address {
+        grid-column: 1 / span 2;
+        margin: 0;
+    }
+
+    &__order-side {
+        grid-column: 1 / span 2;
+    }
+
+    &__row-gap {
+        grid-column: 1 / span 2;
+        margin: 0 0 20px 0;
+    }
+}

@@ -71,7 +71,7 @@ export class AddToken extends React.Component<IProps, {}> {
                                 value={tokenAddress}
                                 type="text"
                                 name="address"
-                                onChange={this.handleChangeInput}
+                                onChangeDeprecated={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -102,7 +102,6 @@ export class AddToken extends React.Component<IProps, {}> {
                                     decimalPointOffset={
                                         tokenInfo.decimalPointOffset
                                     }
-                                    fontSizePx={16}
                                 />
                             </span>
                         </div>

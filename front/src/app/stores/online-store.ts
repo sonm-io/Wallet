@@ -1,40 +1,32 @@
 import { observable, action, computed, when } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { delay } from 'app/utils/async-delay';
-import { Api } from 'app/api';
+import { Api } from 'app/api'; // TODO pass to ctr
 import { WalletApiError } from './types';
+import { ILocalizator } from 'app/localization';
+import * as debounce from 'lodash/fp/debounce';
 
-interface IErrorProcessor {
+export interface IErrorProcessor {
     processError: (err: Error) => void;
 }
 
-interface ILocalizator {
-    getMessageText: (code: string) => string;
+export interface IOnlineStoreServices {
+    errorProcessor: IErrorProcessor;
+    localizator: ILocalizator;
 }
 
-interface IOnlineStore {
-    errorProcessor?: IErrorProcessor;
-    localizator?: ILocalizator;
+export interface IOnlineStore {
+    isPending: boolean;
+    isOffline: boolean;
 }
 
 // TODO use delegating instead inherit
-export class OnlineStore {
-    constructor(args: IOnlineStore) {
-        if (args.errorProcessor) {
-            this._errorProcessor = args.errorProcessor;
-        }
-        if (args.localizator) {
-            this._localizator = args.localizator;
-        }
+export class OnlineStore implements IOnlineStore {
+    constructor(params: IOnlineStoreServices) {
+        this.services = { ...params };
     }
 
-    public readonly _errorProcessor: IErrorProcessor = {
-        processError: (e: Error) => console.error(e),
-    };
-
-    public readonly _localizator: ILocalizator = {
-        getMessageText: (x: string) => x,
-    };
+    protected services: IOnlineStoreServices;
 
     @asyncAction
     protected *goOffline() {
@@ -95,7 +87,7 @@ export class OnlineStore {
                 },
             );
         } else {
-            this._errorProcessor.processError(e);
+            this.services.errorProcessor.processError(e);
         }
     }
 
@@ -119,6 +111,16 @@ export class OnlineStore {
         };
     }
 
+    public static debounced(
+        target: OnlineStore,
+        propertyKey: string,
+        descriptor: PropertyDescriptor,
+    ) {
+        const method = descriptor.value;
+
+        descriptor.value = debounce(500)(method);
+    }
+
     public static catchErrors = ({ restart = false }) => (
         target: OnlineStore,
         propertyKey: string,
@@ -131,17 +133,15 @@ export class OnlineStore {
 
             try {
                 return await method.apply(store, args);
-            } catch (errorStringCode) {
-                if (typeof errorStringCode !== 'string') {
-                    alert(
-                        `Unexpected exception from wallet API; Exception ${errorStringCode}`,
-                    );
+            } catch (err) {
+                if (typeof err !== 'string') {
+                    console.log(`Unexpected exception from wallet API`, err);
                 }
 
                 store.handleError(
                     new WalletApiError(
-                        errorStringCode,
-                        store._localizator.getMessageText(errorStringCode),
+                        err,
+                        store.services.localizator.getMessageText(err),
                         store,
                         descriptor.value,
                         args,

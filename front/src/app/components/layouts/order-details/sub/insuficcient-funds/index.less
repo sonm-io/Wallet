@@ -1,0 +1,37 @@
+.insuficcient-funds {
+    overflow: overlay;
+    padding: 31px;
+    background-color: #f9e9f1;
+
+    &__header {
+        color: @color-font-dark;
+        font-size: 15px;
+        font-weight: 550;
+    }
+    &__message {
+        margin: 0 0 19px 0;
+        color: @color-font-dark;
+        font-size: 15px;
+        font-weight: 400;
+    }
+
+    // Buttons
+    &__button-back,
+    &__button-deposit {
+        float: right;
+        color: @color-violet;
+        font-size: 15px;
+        font-weight: 500;
+        --color: @color-violet;
+        --color-active: desaturate(@color-violet, 20%);
+    }
+    &__button-back,
+    &__button-back:active {
+        background-color: transparent;
+        -webkit-text-fill-color: @color-violet;
+        border-width: 2px;
+    }
+    &__button-deposit {
+        margin: 0 0 0 29px;
+    }
+}

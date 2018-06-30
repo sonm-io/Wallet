@@ -8,7 +8,6 @@ import {
 } from 'app/components/common/account-item';
 import { CurrencyBalanceList } from 'app/components/common/currency-balance-list';
 import { DeletableItemWithConfirmation } from 'app/components/common/deletable-item/with-confirmation';
-import { Header } from 'app/components/common/header';
 import { Button } from 'app/components/common/button';
 import { ImportAccount, IImportAccountForm } from './sub/import-account';
 import { CreateAccount, ICreateAccountForm } from './sub/create-account';
@@ -20,6 +19,7 @@ import { DownloadFile } from 'app/components/common/download-file';
 import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
 import { IValidation } from 'app/api/types';
+import { IAccountItemView } from 'app/stores/types';
 
 enum WalletDialogs {
     new,
@@ -48,7 +48,7 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleClickAccount(address: string) {
-        navigate({ path: `/accounts/${address}` }); // TODO move to router
+        navigate({ path: `/wallet/accounts/${address}` }); // TODO move to router
     }
 
     private handleDelete = (deleteAddress: string) => {
@@ -120,7 +120,6 @@ export class Wallets extends React.Component<IProps, IState> {
 
         return (
             <div className={cn('sonm-accounts', className)}>
-                <Header className="sonm-accounts__header">Accounts</Header>
                 <DownloadFile
                     getData={rootStore.mainStore.getWalletExportText}
                     className="sonm-accounts__export-wallet"
@@ -145,7 +144,7 @@ export class Wallets extends React.Component<IProps, IState> {
                         <EmptyAccountList />
                     ) : (
                         rootStore.mainStore.accountList.map(
-                            (x: IAccountItemProps) => {
+                            (x: IAccountItemView) => {
                                 return (
                                     <DeletableItem
                                         item={x}

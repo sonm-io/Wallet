@@ -1,28 +1,30 @@
 import { TResultPromise } from '../../ipc/types';
-import lStorage from '../utils/local-storage';
 
 const { IPC } = require('../../ipc/index');
 
 const ApiWorker = require('worker/back.worker.ts');
-const worker = ApiWorker();
+const worker = new ApiWorker();
 
-const ipc = new IPC({
+export const ipc = new IPC({
     worker,
 });
 
 ipc.setRequestProcessor(async (type: string, payload: any): TResultPromise<
-    any
+    string
 > => {
-    let result;
+    let data = '';
 
-    if (type === 'get') {
-        result = lStorage.get(payload.key);
-    } else if (type === 'set') {
-        result = lStorage.set(payload.key, payload.value);
+    switch (type) {
+        case 'get':
+            data = window.localStorage.getItem(payload.key) || '';
+            break;
+        case 'set':
+            window.localStorage.setItem(payload.key, (data = payload.value));
+            break;
     }
 
     return {
-        data: result,
+        data,
     };
 });
 

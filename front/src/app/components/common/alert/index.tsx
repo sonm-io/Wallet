@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { Icon } from '../icon';
+import { Hash } from '../hash-view';
 
 export interface IAlertProps {
     id: string;
@@ -27,6 +28,29 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
         }
     };
 
+    protected static processHashes(msg: string): any[] {
+        let idx = 0;
+        const result: any[] = [];
+
+        msg.replace(/0x[0-9a-zA-Z]+/gi, function(value, position) {
+            result.push(msg.slice(idx, position));
+            result.push(
+                <Hash
+                    key={value}
+                    hash={value}
+                    hasCopyButton
+                    className="sonm-alert__hash"
+                />,
+            );
+            idx = position + value.length;
+
+            return '';
+        });
+        result.push(msg.slice(idx, msg.length));
+
+        return result;
+    }
+
     public render() {
         const {
             className,
@@ -43,7 +67,11 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
                 className={cn(className, 'sonm-alert', `sonm-alert--${type}`)}
                 style={style}
             >
-                <span className="sonm-alert__message">{children}</span>
+                <span className="sonm-alert__message">
+                    {typeof children === 'string'
+                        ? Alert.processHashes(children)
+                        : children}
+                </span>
                 {onClosed ? (
                     <Icon
                         i="Close"

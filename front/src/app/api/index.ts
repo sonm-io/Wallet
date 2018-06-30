@@ -1,179 +1,241 @@
-import ipc from './ipc';
-import { TResultPromise } from '../../ipc/types';
+import { ipc as IPC } from './ipc';
+import { ProfileApi } from './sub/profile-api';
+import { OrderApi } from './sub/order-api';
+import { DealApi } from './sub/deal-api';
+import { WorkerApi } from './sub/worker-api';
+import { HistoryApi } from './sub/history-api';
 import {
     ISendTransactionResult,
     IAccountInfo,
     ICurrencyInfo,
     ISendTransaction,
     IResult,
-    ITxListFilter,
     ISettings,
     IWalletListItem,
+    ISender,
+    IKycValidator,
+    IWorker,
+    IConnectionInfo,
 } from './types';
+import { TypeAccountInfoList } from './runtime-types';
 
 export * from './types';
 
-async function ipcSend(type: string, payload?: any): TResultPromise<any> {
-    return ipc.send(type, payload);
-}
+class AllApi {
+    private ipc: ISender = IPC;
 
-export class Api {
-    public static async createWallet(
+    public profile = new ProfileApi(this.ipc);
+    public order = new OrderApi(this.ipc);
+    public deal = new DealApi(this.ipc);
+    public history = new HistoryApi(this.ipc);
+    public worker = new WorkerApi(this.ipc);
+
+    public async createWallet(
         password: string,
         walletName: string,
         chainId: string,
     ): Promise<IResult<IWalletListItem>> {
-        return ipcSend('createWallet', { password, walletName, chainId });
+        return this.ipc.send('createWallet', { password, walletName, chainId });
     }
 
-    public static async unlockWallet(
+    public async unlockWallet(
         password: string,
         walletName: string,
     ): Promise<IResult<boolean>> {
-        return ipcSend('unlockWallet', { password, walletName });
+        return this.ipc.send('unlockWallet', { password, walletName });
     }
 
-    public static async importWallet(
+    public async importWallet(
         password: string,
         walletName: string,
         file: string,
     ): Promise<IResult<IWalletListItem>> {
-        return ipcSend('importWallet', { password, walletName, file });
+        return this.ipc.send('importWallet', { password, walletName, file });
     }
 
-    public static async exportWallet(): Promise<IResult<string>> {
-        return ipcSend('exportWallet');
+    public async getConnectionInfo(): Promise<IResult<IConnectionInfo>> {
+        return this.ipc.send('getConnectionInfo');
     }
 
-    public static async checkConnection(): Promise<IResult<boolean>> {
-        return ipcSend('checkConnection');
+    public async exportWallet(): Promise<IResult<string>> {
+        return this.ipc.send('exportWallet');
     }
 
-    public static async getPrivateKey(
+    public async checkConnection(): Promise<IResult<boolean>> {
+        return this.ipc.send('checkConnection');
+    }
+
+    public getPrivateKey = async (
         password: string,
         address: string,
-    ): Promise<IResult<string>> {
-        return ipcSend('account.getPrivateKey', { address, password });
-    }
+    ): Promise<IResult<string>> => {
+        return this.ipc.send('account.getPrivateKey', { address, password });
+    };
 
-    public static async createAccount(
+    public async createAccount(
         password: string,
         privateKey?: string,
     ): Promise<IResult<string>> {
         if (privateKey) {
-            return ipcSend('account.createFromPrivateKey', {
+            return this.ipc.send('account.createFromPrivateKey', {
                 privateKey,
                 password,
             });
         } else {
-            return ipcSend('account.create', { password });
+            return this.ipc.send('account.create', { password });
         }
     }
 
-    public static async getWalletList(): Promise<IResult<IWalletListItem[]>> {
-        return ipcSend('getWalletList');
+    public async getWalletList(): Promise<IResult<IWalletListItem[]>> {
+        return this.ipc.send('getWalletList');
     }
 
-    public static async getSettings(): Promise<IResult<string[]>> {
-        return ipcSend('getSettings');
+    public async getSettings(): Promise<IResult<string[]>> {
+        return this.ipc.send('getSettings');
     }
 
-    public static async setSettings(
-        settings: ISettings,
-    ): Promise<IResult<string[]>> {
-        return ipcSend('setSettings', { settings });
+    public async setSettings(settings: ISettings): Promise<IResult<string[]>> {
+        return this.ipc.send('setSettings', { settings });
     }
 
-    public static async addAccount(
+    public async addAccount(
         jsonRaw: string,
         password: string,
         name: string,
     ): Promise<IResult<IAccountInfo>> {
-        return ipcSend('account.add', { json: jsonRaw, password, name });
+        return this.ipc.send('account.add', { json: jsonRaw, password, name });
     }
 
-    public static async removeAccount(
-        address: string,
-    ): Promise<IResult<boolean>> {
-        return ipcSend('account.remove', { address });
+    public async removeAccount(address: string): Promise<IResult<boolean>> {
+        return this.ipc.send('account.remove', { address });
     }
 
-    public static async requestTestTokens(
+    public async requestTestTokens(
         password: string,
         address: string,
     ): Promise<IResult<boolean>> {
-        return ipcSend('account.requestTestTokens', {
+        return this.ipc.send('account.requestTestTokens', {
             address,
             password,
         });
     }
 
-    public static async renameAccount(
+    public async buyOrder(
+        password: string,
+        address: string,
+        id: number,
+    ): Promise<IResult<boolean>> {
+        return this.ipc.send('order.buy', {
+            password,
+            address,
+            id,
+        });
+    }
+
+    public async renameAccount(
         address: string,
         name: string,
     ): Promise<IResult<boolean>> {
-        return ipcSend('account.rename', { address, name });
+        return this.ipc.send('account.rename', { address, name });
     }
 
-    public static async getAccountList(): Promise<IResult<IAccountInfo[]>> {
-        return ipcSend('account.list');
+    public async getAccountList(): Promise<IAccountInfo[]> {
+        const data = await this.ipc.send('account.list');
+
+        return TypeAccountInfoList(data.data);
     }
 
-    public static async ping(): Promise<IResult<object>> {
-        return ipcSend('ping', { ping: true });
+    public async ping(): Promise<IResult<object>> {
+        return this.ipc.send('ping', { ping: true });
     }
 
-    public static async getCurrencyList(): Promise<IResult<ICurrencyInfo[]>> {
-        return ipcSend('account.getCurrencies');
+    public async getCurrencyList(): Promise<IResult<ICurrencyInfo[]>> {
+        return this.ipc.send('account.getCurrencies');
     }
 
-    public static async send(
+    public getMarketBalance = async (
+        address: string,
+    ): Promise<IResult<string>> => {
+        return this.ipc.send('account.getMarketBalance', { address });
+    };
+
+    public getValidators = async (): Promise<IResult<IKycValidator[]>> => {
+        return this.ipc.send('market.getValidators');
+    };
+
+    public getWorkers = async (
+        address: string,
+    ): Promise<IResult<IWorker[]>> => {
+        return this.ipc.send('worker.list', { address });
+    };
+
+    public getKYCLink = async (
+        password: string,
+        address: string,
+        kycAddress: string,
+        fee: string,
+    ): Promise<IResult<string>> => {
+        return this.ipc.send('getKYCLink', {
+            password,
+            address,
+            kycAddress,
+            fee,
+        });
+    };
+
+    public async getTokenExchangeRate(): Promise<IResult<string>> {
+        return this.ipc.send('getTokenExchangeRate');
+    }
+
+    public send = async (
         tx: ISendTransaction,
         password: string,
-    ): Promise<IResult<ISendTransactionResult>> {
-        return ipcSend('account.send', { ...tx, password });
+    ): Promise<IResult<ISendTransactionResult>> => {
+        return this.ipc.send('account.send', { ...tx, password });
+    };
+
+    public deposit = async (
+        tx: ISendTransaction,
+        password: string,
+    ): Promise<IResult<ISendTransactionResult>> => {
+        return this.ipc.send('account.deposit', { ...tx, password });
+    };
+
+    public withdraw = async (
+        tx: ISendTransaction,
+        password: string,
+    ): Promise<IResult<ISendTransactionResult>> => {
+        return this.ipc.send('account.withdraw', { ...tx, password });
+    };
+
+    public async getGasPrice(): Promise<IResult<string>> {
+        return this.ipc.send('account.getGasPrice');
     }
 
-    public static async getSendTransactionList(
-        filters?: ITxListFilter,
-        limit?: number,
-        offset?: number,
-    ): Promise<IResult<[ISendTransactionResult[], number]>> {
-        return ipcSend('transaction.list', { filters, limit, offset });
+    public async getSonmTokenAddress(): Promise<IResult<string>> {
+        return this.ipc.send('getSonmTokenAddress');
     }
 
-    public static async getGasPrice(): Promise<IResult<string>> {
-        return ipcSend('account.getGasPrice');
+    public async addToken(address: string): Promise<IResult<ICurrencyInfo>> {
+        return this.ipc.send('addToken', { address });
     }
 
-    public static async getSonmTokenAddress(): Promise<IResult<string>> {
-        return ipcSend('getSonmTokenAddress');
+    public async removeToken(address: string): Promise<IResult<boolean>> {
+        return this.ipc.send('removeToken', { address });
     }
 
-    public static async addToken(
-        address: string,
-    ): Promise<IResult<ICurrencyInfo>> {
-        return ipcSend('addToken', { address });
-    }
-
-    public static async removeToken(
-        address: string,
-    ): Promise<IResult<boolean>> {
-        return ipcSend('removeToken', { address });
-    }
-
-    public static async getTokenInfo(
+    public async getTokenInfo(
         address: string,
         accounts?: string[],
     ): Promise<IResult<ICurrencyInfo>> {
-        return ipcSend('getTokenInfo', { address, accounts });
+        return this.ipc.send('getTokenInfo', { address, accounts });
     }
 
-    public static async getPresetTokenList(): Promise<
-        IResult<ICurrencyInfo[]>
-    > {
-        return ipcSend('getPresetTokenList');
+    public async getPresetTokenList(): Promise<IResult<ICurrencyInfo[]>> {
+        return this.ipc.send('getPresetTokenList');
     }
 }
+
+export const Api = new AllApi();
 
 export default Api;

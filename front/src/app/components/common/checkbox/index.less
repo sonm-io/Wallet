@@ -1,0 +1,83 @@
+@import 'guide.less';
+
+@checkboxSize: 15px;
+@checkboxVerticalAligth: bottom;
+
+.sonm-checkbox {
+    --checkbox-background-color: @color-violet;
+    background: transparent;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    box-sizing: 0;
+    cursor: pointer;
+    line-height: 100%;
+    white-space: nowrap;
+    user-select: none;
+
+    &__input {
+        display: none;
+    }
+
+    &__title {
+        padding: 0;
+        margin: 0;
+        vertical-align: @toggleVerticalAligth;
+        display: inline-block;
+
+        &:first-child {
+            margin-right: 10px;
+        }
+
+        &:last-child {
+            margin-left: 10px;
+        }
+    }
+
+    &__input + &__cradle {
+        vertical-align: @toggleVerticalAligth;
+        position: relative;
+        height: @checkboxSize;
+        width: @checkboxSize;
+        border-radius: 0;
+        border: 0;
+        transition: background-color 0.2s ease;
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+
+        &:after {
+            border-radius: 0;
+            transform: rotateZ(40deg) scaleX(1);
+
+            box-sizing: border-box;
+            height: @checkboxSize * 0.9;
+            width: @checkboxSize * 0.4;
+
+            background: none;
+            display: block;
+            position: absolute;
+            content: '';
+            margin: 0;
+            top: @checkboxSize * -0.1;
+            left: @checkboxSize * 0.3;
+            transition: transform 0.2s ease;
+        }
+    }
+
+    &__input:checked + &__cradle {
+        background-color: var(--checkbox-background-color);
+        &:after {
+            border: 2px solid @color-white;
+            border-top-width: 0;
+            border-left-width: 0;
+        }
+    }
+
+    &__input:not(:checked) + &__cradle {
+        border: 1px solid @color-border;
+        &:after {
+            transform: rotateZ(40deg) scaleX(0);
+        }
+    }
+}

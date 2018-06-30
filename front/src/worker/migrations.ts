@@ -50,6 +50,23 @@ const migrations = {
 
             return data;
         },
+        2: (data: any) => {
+            data.version = 3;
+
+            if (data.settings.chainId === 'rinkeby') {
+                const newTokenAddress =
+                    '0xa2498b16a8fe7cd997f278d2419e3aa3b2b5854c';
+                if (data.tokens && data.tokens[1]) {
+                    data.tokens[1].address = newTokenAddress;
+
+                    if (data.tokens[1].contract) {
+                        data.tokens[1].contract.address = newTokenAddress;
+                    }
+                }
+            }
+
+            return data;
+        },
     },
 } as any;
 

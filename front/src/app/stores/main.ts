@@ -1,10 +1,8 @@
 import { observable, action, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as sortBy from 'lodash/fp/sortBy';
-import { Api, IAccountInfo, ICurrencyInfo } from 'app/api';
-import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
-import { IAccountItemProps } from 'app/components/common/account-item';
-import { AlertType } from './types';
+import { Api, IAccountInfo, IConnectionInfo, ICurrencyInfo } from 'app/api';
+import { AlertType, IAccountItemView, ICurrencyItemView } from './types';
 import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
@@ -20,7 +18,7 @@ import {
     BN,
 } from '../utils/create-big-number';
 import { normalizeCurrencyInfo } from './utils/normalize-currency-info';
-import { IHasLocalizator, ILocalizator, IValidation } from 'app/localization';
+import { ILocalizator, IValidation } from 'app/localization';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -41,17 +39,34 @@ const emptyForm: IMainFormValues = {
     json: '',
 };
 
+const emptyCurrencyInfo = {
+    symbol: '',
+    decimalPointOffset: 2,
+    name: '',
+    address: '',
+    balance: '',
+};
+
+interface IMainStoreServices {
+    localizator: ILocalizator;
+}
+
 Object.freeze(emptyForm);
 
-export class MainStore extends OnlineStore implements IHasLocalizator {
-    constructor(rootStore: RootStore, localizator: ILocalizator) {
+export class MainStore extends OnlineStore {
+    constructor(rootStore: RootStore, services: IMainStoreServices) {
         super({
             errorProcessor: rootStore.uiStore,
-            localizator,
+            localizator: services.localizator,
         });
 
         this.rootStore = rootStore;
-        this.localizator = localizator;
+
+        this.connectionInfo = {
+            isTest: true,
+            ethNodeURL: '',
+            snmNodeURL: '',
+        };
 
         autorun(() => {
             if (Array.from(this.currencyMap.keys()).length > 0) {
@@ -65,6 +80,12 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     protected rootStore: RootStore;
 
     @observable.ref protected walletInfo?: IWalletListItem;
+    @observable.ref public connectionInfo: IConnectionInfo;
+
+    @computed
+    get firstAccountAddress(): IAccountInfo {
+        return this.accountMap.values().next().value;
+    }
 
     @computed
     public get walletName(): string {
@@ -144,14 +165,7 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     @computed
     public get primaryTokenInfo(): ICurrencyInfo {
         const result = this.currencyMap.get(this.primaryTokenAddress);
-
-        if (!result) {
-            throw new Error(
-                `Second token ${this.primaryTokenAddress} not found`,
-            );
-        }
-
-        return result;
+        return result || emptyCurrencyInfo;
     }
 
     @computed
@@ -171,47 +185,54 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     }
 
     private static getTokenBalance(
-        fullList: ICurrencyItemProps[],
+        fullList: ICurrencyItemView[],
         address: string,
     ) {
         const item = fullList.find(x => x.address === address);
-
-        return item ? item.balance : '';
+        const balance = item ? item.balance : '';
+        return balance || '0';
     }
 
     @computed
-    public get accountList(): IAccountItemProps[] {
-        const isCurrencyListEmpty = this.currencyMap.size === 0;
-        const etherAddress = this.etherAddress;
-        const primaryTokenAddress = this.primaryTokenAddress;
+    public get accountList(): IAccountItemView[] {
+        const result = Array.from(this.accountMap.values()).map(
+            this.transformAccountInfoToView,
+        );
 
-        const result = Array.from(this.accountMap.values()).map(account => {
-            const props: IAccountItemProps = {
-                address: account.address,
-                json: account.json,
-                name: account.name,
-                etherBalance: isCurrencyListEmpty
-                    ? ''
-                    : account.currencyBalanceMap[etherAddress],
-                primaryTokenBalance: isCurrencyListEmpty
-                    ? ''
-                    : account.currencyBalanceMap[primaryTokenAddress],
-                primaryTokenInfo: this.primaryTokenInfo,
-            };
-
-            return props;
-        });
-
-        return sortByName(result) as IAccountItemProps[];
+        return sortByName(result) as IAccountItemView[];
     }
 
-    public getBalanceListFor(...accounts: string[]): ICurrencyItemProps[] {
+    public transformAccountInfoToView = (
+        info: IAccountInfo,
+    ): IAccountItemView => {
+        const isCurrencyListEmpty = this.currencyMap.size === 0;
+        const primaryTokenBalance = isCurrencyListEmpty
+            ? ''
+            : info.currencyBalanceMap[this.primaryTokenAddress];
+
+        const preview: IAccountItemView = {
+            address: info.address,
+            json: info.json,
+            name: info.name,
+            etherBalance: isCurrencyListEmpty
+                ? ''
+                : info.currencyBalanceMap[this.etherAddress],
+            primaryTokenBalance,
+            primaryTokenInfo: this.primaryTokenInfo,
+            usdBalance: info.marketUsdBalance,
+            marketBalance: info.marketBalance,
+        };
+
+        return preview;
+    };
+
+    public getBalanceListFor(...accounts: string[]): ICurrencyItemView[] {
         if (this.accountMap === undefined || this.currencyMap === undefined) {
             return [];
         }
 
         const result = Array.from(this.currencyMap.values()).map(
-            (currency): ICurrencyItemProps => {
+            (currency): ICurrencyItemView => {
                 let touched = false;
                 const balance: BN = accounts.reduce(
                     (sum: any, accountAddr: string) => {
@@ -245,7 +266,7 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     }
 
     @computed
-    public get fullBalanceList(): ICurrencyItemProps[] {
+    public get fullBalanceList(): ICurrencyItemView[] {
         const allAccounts = Array.from(this.accountMap.keys());
 
         return this.getBalanceListFor(...allAccounts);
@@ -289,6 +310,9 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
             currencyList.map(normalizeCurrencyInfo),
             this.currencyMap,
         );
+
+        this.connectionInfo = (yield Api.getConnectionInfo()).data;
+        this.rootStore.marketStore.updateValidators();
     }
 
     @action
@@ -302,7 +326,7 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     }
 
     public async update() {
-        const { data: accountList } = await Api.getAccountList();
+        const accountList = await Api.getAccountList();
         this.updateList(accountList);
 
         const { data: gasPrice } = await Api.getGasPrice();
@@ -345,7 +369,7 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
 
         if (validation) {
             const serverValidation = {
-                ...this.localizator.localizeValidationMessages(
+                ...this.services.localizator.localizeValidationMessages(
                     validation as IValidation,
                 ),
             };
@@ -378,7 +402,7 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
 
         if (validation) {
             this.serverValidation = {
-                ...this.localizator.localizeValidationMessages(
+                ...this.services.localizator.localizeValidationMessages(
                     validation as IValidation,
                 ),
             };
@@ -443,6 +467,60 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
 
     @pending
     @asyncAction
+    public *getKYCLink(
+        password: string,
+        address: string,
+        kycAddress: string,
+        fee: string,
+    ) {
+        const { data: link, validation } = yield Api.getKYCLink(
+            password,
+            address,
+            kycAddress,
+            fee,
+        );
+
+        let result;
+        if (validation) {
+            this.serverValidation = {
+                ...this.services.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
+        } else {
+            result = link;
+            this.resetServerValidation();
+        }
+
+        return result;
+    }
+
+    @pending
+    @asyncAction
+    public *confirmWorker(password: string, address: string, slaveId: string) {
+        const { data: link, validation } = yield Api.worker.confirm(
+            password,
+            address,
+            slaveId,
+        );
+
+        let result;
+        if (validation) {
+            this.serverValidation = {
+                ...this.services.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
+        } else {
+            result = link;
+            this.resetServerValidation();
+        }
+
+        return result;
+    }
+
+    @pending
+    @asyncAction
     protected *exportWallet() {
         const { data: text } = yield Api.exportWallet();
 
@@ -459,8 +537,6 @@ export class MainStore extends OnlineStore implements IHasLocalizator {
     public resetServerValidation() {
         this.serverValidation = {};
     }
-
-    public readonly localizator: ILocalizator;
 }
 
 export default MainStore;
