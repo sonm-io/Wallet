@@ -50,7 +50,7 @@ export class DWH {
         [4, 'storageSize', 1024 * 1024 * 1024],
         [11, 'redshiftGPU', 1],
         [10, 'zcashHashrate', 1],
-        [9, 'ethHashrate', 1],
+        [9, 'ethHashrate', 1000 * 1000],
         [8, 'gpuRamSize', 1024 * 1024],
     ];
 
