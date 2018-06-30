@@ -525,25 +525,27 @@ export class DWH {
         const res = await this.fetchData('GetValidators');
         const validators = 'validators' in res ? res.validators : [];
 
-        return validators.map(
-            ({
-                validator,
-                name,
-                level,
-                price,
-                url,
-                description,
-                logo,
-            }: any): t.IKycValidator => ({
-                id: validator.id,
-                level: validator.level,
-                name,
-                description,
-                fee: price,
-                url,
-                logo,
-            }),
-        );
+        return validators
+            .filter((x: any) => x.url)
+            .map(
+                ({
+                    validator,
+                    name,
+                    level,
+                    price,
+                    url,
+                    description,
+                    logo,
+                }: any): t.IKycValidator => ({
+                    id: validator.id,
+                    level: validator.level,
+                    name,
+                    description,
+                    fee: price,
+                    url,
+                    logo,
+                }),
+            );
     };
 
     public getWorkers = async ({
