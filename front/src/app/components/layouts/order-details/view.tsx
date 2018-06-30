@@ -11,12 +11,17 @@ import { Balance } from 'app/components/common/balance-view/index';
 import formatSeconds from 'app/utils/format-seconds';
 import { EnumOrderType } from '../../../api/types';
 import { EnumOrderStatus } from '../../../api';
+import { rootStore } from '../../../stores';
+import { BN } from 'bn.js';
+import { InsuficcientFunds } from './sub/insuficcient-funds';
 
 interface IProps {
     className?: string;
     order: IOrder;
     validationPassword: string;
     onSubmit: (password: string) => void;
+    onNavigateBack: () => void;
+    onNavigateDeposit: () => void;
 }
 
 class OrderPropertyList extends PropertyList<IOrder> {}
@@ -47,9 +52,17 @@ export class OrderView extends React.Component<IProps, never> {
         },
     ];
 
+    protected get canBuy() {
+        const p = this.props;
+        const balance = new BN(rootStore.marketStore.marketAllBalance);
+        const price = new BN(p.order.price);
+        let hours = new BN(p.order.duration).div(new BN(3600));
+        hours = hours.isZero ? new BN(1) : hours; // if there is no duration for order, then consider 1 hour.
+        return balance.gte(price.mul(hours));
+    }
+
     public render() {
         const p = this.props;
-
         return (
             <div className="order-view">
                 <ProfileBrief
@@ -63,13 +76,20 @@ export class OrderView extends React.Component<IProps, never> {
                     config={OrderView.orderViewConfig}
                 />
                 {p.order.orderType === EnumOrderType.ask ? (
-                    <ConfirmationPanel
-                        className="order-view__confirmation"
-                        onSubmit={p.onSubmit}
-                        validationMessage={p.validationPassword}
-                        labelSubmit="Buy"
-                        labelHeader="Accept order"
-                    />
+                    this.canBuy ? (
+                        <ConfirmationPanel
+                            className="order-view__confirmation"
+                            onSubmit={p.onSubmit}
+                            validationMessage={p.validationPassword}
+                            labelSubmit="Buy"
+                            labelHeader="Accept order"
+                        />
+                    ) : (
+                        <InsuficcientFunds
+                            onBack={p.onNavigateBack}
+                            onDeposit={p.onNavigateDeposit}
+                        />
+                    )
                 ) : null}
                 <Benchmark
                     title="Resource parameters"

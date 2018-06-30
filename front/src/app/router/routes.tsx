@@ -30,6 +30,7 @@ import {
 } from './types';
 
 import { reload, firstByDefault, replaceWithChild } from './utils';
+import { navigateBack } from './navigate';
 
 let defaultAction;
 
@@ -452,6 +453,8 @@ export const createRoutes = (
                                                 onCompleteBuyingOrder={
                                                     n.toCompleteBuyingOrder
                                                 }
+                                                onNavigateBack={navigateBack}
+                                                onNavigateDeposit={n.toDeposit}
                                             />
                                         ),
                                     };
