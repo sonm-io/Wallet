@@ -312,6 +312,7 @@ export class MainStore extends OnlineStore {
         );
 
         this.connectionInfo = (yield Api.getConnectionInfo()).data;
+        this.rootStore.marketStore.updateValidators();
     }
 
     @action
