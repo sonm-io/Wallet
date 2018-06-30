@@ -11,7 +11,6 @@ import { Balance } from 'app/components/common/balance-view/index';
 import formatSeconds from 'app/utils/format-seconds';
 import { EnumOrderType } from '../../../api/types';
 import { EnumOrderStatus } from '../../../api';
-import { rootStore } from '../../../stores';
 import { BN } from 'bn.js';
 import { InsuficcientFunds } from './sub/insuficcient-funds';
 
@@ -22,6 +21,7 @@ interface IProps {
     onSubmit: (password: string) => void;
     onNavigateBack: () => void;
     onNavigateDeposit: () => void;
+    marketBalance: string;
 }
 
 class OrderPropertyList extends PropertyList<IOrder> {}
@@ -54,7 +54,8 @@ export class OrderView extends React.Component<IProps, never> {
 
     protected get canBuy() {
         const p = this.props;
-        const balance = new BN(rootStore.marketStore.marketAllBalance);
+
+        const balance = new BN(p.marketBalance);
         const price = new BN(p.order.price);
         let hours = new BN(p.order.duration).div(new BN(3600));
         hours = hours.isZero ? new BN(1) : hours; // if there is no duration for order, then consider 1 hour.

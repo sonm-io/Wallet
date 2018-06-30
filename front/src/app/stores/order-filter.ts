@@ -373,8 +373,8 @@ export class OrderFilterStore implements IFilterStore {
             orderSide: {
                 $eq:
                     this.side === 'Sell'
-                        ? EnumOrderType.bid
-                        : EnumOrderType.ask,
+                        ? EnumOrderType.ask
+                        : EnumOrderType.bid,
             },
             orderStatus: {
                 $eq: this.onlyActive
