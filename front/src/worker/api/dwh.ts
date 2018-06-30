@@ -507,12 +507,13 @@ export class DWH {
         };
         deal.duration = deal.duration ? DWH.parseDuration(deal.duration) : 0;
         deal.price = DWH.recalculatePriceIn(deal.price);
-        deal.startTime =
-            deal.startTime && deal.startTime.seconds
-                ? deal.startTime.seconds
-                : 0;
+        deal.startTime = deal.startTime
+            ? parseInt(moment(deal.startTime).format('X'), 10)
+            : 0;
         deal.endTime =
-            deal.endTime && deal.endTime.seconds ? deal.endTime.seconds : 0;
+            deal.endTime && deal.endTime
+                ? parseInt(moment(deal.endTime).format('X'), 10)
+                : 0;
 
         const now = moment().unix();
         deal.timeLeft =

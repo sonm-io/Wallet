@@ -46,12 +46,14 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     protected rootStore: RootStore;
     protected api: IApiSend;
     protected disableToAddressValidation: boolean;
+    protected defaultLivenetGasLimit: string;
 
     constructor(
         rootStore: RootStore,
         localizator: ILocalizator,
         api: IApiSend,
         disableToAddressValidation: boolean = false,
+        defaultLivenetGasLimit: string = '50000',
     ) {
         super({
             errorProcessor: rootStore.uiStore,
@@ -62,12 +64,13 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         this.localizator = localizator;
         this.disableToAddressValidation = disableToAddressValidation;
         this.api = api;
+        this.defaultLivenetGasLimit = defaultLivenetGasLimit;
     }
 
     @computed
     get defaultGasLimit() {
         return this.rootStore.mainStore.networkName === 'livenet'
-            ? '50000'
+            ? this.defaultLivenetGasLimit
             : '1000000';
     }
 

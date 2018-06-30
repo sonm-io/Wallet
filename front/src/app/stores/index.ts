@@ -110,6 +110,7 @@ export class RootStore implements IHasLocalizator {
                 send: Api.deposit,
             },
             true,
+            '150000',
         );
 
         this.withdrawStore = new WithdrawStore(
