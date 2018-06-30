@@ -67,7 +67,6 @@ export class MarketStore extends OnlineStore {
         ) {
             this.setMarketAccountAddress(this.marketAccountViewList[0].address);
         }
-        this.updateValidators();
         this.updateTotalBalance();
     };
 

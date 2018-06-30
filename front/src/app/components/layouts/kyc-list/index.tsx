@@ -13,6 +13,10 @@ export class KycList extends React.Component<{}, never> {
         yield store.fetchKycLink(itemIndex, password);
     }
 
+    public componentDidMount() {
+        rootStore.marketStore.updateValidators();
+    }
+
     public render() {
         return (
             <KycListView
