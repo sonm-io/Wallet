@@ -5,11 +5,11 @@ import { Input } from 'app/components/common/input';
 import { Button } from 'app/components/common/button';
 import { IOrderFilterPanelProps } from './types';
 import { IOrderFilter } from 'app/stores/order-filter';
-// import { RadioButtonGroup } from 'app/components/common/radio-button-group';
+import { RadioButtonGroup } from 'app/components/common/radio-button-group';
 import { FormField } from 'app/components/common/form';
 // import { ToggleButtonGroup } from 'app/components/common/toggle-button-group';
 import { IChangeParams } from 'app/components/common/types';
-// import ToggleGroup from 'app/components/common/toggle-group/index';
+import ToggleGroup from 'app/components/common/toggle-group/index';
 
 export class OrderFilterPanel extends React.PureComponent<
     IOrderFilterPanelProps,
@@ -25,7 +25,8 @@ export class OrderFilterPanel extends React.PureComponent<
         this.props.onUpdateFilter(key, value);
     };
 
-    //private static orderTypeValues = ['Buy', 'Sell'];
+    private static orderTypeValues = ['Sell', 'Buy'];
+
     // private static orderOwnerTypeValues = [
     //     EnumOrderOwnerType.market,
     //     EnumOrderOwnerType.my,
@@ -68,18 +69,18 @@ export class OrderFilterPanel extends React.PureComponent<
                         />
                     </FormField>
 
-                    {/*<FormField*/}
-                    {/*label="I want to"*/}
-                    {/*className="order-filter-panel__order-side"*/}
-                    {/*>*/}
-                    {/*<RadioButtonGroup*/}
-                    {/*cssClasses={ToggleGroup.radioRowCssClasses}*/}
-                    {/*name="side"*/}
-                    {/*value={p.side}*/}
-                    {/*values={OrderFilterPanel.orderTypeValues}*/}
-                    {/*onChange={this.handleChangeInput}*/}
-                    {/*/>*/}
-                    {/*</FormField>*/}
+                    <FormField
+                        label="Type"
+                        className="order-filter-panel__order-side"
+                    >
+                        <RadioButtonGroup
+                            cssClasses={ToggleGroup.radioRowCssClasses}
+                            name="side"
+                            value={p.side}
+                            values={OrderFilterPanel.orderTypeValues}
+                            onChange={this.handleChangeInput}
+                        />
+                    </FormField>
 
                     <FormField
                         error={p.validation.priceFrom}

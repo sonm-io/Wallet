@@ -58,8 +58,9 @@ export class Deal extends React.Component<IProps, IState> {
         const deal = rootStore.dealDetailsStore.deal;
         const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
         const isOwner =
-            deal.supplier.address.toLowerCase() === marketAccount ||
-            deal.consumer.address.toLowerCase() === marketAccount;
+            deal.supplier.address.toLowerCase() ===
+                marketAccount.toLowerCase() ||
+            deal.consumer.address.toLowerCase() === marketAccount.toLowerCase();
 
         const propertyList = {
             id: deal.id,

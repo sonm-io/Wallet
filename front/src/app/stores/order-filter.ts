@@ -70,7 +70,7 @@ export class OrderFilterStore implements IFilterStore {
     private static defaultUserInput: IOrderFilter = {
         orderOwnerType: EnumOrderOwnerType.market,
         creatorAddress: '',
-        side: 'Buy',
+        side: 'Sell',
         onlyActive: false,
         priceFrom: '',
         priceTo: '',
