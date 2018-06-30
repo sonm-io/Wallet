@@ -1,0 +1,34 @@
+@import 'guide.less';
+
+@import './sub/order-filter-panel/index';
+
+.order-list {
+    display: grid;
+    grid-template-columns: [list] 1fr [filter] 340px;
+    grid-template-rows: ~'[top] 20px [list]';
+    grid-gap: 10px;
+
+    &__header {
+        grid-column: list;
+        grid-row: top / list;
+    }
+
+    &__filter-panel {
+        grid-column: filter;
+        grid-row: top / span 2;
+    }
+
+    &__list {
+        grid-column: list;
+        grid-row: list;
+
+        &-item {
+            cursor: pointer;
+            background: none transparent;
+
+            &:hover {
+                background-color: @color-gray-bg;
+            }
+        }
+    }
+}

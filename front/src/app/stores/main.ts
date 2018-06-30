@@ -1,19 +1,24 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import * as sortBy from 'lodash/fp/sortBy';
-import { Api, IAccountInfo, ICurrencyInfo } from 'app/api';
-import * as BigNumber from 'bignumber.js';
-import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
-import { IAccountItemProps } from 'app/components/common/account-item';
-import { AlertType } from './types';
-import { updateAddressMap } from './utils/updateAddressMap';
-import { AbstractStore } from './abstract-store';
-const { pending, catchErrors } = AbstractStore;
+import { Api, IAccountInfo, IConnectionInfo, ICurrencyInfo } from 'app/api';
+import { AlertType, IAccountItemView, ICurrencyItemView } from './types';
+import { updateAddressMap } from './utils/update-address-map';
+import { OnlineStore } from './online-store';
+const { pending, catchErrors } = OnlineStore;
 import { delay } from 'app/utils/async-delay';
 import { trimZeros } from '../utils/trim-zeros';
-import { getMessageText } from 'app/api/error-messages';
 import { RootStore } from './';
 import { IWalletListItem } from 'app/api/types';
+import {
+    createBigNumber,
+    TWO,
+    THREE,
+    ZERO,
+    BN,
+} from '../utils/create-big-number';
+import { normalizeCurrencyInfo } from './utils/normalize-currency-info';
+import { ILocalizator, IValidation } from 'app/localization';
 
 const sortByName = sortBy(['name', 'address']);
 const UPDATE_INTERVAL = 5000;
@@ -22,22 +27,65 @@ interface IMainFormValues {
     password: string;
     passwordConfirmation: string;
     accountName: string;
+    privateKey: string;
+    json: string;
 }
 
 const emptyForm: IMainFormValues = {
     password: '',
     passwordConfirmation: '',
     accountName: '',
+    privateKey: '',
+    json: '',
 };
+
+const emptyCurrencyInfo = {
+    symbol: '',
+    decimalPointOffset: 2,
+    name: '',
+    address: '',
+    balance: '',
+};
+
+interface IMainStoreServices {
+    localizator: ILocalizator;
+}
 
 Object.freeze(emptyForm);
 
-export class MainStore extends AbstractStore {
+export class MainStore extends OnlineStore {
+    constructor(rootStore: RootStore, services: IMainStoreServices) {
+        super({
+            errorProcessor: rootStore.uiStore,
+            localizator: services.localizator,
+        });
+
+        this.rootStore = rootStore;
+
+        this.connectionInfo = {
+            isTest: true,
+            ethNodeURL: '',
+            snmNodeURL: '',
+        };
+
+        autorun(() => {
+            if (Array.from(this.currencyMap.keys()).length > 0) {
+                this.update();
+            }
+        });
+    }
+
     public static ADDRESS_ETHER = '0x';
 
     protected rootStore: RootStore;
 
     @observable.ref protected walletInfo?: IWalletListItem;
+    @observable.ref public connectionInfo: IConnectionInfo;
+
+    @computed
+    get firstAccountAddress(): IAccountInfo {
+        return this.accountMap.values().next().value;
+    }
 
     @computed
     public get walletName(): string {
@@ -54,15 +102,14 @@ export class MainStore extends AbstractStore {
         return this.walletInfo ? this.walletInfo.nodeUrl : '';
     }
 
-    @observable public validation = { ...emptyForm };
-
-    constructor(rootStore: RootStore) {
-        super({ errorProcessor: rootStore.uiStore });
-
-        this.rootStore = rootStore;
+    @computed
+    public get noValidationMessages(): boolean {
+        return Object.keys(this.serverValidation).length === 0;
     }
 
-    @observable public averageGasPriceEther = '';
+    @observable.ref public serverValidation: Partial<IMainFormValues> = {};
+
+    @observable public averageGasPrice = '';
 
     @observable public accountMap = new Map<string, IAccountInfo>();
 
@@ -83,11 +130,13 @@ export class MainStore extends AbstractStore {
         let min = '5';
         let max = '15';
 
-        if (this.averageGasPriceEther !== '') {
-            const bn = new BigNumber(this.averageGasPriceEther);
+        if (this.averageGasPrice !== '') {
+            const bn = createBigNumber(this.averageGasPrice);
 
-            min = trimZeros(bn.mul(0.5).toFixed(18));
-            max = trimZeros(bn.mul(1.5).toFixed(18));
+            if (bn) {
+                min = trimZeros(bn.div(TWO));
+                max = trimZeros(bn.mul(THREE).div(TWO));
+            }
         }
 
         return [min, max];
@@ -116,14 +165,7 @@ export class MainStore extends AbstractStore {
     @computed
     public get primaryTokenInfo(): ICurrencyInfo {
         const result = this.currencyMap.get(this.primaryTokenAddress);
-
-        if (!result) {
-            throw new Error(
-                `Second token ${this.primaryTokenAddress} not found`,
-            );
-        }
-
-        return result;
+        return result || emptyCurrencyInfo;
     }
 
     @computed
@@ -143,51 +185,56 @@ export class MainStore extends AbstractStore {
     }
 
     private static getTokenBalance(
-        fullList: ICurrencyItemProps[],
+        fullList: ICurrencyItemView[],
         address: string,
     ) {
         const item = fullList.find(x => x.address === address);
-
-        return item ? `${item.balance} ${item.symbol}` : '';
+        const balance = item ? item.balance : '';
+        return balance || '0';
     }
 
     @computed
-    public get accountList(): IAccountItemProps[] {
-        const isCurrencyListEmpty = this.currencyMap.size === 0;
-        const etherAddress = this.etherAddress;
-        const primaryTokenAddress = this.primaryTokenAddress;
+    public get accountList(): IAccountItemView[] {
+        const result = Array.from(this.accountMap.values()).map(
+            this.transformAccountInfoToView,
+        );
 
-        const result = Array.from(this.accountMap.values()).map(account => {
-            const props: IAccountItemProps = {
-                address: account.address,
-                json: account.json,
-                name: account.name,
-                etherBalance: isCurrencyListEmpty
-                    ? ''
-                    : `${account.currencyBalanceMap[etherAddress] || ''} ${
-                          this.etherInfo.symbol
-                      }`,
-                primaryTokenBalance: isCurrencyListEmpty
-                    ? ''
-                    : `${account.currencyBalanceMap[primaryTokenAddress] ||
-                          ''} ${this.primaryTokenInfo.symbol}`,
-            };
-
-            return props;
-        });
-
-        return sortByName(result) as IAccountItemProps[];
+        return sortByName(result) as IAccountItemView[];
     }
 
-    public getBalanceListFor(...accounts: string[]): ICurrencyItemProps[] {
+    public transformAccountInfoToView = (
+        info: IAccountInfo,
+    ): IAccountItemView => {
+        const isCurrencyListEmpty = this.currencyMap.size === 0;
+        const primaryTokenBalance = isCurrencyListEmpty
+            ? ''
+            : info.currencyBalanceMap[this.primaryTokenAddress];
+
+        const preview: IAccountItemView = {
+            address: info.address,
+            json: info.json,
+            name: info.name,
+            etherBalance: isCurrencyListEmpty
+                ? ''
+                : info.currencyBalanceMap[this.etherAddress],
+            primaryTokenBalance,
+            primaryTokenInfo: this.primaryTokenInfo,
+            usdBalance: info.marketUsdBalance,
+            marketBalance: info.marketBalance,
+        };
+
+        return preview;
+    };
+
+    public getBalanceListFor(...accounts: string[]): ICurrencyItemView[] {
         if (this.accountMap === undefined || this.currencyMap === undefined) {
             return [];
         }
 
         const result = Array.from(this.currencyMap.values()).map(
-            (currency): ICurrencyItemProps => {
+            (currency): ICurrencyItemView => {
                 let touched = false;
-                const balance = accounts.reduce(
+                const balance: BN = accounts.reduce(
                     (sum: any, accountAddr: string) => {
                         const account = this.accountMap.get(
                             accountAddr,
@@ -197,19 +244,19 @@ export class MainStore extends AbstractStore {
 
                         if (userBalance) {
                             touched = true;
-                            sum = sum.plus(userBalance);
+                            sum = sum.add(createBigNumber(userBalance));
                         }
 
                         return sum;
                     },
-                    new BigNumber(0),
+                    ZERO,
                 );
 
                 return {
                     name: currency.name,
                     symbol: currency.symbol,
-                    decimals: currency.decimals,
-                    balance: touched ? trimZeros(balance.toFixed(18)) : '',
+                    decimalPointOffset: currency.decimalPointOffset,
+                    balance: touched ? balance.toString() : '',
                     address: currency.address,
                 };
             },
@@ -219,7 +266,7 @@ export class MainStore extends AbstractStore {
     }
 
     @computed
-    public get fullBalanceList(): ICurrencyItemProps[] {
+    public get fullBalanceList(): ICurrencyItemView[] {
         const allAccounts = Array.from(this.accountMap.keys());
 
         return this.getBalanceListFor(...allAccounts);
@@ -259,7 +306,13 @@ export class MainStore extends AbstractStore {
             this.autoUpdateIteration(), // wait for first update
         ]);
 
-        updateAddressMap<ICurrencyInfo>(currencyList, this.currencyMap);
+        updateAddressMap<ICurrencyInfo>(
+            currencyList.map(normalizeCurrencyInfo),
+            this.currencyMap,
+        );
+
+        this.connectionInfo = (yield Api.getConnectionInfo()).data;
+        this.rootStore.marketStore.updateValidators();
     }
 
     @action
@@ -269,11 +322,11 @@ export class MainStore extends AbstractStore {
 
     @action
     protected setAverageGasPrice(gasPrice: string = '') {
-        this.averageGasPriceEther = gasPrice;
+        this.averageGasPrice = gasPrice;
     }
 
     public async update() {
-        const { data: accountList } = await Api.getAccountList();
+        const accountList = await Api.getAccountList();
         this.updateList(accountList);
 
         const { data: gasPrice } = await Api.getGasPrice();
@@ -283,7 +336,7 @@ export class MainStore extends AbstractStore {
     @catchErrors({ restart: true })
     protected async autoUpdateIteration(interval: number = UPDATE_INTERVAL) {
         try {
-            if (process.env.NODE_ENV !== 'production') {
+            if (IS_DEV) {
                 window.console.time('auto-update');
             }
 
@@ -293,7 +346,7 @@ export class MainStore extends AbstractStore {
 
             setTimeout(() => this.autoUpdateIteration(), 0);
         } finally {
-            if (process.env.NODE_ENV !== 'production') {
+            if (IS_DEV) {
                 window.console.timeEnd('auto-update');
             }
         }
@@ -302,25 +355,62 @@ export class MainStore extends AbstractStore {
     @pending
     @catchErrors({ restart: false })
     @asyncAction
-    public *addAccount(json: string, password: string, name: string) {
+    public *addAccount(
+        json: string,
+        password: string,
+        name: string,
+        privateKey?: string,
+    ) {
+        this.serverValidation = {};
+
         const { data, validation } = yield Api.addAccount(json, password, name);
 
+        let result;
+
         if (validation) {
-            this.validation = { ...emptyForm, ...validation };
+            const serverValidation = {
+                ...this.services.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
+
+            if (privateKey) {
+                serverValidation.privateKey = serverValidation.json;
+                delete serverValidation.json;
+            }
+
+            this.serverValidation = serverValidation;
         } else {
-            this.validation = { ...emptyForm };
-            this.accountMap.set(data.address, data);
+            result = this.accountMap.set(data.address, data);
         }
 
-        return this.validation;
+        return result;
     }
 
     @pending
     @catchErrors({ restart: false })
     @asyncAction
-    public *createAccount(password: string, name: string) {
-        const { data } = yield Api.createAccount(password);
-        yield this.addAccount(data, password, name);
+    public *createAccount(password: string, name: string, privateKey: string) {
+        this.serverValidation = {};
+
+        const { data, validation } = yield Api.createAccount(
+            password,
+            privateKey,
+        );
+
+        let result;
+
+        if (validation) {
+            this.serverValidation = {
+                ...this.services.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
+        } else {
+            result = yield this.addAccount(data, password, name, privateKey);
+        }
+
+        return result;
     }
 
     @pending
@@ -335,14 +425,16 @@ export class MainStore extends AbstractStore {
         if (validation) {
             this.rootStore.uiStore.addAlert({
                 type: AlertType.error,
-                message: `SNM delivery delayed cause: ${getMessageText(
+                message: `SNM delivery delayed cause: ${this.rootStore.localizator.getMessageText(
                     validation.password,
                 )}`,
             });
         } else {
             this.rootStore.uiStore.addAlert({
                 type: AlertType.success,
-                message: getMessageText('wait_your_tokens'),
+                message: this.rootStore.localizator.getMessageText(
+                    'wait_your_tokens',
+                ),
             });
         }
     }
@@ -375,6 +467,60 @@ export class MainStore extends AbstractStore {
 
     @pending
     @asyncAction
+    public *getKYCLink(
+        password: string,
+        address: string,
+        kycAddress: string,
+        fee: string,
+    ) {
+        const { data: link, validation } = yield Api.getKYCLink(
+            password,
+            address,
+            kycAddress,
+            fee,
+        );
+
+        let result;
+        if (validation) {
+            this.serverValidation = {
+                ...this.services.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
+        } else {
+            result = link;
+            this.resetServerValidation();
+        }
+
+        return result;
+    }
+
+    @pending
+    @asyncAction
+    public *confirmWorker(password: string, address: string, slaveId: string) {
+        const { data: link, validation } = yield Api.worker.confirm(
+            password,
+            address,
+            slaveId,
+        );
+
+        let result;
+        if (validation) {
+            this.serverValidation = {
+                ...this.services.localizator.localizeValidationMessages(
+                    validation as IValidation,
+                ),
+            };
+        } else {
+            result = link;
+            this.resetServerValidation();
+        }
+
+        return result;
+    }
+
+    @pending
+    @asyncAction
     protected *exportWallet() {
         const { data: text } = yield Api.exportWallet();
 
@@ -386,8 +532,18 @@ export class MainStore extends AbstractStore {
 
         return String(text);
     };
+
+    @action.bound
+    public resetServerValidation() {
+        this.serverValidation = {};
+    }
 }
 
 export default MainStore;
 
 export * from './types';
+
+/**
+ * 0xb900726a920ae31c4381b9d9ec1e0d7e990cac3c Zaschecoin
+ * 0xbda864e991a5ff6f7cc12a73ecb21fcefddd4795 ZASCHECOIN10
+ */

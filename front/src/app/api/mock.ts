@@ -14,6 +14,8 @@ export const newAccount: t.IAccountInfo = {
     name: 'new',
     address: '0x1234567890123456789012345678901234567890',
     json: '',
+    marketUsdBalance: '12345678',
+    marketBalance: '0987654321',
     currencyBalanceMap: {
         [SONM_ADDR]: '1',
     },
@@ -37,6 +39,7 @@ export const transactionListResult: t.IResult<
                 confirmCount: 0,
                 status: t.TransactionStatus.failed,
                 hash: 'hash1',
+                decimalPointOffset: 18,
             },
             {
                 timestamp: Date.now(),
@@ -51,6 +54,7 @@ export const transactionListResult: t.IResult<
                 confirmCount: 0,
                 status: t.TransactionStatus.success,
                 hash: 'hash2',
+                decimalPointOffset: 18,
             },
         ],
         100,
@@ -63,13 +67,15 @@ export const currencyListResult: t.IResult<t.ICurrencyInfo[]> = {
             symbol: 'ETH',
             name: 'Etherium',
             address: ETHER_ADDR,
-            decimals: 18,
+            decimalPointOffset: 18,
+            balance: '0',
         },
         {
             symbol: 'SNMT',
             name: 'Sonm token',
             address: SONM_ADDR,
-            decimals: 18,
+            decimalPointOffset: 18,
+            balance: '0',
         },
     ],
 };
@@ -80,6 +86,8 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             name: 'Vasya',
             address: VASYA_ADDR,
             json: '',
+            marketUsdBalance: '12345678',
+            marketBalance: '0987654321',
             currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(
@@ -96,6 +104,8 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             name: 'Petya',
             address: PETYA_ADDR,
             json: '',
+            marketUsdBalance: '12345678',
+            marketBalance: '0987654321',
             currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(
@@ -135,6 +145,7 @@ export function send(
             fee: '0.0001',
             currencyAddress: params.currencyAddress,
             currencySymbol: 'ETH',
+            decimalPointOffset: 18,
             confirmCount: 30,
             gasPrice: '345',
             gasLimit: '1234',
@@ -143,6 +154,54 @@ export function send(
 
     return result;
 }
+
+export const profileListResult: t.IResult<t.IListResult<t.IProfileBrief>> = {
+    data: {
+        records: [
+            {
+                name: 'Vasya',
+                address: '0x1234567890`123456789012345678901234567890',
+                buyOrders: 99,
+                sellOrders: 88,
+                deals: 98,
+                country: 'ru',
+                logoUrl: '',
+                status: t.EnumProfileStatus.anon,
+            },
+            {
+                name: '',
+                address: '0x1234567890123456789012345678901234567893',
+                buyOrders: 99,
+                sellOrders: 88,
+                deals: 98,
+                country: 'ru',
+                logoUrl: '',
+                status: t.EnumProfileStatus.anon,
+            },
+            {
+                name: 'Ololan Ololoshevich',
+                address: '0x1234567890123456789012345678901234567895',
+                buyOrders: 99,
+                sellOrders: 88,
+                deals: 98,
+                country: 'gb',
+                logoUrl: '',
+                status: t.EnumProfileStatus.anon,
+            },
+            {
+                name: 'BG',
+                address: '0x1234562890123456789013345678901234567897',
+                buyOrders: 99,
+                sellOrders: 88,
+                deals: 98,
+                country: 'us',
+                logoUrl: '',
+                status: t.EnumProfileStatus.anon,
+            },
+        ],
+        total: 5,
+    },
+};
 
 // export function send(tx: any) {
 //     console.log('send!!!');

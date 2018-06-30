@@ -1,51 +1,57 @@
 .sonm-hash {
-  display: inline-flex;
-  overflow: hidden;
-  white-space: nowrap;
-  text-decoration: none !important;
-  color: inherit;
-  max-width: 100%;
-  padding: 0;
-  align-items: flex-end;
-
-  &:hover,
-  &:active,
-  &:visited {
+    display: inline-block;
     text-decoration: none;
     color: inherit;
-  }
-
-  &__start {
+    max-width: 100%;
+    padding: 0;
     overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: inherit;
-    display: block;
-    margin: 0;
-    padding: 0;
-    flex: 1 1 0;
-  }
+    user-select: none;
 
-  &__end {
-    font-size: inherit;
-    margin: 0;
-    padding: 0;
-  }
-
-  &__copy {
-    outline: none;
-    outline-offset: 0;
-    display: inline-block;
-    border: 0 solid transparent;
-    margin: 1px 2px;
-    padding: 0;
-    cursor: pointer;
-    color: inherit;
-    background: transparent none;
-    appearance: none;
-
-    &:focus,
-    &:active {
-      outline: @outline;
+    && {
+        word-break: keep-all;
     }
-  }
+
+    &__line {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        white-space: pre-line;
+    }
+
+    &:hover,
+    &:active,
+    &:visited {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    &__start {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: inherit;
+        display: block;
+        margin: 0;
+        padding: 0;
+        flex-basis: auto;
+    }
+
+    &__end {
+        font-size: inherit;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__copy {
+        outline: none;
+        display: inline-block;
+        cursor: pointer;
+        color: inherit;
+        background: transparent none;
+        margin: 0 0 0 5px;
+
+        &:hover {
+            color: @color-violet;
+        }
+    }
 }

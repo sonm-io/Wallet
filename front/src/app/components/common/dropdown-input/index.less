@@ -1,0 +1,98 @@
+@dropdownInputColor: rgba(0,0,0,.65);
+@dropdownInputBorderColor: #d9d9d9;
+@dropdownInputBgColor: #fff;
+@dropdownBorderColor: #d8d8d8;
+@dropdownInputBorderHoverColor: #9ca0a6;
+@dropdownInputBorderActiveBorder: 0 0 0 2px rgba(147,149,152,.2);
+
+:root {
+    --dropdown-input-button-bg-color: @dropdownInputBgColor;
+}
+
+.dropdown-input {
+    display: inline-block;
+    position: relative;
+    overflow: visible;
+    padding: 0;
+    color: @dropdownInputColor;
+
+    &__popup {
+        padding: 0;
+        max-width: 0;
+        transition: max-width 1s ease;
+    }
+
+    & &__popup {
+        margin: 4px 0 0 0;
+        background: @dropdownInputBgColor;
+        position: absolute;
+        border: solid 1px @dropdownBorderColor;
+        min-width: 100%;
+        z-index: 100;
+        max-width: 4000px;
+        cursor: pointer;
+    }
+
+    &--expanded > &__button {
+        &:after {
+            transform: translate(0, -1px) rotateZ(45deg);
+        }
+    }
+
+    &__button {
+        width: 100%;
+        margin: 0;
+        padding: 0 25px 0 10px;
+        line-height: 30px;
+        font-size: 14px;
+        border: 1px solid @dropdownInputBorderColor;
+        text-align: left;
+        position: relative;
+        box-shadow: none;
+        transition: box-shadow 0.1s 0.1s, border-color 0.1s 0.1s;
+        outline: none;
+        background-color: var(--dropdown-input-button-bg-color);
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover {
+            border: 1px solid @dropdownInputBorderHoverColor;
+            outline: none;
+        }
+
+        &:focus,
+        &:active {
+            border-color: @dropdownInputBorderHoverColor;
+            outline: none;
+            box-shadow: @dropdownInputBorderActiveBorder;
+        }
+
+        &:after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            position: absolute;
+            border: solid @dropdownInputBorderHoverColor 1px;
+            border-right-width: 0;
+            border-bottom-width: 0;
+            top: 50%;
+            right: 9px;
+            transform: translate(0, -4px) rotateZ(225deg);
+            transition: transform 100ms;
+        }
+    }
+
+    &--disabled {
+        .dropdown-input__button {
+            cursor: default;
+            background-color: @color-selection;
+            opacity: @opacity-disabled;
+            &:hover,
+            &:focus,
+            &:active {
+                border: 1px solid @color-border;
+                box-shadow: 0 0;
+            }
+        }
+    }
+}

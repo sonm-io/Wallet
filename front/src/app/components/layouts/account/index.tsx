@@ -1,20 +1,21 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { inject, observer } from 'mobx-react';
-import { RootStore } from 'app/stores/';
+import { observer } from 'mobx-react';
 import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { Header } from 'app/components/common/header';
 import { IdentIcon } from 'app/components/common/ident-icon';
-import { navigate } from 'app/router';
 import { Button } from 'app/components/common/button';
-import { getMessageText } from 'app/api/error-messages';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
+import { Balance } from 'app/components/common/balance-view';
+import { rootStore } from 'app/stores';
+import { TEthereumAddress } from 'app/entities/types';
 
 interface IProps {
     className?: string;
-    rootStore: RootStore;
     initialAddress: string;
+    onClickHistory: (fromAddress?: TEthereumAddress) => void;
+    onClickSend: (currencyAddress: TEthereumAddress) => void;
 }
 
 enum Dialogs {
@@ -22,7 +23,6 @@ enum Dialogs {
     none = '',
 }
 
-@inject('rootStore')
 @observer
 export class Account extends React.Component<IProps, any> {
     public state = {
@@ -31,124 +31,157 @@ export class Account extends React.Component<IProps, any> {
 
     public componentWillMount() {
         if (this.props.initialAddress) {
-            this.props.rootStore.sendStore.setUserInput({ fromAddress: this.props.initialAddress });
+            rootStore.sendStore.setUserInput({
+                fromAddress: this.props.initialAddress,
+            });
         }
     }
 
     protected handleChangeAccount = (accountAddres: any) => {
-        this.props.rootStore.sendStore.setUserInput({ fromAddress: accountAddres });
-    }
-
-    protected handleHistoryClick = () => {
-        navigate({
-            path: '/history',
-            query: {
-                address: this.props.rootStore.sendStore.fromAddress,
-            },
+        rootStore.sendStore.setUserInput({
+            fromAddress: accountAddres,
         });
-    }
+    };
+
+    protected handleClickHistory = () => {
+        this.props.onClickHistory(rootStore.sendStore.fromAddress);
+    };
 
     protected handleSendClick = (event: any) => {
         const currencyAddress = event.target.name;
 
-        navigate({
-            path: '/send',
-            query: {
-                currency: currencyAddress,
-            },
-        });
-    }
+        this.props.onClickSend(currencyAddress);
+    };
 
     protected handleGiveMeMore = async (event: any) => {
         event.preventDefault();
 
-        await this.props.rootStore.mainStore.giveMeMore(
+        await rootStore.mainStore.giveMeMore(
             event.target.password.value,
-            this.props.rootStore.sendStore.fromAddress,
+            rootStore.sendStore.fromAddress,
         );
 
-        await this.props.rootStore.mainStore.update();
-    }
+        await rootStore.mainStore.update();
+    };
 
     public render() {
-        const {
-            className,
-        } = this.props;
+        const { className } = this.props;
 
-        return [
-            <Header className="sonm-account__header" key="header">
-                Account
-            </Header>,
+        const testEtherUrl = 'https://faucet.rinkeby.io/';
+
+        return (
             <div className={cn('sonm-account', className)} key="account">
                 <AccountBigSelect
                     className="sonm-account__account-select"
                     returnPrimitive
-                    accounts={this.props.rootStore.mainStore.accountList}
+                    accounts={rootStore.mainStore.accountList}
                     onChange={this.handleChangeAccount}
-                    value={this.props.rootStore.sendStore.fromAddress}
+                    value={rootStore.sendStore.fromAddress}
                 />
 
                 <button
                     className="sonm-account__go-to-history"
-                    onClick={this.handleHistoryClick}
+                    onClick={this.handleClickHistory}
                 >
                     View operation history
                 </button>
 
-                {this.props.rootStore.sendStore.currentBalanceList.length === 0 ? null :
-                    <ul className="sonm-account__tokens" >
+                {rootStore.sendStore.currentBalanceList.length === 0 ? null : (
+                    <ul className="sonm-account__tokens">
                         <Header className="sonm-account__header">
                             Coins and tokens
                         </Header>
-                        {this.props.rootStore.sendStore.currentBalanceList.map(
-                            ({ symbol, address, name, balance, decimals }) => {
-                            return (
-                                <li className="sonm-account-token-list__currency" key={address}>
-                                    <IdentIcon
-                                        address={address}
-                                        width={40}
-                                        className="sonm-account-token-list__currency-blockies"
-                                    />
-                                    <div className="sonm-account-token-list__currency-name">{name}</div>
-                                    <div className="sonm-account-token-list__currency-balance">
-                                        {balance} {symbol}
-                                    </div>
-                                    <button
-                                        name={address}
-                                        className="sonm-account-token-list__currency-button"
-                                        onClick={this.handleSendClick}
+                        {rootStore.sendStore.currentBalanceList.map(
+                            ({
+                                symbol,
+                                address,
+                                name,
+                                balance,
+                                decimalPointOffset,
+                            }) => {
+                                return (
+                                    <li
+                                        className="sonm-account-token-list__currency"
+                                        key={address}
                                     >
-                                        Send
-                                    </button>
-                                </li>
-                            );
-                        })}
-                    </ul>}
+                                        <IdentIcon
+                                            address={address}
+                                            sizePx={40}
+                                            className="sonm-account-token-list__currency-blockies"
+                                        />
+                                        <div className="sonm-account-token-list__currency-name">
+                                            {name}
+                                        </div>
+                                        <Balance
+                                            className="sonm-account-token-list__currency-balance"
+                                            balance={balance}
+                                            symbol={symbol}
+                                            decimalPointOffset={
+                                                decimalPointOffset
+                                            }
+                                        />
+                                        <button
+                                            name={address}
+                                            className="sonm-account-token-list__currency-button"
+                                            onClick={this.handleSendClick}
+                                        >
+                                            {rootStore.localizator.getMessageText(
+                                                'send',
+                                            )}
+                                        </button>
+                                    </li>
+                                );
+                            },
+                        )}
+                    </ul>
+                )}
 
-                {this.props.rootStore.mainStore.networkName === 'rinkeby' ?
-                    <form onSubmit={this.handleGiveMeMore} className="sonm-account__give-me">
+                {rootStore.mainStore.networkName === 'rinkeby' ? (
+                    <form
+                        onSubmit={this.handleGiveMeMore}
+                        className="sonm-account__give-me"
+                    >
                         <Header className="sonm-account__header">
-                            SONM test tokens request
+                            {rootStore.localizator.getMessageText(
+                                'test_token_request',
+                            )}
                         </Header>
                         <div className="sonm-account__warning">
-                            You need test Ether for token request. Get some here -
-                            <a href="https://faucet.rinkeby.io/" target="_blank">https://faucet.rinkeby.io/</a>
+                            {rootStore.localizator.getMessageText(
+                                'you_need_test_ether',
+                            )}
+                            <a href={testEtherUrl} target="_blank">
+                                {testEtherUrl}
+                            </a>
                         </div>
                         <div className="sonm-account__give-me-ct">
                             <Input
                                 autoComplete="off"
                                 name="password"
                                 className="sonm-account__give-me-password"
-                                prefix={<Icon type="lock" style={{ fontSize: 13 }} />}
+                                prefix={
+                                    <Icon
+                                        type="lock"
+                                        style={{ fontSize: 13 }}
+                                    />
+                                }
                                 type="password"
                                 placeholder="Account password"
                             />
-                            <Button type="submit" className="sonm-account__give-me-button" square transparent>
-                                {getMessageText('give_me_more')}
+                            <Button
+                                type="submit"
+                                className="sonm-account__give-me-button"
+                                square
+                                transparent
+                            >
+                                {rootStore.localizator.getMessageText(
+                                    'give_me_more',
+                                )}
                             </Button>
                         </div>
-                    </form> : null}
-            </div>,
-        ];
+                    </form>
+                ) : null}
+            </div>
+        );
     }
 }

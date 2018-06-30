@@ -10,15 +10,13 @@ import {
     FormHeader,
     FormButtons,
 } from 'app/components/common/form';
-import { MainStore } from 'app/stores/main';
-import { getMessageText } from 'app/api/error-messages';
+import { rootStore } from 'app/stores/';
 import { Hash } from 'app/components/common/hash-view';
 
 export interface IProps {
     address: string;
     className?: string;
     onClose: () => void;
-    mainStore: MainStore;
 }
 
 export class ShowPassword extends React.Component<IProps, any> {
@@ -31,7 +29,7 @@ export class ShowPassword extends React.Component<IProps, any> {
     protected handleSubmit = async (event: any) => {
         event.preventDefault();
 
-        const privateKey = await this.props.mainStore.getPrivateKey(
+        const privateKey = await rootStore.mainStore.getPrivateKey(
             this.state.password,
             this.props.address,
         );
@@ -43,7 +41,9 @@ export class ShowPassword extends React.Component<IProps, any> {
             });
         } else {
             this.setState({
-                validationPassword: getMessageText('incorrect_password'),
+                validationPassword: rootStore.localizator.getMessageText(
+                    'incorrect_password',
+                ),
                 privateKey: '',
             });
         }
@@ -76,10 +76,13 @@ export class ShowPassword extends React.Component<IProps, any> {
                                 error={this.state.validationPassword}
                             >
                                 <Input
+                                    name="password"
                                     autoFocus
                                     type="password"
                                     value={this.state.password}
-                                    onChange={this.handleChangePassword}
+                                    onChangeDeprecated={
+                                        this.handleChangePassword
+                                    }
                                 />
                             </FormField>
                         </FormRow>

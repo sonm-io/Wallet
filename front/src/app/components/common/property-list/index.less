@@ -1,0 +1,35 @@
+@import 'guide.less';
+
+@property-list-label-font-color: @color-light-font;
+@property-list-row-height: 25px;
+
+:root {
+    --property-list__columns: 210px 1fr;
+}
+
+.property-list {
+    margin: 0;
+    display: grid;
+    grid-template-columns: var(--property-list__columns);
+    grid-auto-rows: @property-list-row-height;
+    grid-row-gap: 5px;
+    grid-column-gap: 20px;
+    font-size: 14px;
+
+    &__label {
+        color: @property-list-label-font-color;
+    }
+
+    &__value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__header {
+        grid-column: ~'1 / -1';
+        grid-row: 1;
+        font-weight: 500;
+        color: @color-font-gray;
+        font-size: 14px;
+    }
+}

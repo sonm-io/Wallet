@@ -1,114 +1,127 @@
-@import "guide.less";
+@import 'guide.less';
+@dialogInnerMargin: 10px;
+@dialogInnerMarginX2: @dialogInnerMargin * 2;
 
 .sonm-popup {
-  padding: 0;
-  margin: 0;
-  border: 0;
-  z-index: @z-k2;
-
-  &__pale {
-    z-index: @z-k2 + 1;
-  }
-
-  &__outer,
-  &__inner {
-    z-index: @z-k2 + 2;
-  }
-
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-
-  &__outer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 100vh;
-
-    padding: 10px;
-    margin: 0;
-    border: 0;
-  }
-
-  &__pale {
-    animation: pale-fade-in 0.25s ease;
-
-    opacity: 0.7;
-    background-color: @color-brand-bg;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-
     padding: 0;
     margin: 0;
     border: 0;
-  }
+    z-index: @z-k2;
 
-  &__inner {
-    margin: 0;
-    padding: 40px;
-
-    opacity: 1;
-    animation: inner-fade-in 0.25s ease;
-    overflow: hidden;
-
-    background-color: @color-white;
-    border: solid 1px @color-border;
-    display: flex;
-    flex-direction: column;
-    z-index: @z-k2 + 1;
-    position: relative;
-    align-items: center;
-    transition: all 0.25s;
-
-    .sonm-popup--dark & {
-      background-color: @color-brand-bg;
-      box-shadow: 0 0 23px -2px rgba(33,48,57,1);
-      border: solid 2px #213039;
-      opacity: 0.8;
-
-      & h1, & h2, & h3, & h4 {
-        color: @color-white
-      }
-    }
-  }
-
-  & &__cross {
-    color: @color-dark-gray-bg;
-    border: 1px dashed transparent;
-    border-radius: 50%;
-    background: none;
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    height: 30px;
-    width: 30px;
-    cursor: pointer;
-
-    &:focus,
-    &:active {
-      outline: none;
-      border-color: @color-border;
+    &__pale {
+        z-index: @z-k2 + 1;
     }
 
-    .sonm-popup--dark & {
-      color: @color-light-font;
+    &__outer,
+    &__inner {
+        z-index: @z-k2 + 2;
     }
-  }
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &__outer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 100vh;
+        padding: @dialogInnerMargin;
+        margin: 0;
+        border: 0;
+    }
+
+    &__pale {
+        animation: pale-fade-in 0.25s ease;
+
+        opacity: 0.7;
+        background-color: @color-brand-bg;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        padding: 0;
+        margin: 0;
+        border: 0;
+    }
+
+    &__inner {
+        margin: 0;
+        padding: 40px;
+
+        max-width: ~'calc(100vw - @{dialogInnerMarginX2})';
+        max-height: ~'calc(100vh - @{dialogInnerMarginX2})';
+        overflow: auto;
+
+        opacity: 1;
+        animation: inner-fade-in 0.25s ease;
+        overflow: hidden;
+
+        background-color: @color-white;
+        border: solid 1px @color-border;
+        display: flex;
+        flex-direction: column;
+        z-index: @z-k2 + 1;
+        position: relative;
+        align-items: center;
+        transition: all 0.25s;
+
+        .sonm-popup--dark & {
+            background-color: @color-brand-bg;
+            box-shadow: 0 0 23px -2px rgba(33, 48, 57, 1);
+            border: solid 2px #213039;
+            opacity: 0.8;
+
+            & h1,
+            & h2,
+            & h3,
+            & h4 {
+                color: @color-white;
+            }
+        }
+    }
+
+    & &__cross {
+        color: @color-dark-gray-bg;
+        border: 1px dashed transparent;
+        border-radius: 50%;
+        background: none;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        height: 30px;
+        width: 30px;
+        cursor: pointer;
+
+        &:focus,
+        &:active {
+            outline: none;
+            border-color: @color-border;
+        }
+
+        .sonm-popup--dark & {
+            color: @color-light-font;
+        }
+    }
 }
 
 @keyframes inner-fade-in {
-  0% { opacity: 0; margin-top: -200px }
+    0% {
+        opacity: 0;
+        margin-top: -200px;
+    }
 }
 
 @keyframes pale-fade-in {
-  0% { opacity: 0; }
+    0% {
+        opacity: 0;
+    }
 }

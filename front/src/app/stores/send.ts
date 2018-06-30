@@ -1,7 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import {
-    Api,
     IAccountInfo,
     ISendTransactionResult,
     TransactionStatus,
@@ -12,45 +11,64 @@ import {
     TGasPricePriority,
     IPasswordCache,
     AlertType,
+    IApiSend,
 } from './types';
-import { AbstractStore } from './abstract-store';
-const { pending, catchErrors } = AbstractStore;
-import { etherToGwei } from 'app/utils/ether-to-gwei';
-import { gweiToEther } from 'app/utils/gwei-to-ether';
+import { OnlineStore } from './online-store';
+const { pending, catchErrors } = OnlineStore;
 import { RootStore } from './';
 import {
     validateEtherAddress,
     validatePositiveNumber,
     validatePositiveInteger,
 } from 'app/utils/validation/';
-import { createBigNumber } from 'app/utils/create-big-number';
+import {
+    createBigNumber,
+    createBigNumberAlways,
+    createBigNumberFromFloat,
+    ZERO,
+} from 'app/utils/create-big-number';
+import { moveDecimalPoint } from 'app/utils/move-decimal-point';
+import { ILocalizator, IValidation, IHasLocalizator } from 'app/localization';
 
 const emptyForm: ISendFormValues = {
     fromAddress: '',
     toAddress: '',
     currencyAddress: '',
-    amount: '',
+    amountEther: '',
     gasLimit: '',
-    gasPrice: '',
+    gasPriceGwei: '',
     password: '',
 };
 Object.freeze(emptyForm);
 // const allFormKeys = Object.keys(emptyForm) as Array<keyof ISendFormValues>;
 
-export class SendStore extends AbstractStore {
+export class SendStore extends OnlineStore implements IHasLocalizator {
     protected rootStore: RootStore;
+    protected api: IApiSend;
+    protected disableToAddressValidation: boolean;
 
-    constructor(rootStore: RootStore) {
-        super({ errorProcessor: rootStore.uiStore });
+    constructor(
+        rootStore: RootStore,
+        localizator: ILocalizator,
+        api: IApiSend,
+        disableToAddressValidation: boolean = false,
+    ) {
+        super({
+            errorProcessor: rootStore.uiStore,
+            localizator,
+        });
 
         this.rootStore = rootStore;
+        this.localizator = localizator;
+        this.disableToAddressValidation = disableToAddressValidation;
+        this.api = api;
     }
 
     @computed
     get defaultGasLimit() {
         return this.rootStore.mainStore.networkName === 'livenet'
             ? '50000'
-            : '250000';
+            : '1000000';
     }
 
     @observable public userInput: ISendFormValues = { ...emptyForm };
@@ -58,6 +76,181 @@ export class SendStore extends AbstractStore {
     @observable protected userInputTouched: Array<keyof ISendFormValues> = [];
 
     @observable protected serverValidation: ISendFormValues = { ...emptyForm };
+
+    protected isFieldTouched(fieldName: keyof ISendFormValues) {
+        return this.userInputTouched.indexOf(fieldName) !== -1;
+    }
+
+    /**
+     * form validation
+     */
+
+    @computed
+    public get isFormValid() {
+        return (
+            (this.disableToAddressValidation ||
+                this.validationToAddress.length === 0) &&
+            this.validationGasPrice.length === 0 &&
+            this.validationAmount.length === 0 &&
+            this.validationGasLimit.length === 0
+        );
+    }
+
+    @computed
+    public get hasNecessaryValues() {
+        return (
+            this.userInput.amountEther !== '' &&
+            (this.disableToAddressValidation || this.userInput.toAddress !== '')
+        );
+    }
+
+    @computed
+    public get validationToAddress() {
+        const result: string[] = [];
+        const toAddress = this.userInput.toAddress;
+
+        if (
+            !this.disableToAddressValidation &&
+            this.isFieldTouched('toAddress')
+        ) {
+            if (toAddress === '') {
+                result.push('Required field');
+            } else if (toAddress === this.fromAddress) {
+                result.push(
+                    this.localizator.getMessageText(
+                        'destination_must_be_differ',
+                    ),
+                );
+            } else {
+                result.push(
+                    ...validateEtherAddress(toAddress).map(
+                        this.localizator.getMessageText,
+                    ),
+                );
+            }
+        }
+
+        return result;
+    }
+
+    @computed
+    public get validationGasPrice() {
+        const result: string[] = [];
+        const gasPrice = this.gasPriceGwei;
+
+        if (this.isFieldTouched('gasPriceGwei')) {
+            if (gasPrice === '') {
+                result.push(this.localizator.getMessageText('required_value'));
+            } else {
+                result.push(
+                    ...validatePositiveNumber(gasPrice).map(
+                        this.localizator.getMessageText,
+                    ),
+                );
+            }
+        }
+
+        return result;
+    }
+
+    @computed
+    public get validationAmount() {
+        const result: string[] = [];
+        const amount = this.userInput.amountEther;
+
+        if (this.isFieldTouched('amountEther')) {
+            if (amount === '') {
+                result.push(this.localizator.getMessageText('required_value'));
+            } else {
+                result.push(
+                    ...validatePositiveNumber(amount).map(
+                        this.localizator.getMessageText,
+                    ),
+                );
+
+                const decimalPointOffset = this.currentCurrency
+                    ? Number(this.currentCurrency.decimalPointOffset)
+                    : 0;
+
+                if (result.length === 0) {
+                    const decimalDigits = amount.split('.')[1];
+
+                    if (
+                        decimalDigits &&
+                        decimalDigits.length > decimalPointOffset
+                    ) {
+                        result.push(
+                            this.localizator.getMessageText([
+                                'too_many_decimal_digits',
+                                [decimalPointOffset],
+                            ]),
+                        );
+                    }
+                }
+
+                if (result.length === 0) {
+                    const currentMax = createBigNumber(
+                        this.currentBalanceMaximumWei,
+                    );
+
+                    if (currentMax === undefined) {
+                        result.push(
+                            this.localizator.getMessageText(
+                                'maximum_value_is_undetermined',
+                            ),
+                        );
+                    } else if (
+                        currentMax.lt(
+                            createBigNumberFromFloat(
+                                amount,
+                                decimalPointOffset,
+                            ),
+                        )
+                    ) {
+                        result.push(
+                            this.localizator.getMessageText(
+                                'value_is_greater_than_max',
+                            ),
+                        );
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    @computed
+    public get currentCurrency() {
+        return this.rootStore.mainStore.currencyMap.get(this.currencyAddress);
+    }
+
+    @computed
+    public get validationGasLimit() {
+        return this.userInput.gasLimit === ''
+            ? []
+            : validatePositiveInteger(this.userInput.gasLimit).map(
+                  this.localizator.getMessageText,
+              );
+    }
+
+    /**
+     * form values
+     */
+
+    @computed
+    public get amount() {
+        if (this.validationAmount.length === 0) {
+            return this.userInput.amountEther;
+        }
+
+        return '';
+    }
+
+    @computed
+    public get toAddress() {
+        return this.userInput.toAddress;
+    }
 
     @computed
     public get fromAddress() {
@@ -78,141 +271,24 @@ export class SendStore extends AbstractStore {
     }
 
     @computed
-    public get toAddress() {
-        return this.userInput.toAddress;
-    }
-
-    @computed
-    public get currentCurrency() {
-        return this.rootStore.mainStore.currencyMap.get(this.currencyAddress);
-    }
-
-    protected isFieldTouched(fieldName: keyof ISendFormValues) {
-        return this.userInputTouched.indexOf(fieldName) !== -1;
-    }
-
-    @computed
-    public get validationToAddress() {
-        const result: string[] = [];
-        const toAddress = this.userInput.toAddress;
-
-        if (this.isFieldTouched('toAddress')) {
-            if (toAddress === '') {
-                result.push('Required field');
-            } else if (toAddress === this.fromAddress) {
-                result.push(
-                    'The destination address must differ the sender address',
-                );
-            } else {
-                result.push(...validateEtherAddress(toAddress));
-            }
-        }
-
-        return result;
-    }
-
-    @computed
-    public get validationGasPrice() {
-        const result: string[] = [];
-        const gasPrice = this.gasPriceGwei;
-
-        if (this.isFieldTouched('gasPrice')) {
-            if (gasPrice === '') {
-                result.push('Required field');
-            } else {
-                result.push(...validatePositiveNumber(gasPrice));
-            }
-        }
-
-        return result;
-    }
-
-    @computed
-    public get amount() {
-        return this.userInput.amount;
-    }
-
-    @computed
-    public get validationAmount() {
-        const result: string[] = [];
-        const amount = this.userInput.amount;
-
-        if (this.isFieldTouched('amount')) {
-            if (amount === '') {
-                result.push('Required field');
-            } else {
-                result.push(...validatePositiveNumber(amount));
-
-                if (result.length === 0) {
-                    const decimalDigits = amount.split('.')[1];
-                    const decimals = this.currentCurrency
-                        ? Number(this.currentCurrency.decimals)
-                        : 0;
-
-                    if (decimalDigits && decimalDigits.length > decimals) {
-                        result.push(
-                            `Too many decimal digits. Maximum: ${decimals}`,
-                        );
-                    }
-                }
-
-                if (result.length === 0) {
-                    const currentMax = createBigNumber(
-                        this.currentBalanceMaximum,
-                    );
-
-                    if (currentMax === undefined) {
-                        result.push('Maximum values is undetermined');
-                    } else if (currentMax.lessThan(amount)) {
-                        result.push('Value is greater than maximum');
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    @computed
     public get gasLimit() {
         return this.userInput.gasLimit || this.defaultGasLimit;
-    }
-
-    @computed
-    public get validationGasLimit() {
-        return this.userInput.gasLimit === ''
-            ? []
-            : validatePositiveInteger(this.userInput.gasLimit);
-    }
-
-    @computed
-    public get isFormValid() {
-        return (
-            this.validationToAddress.length === 0 &&
-            this.validationGasPrice.length === 0 &&
-            this.validationAmount.length === 0 &&
-            this.validationGasLimit.length === 0
-        );
-    }
-
-    @computed
-    public get hasNecessaryValues() {
-        return this.userInput.amount && this.userInput.toAddress;
     }
 
     @computed
     public get priority(): TGasPricePriority {
         let result: TGasPricePriority = 'normal';
 
-        if (this.userInput.gasPrice !== '') {
+        if (this.userInput.gasPriceGwei !== '') {
             const [min, max] = this.rootStore.mainStore.gasPriceThresholds;
             const userInput = createBigNumber(
-                gweiToEther(this.userInput.gasPrice),
+                // gwei -> wei
+                moveDecimalPoint(this.userInput.gasPriceGwei, 9),
             );
             if (userInput) {
-                if (userInput.lessThanOrEqualTo(min)) {
+                if (userInput.lte(createBigNumberAlways(min))) {
                     result = 'low';
-                } else if (userInput.greaterThanOrEqualTo(max)) {
+                } else if (userInput.gte(createBigNumberAlways(max))) {
                     result = 'high';
                 }
             }
@@ -220,6 +296,72 @@ export class SendStore extends AbstractStore {
 
         return result;
     }
+
+    @computed
+    get gasPriceGwei() {
+        return this.userInput.gasPriceGwei
+            ? this.userInput.gasPriceGwei
+            : moveDecimalPoint(this.rootStore.mainStore.averageGasPrice, -9);
+    }
+
+    @computed
+    get currentBalanceMaximum(): string {
+        const amountWei = this.currentBalanceMaximumWei;
+        let result = '';
+
+        const currencyInfo = this.rootStore.mainStore.currencyMap.get(
+            this.currencyAddress,
+        );
+
+        if (currencyInfo !== undefined && amountWei !== undefined) {
+            result = moveDecimalPoint(
+                amountWei,
+                -currencyInfo.decimalPointOffset,
+                4,
+            );
+        }
+
+        return result;
+    }
+
+    @computed
+    get currentBalanceMaximumWei() {
+        const account = this.rootStore.mainStore.accountMap.get(
+            this.fromAddress,
+        ) as IAccountInfo;
+
+        let amountWei = createBigNumber(
+            account.currencyBalanceMap[this.currencyAddress],
+        );
+
+        if (amountWei) {
+            if (
+                this.rootStore.mainStore.etherAddress === this.currencyAddress
+            ) {
+                const gasPriceWei = createBigNumberFromFloat(
+                    this.gasPriceGwei,
+                    9,
+                );
+                const gasLimit = createBigNumber(this.gasLimit);
+
+                if (gasLimit && gasPriceWei) {
+                    const feeWei = gasPriceWei.mul(gasLimit);
+
+                    amountWei = amountWei.sub(feeWei);
+
+                    if (amountWei.lt(ZERO)) {
+                        amountWei = undefined;
+                    }
+                }
+            }
+        }
+
+        return String(amountWei);
+    }
+
+    /**
+     *
+     */
 
     @computed
     public get currentBalanceList(): ICurrencyItemProps[] {
@@ -246,22 +388,27 @@ export class SendStore extends AbstractStore {
     }
 
     @action.bound
-    protected setValidation(validation: Partial<ISendFormValues>) {
-        this.serverValidation = { ...emptyForm, ...validation };
+    protected setServerValidation(validation: Partial<ISendFormValues>) {
+        this.serverValidation = {
+            ...emptyForm,
+            ...this.localizator.localizeValidationMessages(
+                validation as IValidation,
+            ),
+        };
     }
 
     @action.bound
-    public resetValidation() {
+    public resetServerValidation() {
         this.serverValidation = { ...emptyForm };
     }
 
     @action.bound
     public resetUserInput() {
-        this.resetValidation();
+        this.resetServerValidation();
         this.userInputTouched = [];
         this.userInput = {
             ...emptyForm,
-            gasPrice: this.userInput.gasPrice,
+            gasPriceGwei: this.userInput.gasPriceGwei,
             gasLimit: this.userInput.gasLimit,
         };
     }
@@ -280,10 +427,10 @@ export class SendStore extends AbstractStore {
         ) {
             validationMessage = '';
         } else {
-            const { data: privateKey, validation } = yield Api.getPrivateKey(
-                password,
-                accountAddress,
-            );
+            const {
+                data: privateKey,
+                validation,
+            } = yield this.api.getPrivateKey(password, accountAddress);
 
             if (privateKey) {
                 this.passwordCache[accountAddress] = password;
@@ -293,28 +440,11 @@ export class SendStore extends AbstractStore {
             }
         }
 
-        this.serverValidation.password = validationMessage;
+        this.serverValidation.password = this.localizator.getMessageText(
+            validationMessage,
+        );
 
         return validationMessage === '';
-    }
-
-    @computed
-    get gasPriceEther() {
-        return this.userInput.gasPrice
-            ? gweiToEther(this.userInput.gasPrice)
-            : this.rootStore.mainStore.averageGasPriceEther;
-    }
-
-    @computed
-    get gasPriceGwei() {
-        return this.userInput.gasPrice
-            ? this.userInput.gasPrice
-            : this.averageGasPriceGwei;
-    }
-
-    @computed
-    get averageGasPriceGwei() {
-        return etherToGwei(this.rootStore.mainStore.averageGasPriceEther);
     }
 
     @catchErrors({ restart: false })
@@ -322,41 +452,44 @@ export class SendStore extends AbstractStore {
     public *confirmTransaction(password: string) {
         const tx = {
             toAddress: this.userInput.toAddress,
-            amount: this.userInput.amount,
+            amount: moveDecimalPoint(this.userInput.amountEther, 18),
             fromAddress: this.fromAddress,
             currencyAddress: this.currencyAddress,
-            gasPrice: this.gasPriceEther,
-            gasLimit: this.userInput.gasLimit,
+            gasPrice: moveDecimalPoint(this.gasPriceGwei, 9),
+            gasLimit: this.gasLimit,
             timestamp: Date.now(),
         };
 
         this.userInput.toAddress = '';
-        this.userInput.amount = '';
+        this.userInput.amountEther = '';
 
-        const { data } = yield Api.send(tx, password);
-
+        const { data } = yield this.api.send(tx, password);
         const result = data as ISendTransactionResult;
 
         let alert;
         if (result.status === TransactionStatus.success) {
-            const currency = this.rootStore.mainStore.currencyMap.get(
-                result.currencyAddress,
-            );
-            const currencyName = currency ? currency.symbol : '';
-
             alert = {
                 type: AlertType.success,
-                message: `Transaction is completed successfully. \
-${result.amount} ${currencyName} has been sent to the address ${
-                    result.toAddress
-                }. TxHash ${result.hash}`,
+                message: this.localizator.getMessageText([
+                    'tx_has_been_completed',
+                    [
+                        moveDecimalPoint(
+                            result.amount,
+                            -result.decimalPointOffset,
+                        ),
+                        result.currencySymbol || '',
+                        result.toAddress,
+                        result.hash,
+                    ],
+                ]),
             };
         } else if (result.status === TransactionStatus.failed) {
             alert = {
                 type: AlertType.error,
-                message: `Transaction to the address ${
-                    result.toAddress
-                } was failed. TxHash ${result.hash}`,
+                message: this.localizator.getMessageText([
+                    'tx_has_been_failed',
+                    [result.toAddress, result.hash],
+                ]),
             };
         } else {
             alert = {
@@ -370,37 +503,7 @@ ${result.amount} ${currencyName} has been sent to the address ${
         return result;
     }
 
-    @computed
-    get currentBalanceMaximum() {
-        const account = this.rootStore.mainStore.accountMap.get(
-            this.fromAddress,
-        ) as IAccountInfo;
-
-        let amount = createBigNumber(
-            account.currencyBalanceMap[this.currencyAddress],
-        );
-
-        if (amount) {
-            if (
-                this.rootStore.mainStore.etherAddress === this.currencyAddress
-            ) {
-                const gasPrice = createBigNumber(this.gasPriceEther);
-                const gasLimit = createBigNumber(this.gasLimit);
-
-                if (gasLimit && gasPrice) {
-                    const fee = gasPrice.mul(gasLimit);
-
-                    amount = amount.minus(fee);
-
-                    if (amount.lessThan(0)) {
-                        amount = undefined;
-                    }
-                }
-            }
-        }
-
-        return amount === undefined ? '' : amount.toString();
-    }
+    public readonly localizator: ILocalizator;
 }
 
 export default SendStore;

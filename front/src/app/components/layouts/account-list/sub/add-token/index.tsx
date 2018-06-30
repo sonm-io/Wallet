@@ -9,11 +9,11 @@ import {
 } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
-import { AddTokenStore } from 'app/stores/add-token';
 import { observer } from 'mobx-react';
+import { rootStore } from 'app/stores';
+import { Balance } from 'app/components/common/balance-view';
 
 export interface IProps {
-    addTokenStore: AddTokenStore;
     onClickCross: () => void;
 }
 
@@ -22,7 +22,7 @@ export class AddToken extends React.Component<IProps, {}> {
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        this.props.addTokenStore.approveCandidateToken();
+        rootStore.addTokenStore.approveCandidateToken();
 
         this.props.onClickCross();
     };
@@ -30,19 +30,19 @@ export class AddToken extends React.Component<IProps, {}> {
     protected handleChangeInput = async (event: any) => {
         const address = event.target.value.trim();
 
-        this.props.addTokenStore.setCandidateTokenAddress(address);
+        rootStore.addTokenStore.setCandidateTokenAddress(address);
     };
 
     protected handleClose = () => {
-        this.props.addTokenStore.resetCandidateToken();
+        rootStore.addTokenStore.resetCandidateToken();
 
         this.props.onClickCross();
     };
 
     public render() {
-        const tokenInfo = this.props.addTokenStore.candidateTokenInfo;
-        const tokenAddress = this.props.addTokenStore.candidateTokenAddress;
-        const validation = this.props.addTokenStore.validationCandidateToken;
+        const tokenInfo = rootStore.addTokenStore.candidateTokenInfo;
+        const tokenAddress = rootStore.addTokenStore.candidateTokenAddress;
+        const validation = rootStore.addTokenStore.validationCandidateToken;
 
         return (
             <Dialog
@@ -58,14 +58,20 @@ export class AddToken extends React.Component<IProps, {}> {
                         <FormField
                             fullWidth
                             label="Token contract address"
-                            error={tokenAddress.length === 0 ? '' : validation}
+                            error={
+                                tokenAddress.length === 0
+                                    ? ''
+                                    : rootStore.localizator.getMessageText(
+                                          validation,
+                                      )
+                            }
                         >
                             <Input
                                 autoFocus
                                 value={tokenAddress}
                                 type="text"
                                 name="address"
-                                onChange={this.handleChangeInput}
+                                onChangeDeprecated={this.handleChangeInput}
                             />
                         </FormField>
                     </FormRow>
@@ -89,7 +95,14 @@ export class AddToken extends React.Component<IProps, {}> {
                                 {tokenInfo.name}
                             </span>
                             <span className="sonm-add-token__preview-ticker">
-                                {tokenInfo.symbol}
+                                <Balance
+                                    className="sonm-add-token__sonm"
+                                    balance={tokenInfo.balance}
+                                    symbol={tokenInfo.symbol}
+                                    decimalPointOffset={
+                                        tokenInfo.decimalPointOffset
+                                    }
+                                />
                             </span>
                         </div>
                     ) : null}

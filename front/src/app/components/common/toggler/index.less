@@ -1,0 +1,82 @@
+@import 'guide.less';
+
+@togglerHeight: 15px;
+@toggleBorder: 2px;
+@toggleVerticalAligth: bottom;
+
+.sonm-toggler {
+    --toggler-background-color: @color-violet;
+    background: transparent;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    box-sizing: 0;
+    cursor: pointer;
+    line-height: 100%;
+    white-space: nowrap;
+    user-select: none;
+
+    &--disabled {
+        background-color: @color-selection;
+        opacity: @opacity-disabled;
+        cursor: default;
+    }
+
+    &__input {
+        display: none;
+    }
+
+    &__title {
+        padding: 0;
+        margin: 0;
+        vertical-align: @toggleVerticalAligth;
+        display: inline-block;
+
+        &:first-child {
+            margin-right: 10px;
+        }
+
+        &:last-child {
+            margin-left: 10px;
+        }
+    }
+
+    &__input + &__cradle {
+        vertical-align: @toggleVerticalAligth;
+        position: relative;
+        height: @togglerHeight;
+        width: @togglerHeight * 2;
+        border-radius: @togglerHeight / 2;
+        background-color: @color-border;
+        transition: background-color 0.2s ease;
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+
+        &:after {
+            height: @togglerHeight - 2 * @toggleBorder;
+            width: @togglerHeight - 2 * @toggleBorder;
+            border-radius: (@togglerHeight - 2 * @toggleBorder) / 2;
+            background: @color-white;
+            display: block;
+            position: absolute;
+            content: '';
+            margin: 0;
+            top: @toggleBorder;
+            left: @toggleBorder;
+            transition: transform 0.2s ease;
+        }
+    }
+
+    &__input:not(checked) + &__cradle:after {
+        transform: none;
+    }
+
+    &__input:checked + &__cradle {
+        background-color: var(--toggler-background-color);
+
+        &:after {
+            transform: translateX(@togglerHeight);
+        }
+    }
+}

@@ -1,138 +1,125 @@
 import * as React from 'react';
-import { Dialog } from 'app/components/common/dialog';
-import { Button } from 'app/components/common/button';
-import {
-    FormField,
-    FormRow,
-    Form,
-    FormButtons,
-} from 'app/components/common/form';
-import { Input } from 'app/components/common/input';
 import { IValidation } from 'ipc/types';
-import { getMessageText } from 'app/api/error-messages';
+import { rootStore } from 'app/stores';
+import { validateHex } from 'app/utils/validation/validate-ether-address';
+import { CreateAccountView } from './view';
 
 export interface ICreateAccountForm {
     password: string;
+    confirmation: string;
     name: string;
+    privateKey: string;
 }
 
 export interface IProps {
-    validation?: IValidation;
+    serverValidation: IValidation;
     onSubmit: (data: ICreateAccountForm) => void;
     onClickCross: () => void;
 }
 
+const emptyForm: ICreateAccountForm = {
+    password: '',
+    confirmation: '',
+    name: '',
+    privateKey: '',
+};
+
+const emptyObject = {};
+
 export class CreateAccount extends React.Component<IProps, any> {
     public state = {
-        name: '',
-        password: '',
-        confirmation: '',
-        validation: {} as IValidation,
+        form: emptyForm,
+        validation: emptyObject as any,
+        dirty: emptyObject as any,
     };
 
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        const validation = { ...this.state.validation };
+        const l = rootStore.localizator.getMessageText;
+        const validation = {} as any;
+        const form = this.state.form;
 
-        if (!this.state.name) {
-            validation.name = getMessageText('name_required');
+        if (!form.name) {
+            validation.name = l('name_required');
         }
 
-        if (!this.state.password) {
-            validation.password = getMessageText('password_required');
-        } else if (this.state.password.length < 8) {
-            validation.password = getMessageText('password_length');
+        if (!form.password) {
+            validation.password = l('password_required');
+        } else if (form.password.length < 8) {
+            validation.password = l('password_length');
         }
 
-        if (this.state.password !== this.state.confirmation) {
-            validation.confirmation = getMessageText('password_not_match');
+        if (form.password !== form.confirmation) {
+            validation.confirmation = l('password_not_match');
         }
 
-        if (Object.keys(validation).every(x => !validation[x])) {
-            this.setState({ validation: {} });
+        if (form.privateKey !== '') {
+            const validationPrivateKey = validateHex(64, form.privateKey);
+            if (validationPrivateKey.length) {
+                validation.privateKey = validationPrivateKey.map(l).join(' ');
+            }
+        }
 
-            this.props.onSubmit({
-                password: this.state.password,
-                name: this.state.name,
-            });
+        this.setState({ dirty: emptyObject });
+
+        if (Object.keys(validation).length === 0) {
+            this.setState({ validation });
+
+            this.props.onSubmit(form);
         } else {
             this.setState({ validation });
         }
     };
-
-    public componentWillReceiveProps(next: IProps) {
-        const validation = { ...next.validation, ...this.state.validation };
-
-        this.setState({ validation });
-    }
 
     protected handleClickCross = () => {
         this.props.onClickCross();
     };
 
     protected handleChangeInput = (event: any) => {
+        const name = event.target.name;
+        const value = event.target.value;
+
         this.setState({
-            [event.target.name]: event.target.value,
+            form: {
+                ...this.state.form,
+                [name]: value,
+            },
             validation: {
                 ...this.state.validation,
-                [event.target.name]: '',
+                [name]: '',
+            },
+            dirty: {
+                ...this.state.dirty,
+                [name]: true,
             },
         });
     };
 
+    protected getValidation(fieldName: keyof ICreateAccountForm): string {
+        const hasLocalValidation =
+            Object.keys(this.state.validation).length !== 0;
+        const hasBeenChanged = (this.state.dirty as any)[fieldName];
+
+        return hasBeenChanged
+            ? ''
+            : (hasLocalValidation
+                  ? this.state.validation[fieldName]
+                  : this.props.serverValidation[fieldName]) || '';
+    }
+
     public render() {
         return (
-            <Dialog onClickCross={this.handleClickCross}>
-                <Form
-                    className="sonm-accounts-create-account__form"
-                    onSubmit={this.handleSubmit}
-                >
-                    <h3>New account</h3>
-                    <FormRow>
-                        <FormField
-                            fullWidth
-                            label="Password"
-                            error={this.state.validation.password}
-                        >
-                            <Input
-                                type="password"
-                                name="password"
-                                onChange={this.handleChangeInput}
-                            />
-                        </FormField>
-                    </FormRow>
-                    <FormRow>
-                        <FormField
-                            fullWidth
-                            label="Password confirmation"
-                            error={this.state.validation.confirmation}
-                        >
-                            <Input
-                                type="password"
-                                name="confirmation"
-                                onChange={this.handleChangeInput}
-                            />
-                        </FormField>
-                    </FormRow>
-                    <FormRow>
-                        <FormField
-                            fullWidth
-                            label="Account name"
-                            error={this.state.validation.name}
-                        >
-                            <Input
-                                type="text"
-                                name="name"
-                                onChange={this.handleChangeInput}
-                            />
-                        </FormField>
-                    </FormRow>
-                    <FormButtons>
-                        <Button type="submit">Create</Button>
-                    </FormButtons>
-                </Form>
-            </Dialog>
+            <CreateAccountView
+                onClickCross={this.handleClickCross}
+                onSubmit={this.handleSubmit}
+                onChangeInput={this.handleChangeInput}
+                validationConfirmation={this.getValidation('confirmation')}
+                validationName={this.getValidation('name')}
+                validationPassword={this.getValidation('password')}
+                validationPrivateKey={this.getValidation('privateKey')}
+                getMessageText={rootStore.localizator.getMessageText}
+            />
         );
     }
 }

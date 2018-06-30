@@ -7,14 +7,10 @@ import * as cn from 'classnames';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';
 import { observer } from 'mobx-react';
-import { RootStore } from 'app/stores/';
-import { HistoryStore } from 'app/stores/history';
-import { Header } from 'app/components/common/header';
+import { rootStore } from 'app/stores/';
 
 interface IProps {
     className?: string;
-    rootStore: RootStore;
-    historyStore?: HistoryStore;
     onSuccess: () => void;
     onBack: () => void;
 }
@@ -27,8 +23,8 @@ export class SendConfirm extends React.Component<IProps, any> {
     };
 
     public handleConfrim = async (event: any) => {
-        const sendStore = this.props.rootStore.sendStore;
-        const historyStore = this.props.rootStore.historyStore;
+        const sendStore = rootStore.sendStore;
+        const historyStore = rootStore.walletHistoryListStore;
 
         event.preventDefault();
 
@@ -54,7 +50,7 @@ export class SendConfirm extends React.Component<IProps, any> {
     };
 
     public handleCancel = () => {
-        this.props.rootStore.sendStore.resetValidation();
+        rootStore.sendStore.resetServerValidation();
 
         this.props.onBack();
     };
@@ -64,8 +60,8 @@ export class SendConfirm extends React.Component<IProps, any> {
     };
 
     public render() {
-        const mainStore = this.props.rootStore.mainStore;
-        const sendStore = this.props.rootStore.sendStore;
+        const mainStore = rootStore.mainStore;
+        const sendStore = rootStore.sendStore;
 
         const accountAddress = sendStore.fromAddress;
         const account = mainStore.accountMap.get(accountAddress);
@@ -82,9 +78,6 @@ export class SendConfirm extends React.Component<IProps, any> {
 
         return (
             <div className={cn('sonm-send-confirm', this.props.className)}>
-                <Header className="sonm-send-confirm__header">
-                    Transfer confirmation
-                </Header>
                 <section className="sonm-send-confirm__from-to">
                     <div className="sonm-send-confirm__account">
                         <IdentIcon

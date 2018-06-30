@@ -6,19 +6,19 @@ export interface InterfaceIPC {
     send<TParams, TResult>(
         method: string,
         payload: TParams,
-    ): Promise<[TResult, t.IValidation | undefined]>;
+    ): t.TResultPromise<TResult>;
     setRequestProcessor(processRequest: t.TRequestProcessor<any, any>): void;
 }
 
 export interface IIpcCtrArguments {
-    worker?: t.IWebWorker;
+    worker?: t.IWorker | t.IWindowWorker;
     errorMessageMap?: t.IValidation;
 }
 
 const noop = (x: any) => undefined;
 
 export class IPC implements InterfaceIPC {
-    private worker: t.IWebWorker;
+    private worker: t.IWorker | t.IWindowWorker;
     private requestIdToListener: Map<string, t.TListener<any>>;
     private requestIdCount = 0;
     private processRequest?: t.TRequestProcessor<any, any>;
@@ -28,13 +28,14 @@ export class IPC implements InterfaceIPC {
     constructor(params: IIpcCtrArguments = {}) {
         const { worker = self, errorMessageMap = {} } = params;
 
-        if (!(worker instanceof Worker)) {
-            throw new Error('worker is not IWebWorker implementation');
+        if (!worker.postMessage) {
+            throw new Error('worker is not IWorker implementation');
         }
 
         this.worker = worker;
         this.worker.addEventListener('message', this.onMessage);
         this.errorMessageMap = errorMessageMap;
+        this.requestIdToListener = new Map<string, t.TListener<any>>();
     }
 
     private static generateSign(): string {
@@ -48,7 +49,7 @@ export class IPC implements InterfaceIPC {
         );
     }
 
-    private getListeners(requestId: string): t.TListener<any> {
+    private getListenerByRequestId(requestId: string): t.TListener<any> {
         return this.requestIdToListener.get(requestId) || noop;
     }
 
@@ -59,12 +60,11 @@ export class IPC implements InterfaceIPC {
             const message = event.data;
             const requestId = message.requestId;
 
-            this.getListeners(requestId)(message);
+            this.getListenerByRequestId(requestId)(message);
         } else if (
             processRequest !== undefined &&
             event.data &&
             event.data.method &&
-            event.data.payload &&
             event.data.sign &&
             event.data.requestId
         ) {
@@ -73,36 +73,35 @@ export class IPC implements InterfaceIPC {
 
             const sendResponse = async (
                 result?: t.IResult<any>,
-                error?: Error,
+                err?: Error,
             ) => {
-                const success = result !== undefined;
+                const success = err === undefined;
 
                 const response: t.IResponse<any> = {
                     done: true, // see continuation
                     data: undefined,
+                    error: undefined,
                     requestId,
                     sign,
                     success,
                 };
 
-                if (result !== undefined) {
-                    const { data, validation /*, continuation*/ } = result;
-
-                    // if (continuation) {
-                    //     response.done = false;
-                    //     continuation
-                    //         .then(r => processResponse(r, undefined))
-                    //         .catch(e => processResponse(undefined, e));
-                    // }
+                if (typeof result === 'object') {
+                    const { data, validation } = result;
 
                     response.data = data;
+
                     (response as t.IFormResponse<any>).validation = validation;
                 } else {
-                    response.success = false;
-                    response.error = String(event);
+                    response.data = result;
                 }
 
-                this.worker.postMessage(response, '*');
+                if (err !== undefined) {
+                    response.error =
+                        'message' in err ? err.message : String(err);
+                }
+
+                this.postMessage(response);
             };
 
             processRequest(event.data.method, event.data.payload)
@@ -131,7 +130,7 @@ export class IPC implements InterfaceIPC {
     public send<TParams, TResult>(
         method: string,
         payload: TParams,
-    ): Promise<[TResult, t.IValidation | undefined]> {
+    ): t.TResultPromise<any> {
         return new Promise((done, reject) => {
             const requestId = this.getNextRequestId();
 
@@ -151,10 +150,15 @@ export class IPC implements InterfaceIPC {
                 }
 
                 if (response.success) {
-                    done([response.data, formResponse.validation]);
+                    done({
+                        data: response.data,
+                        validation: response.validation,
+                    });
                 } else {
                     /* tslint:disable */
                     console.error(`method ${method} error: ${response.error}`);
+                    console.error(payload);
+                    console.error(response);
                     /* tslint:enable */
 
                     reject(response.error || 'request failed');
@@ -170,8 +174,12 @@ export class IPC implements InterfaceIPC {
                 sign: this.sign,
             };
 
-            this.worker.postMessage(request, '*');
+            this.postMessage(request);
         });
+    }
+
+    private postMessage(request: any) {
+        (this.worker as any).postMessage(request);
     }
 
     public setRequestProcessor(

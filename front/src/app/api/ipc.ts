@@ -1,56 +1,31 @@
-const createWorker = require('worker/back.worker.ts');
-const init = require('worker/helpers.ts');
+import { TResultPromise } from '../../ipc/types';
 
-type messageHandler = (...args: any[]) => void;
+const { IPC } = require('../../ipc/index');
 
-const worker = createWorker();
+const ApiWorker = require('worker/back.worker.ts');
+const worker = new ApiWorker();
 
-init(worker);
+export const ipc = new IPC({
+    worker,
+});
 
-worker.onmessage = onMessage;
+ipc.setRequestProcessor(async (type: string, payload: any): TResultPromise<
+    string
+> => {
+    let data = '';
 
-const allListeners = new Map<string, Set<messageHandler>>();
+    switch (type) {
+        case 'get':
+            data = window.localStorage.getItem(payload.key) || '';
+            break;
+        case 'set':
+            window.localStorage.setItem(payload.key, (data = payload.value));
+            break;
+    }
 
-export async function on(requestId: string, handler: messageHandler) {
-    const listeners = getListeners(requestId);
-
-    listeners.add(handler);
-}
-
-export async function once(requestId: string, handler: messageHandler) {
-    const listeners = getListeners(requestId);
-
-    const onceHandler = (...args: any[]) => {
-        handler(...args);
-        listeners.delete(onceHandler);
+    return {
+        data,
     };
-    listeners.add(handler);
-}
+});
 
-export function send(message: any) {
-    worker.postMessage(message);
-}
-
-function getListeners(requestId: string) {
-    let listeners = allListeners.get(requestId);
-
-    if (!listeners) {
-        listeners = new Set();
-        allListeners.set(requestId, listeners);
-    }
-
-    return listeners;
-}
-
-function onMessage(e: MessageEvent) {
-    const message = e.data;
-
-    if (message.type && message.type === 'api') {
-        const requestId = message.requestId as string;
-
-        const listeners = getListeners(requestId);
-        listeners.forEach(handler => {
-            handler(requestId, message);
-        });
-    }
-}
+export default ipc;

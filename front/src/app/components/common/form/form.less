@@ -1,62 +1,64 @@
-@import "guide.less";
+@import 'guide.less';
 
 @sonm-form-padding: 10px;
 
 :root {
-  --color-form-header: @color-font-dark;
+    --color-form-header: @color-font-dark;
 }
 
 .sonm-form {
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: stretch;
-  padding: 0;
-
-  &--theme-dark {
-    --color-form-field-text: @color-light-font;
-    --color-input-help-text: @color-light-font;
-    --color-input-underline: @color-blue;
-    --color-input-text: @color-white;
-  }
-
-  &__row {
-    flex: 0 1;
     display: flex;
-    flex-flow: row nowrap;
-    margin: 0 0 @sonm-form-padding 0;
-    align-items: center;
-
-    &:first-child {
-      margin: 0;
-    }
-  }
-
-  &__buttons {
-    margin: 0 0 @sonm-form-padding 0;
-    flex: 0 1;
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-
-    & > button {
-      margin: 0 10px 0 0;
-    }
-
-    & > button:last-child {
-      margin: 0;
-    }
-  }
-
-  & > h3,
-  & > h2,
-  & > h1,
-  &__header {
-    color: var(--color-form-header);
-    font-size: 18px;
-    font-weight: 500;
-    text-align: center;
-    display: block;
-    margin: 0 0 10px 0;
+    flex-flow: column nowrap;
+    align-items: stretch;
     padding: 0;
-  }
+
+    &--theme-dark {
+        --color-form-field-text: @color-light-font;
+        --color-input-help-text: @color-light-font;
+        --color-input-active-border: @color-blue;
+        --color-input-text: @color-white;
+        --color-input-border: @color-blue;
+        --color-prefix: @color-blue;
+    }
+
+    &__row {
+        flex: 0 1;
+        display: flex;
+        flex-flow: row nowrap;
+        margin: 0 0 @sonm-form-padding 0;
+        align-items: center;
+
+        &:first-child {
+            margin: 0;
+        }
+    }
+
+    &__buttons {
+        margin: 0 0 @sonm-form-padding 0;
+        flex: 0 1;
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+
+        & > button {
+            margin: 0 10px 0 0;
+        }
+
+        & > button:last-child {
+            margin: 0;
+        }
+    }
+
+    & > h3,
+    & > h2,
+    & > h1,
+    &__header {
+        color: var(--color-form-header);
+        font-size: 18px;
+        font-weight: 500;
+        text-align: center;
+        display: block;
+        margin: 0 0 10px 0;
+        padding: 0;
+    }
 }

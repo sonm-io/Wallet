@@ -1,147 +1,145 @@
-@import "guide.less";
-@import "./antd.less";
+@import 'guide.less';
+@import './antd.less';
 
 @account-padding: 20px;
 @currency-balance-list-header-bg: @color-gray-bg;
 @currency-balance-list-item-bg: @color-light-gray-bg;
 
 .sonm-account {
-  display: grid;
-  grid-template-columns: auto min-content;
-  grid-template-rows: min-content auto auto auto;
-  grid-gap: @account-padding;
+    display: grid;
+    grid-template-columns: auto min-content;
+    grid-template-rows: min-content auto auto auto;
+    grid-gap: @account-padding;
 
-  &__account {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  &__go-to-history {
-    grid-column: 2;
-    grid-row: 1;
-
-    background: url('./icon-history.svg') no-repeat center top;
-
-    width: 240px;
-    padding: 40px 10px 10px 10px;
-
-    border: solid 1px @color-border;
-    border-radius: 0;
-    color: @color-dark-gray;
-    font-size: 18px;
-    text-align: center;
-    cursor: pointer;
-    line-height: 1%;
-    outline: none;
-    outline-offset: 3px;
-
-    &:focus,
-    &:active {
-      outline: @outline;
-    }
-  }
-
-  &__tokens {
-    grid-column: ~"1 / 2";
-    grid-row: 2;
-
-    padding: 0;
-    margin: 0;
-  }
-
-  &__warning {
-    margin-bottom: 5px;
-    font-size: 15px;
-    font-weight: bold;
-  }
-
-  &__give-me {
-    grid-row: 4;
-    grid-column: 1;
-
-    & &-password {
-      width: 300px;
-      margin: 0;
+    &__account {
+        grid-column: 1;
+        grid-row: 1;
     }
 
-    &-button {
-      margin: 0 0 0 5px;
+    &__go-to-history {
+        grid-column: 2;
+        grid-row: 1;
+
+        background: url('./icon-history.svg') no-repeat center top;
+
+        width: 240px;
+        padding: 40px 10px 10px 10px;
+
+        border: solid 1px @color-border;
+        border-radius: 0;
+        color: @color-dark-gray;
+        font-size: 18px;
+        text-align: center;
+        cursor: pointer;
+        line-height: 1%;
+        outline: none;
+        outline-offset: 3px;
+
+        &:focus,
+        &:active {
+            outline: @outline;
+        }
     }
 
-    &-header {
-      grid-row: 3;
-      grid-column: 1;
+    &__tokens {
+        grid-column: ~'1 / 2';
+        grid-row: 2;
+
+        padding: 0;
+        margin: 0;
     }
 
-    &-ct {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
+    &__warning {
+        margin-bottom: 5px;
+        font-size: 15px;
+        font-weight: bold;
     }
-  }
+
+    &__give-me {
+        grid-row: 4;
+        grid-column: 1;
+
+        & &-password {
+            width: 300px;
+            margin: 0;
+        }
+
+        &-button {
+            margin: 0 0 0 5px;
+        }
+
+        &-header {
+            grid-row: 3;
+            grid-column: 1;
+        }
+
+        &-ct {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+        }
+    }
 }
 
-
 .sonm-account-token-list {
-  padding-top: 20px;
+    padding-top: 20px;
 
-
-  &__list {
-    list-style-type: none;
-  }
-
-  &__currency {
-    border: 1px solid @currency-balance-list-header-bg;
-    border-bottom-width: 0;
-    text-align: left;
-    font-size: 16px;
-    padding: @account-padding;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    &:last-child {
-      border-bottom-width: 1px;
+    &__list {
+        list-style-type: none;
     }
 
-    &-blockies {
-      margin: 0 50px 0 0;
+    &__currency {
+        border: 1px solid @currency-balance-list-header-bg;
+        border-bottom-width: 0;
+        text-align: left;
+        font-size: 16px;
+        padding: @account-padding;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:last-child {
+            border-bottom-width: 1px;
+        }
+
+        &-blockies {
+            margin: 0 50px 0 0;
+        }
+
+        &-name {
+            width: 200px;
+            overflow: hidden;
+            word-break: break-all;
+        }
+
+        &-balance {
+            padding: 0 0 0 10px;
+            flex-grow: 1;
+        }
+
+        &-button {
+            border-radius: 0;
+            border: 0 solid transparent;
+            outline: 0;
+            background: none transparent;
+            cursor: pointer;
+            color: @color-blue;
+            font-weight: bold;
+
+            &:after {
+                content: '';
+                background: url(./send.svg) center no-repeat;
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                vertical-align: sub;
+                margin: 0 0 0 10px;
+            }
+
+            &:focus {
+                outline-offset: 3px;
+                outline: @outline;
+            }
+        }
     }
-
-    &-name {
-      width: 200px;
-      overflow: hidden;
-      word-break: break-all;
-    }
-
-    &-balance {
-      padding: 0 0 0 10px;
-      flex-grow: 1;
-    }
-
-    &-button {
-      border-radius: 0;
-      border: 0 solid transparent;
-      outline: 0;
-      background: none transparent;
-      cursor: pointer;
-      color: @color-blue;
-      font-weight: bold;
-
-      &:after {
-        content: '';
-        background: url(./send.svg) center no-repeat;
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        vertical-align: sub;
-        margin: 0 0 0 10px;
-      }
-
-      &:focus {
-        outline-offset: 3px;
-        outline: @outline;
-      }
-    }
-  }
 }

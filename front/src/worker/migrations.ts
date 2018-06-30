@@ -1,4 +1,5 @@
 import { IWalletList } from '../app/api/types';
+import moveDecimalPoint from 'app/utils/move-decimal-point';
 
 const migrations = {
     wallet_list: {
@@ -33,10 +34,43 @@ const migrations = {
 
             return data;
         },
+        1: (data: any) => {
+            data.version = 2;
+
+            for (const transaction of data.transactions) {
+                transaction.decimalPointOffset = 18;
+                transaction.fee = moveDecimalPoint(transaction.fee, 18);
+                if (transaction.currencySymbol === 'Ether') {
+                    transaction.amount = moveDecimalPoint(
+                        transaction.amount,
+                        18,
+                    );
+                }
+            }
+
+            return data;
+        },
+        2: (data: any) => {
+            data.version = 3;
+
+            if (data.settings.chainId === 'rinkeby') {
+                const newTokenAddress =
+                    '0xa2498b16a8fe7cd997f278d2419e3aa3b2b5854c';
+                if (data.tokens && data.tokens[1]) {
+                    data.tokens[1].address = newTokenAddress;
+
+                    if (data.tokens[1].contract) {
+                        data.tokens[1].contract.address = newTokenAddress;
+                    }
+                }
+            }
+
+            return data;
+        },
     },
 } as any;
 
-module.exports = function migrate(type: string, data: any) {
+export function migrate(type: string, data: any) {
     if (!data.version) {
         if (type === 'wallet_list') {
             data = {
@@ -55,4 +89,4 @@ module.exports = function migrate(type: string, data: any) {
     }
 
     return data;
-};
+}

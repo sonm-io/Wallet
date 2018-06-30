@@ -1,129 +1,128 @@
-@import "./antd.less";
+@import './antd.less';
 
 @sonm-tx-list-cell-padding: 10px;
 
 .sonm-tx-list {
-
-  &__currency-col,
-  &__time-col,
-  &__amount-col {
-    white-space: nowrap;
-  }
+    &__currency-col,
+    &__time-col,
+    &__amount-col {
+        white-space: nowrap;
+    }
 }
 
 .sonm-history {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  align-content: flex-start;
-  flex-wrap: wrap;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
 
-  &__select-account {
-    width: 100%;
-    margin: 0 0 5px 0;
-  }
+    &__select-account {
+        width: 100%;
+        margin: 0 0 5px 0;
+    }
 
-  &__date-range {
-    width: ~'calc(30% - 5px)';
-    margin: 5px 5px 5px 0;
-  }
+    &__date-range {
+        width: ~'calc(30% - 5px)';
+        margin: 5px 5px 5px 0;
+    }
 
-  &__select-currency {
-    width: ~'calc(20% - 10px)';
-    margin: 5px;
-  }
+    &__select-currency {
+        width: ~'calc(20% - 10px)';
+        margin: 5px;
+    }
 
-  &__query {
-    width: ~'calc(50% - 5px)';
-    margin: 5px 0 5px 5px;
-  }
+    &__query {
+        width: ~'calc(50% - 5px)';
+        margin: 5px 0 5px 5px;
+    }
 
-  &__table {
-    width: 100%;
-    margin: 5px 0;
-  }
+    &__table {
+        width: 100%;
+        margin: 5px 0;
+    }
 }
 
 .sonm-tx-list {
-
-  & table {
-    table-layout: fixed;
-    font-size: 12px;
-  }
-
-  & &__cell {
-    padding: @sonm-tx-list-cell-padding;
-    font-size: 12px;
-    text-align: left;
-    vertical-align: bottom;
-
-    &-from {
-      width: 300px;
-      padding-left: @sonm-tx-list-cell-padding + 25px;
-      position: relative;
-
-      &-name {
-        font-weight: bold;
-        max-width: 190px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      &-icon {
-        position: absolute;
-        left: @sonm-tx-list-cell-padding;
-        bottom: @sonm-tx-list-cell-padding;
-      }
+    & table {
+        table-layout: fixed;
+        font-size: 12px;
     }
 
-    &-time {
-      width: 85px;
+    & &__cell {
+        padding: @sonm-tx-list-cell-padding;
+        font-size: 12px;
+        text-align: left;
+        vertical-align: bottom;
+
+        &-from {
+            width: 300px;
+            padding-left: @sonm-tx-list-cell-padding + 25px;
+            position: relative;
+
+            &-name {
+                font-weight: bold;
+                max-width: 190px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            &-icon {
+                position: absolute;
+                left: @sonm-tx-list-cell-padding;
+                bottom: @sonm-tx-list-cell-padding;
+            }
+        }
+
+        &-time {
+            width: 85px;
+        }
+
+        &-to {
+            width: 300px;
+            padding-left: @sonm-tx-list-cell-padding + 25px;
+            position: relative;
+
+            &-icon {
+                position: absolute;
+                left: @sonm-tx-list-cell-padding;
+                bottom: @sonm-tx-list-cell-padding;
+            }
+        }
+
+        &-status {
+            width: 70px;
+            text-transform: uppercase;
+
+            &--success {
+                color: @color-green;
+            }
+
+            &--failed {
+                color: @color-red;
+            }
+
+            &--pending {
+                color: @color-dark-blue;
+            }
+        }
+
+        &-amount {
+            width: 150px;
+
+            &-ct {
+                display: flex;
+                align-items: end;
+                flex-direction: column;
+                padding: 0;
+                margin: 0;
+            }
+        }
+
+        &-hash {
+            vertical-align: bottom;
+        }
     }
-
-    &-to {
-      width: 300px;
-      padding-left: @sonm-tx-list-cell-padding + 25px;
-      position: relative;
-
-      &-icon {
-        position: absolute;
-        left: @sonm-tx-list-cell-padding;
-        bottom: @sonm-tx-list-cell-padding;
-      }
-    }
-
-    &-status {
-      width: 70px;
-
-      &--success {
-        color: @color-green;
-      }
-
-      &--failed {
-        color: @color-red;
-      }
-
-      &--pending {
-        color: @color-dark-blue;
-      }
-    }
-
-    &-amount {
-      width: 150px;
-
-      &-ct {
-        display: flex;
-        align-items: end;
-        flex-direction: column;
-        padding: 0;
-        margin: 0;
-      }
-    }
-
-    &-hash {
-      vertical-align: bottom;
-    }
-  }
 }

@@ -1,0 +1,43 @@
+@import 'guide.less';
+@import './sub/insuficcient-funds/index.less';
+
+.order-view {
+    display: grid;
+    grid-template-columns: [left] 3fr [center] 2fr [right] 1fr;
+    grid-template-rows: [top] auto [center] auto;
+    grid-gap: 20px;
+    align-items: start;
+
+    &__creator {
+        grid-row: top;
+        grid-column: left;
+    }
+
+    &__details {
+        grid-row: center;
+        grid-column: left;
+    }
+
+    &__confirmation {
+        grid-row: top;
+        grid-column: center / span 2;
+        background-color: @color-gray-bg;
+        padding: 30px;
+    }
+
+    &__benchmark {
+        grid-row: center;
+        grid-column: center;
+    }
+
+    &__price {
+        font-size: 20px;
+    }
+
+    &__header {
+        font-weight: 500;
+        color: @color-font-gray;
+        font-size: 14px;
+        margin: 0;
+    }
+}

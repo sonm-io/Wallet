@@ -5,18 +5,20 @@ import { Icon } from '../icon';
 import { Balance } from '../balance-view';
 import { Hash } from '../hash-view';
 import { DownloadFile } from '../download-file';
+import { ICurrencyInfo } from 'app/api/types';
 
 export interface IAccountItemProps {
     className?: string;
     address: string;
     json?: string;
     name: string;
-    etherBalance: string;
-    primaryTokenBalance: string;
+    etherBalance?: string;
+    primaryTokenBalance?: string;
     onRename?: (newName: string, address: string) => void;
     onClickIcon?: (address: string) => void;
     onClickShowPrivateKey?: (address: string) => void;
     hasButtons?: boolean;
+    primaryTokenInfo?: ICurrencyInfo;
 }
 
 export class AccountItem extends React.Component<IAccountItemProps, any> {
@@ -50,6 +52,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
             address,
             etherBalance,
             primaryTokenBalance,
+            primaryTokenInfo,
             onClickIcon,
             json,
             hasButtons,
@@ -71,22 +74,28 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                 <span className="sonm-account-item__name-wrapper">
                     {this.renderName()}
                 </span>
-                <Balance
-                    className="sonm-account-item__sonm"
-                    fullString={etherBalance}
-                    fontSizePx={16}
-                />
+                {etherBalance !== undefined ? (
+                    <Balance
+                        className="sonm-account-item__sonm"
+                        balance={etherBalance}
+                        symbol="Ether"
+                        decimalPointOffset={18}
+                    />
+                ) : null}
                 <Hash
                     hasCopyButton={hasButtons}
                     className="sonm-account-item__address"
                     hash={address}
                     onClick={this.handleClickIcon}
                 />
-                <Balance
-                    className="sonm-account-item__ether"
-                    fullString={primaryTokenBalance}
-                    fontSizePx={16}
-                />
+                {primaryTokenBalance !== undefined && primaryTokenInfo ? (
+                    <Balance
+                        className="sonm-account-item__ether"
+                        balance={primaryTokenBalance}
+                        symbol={primaryTokenInfo.symbol}
+                        decimalPointOffset={primaryTokenInfo.decimalPointOffset}
+                    />
+                ) : null}
                 {hasButtons && json ? (
                     <div className="sonm-account-item__buttons">
                         <DownloadFile
@@ -188,16 +197,13 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
 
             if (onRename) {
                 result.push(
-                    <button
+                    <Icon
+                        tag="button"
                         key="b"
-                        className="sonm-account-item__edit-button"
+                        i="Pencil"
                         onClick={this.startEdit}
-                    >
-                        <Icon
-                            i="Pencil"
-                            className="sonm-account-item__edit-icon"
-                        />
-                    </button>,
+                        className="sonm-account-item__edit-button"
+                    />,
                 );
             }
         }

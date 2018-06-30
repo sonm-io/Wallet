@@ -1,36 +1,26 @@
-@import "guide.less";
+@import 'guide.less';
 
 @currency-item-size: @big-select-height;
 
 .sonm-currency-item {
-  padding: 0;
-  display: block;
-  color: @color-font-gray;
-  height: @currency-item-size;
-  font-weight: 500;
-  line-height: 30px !important;
-
-  &__name {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 0 10px;
-    height: 50%;
-    font-size: 18px;
-  }
-
-  &__amount,
-  &__symbol {
-    vertical-align: baseline;
-    display: inline-block;
-    font-size: 16px;
-  }
-
-  &__amount {
-    padding: 0 5px 0 10px;
-  }
-
-  &__symbol {
     padding: 0;
-  }
+    display: block;
+    color: @color-font-gray;
+    height: @currency-item-size;
+    font-weight: 500;
+    line-height: 30px !important;
+
+    &__name {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 0 10px;
+        height: 50%;
+        font-size: 18px;
+    }
+
+    &__balance {
+        margin: 0 10px;
+        font-size: 16px;
+    }
 }

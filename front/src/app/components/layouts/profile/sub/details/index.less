@@ -1,0 +1,109 @@
+@import 'guide.less';
+
+.sonm-profile-definition-container {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 24px;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: ~'[label] 100px [value] 1fr [info] min-content';
+    grid-gap: 10px;
+}
+
+.sonm-profile-definition-label {
+    color: @color-font-gray;
+    display: block;
+    margin: 0;
+    grid-column: label;
+
+    &:last-of-type {
+        margin: 0;
+    }
+}
+
+.sonm-profile-definition-value {
+    color: @color-font-dark;
+    display: block;
+    margin: 0;
+    grid-column: value;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:last-of-type {
+        margin: 0;
+    }
+}
+
+.sonm-profile-details {
+    &__address-panel {
+        margin: 20px -25px;
+        padding: 10px 25px;
+
+        border: 1px solid @color-border;
+        border-left-width: 0;
+        border-right-width: 0;
+
+        position: relative;
+    }
+
+    &__address-title {
+        margin: 0 0 10px 80px;
+        color: @color-font-gray;
+        display: block;
+        line-height: 100%;
+    }
+
+    & &__address-icon {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+    }
+
+    & &__address-hash {
+        margin: 0 0 0 80px;
+        color: @color-font-dark;
+        line-height: 24px;
+    }
+
+    &__main-info {
+        .sonm-profile-definition-container;
+        width: 400px;
+
+        & > dt {
+            .sonm-profile-definition-label;
+        }
+
+        & > dd {
+            .sonm-profile-definition-value;
+        }
+    }
+
+    &__country-flag {
+        padding: 0;
+        margin: 0 0 0 10px;
+        width: 20px;
+        height: 15px;
+        display: inline-block;
+        vertical-align: -2px;
+        border: 0;
+        box-shadow: 0 0 1px 0px rgba(51, 51, 51, 0.3);
+    }
+
+    &__extra {
+        .sonm-profile-definition-container;
+
+        &-label {
+            .sonm-profile-definition-label;
+        }
+
+        &-value {
+            .sonm-profile-definition-value;
+        }
+
+        &-info {
+            grid-column: info;
+            display: inline-block;
+        }
+    }
+}

@@ -1,8 +1,8 @@
-import { AbstractStore } from './abstract-store';
+import { OnlineStore } from './online-store';
 
-export { AbstractStore } from './abstract-store';
+export { OnlineStore } from './online-store';
 
-import { IValidation } from 'app/api';
+import { IValidation, ISendTransaction, ICurrencyInfo } from 'app/api';
 
 export interface IHasAddress {
     address: string;
@@ -13,8 +13,8 @@ export interface IAddressMap<T extends IHasAddress> {
 }
 
 export interface ISendFormValues {
-    amount: string;
-    gasPrice: string;
+    amountEther: string;
+    gasPriceGwei: string;
     gasLimit: string;
     toAddress: string;
     fromAddress: string;
@@ -35,13 +35,13 @@ export type TGasPricePriority = 'low' | 'normal' | 'high';
 export class WalletApiError extends Error {
     public method: Function;
     public code: string;
-    public scope: AbstractStore;
+    public scope: OnlineStore;
     public args: any[];
 
     constructor(
         code: string,
         msg: string,
-        scope: AbstractStore,
+        scope: OnlineStore,
         method: Function,
         args: any[],
     ) {
@@ -62,6 +62,44 @@ export enum AlertType {
 }
 
 export interface IAlert {
+    id: string;
     type: AlertType;
     message: string;
+}
+
+export enum EnumHistorySourceMode {
+    wallet = 'wallet',
+    market = 'market',
+}
+
+export interface IApiSend {
+    getPrivateKey: (password: string, accountAddress: string) => void;
+    send: (tx: ISendTransaction, password: string) => void;
+}
+
+export enum Status {
+    UPDATED,
+    CREATED,
+    PENDING,
+    ERROR,
+    LOADED,
+}
+
+export interface IAccountItemView {
+    address: string;
+    json: string;
+    name: string;
+    etherBalance: string;
+    usdBalance: string;
+    marketBalance: string;
+    primaryTokenBalance: string;
+    primaryTokenInfo: ICurrencyInfo;
+}
+
+export interface ICurrencyItemView {
+    address: string;
+    name: string;
+    symbol: string;
+    balance: string;
+    decimalPointOffset: number;
 }

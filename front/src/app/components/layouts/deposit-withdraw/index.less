@@ -1,0 +1,100 @@
+// Mixins
+.deposit-withdraw__label-font {
+    color: @color-light-font;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+// Block
+.deposit-withdraw {
+    display: grid;
+    grid:
+        'header     header     header    header        header  header'
+        'account    account    account   account       account account'
+        'amount     amount     amount    btn-max       gap     right'
+        'gas-limit  gas-price  gwei      btn-priority  gap     right'
+        'line       line       line      line          gap     right'
+        'you-get    comission  comission comission     gap     right' 65px
+        ~'/' 2fr 2fr 1fr 2fr 80px 7fr;
+
+    // Header
+    &__header {
+        grid-area: header;
+        margin: 0 0 15px 0;
+        .deposit-withdraw__label-font;
+    }
+
+    // Account
+    &__account {
+        grid-area: account;
+        background-color: @color-gray-bg;
+        &--confirmation {
+            grid-area: account / span 7;
+            background-color: transparent;
+        }
+    }
+
+    //#region Amount
+    &__amount {
+        grid-area: amount;
+        margin: 45px 50px 0 0;
+    }
+    &__btn-max {
+        grid-area: btn-max;
+        box-sizing: border-box;
+        width: 157px;
+        margin: auto 0 22px auto;
+    }
+    //#endregion
+
+    //#region Limit, Price, Priority
+    &__gas-limit {
+        grid-area: gas-limit;
+        margin: 0 48px 0 0;
+    }
+    &__gas-price {
+        grid-area: gas-price;
+        margin: 0 5px 0 0;
+    }
+    &__gwei {
+        grid-area: gwei;
+        display: flex;
+        align-items: center;
+    }
+    &__btn-priority {
+        grid-area: btn-priority;
+        margin: auto 0 22px auto;
+    }
+    //#endregion
+
+    //#region You get, Commission
+    &__line {
+        grid-area: line;
+        border-top: 2px solid @color-green;
+        margin: 62px 0 19px 0;
+    }
+    &__you-get {
+        grid-area: you-get;
+    }
+    &__you-get-label {
+        .deposit-withdraw__label-font;
+    }
+    &__commission {
+        grid-area: comission;
+    }
+    &__commission-label {
+        .deposit-withdraw__label-font;
+    }
+    //#endregion
+
+    //#region Right panel elements
+    &__next-button {
+        grid-area: right;
+        margin: auto 110px 20px auto;
+    }
+    &__confirmation-panel {
+        grid-area: amount / right / right / right;
+        padding: 20px 110px;
+    }
+    //#endregion
+}

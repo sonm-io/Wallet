@@ -1,128 +1,61 @@
 @import 'guide.less';
 @import './antd.less';
 
-@import "./sub/alerts/index";
-@import "./sub/nav-menu/index";
+@import './sub/app-header/index';
+@import './sub/my-profile-link/index';
 
-.sonm-app {
-  margin: 0 auto;
-  width: 1280px;
-  height: 100vh;
-  border: 0;
-  display: flex;
-  flex-direction: column;
-  background-color: #fff;
+@sonmAppSidePadding: 40px;
 
-  &__content {
-    flex: 1 1 0;
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-
-    border: 1px solid @color-border;
-    border-top-width: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-
-    &-scroll-ct {
-      margin: 0;
-      position: relative;
-      padding: 20px 50px 50px 50px;
-      min-height: 50px;
-      display:  flex;
-      flex-direction:  column;
-    }
-  }
-
-  &__alert-group {
+.sonm-app-row {
     border: 1px solid @color-border;
     border-top-width: 0;
     border-bottom-width: 0;
-  }
 }
 
-.sonm-nav {
-  user-select: none;
-  background-color: @color-brand-bg !important;
-  padding: 0 50px;
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  border: 0;
-  border-left: 1px solid  @color-brand-bg;
-  border-right: 1px solid  @color-brand-bg;
+.sonm-app {
+    margin: 0 auto;
+    width: 1280px;
+    height: 100vh;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
 
-  &__logo {
-    background: url('./sonm-wallet-logo.svg') no-repeat left;
-    width: 160px;
-    height: 40px;
-  }
+    &__content {
+        flex: 1 1 0;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
 
-  &__total {
-    display: inline-block;
-    vertical-align: middle;
-    padding: 0;
+        border: 1px solid @color-border;
+        border-top-width: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        &-scroll-ct {
+            margin: 0;
+            position: relative;
+            padding: 40px @sonmAppSidePadding 50px @sonmAppSidePadding;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    &__alert-group {
+        .sonm-app-row;
+    }
+
+    &__page-header {
+        .sonm-app-row;
+    }
+
+    &--confirmation-bg {
+        background: linear-gradient(90deg, white 50%, @color-gray-bg 50%);
+    }
+}
+
+.sonm-app-common-block {
     margin: 0;
-
-    &-item {
-      display: inline-block;
-      margin: 0 0 0 16px;
-      font-size: 20px;
-      font-weight: 100;
-      color: @color-light-font;
-    }
-  }
-
-  &--rinkeby {
-    --color-nav-menu-selection: @color-pink;
-  }
-
-  &--livenet {
-    --color-nav-menu-selection: @color-green;
-  }
-
-  &__network {
-    display: inline-block;
-    vertical-align: middle;
-    color: @color-white;
-    padding: 8px 5px;
-    margin: 0 0 0 20px;
-    height: 100%;
-    font-weight: 100;;
-    font-size: 14px;
-    max-width: 150px;
-    overflow: hidden;
-
-    &-url {
-      overflow: hidden;
-      width: 100%;
-      font-size: 12px;
-      text-overflow: ellipsis;
-    }
-
-    &-type {
-      text-align: justify;
-      width: 70%;
-    }
-
-    background-color: var(--color-nav-menu-selection);
-  }
-
-  &__right-group {
-    align-self: stretch;
-  }
-
-  & &__exit-icon {
-    margin: 1px 0 1px 10px;
-    font-size: 20px;
-    color: var(--color-nav-menu-selection);
-    vertical-align: middle;
-
-    &:active,
-    &:hover {
-      color: @color-white;
-    }
-  }
+    padding: 0;
 }

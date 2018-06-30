@@ -1,0 +1,76 @@
+@import 'guide.less';
+
+.sonm-profile-brief {
+    display: grid;
+    grid-template-columns: ~'[logo] min-content [ident-key] min-content [ident-value] 1fr [balance] auto';
+    grid-auto-rows: 1fr;
+    grid-auto-flow: column;
+    grid-column-gap: 10px;
+    font-size: 14px;
+    color: @color-font-dark;
+    background: none transparent;
+
+    && {
+        word-break: normal;
+    }
+
+    &__ident-value {
+        grid-column: ident-value;
+        grid-row: auto / span 2;
+        margin: 0;
+    }
+
+    &__ident-key {
+        grid-column: ident-key;
+        grid-row: auto / span 2;
+        margin: 0;
+        color: @color-font-gray;
+    }
+
+    &__logo {
+        grid-column: logo;
+        grid-row: 1 / span 6;
+        margin: auto;
+    }
+
+    &__name&__ident-value {
+        font-weight: 500;
+    }
+
+    &__address {
+        overflow: hidden;
+    }
+
+    &__logo + &__address {
+        grid-row: 2 / span 2;
+    }
+
+    &__logo + &__address + &__address {
+        grid-row: 2 / span 2;
+    }
+
+    &__status {
+    }
+
+    &__eth-balance {
+        grid-column: balance;
+        grid-row: 2 / span 2;
+        display: flex;
+        flex-direction: row-reverse;
+    }
+
+    &__balance + &__balance {
+        &:after {
+            content: ' | ';
+            margin: 0 7px;
+        }
+    }
+
+    &__market-balance {
+        grid-column: balance;
+        grid-row: 4 / span 2;
+        display: flex;
+        flex-direction: row-reverse;
+        color: @color-green;
+    }
+}

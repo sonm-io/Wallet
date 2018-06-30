@@ -1,0 +1,64 @@
+@import 'guide.less';
+
+.sonm-deal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 10px;
+
+    &__column-left {
+        grid-column: 1;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 100px 100px 1fr;
+        grid-row-gap: 30px;
+    }
+
+    &__column-right {
+        grid-column: 2;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: min-content 1fr;
+        grid-row-gap: 30px;
+
+        &__buttons {
+            height: 50px;
+            grid-column: 1 / span 2;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &__confirmation-panel {
+            grid-column: 1 / span 2;
+        }
+
+        &__blacklist-checkbox {
+            padding-top: 20px;
+            grid-column: 1 / span 2;
+            text-align: center;
+        }
+    }
+
+    &__price-duration {
+        text-align: center;
+    }
+
+    &__price {
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+
+    &__duration {
+        font-size: 22px;
+        color: @color-font-gray;
+    }
+
+    &__header {
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: @color-font-gray;
+        font-weight: bold;
+    }
+}

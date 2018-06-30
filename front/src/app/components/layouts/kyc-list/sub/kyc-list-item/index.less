@@ -1,0 +1,95 @@
+.kyc-list-item {
+    // grid layout
+    display: grid;
+    grid-template-areas:
+        'icon  title   title   title'
+        'icon  descr   status  price'
+        'icon  bottom  .  .'
+        'icon  line    line    line';
+
+    grid-template-columns: 195px repeat(3, auto);
+    grid-column-gap: 33px;
+
+    // other styles
+    padding: 30px;
+    cursor: pointer;
+
+    &:hover,
+    &--selected {
+        background-color: @color-gray-bg;
+    }
+    &--selected {
+        cursor: default;
+    }
+
+    // Grid cells layout
+    &__icon {
+        grid-area: icon;
+
+        margin: 0 auto 0 auto;
+    }
+
+    &__title {
+        grid-area: title;
+
+        color: @color-font-dark;
+        font-size: 20px;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    &__descr {
+        grid-area: descr;
+
+        color: @color-font-dark;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 24px;
+
+        text-align: justify;
+    }
+
+    &__status {
+        grid-area: status;
+    }
+
+    &__price {
+        grid-area: price;
+    }
+
+    &__icon {
+        grid-area: icon;
+    }
+
+    &__bottom {
+        grid-area: bottom;
+
+        height: auto;
+        margin: 58px 0 0 0;
+        color: @color-font-dark;
+    }
+
+    &__line {
+        grid-area: line;
+
+        border-top: 1px solid @color-border;
+        margin: 29px 0 0 0;
+    }
+    &:hover &__line {
+        border-top: 1px solid transparent;
+    }
+
+    // Elements style
+
+    &__status,
+    &__price {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__label {
+        color: @color-light-font;
+        font-size: 13px;
+        font-weight: 700;
+    }
+}
