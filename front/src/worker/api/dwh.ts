@@ -228,8 +228,15 @@ export class DWH {
     protected static priceMultiplierOut = new BN('1000000000000000000').div(
         new BN('3600'),
     );
+
     public static recalculatePriceOut(price: string) {
-        return String(new BN(price).mul(DWH.priceMultiplierOut));
+        const multiplier = 1000000;
+
+        return String(
+            new BN(String(parseFloat(price) * multiplier))
+                .mul(DWH.priceMultiplierOut)
+                .div(new BN(multiplier)),
+        );
     }
 
     public getOrders = async ({
@@ -332,8 +339,8 @@ export class DWH {
     ) => {
         if (value && ('$gte' in value || '$lte' in value)) {
             return {
-                min: value.$gte === undefined ? '0' : converter(value.$gte),
-                max: value.$lte === undefined ? '0' : converter(value.$lte),
+                min: value.$gte === undefined ? null : converter(value.$gte),
+                max: value.$lte === undefined ? null : converter(value.$lte),
             };
         }
         return undefined;
@@ -361,9 +368,7 @@ export class DWH {
                 Math.round(benchmarks.values[6] / (1024 * 1024)) || 0,
             gpuCount: benchmarks.values[7] || 0,
             gpuRamSize: Math.round(benchmarks.values[8] / (1024 * 1024)) || 0,
-            ethHashrate:
-                Math.round(100 * benchmarks.values[9] / (1024 * 1024)) / 100 ||
-                0,
+            ethHashrate: Math.round(100 * benchmarks.values[9] / (1000 * 1000)) / 100 || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
@@ -489,7 +494,7 @@ export class DWH {
             item.netflags,
         );
         deal.supplier = {
-            address: deal.supplierID,
+            address: deal.masterID,
             status: supplier.status || EnumProfileStatus.anonimest,
             name: supplier.name || '',
         };
@@ -518,25 +523,27 @@ export class DWH {
         const res = await this.fetchData('GetValidators');
         const validators = 'validators' in res ? res.validators : [];
 
-        return validators.map(
-            ({
-                validator,
-                name,
-                level,
-                price,
-                url,
-                description,
-                logo,
-            }: any): t.IKycValidator => ({
-                id: validator.id,
-                level: validator.level,
-                name,
-                description,
-                fee: price,
-                url,
-                logo,
-            }),
-        );
+        return validators
+            .filter((x: any) => x.url)
+            .map(
+                ({
+                    validator,
+                    name,
+                    level,
+                    price,
+                    url,
+                    description,
+                    logo,
+                }: any): t.IKycValidator => ({
+                    id: validator.id,
+                    level: validator.level,
+                    name,
+                    description,
+                    fee: price,
+                    url,
+                    logo,
+                }),
+            );
     };
 
     public getWorkers = async ({

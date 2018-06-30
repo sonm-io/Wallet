@@ -166,7 +166,7 @@ export const createRoutes = (
                                         <Account
                                             initialAddress={params.address}
                                             onClickHistory={n.toWalletHistory}
-                                            onClickSend={n.toWalletHistory}
+                                            onClickSend={n.toSend}
                                         />
                                     ),
                                     browserTabTitle: 'Account',

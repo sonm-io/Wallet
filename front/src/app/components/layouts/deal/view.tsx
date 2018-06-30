@@ -87,7 +87,7 @@ export class DealView extends React.Component<IProps, never> {
         {
             name: 'Executed payment',
             key: 'blockedBalance',
-            render: (value: any) => `${moveDecimalPoint(value, 18, 2)} SNM`,
+            render: (value: string) => `${moveDecimalPoint(value, -18, 2)} SNM`,
         },
     ];
 

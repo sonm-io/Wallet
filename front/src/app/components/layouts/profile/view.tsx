@@ -64,7 +64,7 @@ export class ProfileView extends React.PureComponent<IProps, never> {
                     ) : null}
                 </div>
                 <div className="sonm-profile__column">
-                    {p.certificates.length > 0 ? (
+                    {p.certificates.length > 0 || p.my ? (
                         <CertificatesPanel
                             className="sonm-profile__panel"
                             certificates={p.certificates}
