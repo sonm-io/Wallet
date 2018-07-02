@@ -5,15 +5,6 @@ import { RootStore } from 'app/stores';
 import { asyncAction } from 'mobx-utils';
 const { pending, catchErrors } = OnlineStore;
 
-export interface IKycDataItem {
-    kycLink?: string;
-    validationMessage?: string;
-}
-
-export interface IKycData {
-    [id: string]: IKycDataItem;
-}
-
 export interface IKycListStoreExternal {
     market: {
         marketAccountAddress: string;
@@ -26,8 +17,12 @@ export interface IKycListStoreExternal {
     };
 }
 
-export interface IKycListInput {
-    data: IKycData;
+interface IKycListState {
+    kycLinks: { [kycEthAddress: string]: string };
+    validationMessage?: string;
+}
+
+interface IKycListInput {
     selectedIndex?: number;
 }
 
@@ -36,9 +31,16 @@ export class KycListStore extends OnlineStore implements IKycListInput {
     protected externalStores: IKycListStoreExternal;
 
     protected static defaultUserInput: IKycListInput = {
-        data: {},
         selectedIndex: undefined,
     };
+
+    protected static defaultState: IKycListState = {
+        kycLinks: {},
+        validationMessage: undefined,
+    };
+
+    @observable
+    protected state: IKycListState = { ...KycListStore.defaultState };
 
     @observable
     protected userInput: IKycListInput = { ...KycListStore.defaultUserInput };
@@ -53,8 +55,12 @@ export class KycListStore extends OnlineStore implements IKycListInput {
         this.externalStores = externalStores;
     }
 
+    @pending
+    @catchErrors({ restart: false })
     @asyncAction
-    protected *getDataItem(password: string, validator: IKycValidator) {
+    public *fetchKycLink(itemIndex: number, password: string) {
+        const links = this.links;
+        const validator = this.externalStores.market.validators[itemIndex];
         const link = yield this.rootStore.mainStore.getKYCLink(
             password,
             this.externalStores.market.marketAccountAddress,
@@ -63,29 +69,22 @@ export class KycListStore extends OnlineStore implements IKycListInput {
         ) as any;
 
         if (link) {
-            return {
-                kycLink: link as string,
-            };
+            links[validator.id] = link;
+            this.state.kycLinks = { ...links };
         } else {
-            return {
-                validationMessage: this.externalStores.main.serverValidation
-                    .password,
-            };
+            this.state.validationMessage = this.externalStores.main.serverValidation.password;
         }
     }
 
     @action.bound
     protected clearValidationMessage = () => {
-        const data = this.data;
-        Object.keys(data).forEach(function(id) {
-            data[id].validationMessage = undefined;
-        });
-        this.userInput.data = { ...data };
+        this.state.validationMessage = undefined;
     };
 
     @action.bound
     public reset() {
         this.userInput = { ...KycListStore.defaultUserInput };
+        this.state = { ...KycListStore.defaultState };
     }
 
     @action.bound
@@ -102,24 +101,19 @@ export class KycListStore extends OnlineStore implements IKycListInput {
         this.clearValidationMessage();
     }
 
-    @pending
-    @catchErrors({ restart: false })
-    @asyncAction
-    public *fetchKycLink(itemIndex: number, password: string) {
-        const target = this.externalStores.market.validators[itemIndex];
-        const data = this.data;
-        data[target.id] = yield this.getDataItem(password, target);
-        this.userInput.data = { ...data };
-    }
-
     @computed
     public get validators() {
         return this.externalStores.market.validators;
     }
 
     @computed
-    public get data(): IKycData {
-        return this.userInput.data;
+    public get links(): { [kycEthAddress: string]: string } {
+        return this.state.kycLinks;
+    }
+
+    @computed
+    public get validationMessage(): string | undefined {
+        return this.state.validationMessage;
     }
 
     @computed
