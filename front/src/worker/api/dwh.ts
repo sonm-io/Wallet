@@ -369,8 +369,8 @@ export class DWH {
             gpuCount: benchmarks.values[7] || 0,
             gpuRamSize: Math.round(benchmarks.values[8] / (1024 * 1024)) || 0,
             ethHashrate:
-                Math.round(100 * benchmarks.values[9] / (1000 * 1000)) / 100 ||
-                0,
+                Math.round((100 * benchmarks.values[9]) / (1000 * 1000)) /
+                    100 || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
@@ -394,7 +394,7 @@ export class DWH {
         order.creator = {
             status: item.creatorIdentityLevel || EnumProfileStatus.anonimest,
             name: item.creatorName || '',
-            address: order.authorID,
+            address: item.masterID || order.authorID,
         };
 
         return order;
@@ -526,27 +526,25 @@ export class DWH {
         const res = await this.fetchData('GetValidators');
         const validators = 'validators' in res ? res.validators : [];
 
-        return validators
-            .filter((x: any) => x.url)
-            .map(
-                ({
-                    validator,
-                    name,
-                    level,
-                    price,
-                    url,
-                    description,
-                    icon,
-                }: any): t.IKycValidator => ({
-                    id: validator.id,
-                    level: validator.level,
-                    name,
-                    description,
-                    fee: price,
-                    url,
-                    logo: icon,
-                }),
-            );
+        return validators.filter((x: any) => x.url).map(
+            ({
+                validator,
+                name,
+                level,
+                price,
+                url,
+                description,
+                icon,
+            }: any): t.IKycValidator => ({
+                id: validator.id,
+                level: validator.level,
+                name,
+                description,
+                fee: price,
+                url,
+                logo: icon,
+            }),
+        );
     };
 
     public getWorkers = async ({
