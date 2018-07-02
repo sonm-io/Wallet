@@ -112,7 +112,7 @@ export class Details extends React.PureComponent<IProps, TUiText> {
                 </div>
                 <div className="sonm-profile-details__extra">
                     {
-                        (p.definitions.forEach(({ label, value }) => {
+                        (p.definitions.forEach(({ label, value }, index) => {
                             const render =
                                 label in renders
                                     ? renders[label]
@@ -120,18 +120,21 @@ export class Details extends React.PureComponent<IProps, TUiText> {
 
                             definitions.push(
                                 <dt
-                                    key={label}
+                                    key={`label_${index}`}
                                     className="sonm-profile-details__extra-label"
                                 >
                                     {t(label)}
                                 </dt>,
                                 <dd
-                                    key={`${label}^*`}
+                                    key={`value_${index}`}
                                     className="sonm-profile-details__extra-value"
                                 >
                                     {render(value)}
                                 </dd>,
-                                <InfoBalloon className="sonm-profile-details__extra-info">
+                                <InfoBalloon
+                                    className="sonm-profile-details__extra-info"
+                                    key={`tooltip_${index}`}
+                                >
                                     {'text'}
                                 </InfoBalloon>,
                             );

@@ -12,7 +12,7 @@ interface IProps {
 const returnFirstArg = (...as: any[]) => String(as[0]);
 
 @observer
-export class Profile extends React.PureComponent<IProps, never> {
+export class Profile extends React.Component<IProps, never> {
     public render() {
         const props = this.props;
         const store = rootStore.profileDetailsStore;
