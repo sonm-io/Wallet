@@ -60,7 +60,7 @@ class SubMenuItem extends React.Component<ISubItemProps, never> {
 }
 
 @observer
-export class NavMenuDropdown extends React.PureComponent<
+export class NavMenuDropdown extends React.Component<
     INavMenuDropdownProps,
     any
 > {

@@ -194,10 +194,20 @@ export class DWH {
                             x.attribute
                         ];
 
-                        return {
-                            value: converter(x.value),
-                            label,
-                        };
+                        if (x.value !== undefined) {
+                            let value = '';
+                            try {
+                                value = converter(x.value);
+                            } catch (err) {
+                                console.error(['Converter failed', x.value]);
+                                console.error(err.stack);
+                            }
+
+                            return {
+                                value,
+                                label,
+                            };
+                        }
                     }
                     return undefined;
                 })
