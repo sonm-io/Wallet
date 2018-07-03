@@ -4,7 +4,8 @@ import { Password } from 'app/components/common/password';
 import { IChangeParams } from 'app/components/common/types';
 import { Button } from 'app/components/common/button';
 import * as cn from 'classnames';
-import { Icon, IconButton } from '../icon';
+import { Icon } from '../icon';
+import { IconButton } from '../icon-button';
 
 export enum EnumConfirmationDisplay {
     OneLine = 'one-line',
