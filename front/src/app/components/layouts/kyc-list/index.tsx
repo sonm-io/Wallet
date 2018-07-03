@@ -25,6 +25,7 @@ export class KycList extends React.Component<{}, never> {
                 onSubmitPassword={this.handleSubmitPassword}
                 onClickItem={store.select}
                 onCloseBottom={store.unselect}
+                marketBalance={rootStore.marketStore.marketBalance}
             />
         );
     }
