@@ -28,7 +28,7 @@ interface IAny {
     [key: string]: any;
 }
 
-interface IIconProps extends IAny {
+export interface IIconProps extends IAny {
     color?: string;
     className?: string;
     tag?: string;
@@ -54,9 +54,5 @@ export class Icon extends React.PureComponent<IIconProps, any> {
         );
     }
 }
-
-export const IconButton = (props: IIconProps) => (
-    <Icon {...props} tag="button" />
-);
 
 export default Icon;

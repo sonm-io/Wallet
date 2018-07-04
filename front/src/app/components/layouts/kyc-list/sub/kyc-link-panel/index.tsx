@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconButton } from 'app/components/common/icon';
+import { IconButton } from 'app/components/common/icon-button';
 import { copyToClipboard } from '../../../../../utils/clipboard-helper';
 import * as cn from 'classnames';
 
