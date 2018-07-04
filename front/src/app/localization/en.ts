@@ -42,6 +42,8 @@ export const en: ILocalizationDictionary = {
     you_need_test_ether:
         'You need test Ether for token request. Get some here - ',
     wallet_not_found: 'Wallet not found',
+    tx_sidechain_delay:
+        'NORMAL TIME TO MOVE FUNDS IN/FROM THE OPPOSITE BLOCKCHAIN IS: [b]THE TIME OF MINING YOUR TRANSACTION + 15 MINUTES[/b]',
     tx_has_been_completed: ([
         amount,
         currencyName,
