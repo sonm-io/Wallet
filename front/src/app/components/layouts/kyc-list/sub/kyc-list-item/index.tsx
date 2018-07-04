@@ -53,7 +53,7 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                 })}
                 onClick={this.handleClickSelect}
             >
-                <span className="kyc-list-item__top" />
+                {/* <span className="kyc-list-item__top" /> */}
                 <img
                     className="kyc-list-item__icon"
                     src={KycListItem.imgPrefix + v.logo}
@@ -81,9 +81,8 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                             validationMessage={p.validationMessage}
                         />
                     )
-                ) : (
-                    <span className="kyc-list-item__line" />
-                )}
+                ) : // <span className="kyc-list-item__line" />
+                null}
             </div>
         );
     }

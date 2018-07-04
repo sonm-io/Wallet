@@ -1,18 +1,19 @@
+@kyc-list-item__column-gap: 33px;
+@kyc-list-item__padding: 30px;
+
 .kyc-list-item {
     // grid layout
     display: grid;
     grid-template-areas:
-        '.     top     top     top'
         'icon  title   title   title'
         'icon  descr   status  price'
-        'icon  bottom  .       .'
-        'icon  line    line    line';
+        'icon  bottom  .       .';
 
     grid-template-columns: 195px repeat(3, auto);
-    grid-column-gap: 33px;
+    // grid-column-gap: 33px;
 
     // other styles
-    padding: 0 30px 30px 30px;
+    padding: 0 0 0 @kyc-list-item__padding;
     cursor: pointer;
 
     &:hover,
@@ -25,28 +26,18 @@
 
     // Grid cells layout
 
-    &__top {
-        grid-area: top;
-        padding: 30px 0 0 0;
-        border-top: 1px solid transparent;
-    }
-    &:not(:first-child):not(:hover):not(&--selected) &__top {
-        border-top: 1px @color-border solid;
-    }
-    &:hover + & &__top,
-    &--selected + & &__top {
-        border-top: 1px solid transparent !important;
-    }
-
     &__icon {
         grid-area: icon;
 
         margin: 0 auto 0 auto;
+        padding: @kyc-list-item__padding 0 0 0;
     }
 
     &__title {
         grid-area: title;
 
+        margin: 0 0 0 @kyc-list-item__column-gap;
+        padding: @kyc-list-item__padding 0 0 0;
         color: @color-font-dark;
         font-size: 20px;
         font-weight: 500;
@@ -56,19 +47,23 @@
     &__descr {
         grid-area: descr;
 
+        margin: 0 0 0 @kyc-list-item__column-gap;
+        padding: 0 0 @kyc-list-item__padding 0;
         color: @color-font-dark;
         font-size: 15px;
         font-weight: 400;
         line-height: 24px;
-
         text-align: justify;
     }
 
     &__status {
+        padding: 0 0 @kyc-list-item__padding @kyc-list-item__column-gap;
         grid-area: status;
     }
 
     &__price {
+        padding: 0 @kyc-list-item__padding @kyc-list-item__padding
+            @kyc-list-item__column-gap;
         grid-area: price;
     }
 
@@ -80,20 +75,31 @@
         grid-area: bottom;
 
         height: auto;
-        margin: 58px 0 0 0;
+        margin: 0 0 30px 33px;
         color: @color-font-dark;
     }
 
-    &__line {
-        grid-area: line;
-        margin: 29px 0 0 0;
+    // line
+
+    &__title {
         border-top: 1px solid transparent;
     }
-    &:last-child &__line {
+    &:not(:hover):not(&--selected)
+        + &:not(:hover):not(:first-child):not(&--selected)
+        &__title {
         border-top: 1px solid @color-border;
     }
-    &:hover &__line {
-        border-top: 1px solid transparent;
+
+    &__descr,
+    &__status,
+    &__price {
+        border-bottom: 1px solid transparent;
+    }
+
+    &:not(:hover):not(&--selected):last-child &__descr,
+    &:not(:hover):not(&--selected):last-child &__status,
+    &:not(:hover):not(&--selected):last-child &__price {
+        border-bottom: 1px solid @color-border;
     }
 
     // Elements style
