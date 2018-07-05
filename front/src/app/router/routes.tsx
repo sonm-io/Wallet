@@ -151,7 +151,9 @@ export const createRoutes = (
                             async (ctx: IContext, params: IUrlParams) => ({
                                 browserTabTitle: 'Accounts',
                                 pageTitle: 'Accounts',
-                                content: <Wallets />,
+                                content: (
+                                    <Wallets navigateToProfile={n.toProfile} />
+                                ),
                             }),
                         )),
                         children: [
