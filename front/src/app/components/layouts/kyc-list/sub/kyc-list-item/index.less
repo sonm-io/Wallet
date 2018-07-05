@@ -1,18 +1,25 @@
+@kyc-list-item__column-gap: 33px;
+@kyc-list-item__padding: 30px;
+
 .kyc-list-item {
-    // grid layout
+    // Grid layout
+
     display: grid;
     grid-template-areas:
-        'icon  title   title   title'
+        'icon  title   status  price'
         'icon  descr   status  price'
-        'icon  bottom  .  .'
-        'icon  line    line    line';
+        '.     bottom  .       .';
 
     grid-template-columns: 195px repeat(3, auto);
-    grid-column-gap: 33px;
 
-    // other styles
-    padding: 30px;
+    // Block styles
+
+    padding: 0 0 0 @kyc-list-item__padding;
     cursor: pointer;
+    // hide border of previous element <begin
+    margin: -1px 0 0 0;
+    position: relative;
+    // end>
 
     &:hover,
     &--selected {
@@ -22,16 +29,17 @@
         cursor: default;
     }
 
-    // Grid cells layout
+    // Grid cells
+
     &__icon {
         grid-area: icon;
-
-        margin: 0 auto 0 auto;
+        margin: auto;
     }
 
     &__title {
         grid-area: title;
-
+        margin: 0 0 0 @kyc-list-item__column-gap;
+        padding: @kyc-list-item__padding 0 0 0;
         color: @color-font-dark;
         font-size: 20px;
         font-weight: 500;
@@ -40,46 +48,49 @@
 
     &__descr {
         grid-area: descr;
-
+        margin: 0 0 0 @kyc-list-item__column-gap;
+        padding: 0 0 @kyc-list-item__padding 0;
         color: @color-font-dark;
         font-size: 15px;
         font-weight: 400;
         line-height: 24px;
-
         text-align: justify;
     }
 
     &__status {
         grid-area: status;
+        padding: @kyc-list-item__padding 0 @kyc-list-item__padding
+            @kyc-list-item__column-gap;
     }
 
     &__price {
         grid-area: price;
-    }
-
-    &__icon {
-        grid-area: icon;
+        padding: @kyc-list-item__padding @kyc-list-item__padding
+            @kyc-list-item__padding @kyc-list-item__column-gap;
     }
 
     &__bottom {
         grid-area: bottom;
-
         height: auto;
-        margin: 58px 0 0 0;
+        margin: 0 0 @kyc-list-item__padding @kyc-list-item__column-gap;
         color: @color-font-dark;
     }
 
-    &__line {
-        grid-area: line;
+    // Lines
 
-        border-top: 1px solid @color-border;
-        margin: 29px 0 0 0;
-    }
-    &:hover &__line {
-        border-top: 1px solid transparent;
+    &__descr,
+    &__status,
+    &__price {
+        border-bottom: 1px solid transparent;
     }
 
-    // Elements style
+    &:not(:hover):not(&--selected):not(:only-child) &__descr,
+    &:not(:hover):not(&--selected):not(:only-child) &__status,
+    &:not(:hover):not(&--selected):not(:only-child) &__price {
+        border-bottom: 1px solid @color-border;
+    }
+
+    // Rest elements
 
     &__status,
     &__price {
