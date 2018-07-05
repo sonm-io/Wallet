@@ -6,9 +6,9 @@
 
     display: grid;
     grid-template-areas:
-        'icon  title   title   title'
+        'icon  title   status  price'
         'icon  descr   status  price'
-        'icon  bottom  .       .';
+        '.     bottom  .       .';
 
     grid-template-columns: 195px repeat(3, auto);
 
@@ -29,18 +29,15 @@
         cursor: default;
     }
 
-    // Grid cells layout
+    // Grid cells
 
     &__icon {
         grid-area: icon;
-
-        margin: 0 auto 0 auto;
-        padding: @kyc-list-item__padding 0 0 0;
+        margin: auto;
     }
 
     &__title {
         grid-area: title;
-
         margin: 0 0 0 @kyc-list-item__column-gap;
         padding: @kyc-list-item__padding 0 0 0;
         color: @color-font-dark;
@@ -51,7 +48,6 @@
 
     &__descr {
         grid-area: descr;
-
         margin: 0 0 0 @kyc-list-item__column-gap;
         padding: 0 0 @kyc-list-item__padding 0;
         color: @color-font-dark;
@@ -62,23 +58,19 @@
     }
 
     &__status {
-        padding: 0 0 @kyc-list-item__padding @kyc-list-item__column-gap;
         grid-area: status;
+        padding: @kyc-list-item__padding 0 @kyc-list-item__padding
+            @kyc-list-item__column-gap;
     }
 
     &__price {
-        padding: 0 @kyc-list-item__padding @kyc-list-item__padding
-            @kyc-list-item__column-gap;
         grid-area: price;
-    }
-
-    &__icon {
-        grid-area: icon;
+        padding: @kyc-list-item__padding @kyc-list-item__padding
+            @kyc-list-item__padding @kyc-list-item__column-gap;
     }
 
     &__bottom {
         grid-area: bottom;
-
         height: auto;
         margin: 0 0 @kyc-list-item__padding @kyc-list-item__column-gap;
         color: @color-font-dark;
@@ -92,9 +84,9 @@
         border-bottom: 1px solid transparent;
     }
 
-    &:not(:hover):not(&--selected) &__descr,
-    &:not(:hover):not(&--selected) &__status,
-    &:not(:hover):not(&--selected) &__price {
+    &:not(:hover):not(&--selected):not(:only-child) &__descr,
+    &:not(:hover):not(&--selected):not(:only-child) &__status,
+    &:not(:hover):not(&--selected):not(:only-child) &__price {
         border-bottom: 1px solid @color-border;
     }
 
