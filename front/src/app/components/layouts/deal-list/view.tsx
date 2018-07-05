@@ -39,7 +39,12 @@ export class DealListView extends React.PureComponent<IProps, any> {
             render: (address: string, record: IDeal) => {
                 return (
                     <ProfileBrief
-                        profile={record.supplier}
+                        profile={
+                            record.consumer.address.toLowerCase() ===
+                            this.props.marketAccountAddress.toLowerCase()
+                                ? record.supplier
+                                : record.consumer
+                        }
                         showBalances={false}
                     />
                 );

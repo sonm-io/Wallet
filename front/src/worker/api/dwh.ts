@@ -476,6 +476,8 @@ export class DWH {
             if (attrMap.kyc4) {
                 attrMap.status = EnumProfileStatus.pro;
             } else if (attrMap.kyc3) {
+                attrMap.status = EnumProfileStatus.reg;
+            } else if (attrMap.kyc2) {
                 attrMap.status = EnumProfileStatus.ident;
             }
         } catch {}
