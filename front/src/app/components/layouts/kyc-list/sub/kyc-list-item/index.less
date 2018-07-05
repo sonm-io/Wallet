@@ -2,7 +2,8 @@
 @kyc-list-item__padding: 30px;
 
 .kyc-list-item {
-    // grid layout
+    // Grid layout
+
     display: grid;
     grid-template-areas:
         'icon  title   title   title'
@@ -10,11 +11,15 @@
         'icon  bottom  .       .';
 
     grid-template-columns: 195px repeat(3, auto);
-    // grid-column-gap: 33px;
 
-    // other styles
+    // Block styles
+
     padding: 0 0 0 @kyc-list-item__padding;
     cursor: pointer;
+    // hide border of previous element <begin
+    margin: -1px 0 0 0;
+    position: relative;
+    // end>
 
     &:hover,
     &--selected {
@@ -75,20 +80,11 @@
         grid-area: bottom;
 
         height: auto;
-        margin: 0 0 30px 33px;
+        margin: 0 0 @kyc-list-item__padding @kyc-list-item__column-gap;
         color: @color-font-dark;
     }
 
-    // line
-
-    &__title {
-        border-top: 1px solid transparent;
-    }
-    &:not(:hover):not(&--selected)
-        + &:not(:hover):not(:first-child):not(&--selected)
-        &__title {
-        border-top: 1px solid @color-border;
-    }
+    // Lines
 
     &__descr,
     &__status,
@@ -96,13 +92,13 @@
         border-bottom: 1px solid transparent;
     }
 
-    &:not(:hover):not(&--selected):last-child &__descr,
-    &:not(:hover):not(&--selected):last-child &__status,
-    &:not(:hover):not(&--selected):last-child &__price {
+    &:not(:hover):not(&--selected) &__descr,
+    &:not(:hover):not(&--selected) &__status,
+    &:not(:hover):not(&--selected) &__price {
         border-bottom: 1px solid @color-border;
     }
 
-    // Elements style
+    // Rest elements
 
     &__status,
     &__price {
