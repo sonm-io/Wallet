@@ -3,22 +3,8 @@ import { IKycListItemProps } from './types';
 import ProfileStatus from 'app/components/common/profile-status';
 import Balance from 'app/components/common/balance-view';
 import * as cn from 'classnames';
-import { ConfirmationPanel } from '../../../../common/confirmation-panel';
+import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 import { KycLinkPanel } from '../kyc-link-panel';
-
-const Status = ({ status }: any) => (
-    <div className="kyc-list-item__status">
-        <div className="kyc-list-item__label">Identification level</div>
-        <ProfileStatus status={status} />
-    </div>
-);
-
-const Price = ({ price }: any) => (
-    <div className="kyc-list-item__price">
-        <div className="kyc-list-item__label">Price</div>
-        <Balance balance={price} decimalPointOffset={18} symbol="SNM" />
-    </div>
-);
 
 export class KycListItem extends React.Component<IKycListItemProps, never> {
     constructor(props: IKycListItemProps) {
@@ -53,15 +39,28 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                 })}
                 onClick={this.handleClickSelect}
             >
-                {/* <span className="kyc-list-item__top" /> */}
                 <img
                     className="kyc-list-item__icon"
                     src={KycListItem.imgPrefix + v.logo}
                 />
                 <h3 className="kyc-list-item__title">{v.name}</h3>
                 <div className="kyc-list-item__descr">{v.description}</div>
-                <Status status={v.level} />
-                <Price price={v.fee} />
+
+                <div className="kyc-list-item__status">
+                    <div className="kyc-list-item__label">
+                        Identification level
+                    </div>
+                    <ProfileStatus status={v.level} />
+                </div>
+
+                <div className="kyc-list-item__price">
+                    <div className="kyc-list-item__label">Price</div>
+                    <Balance
+                        balance={v.fee}
+                        decimalPointOffset={18}
+                        symbol="SNM"
+                    />
+                </div>
 
                 {p.isSelected ? (
                     p.kycLink !== undefined ? (
@@ -81,8 +80,7 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                             validationMessage={p.validationMessage}
                         />
                     )
-                ) : // <span className="kyc-list-item__line" />
-                null}
+                ) : null}
             </div>
         );
     }
