@@ -11,8 +11,12 @@ import {
     EnumOrderStatus,
     EnumProfileStatus,
     IOrder,
-    EnumOrderType,
+    EnumOrderSide,
 } from 'app/api/types';
+import { createBigNumber, BN } from '../utils/create-big-number';
+import moveDecimalPoint from '../utils/move-decimal-point';
+
+const SECS_IN_HOUR = new BN('3600');
 
 export interface IOrderDetailsInput {
     password: string;
@@ -201,18 +205,59 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     @asyncAction
     protected *fetchData() {
         this.order = yield this.api.fetchById(this.orderId);
-        this.setDuration(this.order.duration);
+        this.setDuration(this.order.durationSeconds);
+    }
+
+    @computed
+    public get usdWeiPerHour(): string {
+        let result = '';
+
+        const price = createBigNumber(this.order.usdWeiPerSeconds);
+
+        if (price !== undefined) {
+            result = price.mul(SECS_IN_HOUR).toString();
+        }
+
+        return result;
+    }
+
+    @computed
+    public get isBuyingAvailable() {
+        let result = false;
+
+        const price = createBigNumber(this.order.usdWeiPerSeconds);
+        const duration = createBigNumber(String(this.order.durationSeconds));
+
+        debugger;
+
+        if (price !== undefined && duration !== undefined) {
+            const balance = this.rootStore.marketStore.marketBalance;
+            const perHour = moveDecimalPoint(
+                price
+                    .mul(duration)
+                    .mul(SECS_IN_HOUR)
+                    .toString(),
+                -36,
+                2,
+            );
+
+            console.log('' + balance, '' + perHour);
+        }
+
+        debugger;
+
+        return result;
     }
 
     public static emptyOrder: IOrder = {
         id: '0',
-        orderType: EnumOrderType.any,
+        orderSide: EnumOrderSide.any,
         creator: {
             address: '0x1234567890123456789012345678901234567890',
             status: EnumProfileStatus.anon,
         },
-        price: '1',
-        duration: 0,
+        usdWeiPerSeconds: '1',
+        durationSeconds: 0,
         orderStatus: EnumOrderStatus.active,
         benchmarkMap: {},
     };

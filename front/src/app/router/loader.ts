@@ -17,7 +17,7 @@ export class DataLoader {
     public loadOrderListByOrder(order: IOrder) {
         this.loadOrderListByParams({
             side: 'Sell',
-            priceFrom: str(order.price),
+            priceFrom: str(order.usdWeiPerSeconds),
             redshiftFrom: str(order.benchmarkMap.redshiftGpu),
             ethFrom: str(order.benchmarkMap.ethHashrate),
             zCashFrom: str(order.benchmarkMap.zcashHashrate),

@@ -69,18 +69,16 @@ export class OrderFilterPanel extends React.PureComponent<
                         />
                     </FormField>
 
-                    <FormField
-                        label="Type"
-                        className="order-filter-panel__order-side"
-                    >
-                        <RadioButtonGroup
-                            cssClasses={ToggleGroup.radioRowCssClasses}
-                            name="side"
-                            value={p.side}
-                            values={OrderFilterPanel.orderTypeValues}
-                            onChange={this.handleChangeInput}
-                        />
-                    </FormField>
+                    <h3 className="order-filter-panel__header">
+                        Owner status:
+                    </h3>
+                    <RadioButtonGroup
+                        cssClasses={ToggleGroup.radioRowCssClasses}
+                        name="side"
+                        value={p.side}
+                        values={OrderFilterPanel.orderTypeValues}
+                        onChange={this.handleChangeInput}
+                    />
 
                     <FormField
                         error={p.validation.priceFrom}

@@ -34,7 +34,9 @@ export class OrderDetails extends React.Component<IProps, never> {
                 onSubmit={this.handleSubmit}
                 onNavigateBack={p.onNavigateBack}
                 onNavigateDeposit={p.onNavigateDeposit}
-                marketBalance={rootStore.marketStore.marketBalance}
+                isBuyingAvailable={
+                    rootStore.orderDetailsStore.isBuyingAvailable
+                }
             />
         );
     }

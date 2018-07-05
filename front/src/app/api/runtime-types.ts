@@ -160,10 +160,10 @@ export const TypeAccountInfoList = t.list(TypeAccountInfo);
 export const TypeOrder = createStruct<IOrder>(
     {
         id: t.String,
-        orderType: t.Number,
+        orderSide: t.Number,
         creator: TypeAccountBrief,
-        price: t.String,
-        duration: t.Number,
+        usdWeiPerSeconds: t.String,
+        durationSeconds: t.Number,
         orderStatus: t.Number,
         benchmarkMap: TypeBenchmarkMap,
     },
