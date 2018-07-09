@@ -77,7 +77,7 @@ export class WorkerListView extends React.PureComponent<IProps, any> {
                     className="sonm-workers__table"
                     dataSource={dataSource}
                     columns={this.columns}
-                    rowKey="id"
+                    rowKey="slaveId"
                     pagination={pagination}
                 />
                 {p.showConfirm ? (
