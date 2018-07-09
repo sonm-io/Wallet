@@ -38,6 +38,7 @@
     }
 
     //&--color-violet {
+    --text-color: white;
     --color: @color-violet;
     --color-active: desaturate(@color-violet, 20%);
     //}
@@ -59,8 +60,8 @@
 
     background-color: var(--color);
     border: solid 1px var(--color);
-    color: white;
-    -webkit-text-fill-color: white;
+    color: var(--text-color);
+    -webkit-text-fill-color: var(--text-color);
 
     &:active {
         box-shadow: none;
