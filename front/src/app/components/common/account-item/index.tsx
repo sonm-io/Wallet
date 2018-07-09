@@ -17,6 +17,7 @@ export interface IAccountItemProps {
     onRename?: (newName: string, address: string) => void;
     onClickIcon?: (address: string) => void;
     onClickShowPrivateKey?: (address: string) => void;
+    onClickProfileIcon?: (address: string) => void;
     hasButtons?: boolean;
     primaryTokenInfo?: ICurrencyInfo;
 }
@@ -43,6 +44,14 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
 
         if (this.props.onClickShowPrivateKey) {
             this.props.onClickShowPrivateKey(this.props.address);
+        }
+    };
+
+    protected handleClickProfileIcon = (event: any) => {
+        event.preventDefault();
+
+        if (this.props.onClickProfileIcon) {
+            this.props.onClickProfileIcon(this.props.address);
         }
     };
 
@@ -118,6 +127,15 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                                 />
                             </a>
                         ) : null}
+                        <a
+                            href="#show-private-key"
+                            onClick={this.handleClickProfileIcon}
+                        >
+                            <Icon
+                                i="Profile"
+                                className="sonm-account-item__action"
+                            />
+                        </a>
                     </div>
                 ) : null}
             </div>

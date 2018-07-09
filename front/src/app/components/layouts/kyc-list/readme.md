@@ -8,16 +8,13 @@ const correctPassword = 'password';
 
 const state = observable({
     list: require('./sub/kyc-list-item/mock-data.js'),
-    data: {},
+    kycLinks: {},
     selectedIndex: -1,
+    validationMessage: undefined,
 
     // private
     clearValidationMessage: action.bound(function() {
-        const data = this.data;
-        Object.keys(data).forEach(function(id) {
-            data[id].validationMessage = undefined;
-        });
-        this.data = Object.assign({}, data);
+        this.validationMessage = undefined;
     }),
 
     // handlers
@@ -34,19 +31,19 @@ const state = observable({
     handleSubmitPassword: action.bound(function(itemIndex, password) {
         const dataItem = {};
         if (password === correctPassword) {
-            dataItem.kycLink = '/link/to/service';
+            this.kycLinks[this.list[itemIndex].id] = '/link/to/service';
+            this.kycLinks = Object.assign({}, this.kycLinks);
         } else {
-            dataItem.validationMessage = 'Invalid password.';
+            this.validationMessage = 'Invalid password.';
         }
-        this.data[this.list[itemIndex].id] = dataItem;
-        this.data = Object.assign({}, this.data);
     }),
 });
 
 const Container = observer(() => (
     <KycListView
         list={state.list}
-        data={state.data}
+        kycLinks={state.kycLinks}
+        validationMessage={state.validationMessage}
         selectedIndex={state.selectedIndex}
         onClickItem={state.handleClickItem}
         onCloseBottom={state.handleCloseBottom}
@@ -62,4 +59,19 @@ const StateInfo = observer(() => (
     <StateInfo />
     <Container />
 </div>;
+```
+
+When child is only one, do not show bottom line
+
+```js
+const emptyFn = () => {};
+<KycListView
+    list={require('./sub/kyc-list-item/mock-data.js').slice(0, 1)}
+    kycLinks={{}}
+    validationMessage={undefined}
+    selectedIndex={undefined}
+    onClickItem={emptyFn}
+    onCloseBottom={emptyFn}
+    onSubmitPassword={emptyFn}
+/>;
 ```

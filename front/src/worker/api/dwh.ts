@@ -24,6 +24,8 @@ const DEFAULT_NODES: t.INodes = {
     rinkeby: 'https://dwh-testnet.sonm.com:15022/DWHServer/',
 };
 
+const MB_SIZE = 1000 * 1000;
+
 export class DWH {
     private url: string;
 
@@ -46,12 +48,12 @@ export class DWH {
     > = [
         [2, 'cpuCount', 1],
         [7, 'gpuCount', 1],
-        [3, 'ramSize', 1024 * 1024],
-        [4, 'storageSize', 1024 * 1024 * 1024],
-        [11, 'redshiftGPU', 1],
+        [3, 'ramSize', MB_SIZE],
+        [4, 'storageSize', MB_SIZE * 1000],
+        [11, 'redshiftGpu', 1],
         [10, 'zcashHashrate', 1],
-        [9, 'ethHashrate', 1000 * 1000],
-        [8, 'gpuRamSize', 1024 * 1024],
+        [9, 'ethHashrate', MB_SIZE],
+        [8, 'gpuRamSize', MB_SIZE],
     ];
 
     public static readonly mapProfile: IDictionary<t.IProfileBrief> = {
@@ -194,10 +196,20 @@ export class DWH {
                             x.attribute
                         ];
 
-                        return {
-                            value: converter(x.value),
-                            label,
-                        };
+                        if (x.value !== undefined) {
+                            let value = '';
+                            try {
+                                value = converter(x.value);
+                            } catch (err) {
+                                console.error(['Converter failed', x.value]);
+                                console.error(err.stack);
+                            }
+
+                            return {
+                                value,
+                                label,
+                            };
+                        }
                     }
                     return undefined;
                 })
@@ -359,18 +371,15 @@ export class DWH {
             cpuSysbenchMulti: benchmarks.values[0] || 0,
             cpuSysbenchOne: benchmarks.values[1] || 0,
             cpuCount: benchmarks.values[2] || 0,
-            ramSize: Math.round(benchmarks.values[3] / (1024 * 1024)) || 0,
+            ramSize: Math.round(benchmarks.values[3] / MB_SIZE) || 0,
             storageSize:
-                Math.round(benchmarks.values[4] / (1024 * 1024 * 1024)) || 10,
-            downloadNetSpeed:
-                Math.round(benchmarks.values[5] / (1024 * 1024)) || 0,
-            uploadNetSpeed:
-                Math.round(benchmarks.values[6] / (1024 * 1024)) || 0,
+                Math.round(benchmarks.values[4] / (1000 * MB_SIZE)) || 10,
+            downloadNetSpeed: Math.round(benchmarks.values[5] / MB_SIZE) || 0,
+            uploadNetSpeed: Math.round(benchmarks.values[6] / MB_SIZE) || 0,
             gpuCount: benchmarks.values[7] || 0,
-            gpuRamSize: Math.round(benchmarks.values[8] / (1024 * 1024)) || 0,
+            gpuRamSize: Math.round(benchmarks.values[8] / MB_SIZE) || 0,
             ethHashrate:
-                Math.round((100 * benchmarks.values[9]) / (1000 * 1000)) /
-                    100 || 0,
+                Math.round((100 * benchmarks.values[9]) / MB_SIZE) / 100 || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
@@ -397,7 +406,7 @@ export class DWH {
                         ? EnumProfileStatus.anonimest
                         : item.creatorIdentityLevel,
                 name: item.creatorName || '',
-                address: item.order.authorID,
+                address: item.masterID || item.order.authorID,
             },
             id: item.order.id,
         };
@@ -471,6 +480,8 @@ export class DWH {
 
             if (attrMap.kyc4) {
                 attrMap.status = EnumProfileStatus.pro;
+            } else if (attrMap.kyc2) {
+                attrMap.status = EnumProfileStatus.reg;
             } else if (attrMap.kyc3) {
                 attrMap.status = EnumProfileStatus.ident;
             }

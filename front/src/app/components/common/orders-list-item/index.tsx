@@ -56,7 +56,7 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
             name: 'RAM',
             key: 'ramSize',
             render: (value: number) =>
-                value === 0 ? OrdersListItem.dash : `${value} Mb`,
+                value === 0 ? OrdersListItem.dash : `${value} MB`,
         },
         {
             name: 'GPU #',
@@ -78,13 +78,13 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
             name: 'Storage',
             key: 'storageSize',
             render: (value: number) =>
-                value === 0 ? OrdersListItem.dash : `${value} Gb`,
+                value === 0 ? OrdersListItem.dash : `${value} GB`,
         },
         {
             name: 'GPU RAM',
             key: 'gpuRamSize',
             render: (value: number) =>
-                value === 0 ? OrdersListItem.dash : `${value} Mb`,
+                value === 0 ? OrdersListItem.dash : `${value} MB`,
         },
         {
             name: 'GPU Equihash',
