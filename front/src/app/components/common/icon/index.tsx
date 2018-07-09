@@ -22,6 +22,7 @@ export const icons: any = {
     Pencil: require('./pencil.svg').default,
     Refresh: require('./refresh.svg').default,
     Sync: require('./sync.svg').default,
+    Profile: require('./profile.svg').default,
 };
 
 interface IAny {
