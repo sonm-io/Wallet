@@ -73,6 +73,7 @@ export class OrderFilterPanel extends React.PureComponent<
                         Owner status:
                     </h3>
                     <RadioButtonGroup
+                        className="order-filter-panel__side"
                         cssClasses={ToggleGroup.radioRowCssClasses}
                         name="side"
                         value={p.side}

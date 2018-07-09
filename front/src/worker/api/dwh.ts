@@ -395,7 +395,7 @@ export class DWH {
                 item.order.benchmarks,
                 item.order.netflags.flags,
             ),
-            durationSeconds: item.duration
+            durationSeconds: item.order.duration
                 ? DWH.parseDuration(item.order.duration)
                 : 0,
             usdWeiPerSeconds: DWH.recalculatePriceIn(item.order.price),

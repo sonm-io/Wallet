@@ -14,9 +14,9 @@ import {
     EnumOrderSide,
 } from 'app/api/types';
 import { createBigNumber, BN } from '../utils/create-big-number';
-import moveDecimalPoint from '../utils/move-decimal-point';
 
 const SECS_IN_HOUR = new BN('3600');
+const SECS_IN_DAY = SECS_IN_HOUR.mul(new BN('24'));
 
 export interface IOrderDetailsInput {
     password: string;
@@ -225,26 +225,31 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     public get isBuyingAvailable() {
         let result = false;
 
-        const price = createBigNumber(this.order.usdWeiPerSeconds);
-        const duration = createBigNumber(String(this.order.durationSeconds));
-
-        debugger;
+        const price = new BN(this.order.usdWeiPerSeconds);
+        const duration = new BN(String(this.order.durationSeconds));
 
         if (price !== undefined && duration !== undefined) {
-            const balance = this.rootStore.marketStore.marketBalance;
-            const perHour = moveDecimalPoint(
-                price
-                    .mul(duration)
-                    .mul(SECS_IN_HOUR)
-                    .toString(),
-                -36,
-                2,
-            );
+            const balance =
+                this.rootStore.marketStore.marketAccountView === undefined
+                    ? undefined
+                    : new BN(
+                          this.rootStore.marketStore.marketAccountView.usdBalance,
+                      );
 
-            console.log('' + balance, '' + perHour);
+            if (balance !== undefined) {
+                if (this.order.durationSeconds !== 0) {
+                    const cost = duration.gt(SECS_IN_DAY)
+                        ? price.mul(SECS_IN_DAY)
+                        : price.mul(duration);
+
+                    result = balance.gte(cost);
+                } else {
+                    const perHour = price.mul(SECS_IN_HOUR);
+
+                    result = balance.gte(perHour);
+                }
+            }
         }
-
-        debugger;
 
         return result;
     }

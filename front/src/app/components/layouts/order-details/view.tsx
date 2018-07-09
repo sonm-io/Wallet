@@ -75,6 +75,7 @@ export class OrderView extends React.Component<IProps, never> {
                         />
                     ) : (
                         <InsuficcientFunds
+                            className="order-view__alert"
                             onBack={p.onNavigateBack}
                             onDeposit={p.onNavigateDeposit}
                         />

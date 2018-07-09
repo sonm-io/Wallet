@@ -36,7 +36,7 @@ export class PricePerHour extends React.PureComponent<IProps, IState> {
             <Balance
                 className={this.props.className}
                 balance={this.state.usdWeiPerHour}
-                decimalDigitAmount={2}
+                decimalDigitAmount={4}
                 decimalPointOffset={18}
                 symbol="USD/h"
                 round
