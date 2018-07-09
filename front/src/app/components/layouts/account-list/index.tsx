@@ -15,6 +15,7 @@ import { EmptyAccountList } from './sub/empty-account-list';
 import { AddToken } from './sub/add-token';
 import { navigate } from 'app/router/navigate';
 import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
+import { Changelly } from './sub/changelly';
 import { DownloadFile } from 'app/components/common/download-file';
 import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
@@ -27,6 +28,7 @@ enum WalletDialogs {
     addToken,
     none,
     showPrivateKey,
+    changelly,
 }
 
 interface IProps {
@@ -115,30 +117,58 @@ export class Wallets extends React.Component<IProps, IState> {
         this.switchDialog(WalletDialogs.showPrivateKey, address);
     };
 
+    protected handleBuySonm = () => {
+        this.switchDialog(WalletDialogs.changelly);
+    };
+
     public render() {
         const { className } = this.props;
 
         return (
             <div className={cn('sonm-accounts', className)}>
-                <DownloadFile
-                    getData={rootStore.mainStore.getWalletExportText}
-                    className="sonm-accounts__export-wallet"
-                    fileName={`sonm-wallet-${
-                        rootStore.mainStore.walletName
-                    }.json`}
-                >
+                <div className="sonm-accounts__balances">
                     <Button
                         tag="div"
-                        color="gray"
                         square
-                        transparent
                         height={40}
-                        className="sonm-accounts__export-wallet-button"
+                        className="sonm-accounts__buy-sonm-button"
+                        onClick={this.handleBuySonm}
                     >
-                        <Icon i="Export" />
-                        {' Export wallet'}
+                        {'Buy SONM'}
+                        <div className="sonm-accounts__visa_mastercard_icon" />
                     </Button>
-                </DownloadFile>
+                    <DownloadFile
+                        getData={rootStore.mainStore.getWalletExportText}
+                        className="sonm-accounts__export-wallet-button"
+                        fileName={`sonm-wallet-${
+                            rootStore.mainStore.walletName
+                        }.json`}
+                    >
+                        <Button
+                            tag="div"
+                            color="gray"
+                            square
+                            transparent
+                            height={40}
+                            className="sonm-accounts__export-wallet-button"
+                        >
+                            <Icon i="Export" />
+                            {' Export wallet'}
+                        </Button>
+                    </DownloadFile>
+                    <CurrencyBalanceList
+                        className="sonm-accounts__balance-list"
+                        currencyBalanceList={
+                            rootStore.mainStore.fullBalanceList
+                        }
+                        onRequireAddToken={
+                            rootStore.isOffline
+                                ? undefined
+                                : this.handleRequireAddToken
+                        }
+                        onDeleteToken={this.handleDeleteToken}
+                    />
+                </div>
                 <div className="sonm-accounts__list">
                     {rootStore.mainStore.accountList.length === 0 ? (
                         <EmptyAccountList />
@@ -172,16 +202,6 @@ export class Wallets extends React.Component<IProps, IState> {
                         )
                     )}
                 </div>
-                <CurrencyBalanceList
-                    className="sonm-accounts__balances"
-                    currencyBalanceList={rootStore.mainStore.fullBalanceList}
-                    onRequireAddToken={
-                        rootStore.isOffline
-                            ? undefined
-                            : this.handleRequireAddToken
-                    }
-                    onDeleteToken={this.handleDeleteToken}
-                />
                 <div className="sonm-accounts__buttons">
                     <Button
                         type="button"
@@ -230,6 +250,9 @@ export class Wallets extends React.Component<IProps, IState> {
                             address={this.state.visibleDialogProps[0]}
                             onClose={this.closeDialog}
                         />
+                    ) : null}
+                    {this.state.visibleDialog === WalletDialogs.changelly ? (
+                        <Changelly onClickCross={this.closeDialog} />
                     ) : null}
                 </div>
             </div>

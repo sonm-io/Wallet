@@ -51,7 +51,7 @@ module.exports = {
                     loaders: 'svg-url-loader',
                 },
                 {
-                    test: /\.(ttf|jpg)$/,
+                    test: /\.(ttf|jpg|png)$/,
                     loader: 'file-loader',
                 },
                 {

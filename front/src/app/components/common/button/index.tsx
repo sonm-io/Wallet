@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 
-export type TButtonColor = 'blue' | 'pink' | 'gray' | 'violet';
+export type TButtonColor = 'blue' | 'pink' | 'gray' | 'violet' | 'light-gray';
 
 export interface IButtonProps extends React.ButtonHTMLAttributes<any> {
     color?: TButtonColor;

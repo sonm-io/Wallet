@@ -9,17 +9,26 @@
 
 .sonm-accounts {
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto;
     grid-template-columns: 1fr 270px;
-    grid-gap: 20px;
-
-    &__export-wallet {
-        grid-column: 2;
-        grid-row: 1;
-    }
+    grid-column-gap: 30px;
 
     & &__export-wallet-button {
         display: block;
+        margin-bottom: 15px;
+    }
+
+    & &__buy-sonm-button {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        background-color: @color-light-gray;
+        color: black;
+    }
+
+    &__buy-sonm-dialog {
+        border: 0px;
+        padding: 0px;
     }
 
     &__header {
@@ -29,7 +38,8 @@
 
     &__list {
         grid-column: 1;
-        grid-row: 2;
+        grid-row: 1;
+        margin-bottom: 25px;
 
         &-item-inner {
             border: 1px solid @color-border;
@@ -39,15 +49,24 @@
 
     &__buttons {
         grid-column: 1;
-        grid-row: 3;
+        grid-row: 2;
     }
 
     &__button {
         margin-right: 20px;
     }
 
+    &__visa_mastercard_icon {
+        width: 70px;
+        background: url('./visa_mastercard.png') no-repeat center;
+    }
+
     &__balances {
         grid-column: 2;
-        grid-row: 2;
+        grid-row: 1 / span 2;
+    }
+
+    & &__balance-list {
+        display: block;
     }
 }
