@@ -1,37 +1,29 @@
+@import 'guide.less';
+
 .insuficcient-funds {
-    overflow: overlay;
-    padding: 31px;
     background-color: #f9e9f1;
+    padding: 30px;
 
     &__header {
         color: @color-font-dark;
         font-size: 15px;
-        font-weight: 550;
+        font-weight: 500;
+        margin: 0 0 10px 0;
     }
     &__message {
-        margin: 0 0 19px 0;
         color: @color-font-dark;
         font-size: 15px;
         font-weight: 400;
+        margin: 0 0 20px 0;
     }
 
-    // Buttons
-    &__button-back,
     &__button-deposit {
         float: right;
-        color: @color-violet;
-        font-size: 15px;
-        font-weight: 500;
-        --color: @color-violet;
-        --color-active: desaturate(@color-violet, 20%);
+        margin: 0;
     }
-    &__button-back,
-    &__button-back:active {
-        background-color: transparent;
-        -webkit-text-fill-color: @color-violet;
-        border-width: 2px;
-    }
-    &__button-deposit {
-        margin: 0 0 0 29px;
+
+    &__button-back {
+        float: right;
+        margin: 0 10px 0 0;
     }
 }

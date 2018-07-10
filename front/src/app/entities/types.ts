@@ -15,3 +15,7 @@ export type TPrimitive =
 export interface IDictionary {
     [index: string]: TPrimitive;
 }
+
+export type TUsdWeiPerSeconds = string;
+
+export type TSeconds = number;

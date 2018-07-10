@@ -2,6 +2,8 @@ import { observable, action, computed } from 'mobx';
 import { IAlert, AlertType } from './types';
 import { RootStore } from 'app/stores';
 
+const SUCCESS_ALERT_DELAY_CLOSE = 30000;
+
 export class UiStore {
     protected static alertIdx = 0;
 
@@ -39,6 +41,13 @@ export class UiStore {
         };
 
         this.mapIdToAlert.set(full.id, full);
+
+        if (alert.type === AlertType.success) {
+            setTimeout(
+                () => this.closeAlert(full.id),
+                SUCCESS_ALERT_DELAY_CLOSE,
+            );
+        }
 
         return full.id;
     }

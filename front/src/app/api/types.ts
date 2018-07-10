@@ -1,3 +1,5 @@
+import { TUsdWeiPerSeconds, TSeconds } from 'app/entities/types';
+
 export interface IRawAccount {
     json: string;
     name: string;
@@ -157,7 +159,7 @@ export interface IBenchmarkMap {
     networkIncoming: boolean;
 }
 
-export enum EnumOrderType {
+export enum EnumOrderSide {
     any = 0,
     bid = 1,
     ask = 2,
@@ -176,10 +178,10 @@ export enum EnumOrderStatus {
 
 export interface IOrder {
     id: string;
-    orderType: EnumOrderType;
+    orderSide: EnumOrderSide;
     creator: IAccountBrief;
-    price: string;
-    duration: number;
+    usdWeiPerSeconds: TUsdWeiPerSeconds;
+    durationSeconds: TSeconds;
     orderStatus: EnumOrderStatus;
     benchmarkMap: Partial<IBenchmarkMap>;
 }

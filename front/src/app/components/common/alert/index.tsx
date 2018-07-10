@@ -28,7 +28,7 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
         }
     };
 
-    protected static processHashes(msg: string): any[] {
+    protected static processMessage(msg: string): any[] {
         let idx = 0;
         const result: any[] = [];
 
@@ -41,6 +41,18 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
                     hasCopyButton
                     className="sonm-alert__hash"
                 />,
+            );
+            idx = position + value.length;
+
+            return '';
+        });
+
+        msg.replace(/\[b\].+?\[\/b\]/gi, function(value, position) {
+            result.push(msg.slice(idx, position));
+            result.push(
+                <span className="sonm-alert__bold">
+                    {value.replace('[b]', '').replace('[/b]', '')}
+                </span>,
             );
             idx = position + value.length;
 
@@ -69,7 +81,7 @@ export class Alert extends React.PureComponent<IAlertProps, any> {
             >
                 <span className="sonm-alert__message">
                     {typeof children === 'string'
-                        ? Alert.processHashes(children)
+                        ? Alert.processMessage(children)
                         : children}
                 </span>
                 {onClosed ? (
