@@ -52,7 +52,7 @@ xdescribe('Api', async function() {
         if (response.records) {
             const response1 = await Api.order.fetchById(response.records[0].id);
             expect(response1).to.have.nested.property('id');
-            expect(response1).to.have.nested.property('orderType');
+            expect(response1).to.have.nested.property('orderSide');
         }
     });
 

@@ -8,13 +8,13 @@ import {
 } from 'app/components/common/property-list';
 import { ProfileBrief } from 'app/components/common/profile-brief';
 import { Button } from 'app/components/common/button';
-import { Balance } from 'app/components/common/balance-view';
 import { Checkbox } from 'app/components/common/checkbox';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
-import { ITogglerChangeParams } from '../../common/toggler';
+import { ITogglerChangeParams } from 'app/components/common/toggler';
 import * as moment from 'moment';
 import formatSeconds from 'app/utils/format-seconds';
+import { PricePerHour } from 'app/components/common/price-per-hour';
 
 interface IDealData {
     id: string;
@@ -174,13 +174,9 @@ export class DealView extends React.Component<IProps, never> {
                         <h4 className="sonm-deal__header">
                             Price and duration
                         </h4>
-                        <Balance
+                        <PricePerHour
                             className="sonm-deal__price"
-                            balance={p.price}
-                            decimalPointOffset={18}
-                            decimalDigitAmount={4}
-                            symbol="USD/h"
-                            round
+                            usdWeiPerSeconds={p.price}
                         />
                         <div className="sonm-deal__duration">
                             {p.duration ? (

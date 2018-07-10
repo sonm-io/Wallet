@@ -3,7 +3,7 @@ import Table from 'antd/es/table';
 import * as cn from 'classnames';
 import { ColumnProps } from 'antd/lib/table';
 import { IDeal } from 'app/api/types';
-import { Balance } from 'app/components/common/balance-view';
+import { PricePerHour } from 'app/components/common/price-per-hour';
 import { BenchmarkShort } from 'app/components/common/benchmark-short';
 import { ProfileBrief } from 'app/components/common/profile-brief';
 import {
@@ -39,7 +39,12 @@ export class DealListView extends React.PureComponent<IProps, any> {
             render: (address: string, record: IDeal) => {
                 return (
                     <ProfileBrief
-                        profile={record.supplier}
+                        profile={
+                            record.consumer.address.toLowerCase() ===
+                            this.props.marketAccountAddress.toLowerCase()
+                                ? record.supplier
+                                : record.consumer
+                        }
                         showBalances={false}
                     />
                 );
@@ -98,14 +103,7 @@ export class DealListView extends React.PureComponent<IProps, any> {
             title: 'Price',
             render: (price: string, record: IDeal) => {
                 return [
-                    <Balance
-                        key="1"
-                        balance={price}
-                        decimalPointOffset={18}
-                        decimalDigitAmount={4}
-                        symbol="USD/h"
-                        round
-                    />,
+                    <PricePerHour key="1" usdWeiPerSeconds={price} />,
                     record.timeLeft ? (
                         <div
                             key="3"

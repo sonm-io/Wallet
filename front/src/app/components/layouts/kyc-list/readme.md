@@ -60,3 +60,18 @@ const StateInfo = observer(() => (
     <Container />
 </div>;
 ```
+
+When child is only one, do not show bottom line
+
+```js
+const emptyFn = () => {};
+<KycListView
+    list={require('./sub/kyc-list-item/mock-data.js').slice(0, 1)}
+    kycLinks={{}}
+    validationMessage={undefined}
+    selectedIndex={undefined}
+    onClickItem={emptyFn}
+    onCloseBottom={emptyFn}
+    onSubmitPassword={emptyFn}
+/>;
+```
