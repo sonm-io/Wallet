@@ -514,7 +514,9 @@ export const createRoutes = (
                             return {
                                 browserTabTitle: 'KYC providers',
                                 pageTitle: 'KYC providers',
-                                content: <KycList />,
+                                content: (
+                                    <KycList onNavigateDeposit={n.toDeposit} />
+                                ),
                             };
                         },
                     },

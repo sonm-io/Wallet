@@ -5,6 +5,7 @@ import Balance from 'app/components/common/balance-view';
 import * as cn from 'classnames';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 import { KycLinkPanel } from '../kyc-link-panel';
+import Button from 'app/components/common/button';
 
 export class KycListItem extends React.Component<IKycListItemProps, never> {
     constructor(props: IKycListItemProps) {
@@ -26,6 +27,13 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
     };
 
     protected handleCloseLink = () => {
+        this.props.onCloseLink(this.props.index);
+    };
+
+    protected handleBackClick = (
+        event: React.MouseEvent<HTMLButtonElement>,
+    ) => {
+        event.stopPropagation();
         this.props.onCloseLink(this.props.index);
     };
 
@@ -69,7 +77,7 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                             value={(v.url || '') + '/' + (p.kycLink || '')}
                             onClose={this.handleCloseLink}
                         />
-                    ) : (
+                    ) : p.isBuyingAvailable ? (
                         <ConfirmationPanel
                             className="kyc-list-item__bottom"
                             showCloseButton
@@ -79,6 +87,31 @@ export class KycListItem extends React.Component<IKycListItemProps, never> {
                             onCancel={this.handleCancelPassword}
                             validationMessage={p.validationMessage}
                         />
+                    ) : (
+                        <div className="kyc-insuficcient-funds kyc-list-item__bottom">
+                            <h4 className="kyc-insuficcient-funds__header">
+                                Insufficient funds for KYC
+                            </h4>
+                            <div className="insuficcient-funds__message">
+                                Choose another KYC service or replenish your
+                                deposit
+                            </div>
+                            <Button
+                                color="violet"
+                                className="kyc-insuficcient-funds__button-deposit"
+                                onClick={this.props.onNavigateDeposit}
+                            >
+                                DEPOSIT
+                            </Button>
+                            <Button
+                                color="violet"
+                                transparent
+                                className="kyc-insuficcient-funds__button-back"
+                                onClick={this.handleBackClick}
+                            >
+                                BACK
+                            </Button>
+                        </div>
                     )
                 ) : null}
             </div>

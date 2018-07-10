@@ -20,6 +20,7 @@ export interface IKycListViewProps {
     onCloseBottom: () => void;
     onSubmitPassword: (itemIndex: number, password: string) => void;
     marketBalance: string;
+    onNavigateDeposit: () => void;
 }
 
 export class KycListView extends React.Component<IKycListViewProps, never> {
@@ -35,7 +36,6 @@ export class KycListView extends React.Component<IKycListViewProps, never> {
                     const enoughBalance = new BN(this.props.marketBalance).gte(
                         new BN(i.fee),
                     );
-                    console.log(enoughBalance);
 
                     return (
                         <KycListItem
@@ -50,6 +50,8 @@ export class KycListView extends React.Component<IKycListViewProps, never> {
                             onSubmitPassword={this.props.onSubmitPassword}
                             onCancelPassword={this.props.onCloseBottom}
                             onCloseLink={this.props.onCloseBottom}
+                            isBuyingAvailable={enoughBalance}
+                            onNavigateDeposit={this.props.onNavigateDeposit}
                         />
                     );
                 })}
