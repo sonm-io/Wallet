@@ -389,28 +389,33 @@ export class DWH {
     }
 
     public static parseOrder(item: any): t.IOrder {
-        const order = {
-            ...item.order,
-        };
-
-        order.benchmarkMap = DWH.parseBenchmarks(
-            item.order.benchmarks,
-            item.order.netflags.flags,
-        );
-        order.duration = order.duration ? DWH.parseDuration(order.duration) : 0;
-        order.price = DWH.recalculatePriceIn(order.price);
-
-        order.creator = {
-            status: item.creatorIdentityLevel || EnumProfileStatus.anonimest,
-            name: item.creatorName || '',
-            address: item.masterID || order.authorID,
+        const order: t.IOrder = {
+            orderSide: item.order.orderType,
+            benchmarkMap: DWH.parseBenchmarks(
+                item.order.benchmarks,
+                item.order.netflags.flags,
+            ),
+            durationSeconds: item.order.duration
+                ? DWH.parseDuration(item.order.duration)
+                : 0,
+            usdWeiPerSeconds: DWH.recalculatePriceIn(item.order.price),
+            orderStatus: item.order.orderStatus,
+            creator: {
+                status:
+                    item.creatorIdentityLevel === undefined
+                        ? EnumProfileStatus.anonimest
+                        : item.creatorIdentityLevel,
+                name: item.creatorName || '',
+                address: item.masterID || item.order.authorID,
+            },
+            id: item.order.id,
         };
 
         return order;
     }
 
     public static recalculatePriceIn(price: number) {
-        return String(new BN(price).mul(new BN(3600)));
+        return String(price);
     }
 
     public static parseDuration(duration: number) {

@@ -13,7 +13,48 @@ interface IBalanceViewProps {
 import * as cn from 'classnames';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 
-export class Balance extends React.PureComponent<IBalanceViewProps, any> {
+interface IState {
+    text: string;
+    balance?: string;
+    decimalDigitAmount?: number;
+    decimalPointOffset?: number;
+    round?: boolean;
+}
+
+export class Balance extends React.PureComponent<IBalanceViewProps, IState> {
+    public constructor(props: IBalanceViewProps) {
+        super(props);
+
+        this.state = {
+            balance: props.balance,
+            decimalDigitAmount: props.decimalDigitAmount,
+            decimalPointOffset: props.decimalPointOffset,
+            round: props.round,
+            text: Balance.createStringRepresentation(props),
+        };
+    }
+
+    public static getDerivedStateFromProps(
+        props: IBalanceViewProps,
+        state: IState,
+    ) {
+        if (
+            props.balance !== state.balance ||
+            props.decimalPointOffset !== state.decimalPointOffset ||
+            props.decimalDigitAmount !== state.decimalDigitAmount ||
+            props.round !== state.round
+        ) {
+            return {
+                balance: props.balance,
+                decimalDigitAmount: props.decimalDigitAmount,
+                decimalPointOffset: props.decimalPointOffset,
+                round: props.round,
+                text: Balance.createStringRepresentation(props),
+            };
+        }
+        return null;
+    }
+
     protected static limitDecimalDigitAmount(
         num: string,
         decimalDigitAmount: number,
@@ -78,7 +119,7 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
         num: string,
         decimalDigitAmount: number,
         round?: boolean,
-    ) {
+    ): string {
         let result = Balance.limitDecimalDigitAmount(
             num,
             decimalDigitAmount + 1,
@@ -93,30 +134,35 @@ export class Balance extends React.PureComponent<IBalanceViewProps, any> {
         return result;
     }
 
-    public render() {
+    public static createStringRepresentation(props: IBalanceViewProps): string {
         const {
-            className,
-            prefix,
-            decimalPointOffset,
+            decimalPointOffset = 18,
             decimalDigitAmount = 4,
+            balance,
             round,
-        } = this.props;
-        const { balance, symbol } = this.props;
-        let num = '';
+        } = props;
 
-        if (balance) {
-            num = moveDecimalPoint(balance, -decimalPointOffset);
-            num = Balance.roundOrCrop(num, decimalDigitAmount, round);
+        let result = '';
+
+        if (balance !== undefined && balance !== '') {
+            result = moveDecimalPoint(balance, -decimalPointOffset);
+            result = Balance.roundOrCrop(result, decimalDigitAmount, round);
         }
+
+        return result;
+    }
+
+    public render() {
+        const { className, prefix, symbol } = this.props;
 
         return (
             <div
                 className={cn('sonm-balance', className)}
-                {...{ 'data-display-id': `balance` }}
+                data-display-id="balance"
             >
                 <span className="sonm-balance__number">
                     {prefix ? `${prefix} ` : null}
-                    {num}
+                    {this.state.text}
                 </span>
                 {symbol ? (
                     <span className="sonm-balance__symbol">{symbol}</span>

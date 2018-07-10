@@ -37,14 +37,16 @@ export class OrderListView extends React.PureComponent<IOrdersProps, any> {
                     pageLimits={OrderListView.headerProps.pageLimits}
                 />
                 <div className="order-list__list">
-                    {p.dataSource.map((order, idx) => (
-                        <OrdersListItem
-                            order={order}
-                            key={order.id}
-                            className="order-list__list-item"
-                            onClick={this.handleClick}
-                        />
-                    ))}
+                    {p.dataSource.map((order, idx) => {
+                        return (
+                            <OrdersListItem
+                                order={order}
+                                key={order.id}
+                                className="order-list__list-item"
+                                onClick={this.handleClick}
+                            />
+                        );
+                    })}
                 </div>
                 <div className="order-list__filter-panel">{p.filterPanel}</div>
             </div>

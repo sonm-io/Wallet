@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { Balance } from 'app/components/common/balance-view';
+import { PricePerHour } from 'app/components/common/price-per-hour';
 
 interface IAppBalanceProps {
     marketMode: boolean;
@@ -59,13 +60,9 @@ export class AppBalance extends React.PureComponent<IAppBalanceProps, any> {
                         </span>
                         <span className="app-balance__value">
                             {p.marketDealsCount} deals,
-                            <Balance
+                            <PricePerHour
                                 className="app-balance__value"
-                                balance={p.marketDealsPrice}
-                                decimalPointOffset={18}
-                                symbol="USD/h"
-                                decimalDigitAmount={4}
-                                round
+                                usdWeiPerSeconds={p.marketDealsPrice}
                             />
                         </span>
                     </div>
