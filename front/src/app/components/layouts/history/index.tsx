@@ -1,9 +1,6 @@
 import * as React from 'react';
 import Table from 'antd/es/table';
-import {
-    DateRangeDropdown,
-    IDateRangeChangeParams,
-} from 'app/components/common/date-range-dropdown';
+import { DateRangeDropdown } from 'app/components/common/date-range-dropdown';
 import Select from 'antd/es/select';
 import Input from 'antd/es/input';
 import * as cn from 'classnames';
@@ -16,6 +13,7 @@ import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Balance } from 'app/components/common/balance-view';
 import { Hash } from 'app/components/common/hash-view';
+import { IChangeParams } from 'app/components/common/types';
 
 const Option = Select.Option;
 
@@ -185,7 +183,7 @@ export class History extends React.Component<IProps, any> {
         });
     };
 
-    protected handleChangeTime = (params: IDateRangeChangeParams) => {
+    protected handleChangeTime = (params: IChangeParams<[Date, Date]>) => {
         filterStore.updateUserInput({
             timeStart: params.value[0].valueOf(),
             timeEnd: params.value[1].valueOf(),
