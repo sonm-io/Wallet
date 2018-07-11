@@ -1,9 +1,6 @@
 import * as React from 'react';
 import Table from 'antd/es/table';
-import {
-    DateRangeDropdown,
-    IDateRangeChangeParams,
-} from 'app/components/common/date-range-dropdown';
+import { DateRangeDropdown } from 'app/components/common/date-range-dropdown';
 import Select from 'antd/es/select'; // TODO replace with common component
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
@@ -15,6 +12,7 @@ import { Balance } from 'app/components/common/balance-view';
 import { Hash } from 'app/components/common/hash-view';
 import { Button } from 'app/components/common/button';
 import { Icon } from 'app/components/common/icon';
+import { IChangeParams } from 'app/components/common/types';
 
 const filterStore = rootStore.dwHistoryFilterStore;
 const listStore = rootStore.dwHistoryListStore;
@@ -162,7 +160,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         listStore.update();
     }
 
-    protected handleChangeTime = (params: IDateRangeChangeParams) => {
+    protected handleChangeTime = (params: IChangeParams<[Date, Date]>) => {
         filterStore.updateUserInput({
             timeStart: params.value[0].valueOf(),
             timeEnd: params.value[1].valueOf(),

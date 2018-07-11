@@ -18,8 +18,17 @@ export class DateRange extends React.Component<IDateRangeProps, any> {
         rightPickerProps: undefined,
     };
 
-    public static format(value: TDateRangeValue): string {
-        return `${Calendar.format(value[0])} ~ ${Calendar.format(value[1])}`;
+    protected static getDefaultDate = () => new Date(0);
+
+    protected static getDateOrDefault = (
+        value: TDateRangeValue | undefined,
+        index: 0 | 1,
+    ) => (value === undefined ? DateRange.getDefaultDate() : value[index]);
+
+    public static format(value?: TDateRangeValue): string {
+        const from = Calendar.format(DateRange.getDateOrDefault(value, 0));
+        const to = Calendar.format(DateRange.getDateOrDefault(value, 1));
+        return `${from} ~ ${to}`;
     }
 
     protected static isDateEqual(
@@ -38,15 +47,21 @@ export class DateRange extends React.Component<IDateRangeProps, any> {
     }
 
     protected onChange = (params: any) => {
-        const value = [
-            this.props.value[0],
-            this.props.value[1],
-        ] as TDateRangeValue;
+        const value =
+            this.props.value === undefined
+                ? ([
+                      DateRange.getDefaultDate(),
+                      DateRange.getDefaultDate(),
+                  ] as TDateRangeValue)
+                : ([
+                      this.props.value[0],
+                      this.props.value[1],
+                  ] as TDateRangeValue);
 
         const isRangeEnd = params.name === 'to';
         const idx = isRangeEnd ? 1 : 0;
         value[idx] = params.value;
-        const valueString = this.getProps().valueToString(value);
+        const stringValue = this.getProps().valueToString(value);
 
         if (isRangeEnd) {
             value[idx].setHours(23);
@@ -55,11 +70,13 @@ export class DateRange extends React.Component<IDateRangeProps, any> {
             value[idx].setMilliseconds(999);
         }
 
-        this.props.onChange({
-            value,
-            valueString,
-            name,
-        });
+        if (this.props.onChange) {
+            this.props.onChange({
+                value,
+                stringValue,
+                name,
+            });
+        }
     };
 
     protected getProps(): IDateRangeAllProps {
@@ -73,15 +90,21 @@ export class DateRange extends React.Component<IDateRangeProps, any> {
             props.className !== next.className ||
             props.leftPickerProps !== next.leftPickerProps ||
             props.rightPickerProps !== next.rightPickerProps ||
-            !DateRange.isDateEqual(props.value[0], next.value[0]) ||
-            !DateRange.isDateEqual(props.value[1], next.value[1])
+            !DateRange.isDateEqual(
+                DateRange.getDateOrDefault(props.value, 0),
+                DateRange.getDateOrDefault(next.value, 0),
+            ) ||
+            !DateRange.isDateEqual(
+                DateRange.getDateOrDefault(props.value, 1),
+                DateRange.getDateOrDefault(next.value, 1),
+            )
         );
     }
 
     public render() {
         const { value: fromTo, className } = this.props;
-        const from = fromTo[0];
-        const to = fromTo[1];
+        const from = DateRange.getDateOrDefault(fromTo, 0);
+        const to = DateRange.getDateOrDefault(fromTo, 1);
 
         return (
             <div className={cn('date-range', className)}>
