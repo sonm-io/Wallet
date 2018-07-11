@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { balance } from './logic';
+import { BalanceUtils } from './utils';
 
 interface IBalanceViewProps {
     className?: string;
@@ -32,7 +32,7 @@ export class Balance extends React.PureComponent<IBalanceViewProps, IState> {
         decimalDigitAmount: props.decimalDigitAmount,
         decimalPointOffset: props.decimalPointOffset,
         round: props.round,
-        text: balance(
+        text: BalanceUtils.formatBalance(
             props.balance,
             props.decimalDigitAmount,
             props.decimalPointOffset,
