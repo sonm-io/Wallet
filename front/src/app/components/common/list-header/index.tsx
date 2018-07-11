@@ -24,8 +24,10 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
     protected handleClickPageLimit = (
         event: React.MouseEvent<HTMLButtonElement>,
     ) => {
-        const limit = parseInt(event.currentTarget.value);
-        limit !== this.props.pageLimit && this.props.onChangeLimit(limit);
+        const limit = parseInt(event.currentTarget.value, undefined);
+        if (limit !== this.props.pageLimit) {
+            this.props.onChangeLimit(limit);
+        }
     };
 
     public render() {
