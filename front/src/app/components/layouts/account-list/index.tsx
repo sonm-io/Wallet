@@ -127,13 +127,15 @@ export class Wallets extends React.Component<IProps, IState> {
         return (
             <div className={cn('sonm-accounts', className)}>
                 <div className="sonm-accounts__balances">
-                    <div
-                        className="sonm-accounts__buy-sonm-button"
-                        onClick={this.handleBuySonm}
-                    >
-                        {'Buy SONM'}
-                        <div className="sonm-accounts__visa_mastercard_icon" />
-                    </div>
+                    {rootStore.mainStore.networkName === 'livenet' ? (
+                        <div
+                            className="sonm-accounts__buy-sonm-button"
+                            onClick={this.handleBuySonm}
+                        >
+                            {'Buy SONM'}
+                            <div className="sonm-accounts__visa_mastercard_icon" />
+                        </div>
+                    ) : null}
                     <DownloadFile
                         getData={rootStore.mainStore.getWalletExportText}
                         className="sonm-accounts__export-wallet-button"
