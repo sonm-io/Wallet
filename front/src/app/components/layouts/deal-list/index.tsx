@@ -3,10 +3,10 @@ import { DealListView } from './view';
 import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
-import { IDateRangeChangeParams } from 'app/components/common/date-range-dropdown';
 import { ITogglerChangeParams } from 'app/components/common/toggler';
 import * as debounce from 'lodash/fp/debounce';
 import { IDeal } from 'app/api/types';
+import { IChangeParams } from 'app/components/common/types';
 
 const debounce500 = debounce(500);
 
@@ -36,7 +36,7 @@ export class DealList extends React.Component<IProps, any> {
         rootStore.dealListStore.stopAutoUpdate();
     }
 
-    protected handleChangeTime = (params: IDateRangeChangeParams) => {
+    protected handleChangeTime = (params: IChangeParams<[Date, Date]>) => {
         filterStore.updateUserInput({
             dateFrom: params.value[0].valueOf(),
             dateTo: params.value[1].valueOf(),

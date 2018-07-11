@@ -1,29 +1,18 @@
 import { IDatePickerProps } from '../date-picker';
+import { IChengableProps } from 'app/components/common/types';
 
-export interface IDateRangeChangeParams {
-    name: string;
-    value: [Date, Date];
-    valueString: string;
-}
-
-export interface IDateRequredRangeProps {
-    value: [Date, Date];
-    onChange: (params: IDateRangeChangeParams) => void;
-    name: string;
-}
+export type TDateRangeValue = [Date, Date];
 
 export interface IDateRangeOptionalProps {
     className: string;
     leftPickerProps: IDatePickerProps | undefined;
     rightPickerProps: IDatePickerProps | undefined;
-    valueToString: (value: IDateRangeProps['value']) => string;
+    valueToString: (value?: TDateRangeValue) => string;
     disabled?: boolean;
 }
 
-export type IDateRangeProps = IDateRequredRangeProps &
+export type IDateRangeProps = IChengableProps<TDateRangeValue> &
     Partial<IDateRangeOptionalProps>;
 
-export type IDateRangeAllProps = IDateRequredRangeProps &
+export type IDateRangeAllProps = IChengableProps<TDateRangeValue> &
     IDateRangeOptionalProps;
-
-export type TDateRangeValue = [Date, Date];
