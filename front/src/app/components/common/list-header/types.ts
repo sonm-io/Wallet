@@ -2,15 +2,20 @@ export interface IOrderBy {
     [address: string]: string;
 }
 
-export interface IListHeaderProps {
+/**
+ * If some controllable component containes ListHeader, then usualy it exposes this interface.
+ */
+export interface IListHeader {
     orderBy: string;
-    orderKeys: IOrderBy;
     orderDesc: boolean;
     pageLimit: number;
-    pageLimits: Array<number>;
     onChangeLimit: (limit: number) => void;
     onChangeOrder: (orderKey: string, isDesc: boolean) => void;
     onRefresh: () => void;
-    //optional
+}
+
+export interface IListHeaderProps extends IListHeader {
+    orderKeys: IOrderBy;
+    pageLimits: Array<number>;
     className?: string;
 }
