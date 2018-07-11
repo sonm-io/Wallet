@@ -1,3 +1,5 @@
+@deal-list-item__border: 2px solid @color-gray-bg;
+
 .deal-list-item {
     display: grid;
     grid-template-areas:
@@ -6,6 +8,9 @@
 
     grid-template-columns: 485px 188px 1fr 1fr;
     grid-row-gap: 20px;
+
+    border-bottom: @deal-list-item__border;
+    padding: 20px 0 30px 0;
 
     &__dash {
         color: @color-border;

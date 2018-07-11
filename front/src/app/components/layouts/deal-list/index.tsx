@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { DealListViewOld } from './viewOld';
 import { DealListView } from './view';
 import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
@@ -80,7 +81,7 @@ export class DealList extends React.Component<IProps, any> {
         const dataSource = toJS(listStore.records);
 
         return (
-            <DealListView
+            <DealListViewOld
                 dataSource={dataSource}
                 marketAccountAddress={
                     rootStore.marketStore.marketAccountAddress
@@ -95,3 +96,5 @@ export class DealList extends React.Component<IProps, any> {
         );
     }
 }
+
+export { DealListView };
