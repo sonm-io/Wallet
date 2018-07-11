@@ -51,6 +51,14 @@ export class WorkerList extends React.Component<IProps, any> {
         }
     };
 
+    public componentDidMount() {
+        rootStore.workerListStore.startAutoUpdate();
+    }
+
+    public componentWillUnmount() {
+        rootStore.workerListStore.stopAutoUpdate();
+    }
+
     public render() {
         const listStore = rootStore.workerListStore;
         const dataSource = toJS(listStore.records);

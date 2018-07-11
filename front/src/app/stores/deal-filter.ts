@@ -1,9 +1,9 @@
 import { observable, computed, action } from 'mobx';
 import * as moment from 'moment';
 import { IFilterStore } from './filter-base';
+import { RootStore } from './index';
 
 export interface IDealFilter {
-    address: string;
     query: string;
     dateFrom: number;
     dateTo: number;
@@ -11,9 +11,14 @@ export interface IDealFilter {
 }
 
 export class DealFilterStore implements IDealFilter, IFilterStore {
+    protected rootStore: RootStore;
+
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
+    }
+
     @observable
     public userInput: Partial<IDealFilter> = {
-        address: undefined,
         query: undefined,
         dateFrom: moment('20171201', 'YYYYMMDD').valueOf(),
         dateTo: moment()
@@ -35,11 +40,6 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
                 this.userInput[key] = values[key];
             }
         });
-    }
-
-    @computed
-    public get address() {
-        return this.userInput.address || '';
     }
 
     @computed
@@ -66,7 +66,7 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
     public get filter(): any {
         const result: any = {
             address: {
-                $eq: this.address,
+                $eq: this.rootStore.marketStore.marketAccountAddress,
             },
             date: {
                 $gte: this.dateFrom,
