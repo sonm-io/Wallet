@@ -3,16 +3,15 @@
 @accountSelectBgColor: @color-brand-bg;
 @accountSelectBgColorActive: lighten(@color-brand-bg, 5%);
 @accountSelectTextColor: @color-font-gray;
-@accountSelectTextColorActive: @color-white;
-@accountSelectTextColorMarked: @color-green;
+@accountSelectTextColorBalance: var(--color-nav-menu-selection);
+@accountSelectTextColorHover: @color-white;
 @accountSelectPaddingLeft: 20px;
 
 .sonm-market-account {
-    --color-nav-menu-selection: @accountSelectTextColorActive;
     background-color: @accountSelectBgColor;
 
     &__title {
-        color: @accountSelectTextColorActive;
+        color: @accountSelectTextColorHover;
         font-size: 15px;
         text-align: left;
         padding: 0 @accountSelectPaddingLeft;
@@ -25,7 +24,7 @@
             width: 6px;
             height: 6px;
             position: absolute;
-            border: solid @accountSelectTextColorActive 1px;
+            border: solid @accountSelectTextColorHover 1px;
             border-right-width: 0;
             border-bottom-width: 0;
             top: 50%;
@@ -89,7 +88,7 @@
         box-sizing: border-box;
 
         &:hover {
-            color: @accountSelectTextColorActive;
+            color: @accountSelectTextColorHover;
         }
     }
 }
@@ -132,7 +131,7 @@
     &__balance {
         width: 200px;
         margin: 0 6px;
-        color: @accountSelectTextColorMarked;
+        color: var(--color-nav-menu-selection);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

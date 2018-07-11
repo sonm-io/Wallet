@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Icon, IIconProps } from 'app/components/common/icon';
 
 export const IconButton = (props: IIconProps) => (

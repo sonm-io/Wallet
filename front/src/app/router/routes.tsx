@@ -151,7 +151,9 @@ export const createRoutes = (
                             async (ctx: IContext, params: IUrlParams) => ({
                                 browserTabTitle: 'Accounts',
                                 pageTitle: 'Accounts',
-                                content: <Wallets />,
+                                content: (
+                                    <Wallets navigateToProfile={n.toProfile} />
+                                ),
                             }),
                         )),
                         children: [
@@ -427,7 +429,7 @@ export const createRoutes = (
                                                     n.toSimilarOrders
                                                 }
                                                 onClickOrders={
-                                                    n.toFullOrderList
+                                                    n.toOrderListByAddress
                                                 }
                                             />
                                         ),
@@ -512,7 +514,9 @@ export const createRoutes = (
                             return {
                                 browserTabTitle: 'KYC providers',
                                 pageTitle: 'KYC providers',
-                                content: <KycList />,
+                                content: (
+                                    <KycList onNavigateDeposit={n.toDeposit} />
+                                ),
                             };
                         },
                     },

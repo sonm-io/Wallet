@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { KycListItem } from './sub/kyc-list-item';
 import { IKycValidator } from 'app/api';
+import { BN } from 'bn.js';
 
 export interface IKycListViewProps {
     className?: string;
@@ -18,6 +19,8 @@ export interface IKycListViewProps {
      */
     onCloseBottom: () => void;
     onSubmitPassword: (itemIndex: number, password: string) => void;
+    marketBalance: string;
+    onNavigateDeposit: () => void;
 }
 
 export class KycListView extends React.Component<IKycListViewProps, never> {
@@ -30,6 +33,10 @@ export class KycListView extends React.Component<IKycListViewProps, never> {
             <div className={cn('kyc-list', this.props.className)}>
                 {this.props.list.map((i, index) => {
                     const kycLink = this.props.kycLinks[i.id];
+                    const enoughBalance = new BN(this.props.marketBalance).gte(
+                        new BN(i.fee),
+                    );
+
                     return (
                         <KycListItem
                             className="kyc-list__item"
@@ -43,6 +50,8 @@ export class KycListView extends React.Component<IKycListViewProps, never> {
                             onSubmitPassword={this.props.onSubmitPassword}
                             onCancelPassword={this.props.onCloseBottom}
                             onCloseLink={this.props.onCloseBottom}
+                            isBuyingAvailable={enoughBalance}
+                            onNavigateDeposit={this.props.onNavigateDeposit}
                         />
                     );
                 })}

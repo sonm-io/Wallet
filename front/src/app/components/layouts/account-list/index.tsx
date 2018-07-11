@@ -33,6 +33,7 @@ enum WalletDialogs {
 
 interface IProps {
     className?: string;
+    navigateToProfile: (address: string) => void;
 }
 
 interface IState {
@@ -117,6 +118,11 @@ export class Wallets extends React.Component<IProps, IState> {
         this.switchDialog(WalletDialogs.showPrivateKey, address);
     };
 
+    protected handleClickProfileIcon = (address: string) => {
+        rootStore.marketStore.setMarketAccountAddress(address);
+        this.props.navigateToProfile(address);
+    };
+
     protected handleBuySonm = () => {
         this.switchDialog(WalletDialogs.changelly);
     };
@@ -190,6 +196,9 @@ export class Wallets extends React.Component<IProps, IState> {
                                             }
                                             onClickShowPrivateKey={
                                                 this.handleShowPrivateKey
+                                            }
+                                            onClickProfileIcon={
+                                                this.handleClickProfileIcon
                                             }
                                             onRename={this.handleRename}
                                             className="sonm-accounts__list-item-inner"

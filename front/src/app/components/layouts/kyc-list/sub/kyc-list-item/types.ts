@@ -11,4 +11,6 @@ export interface IKycListItemProps {
     onSubmitPassword: (index: number, password: string) => void;
     onCancelPassword: (index: number) => void;
     onCloseLink: (index: number) => void;
+    isBuyingAvailable: boolean;
+    onNavigateDeposit: () => void;
 }

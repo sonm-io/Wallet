@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DealListView } from './view';
 import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
-import { toJS, autorun } from 'mobx';
+import { toJS } from 'mobx';
 import { IDateRangeChangeParams } from 'app/components/common/date-range-dropdown';
 import { ITogglerChangeParams } from 'app/components/common/toggler';
 import * as debounce from 'lodash/fp/debounce';
@@ -28,21 +28,12 @@ export class DealList extends React.Component<IProps, any> {
         super(props);
     }
 
-    protected syncStores() {
-        autorun(() => {
-            const fromAddress = rootStore.marketStore.marketAccountAddress;
-            filterStore.updateUserInput({ address: fromAddress });
-        });
+    public componentDidMount() {
+        rootStore.dealListStore.startAutoUpdate();
     }
 
-    public componentDidMount() {
-        if (rootStore.mainStore.accountAddressList.length === 0) {
-            // this.props.onNotAvailable();
-        } else {
-            rootStore.dealListStore.update();
-            rootStore.marketStore.updateMarketStats();
-            this.syncStores();
-        }
+    public componentWillUnmount() {
+        rootStore.dealListStore.stopAutoUpdate();
     }
 
     protected handleChangeTime = (params: IDateRangeChangeParams) => {
