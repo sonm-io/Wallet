@@ -3,7 +3,6 @@ import * as cn from 'classnames';
 import { IChengableProps, IFocusable } from '../types';
 
 export interface ITextInputProps extends IChengableProps<string> {
-    name: string;
     autoFocus?: boolean;
     prefix?: string;
     onChangeDeprecated?: (event: any) => void;
