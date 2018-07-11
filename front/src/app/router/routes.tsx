@@ -429,7 +429,7 @@ export const createRoutes = (
                                                     n.toSimilarOrders
                                                 }
                                                 onClickOrders={
-                                                    n.toFullOrderList
+                                                    n.toOrderListByAddress
                                                 }
                                             />
                                         ),
