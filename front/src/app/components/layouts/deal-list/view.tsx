@@ -6,15 +6,13 @@ import { IDeal } from 'app/api/types';
 import { PricePerHour } from 'app/components/common/price-per-hour';
 import { BenchmarkShort } from 'app/components/common/benchmark-short';
 import { ProfileBrief } from 'app/components/common/profile-brief';
-import {
-    DateRangeDropdown,
-    IDateRangeChangeParams,
-} from 'app/components/common/date-range-dropdown';
+import { DateRangeDropdown } from 'app/components/common/date-range-dropdown';
 import Input from 'antd/es/input';
 import { Toggler, ITogglerChangeParams } from 'app/components/common/toggler';
 import DealFilterStore from 'app/stores/deal-filter';
 import formatSeconds from 'app/utils/format-seconds';
 import * as moment from 'moment';
+import { IChangeParams } from 'app/components/common/types';
 
 class DealTable extends Table<IDeal> {}
 
@@ -22,7 +20,7 @@ interface IProps {
     className?: string;
     dataSource: Array<IDeal>;
     marketAccountAddress: string;
-    handleChangeTime: (params: IDateRangeChangeParams) => void;
+    handleChangeTime: (params: IChangeParams<[Date, Date]>) => void;
     handleChangeQuery: (event: any) => void;
     handleChangeActive: (params: ITogglerChangeParams) => void;
     filterStore: DealFilterStore;
