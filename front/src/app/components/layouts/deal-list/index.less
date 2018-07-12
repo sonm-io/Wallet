@@ -9,6 +9,7 @@
 
 // Component
 
+// ToDo a
 .sonm-deals-filter {
     display: flex;
     flex-direction: row;
@@ -59,10 +60,32 @@
 // --------------------------- ToDo a
 
 .deal-list {
-    &__header {
+    &__header-container {
+        margin: 30px 0 0 0;
+        display: flex;
+        flex-direction: row;
         border-bottom: 2px solid @color-gray-bg;
         padding: 0 0 15px 0;
     }
-    &__filter-panel {
+
+    &__header {
+        --list-header__pagesize-margin: 0 0 0 165px;
+    }
+
+    &__buy-resources-link {
+        margin: auto 0 auto auto;
+        white-space: nowrap;
+        color: @color-blue;
+        font-size: 15px;
+        font-weight: 200;
+
+        &:hover {
+            color: @color-blue;
+        }
+    }
+
+    &__buy-resources-icon {
+        margin: 0 3px 0 0;
+        vertical-align: text-bottom;
     }
 }
