@@ -1,14 +1,16 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import DateRangeDropdown from 'app/components/common/date-range-dropdown';
+import {
+    DateRangeDropdown,
+    TDateRangeValue,
+} from 'app/components/common/date-range-dropdown';
 import { Input } from 'app/components/common/input';
 import Toggler from 'app/components/common/toggler';
 import { IChangeParams } from 'app/components/common/types';
 
 interface IDealFilter {
     query: string;
-    dateFrom: number;
-    dateTo: number;
+    dateRange: TDateRangeValue;
     onlyActive: boolean;
 }
 
@@ -28,9 +30,9 @@ export class DealFilterPanel extends React.Component<
         super(props);
     }
 
-    protected handleChangeDateRange = () => {};
-
-    protected handleChangeInput = (params: IChangeParams<boolean | string>) => {
+    protected handleChangeInput = (
+        params: IChangeParams<string | boolean | TDateRangeValue>,
+    ) => {
         const key = params.name as keyof IDealFilter;
         const value: IDealFilter[keyof IDealFilter] = params.value;
         this.props.onUpdateFilter(key, value);
@@ -40,29 +42,26 @@ export class DealFilterPanel extends React.Component<
         return (
             <div className={cn('deal-filter-panel', this.props.className)}>
                 <DateRangeDropdown
-                    name="deals-date-range-history"
-                    className="sonm-deals-filter__date-range"
-                    value={[
-                        new Date(this.props.dateFrom),
-                        new Date(this.props.dateTo),
-                    ]}
-                    onChange={this.props.handleChangeTime}
+                    name="dateRange"
+                    className="deal-filter-panel__date-range"
+                    value={this.props.dateRange}
+                    onChange={this.handleChangeInput}
                     disabled
                 />
                 <Input
                     name="search-by-address"
                     placeholder="Search by address"
-                    onChange={this.props.handleChangeQuery}
-                    className="sonm-deals-filter__query"
+                    onChange={this.handleChangeInput}
+                    className="deal-filter-panel__query"
                     value={this.props.query}
                     disabled
                 />
                 <Toggler
                     name="deals-active"
-                    className="sonm-deals-filter__active"
+                    className="deal-filter-panel__active"
                     title="Only active"
                     value={this.props.onlyActive}
-                    onChange={this.props.handleChangeActive}
+                    onChange={this.handleChangeInput}
                     disabled
                 />
             </div>

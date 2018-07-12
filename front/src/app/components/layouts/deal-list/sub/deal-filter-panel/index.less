@@ -1,2 +1,23 @@
 .deal-filter-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: flex-start;
+    flex-wrap: wrap;
+
+    &__date-range {
+        width: ~'calc(25% - 5px)';
+        margin: 5px 5px 5px 0;
+    }
+
+    &__query {
+        width: 400px;
+        margin: 5px 30px 15px 5px;
+    }
+
+    &__active {
+        width: 120px;
+        margin: 5px 0;
+    }
 }
