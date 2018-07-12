@@ -5,20 +5,39 @@ import { IFilterStore } from './filter-base';
 export interface IDealFilter {
     address: string;
     query: string;
-    dateFrom: number;
-    dateTo: number;
+    dateRange: [Date, Date];
     onlyActive: boolean;
 }
 
+export interface IDealFilterStoreExternals {
+    market: {
+        marketAccountAddress: string;
+    };
+}
+
 export class DealFilterStore implements IDealFilter, IFilterStore {
+    private config: IDealFilterStoreExternals;
+
+    constructor(config: IDealFilterStoreExternals) {
+        this.config = config;
+        // autorun(() => {
+        //     const fromAddress = config.market.marketAccountAddress;
+        //     this.updateUserInput({ address: fromAddress });
+        // });
+    }
+
+    protected static readonly defaultDateRange: [Date, Date] = [
+        moment('20171201', 'YYYYMMDD').toDate(),
+        moment()
+            .endOf('day')
+            .toDate(),
+    ];
+
     @observable
     public userInput: Partial<IDealFilter> = {
         address: undefined,
         query: undefined,
-        dateFrom: moment('20171201', 'YYYYMMDD').valueOf(),
-        dateTo: moment()
-            .endOf('day')
-            .valueOf(),
+        dateRange: DealFilterStore.defaultDateRange,
         onlyActive: true,
     };
 
@@ -39,17 +58,13 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
 
     @computed
     public get address() {
-        return this.userInput.address || '';
+        console.log('address');
+        return this.config.market.marketAccountAddress; // this.userInput.address || '';
     }
 
     @computed
-    public get dateFrom() {
-        return this.userInput.dateFrom || 0;
-    }
-
-    @computed
-    public get dateTo() {
-        return this.userInput.dateTo || 0;
+    public get dateRange() {
+        return this.userInput.dateRange || DealFilterStore.defaultDateRange;
     }
 
     @computed
@@ -64,13 +79,14 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
 
     @computed
     public get filter(): any {
+        console.log('filter');
         const result: any = {
             address: {
                 $eq: this.address,
             },
             date: {
-                $gte: this.dateFrom,
-                $lte: this.dateTo,
+                $gte: this.dateRange[0].valueOf(),
+                $lte: this.dateRange[1].valueOf(),
             },
             onlyActive: {
                 $eq: this.onlyActive,
@@ -85,6 +101,7 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
 
     @computed
     public get filterAsString(): string {
+        console.log(JSON.stringify(this.filter));
         return JSON.stringify(this.filter);
     }
 }

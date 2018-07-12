@@ -160,7 +160,9 @@ export class RootStore implements IHasLocalizator {
             },
         );
 
-        this.dealFilterStore = new DealFilterStore();
+        this.dealFilterStore = new DealFilterStore({
+            market: this.marketStore,
+        });
 
         this.dealListStore = new DealList(
             {

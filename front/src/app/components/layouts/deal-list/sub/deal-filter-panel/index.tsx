@@ -8,7 +8,8 @@ import { Input } from 'app/components/common/input';
 import Toggler from 'app/components/common/toggler';
 import { IChangeParams } from 'app/components/common/types';
 
-interface IDealFilter {
+// ToDo a move to store?
+export interface IDealFilter {
     query: string;
     dateRange: TDateRangeValue;
     onlyActive: boolean;

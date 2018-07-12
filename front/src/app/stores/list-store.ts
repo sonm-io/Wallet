@@ -81,12 +81,13 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
     protected reactionOnFilter = () => {
         const filter = String(this.reactiveDeps.filter.filterAsString);
-
+        console.log('reactionOnFilter');
         this.updateUserInput({ filter });
     };
 
     protected reactionOnUserInput = () => {
         const userInput = toJS(this.userInput);
+        console.log('reactionOnUserInput');
         if (userInput !== undefined) {
             this.update();
         }
@@ -174,10 +175,12 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
         try {
             const response = yield this.services.api.fetchList(query);
-
+            debugger;
             this.offset = offset;
             this.limit = limit;
             this.records = response.records;
+            console.log('records:');
+            console.log(response.records);
             this.total = response.total;
             this.status = Status.LOADED;
         } catch (e) {
@@ -206,6 +209,9 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         }
 
         this.status = Status.UPDATED;
+
+        console.log('userInput');
+        console.log(this.userInput);
     }
 }
 
