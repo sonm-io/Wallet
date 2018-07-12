@@ -3,6 +3,7 @@ import { Dialog } from 'app/components/common/dialog';
 import { observer } from 'mobx-react';
 
 export interface IProps {
+    address: string;
     currency: string;
     onClickCross: () => void;
 }
@@ -12,7 +13,9 @@ export class Changelly extends React.Component<IProps, {}> {
     public render() {
         const url = `https://changelly.com/widget/v1?auth=email&from=USD&to=${
             this.props.currency
-        }&merchant_id=a836576e0207&address=0x0&amount=100&ref_id=a836576e0207&color=0B1D26`;
+        }&merchant_id=a836576e0207&address=${
+            this.props.address
+        }&amount=100&ref_id=a836576e0207&color=0B1D26`;
         return (
             <Dialog
                 onClickCross={this.props.onClickCross}

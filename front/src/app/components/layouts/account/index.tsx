@@ -152,7 +152,7 @@ export class Account extends React.Component<IProps, any> {
                                                 onClick={this.handleBuySonm}
                                                 id={symbol}
                                             >
-                                                {'Buy ' + symbol}
+                                                {'Buy'}
                                                 <div className="sonm-account__visa-mastercard-icon" />
                                             </div>
                                         ) : null}
@@ -224,6 +224,7 @@ export class Account extends React.Component<IProps, any> {
                     <Changelly
                         onClickCross={this.closeDialog}
                         currency={this.state.currency}
+                        address={rootStore.sendStore.fromAddress}
                     />
                 ) : null}
             </div>
