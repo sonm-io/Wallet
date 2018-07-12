@@ -10,6 +10,7 @@ import Icon from 'antd/es/icon';
 import { Balance } from 'app/components/common/balance-view';
 import { rootStore } from 'app/stores';
 import { TEthereumAddress } from 'app/entities/types';
+import { Changelly } from './sub/changelly';
 
 interface IProps {
     className?: string;
@@ -20,6 +21,13 @@ interface IProps {
 
 enum Dialogs {
     giveMe = 'giveMe',
+    changelly = 'changelly',
+    none = '',
+}
+
+enum Currencies {
+    eth = 'ETH',
+    snm = 'SNM',
     none = '',
 }
 
@@ -27,6 +35,7 @@ enum Dialogs {
 export class Account extends React.Component<IProps, any> {
     public state = {
         visibleDialog: Dialogs.none,
+        currency: Currencies.none,
     };
 
     public componentWillMount() {
@@ -48,8 +57,7 @@ export class Account extends React.Component<IProps, any> {
     };
 
     protected handleSendClick = (event: any) => {
-        const currencyAddress = event.target.name;
-
+        const currencyAddress = event.target.id;
         this.props.onClickSend(currencyAddress);
     };
 
@@ -62,6 +70,20 @@ export class Account extends React.Component<IProps, any> {
         );
 
         await rootStore.mainStore.update();
+    };
+
+    protected handleBuySonm = (event: any) => {
+        this.setState({
+            currency:
+                event.target.id === 'Ether' ? Currencies.eth : Currencies.snm,
+            visibleDialog: Dialogs.changelly,
+        });
+    };
+
+    protected closeDialog = () => {
+        this.setState({
+            visibleDialog: Dialogs.none,
+        });
     };
 
     public render() {
@@ -92,13 +114,16 @@ export class Account extends React.Component<IProps, any> {
                             Coins and tokens
                         </Header>
                         {rootStore.sendStore.currentBalanceList.map(
-                            ({
-                                symbol,
-                                address,
-                                name,
-                                balance,
-                                decimalPointOffset,
-                            }) => {
+                            (
+                                {
+                                    symbol,
+                                    address,
+                                    name,
+                                    balance,
+                                    decimalPointOffset,
+                                },
+                                index,
+                            ) => {
                                 return (
                                     <li
                                         className="sonm-account-token-list__currency"
@@ -120,15 +145,27 @@ export class Account extends React.Component<IProps, any> {
                                                 decimalPointOffset
                                             }
                                         />
-                                        <button
-                                            name={address}
-                                            className="sonm-account-token-list__currency-button"
+                                        {rootStore.mainStore.networkName ===
+                                            'livenet' && index < 2 ? (
+                                            <div
+                                                className="sonm-account__buy-sonm-button"
+                                                onClick={this.handleBuySonm}
+                                                id={symbol}
+                                            >
+                                                {'Buy ' + symbol}
+                                                <div className="sonm-account__visa-mastercard-icon" />
+                                            </div>
+                                        ) : null}
+                                        <div
+                                            className="sonm-account-token-list__currency__send-button"
                                             onClick={this.handleSendClick}
+                                            id={address}
                                         >
                                             {rootStore.localizator.getMessageText(
                                                 'send',
                                             )}
-                                        </button>
+                                            <div className="sonm-account-token-list__currency__send-icon" />
+                                        </div>
                                     </li>
                                 );
                             },
@@ -180,6 +217,14 @@ export class Account extends React.Component<IProps, any> {
                             </Button>
                         </div>
                     </form>
+                ) : null}
+
+                {rootStore.mainStore.networkName === 'livenet' &&
+                this.state.visibleDialog === Dialogs.changelly ? (
+                    <Changelly
+                        onClickCross={this.closeDialog}
+                        currency={this.state.currency}
+                    />
                 ) : null}
             </div>
         );

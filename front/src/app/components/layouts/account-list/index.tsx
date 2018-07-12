@@ -15,7 +15,6 @@ import { EmptyAccountList } from './sub/empty-account-list';
 import { AddToken } from './sub/add-token';
 import { navigate } from 'app/router/navigate';
 import { DeleteAccountConfirmation } from './sub/delete-account-confirmation';
-import { Changelly } from './sub/changelly';
 import { DownloadFile } from 'app/components/common/download-file';
 import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
@@ -123,25 +122,12 @@ export class Wallets extends React.Component<IProps, IState> {
         this.props.navigateToProfile(address);
     };
 
-    protected handleBuySonm = () => {
-        this.switchDialog(WalletDialogs.changelly);
-    };
-
     public render() {
         const { className } = this.props;
 
         return (
             <div className={cn('sonm-accounts', className)}>
                 <div className="sonm-accounts__balances">
-                    {rootStore.mainStore.networkName === 'livenet' ? (
-                        <div
-                            className="sonm-accounts__buy-sonm-button"
-                            onClick={this.handleBuySonm}
-                        >
-                            {'Buy SONM'}
-                            <div className="sonm-accounts__visa_mastercard_icon" />
-                        </div>
-                    ) : null}
                     <DownloadFile
                         getData={rootStore.mainStore.getWalletExportText}
                         className="sonm-accounts__export-wallet-button"
@@ -258,9 +244,6 @@ export class Wallets extends React.Component<IProps, IState> {
                             address={this.state.visibleDialogProps[0]}
                             onClose={this.closeDialog}
                         />
-                    ) : null}
-                    {this.state.visibleDialog === WalletDialogs.changelly ? (
-                        <Changelly onClickCross={this.closeDialog} />
                     ) : null}
                 </div>
             </div>

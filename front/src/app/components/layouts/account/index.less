@@ -11,6 +11,23 @@
     grid-template-rows: min-content auto auto auto;
     grid-gap: @account-padding;
 
+    & &__buy-sonm-button {
+        display: flex;
+        justify-content: space-between;
+        background-color: @color-light-gray;
+        cursor: pointer;
+        padding: 10px 20px 10px 20px;
+        text-transform: uppercase;
+        font-weight: 500;
+        width: 230px;
+        margin-right: 15px;
+    }
+
+    &__visa-mastercard-icon {
+        width: 70px;
+        background: url('./visa_mastercard.png') no-repeat center;
+    }
+
     &__account {
         grid-column: 1;
         grid-row: 1;
@@ -117,29 +134,22 @@
             flex-grow: 1;
         }
 
-        &-button {
-            border-radius: 0;
-            border: 0 solid transparent;
-            outline: 0;
-            background: none transparent;
+        & &__send-button {
+            display: flex;
+            justify-content: space-between;
+            background-color: @color-light-gray;
             cursor: pointer;
-            color: @color-blue;
-            font-weight: bold;
+            padding: 10px 20px 10px 20px;
+            text-transform: uppercase;
+            font-weight: 500;
+            width: 120px;
+        }
 
-            &:after {
-                content: '';
-                background: url(./send.svg) center no-repeat;
-                display: inline-block;
-                width: 20px;
-                height: 20px;
-                vertical-align: sub;
-                margin: 0 0 0 10px;
-            }
-
-            &:focus {
-                outline-offset: 3px;
-                outline: @outline;
-            }
+        &__send-icon {
+            width: 24px;
+            background-color: @color-dark-gray;
+            -webkit-mask: url('./send.svg') no-repeat 50% 50%;
+            mask: url('./send.svg') no-repeat 50% 50%;
         }
     }
 }
