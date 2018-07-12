@@ -2,62 +2,7 @@
 @import './sub/deal-list-item/index';
 @import './sub/deal-filter-panel/index';
 
-// Variables
-
-@deal-list-item-label-fontColor: @color-light-font;
-@deal-list-item-row-height: 25px;
-
 // Component
-
-// ToDo a
-.sonm-deals-filter {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-    align-content: flex-start;
-    flex-wrap: wrap;
-
-    &__date-range {
-        width: ~'calc(25% - 5px)';
-        margin: 5px 5px 5px 0;
-    }
-
-    &__query {
-        width: 400px;
-        margin: 5px 30px 5px 5px;
-    }
-
-    &__active {
-        width: 100px;
-        margin: 5px 0;
-    }
-}
-
-.sonm-deals-list-cell {
-    &__date {
-        width: 210px;
-    }
-
-    &__stats {
-        width: 300px;
-    }
-
-    &__status {
-        width: 70px;
-        text-transform: uppercase;
-    }
-
-    &__price {
-        width: 200px;
-
-        &--green {
-            color: @color-green;
-        }
-    }
-}
-
-// --------------------------- ToDo a
 
 .deal-list {
     &__header-container {
@@ -69,7 +14,7 @@
     }
 
     &__header {
-        --list-header__pagesize-margin: 0 0 0 165px;
+        --list-header__pagesize-margin: 0 0 0 185px;
     }
 
     &__buy-resources-link {

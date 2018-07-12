@@ -31,6 +31,8 @@ export class DealListView extends React.Component<IDealListViewProps, never> {
 
     public render() {
         const p = this.props;
+        console.log('render DealListView');
+        console.log(p.data);
         return (
             <div className="deal-list">
                 {p.filterPanel}
