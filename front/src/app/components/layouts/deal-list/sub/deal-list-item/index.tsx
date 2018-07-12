@@ -15,6 +15,7 @@ interface IDealListItem {
     deal: IDeal;
     buyOrSell: 'buy' | 'sell';
     pendingChangeExists?: boolean;
+    onClick?: (dealId: string) => void;
 }
 
 interface IFromToData {
@@ -54,6 +55,12 @@ export class DealListItem extends React.Component<IDealListItem, never> {
                 : 'Spot deal';
     };
 
+    protected handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        if (this.props.onClick) {
+            this.props.onClick(event.currentTarget.dataset.dealId || '');
+        }
+    };
+
     public render() {
         const p = this.props;
         const fromTo: IFromToData = {
@@ -66,8 +73,13 @@ export class DealListItem extends React.Component<IDealListItem, never> {
                 ? 'deal-list-item--finished'
                 : null,
         );
+
         return (
-            <div className={classes}>
+            <a
+                className={classes}
+                data-deal-id={p.deal.id}
+                onClick={this.handleClick}
+            >
                 <ProfileBrief
                     className="deal-list-item__profile"
                     profile={p.deal.supplier}
@@ -121,7 +133,7 @@ export class DealListItem extends React.Component<IDealListItem, never> {
                     data={fromTo}
                     config={DealListItem.fromToConfig}
                 />
-            </div>
+            </a>
         );
     }
 }
