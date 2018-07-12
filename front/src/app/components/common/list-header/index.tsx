@@ -58,20 +58,20 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                         ))}
                     </div>
                 </div>
-                <div className="list-header__pageSize">
+                <div className="list-header__pagesize">
                     {this.props.pageLimits.map((limit: number) => {
                         return (
                             <button
-                                className="list-header__pageSize-button"
+                                className="list-header__pagesize-button"
                                 key={limit}
                                 value={limit}
                                 onClick={this.handleClickPageLimit}
                             >
                                 <span
                                     className={cn(
-                                        'list-header__pageSize-button-label',
+                                        'list-header__pagesize-button-label',
                                         {
-                                            'list-header__pageSize-button-label--selected':
+                                            'list-header__pagesize-button-label--selected':
                                                 limit === this.props.pageLimit,
                                         },
                                     )}
@@ -83,7 +83,7 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                     })}
                     <button
                         onClick={this.props.onRefresh}
-                        className="list-header__pageSize-refresh"
+                        className="list-header__pagesize-refresh"
                     >
                         <Icon i="Sync" />
                     </button>
