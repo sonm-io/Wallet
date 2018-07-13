@@ -10,6 +10,8 @@ import {
 } from 'app/components/common/property-list';
 import * as moment from 'moment';
 import * as cn from 'classnames';
+import { BalanceUtils } from 'app/components/common/balance-view/utils';
+import { getPricePerHour } from 'app/components/common/price-per-hour/utils';
 
 interface IDealListItem {
     deal: IDeal;
@@ -73,7 +75,18 @@ export class DealListItem extends React.Component<IDealListItem, never> {
                 ? 'deal-list-item--finished'
                 : null,
         );
-
+        const price = BalanceUtils.formatBalance(
+            getPricePerHour(p.deal.price),
+            4,
+            18,
+            true,
+        );
+        const totalPayout = BalanceUtils.formatBalance(
+            p.deal.totalPayout,
+            4,
+            18,
+            true,
+        );
         return (
             <a
                 className={classes}
@@ -99,20 +112,15 @@ export class DealListItem extends React.Component<IDealListItem, never> {
                         <Balance
                             className="deal-list-item__blocked-balance"
                             balance={p.deal.blockedBalance}
-                            decimalDigitAmount={2}
+                            decimalDigitAmount={4}
                             decimalPointOffset={18}
                             symbol="SNM"
                             round
                         />
                     ) : null}
-                    <Balance
-                        className="deal-list-item__price"
-                        balance={p.deal.price}
-                        decimalDigitAmount={2}
-                        decimalPointOffset={18}
-                        symbol="USD/h"
-                        round
-                    />
+                    <div className="deal-list-item__price">
+                        {price} USD/h ({totalPayout} USD total)
+                    </div>
                     <div className="deal-list-item__time-left">
                         {this.getTimeLeft()}
                     </div>
