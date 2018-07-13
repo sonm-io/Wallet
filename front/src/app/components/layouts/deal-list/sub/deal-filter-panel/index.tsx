@@ -7,13 +7,7 @@ import {
 import { Input } from 'app/components/common/input';
 import Toggler from 'app/components/common/toggler';
 import { IChangeParams } from 'app/components/common/types';
-
-// ToDo a move to store?
-export interface IDealFilter {
-    query: string;
-    dateRange: TDateRangeValue;
-    onlyActive: boolean;
-}
+import { IDealFilter } from 'app/stores/deal-filter';
 
 export interface IDealFilterPanelProps extends IDealFilter {
     className?: string;
