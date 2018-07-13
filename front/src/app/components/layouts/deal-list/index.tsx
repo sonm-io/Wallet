@@ -16,7 +16,7 @@ const listStore = rootStore.dealListStore;
 
 const filterStore = rootStore.dealFilterStore;
 
-const emptyFn = () => {}; // ToDo a
+const emptyFn = () => {};
 
 @observer
 export class DealList extends React.Component<IProps, any> {
