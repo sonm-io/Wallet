@@ -21,23 +21,13 @@ export class DealList extends React.Component<IProps, any> {
         super(props);
     }
 
-    // protected syncStores() {
-    //     // ToDo a
-    //     autorun(() => {
-    //         const fromAddress = rootStore.marketStore.marketAccountAddress;
-    //         filterStore.updateUserInput({ address: fromAddress });
-    //     });
-    // }
+    public componentDidMount() {
+        rootStore.dealListStore.startAutoUpdate();
+    }
 
-    // public componentDidMount() {
-    //     if (rootStore.mainStore.accountAddressList.length === 0) {
-    //         // this.props.onNotAvailable();
-    //     } else {
-    //         // rootStore.dealListStore.update();
-    //         // rootStore.marketStore.updateMarketStats();
-    //         this.syncStores();
-    //     }
-    // }
+    public componentWillUnmount() {
+        rootStore.dealListStore.stopAutoUpdate();
+    }
 
     protected handleUpdateFilter = (
         key: keyof IDealFilter,
@@ -61,7 +51,9 @@ export class DealList extends React.Component<IProps, any> {
         return (
             <DealListView
                 data={toJS(listStore.records)}
-                marketAccountAddress={filterStore.address}
+                marketAccountAddress={
+                    rootStore.marketStore.marketAccountAddress
+                }
                 filterPanel={filterPanel}
                 onClickRow={this.props.onClickDeal}
                 onClickBuyResources={emptyFn}

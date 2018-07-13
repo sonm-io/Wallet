@@ -5,8 +5,12 @@ import { observer } from 'mobx-react';
 
 const store = rootStore.kycListStore;
 
+interface IProps {
+    onNavigateDeposit: () => void;
+}
+
 @observer
-export class KycList extends React.Component<{}, never> {
+export class KycList extends React.Component<IProps, never> {
     protected handleSubmitPassword(itemIndex: number, password: string) {
         store.fetchKycLink(itemIndex, password);
     }
@@ -25,6 +29,8 @@ export class KycList extends React.Component<{}, never> {
                 onSubmitPassword={this.handleSubmitPassword}
                 onClickItem={store.select}
                 onCloseBottom={store.unselect}
+                marketBalance={rootStore.marketStore.marketBalance}
+                onNavigateDeposit={this.props.onNavigateDeposit}
             />
         );
     }

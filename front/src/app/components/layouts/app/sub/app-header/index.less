@@ -61,6 +61,27 @@
             color: @color-white;
         }
     }
+
+    &__profile {
+        color: var(--color-nav-menu-selection);
+        height: 40px;
+        width: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid var(--color-nav-menu-selection);
+        border-radius: 50%;
+        box-shadow: 0 0 1px 0px var(--color-nav-menu-selection) inset,
+            0 0 1px 0px var(--color-nav-menu-selection);
+        transition: border 0.25s, box-shadow 0.25s;
+
+        &:hover {
+            color: @color-white;
+            border-color: @color-white;
+            border-radius: 50%;
+            box-shadow: 0 0 1px 0px @color-white inset, 0 0 1px 0px @color-white;
+        }
+    }
 }
 
 .sonm-network {

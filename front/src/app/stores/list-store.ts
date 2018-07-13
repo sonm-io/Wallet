@@ -1,10 +1,17 @@
-import { observable, computed, autorun, action, toJS } from 'mobx';
+import {
+    observable,
+    computed,
+    autorun,
+    action,
+    toJS,
+    autorunAsync,
+} from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Status } from './types';
 import { IErrorProcessor, OnlineStore, IOnlineStore } from './online-store';
 import { ILocalizator } from '../localization/types';
 
-const { pending, catchErrors, debounced } = OnlineStore;
+const { pending, catchErrors } = OnlineStore;
 
 interface IFetchListResult<T> {
     records: Array<T>;
@@ -42,6 +49,8 @@ export interface IListStore<T> extends IOnlineStore {
     hasNextPage: boolean;
     update: () => void;
     updateUserInput: (input: Partial<IUserInput>) => void;
+    startAutoUpdate: () => void;
+    stopAutoUpdate: () => void;
 }
 
 export interface IListQuery {
@@ -75,23 +84,23 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         this.services = services;
         this.reactiveDeps = stores;
 
-        autorun(this.reactionOnFilter);
-        autorun(this.reactionOnUserInput);
+        autorunAsync('change filter', this.reactionOnFilter, 500);
+        autorun('update user input by filter', this.reactionOnUserInput);
     }
 
     protected reactionOnFilter = () => {
-        const filter = String(this.reactiveDeps.filter.filterAsString);
-        console.log('reactionOnFilter');
+        const filter = toJS(this.reactiveDeps.filter.filterAsString);
         this.updateUserInput({ filter });
     };
 
     protected reactionOnUserInput = () => {
         const userInput = toJS(this.userInput);
-        console.log('reactionOnUserInput');
         if (userInput !== undefined) {
             this.update();
         }
     };
+
+    public static readonly AUTO_UPDATE_DELAY = 5000;
 
     protected services: IListStoreServices<TItem>;
 
@@ -148,7 +157,6 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         return this.offset + this.limit < this.total;
     }
 
-    @debounced
     @pending
     @catchErrors({ restart: true })
     @asyncAction
@@ -175,12 +183,9 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
         try {
             const response = yield this.services.api.fetchList(query);
-            debugger;
             this.offset = offset;
             this.limit = limit;
             this.records = response.records;
-            console.log('records:');
-            console.log(response.records);
             this.total = response.total;
             this.status = Status.LOADED;
         } catch (e) {
@@ -209,10 +214,36 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
         }
 
         this.status = Status.UPDATED;
-
-        console.log('userInput');
-        console.log(this.userInput);
     }
+
+    protected updateTick = async () => {
+        if (!this.isAutoUpdateEnabled) {
+            return;
+        }
+
+        await this.update();
+
+        await new Promise(done =>
+            setTimeout(done, ListStore.AUTO_UPDATE_DELAY),
+        );
+
+        if (this.isAutoUpdateEnabled) {
+            this.updateTick();
+        }
+    };
+
+    protected isAutoUpdateEnabled = false;
+
+    public startAutoUpdate = () => {
+        if (this.isAutoUpdateEnabled === false) {
+            this.isAutoUpdateEnabled = true;
+            this.updateTick();
+        }
+    };
+
+    public stopAutoUpdate = () => {
+        this.isAutoUpdateEnabled = false;
+    };
 }
 
 export default ListStore;

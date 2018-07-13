@@ -1,32 +1,22 @@
 import { observable, computed, action } from 'mobx';
 import * as moment from 'moment';
 import { IFilterStore } from './filter-base';
+import { RootStore } from './index';
 
 export interface IDealFilter {
-    address: string;
     query: string;
     dateRange: [Date, Date];
     onlyActive: boolean;
 }
 
-export interface IDealFilterStoreExternals {
-    market: {
-        marketAccountAddress: string;
-    };
-}
-
 export class DealFilterStore implements IDealFilter, IFilterStore {
-    private config: IDealFilterStoreExternals;
+    protected rootStore: RootStore;
 
-    constructor(config: IDealFilterStoreExternals) {
-        this.config = config;
-        // autorun(() => {
-        //     const fromAddress = config.market.marketAccountAddress;
-        //     this.updateUserInput({ address: fromAddress });
-        // });
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
     }
 
-    protected static readonly defaultDateRange: [Date, Date] = [
+    public static defaultDateRange: [Date, Date] = [
         moment('20171201', 'YYYYMMDD').toDate(),
         moment()
             .endOf('day')
@@ -34,9 +24,8 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
     ];
 
     @observable
-    public userInput: Partial<IDealFilter> = {
-        address: undefined,
-        query: undefined,
+    public userInput: IDealFilter = {
+        query: '',
         dateRange: DealFilterStore.defaultDateRange,
         onlyActive: true,
     };
@@ -51,20 +40,14 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
             }
 
             if (values[key] !== undefined) {
-                this.userInput[key] = values[key];
+                this.userInput[key] = values[key] as any;
             }
         });
     }
 
     @computed
-    public get address() {
-        console.log('address');
-        return this.config.market.marketAccountAddress; // this.userInput.address || '';
-    }
-
-    @computed
-    public get dateRange() {
-        return this.userInput.dateRange || DealFilterStore.defaultDateRange;
+    public get dateRange(): [Date, Date] {
+        return this.userInput.dateRange;
     }
 
     @computed
@@ -79,10 +62,9 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
 
     @computed
     public get filter(): any {
-        console.log('filter');
         const result: any = {
             address: {
-                $eq: this.address,
+                $eq: this.rootStore.marketStore.marketAccountAddress,
             },
             date: {
                 $gte: this.dateRange[0].valueOf(),
@@ -101,7 +83,6 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
 
     @computed
     public get filterAsString(): string {
-        console.log(JSON.stringify(this.filter));
         return JSON.stringify(this.filter);
     }
 }
