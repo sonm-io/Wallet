@@ -2,15 +2,20 @@ import * as React from 'react';
 // TODO move from common
 import { OrdersListItem } from 'app/components/common/orders-list-item';
 // TODO move from common?
-import { ListHeader, IListHeader } from 'app/components/common/list-header';
+import {
+    ListHeader,
+    IOrderable,
+    IPageLimits,
+} from 'app/components/common/list-header';
 import { IOrder } from 'app/api/types';
 
-export interface IOrdersProps extends IListHeader {
+export interface IOrdersProps extends IOrderable, IPageLimits {
     className?: string;
     dataSource: Array<IOrder>;
     onClickRow: (orderId: string) => void;
     isListPending: boolean;
     filterPanel: React.ReactElement<any>;
+    onRefresh?: () => void;
 }
 
 export class OrderListView extends React.PureComponent<IOrdersProps, any> {

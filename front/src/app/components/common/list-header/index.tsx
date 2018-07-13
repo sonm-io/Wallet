@@ -15,17 +15,19 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
         event: React.MouseEvent<HTMLButtonElement>,
     ) => {
         const selectedKey = event.currentTarget.value;
-        this.props.onChangeOrder(
-            selectedKey,
-            !(this.props.orderBy === selectedKey && this.props.orderDesc),
-        );
+        if (this.props.onChangeOrder) {
+            this.props.onChangeOrder(
+                selectedKey,
+                !(this.props.orderBy === selectedKey && this.props.orderDesc),
+            );
+        }
     };
 
     protected handleClickPageLimit = (
         event: React.MouseEvent<HTMLButtonElement>,
     ) => {
         const limit = parseInt(event.currentTarget.value, undefined);
-        if (limit !== this.props.pageLimit) {
+        if (limit !== this.props.pageLimit && this.props.onChangeLimit) {
             this.props.onChangeLimit(limit);
         }
     };
@@ -59,8 +61,8 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                     </div>
                 </div>
                 <div className="list-header__pagesize">
-                    {this.props.pageLimits.map((limit: number) => {
-                        return (
+                    {this.props.pageLimits &&
+                        this.props.pageLimits.map((limit: number) => (
                             <button
                                 className="list-header__pagesize-button"
                                 key={limit}
@@ -79,14 +81,15 @@ export class ListHeader extends React.Component<IListHeaderProps, any> {
                                     {limit}
                                 </span>
                             </button>
-                        );
-                    })}
-                    <button
-                        onClick={this.props.onRefresh}
-                        className="list-header__pagesize-refresh"
-                    >
-                        <Icon i="Sync" />
-                    </button>
+                        ))}
+                    {this.props.onRefresh ? (
+                        <button
+                            onClick={this.props.onRefresh}
+                            className="list-header__pagesize-refresh"
+                        >
+                            <Icon i="Sync" />
+                        </button>
+                    ) : null}
                 </div>
             </div>
         );
