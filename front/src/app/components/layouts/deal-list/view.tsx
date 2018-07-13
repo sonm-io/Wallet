@@ -1,16 +1,24 @@
 import * as React from 'react';
 import { IDeal } from 'app/api';
 import { DealListItem } from './sub/deal-list-item';
-import { ListHeader, IListHeader } from 'app/components/common/list-header';
+import { ListHeader, IOrderable } from 'app/components/common/list-header';
 import Icon from 'app/components/common/icon';
+import Pagination from 'antd/es/pagination';
 
-interface IDealListViewProps extends IListHeader {
+interface IHasPaginator {
+    currentPage: number;
+    pageSize: number;
+    totalRecords: number;
+    onChangePage: (page: number, pageSize?: number) => void;
+}
+
+interface IDealListViewProps extends IOrderable, IHasPaginator {
     data: IDeal[];
     marketAccountAddress: string;
     className?: string;
-    filterPanel: React.ReactElement<any>;
     onClickRow: (dealId: string) => void;
     onClickBuyResources: () => void;
+    filterPanel: React.ReactElement<any>;
 }
 
 export class DealListView extends React.Component<IDealListViewProps, never> {
@@ -20,7 +28,6 @@ export class DealListView extends React.Component<IDealListViewProps, never> {
             duration: 'Duration',
             status: 'Owner status',
         },
-        pageLimits: [10, 25, 50, 100],
     };
 
     protected getSide = (deal: IDeal) =>
@@ -31,8 +38,6 @@ export class DealListView extends React.Component<IDealListViewProps, never> {
 
     public render() {
         const p = this.props;
-        console.log('render DealListView');
-        console.log(p.data);
         return (
             <div className="deal-list">
                 {p.filterPanel}
@@ -42,11 +47,7 @@ export class DealListView extends React.Component<IDealListViewProps, never> {
                         orderBy={p.orderBy}
                         orderKeys={DealListView.headerProps.orderKeys}
                         orderDesc={p.orderDesc}
-                        onRefresh={p.onRefresh}
-                        onChangeLimit={p.onChangeLimit}
                         onChangeOrder={p.onChangeOrder}
-                        pageLimit={p.pageLimit}
-                        pageLimits={DealListView.headerProps.pageLimits}
                     />
                     <a
                         className="deal-list__buy-resources-link"
@@ -69,6 +70,14 @@ export class DealListView extends React.Component<IDealListViewProps, never> {
                         onClick={this.props.onClickRow}
                     />
                 ))}
+
+                <Pagination
+                    className="deal-list__paginator"
+                    current={this.props.currentPage}
+                    pageSize={this.props.pageSize}
+                    total={this.props.totalRecords}
+                    onChange={this.props.onChangePage}
+                />
             </div>
         );
     }

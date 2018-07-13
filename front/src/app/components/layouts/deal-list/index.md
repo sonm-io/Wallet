@@ -18,7 +18,7 @@ const filterPanel = (
 <DealListView
     data={data}
     marketAccountAddress={'0xDb12524EfaF41AA1A7beC813E0c5666722894166'}
-    filterPanel={filterPanel}
     onClickRow={id => console.log(id)}
+    filterPanel={filterPanel}
 />;
 ```

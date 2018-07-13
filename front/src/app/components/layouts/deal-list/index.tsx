@@ -3,7 +3,8 @@ import { DealListView } from './view';
 import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
-import { DealFilterPanel, IDealFilter } from './sub/deal-filter-panel';
+import { DealFilterPanel } from './sub/deal-filter-panel';
+import { IDealFilter } from 'app/stores/deal-filter';
 
 interface IProps {
     className?: string;
@@ -11,9 +12,11 @@ interface IProps {
     onClickDeal: (dealId: string) => void;
 }
 
+const listStore = rootStore.dealListStore;
+
 const filterStore = rootStore.dealFilterStore;
 
-const emptyFn = () => {};
+const emptyFn = () => {}; // ToDo a
 
 @observer
 export class DealList extends React.Component<IProps, any> {
@@ -36,9 +39,18 @@ export class DealList extends React.Component<IProps, any> {
         filterStore.updateUserInput({ [key]: value });
     };
 
+    protected handleChangePage = (page: number) => {
+        listStore.updateUserInput({ page });
+    };
+
+    protected handleChangeOrder = (orderKey: string, isDesc: boolean) => {
+        listStore.updateUserInput({
+            sortBy: orderKey,
+            sortDesc: isDesc,
+        });
+    };
+
     public render() {
-        console.log('render DealList');
-        const listStore = rootStore.dealListStore;
         const filterPanel = (
             <DealFilterPanel
                 query={filterStore.query}
@@ -57,12 +69,13 @@ export class DealList extends React.Component<IProps, any> {
                 filterPanel={filterPanel}
                 onClickRow={this.props.onClickDeal}
                 onClickBuyResources={emptyFn}
-                orderBy={''}
-                orderDesc={false}
-                pageLimit={10}
-                onChangeLimit={emptyFn}
-                onChangeOrder={emptyFn}
-                onRefresh={emptyFn}
+                orderBy={listStore.sortBy}
+                orderDesc={listStore.sortDesc}
+                onChangeOrder={this.handleChangeOrder}
+                currentPage={listStore.page}
+                pageSize={listStore.limit}
+                totalRecords={listStore.records.length}
+                onChangePage={this.handleChangePage}
             />
         );
     }
