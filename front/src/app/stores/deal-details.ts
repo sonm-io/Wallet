@@ -11,6 +11,8 @@ import { RootStore } from './';
 export interface IDealDetailsInput {
     password: string;
     isBlacklisted: boolean;
+    newPrice: string;
+    newDuration: string;
 }
 
 export interface IDealDetailsStoreServices {
@@ -25,6 +27,13 @@ export interface IDealDetailsStoreApi {
         password: string,
         dealId: string,
         isBlacklisted: boolean,
+    ) => {};
+    createChangeRequest: (
+        accountAddress: string,
+        password: string,
+        dealId: string,
+        newPrice: string,
+        newDuration: string,
     ) => {};
     fetchById: (id: string) => Promise<IDeal>;
 }
@@ -109,6 +118,8 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     public userInput: IDealDetailsInput = {
         password: '',
         isBlacklisted: false,
+        newPrice: '',
+        newDuration: '',
     };
 
     @observable
@@ -133,7 +144,13 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
 
     @pending
     @asyncAction
-    public *submit() {
+    public *update() {
+        this.deal = yield this.api.fetchById(this.dealId);
+    }
+
+    @pending
+    @asyncAction
+    public *finish() {
         const password = this.password;
         const id = this.dealId;
         const isBlacklisted = this.isBlacklisted;
@@ -176,9 +193,66 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         }
     }
 
+    @pending
+    @asyncAction
+    public *createChangeRequest() {
+        const password = this.password;
+        const id = this.dealId;
+        const newPrice = this.newPrice;
+        const newDuration = this.newDuration;
+        const accountAddress = this.externalStores.market.marketAccountAddress;
+
+        const { data, validation } = yield this.api.createChangeRequest(
+            accountAddress,
+            password,
+            id,
+            newPrice,
+            newDuration,
+        );
+
+        if (validation && validation.password) {
+            this.serverValidation.password = this.services.localizator.getMessageText(
+                validation.password,
+            );
+        } else {
+            let alert;
+
+            if (data.status === EnumTransactionStatus.fail) {
+                alert = {
+                    type: AlertType.error,
+                    message: this.localizator.getMessageText([
+                        'deal_finish_failed',
+                        [id, data.transactionHash],
+                    ]),
+                };
+            } else {
+                alert = {
+                    type: AlertType.success,
+                    message: this.localizator.getMessageText([
+                        'deal_finish_success',
+                        [id, data.transactionHash],
+                    ]),
+                };
+            }
+
+            this.serverValidation.password = '';
+            this.rootStore.uiStore.addAlert(alert);
+        }
+    }
+
     @computed
     public get password() {
         return this.userInput.password;
+    }
+
+    @computed
+    public get newPrice() {
+        return this.userInput.newPrice;
+    }
+
+    @computed
+    public get newDuration() {
+        return this.userInput.newDuration;
     }
 
     @computed
