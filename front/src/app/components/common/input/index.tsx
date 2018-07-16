@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IChengableProps, IFocusable } from '../types';
+import { IChangeableProps, IFocusable } from '../types';
 
-export interface ITextInputProps extends IChengableProps<string> {
+export interface ITextInputProps extends IChangeableProps<string> {
     autoFocus?: boolean;
     prefix?: string;
     onChangeDeprecated?: (event: any) => void;
