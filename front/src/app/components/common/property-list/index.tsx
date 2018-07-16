@@ -10,25 +10,45 @@ export interface IPropertyListCssClasses {
     header: string;
 }
 
-export interface IPropertyItemConfig<T = string, TData = any> {
-    name: string;
-    key: T;
-    render?: (value: any, dataSource: IDictionary<TData>) => React.ReactNode;
+interface IConfigItemBase {
+    /**
+     * If name is not specified then show id as name.
+     */
+    name?: string;
 }
 
-interface IPropertyListProps<T> {
+interface IConfigItemWithKey<TData> extends IConfigItemBase {
+    type?: 'single';
+    id: keyof TData;
+    renderValue?: (value: any) => React.ReactNode;
+}
+
+interface IConfigItemWithRender<TData, TId> extends IConfigItemBase {
+    type: 'composite';
+    id?: TId;
+    render: (data: TData) => React.ReactNode;
+}
+
+export type IPropertyItemConfig<TData = any, TId = never> =
+    | IConfigItemWithKey<TData>
+    | IConfigItemWithRender<TData, TId>;
+
+interface IPropertyListProps<
+    TData extends IDictionary<TData> = any,
+    TId = never
+> {
     className?: string;
-    dataSource: IDictionary<T>;
-    config: Array<IPropertyItemConfig<keyof T | undefined, T>>;
+    data: TData;
+    config: Array<IPropertyItemConfig<TData, TId>>;
     title?: string;
     cssClasses?: Partial<IPropertyListCssClasses>;
 }
 
-export class PropertyList<T = any> extends React.Component<
-    IPropertyListProps<T>,
+export class PropertyList<TData = any, TId = never> extends React.Component<
+    IPropertyListProps<TData, TId>,
     never
 > {
-    public static readonly renders = {
+    public static readonly renderers = {
         booleanYesNo: (value: boolean): string => (value ? 'Yes' : 'No'),
     };
 
@@ -39,8 +59,11 @@ export class PropertyList<T = any> extends React.Component<
         header: 'property-list__header',
     };
 
+    protected static toStr = (value: any) =>
+        value === undefined ? '' : String(value);
+
     public render() {
-        const p: IPropertyListProps<T> = this.props;
+        const p = this.props;
         const cssClasses = p.cssClasses || PropertyList.defaultCssClasses;
         return (
             <div
@@ -50,19 +73,19 @@ export class PropertyList<T = any> extends React.Component<
                 {p.title ? (
                     <h4 className={cssClasses.header}>{p.title}</h4>
                 ) : null}
-                {p.config.map(({ name, key, render }) => {
+                {p.config.map(configItem => {
+                    const name = configItem.name || String(configItem.id);
                     const value =
-                        key !== undefined && p.dataSource[key] !== undefined
-                            ? p.dataSource[key]
-                            : '';
+                        configItem.type === 'composite'
+                            ? configItem.render(p.data)
+                            : configItem.renderValue
+                                ? configItem.renderValue(p.data[configItem.id])
+                                : PropertyList.toStr(p.data[configItem.id]);
+
                     return (
                         <React.Fragment key={name}>
                             <div className={cssClasses.label}>{name}</div>
-                            <div className={cssClasses.value}>
-                                {render
-                                    ? render(value, p.dataSource)
-                                    : String(value)}
-                            </div>
+                            <div className={cssClasses.value}>{value}</div>
                         </React.Fragment>
                     );
                 })}

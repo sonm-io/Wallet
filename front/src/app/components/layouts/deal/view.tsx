@@ -2,7 +2,10 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { IAccountBrief, IBenchmarkMap } from 'app/api/types';
 import { Benchmark } from 'app/components/common/benchmark';
-import { PropertyList } from 'app/components/common/property-list';
+import {
+    PropertyList,
+    IPropertyItemConfig,
+} from 'app/components/common/property-list';
 import { ProfileBrief } from 'app/components/common/profile-brief';
 import { Button } from 'app/components/common/button';
 import { Checkbox } from 'app/components/common/checkbox';
@@ -12,6 +15,17 @@ import { ITogglerChangeParams } from 'app/components/common/toggler';
 import * as moment from 'moment';
 import formatSeconds from 'app/utils/format-seconds';
 import { PricePerHour } from 'app/components/common/price-per-hour';
+
+interface IDealData {
+    id: string;
+    startTime: number;
+    endTime: number;
+    timeLeft: number;
+    blockedBalance: string;
+    status: number;
+    supplierAddress: string;
+    consumerAddress: string;
+}
 
 interface IProps {
     className?: string;
@@ -23,16 +37,7 @@ interface IProps {
     benchmarkMap: IBenchmarkMap;
     marketAccountAddress: string;
     showButtons: boolean;
-    propertyList: {
-        id: string;
-        startTime: number;
-        endTime: number;
-        timeLeft: number;
-        blockedBalance: string;
-        status: number;
-        supplierAddress: string;
-        consumerAddress: string;
-    };
+    propertyList: IDealData;
     onFinishDeal: (password: string) => void;
     onShowConfirmationPanel: () => void;
     onHideConfirmationPanel: () => void;
@@ -43,26 +48,26 @@ interface IProps {
 }
 
 export class DealView extends React.Component<IProps, never> {
-    private config = [
+    private config: Array<IPropertyItemConfig<IDealData>> = [
         {
             name: 'Deal ID',
-            key: 'id',
+            id: 'id',
         },
         {
             name: 'Deal status',
-            key: 'status',
-            render: (value: string) => (value ? 'Active' : 'Close'),
+            id: 'status',
+            renderValue: (value: string) => (value ? 'Active' : 'Close'),
         },
         {
             name: 'Start',
-            key: 'startTime',
-            render: (value: string) =>
+            id: 'startTime',
+            renderValue: (value: string) =>
                 moment.unix(parseInt(value, 10)).format('D MMM YYYY | H:mm'),
         },
         {
             name: 'Finish',
-            key: 'endTime',
-            render: (value: any) =>
+            id: 'endTime',
+            renderValue: (value: any) =>
                 value
                     ? moment
                           .unix(parseInt(value, 10))
@@ -71,14 +76,14 @@ export class DealView extends React.Component<IProps, never> {
         },
         {
             name: 'Time left',
-            key: 'timeLeft',
-            render: (value: number) =>
+            id: 'timeLeft',
+            renderValue: (value: number) =>
                 value ? `${formatSeconds(value)} left` : '---',
         },
         {
             name: 'Type',
-            key: 'consumerAddress',
-            render: (value: string) =>
+            id: 'consumerAddress',
+            renderValue: (value: string) =>
                 this.props.marketAccountAddress.toLowerCase() ===
                 value.toLowerCase()
                     ? 'Buy'
@@ -86,8 +91,9 @@ export class DealView extends React.Component<IProps, never> {
         },
         {
             name: 'Executed payment',
-            key: 'blockedBalance',
-            render: (value: string) => `${moveDecimalPoint(value, -18, 2)} SNM`,
+            id: 'blockedBalance',
+            renderValue: (value: string) =>
+                `${moveDecimalPoint(value, -18, 2)} SNM`,
         },
     ];
 
@@ -118,7 +124,7 @@ export class DealView extends React.Component<IProps, never> {
                     <div className="sonm-deal__column-left__details">
                         <h4 className="sonm-deal__header">Details</h4>
                         <PropertyList
-                            dataSource={p.propertyList}
+                            data={p.propertyList}
                             config={this.config}
                         />
                     </div>

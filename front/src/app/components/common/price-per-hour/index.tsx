@@ -1,6 +1,6 @@
 import { Balance } from '../balance-view/index';
 import * as React from 'react';
-import { BN } from 'bn.js';
+import { getPricePerHour } from './utils';
 
 interface IState {
     usdWeiPerHour: string;
@@ -12,8 +12,6 @@ interface IProps {
     className?: string;
 }
 
-const SEC_IN_HOUR = new BN('3600');
-
 export class PricePerHour extends React.PureComponent<IProps, IState> {
     public state = {
         usdWeiPerHour: '',
@@ -23,9 +21,7 @@ export class PricePerHour extends React.PureComponent<IProps, IState> {
     public static getDerivedStateFromProps(props: IProps, state: IState) {
         if (state.usdWeiPerSeconds !== props.usdWeiPerSeconds) {
             return {
-                usdWeiPerHour: new BN(props.usdWeiPerSeconds)
-                    .mul(SEC_IN_HOUR)
-                    .toString(),
+                usdWeiPerHour: getPricePerHour(props.usdWeiPerSeconds),
             };
         }
         return null;

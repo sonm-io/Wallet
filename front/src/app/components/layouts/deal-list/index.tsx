@@ -3,12 +3,8 @@ import { DealListView } from './view';
 import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
-import { IDateRangeChangeParams } from 'app/components/common/date-range-dropdown';
-import { ITogglerChangeParams } from 'app/components/common/toggler';
-import * as debounce from 'lodash/fp/debounce';
-import { IDeal } from 'app/api/types';
-
-const debounce500 = debounce(500);
+import { DealFilterPanel } from './sub/deal-filter-panel';
+import { IDealFilter } from 'app/stores/deal-filter';
 
 interface IProps {
     className?: string;
@@ -16,14 +12,14 @@ interface IProps {
     onClickDeal: (dealId: string) => void;
 }
 
+const listStore = rootStore.dealListStore;
+
 const filterStore = rootStore.dealFilterStore;
+
+const emptyFn = () => {};
 
 @observer
 export class DealList extends React.Component<IProps, any> {
-    public state = {
-        query: '',
-    };
-
     constructor(props: IProps) {
         super(props);
     }
@@ -36,53 +32,53 @@ export class DealList extends React.Component<IProps, any> {
         rootStore.dealListStore.stopAutoUpdate();
     }
 
-    protected handleChangeTime = (params: IDateRangeChangeParams) => {
-        filterStore.updateUserInput({
-            dateFrom: params.value[0].valueOf(),
-            dateTo: params.value[1].valueOf(),
-        });
+    protected handleUpdateFilter = (
+        key: keyof IDealFilter,
+        value: string | boolean | [Date, Date],
+    ) => {
+        filterStore.updateUserInput({ [key]: value });
     };
 
-    protected handleChangeQuery = (event: any) => {
-        const query = event.target.value;
-
-        this.setState({ query });
-        this.setQueryDebonced(query);
+    protected handleChangePage = (page: number) => {
+        listStore.updateUserInput({ page });
     };
 
-    protected setQueryDebonced = debounce500((query: string) => {
-        filterStore.updateUserInput({
-            query,
+    protected handleChangeOrder = (orderKey: string, isDesc: boolean) => {
+        listStore.updateUserInput({
+            sortBy: orderKey,
+            sortDesc: isDesc,
         });
-    });
-
-    protected handleChangeActive = (change: ITogglerChangeParams) => {
-        filterStore.updateUserInput({
-            onlyActive: change.value,
-        });
-    };
-
-    public handleRowClick = (record: IDeal) => {
-        this.props.onClickDeal(record.id);
     };
 
     public render() {
-        const listStore = rootStore.dealListStore;
-        const dataSource = toJS(listStore.records);
+        const filterPanel = (
+            <DealFilterPanel
+                query={filterStore.query}
+                dateRange={filterStore.dateRange}
+                onlyActive={filterStore.onlyActive}
+                onUpdateFilter={this.handleUpdateFilter}
+            />
+        );
 
         return (
             <DealListView
-                dataSource={dataSource}
+                data={toJS(listStore.records)}
                 marketAccountAddress={
                     rootStore.marketStore.marketAccountAddress
                 }
-                handleChangeQuery={this.handleChangeQuery}
-                handleChangeTime={this.handleChangeTime}
-                handleChangeActive={this.handleChangeActive}
-                filterStore={filterStore}
-                queryValue={this.state.query}
-                onClickRow={this.handleRowClick}
+                filterPanel={filterPanel}
+                onClickRow={this.props.onClickDeal}
+                onClickBuyResources={emptyFn}
+                orderBy={listStore.sortBy}
+                orderDesc={listStore.sortDesc}
+                onChangeOrder={this.handleChangeOrder}
+                currentPage={listStore.page}
+                pageSize={listStore.limit}
+                totalRecords={listStore.records.length}
+                onChangePage={this.handleChangePage}
             />
         );
     }
 }
+
+export { DealListView };

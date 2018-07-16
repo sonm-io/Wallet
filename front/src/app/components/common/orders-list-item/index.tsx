@@ -3,14 +3,9 @@ import { IOrdersListItemProps } from './types';
 import { PricePerHour } from '../price-per-hour';
 import * as cn from 'classnames';
 import { ProfileBrief } from 'app/components/common/profile-brief';
-import {
-    IPropertyItemConfig,
-    PropertyList,
-    IPropertyListCssClasses,
-} from 'app/components/common/property-list';
-import { IBenchmarkMap } from '../../../api';
-import Icon from '../icon';
+import { IPropertyListCssClasses } from 'app/components/common/property-list';
 import formatSeconds from 'app/utils/format-seconds';
+import Benchmark from '../benchmark';
 
 export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
     protected handleClick = (event: any) => {
@@ -18,81 +13,6 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
 
         this.props.onClick(this.props.order);
     };
-
-    protected static dash = (
-        <span className="orders-list-item__dash">&mdash;&mdash;</span>
-    );
-
-    protected static benchmarksConfig: Array<
-        IPropertyItemConfig<keyof IBenchmarkMap | undefined, IBenchmarkMap>
-    > = [
-        {
-            name: 'CPU',
-            key: undefined,
-            render: (_: any, data: Partial<IBenchmarkMap>) =>
-                `${data.cpuSysbenchMulti} (${data.cpuCount} threads)`,
-        },
-        {
-            name: 'Network speed',
-            key: undefined,
-            render: (_: number, data: Partial<IBenchmarkMap>) =>
-                data.uploadNetSpeed === 0 && data.downloadNetSpeed === 0 ? (
-                    OrdersListItem.dash
-                ) : (
-                    <div className="orders-list-item__network-speed">
-                        {data.uploadNetSpeed}
-                        <Icon i="ArrowUp" /> {data.downloadNetSpeed}
-                        <Icon i="ArrowDown" /> Mbps
-                    </div>
-                ),
-        },
-        {
-            name: 'Redshift benchmark',
-            key: 'redshiftGpu',
-            render: (value: number) =>
-                value === 0 ? OrdersListItem.dash : `${value} K/Ex. time in s`,
-        },
-        {
-            name: 'RAM',
-            key: 'ramSize',
-            render: (value: number) =>
-                value === 0 ? OrdersListItem.dash : `${value} MB`,
-        },
-        {
-            name: 'GPU #',
-            key: 'gpuCount',
-            render: (value: number) =>
-                value === 0
-                    ? OrdersListItem.dash
-                    : value === 1
-                        ? `${value} unit`
-                        : `${value} units`,
-        },
-        {
-            name: 'GPU Ethash',
-            key: 'ethHashrate',
-            render: (value: number) =>
-                value === 0 ? OrdersListItem.dash : `${value} MH/s`,
-        },
-        {
-            name: 'Storage',
-            key: 'storageSize',
-            render: (value: number) =>
-                value === 0 ? OrdersListItem.dash : `${value} GB`,
-        },
-        {
-            name: 'GPU RAM',
-            key: 'gpuRamSize',
-            render: (value: number) =>
-                value === 0 ? OrdersListItem.dash : `${value} MB`,
-        },
-        {
-            name: 'GPU Equihash',
-            key: 'zcashHashrate',
-            render: (value: number) =>
-                value === 0 ? OrdersListItem.dash : `${value} sol/s`,
-        },
-    ];
 
     protected static benchmarksCssClasses: Partial<IPropertyListCssClasses> = {
         root: 'orders-list-item__benchmarks',
@@ -140,11 +60,11 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 ) : null}
 
                 {/* Benchmarks */}
-                <PropertyList
-                    className="orders-list-item__benchmarks"
+                <Benchmark
                     cssClasses={OrdersListItem.benchmarksCssClasses}
-                    config={OrdersListItem.benchmarksConfig}
-                    dataSource={this.props.order.benchmarkMap}
+                    data={this.props.order.benchmarkMap}
+                    ids={Benchmark.gridItemIds}
+                    names={Benchmark.gridItemNames}
                 />
             </a>
         );

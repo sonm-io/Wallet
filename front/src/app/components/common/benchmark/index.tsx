@@ -3,162 +3,257 @@ import { IBenchmarkMap } from 'app/api/types';
 import {
     PropertyList,
     IPropertyItemConfig,
-    IDictionary,
+    IPropertyListCssClasses,
 } from '../property-list';
+import Icon from 'app/components/common/icon';
+
+enum EnumCompositeBenchmarks {
+    cpu = 'cpu',
+    networkSpeed = 'networkSpeed',
+}
+
+type IBenchmarkId = keyof IBenchmarkMap | EnumCompositeBenchmarks;
+type IBenchmarkNames = { [key in IBenchmarkId]?: string };
+type IBenchmarkConfigItem = IPropertyItemConfig<
+    Partial<IBenchmarkMap>,
+    EnumCompositeBenchmarks
+>;
 
 interface IBenchmarkProps {
     className?: string;
-    keys?: Array<keyof IBenchmarkMap>;
-    data: Partial<IBenchmarkMap>;
+    cssClasses?: Partial<IPropertyListCssClasses>;
     title?: string;
+    data: Partial<IBenchmarkMap>;
+    /**
+     * If config is not specified, then BenchmarkList.defaultConfig will be used.
+     */
+    config?: IBenchmarkConfigItem[];
+    /**
+     * If ids passed, then only that benchmarks will be shown in specified order.
+     */
+    ids?: IBenchmarkId[];
+    /**
+     * Pass it to override benchmark names in config.
+     */
+    names?: IBenchmarkNames;
 }
 
 interface IState {
-    keys: Array<keyof IBenchmarkMap>;
-    config: Array<IPropertyItemConfig<keyof IBenchmarkMap>>;
-    data: Partial<IBenchmarkMap>;
-    propertyList: IDictionary<IBenchmarkMap>;
+    config: IBenchmarkConfigItem[];
+    ids?: IBenchmarkId[];
+    names?: IBenchmarkNames;
 }
 
-class BenchmarkList extends PropertyList<IBenchmarkMap> {}
+class BenchmarkPropertyList extends PropertyList<
+    Partial<IBenchmarkMap>,
+    EnumCompositeBenchmarks
+> {}
 
 export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
     public state: IState = {
         config: Array.prototype,
-        keys: Array.prototype,
-        data: {},
-        propertyList: {},
     };
 
-    public static readonly emptyBenchmark: IBenchmarkMap = {
-        cpuSysbenchMulti: 0,
-        cpuSysbenchOne: 0,
-        cpuCount: 0,
-        gpuCount: 0,
-        ethHashrate: 0,
-        ramSize: 0,
-        storageSize: 0,
-        downloadNetSpeed: 0,
-        uploadNetSpeed: 0,
-        gpuRamSize: 0,
-        zcashHashrate: 0,
-        redshiftGpu: 0,
-        networkOverlay: false,
-        networkOutbound: false,
-        networkIncoming: false,
-    };
+    protected static readonly dash = (
+        <span className="benchmark__dash">&mdash;&mdash;</span>
+    );
 
-    public static readonly defaultConfig: Array<
-        IPropertyItemConfig<keyof IBenchmarkMap>
-    > = [
+    protected static overrideNames = (
+        config: IBenchmarkConfigItem[],
+        names: IBenchmarkNames,
+    ): IBenchmarkConfigItem[] =>
+        config.map(
+            cfg =>
+                cfg.id === undefined || names[cfg.id] === undefined
+                    ? cfg
+                    : { ...cfg, name: names[cfg.id] },
+        );
+
+    // #region Configuragion presets
+
+    protected static readonly allBenchmarks: IBenchmarkConfigItem[] = [
         {
-            key: 'cpuSysbenchMulti',
-            name: 'Benchmark multicore',
+            id: 'cpuSysbenchMulti',
         },
         {
-            key: 'cpuSysbenchOne',
-            name: 'Benchmark one core',
+            id: 'cpuSysbenchOne',
         },
         {
-            key: 'cpuCount',
-            name: 'CPU Count',
+            id: 'cpuCount',
         },
         {
-            key: 'gpuCount',
-            name: 'GPU Count',
+            id: 'gpuCount',
+            renderValue: (value: number) =>
+                value === 0
+                    ? Benchmark.dash
+                    : value === 1
+                        ? `${value} unit`
+                        : `${value} units`,
         },
         {
-            key: 'ethHashrate',
-            name: 'GPU Ethash',
-            render: value => `${value} MH/s`,
+            id: 'ethHashrate',
+            renderValue: value =>
+                value === 0 ? Benchmark.dash : `${value} MH/s`,
         },
         {
-            key: 'ramSize',
-            name: 'RAM size',
-            render: value => `${value} MB`,
+            id: 'ramSize',
+            renderValue: value =>
+                value === 0 ? Benchmark.dash : `${value} MB`,
         },
         {
-            key: 'storageSize',
-            name: 'Storage size',
-            render: value => `${value} GB`,
+            id: 'storageSize',
+            renderValue: value =>
+                value === 0 ? Benchmark.dash : `${value} GB`,
         },
         {
-            key: 'downloadNetSpeed',
-            name: 'Download net speed',
-            render: value => `${value} Mbps`,
+            id: 'downloadNetSpeed',
+            renderValue: value => `${value} Mbps`,
         },
         {
-            key: 'uploadNetSpeed',
-            name: 'Upload net speed',
-            render: value => `${value} Mbps`,
+            id: 'uploadNetSpeed',
+            renderValue: value => `${value} Mbps`,
         },
         {
-            key: 'gpuRamSize',
-            name: 'GPU RAM size',
-            render: value => `${value} MB`,
+            id: 'gpuRamSize',
+            renderValue: value =>
+                value === 0 ? Benchmark.dash : `${value} MB`,
         },
         {
-            key: 'zcashHashrate',
-            name: 'GPU Equihash',
-            render: value => `${value} h/sol`,
+            id: 'zcashHashrate',
+            renderValue: value =>
+                value === 0 ? Benchmark.dash : `${value} sol/s`,
         },
         {
-            key: 'redshiftGpu',
-            name: 'Redshift',
-            render: value => `${value}`,
+            id: 'redshiftGpu',
+            renderValue: value =>
+                value === 0 ? Benchmark.dash : `${value} K/Ex. time in s`,
         },
         {
-            key: 'networkOverlay',
-            name: 'Overlay is allowed',
-            render: PropertyList.renders.booleanYesNo,
+            id: 'networkOverlay',
+            renderValue: PropertyList.renderers.booleanYesNo,
         },
         {
-            key: 'networkOutbound',
-            name: 'Outbound connection is allowed',
-            render: PropertyList.renders.booleanYesNo,
+            type: 'single',
+            id: 'networkOutbound',
+            renderValue: PropertyList.renderers.booleanYesNo,
         },
         {
-            key: 'networkIncoming',
-            name: 'Incoming connection is allowed',
-            render: PropertyList.renders.booleanYesNo,
+            id: 'networkIncoming',
+            renderValue: PropertyList.renderers.booleanYesNo,
+        },
+        // Composite benchmarks:
+        {
+            type: 'composite',
+            id: EnumCompositeBenchmarks.cpu,
+            render: data =>
+                `${data.cpuSysbenchMulti} (${data.cpuCount} threads)`,
+        },
+        {
+            type: 'composite',
+            id: EnumCompositeBenchmarks.networkSpeed,
+            render: data =>
+                data.uploadNetSpeed === 0 && data.downloadNetSpeed === 0 ? (
+                    Benchmark.dash
+                ) : (
+                    <div className="benchmark__network-speed">
+                        {data.uploadNetSpeed}
+                        <Icon i="ArrowUp" /> {data.downloadNetSpeed}
+                        <Icon i="ArrowDown" /> Mbps
+                    </div>
+                ),
         },
     ];
+
+    public static detailsPanelNames: IBenchmarkNames = {
+        cpuSysbenchMulti: 'Benchmark multicore',
+        cpuSysbenchOne: 'Benchmark one core',
+        cpuCount: 'CPU Count',
+        gpuCount: 'GPU Count',
+        ethHashrate: 'GPU Ethash',
+        ramSize: 'RAM size',
+        storageSize: 'Storage size',
+        downloadNetSpeed: 'Download net speed',
+        uploadNetSpeed: 'Upload net speed',
+        gpuRamSize: 'GPU RAM size',
+        zcashHashrate: 'GPU Equihash',
+        redshiftGpu: 'Redshift',
+        networkOverlay: 'Overlay is allowed',
+        networkOutbound: 'Outbound connection is allowed',
+        networkIncoming: 'Incoming connection is allowed',
+    };
+
+    public static detailsPanelIds: IBenchmarkId[] = Object.keys(
+        Benchmark.detailsPanelNames,
+    ) as IBenchmarkId[];
+
+    public static gridItemNames: IBenchmarkNames = {
+        [EnumCompositeBenchmarks.cpu]: 'CPU',
+        [EnumCompositeBenchmarks.networkSpeed]: 'Network speed',
+        redshiftGpu: 'Redshift benchmark',
+        ramSize: 'RAM',
+        gpuCount: 'GPU #',
+        ethHashrate: 'GPU Ethash',
+        storageSize: 'Storage',
+        gpuRamSize: 'GPU RAM',
+        zcashHashrate: 'GPU Equihash',
+    };
+
+    public static gridItemIds: IBenchmarkId[] = [
+        EnumCompositeBenchmarks.cpu,
+        EnumCompositeBenchmarks.networkSpeed,
+        'redshiftGpu',
+        'ramSize',
+        'gpuCount',
+        'ethHashrate',
+        'storageSize',
+        'gpuRamSize',
+        'zcashHashrate',
+    ];
+
+    // #endregion
 
     public static getDerivedStateFromProps(
         nextProps: IBenchmarkProps,
         prevState: IState,
     ) {
-        if (
-            nextProps.keys !== prevState.keys ||
-            nextProps.data !== prevState.data
-        ) {
-            const keys = nextProps.keys;
-            const data = nextProps.data;
-            const config = (keys !== undefined && keys.length > 0
-                ? Benchmark.defaultConfig.filter(x => keys.indexOf(x.key) > -1)
-                : Benchmark.defaultConfig
-            ).filter(x => x.key in data);
+        const ids = nextProps.ids;
+        const names = nextProps.names;
 
+        if (
+            ids !== prevState.ids ||
+            names !== prevState.names ||
+            nextProps.config !== prevState.config
+        ) {
+            let config = nextProps.config || Benchmark.allBenchmarks;
+            if (ids) {
+                config = ids
+                    .filter(id => config.some(cfg => cfg.id === id))
+                    .map(
+                        id =>
+                            config.find(
+                                cfg => cfg.id === id,
+                            ) as IBenchmarkConfigItem,
+                    );
+            }
+            if (names) {
+                config = Benchmark.overrideNames(config, names);
+            }
             return {
-                keys: nextProps.keys,
-                data: nextProps.data,
                 config,
-                propertyList: config.reduce<IDictionary<IBenchmarkMap>>(
-                    (acc, x) => ((acc[x.key] = data[x.key]), acc),
-                    {},
-                ),
+                names,
+                ids,
             };
         }
-
         return null;
     }
 
     public render() {
         return (
-            <BenchmarkList
-                title={this.props.title}
+            <BenchmarkPropertyList
                 className={this.props.className}
-                dataSource={this.state.propertyList}
+                cssClasses={this.props.cssClasses}
+                title={this.props.title}
+                data={this.props.data}
                 config={this.state.config}
             />
         );
