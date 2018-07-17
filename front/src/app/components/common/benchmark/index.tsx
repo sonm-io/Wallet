@@ -69,7 +69,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
                     : { ...cfg, name: names[cfg.id] },
         );
 
-    // #region Configuragion presets
+    //#region Configuragion presets
 
     protected static readonly allBenchmarks: IBenchmarkConfigItem[] = [
         {
@@ -210,7 +210,7 @@ export class Benchmark extends React.PureComponent<IBenchmarkProps, IState> {
         'zcashHashrate',
     ];
 
-    // #endregion
+    //#endregion
 
     public static getDerivedStateFromProps(
         nextProps: IBenchmarkProps,
