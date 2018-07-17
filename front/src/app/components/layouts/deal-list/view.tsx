@@ -26,7 +26,7 @@ export class DealListView extends React.Component<IDealListViewProps, never> {
         orderKeys: {
             price: 'Price',
             duration: 'Duration',
-            status: 'Owner status',
+            // status: 'Owner status',
         },
     };
 

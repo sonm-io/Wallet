@@ -304,6 +304,10 @@ export class DWH {
                     field: sortField,
                     order: sortDesc ? 1 : 0,
                 },
+                {
+                    field: 'id',
+                    order: 0,
+                },
             ],
             counterpartyID: [
                 '0x0000000000000000000000000000000000000000',
@@ -379,7 +383,7 @@ export class DWH {
             gpuCount: benchmarks.values[7] || 0,
             gpuRamSize: Math.round(benchmarks.values[8] / MB_SIZE) || 0,
             ethHashrate:
-                Math.round(100 * benchmarks.values[9] / MB_SIZE) / 100 || 0,
+                Math.round((100 * benchmarks.values[9]) / MB_SIZE) / 100 || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
@@ -431,10 +435,27 @@ export class DWH {
         limit,
         offset,
         filter,
+        sortBy,
+        sortDesc,
     }: t.IListQuery): Promise<t.IListResult<t.IDeal>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
+        tcomb.maybe(tcomb.String)(sortBy);
+        tcomb.maybe(tcomb.Boolean)(sortDesc);
+
+        let sortField = 'StartTime';
+        switch (sortBy) {
+            case 'price':
+            case 'duration':
+                sortField = sortBy;
+                break;
+            case 'status':
+                sortField = sortBy;
+                break;
+            default:
+                break;
+        }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
         const res = await this.fetchData('GetDeals', {
@@ -445,8 +466,12 @@ export class DWH {
             limit,
             sortings: [
                 {
-                    field: 'StartTime',
-                    order: 1,
+                    field: sortField,
+                    order: sortDesc ? 1 : 0,
+                },
+                {
+                    field: 'id',
+                    order: 0,
                 },
             ],
             WithCount: true,
@@ -542,27 +567,25 @@ export class DWH {
         const res = await this.fetchData('GetValidators');
         const validators = 'validators' in res ? res.validators : [];
 
-        return validators
-            .filter((x: any) => x.url)
-            .map(
-                ({
-                    validator,
-                    name,
-                    level,
-                    price,
-                    url,
-                    description,
-                    icon,
-                }: any): t.IKycValidator => ({
-                    id: validator.id,
-                    level: validator.level,
-                    name,
-                    description,
-                    fee: price,
-                    url,
-                    logo: icon,
-                }),
-            );
+        return validators.filter((x: any) => x.url).map(
+            ({
+                validator,
+                name,
+                level,
+                price,
+                url,
+                description,
+                icon,
+            }: any): t.IKycValidator => ({
+                id: validator.id,
+                level: validator.level,
+                name,
+                description,
+                fee: price,
+                url,
+                logo: icon,
+            }),
+        );
     };
 
     public getWorkers = async ({
