@@ -2,7 +2,7 @@ import * as React from 'react';
 import { IDeal } from 'app/api';
 import { DealListItem } from './sub/deal-list-item';
 import { ListHeader, IOrderable } from 'app/components/common/list-header';
-import Icon from 'app/components/common/icon';
+// import Icon from 'app/components/common/icon';
 import Pagination from 'antd/es/pagination';
 
 interface IHasPaginator {
@@ -49,16 +49,16 @@ export class DealListView extends React.Component<IDealListViewProps, never> {
                         orderDesc={p.orderDesc}
                         onChangeOrder={p.onChangeOrder}
                     />
-                    <a
-                        className="deal-list__buy-resources-link"
-                        onClick={this.props.onClickBuyResources}
-                    >
-                        <Icon
-                            i="Add"
-                            className="deal-list__buy-resources-icon"
-                        />
-                        Buy resources
-                    </a>
+                    {/*<a*/}
+                    {/*className="deal-list__buy-resources-link"*/}
+                    {/*onClick={this.props.onClickBuyResources}*/}
+                    {/*>*/}
+                    {/*<Icon*/}
+                    {/*i="Add"*/}
+                    {/*className="deal-list__buy-resources-icon"*/}
+                    {/*/>*/}
+                    {/*Buy resources*/}
+                    {/*</a>*/}
                 </div>
 
                 {p.data.map(i => (
