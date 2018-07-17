@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Input } from 'app/components/common/input';
 import { Icon } from 'app/components/common/icon';
-import { IChengableProps } from '../types';
+import { IChangeableProps } from '../types';
 
-export interface IPasswordInputProps extends IChengableProps<string> {
+export interface IPasswordInputProps extends IChangeableProps<string> {
     autoFocus?: boolean;
     prefix?: string;
     className?: string;

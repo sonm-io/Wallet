@@ -2,15 +2,20 @@ export interface IOrderBy {
     [address: string]: string;
 }
 
-export interface IListHeaderProps {
-    orderBy: string;
-    orderKeys: IOrderBy;
-    orderDesc: boolean;
+export interface IPageLimits {
     pageLimit: number;
-    pageLimits: Array<number>;
     onChangeLimit: (limit: number) => void;
+}
+
+export interface IOrderable {
+    orderBy: string;
+    orderDesc: boolean;
     onChangeOrder: (orderKey: string, isDesc: boolean) => void;
-    onRefresh: () => void;
-    //optional
+}
+
+export interface IListHeaderProps extends IOrderable, Partial<IPageLimits> {
     className?: string;
+    orderKeys: IOrderBy;
+    onRefresh?: () => void;
+    pageLimits?: Array<number>;
 }

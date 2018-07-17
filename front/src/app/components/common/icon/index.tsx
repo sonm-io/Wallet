@@ -3,6 +3,7 @@ import * as cn from 'classnames';
 
 // To get more icons go to: https://material.io/icons/
 export const icons: any = {
+    Add: require('./add.svg').default,
     ArrowBack: require('./arrow-back.svg').default,
     ArrowDown: require('./arrow-down.svg').default,
     ArrowRight: require('./arrow-right.svg').default,

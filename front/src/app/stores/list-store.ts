@@ -90,7 +90,6 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
     protected reactionOnFilter = () => {
         const filter = toJS(this.reactiveDeps.filter.filterAsString);
-
         this.updateUserInput({ filter });
     };
 
@@ -184,7 +183,6 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
         try {
             const response = yield this.services.api.fetchList(query);
-
             this.offset = offset;
             this.limit = limit;
             this.records = response.records;

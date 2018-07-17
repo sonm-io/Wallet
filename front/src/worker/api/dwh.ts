@@ -305,6 +305,10 @@ export class DWH {
                     field: sortField,
                     order: sortDesc ? 1 : 0,
                 },
+                {
+                    field: 'id',
+                    order: 0,
+                },
             ],
             counterpartyID: [
                 '0x0000000000000000000000000000000000000000',
@@ -439,10 +443,27 @@ export class DWH {
         limit,
         offset,
         filter,
+        sortBy,
+        sortDesc,
     }: t.IListQuery): Promise<t.IListResult<t.IDeal>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
+        tcomb.maybe(tcomb.String)(sortBy);
+        tcomb.maybe(tcomb.Boolean)(sortDesc);
+
+        let sortField = 'StartTime';
+        switch (sortBy) {
+            case 'price':
+            case 'duration':
+                sortField = sortBy;
+                break;
+            case 'status':
+                sortField = sortBy;
+                break;
+            default:
+                break;
+        }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
         const res = await this.fetchData('GetDeals', {
@@ -453,8 +474,12 @@ export class DWH {
             limit,
             sortings: [
                 {
-                    field: 'StartTime',
-                    order: 1,
+                    field: sortField,
+                    order: sortDesc ? 1 : 0,
+                },
+                {
+                    field: 'id',
+                    order: 0,
                 },
             ],
             WithCount: true,

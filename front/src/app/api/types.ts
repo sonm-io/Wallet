@@ -186,6 +186,12 @@ export interface IOrder {
     benchmarkMap: Partial<IBenchmarkMap>;
 }
 
+export enum EnumDealStatus {
+    Unknown = 0,
+    Accepted,
+    Closed,
+}
+
 export interface IDeal {
     id: string;
     supplier: IAccountBrief;
@@ -195,7 +201,7 @@ export interface IDeal {
     bidID: string;
     duration: number;
     price: string;
-    status: number;
+    status: EnumDealStatus;
     blockedBalance: string;
     totalPayout: string;
     startTime: number;
