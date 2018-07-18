@@ -32,7 +32,8 @@ const DEFAULT_NODES: t.INodes = {
     livenet_private: 'https://sidechain.livenet.sonm.com',
     rinkeby: 'https://rinkeby.infura.io',
     rinkeby_private: 'https://sidechain-dev.sonm.com',
-    testrpc: 'http://localhost:8545',
+    testrpc: 'https://proxy.test.sonm.com:8545',
+    testrpc_private: 'https://proxy.test.sonm.com:8546',
 };
 
 const ZERO_ADDRESS = Array(41).join('0');
