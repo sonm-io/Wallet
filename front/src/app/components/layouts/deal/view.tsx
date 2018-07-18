@@ -45,6 +45,7 @@ interface IProps {
     showConfirmationPanel: boolean;
     validationPassword: string;
     isBlacklisted: boolean;
+    onClickChangeRequest: () => void;
 }
 
 export class DealView extends React.Component<IProps, never> {
@@ -160,6 +161,13 @@ export class DealView extends React.Component<IProps, never> {
                                     onClick={this.props.onShowConfirmationPanel}
                                 >
                                     Finish Deal
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    color="violet"
+                                    onClick={this.props.onClickChangeRequest}
+                                >
+                                    Change request
                                 </Button>
                             </div>
                         )

@@ -1,8 +1,6 @@
 @import 'guide.less';
-@import './sub/change-request-list/index';
-@import './sub/change/index';
 
-.sonm-deal {
+.sonm-deal-change-request {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-column-gap: 10px;
@@ -62,5 +60,23 @@
         font-size: 14px;
         color: @color-font-gray;
         font-weight: bold;
+    }
+}
+
+.sonm-deal-change-request-input-values {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    grid-column-gap: 20px;
+    color: @color-light-font;
+
+    &__label,
+    &__value {
+        display: inline-block;
+        align-self: flex-end;
+    }
+
+    &__value {
+        color: @color-green;
     }
 }

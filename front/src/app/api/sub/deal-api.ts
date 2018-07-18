@@ -70,6 +70,27 @@ export class DealApi {
 
         return { data, validation };
     }
+
+    public async createChangeRequest(
+        address: string,
+        password: string,
+        dealId: string,
+        newPrice: string,
+        newDuration: string,
+    ) {
+        const { data, validation } = await this.ipc.send(
+            'deal.createChangeRequest',
+            {
+                address,
+                id: dealId,
+                password,
+                newPrice,
+                newDuration,
+            },
+        );
+
+        return { data, validation };
+    }
 }
 
 export default DealApi;

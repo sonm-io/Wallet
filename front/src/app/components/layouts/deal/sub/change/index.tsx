@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { DealView } from './view';
+import { DealChangeRequestView } from './view';
 import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
-import { ITogglerChangeParams } from '../../common/toggler';
 
 interface IProps {
     className?: string;
-    onNavigateToDeals: () => void;
-    onNavigateToDealChangeRequest: (id: string) => void;
+    onNavigateToDeal: (id: string) => void;
 }
 
 interface IState {
@@ -16,38 +14,28 @@ interface IState {
 }
 
 @observer
-export class Deal extends React.Component<IProps, IState> {
+export class DealChangeRequest extends React.Component<IProps, IState> {
     public state = {
         showConfirmationPanel: false,
         validationMessage: '',
     };
 
-    public handleFinishDeal = async (password: string) => {
+    public handleCreateChangeRequest = async (password: string) => {
         const dealDetailsStore = rootStore.dealDetailsStore;
 
         dealDetailsStore.updateUserInput({ password });
-        await dealDetailsStore.finish();
+        await dealDetailsStore.createChangeRequest();
 
         if (dealDetailsStore.validationPassword === '') {
-            this.props.onNavigateToDeals();
+            this.props.onNavigateToDeal(rootStore.dealDetailsStore.deal.id);
         }
     };
 
-    public componentDidMount() {
-        rootStore.dealDetailsStore.update();
-    }
-
-    public handleClickChangeRequest = async () => {
-        this.props.onNavigateToDealChangeRequest(
-            rootStore.dealDetailsStore.deal.id,
-        );
-    };
-
-    public handleChangeCheckbox = (params: ITogglerChangeParams) => {
+    protected handleChangeFormInput(name: string, value: string) {
         rootStore.dealDetailsStore.updateUserInput({
-            isBlacklisted: params.value,
+            [name]: value,
         });
-    };
+    }
 
     public handleShowConfirmationPanel = () => {
         this.setState({
@@ -85,9 +73,7 @@ export class Deal extends React.Component<IProps, IState> {
         };
 
         return (
-            <DealView
-                supplier={deal.supplier}
-                consumer={deal.consumer}
+            <DealChangeRequestView
                 duration={deal.duration}
                 price={deal.price}
                 totalPayout={deal.totalPayout}
@@ -95,19 +81,19 @@ export class Deal extends React.Component<IProps, IState> {
                 marketAccountAddress={marketAccount}
                 showButtons={isOwner}
                 propertyList={propertyList}
-                onFinishDeal={this.handleFinishDeal}
+                onCreateChangeRequest={this.handleCreateChangeRequest}
                 showConfirmationPanel={this.state.showConfirmationPanel}
+                onChangeFormInput={this.handleChangeFormInput}
                 onShowConfirmationPanel={this.handleShowConfirmationPanel}
                 onHideConfirmationPanel={this.handleHideConfirmationPanel}
                 validationPassword={
                     rootStore.dealDetailsStore.validationPassword
                 }
-                isBlacklisted={rootStore.dealDetailsStore.isBlacklisted}
-                onChangeCheckbox={this.handleChangeCheckbox}
-                onClickChangeRequest={this.handleClickChangeRequest}
+                newPrice={rootStore.dealDetailsStore.newPrice}
+                newDuration={rootStore.dealDetailsStore.newDuration}
             />
         );
     }
 }
 
-export default Deal;
+export default DealChangeRequest;

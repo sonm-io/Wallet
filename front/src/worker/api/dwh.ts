@@ -25,6 +25,7 @@ const DEFAULT_NODES: t.INodes = {
 };
 
 const MB_SIZE = 1000 * 1000;
+const SEC_IN_HOUR = new BN('3600');
 
 export class DWH {
     private url: string;
@@ -238,7 +239,7 @@ export class DWH {
     };
 
     protected static priceMultiplierOut = new BN('1000000000000000000').div(
-        new BN('3600'),
+        SEC_IN_HOUR,
     );
 
     public static recalculatePriceOut(price: string) {
@@ -427,8 +428,15 @@ export class DWH {
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
-        const res = await this.fetchData('GetDealDetails', id);
-        return this.parseDeal(res);
+        const [deal, changeRequests] = await Promise.all([
+            this.fetchData('GetDealDetails', id),
+            this.fetchData('GetDealChangeRequests', id),
+        ]);
+
+        console.log(deal);
+        console.log(changeRequests);
+
+        return this.parseDeal(deal);
     };
 
     public getDeals = async ({
