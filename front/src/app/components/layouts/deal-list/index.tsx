@@ -5,11 +5,13 @@ import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import { DealFilterPanel } from './sub/deal-filter-panel';
 import { IDealFilter } from 'app/stores/deal-filter';
+import { DealListEmpty } from './sub/deal-list-empty';
 
 interface IProps {
     className?: string;
     filterByAddress?: string;
     onClickDeal: (dealId: string) => void;
+    onClickViewMarket: () => void;
 }
 
 const listStore = rootStore.dealListStore;
@@ -51,6 +53,7 @@ export class DealList extends React.Component<IProps, any> {
     };
 
     public render() {
+        const p = this.props;
         const filterPanel = (
             <DealFilterPanel
                 query={filterStore.query}
@@ -59,15 +62,21 @@ export class DealList extends React.Component<IProps, any> {
                 onUpdateFilter={this.handleUpdateFilter}
             />
         );
+        const data = toJS(listStore.records);
 
-        return (
+        return data.length === 0 ? (
+            <DealListEmpty
+                onClickViewMarket={p.onClickViewMarket}
+                onClickBuyResources={emptyFn}
+            />
+        ) : (
             <DealListView
-                data={toJS(listStore.records)}
+                data={data}
                 marketAccountAddress={
                     rootStore.marketStore.marketAccountAddress
                 }
                 filterPanel={filterPanel}
-                onClickRow={this.props.onClickDeal}
+                onClickRow={p.onClickDeal}
                 onClickBuyResources={emptyFn}
                 orderBy={listStore.sortBy}
                 orderDesc={listStore.sortDesc}
