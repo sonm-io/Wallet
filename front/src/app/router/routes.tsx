@@ -488,7 +488,12 @@ export const createRoutes = (
                             return {
                                 browserTabTitle: 'Deals',
                                 pageTitle: 'Deals',
-                                content: <DealList onClickDeal={n.toDeal} />,
+                                content: (
+                                    <DealList
+                                        onClickDeal={n.toDeal}
+                                        onClickViewMarket={n.toOrders}
+                                    />
+                                ),
                             };
                         },
                     },
