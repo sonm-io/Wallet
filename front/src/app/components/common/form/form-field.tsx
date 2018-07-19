@@ -7,7 +7,7 @@ interface IFormFieldProps {
     error?: string | string[];
     info?: string | string[];
     success?: string | string[];
-    children: any;
+    children?: any;
     label?: string;
     fullWidth?: boolean;
     postfix?: string;
@@ -65,9 +65,9 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
                     },
                 )}
             >
-                <div className="sonm-form-field__label">
-                    {label ? label : ''}
-                </div>
+                {label ? (
+                    <div className="sonm-form-field__label">{label}</div>
+                ) : null}
                 <div className="sonm-form-field__input">
                     {this.props.children}
                     {postfix}

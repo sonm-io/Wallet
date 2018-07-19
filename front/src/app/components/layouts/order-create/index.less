@@ -1,0 +1,49 @@
+@import 'guide.less';
+
+.order-create {
+    display: grid;
+    grid-template-areas:
+        'profile actions'
+        'details params';
+
+    &__profile {
+        grid-area: profile;
+    }
+
+    &__actions {
+        grid-area: actions;
+    }
+
+    &__button {
+        text-transform: capitalize;
+        min-width: 113px;
+    }
+
+    &__label {
+        margin: 21px 0 0 0;
+    }
+
+    &__property-grid {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-auto-rows: min-content;
+        grid-column-gap: 10px;
+        grid-row-gap: 5px;
+        padding: 30px;
+    }
+
+    &__grid-header {
+        grid-column: 1 / span 2;
+        color: #95989a;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    &__details {
+        grid-area: details;
+    }
+
+    &__params {
+        grid-area: params;
+    }
+}
