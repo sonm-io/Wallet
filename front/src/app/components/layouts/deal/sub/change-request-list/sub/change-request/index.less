@@ -19,10 +19,6 @@
         line-height: 24px;
     }
 
-    &__rubber {
-        margin: auto;
-    }
-
     &__button {
         min-width: 105px;
         margin: auto 10px;
@@ -32,6 +28,11 @@
         color: var(--button-color);
         -webkit-text-fill-color: var(--button-color);
         border-color: var(--button-color);
+
+        &:first-of-type {
+            margin-left: auto;
+        }
+
         &:active {
             background-color: transparent;
             border-color: var(--button-color);

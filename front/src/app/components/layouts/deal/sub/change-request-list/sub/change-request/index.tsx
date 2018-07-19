@@ -95,7 +95,6 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                         }
                     />
                 ) : null}
-                <span className="change-request__rubber" />
                 {p.state === EnumChangeRequestState.mySide ? (
                     <React.Fragment>
                         <Button
