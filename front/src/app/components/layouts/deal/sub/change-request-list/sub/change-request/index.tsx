@@ -99,14 +99,18 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                     <React.Fragment>
                         <Button
                             name="cancel"
-                            className="change-request__button change-request__button-cancel"
+                            className="change-request__button"
+                            transparent
+                            color="gray"
                             onClick={this.handleClickButton}
                         >
                             Cancel
                         </Button>
                         <Button
                             name="change"
-                            className="change-request__button change-request__button-change"
+                            className="change-request__button"
+                            transparent
+                            color="violet"
                             onClick={this.handleClickButton}
                         >
                             Change
@@ -117,14 +121,18 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                     <React.Fragment>
                         <Button
                             name="reject"
-                            className="change-request__button change-request__button-reject"
+                            className="change-request__button"
+                            transparent
+                            color="pink"
                             onClick={this.handleClickButton}
                         >
                             Reject
                         </Button>
                         <Button
                             name="accept"
-                            className="change-request__button change-request__button-accept"
+                            className="change-request__button"
+                            transparent
+                            color="green"
                             onClick={this.handleClickButton}
                         >
                             Accept
