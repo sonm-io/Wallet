@@ -1,3 +1,5 @@
+@import 'guide.less';
+
 .change-request {
     display: flex;
     flex-direction: row;
@@ -5,41 +7,25 @@
 
     &__side {
         width: 80px;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 24px;
     }
 
     &__param {
         margin: auto 10px;
-    }
-
-    &__rubber {
-        margin: auto;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 24px;
     }
 
     &__button {
         min-width: 105px;
         margin: auto 10px;
-        background-color: transparent;
         text-transform: capitalize;
 
-        color: var(--button-color);
-        -webkit-text-fill-color: var(--button-color);
-        border-color: var(--button-color);
-        &:active {
-            background-color: transparent;
-            border-color: var(--button-color);
-        }
-
-        &-cancel {
-            --button-color: @color-dark-gray;
-        }
-        &-change {
-            --button-color: @color-violet;
-        }
-        &-reject {
-            --button-color: @color-pink;
-        }
-        &-accept {
-            --button-color: @color-green;
+        &:first-of-type {
+            margin-left: auto;
         }
     }
 }

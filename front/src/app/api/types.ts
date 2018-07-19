@@ -160,7 +160,6 @@ export interface IBenchmarkMap {
 }
 
 export enum EnumOrderSide {
-    any = 0,
     bid = 1,
     ask = 2,
 }

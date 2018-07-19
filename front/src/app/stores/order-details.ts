@@ -256,7 +256,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
     public static emptyOrder: IOrder = {
         id: '0',
-        orderSide: EnumOrderSide.any,
+        orderSide: EnumOrderSide.bid,
         creator: {
             address: '0x1234567890123456789012345678901234567890',
             status: EnumProfileStatus.anon,

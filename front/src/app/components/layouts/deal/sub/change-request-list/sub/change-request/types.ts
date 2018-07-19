@@ -21,7 +21,6 @@ export enum EnumChangeRequestState {
 }
 
 export enum EnumChangeRequestStatus {
-    Uncnown = 0,
     Created = 1,
     Canceled = 2,
     Rejected = 3,
