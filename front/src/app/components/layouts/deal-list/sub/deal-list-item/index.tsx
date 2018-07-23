@@ -96,7 +96,7 @@ export class DealListItem extends React.Component<IDealListItem, never> {
                 <ProfileBrief
                     className="deal-list-item__profile"
                     profile={
-                        p.buyOrSell === 'sell'
+                        p.buyOrSell === 'buy'
                             ? p.deal.supplier
                             : p.deal.consumer
                     }
