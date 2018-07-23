@@ -149,15 +149,6 @@ export class MarketStore extends OnlineStore {
     }
 
     @computed
-    public get getAccountMarketBalance(): string {
-        const account = this.rootStore.mainStore.accountMap.get(
-            this.marketAccountAddress,
-        );
-
-        return account ? account.marketBalance : '0';
-    }
-
-    @computed
     public get marketAccountAddress(): string {
         if (
             this.userInput.marketAccountAddress === '' &&
