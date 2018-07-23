@@ -10,7 +10,7 @@ export class WithdrawStore extends SendStore {
 
     @computed
     get currentBalanceMaximumWei() {
-        return this.rootStore.marketStore.marketBalance;
+        return this.rootStore.marketStore.getAccountMarketBalance;
     }
 }
 
