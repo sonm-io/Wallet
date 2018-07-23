@@ -434,10 +434,28 @@ export class DWH {
             this.fetchData('GetDealChangeRequests', id),
         ]);
 
-        console.log(deal);
-        console.log(changeRequests);
+        const parsedDeal = this.parseDeal(deal);
 
-        return this.parseDeal(deal);
+        parsedDeal.changeRequests =
+            changeRequests && changeRequests.requests
+                ? changeRequests.requests.map(
+                      ({
+                          id,
+                          status,
+                          price,
+                          duration,
+                          requestType,
+                      }: any): t.IDealChangeRequest => ({
+                          id,
+                          status,
+                          price,
+                          duration,
+                          requestType,
+                      }),
+                  )
+                : [];
+
+        return parsedDeal;
     };
 
     public getDeals = async ({

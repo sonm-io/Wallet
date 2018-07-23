@@ -13,6 +13,8 @@ export interface IDealDetailsInput {
     isBlacklisted: boolean;
     newPrice: string;
     newDuration: string;
+    changeRequestId: string;
+    action: string;
 }
 
 export interface IDealDetailsStoreServices {
@@ -34,6 +36,11 @@ export interface IDealDetailsStoreApi {
         dealId: string,
         newPrice: string,
         newDuration: string,
+    ) => {};
+    cancelChangeRequest: (
+        accountAddress: string,
+        password: string,
+        dealId: string,
     ) => {};
     fetchById: (id: string) => Promise<IDeal>;
 }
@@ -120,6 +127,8 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         isBlacklisted: false,
         newPrice: '',
         newDuration: '',
+        changeRequestId: '',
+        action: '',
     };
 
     @observable
@@ -148,6 +157,36 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         this.deal = yield this.api.fetchById(this.dealId);
     }
 
+    private addAlert(
+        id: string,
+        data: any,
+        successMessage: string,
+        failMessage: string,
+    ) {
+        let alert;
+
+        if (data.status === EnumTransactionStatus.fail) {
+            alert = {
+                type: AlertType.error,
+                message: this.localizator.getMessageText([
+                    failMessage,
+                    [id, data.transactionHash],
+                ]),
+            };
+        } else {
+            alert = {
+                type: AlertType.success,
+                message: this.localizator.getMessageText([
+                    successMessage,
+                    [id, data.transactionHash],
+                ]),
+            };
+        }
+
+        this.serverValidation.password = '';
+        this.rootStore.uiStore.addAlert(alert);
+    }
+
     @pending
     @asyncAction
     public *finish() {
@@ -168,28 +207,39 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
                 validation.password,
             );
         } else {
-            let alert;
+            this.addAlert(
+                id,
+                data,
+                'deal_finish_success',
+                'deal_finish_failed',
+            );
+        }
+    }
 
-            if (data.status === EnumTransactionStatus.fail) {
-                alert = {
-                    type: AlertType.error,
-                    message: this.localizator.getMessageText([
-                        'deal_finish_failed',
-                        [id, data.transactionHash],
-                    ]),
-                };
-            } else {
-                alert = {
-                    type: AlertType.success,
-                    message: this.localizator.getMessageText([
-                        'deal_finish_success',
-                        [id, data.transactionHash],
-                    ]),
-                };
-            }
+    @pending
+    @asyncAction
+    public *cancelChangeRequest() {
+        const password = this.password;
+        const id = this.changeRequestId;
+        const accountAddress = this.externalStores.market.marketAccountAddress;
 
-            this.serverValidation.password = '';
-            this.rootStore.uiStore.addAlert(alert);
+        const { data, validation } = yield this.api.cancelChangeRequest(
+            accountAddress,
+            password,
+            id,
+        );
+
+        if (validation && validation.password) {
+            this.serverValidation.password = this.services.localizator.getMessageText(
+                validation.password,
+            );
+        } else {
+            this.addAlert(
+                id,
+                data,
+                'cancel_change_request_success',
+                'cancel_change_request_failed',
+            );
         }
     }
 
@@ -215,28 +265,12 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
                 validation.password,
             );
         } else {
-            let alert;
-
-            if (data.status === EnumTransactionStatus.fail) {
-                alert = {
-                    type: AlertType.error,
-                    message: this.localizator.getMessageText([
-                        'deal_finish_failed',
-                        [id, data.transactionHash],
-                    ]),
-                };
-            } else {
-                alert = {
-                    type: AlertType.success,
-                    message: this.localizator.getMessageText([
-                        'deal_finish_success',
-                        [id, data.transactionHash],
-                    ]),
-                };
-            }
-
-            this.serverValidation.password = '';
-            this.rootStore.uiStore.addAlert(alert);
+            this.addAlert(
+                id,
+                data,
+                'create_change_request_success',
+                'create_change_request_failed',
+            );
         }
     }
 
@@ -258,6 +292,16 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @computed
     public get isBlacklisted() {
         return this.userInput.isBlacklisted;
+    }
+
+    @computed
+    public get changeRequestId() {
+        return this.userInput.changeRequestId;
+    }
+
+    @computed
+    public get action() {
+        return this.userInput.action;
     }
 
     @computed

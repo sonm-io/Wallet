@@ -207,6 +207,7 @@ export interface IDeal {
     endTime: number;
     benchmarkMap: IBenchmarkMap;
     timeLeft: number;
+    changeRequests?: Array<IDealChangeRequest>;
 }
 
 export interface IKycValidator {
@@ -249,8 +250,45 @@ export interface IConnectionInfo {
     isTest: boolean;
 }
 
+export interface IDealComparableParams {
+    price: string;
+    duration: number;
+}
+
+export enum EnumChangeRequestState {
+    /**
+     * This is my change request, show Cancel and Change buttons.
+     */
+    mySide = 0,
+    /**
+     * This is other side change request, show Reject and Accept buttons.
+     */
+    otherSide,
+    /**
+     * No buttons are shown
+     */
+    noButtons,
+}
+
+export enum EnumChangeRequestStatus {
+    Created = 1,
+    Canceled = 2,
+    Rejected = 3,
+    Accepted = 4,
+}
+
+export interface IDealChangeRequest {
+    id: string;
+    requestType: EnumOrderSide;
+    duration?: string;
+    price?: string;
+    status: EnumChangeRequestStatus;
+}
+
 export interface ISender {
     send: (messageType: string, payload?: any) => any;
 }
+
+export type TChangeRequestAction = (requestId: string) => void;
 
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

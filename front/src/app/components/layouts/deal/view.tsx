@@ -1,6 +1,11 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IAccountBrief, IBenchmarkMap } from 'app/api/types';
+import {
+    IAccountBrief,
+    IBenchmarkMap,
+    IDealChangeRequest,
+    TChangeRequestAction,
+} from 'app/api/types';
 import { Benchmark } from 'app/components/common/benchmark';
 import {
     PropertyList,
@@ -15,6 +20,8 @@ import { ITogglerChangeParams } from 'app/components/common/toggler';
 import * as moment from 'moment';
 import formatSeconds from 'app/utils/format-seconds';
 import { PricePerHour } from 'app/components/common/price-per-hour';
+import { ChangeRequestList } from './sub/change-request-list/index';
+import { EnumOrderSide } from 'app/api';
 
 interface IDealData {
     id: string;
@@ -34,6 +41,7 @@ interface IProps {
     duration: number;
     price: string;
     totalPayout: string;
+    changeRequests?: Array<IDealChangeRequest>;
     benchmarkMap: IBenchmarkMap;
     marketAccountAddress: string;
     showButtons: boolean;
@@ -45,7 +53,16 @@ interface IProps {
     showConfirmationPanel: boolean;
     validationPassword: string;
     isBlacklisted: boolean;
-    onClickChangeRequest: () => void;
+
+    mySide: EnumOrderSide;
+    onChangeRequestCreate: () => void;
+    onChangeRequestCancel: TChangeRequestAction;
+    onChangeRequestChange: TChangeRequestAction;
+    onChangeRequestReject: TChangeRequestAction;
+    onChangeRequestAccept: TChangeRequestAction;
+    onChangeRequestSubmit: (password: string) => void;
+    onChangeRequestConfirmationCancel: () => void;
+    changeRequestShowConfirmationPanel: boolean;
 }
 
 export class DealView extends React.Component<IProps, never> {
@@ -162,13 +179,6 @@ export class DealView extends React.Component<IProps, never> {
                                 >
                                     Finish Deal
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    color="violet"
-                                    onClick={this.props.onClickChangeRequest}
-                                >
-                                    Change request
-                                </Button>
                             </div>
                         )
                     ) : null}
@@ -195,6 +205,29 @@ export class DealView extends React.Component<IProps, never> {
                         </div>
                     </div>
                 </div>
+
+                {p.showButtons ? (
+                    <ChangeRequestList
+                        className="sonm-deal__change_request"
+                        requests={p.changeRequests || []}
+                        dealParams={{
+                            price: p.price,
+                            duration: p.duration,
+                        }}
+                        mySide={p.mySide}
+                        onCreateRequest={p.onChangeRequestCreate}
+                        onCancelRequest={p.onChangeRequestCancel}
+                        onChangeRequest={p.onChangeRequestChange}
+                        onRejectRequest={p.onChangeRequestReject}
+                        onAcceptRequest={p.onChangeRequestAccept}
+                        onSubmit={p.onChangeRequestSubmit}
+                        onConfirmationCancel={
+                            p.onChangeRequestConfirmationCancel
+                        }
+                        showConfirmation={p.changeRequestShowConfirmationPanel}
+                        validationMessage={this.props.validationPassword}
+                    />
+                ) : null}
             </div>
         );
     }

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { EnumOrderSide } from 'app/api';
-import { ChangeRequest, TChangeRequestAction } from './sub/change-request';
+import { ChangeRequest } from './sub/change-request';
 import {
     IDealChangeRequest,
     IDealComparableParams,
     EnumChangeRequestState,
-} from './sub/change-request/types';
+    EnumOrderSide,
+    TChangeRequestAction,
+} from 'app/api/types';
 import Button from 'app/components/common/button';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 

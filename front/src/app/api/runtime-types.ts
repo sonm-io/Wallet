@@ -16,6 +16,7 @@ import {
     ICertificate,
     IKycValidator,
     IWorker,
+    IDealChangeRequest,
 } from './types';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
@@ -178,6 +179,17 @@ export const TypeOrderList = createStruct<IListResult<IOrder>>(
     'IListResult<IOrder>',
 );
 
+export const TypeDealChangeRequest = createStruct<IDealChangeRequest>(
+    {
+        id: t.String,
+        price: t.maybe(t.String),
+        duration: t.maybe(t.String),
+        status: t.Number,
+        requestType: t.Number,
+    },
+    'IDealChangeRequest',
+);
+
 export const TypeDeal = createStruct<IDeal>(
     {
         id: t.String,
@@ -195,6 +207,7 @@ export const TypeDeal = createStruct<IDeal>(
         endTime: t.Number,
         benchmarkMap: TypeBenchmarkMap,
         timeLeft: t.Number,
+        changeRequests: t.maybe(t.list(TypeDealChangeRequest)),
     },
     'IDeal',
 );

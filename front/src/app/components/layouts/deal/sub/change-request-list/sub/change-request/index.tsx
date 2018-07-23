@@ -4,15 +4,14 @@ import {
     IDealComparableParams,
     IDealChangeRequest,
     EnumChangeRequestState,
-} from './types';
-import { EnumOrderSide } from 'worker/api/types';
+    EnumOrderSide,
+    TChangeRequestAction,
+} from 'app/api/types';
 import { ChangeRequestParam } from '../change-request-param';
 import { BalanceUtils } from 'app/components/common/balance-view/utils';
 import { BN } from 'bn.js';
 import Button from 'app/components/common/button';
 import { getPricePerHour } from 'app/components/common/price-per-hour/utils';
-
-export type TChangeRequestAction = (requestId: number) => void;
 
 export interface IChangeRequestProps {
     className?: string;
@@ -66,7 +65,7 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
         return (
             <div className={cn('change-request', this.props.className)}>
                 <div className="change-request__side">
-                    {p.request.requestType === EnumOrderSide.ask
+                    {p.request.requestType === EnumOrderSide.bid
                         ? 'Customer'
                         : 'Supplier'}
                 </div>
@@ -89,9 +88,12 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                         initialValue={this.formatDuration(
                             p.dealParams.duration,
                         )}
-                        changedValue={this.formatDuration(p.request.duration)}
+                        changedValue={this.formatDuration(
+                            parseInt(p.request.duration, 10),
+                        )}
                         hasAdvantage={
-                            p.request.duration > p.dealParams.duration
+                            parseInt(p.request.duration, 10) >
+                            p.dealParams.duration
                         }
                     />
                 ) : null}

@@ -70,6 +70,8 @@ export class DealChangeRequest extends React.Component<IProps, IState> {
             timeLeft: deal.timeLeft,
             supplierAddress: deal.supplier.address,
             consumerAddress: deal.consumer.address,
+            duration: deal.duration,
+            price: deal.price,
         };
 
         return (

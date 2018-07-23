@@ -3,6 +3,9 @@ import { DealView } from './view';
 import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { ITogglerChangeParams } from '../../common/toggler';
+import { EnumOrderSide } from 'app/api';
+import { BalanceUtils } from 'app/components/common/balance-view/utils';
+import { getPricePerHour } from 'app/components/common/price-per-hour/utils';
 
 interface IProps {
     className?: string;
@@ -10,21 +13,19 @@ interface IProps {
     onNavigateToDealChangeRequest: (id: string) => void;
 }
 
-interface IState {
-    showConfirmationPanel: boolean;
-    validationMessage: string;
+enum DealActions {
+    finish = 'finish',
+    changeRequest = 'changeRequest',
+    cancelChangeRequest = 'cancelChangeRequest',
+    acceptChangeRequest = 'acceptChangeRequest',
+    none = '',
 }
 
+const dealDetailsStore = rootStore.dealDetailsStore;
+
 @observer
-export class Deal extends React.Component<IProps, IState> {
-    public state = {
-        showConfirmationPanel: false,
-        validationMessage: '',
-    };
-
+export class Deal extends React.Component<IProps, never> {
     public handleFinishDeal = async (password: string) => {
-        const dealDetailsStore = rootStore.dealDetailsStore;
-
         dealDetailsStore.updateUserInput({ password });
         await dealDetailsStore.finish();
 
@@ -34,44 +35,93 @@ export class Deal extends React.Component<IProps, IState> {
     };
 
     public componentDidMount() {
-        rootStore.dealDetailsStore.update();
+        dealDetailsStore.update();
     }
 
-    public handleClickChangeRequest = async () => {
-        this.props.onNavigateToDealChangeRequest(
-            rootStore.dealDetailsStore.deal.id,
-        );
-    };
-
     public handleChangeCheckbox = (params: ITogglerChangeParams) => {
-        rootStore.dealDetailsStore.updateUserInput({
+        dealDetailsStore.updateUserInput({
             isBlacklisted: params.value,
         });
     };
 
     public handleShowConfirmationPanel = () => {
-        this.setState({
-            showConfirmationPanel: true,
+        dealDetailsStore.updateUserInput({
+            action: DealActions.finish,
         });
     };
 
     public handleHideConfirmationPanel = () => {
-        this.setState({
-            showConfirmationPanel: false,
-        });
-
-        rootStore.dealDetailsStore.updateUserInput({
+        dealDetailsStore.updateUserInput({
+            action: DealActions.none,
             isBlacklisted: false,
         });
     };
 
+    public handleChangeRequestCreate = () => {
+        dealDetailsStore.updateUserInput({
+            newPrice: '',
+            newDuration: '',
+        });
+
+        this.props.onNavigateToDealChangeRequest(dealDetailsStore.deal.id);
+    };
+
+    public handleChangeRequestChange = (id: string) => {
+        const changeRequest =
+            dealDetailsStore.deal.changeRequests &&
+            dealDetailsStore.deal.changeRequests.find(
+                (item: any) => item.id === id,
+            );
+
+        dealDetailsStore.updateUserInput({
+            newPrice:
+                changeRequest && changeRequest.price
+                    ? BalanceUtils.formatBalance(
+                          getPricePerHour(changeRequest.price),
+                          4,
+                          18,
+                          true,
+                      )
+                    : '',
+            newDuration: (changeRequest && changeRequest.duration) || '',
+        });
+
+        this.props.onNavigateToDealChangeRequest(dealDetailsStore.deal.id);
+    };
+
+    public handleChangeRequestCancel = (id: string) => {
+        dealDetailsStore.updateUserInput({
+            action: DealActions.cancelChangeRequest,
+            changeRequestId: id,
+        });
+    };
+
+    public handleChangeRequestSubmit = async (password: string) => {
+        dealDetailsStore.updateUserInput({ password });
+
+        if (dealDetailsStore.action === DealActions.cancelChangeRequest) {
+            await dealDetailsStore.cancelChangeRequest();
+        } else if (
+            dealDetailsStore.action === DealActions.acceptChangeRequest
+        ) {
+            await dealDetailsStore.createChangeRequest();
+        }
+
+        dealDetailsStore.update();
+        this.handleHideConfirmationPanel();
+    };
+
     public render() {
-        const deal = rootStore.dealDetailsStore.deal;
+        const deal = dealDetailsStore.deal;
         const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
         const isOwner =
             deal.supplier.address.toLowerCase() ===
                 marketAccount.toLowerCase() ||
             deal.consumer.address.toLowerCase() === marketAccount.toLowerCase();
+        const mySide =
+            deal.supplier.address.toLowerCase() === marketAccount.toLowerCase()
+                ? EnumOrderSide.ask
+                : EnumOrderSide.bid;
 
         const propertyList = {
             id: deal.id,
@@ -91,20 +141,36 @@ export class Deal extends React.Component<IProps, IState> {
                 duration={deal.duration}
                 price={deal.price}
                 totalPayout={deal.totalPayout}
+                changeRequests={deal.changeRequests}
                 benchmarkMap={deal.benchmarkMap}
                 marketAccountAddress={marketAccount}
                 showButtons={isOwner}
                 propertyList={propertyList}
                 onFinishDeal={this.handleFinishDeal}
-                showConfirmationPanel={this.state.showConfirmationPanel}
                 onShowConfirmationPanel={this.handleShowConfirmationPanel}
                 onHideConfirmationPanel={this.handleHideConfirmationPanel}
+                showConfirmationPanel={
+                    dealDetailsStore.action === DealActions.finish
+                }
                 validationPassword={
                     rootStore.dealDetailsStore.validationPassword
                 }
                 isBlacklisted={rootStore.dealDetailsStore.isBlacklisted}
                 onChangeCheckbox={this.handleChangeCheckbox}
-                onClickChangeRequest={this.handleClickChangeRequest}
+                mySide={mySide}
+                changeRequestShowConfirmationPanel={
+                    dealDetailsStore.action !== DealActions.none &&
+                    dealDetailsStore.action !== DealActions.finish
+                }
+                onChangeRequestCreate={this.handleChangeRequestCreate}
+                onChangeRequestChange={this.handleChangeRequestChange}
+                onChangeRequestCancel={this.handleChangeRequestCancel}
+                onChangeRequestReject={this.handleChangeRequestCancel}
+                onChangeRequestAccept={this.handleChangeRequestCancel}
+                onChangeRequestSubmit={this.handleChangeRequestSubmit}
+                onChangeRequestConfirmationCancel={
+                    this.handleHideConfirmationPanel
+                }
             />
         );
     }

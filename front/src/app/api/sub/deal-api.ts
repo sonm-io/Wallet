@@ -91,6 +91,23 @@ export class DealApi {
 
         return { data, validation };
     }
+
+    public async cancelChangeRequest(
+        address: string,
+        password: string,
+        dealId: string,
+    ) {
+        const { data, validation } = await this.ipc.send(
+            'deal.cancelChangeRequest',
+            {
+                address,
+                id: dealId,
+                password,
+            },
+        );
+
+        return { data, validation };
+    }
 }
 
 export default DealApi;
