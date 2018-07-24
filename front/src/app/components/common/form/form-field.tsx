@@ -75,8 +75,8 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
                 <div className="sonm-form-field__input">
                     {p.children}
                     {postfix}
+                    <div className="sonm-form-field__help">{helpText}</div>
                 </div>
-                <div className="sonm-form-field__help">{helpText}</div>
             </Tag>
         );
     }
