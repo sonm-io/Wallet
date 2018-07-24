@@ -23,7 +23,7 @@ const state = observable({
         onCancel: 0,
         onNext: 0,
         onConfirmationCancel: 0,
-        onSubmit: 0,
+        onSubmitPassword: 0,
     },
     ...dealDetails,
     ...resourceParams,
@@ -48,8 +48,8 @@ const state = observable({
         this.showConfirmation = false;
         this.validationMessage = undefined;
     }),
-    onSubmit: action.bound(function(p) {
-        this.eventsCounter.onSubmit++;
+    onSubmitPassword: action.bound(function(p) {
+        this.eventsCounter.onSubmitPassword++;
         if (p === password) {
             console.log('onSubmit:  success');
             this.showConfirmation = false;
@@ -79,27 +79,38 @@ const StateInfo = observer(() => (
     </div>
 ));
 
-const params = Object.keys({
-    ...dealDetails,
-    ...resourceParams,
-}).reduce((acc, key) => {
-    acc[key] = state[key];
-    return acc;
-}, {});
-
 const Container = observer(() => (
-    <OrderCreate
+    <OrderCreateView
         profile={profile}
         validation={{}}
         deposit="123456789012345678"
-        {...params}
         showConfirmation={state.showConfirmation}
         validationMessage={state.validationMessage}
         onUpdateField={state.onUpdateField}
         onCancel={state.onCancel}
         onNext={state.onNext}
         onConfirmationCancel={state.onConfirmationCancel}
-        onSubmit={state.onSubmit}
+        onSubmitPassword={state.onSubmitPassword}
+        price={state.price}
+        duration={state.duration}
+        counterparty={state.counterparty}
+        professional={state.professional}
+        registered={state.registered}
+        identified={state.identified}
+        anonymous={state.anonymous}
+        useBlacklist={state.useBlacklist}
+        cpuCount={state.cpuCount}
+        gpuCount={state.gpuCount}
+        ramSize={state.ramSize}
+        storageSize={state.storageSize}
+        overlayAllowed={state.overlayAllowed}
+        outboundAllowed={state.outboundAllowed}
+        incomingAllowed={state.incomingAllowed}
+        downloadSpeed={state.downloadSpeed}
+        uploadSpeed={state.uploadSpeed}
+        ethereumHashrate={state.ethereumHashrate}
+        zcashHashrate={state.zcashHashrate}
+        redshiftBenchmark={state.redshiftBenchmark}
     />
 ));
 
