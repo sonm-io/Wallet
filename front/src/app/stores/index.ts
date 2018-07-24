@@ -12,6 +12,7 @@ import { OnlineStore } from './online-store';
 import { ProfileFilterStore } from './profile-filter';
 import { DealFilterStore } from './deal-filter';
 import { OrderFilterStore } from './order-filter';
+import { OrderCreateStore } from './order-create';
 import {
     localizator as en,
     ILocalizator,
@@ -49,6 +50,7 @@ export class RootStore implements IHasLocalizator {
     public readonly workerListStore: IListStore<IWorker>;
     public readonly workerFilterStore: WorkerFilterStore;
     public readonly ordersListStore: IListStore<IOrder>;
+    public readonly orderCreateStore: OrderCreateStore;
     public readonly marketStore: MarketStore;
     public readonly profileFilterStore: ProfileFilterStore;
     public readonly dealFilterStore: DealFilterStore;
@@ -157,6 +159,16 @@ export class RootStore implements IHasLocalizator {
                 localizator,
                 errorProcessor: this.uiStore,
                 api: Api.order,
+            },
+        );
+
+        this.orderCreateStore = new OrderCreateStore(
+            {
+                market: this.marketStore,
+            },
+            {
+                localizator,
+                errorProcessor: this.uiStore,
             },
         );
 

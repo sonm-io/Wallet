@@ -1,6 +1,6 @@
 const profile = {
     address: '0xF0FE2F10901CaFcCFd3Aa3aE960A561B88CCc3d6',
-    name: '',
+    name: 'Vasya',
     status: 0,
 };
 
