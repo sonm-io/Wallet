@@ -95,25 +95,6 @@ export const createRoutes = (
                         ),
                         children: [
                             {
-                                path: '/:currency',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) => ({
-                                    browserTabTitle: 'Transfer confirmation',
-                                    pageTitle: 'Transfer confirmation',
-                                    content: (
-                                        <Send
-                                            onNotAvailable={n.toMain}
-                                            initialCurrency={params.currency}
-                                            onRequireConfirmation={
-                                                n.toConfirmation
-                                            }
-                                        />
-                                    ),
-                                }),
-                            },
-                            {
                                 path: '/confirm',
                                 action: async (
                                     ctx: IContext,
