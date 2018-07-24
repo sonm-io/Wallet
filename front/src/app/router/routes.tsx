@@ -127,25 +127,6 @@ export const createRoutes = (
                                     ),
                                 }),
                             },
-                            {
-                                path: '/:currency',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) => ({
-                                    browserTabTitle: 'Transfer confirmation',
-                                    pageTitle: 'Transfer confirmation',
-                                    content: (
-                                        <Send
-                                            onNotAvailable={n.toMain}
-                                            initialCurrency={params.currency}
-                                            onRequireConfirmation={
-                                                n.toConfirmation
-                                            }
-                                        />
-                                    ),
-                                }),
-                            },
                         ],
                     },
                     {
