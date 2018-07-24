@@ -8,6 +8,10 @@ import { IChangeParams } from 'app/components/common/types';
 import { IOrderCreateParams, IOrderCreateValidation } from './types';
 import Balance from 'app/components/common/balance-view';
 import { Checkbox } from 'app/components/common/checkbox';
+import {
+    ConfirmationPanel,
+    EnumConfirmationDisplay,
+} from 'app/components/common/confirmation-panel';
 
 export interface IOrderCreateProps extends IOrderCreateParams {
     profile: IProfileBrief;
@@ -17,9 +21,13 @@ export interface IOrderCreateProps extends IOrderCreateParams {
         value: IOrderCreateParams[keyof IOrderCreateParams],
     ) => void;
     deposit: string;
+    showConfirmation: boolean;
+    validationMessage?: string;
+    onCancel: () => void;
+    onNext: () => void;
+    onConfirmationCancel: () => void;
+    onSubmit: () => void;
 }
-
-const emptyFn = () => {}; // ToDo a
 
 export class OrderCreate extends React.Component<IOrderCreateProps, never> {
     constructor(props: IOrderCreateProps) {
@@ -34,19 +42,32 @@ export class OrderCreate extends React.Component<IOrderCreateProps, never> {
     };
 
     protected renderActions = () => {
-        return (
+        const p = this.props;
+        return p.showConfirmation ? (
+            <ConfirmationPanel
+                className="order-create__confirmation"
+                displayMode={EnumConfirmationDisplay.OneLine}
+                validationMessage={p.validationMessage}
+                onCancel={p.onConfirmationCancel}
+                onSubmit={p.onSubmit}
+                labelHeader="Please, enter account password."
+                labelDescription=""
+                labelCancel="BACK"
+                labelSubmit="CONFIRM"
+            />
+        ) : (
             <div className="order-create__actions">
                 <Button
                     transparent
                     color="violet"
                     className="order-create__button"
-                    onClick={emptyFn}
+                    onClick={p.onCancel}
                 >
                     Cancel
                 </Button>
                 <Button
                     color="violet"
-                    onClick={emptyFn}
+                    onClick={p.onNext}
                     className="order-create__button"
                 >
                     Next
@@ -120,6 +141,7 @@ export class OrderCreate extends React.Component<IOrderCreateProps, never> {
                     className="order-create__non-input"
                     label="Counterparty status"
                     horizontal
+                    tag="div"
                 >
                     <div className="order-create__status-checkboxes">
                         <Checkbox
