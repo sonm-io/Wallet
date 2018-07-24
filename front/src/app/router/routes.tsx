@@ -95,25 +95,6 @@ export const createRoutes = (
                         ),
                         children: [
                             {
-                                path: '/:currency',
-                                action: async (
-                                    ctx: IContext,
-                                    params: IUrlParams,
-                                ) => ({
-                                    browserTabTitle: 'Transfer confirmation',
-                                    pageTitle: 'Transfer confirmation',
-                                    content: (
-                                        <Send
-                                            onNotAvailable={n.toMain}
-                                            initialCurrency={params.currency}
-                                            onRequireConfirmation={
-                                                n.toConfirmation
-                                            }
-                                        />
-                                    ),
-                                }),
-                            },
-                            {
                                 path: '/confirm',
                                 action: async (
                                     ctx: IContext,
@@ -142,6 +123,25 @@ export const createRoutes = (
                                         <SendSuccess
                                             onClickHistory={n.toWalletHistory}
                                             onClickSend={n.toSend}
+                                        />
+                                    ),
+                                }),
+                            },
+                            {
+                                path: '/:currency',
+                                action: async (
+                                    ctx: IContext,
+                                    params: IUrlParams,
+                                ) => ({
+                                    browserTabTitle: 'Transfer confirmation',
+                                    pageTitle: 'Transfer confirmation',
+                                    content: (
+                                        <Send
+                                            onNotAvailable={n.toMain}
+                                            initialCurrency={params.currency}
+                                            onRequireConfirmation={
+                                                n.toConfirmation
+                                            }
                                         />
                                     ),
                                 }),
