@@ -7,9 +7,10 @@ interface IFormFieldProps {
     error?: string | string[];
     info?: string | string[];
     success?: string | string[];
-    children?: any;
+    children: any;
     label?: string;
     fullWidth?: boolean;
+    horizontal?: boolean;
     postfix?: string;
 }
 
@@ -21,11 +22,12 @@ const helpTextTypes: Array<keyof IFormFieldProps> = [
 
 export class FormField extends React.PureComponent<IFormFieldProps, any> {
     public render() {
+        const p = this.props;
         let helpText = '';
         let helpTextType = '';
 
         helpTextTypes.some(x => {
-            const raw = this.props[x];
+            const raw = p[x];
 
             if (raw && raw.length) {
                 helpText = Array.isArray(raw) ? raw.join('; ') : raw;
@@ -37,39 +39,34 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
 
         let label;
 
-        if (this.props.label) {
-            label = this.props.label.trim();
-            if (!label.endsWith(':')) {
+        if (p.label) {
+            label = p.label.trim();
+            if (!label.endsWith(':') && p.horizontal !== true) {
                 label += ':';
             }
         }
 
-        const postfix = this.props.postfix ? (
-            <div className="sonm-form-field__postfix">{this.props.postfix}</div>
+        const postfix = p.postfix ? (
+            <div className="sonm-form-field__postfix">{p.postfix}</div>
         ) : null;
 
         return (
             <label
-                className={cn(
-                    'sonm-form-field',
-                    this.props.className,
-                    {
-                        [`sonm-form-field--${helpTextType}`]: Boolean(
-                            helpTextType,
-                        ),
-                    },
-                    {
-                        [`sonm-form-field--full-width`]: Boolean(
-                            this.props.fullWidth,
-                        ),
-                    },
-                )}
+                className={cn('sonm-form-field', p.className, {
+                    [`sonm-form-field--${helpTextType}`]: helpTextType,
+                    'sonm-form-field--full-width': p.fullWidth,
+                    'sonm-form-field--horizontal': p.horizontal,
+                })}
             >
-                {label ? (
-                    <div className="sonm-form-field__label">{label}</div>
-                ) : null}
+                <div
+                    className={cn('sonm-form-field__label', {
+                        'sonm-form-field__label--nowrap': p.horizontal !== true,
+                    })}
+                >
+                    {label ? label : ''}
+                </div>
                 <div className="sonm-form-field__input">
-                    {this.props.children}
+                    {p.children}
                     {postfix}
                 </div>
                 <div className="sonm-form-field__help">{helpText}</div>

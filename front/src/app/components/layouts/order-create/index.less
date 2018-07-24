@@ -6,44 +6,76 @@
         'profile actions'
         'details params';
 
+    grid-template-columns: 540px auto;
+
+    // Main grid areas
+
     &__profile {
         grid-area: profile;
     }
 
     &__actions {
         grid-area: actions;
-    }
-
-    &__button {
-        text-transform: capitalize;
-        min-width: 113px;
-    }
-
-    &__label {
-        margin: 21px 0 0 0;
-    }
-
-    &__property-grid {
-        display: grid;
-        grid-template-columns: 50% 50%;
-        grid-auto-rows: min-content;
-        grid-column-gap: 10px;
-        grid-row-gap: 5px;
-        padding: 30px;
-    }
-
-    &__grid-header {
-        grid-column: 1 / span 2;
-        color: #95989a;
-        font-size: 13px;
-        font-weight: bold;
+        margin: 0 0 44px auto;
     }
 
     &__details {
         grid-area: details;
+        --label-width: 150px;
+
+        &-input {
+            width: 128px;
+        }
+        &-counterparty {
+            width: 350px;
+        }
     }
 
     &__params {
         grid-area: params;
+        --label-width: 350px;
+
+        &-input {
+            width: 128px;
+        }
+    }
+
+    // Elements
+
+    &__button {
+        text-transform: capitalize;
+        min-width: 113px;
+        margin: 0 0 0 36px;
+    }
+
+    &__status-checkboxes {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-gap: 10px;
+    }
+
+    &__grid-header {
+        color: #95989a;
+        font-size: 13px;
+        font-weight: bold;
+
+        &-details {
+            padding: 26px 0 0 0;
+        }
+        &-params {
+            border-top: 2px solid #fafafa;
+            padding: 24px 0 0 0;
+        }
+    }
+
+    &__input {
+        color: #333333;
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+    &__non-input {
+        padding-top: 15px;
+        padding-bottom: 6px;
     }
 }
