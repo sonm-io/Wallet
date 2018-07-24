@@ -17,7 +17,7 @@ export class IdentIcon extends React.Component<IProps, any> {
         '0x0000000000000000000000000000000000000000': 'ether',
         '0x06bda3cf79946e8b32a0bb6a3daa174b577c55b5': 'sonm',
         '0xa2498b16a8fe7cd997f278d2419e3aa3b2b5854c': 'sonm',
-        '0x983F6d60db79ea8cA4eB9968C6aFf8cfA04B3c63': 'sonm',
+        '0x983f6d60db79ea8ca4eb9968c6aff8cfa04b3c63': 'sonm',
     };
 
     public static defaultProps: Partial<IProps> = {

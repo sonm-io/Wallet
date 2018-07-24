@@ -639,6 +639,13 @@ class Api {
 
                 if (key !== KEY_WALLETS_LIST) {
                     this.dwh.setNetworkURL(storage.settings.chainId);
+
+                    storage.tokens = storage.tokens.map(
+                        (item: t.ICurrencyInfo) => {
+                            item.address = item.address.toLowerCase();
+                            return item;
+                        },
+                    );
                 }
 
                 return storage;
