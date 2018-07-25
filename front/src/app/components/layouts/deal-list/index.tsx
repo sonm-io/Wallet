@@ -22,10 +22,6 @@ const emptyFn = () => {};
 
 @observer
 export class DealList extends React.Component<IProps, any> {
-    constructor(props: IProps) {
-        super(props);
-    }
-
     public componentDidMount() {
         rootStore.dealListStore.startAutoUpdate();
     }
