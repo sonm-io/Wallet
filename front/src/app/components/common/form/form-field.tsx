@@ -12,11 +12,6 @@ interface IFormFieldProps {
     fullWidth?: boolean;
     horizontal?: boolean;
     postfix?: string;
-    /**
-     * Use 'div' to not propagate click event to fields container.
-     * Usefull in case multiple checkboxes in fields container.
-     */
-    tag?: 'label' | 'div';
 }
 
 const helpTextTypes: Array<keyof IFormFieldProps> = [
@@ -26,6 +21,23 @@ const helpTextTypes: Array<keyof IFormFieldProps> = [
 ];
 
 export class FormField extends React.PureComponent<IFormFieldProps, any> {
+    protected inputContainerRef?: HTMLDivElement;
+
+    protected handleClick = (event: React.MouseEvent<HTMLLabelElement>) => {
+        if (
+            event.currentTarget.querySelectorAll('input').length > 1 &&
+            this.inputContainerRef !== undefined &&
+            event.target !== undefined &&
+            !this.inputContainerRef.contains(event.target as HTMLElement)
+        ) {
+            event.preventDefault();
+        }
+    };
+
+    protected saveInputContainerRef = (ref: HTMLDivElement) => {
+        this.inputContainerRef = ref;
+    };
+
     public render() {
         const p = this.props;
         let helpText = '';
@@ -55,15 +67,14 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
             <div className="sonm-form-field__postfix">{p.postfix}</div>
         ) : null;
 
-        const Tag = p.tag || 'label';
-
         return (
-            <Tag
+            <label
                 className={cn('sonm-form-field', p.className, {
                     [`sonm-form-field--${helpTextType}`]: helpTextType,
                     'sonm-form-field--full-width': p.fullWidth,
                     'sonm-form-field--horizontal': p.horizontal,
                 })}
+                onClick={this.handleClick}
             >
                 <div
                     className={cn('sonm-form-field__label', {
@@ -72,12 +83,15 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
                 >
                     {label ? label : ''}
                 </div>
-                <div className="sonm-form-field__input">
+                <div
+                    className="sonm-form-field__input"
+                    ref={this.saveInputContainerRef}
+                >
                     {p.children}
                     {postfix}
                     <div className="sonm-form-field__help">{helpText}</div>
                 </div>
-            </Tag>
+            </label>
         );
     }
 }

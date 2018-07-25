@@ -148,7 +148,6 @@ export class OrderCreateView extends React.Component<IOrderCreateProps, never> {
                     className="order-create__non-input"
                     label="Counterparty status"
                     horizontal
-                    tag="div"
                 >
                     <div className="order-create__status-checkboxes">
                         <Checkbox
