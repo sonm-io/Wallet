@@ -21,13 +21,14 @@ const helpTextTypes: Array<keyof IFormFieldProps> = [
 ];
 
 export class FormField extends React.PureComponent<IFormFieldProps, any> {
-    protected inputContainerRef?: HTMLDivElement;
+    protected inputContainerRef?: HTMLElement;
 
     protected handleClick = (event: React.MouseEvent<HTMLLabelElement>) => {
         if (
             event.currentTarget.querySelectorAll('input').length > 1 &&
-            this.inputContainerRef !== undefined &&
-            !this.inputContainerRef.contains(event.target as HTMLElement)
+            !(this.inputContainerRef as HTMLElement).contains(
+                event.target as HTMLElement,
+            )
         ) {
             event.preventDefault();
         }
