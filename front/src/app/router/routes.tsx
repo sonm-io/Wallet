@@ -89,8 +89,6 @@ export const createRoutes = (
                                 content: (
                                     <Send
                                         onNotAvailable={n.toMain}
-                                        initialAddress={ctx.query.address}
-                                        initialCurrency={ctx.query.currency}
                                         onRequireConfirmation={n.toConfirmation}
                                     />
                                 ),
@@ -511,7 +509,12 @@ export const createRoutes = (
                             return {
                                 browserTabTitle: 'Deals',
                                 pageTitle: 'Deals',
-                                content: <DealList onClickDeal={n.toDeal} />,
+                                content: (
+                                    <DealList
+                                        onClickDeal={n.toDeal}
+                                        onClickViewMarket={n.toOrders}
+                                    />
+                                ),
                             };
                         },
                     },

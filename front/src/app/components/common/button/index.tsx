@@ -37,7 +37,7 @@ export class Button extends React.PureComponent<IButtonProps> {
 
     public render() {
         const {
-            color = 'blue',
+            color,
             square,
             transparent,
             children,

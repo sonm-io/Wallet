@@ -12,11 +12,6 @@ interface IProps {
 
 @observer
 export class ProfileList extends React.Component<IProps, any> {
-    constructor(props: IProps) {
-        super(props);
-        rootStore.profileListStore.update();
-    }
-
     public handleRowClick = (record: IProfileBrief) => {
         this.props.onNavigate(record.address);
     };

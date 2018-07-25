@@ -186,7 +186,11 @@ export class DealView extends React.Component<IProps, never> {
                         <h4 className="sonm-deal__header">
                             Resource parameters
                         </h4>
-                        <Benchmark data={p.benchmarkMap} />
+                        <Benchmark
+                            data={p.benchmarkMap}
+                            ids={Benchmark.detailsPanelIds}
+                            names={Benchmark.detailsPanelNames}
+                        />
                     </div>
                     <div className="sonm-deal__price-duration">
                         <h4 className="sonm-deal__header">

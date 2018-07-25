@@ -641,6 +641,10 @@ class Api {
 
                 if (key !== KEY_WALLETS_LIST) {
                     this.dwh.setNetworkURL(storage.settings.chainId);
+
+                    for (const token of storage.tokens) {
+                        token.address = token.address.toLowerCase();
+                    }
                 }
 
                 return storage;
