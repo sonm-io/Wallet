@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as get from 'lodash/fp/get';
 import * as cn from 'classnames';
-import { IChengableProps, IChangeParams, ITogglerBaseProps } from '../types';
+import { IChangeableProps, IChangeParams, ITogglerBaseProps } from '../types';
 import { Toggler } from '../toggler';
 
 let uniqIdx = 0;
@@ -9,7 +9,7 @@ function nextUniqId() {
     return 'toggleGroupId' + uniqIdx++;
 }
 
-export interface IToggleGroupProps<TValue> extends IChengableProps<TValue> {
+export interface IToggleGroupProps<TValue> extends IChangeableProps<TValue> {
     values: TValue[];
     titlesOrDisplayIndex?: string[] | string;
     displayIndex?: string;

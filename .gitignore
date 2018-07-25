@@ -1,8 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
 .vscode
-/node_modules/
-/package-lock.json
+/node_modules
 /yarn.lock
 /dist
 /docs

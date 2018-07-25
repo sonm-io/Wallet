@@ -5,7 +5,6 @@ import { MarketAccountSelect, IAccount } from '../account-select';
 import { AppBalance } from '../balance';
 export { IAccount } from '../account-select';
 import { IMarketStats } from 'app/api/types';
-import { MyProfileLink } from '../my-profile-link';
 
 export interface IAppHeaderProps {
     className?: string;
@@ -33,6 +32,12 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
         this.props.onExit();
     };
 
+    protected handleClickMyProfile = (event: any) => {
+        event.preventDefault();
+
+        this.props.onClickMyProfile();
+    };
+
     public render() {
         const p = this.props;
 
@@ -50,7 +55,17 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                     items={p.menu}
                 />
                 {p.hasMarketAccountSelect ? (
-                    <MyProfileLink onClick={this.props.onClickMyProfile} />
+                    <a
+                        className="sonm-app-header__profile"
+                        onClick={this.handleClickMyProfile}
+                    >
+                        <Icon
+                            className="sonm-app-header__profile-icon"
+                            title="logout"
+                            href="#exit"
+                            i="Profile"
+                        />
+                    </a>
                 ) : null}
                 {p.account && p.hasMarketAccountSelect ? (
                     <MarketAccountSelect
@@ -74,9 +89,7 @@ export class AppHeader extends React.Component<IAppHeaderProps, any> {
                         marketDaysLeft={p.marketStats.daysLeft}
                     />
                     <Icon
-                        className={
-                            'sonm-app-header__icon sonm-app-header-block__icon'
-                        }
+                        className="sonm-app-header__icon"
                         title="logout"
                         href="#exit"
                         tag="a"

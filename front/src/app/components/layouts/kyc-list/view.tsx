@@ -2,12 +2,13 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { KycListItem } from './sub/kyc-list-item';
 import { IKycValidator } from 'app/api';
-import { IKycData, IKycDataItem } from 'app/stores/kyc-list';
+import { BN } from 'bn.js';
 
 export interface IKycListViewProps {
     className?: string;
     list: Array<IKycValidator>;
-    data: IKycData;
+    kycLinks: { [kycEthAddress: string]: string };
+    validationMessage?: string;
     /**
      * Index of selected item. If undefined, then no one is selected.
      */
@@ -18,6 +19,8 @@ export interface IKycListViewProps {
      */
     onCloseBottom: () => void;
     onSubmitPassword: (itemIndex: number, password: string) => void;
+    marketBalance: string;
+    onNavigateDeposit: () => void;
 }
 
 export class KycListView extends React.Component<IKycListViewProps, never> {
@@ -25,23 +28,15 @@ export class KycListView extends React.Component<IKycListViewProps, never> {
         super(props);
     }
 
-    protected static emptyData: IKycDataItem = {
-        kycLink: undefined,
-        validationMessage: undefined,
-    };
-
-    protected getDataItem = (id: string) => {
-        const dataItem = this.props.data[id];
-        return dataItem !== undefined ? dataItem : KycListView.emptyData;
-    };
-
     public render() {
         return (
             <div className={cn('kyc-list', this.props.className)}>
                 {this.props.list.map((i, index) => {
-                    const { kycLink, validationMessage } = this.getDataItem(
-                        i.id,
+                    const kycLink = this.props.kycLinks[i.id];
+                    const enoughBalance = new BN(this.props.marketBalance).gte(
+                        new BN(i.fee),
                     );
+
                     return (
                         <KycListItem
                             className="kyc-list__item"
@@ -49,12 +44,14 @@ export class KycListView extends React.Component<IKycListViewProps, never> {
                             key={index}
                             validator={i}
                             kycLink={kycLink}
-                            validationMessage={validationMessage}
+                            validationMessage={this.props.validationMessage}
                             isSelected={this.props.selectedIndex === index}
                             onClick={this.props.onClickItem}
                             onSubmitPassword={this.props.onSubmitPassword}
                             onCancelPassword={this.props.onCloseBottom}
                             onCloseLink={this.props.onCloseBottom}
+                            isBuyingAvailable={enoughBalance}
+                            onNavigateDeposit={this.props.onNavigateDeposit}
                         />
                     );
                 })}

@@ -11,8 +11,12 @@ import {
     EnumOrderStatus,
     EnumProfileStatus,
     IOrder,
-    EnumOrderType,
+    EnumOrderSide,
 } from 'app/api/types';
+import { createBigNumber, BN } from '../utils/create-big-number';
+
+const SECS_IN_HOUR = new BN('3600');
+const SECS_IN_DAY = SECS_IN_HOUR.mul(new BN('24'));
 
 export interface IOrderDetailsInput {
     password: string;
@@ -201,18 +205,64 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     @asyncAction
     protected *fetchData() {
         this.order = yield this.api.fetchById(this.orderId);
-        this.setDuration(this.order.duration);
+        this.setDuration(this.order.durationSeconds);
+    }
+
+    @computed
+    public get usdWeiPerHour(): string {
+        let result = '';
+
+        const price = createBigNumber(this.order.usdWeiPerSeconds);
+
+        if (price !== undefined) {
+            result = price.mul(SECS_IN_HOUR).toString();
+        }
+
+        return result;
+    }
+
+    @computed
+    public get isBuyingAvailable() {
+        let result = false;
+
+        const price = new BN(this.order.usdWeiPerSeconds);
+        const duration = new BN(String(this.order.durationSeconds));
+
+        if (price !== undefined && duration !== undefined) {
+            const balance =
+                this.rootStore.marketStore.marketAccountView === undefined
+                    ? undefined
+                    : new BN(
+                          this.rootStore.marketStore.marketAccountView.usdBalance,
+                      );
+
+            if (balance !== undefined) {
+                if (this.order.durationSeconds !== 0) {
+                    const cost = duration.gt(SECS_IN_DAY)
+                        ? price.mul(SECS_IN_DAY)
+                        : price.mul(duration);
+
+                    result = balance.gte(cost);
+                } else {
+                    const perHour = price.mul(SECS_IN_HOUR);
+
+                    result = balance.gte(perHour);
+                }
+            }
+        }
+
+        return result;
     }
 
     public static emptyOrder: IOrder = {
         id: '0',
-        orderType: EnumOrderType.any,
+        orderSide: EnumOrderSide.any,
         creator: {
             address: '0x1234567890123456789012345678901234567890',
             status: EnumProfileStatus.anon,
         },
-        price: '1',
-        duration: 0,
+        usdWeiPerSeconds: '1',
+        durationSeconds: 0,
         orderStatus: EnumOrderStatus.active,
         benchmarkMap: {},
     };

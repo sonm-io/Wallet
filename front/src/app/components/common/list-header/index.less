@@ -29,9 +29,15 @@
     }
 }
 
+:root {
+    --list-header__pagesize-margin: 0 0 0 auto;
+}
+
 // Component
 
 .list-header {
+    width: 100%;
+
     .list-header__flexRow;
 
     // Sortings block
@@ -61,15 +67,15 @@
 
     // PageSize block
 
-    &__pageSize {
+    &__pagesize {
         .list-header__flexRow;
         .list-header__font;
-        margin-left: auto;
+        margin: var(--list-header__pagesize-margin);
     }
-    &__pageSize-button {
+    &__pagesize-button {
         .list-header__noButton;
     }
-    &__pageSize-button-label {
+    &__pagesize-button-label {
         .list-header__font;
         margin: 0 5px;
         cursor: pointer;
@@ -79,7 +85,7 @@
             text-decoration: underline;
         }
     }
-    &__pageSize-refresh {
+    &__pagesize-refresh {
         .list-header__noButton;
         cursor: pointer;
     }

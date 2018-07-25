@@ -466,6 +466,16 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         this.userInput.toAddress = '';
         this.userInput.amountEther = '';
 
+        if (tx.toAddress === tx.fromAddress) {
+            this.rootStore.uiStore.addAlert({
+                type: AlertType.warning,
+                message: this.localizator.getMessageText([
+                    'tx_sidechain_delay',
+                    [],
+                ]),
+            });
+        }
+
         const { data } = yield this.api.send(tx, password);
         const result = data as ISendTransactionResult;
 

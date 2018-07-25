@@ -3,6 +3,7 @@ import * as cn from 'classnames';
 
 // To get more icons go to: https://material.io/icons/
 export const icons: any = {
+    Add: require('./add.svg').default,
     ArrowBack: require('./arrow-back.svg').default,
     ArrowDown: require('./arrow-down.svg').default,
     ArrowRight: require('./arrow-right.svg').default,
@@ -22,13 +23,14 @@ export const icons: any = {
     Pencil: require('./pencil.svg').default,
     Refresh: require('./refresh.svg').default,
     Sync: require('./sync.svg').default,
+    Profile: require('./profile.svg').default,
 };
 
 interface IAny {
     [key: string]: any;
 }
 
-interface IIconProps extends IAny {
+export interface IIconProps extends IAny {
     color?: string;
     className?: string;
     tag?: string;
@@ -54,9 +56,5 @@ export class Icon extends React.PureComponent<IIconProps, any> {
         );
     }
 }
-
-export const IconButton = (props: IIconProps) => (
-    <Icon {...props} tag="button" />
-);
 
 export default Icon;

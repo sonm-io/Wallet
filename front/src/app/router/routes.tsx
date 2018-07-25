@@ -88,8 +88,6 @@ export const createRoutes = (
                                 content: (
                                     <Send
                                         onNotAvailable={n.toMain}
-                                        initialAddress={ctx.query.address}
-                                        initialCurrency={ctx.query.currency}
                                         onRequireConfirmation={n.toConfirmation}
                                     />
                                 ),
@@ -151,7 +149,9 @@ export const createRoutes = (
                             async (ctx: IContext, params: IUrlParams) => ({
                                 browserTabTitle: 'Accounts',
                                 pageTitle: 'Accounts',
-                                content: <Wallets />,
+                                content: (
+                                    <Wallets navigateToProfile={n.toProfile} />
+                                ),
                             }),
                         )),
                         children: [
@@ -427,7 +427,7 @@ export const createRoutes = (
                                                     n.toSimilarOrders
                                                 }
                                                 onClickOrders={
-                                                    n.toFullOrderList
+                                                    n.toOrderListByAddress
                                                 }
                                             />
                                         ),
@@ -486,7 +486,12 @@ export const createRoutes = (
                             return {
                                 browserTabTitle: 'Deals',
                                 pageTitle: 'Deals',
-                                content: <DealList onClickDeal={n.toDeal} />,
+                                content: (
+                                    <DealList
+                                        onClickDeal={n.toDeal}
+                                        onClickViewMarket={n.toOrders}
+                                    />
+                                ),
                             };
                         },
                     },
@@ -512,7 +517,9 @@ export const createRoutes = (
                             return {
                                 browserTabTitle: 'KYC providers',
                                 pageTitle: 'KYC providers',
-                                content: <KycList />,
+                                content: (
+                                    <KycList onNavigateDeposit={n.toDeposit} />
+                                ),
                             };
                         },
                     },

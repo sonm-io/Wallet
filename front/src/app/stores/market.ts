@@ -75,7 +75,7 @@ export class MarketStore extends OnlineStore {
         marketAccountAddress: '',
     };
 
-    @observable public marketBalance: string = '- - -';
+    @observable public marketBalance: string = '';
     @observable
     public marketStats: IMarketStats = {
         dealsCount: 0,

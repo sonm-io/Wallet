@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as cn from 'classnames';
+import { BalanceUtils } from './utils';
 
 interface IBalanceViewProps {
     className?: string;
@@ -10,113 +12,60 @@ interface IBalanceViewProps {
     round?: boolean;
 }
 
-import * as cn from 'classnames';
-import { moveDecimalPoint } from 'app/utils/move-decimal-point';
+interface IState {
+    text: string;
+    balance?: string;
+    decimalDigitAmount?: number;
+    decimalPointOffset?: number;
+    round?: boolean;
+}
 
-export class Balance extends React.PureComponent<IBalanceViewProps, any> {
-    protected static limitDecimalDigitAmount(
-        num: string,
-        decimalDigitAmount: number,
+export class Balance extends React.PureComponent<IBalanceViewProps, IState> {
+    public constructor(props: IBalanceViewProps) {
+        super(props);
+
+        this.state = Balance.getStateFromProps(props);
+    }
+
+    private static getStateFromProps = (props: IBalanceViewProps) => ({
+        balance: props.balance,
+        decimalDigitAmount: props.decimalDigitAmount,
+        decimalPointOffset: props.decimalPointOffset,
+        round: props.round,
+        text: BalanceUtils.formatBalance(
+            props.balance,
+            props.decimalDigitAmount,
+            props.decimalPointOffset,
+            props.round,
+        ),
+    });
+
+    public static getDerivedStateFromProps(
+        props: IBalanceViewProps,
+        state: IState,
     ) {
-        const dotIdx = num.indexOf('.');
-
-        return dotIdx !== -1
-            ? num.slice(0, dotIdx + 1 + decimalDigitAmount)
-            : num;
-    }
-
-    protected static removeTrailingPoint(str: string) {
-        const len = str.length;
-        return str[len - 1] === '.' ? str.slice(0, len - 1) : str;
-    }
-
-    protected static increaseInteger(n: string) {
-        let i = n.length - 1;
-        while (i >= 0 && n[i] === '9') {
-            i--;
-        }
-        if (i === -1) {
-            return '1' + '0'.repeat(n.length);
-        }
-        return (
-            n.substr(0, i - 1) +
-            (Number(n[i]) + 1) +
-            '0'.repeat(n.length - i - 1)
-        );
-    }
-
-    public static roundLastNumberPosition(num: string, justCutOff?: boolean) {
-        let result = num;
-
-        if (num.indexOf('.') > 0) {
-            const lastIdx = num.length - 1;
-            if (justCutOff || num[lastIdx] === '0') {
-                result = num.slice(0, lastIdx);
-            } else {
-                const last = Number(num[lastIdx]);
-                if (last < 5) {
-                    result = num.slice(0, lastIdx);
-                } else {
-                    let idx = lastIdx - 1;
-                    while (num[idx] === '9') {
-                        --idx;
-                    }
-                    if (num[idx] === '.') {
-                        result = Balance.increaseInteger(num.slice(0, idx));
-                    } else {
-                        const digit = Number(num[idx]);
-                        result = num.slice(0, idx) + Number(digit + 1);
-                    }
-                }
-            }
-            result = Balance.removeTrailingPoint(result);
-        }
-        return result;
-    }
-
-    public static roundOrCrop(
-        num: string,
-        decimalDigitAmount: number,
-        round?: boolean,
-    ) {
-        let result = Balance.limitDecimalDigitAmount(
-            num,
-            decimalDigitAmount + 1,
-        );
-        const pointIndex = result.indexOf('.');
         if (
-            pointIndex > -1 &&
-            result.substr(pointIndex + 1).length > decimalDigitAmount
+            props.balance !== state.balance ||
+            props.decimalPointOffset !== state.decimalPointOffset ||
+            props.decimalDigitAmount !== state.decimalDigitAmount ||
+            props.round !== state.round
         ) {
-            result = Balance.roundLastNumberPosition(result, !round);
+            return Balance.getStateFromProps(props);
         }
-        return result;
+        return null;
     }
 
     public render() {
-        const {
-            className,
-            prefix,
-            decimalPointOffset,
-            decimalDigitAmount = 4,
-            round,
-        } = this.props;
-        const { balance, symbol } = this.props;
-        let num = '';
-
-        if (balance) {
-            num = moveDecimalPoint(balance, -decimalPointOffset);
-            num = Balance.roundOrCrop(num, decimalDigitAmount, round);
-        }
+        const { className, prefix, symbol } = this.props;
 
         return (
             <div
                 className={cn('sonm-balance', className)}
-                {...{ 'data-display-id': `balance` }}
+                data-display-id="balance"
             >
                 <span className="sonm-balance__number">
                     {prefix ? `${prefix} ` : null}
-                    {num}
+                    {this.state.text}
                 </span>
                 {symbol ? (
                     <span className="sonm-balance__symbol">{symbol}</span>

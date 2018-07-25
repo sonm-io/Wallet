@@ -1,24 +1,32 @@
 import { observable, computed, action } from 'mobx';
 import * as moment from 'moment';
 import { IFilterStore } from './filter-base';
+import { RootStore } from './index';
 
 export interface IDealFilter {
-    address: string;
     query: string;
-    dateFrom: number;
-    dateTo: number;
+    dateRange: [Date, Date];
     onlyActive: boolean;
 }
 
 export class DealFilterStore implements IDealFilter, IFilterStore {
-    @observable
-    public userInput: Partial<IDealFilter> = {
-        address: undefined,
-        query: undefined,
-        dateFrom: moment('20171201', 'YYYYMMDD').valueOf(),
-        dateTo: moment()
+    protected rootStore: RootStore;
+
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
+    }
+
+    public static defaultDateRange: [Date, Date] = [
+        moment('20171201', 'YYYYMMDD').toDate(),
+        moment()
             .endOf('day')
-            .valueOf(),
+            .toDate(),
+    ];
+
+    @observable
+    public userInput: IDealFilter = {
+        query: '',
+        dateRange: DealFilterStore.defaultDateRange,
         onlyActive: true,
     };
 
@@ -32,24 +40,14 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
             }
 
             if (values[key] !== undefined) {
-                this.userInput[key] = values[key];
+                this.userInput[key] = values[key] as any;
             }
         });
     }
 
     @computed
-    public get address() {
-        return this.userInput.address || '';
-    }
-
-    @computed
-    public get dateFrom() {
-        return this.userInput.dateFrom || 0;
-    }
-
-    @computed
-    public get dateTo() {
-        return this.userInput.dateTo || 0;
+    public get dateRange(): [Date, Date] {
+        return this.userInput.dateRange;
     }
 
     @computed
@@ -66,11 +64,11 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
     public get filter(): any {
         const result: any = {
             address: {
-                $eq: this.address,
+                $eq: this.rootStore.marketStore.marketAccountAddress,
             },
             date: {
-                $gte: this.dateFrom,
-                $lte: this.dateTo,
+                $gte: this.dateRange[0].valueOf(),
+                $lte: this.dateRange[1].valueOf(),
             },
             onlyActive: {
                 $eq: this.onlyActive,

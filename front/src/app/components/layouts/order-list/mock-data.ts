@@ -4,14 +4,14 @@ import { IOrder } from 'app/api/types';
 const data: Array<IOrder> = [
     {
         id: '10',
-        orderType: 1,
+        orderSide: 1,
         creator: {
             address: '0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD',
             name: '',
             status: 0,
         },
-        price: '999999999999997200',
-        duration: 4,
+        usdWeiPerSeconds: '999999999999997200',
+        durationSeconds: 4,
         orderStatus: 2,
         benchmarkMap: {
             cpuCount: 1,
@@ -30,14 +30,14 @@ const data: Array<IOrder> = [
     },
     {
         id: '1057',
-        orderType: 2,
+        orderSide: 2,
         creator: {
             address: '0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD',
             name: '',
             status: 0,
         },
-        price: '999999999999997200',
-        duration: 1,
+        usdWeiPerSeconds: '999999999999997200',
+        durationSeconds: 1,
         orderStatus: 2,
         benchmarkMap: {
             cpuCount: 4,
@@ -56,14 +56,14 @@ const data: Array<IOrder> = [
     },
     {
         id: '1058',
-        orderType: 2,
+        orderSide: 2,
         creator: {
             address: '0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD',
             name: '',
             status: 0,
         },
-        price: '999999999999997200',
-        duration: 1,
+        usdWeiPerSeconds: '999999999999997200',
+        durationSeconds: 1,
         orderStatus: 2,
         benchmarkMap: {
             cpuCount: 4,

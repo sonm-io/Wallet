@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IOrder } from 'app/api/types';
+import { IOrder, EnumOrderSide } from 'app/api/types';
 import { ProfileBrief } from 'app/components/common/profile-brief/index';
 import { Benchmark } from 'app/components/common/benchmark';
 import {
@@ -7,11 +7,9 @@ import {
     IPropertyItemConfig,
 } from 'app/components/common/property-list';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel/index';
-import { Balance } from 'app/components/common/balance-view/index';
+import { PricePerHour } from 'app/components/common/price-per-hour';
 import formatSeconds from 'app/utils/format-seconds';
-import { EnumOrderType } from '../../../api/types';
-import { EnumOrderStatus } from '../../../api';
-import { BN } from 'bn.js';
+import { EnumOrderStatus } from 'app/api';
 import { InsuficcientFunds } from './sub/insuficcient-funds';
 
 interface IProps {
@@ -21,46 +19,36 @@ interface IProps {
     onSubmit: (password: string) => void;
     onNavigateBack: () => void;
     onNavigateDeposit: () => void;
-    marketBalance: string;
+    isBuyingAvailable: boolean;
 }
 
 class OrderPropertyList extends PropertyList<IOrder> {}
 
 export class OrderView extends React.Component<IProps, never> {
-    public static orderViewConfig: Array<IPropertyItemConfig<keyof IOrder>> = [
+    public static orderViewConfig: Array<IPropertyItemConfig<IOrder>> = [
         {
-            key: 'id',
+            id: 'id',
             name: 'ID',
         },
         {
-            key: 'duration',
+            id: 'durationSeconds',
             name: 'Duration',
-            render: (seconds: number) =>
+            renderValue: (seconds: number) =>
                 seconds ? formatSeconds(seconds) : '--',
         },
         {
-            key: 'orderType',
+            id: 'orderSide',
             name: 'Type',
-            render: (orderType: number) =>
-                orderType === EnumOrderType.bid ? 'Bid' : 'Ask',
+            renderValue: (orderType: number) =>
+                orderType === EnumOrderSide.bid ? 'Bid' : 'Ask',
         },
         {
-            key: 'orderStatus',
+            id: 'orderStatus',
             name: 'Status',
-            render: (status: number) =>
+            renderValue: (status: number) =>
                 status === EnumOrderStatus.active ? 'Active' : 'Not Active',
         },
     ];
-
-    protected get canBuy() {
-        const p = this.props;
-
-        const balance = new BN(p.marketBalance);
-        const price = new BN(p.order.price);
-        let hours = new BN(p.order.duration).div(new BN(3600));
-        hours = hours.isZero ? new BN(1) : hours; // if there is no duration for order, then consider 1 hour.
-        return balance.gte(price.mul(hours));
-    }
 
     public render() {
         const p = this.props;
@@ -73,11 +61,11 @@ export class OrderView extends React.Component<IProps, never> {
                 <OrderPropertyList
                     title="Details"
                     className="order-view__details"
-                    dataSource={p.order}
+                    data={p.order}
                     config={OrderView.orderViewConfig}
                 />
-                {p.order.orderType === EnumOrderType.ask ? (
-                    this.canBuy ? (
+                {p.order.orderSide === EnumOrderSide.ask ? (
+                    p.isBuyingAvailable ? (
                         <ConfirmationPanel
                             className="order-view__confirmation"
                             onSubmit={p.onSubmit}
@@ -87,6 +75,7 @@ export class OrderView extends React.Component<IProps, never> {
                         />
                     ) : (
                         <InsuficcientFunds
+                            className="order-view__alert"
                             onBack={p.onNavigateBack}
                             onDeposit={p.onNavigateDeposit}
                         />
@@ -96,16 +85,12 @@ export class OrderView extends React.Component<IProps, never> {
                     title="Resource parameters"
                     className="order-view__benchmark"
                     data={p.order.benchmarkMap}
+                    ids={Benchmark.detailsPanelIds}
+                    names={Benchmark.detailsPanelNames}
                 />
                 <div className="order-view__price">
                     <h4 className="order-view__header">Price</h4>
-                    <Balance
-                        symbol="USD/h"
-                        balance={p.order.price}
-                        decimalPointOffset={18}
-                        decimalDigitAmount={4}
-                        round
-                    />
+                    <PricePerHour usdWeiPerSeconds={p.order.usdWeiPerSeconds} />
                 </div>
             </div>
         );

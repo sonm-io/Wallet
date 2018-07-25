@@ -3,6 +3,7 @@ import * as cn from 'classnames';
 import { Header } from 'app/components/common/header';
 import { rootStore } from 'app/stores';
 import { IOrder } from 'app/api/types';
+import { TEthereumAddress } from 'app/entities/types';
 
 const orderDetailsStore = rootStore.orderDetailsStore;
 
@@ -10,18 +11,24 @@ export interface IOrderBuySuccessProps {
     className?: string;
     onClickDeals: () => void;
     onClickMarket: (order: IOrder) => void;
-    onClickOrders: () => void;
+    onClickOrders: (myAddress: TEthereumAddress) => void;
 }
 
 export class OrderCompleteBuy extends React.Component<
     IOrderBuySuccessProps,
     never
 > {
-    protected handleMarketClick = () => {
+    protected handleClickMarket = () => {
         const order = orderDetailsStore.order;
         if (order !== undefined) {
             this.props.onClickMarket(order);
         }
+    };
+
+    protected handleClickOrder = () => {
+        const address = rootStore.marketStore.marketAccountAddress;
+
+        this.props.onClickOrders(address);
     };
 
     public render() {
@@ -33,7 +40,7 @@ export class OrderCompleteBuy extends React.Component<
                 <div className="order-complete-buy__buttons">
                     <button
                         className="order-complete-buy__button"
-                        onClick={this.handleMarketClick}
+                        onClick={this.handleClickMarket}
                     >
                         <div className="order-complete-buy__icon-market" />
                         <div className="order-complete-buy__label">
@@ -42,7 +49,7 @@ export class OrderCompleteBuy extends React.Component<
                     </button>
                     <button
                         className="order-complete-buy__button"
-                        onClick={this.props.onClickOrders}
+                        onClick={this.handleClickOrder}
                     >
                         <div className="order-complete-buy__icon-orders" />
                         <div className="order-complete-buy__label">

@@ -121,6 +121,7 @@ export class RootStore implements IHasLocalizator {
                 send: Api.withdraw,
             },
             true,
+            '150000',
         );
 
         this.marketStore = new MarketStore(this, {
@@ -160,7 +161,7 @@ export class RootStore implements IHasLocalizator {
             },
         );
 
-        this.dealFilterStore = new DealFilterStore();
+        this.dealFilterStore = new DealFilterStore(this);
 
         this.dealListStore = new DealList(
             {

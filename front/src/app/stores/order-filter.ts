@@ -1,7 +1,7 @@
 import { observable, computed, action } from 'mobx';
 import {
     EnumProfileStatus,
-    EnumOrderType,
+    EnumOrderSide,
     EnumOrderStatus,
 } from 'app/api/types';
 import { RootStore } from 'app/stores';
@@ -373,8 +373,8 @@ export class OrderFilterStore implements IFilterStore {
             orderSide: {
                 $eq:
                     this.side === 'Sell'
-                        ? EnumOrderType.ask
-                        : EnumOrderType.bid,
+                        ? EnumOrderSide.ask
+                        : EnumOrderSide.bid,
             },
             orderStatus: {
                 $eq: this.onlyActive

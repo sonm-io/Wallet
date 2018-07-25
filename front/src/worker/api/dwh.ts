@@ -22,7 +22,10 @@ const NETWORK_INCOMING = 0x4;
 const DEFAULT_NODES: t.INodes = {
     livenet: 'https://dwh.livenet.sonm.com:15022/DWHServer/',
     rinkeby: 'https://dwh-testnet.sonm.com:15022/DWHServer/',
+    testrpc: 'https://proxy.test.sonm.com:15123/DWHServer/',
 };
+
+const MB_SIZE = 1000 * 1000;
 
 export class DWH {
     private url: string;
@@ -46,12 +49,12 @@ export class DWH {
     > = [
         [2, 'cpuCount', 1],
         [7, 'gpuCount', 1],
-        [3, 'ramSize', 1024 * 1024],
-        [4, 'storageSize', 1024 * 1024 * 1024],
-        [11, 'redshiftGPU', 1],
+        [3, 'ramSize', MB_SIZE],
+        [4, 'storageSize', MB_SIZE * 1000],
+        [11, 'redshiftGpu', 1],
         [10, 'zcashHashrate', 1],
-        [9, 'ethHashrate', 1000 * 1000],
-        [8, 'gpuRamSize', 1024 * 1024],
+        [9, 'ethHashrate', MB_SIZE],
+        [8, 'gpuRamSize', MB_SIZE],
     ];
 
     public static readonly mapProfile: IDictionary<t.IProfileBrief> = {
@@ -194,10 +197,20 @@ export class DWH {
                             x.attribute
                         ];
 
-                        return {
-                            value: converter(x.value),
-                            label,
-                        };
+                        if (x.value !== undefined) {
+                            let value = '';
+                            try {
+                                value = converter(x.value);
+                            } catch (err) {
+                                console.error(['Converter failed', x.value]);
+                                console.error(err.stack);
+                            }
+
+                            return {
+                                value,
+                                label,
+                            };
+                        }
                     }
                     return undefined;
                 })
@@ -292,6 +305,10 @@ export class DWH {
                     field: sortField,
                     order: sortDesc ? 1 : 0,
                 },
+                {
+                    field: 'id',
+                    order: 0,
+                },
             ],
             counterpartyID: [
                 '0x0000000000000000000000000000000000000000',
@@ -359,18 +376,15 @@ export class DWH {
             cpuSysbenchMulti: benchmarks.values[0] || 0,
             cpuSysbenchOne: benchmarks.values[1] || 0,
             cpuCount: benchmarks.values[2] || 0,
-            ramSize: Math.round(benchmarks.values[3] / (1024 * 1024)) || 0,
+            ramSize: Math.round(benchmarks.values[3] / MB_SIZE) || 0,
             storageSize:
-                Math.round(benchmarks.values[4] / (1024 * 1024 * 1024)) || 10,
-            downloadNetSpeed:
-                Math.round(benchmarks.values[5] / (1024 * 1024)) || 0,
-            uploadNetSpeed:
-                Math.round(benchmarks.values[6] / (1024 * 1024)) || 0,
+                Math.round(benchmarks.values[4] / (1000 * MB_SIZE)) || 10,
+            downloadNetSpeed: Math.round(benchmarks.values[5] / MB_SIZE) || 0,
+            uploadNetSpeed: Math.round(benchmarks.values[6] / MB_SIZE) || 0,
             gpuCount: benchmarks.values[7] || 0,
-            gpuRamSize: Math.round(benchmarks.values[8] / (1024 * 1024)) || 0,
+            gpuRamSize: Math.round(benchmarks.values[8] / MB_SIZE) || 0,
             ethHashrate:
-                Math.round((100 * benchmarks.values[9]) / (1000 * 1000)) /
-                    100 || 0,
+                Math.round((100 * benchmarks.values[9]) / MB_SIZE) / 100 || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
@@ -380,28 +394,33 @@ export class DWH {
     }
 
     public static parseOrder(item: any): t.IOrder {
-        const order = {
-            ...item.order,
-        };
-
-        order.benchmarkMap = DWH.parseBenchmarks(
-            item.order.benchmarks,
-            item.order.netflags.flags,
-        );
-        order.duration = order.duration ? DWH.parseDuration(order.duration) : 0;
-        order.price = DWH.recalculatePriceIn(order.price);
-
-        order.creator = {
-            status: item.creatorIdentityLevel || EnumProfileStatus.anonimest,
-            name: item.creatorName || '',
-            address: item.masterID || order.authorID,
+        const order: t.IOrder = {
+            orderSide: item.order.orderType,
+            benchmarkMap: DWH.parseBenchmarks(
+                item.order.benchmarks,
+                item.order.netflags.flags,
+            ),
+            durationSeconds: item.order.duration
+                ? DWH.parseDuration(item.order.duration)
+                : 0,
+            usdWeiPerSeconds: DWH.recalculatePriceIn(item.order.price),
+            orderStatus: item.order.orderStatus,
+            creator: {
+                status:
+                    item.creatorIdentityLevel === undefined
+                        ? EnumProfileStatus.anonimest
+                        : item.creatorIdentityLevel,
+                name: item.creatorName || '',
+                address: item.masterID || item.order.authorID,
+            },
+            id: item.order.id,
         };
 
         return order;
     }
 
     public static recalculatePriceIn(price: number) {
-        return String(new BN(price).mul(new BN(3600)));
+        return String(price);
     }
 
     public static parseDuration(duration: number) {
@@ -417,10 +436,27 @@ export class DWH {
         limit,
         offset,
         filter,
+        sortBy,
+        sortDesc,
     }: t.IListQuery): Promise<t.IListResult<t.IDeal>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
+        tcomb.maybe(tcomb.String)(sortBy);
+        tcomb.maybe(tcomb.Boolean)(sortDesc);
+
+        let sortField = 'StartTime';
+        switch (sortBy) {
+            case 'price':
+            case 'duration':
+                sortField = sortBy;
+                break;
+            case 'status':
+                sortField = sortBy;
+                break;
+            default:
+                break;
+        }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
         const res = await this.fetchData('GetDeals', {
@@ -431,8 +467,12 @@ export class DWH {
             limit,
             sortings: [
                 {
-                    field: 'StartTime',
-                    order: 1,
+                    field: sortField,
+                    order: sortDesc ? 1 : 0,
+                },
+                {
+                    field: 'id',
+                    order: 0,
                 },
             ],
             WithCount: true,
@@ -466,6 +506,8 @@ export class DWH {
 
             if (attrMap.kyc4) {
                 attrMap.status = EnumProfileStatus.pro;
+            } else if (attrMap.kyc2) {
+                attrMap.status = EnumProfileStatus.reg;
             } else if (attrMap.kyc3) {
                 attrMap.status = EnumProfileStatus.ident;
             }
