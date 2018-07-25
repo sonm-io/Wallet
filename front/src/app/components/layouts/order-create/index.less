@@ -24,11 +24,6 @@
         padding: 20px 20px 17px 20px;
     }
 
-    &__confirmation {
-        background-color: #fafafa;
-        padding: 20px 20px 0 20px;
-    }
-
     &__details {
         grid-area: details;
         --label-width: 150px;
@@ -52,6 +47,11 @@
 
     // Elements
 
+    &__confirmation {
+        background-color: @color-gray-bg;
+        padding: 20px 20px 0 20px;
+    }
+
     &__button {
         text-transform: capitalize;
         min-width: 113px;
@@ -65,7 +65,7 @@
     }
 
     &__grid-header {
-        color: #95989a;
+        color: @color-font-gray;
         font-size: 13px;
         font-weight: bold;
 
@@ -79,7 +79,7 @@
     }
 
     &__input {
-        color: #333333;
+        color: @color-font-dark;
         font-size: 14px;
         font-weight: normal;
     }

@@ -48,7 +48,7 @@ export class OrderCreateView extends React.Component<IOrderCreateProps, never> {
         const p = this.props;
         return p.showConfirmation ? (
             <ConfirmationPanel
-                className="order-create__confirmation"
+                className="order-create__actions order-create__confirmation"
                 displayMode={EnumConfirmationDisplay.OneLine}
                 validationMessage={p.validationMessage}
                 onCancel={p.onConfirmationCancel}
