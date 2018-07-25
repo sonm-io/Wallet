@@ -21,8 +21,8 @@ const state = observable({
     eventsCounter: {
         onUpdateField: 0,
         onCancel: 0,
-        onNext: 0,
-        onConfirmationCancel: 0,
+        onShowConfirmation: 0,
+        onCancelConfirmation: 0,
         onSubmitPassword: 0,
     },
     ...dealDetails,
@@ -39,12 +39,12 @@ const state = observable({
     onCancel: action.bound(function() {
         this.eventsCounter.onCancel++;
     }),
-    onNext: action.bound(function() {
-        this.eventsCounter.onNext++;
+    onShowConfirmation: action.bound(function() {
+        this.eventsCounter.onShowConfirmation++;
         this.showConfirmation = true;
     }),
-    onConfirmationCancel: action.bound(function() {
-        this.eventsCounter.onConfirmationCancel++;
+    onCancelConfirmation: action.bound(function() {
+        this.eventsCounter.onCancelConfirmation++;
         this.showConfirmation = false;
         this.validationMessage = undefined;
     }),
@@ -88,8 +88,8 @@ const Container = observer(() => (
         validationMessage={state.validationMessage}
         onUpdateField={state.onUpdateField}
         onCancel={state.onCancel}
-        onNext={state.onNext}
-        onConfirmationCancel={state.onConfirmationCancel}
+        onShowConfirmation={state.onShowConfirmation}
+        onCancelConfirmation={state.onCancelConfirmation}
         onSubmitPassword={state.onSubmitPassword}
         price={state.price}
         duration={state.duration}

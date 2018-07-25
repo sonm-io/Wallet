@@ -27,8 +27,8 @@ interface IOrderCreateProps extends IOrderCreateParams {
     showConfirmation: boolean;
     validationMessage?: string;
     onCancel: () => void;
-    onNext: () => void;
-    onConfirmationCancel: () => void;
+    onShowConfirmation: () => void;
+    onCancelConfirmation: () => void;
     onSubmitPassword: (password: string) => void;
 }
 
@@ -51,7 +51,7 @@ export class OrderCreateView extends React.Component<IOrderCreateProps, never> {
                 className="order-create__actions order-create__confirmation"
                 displayMode={EnumConfirmationDisplay.OneLine}
                 validationMessage={p.validationMessage}
-                onCancel={p.onConfirmationCancel}
+                onCancel={p.onCancelConfirmation}
                 onSubmit={p.onSubmitPassword}
                 labelHeader="Please, enter account password."
                 labelDescription=""
@@ -70,7 +70,7 @@ export class OrderCreateView extends React.Component<IOrderCreateProps, never> {
                 </Button>
                 <Button
                     color="violet"
-                    onClick={p.onNext}
+                    onClick={p.onShowConfirmation}
                     className="order-create__button"
                 >
                     Next
