@@ -30,12 +30,12 @@ export class OrderCreate extends React.Component<IOrderCreateProps, never> {
                 profile={store.profile}
                 validation={store.validation}
                 deposit={store.deposit}
-                showConfirmation={store.showConfirmation}
+                showConfirmation={store.isConfirmationState}
                 validationMessage={store.validationMessage}
                 onUpdateField={this.handleUpdateField}
                 onCancel={p.onCancel}
-                onNext={store.next}
-                onConfirmationCancel={store.confirmationCancel}
+                onShowConfirmation={store.showConfirmation}
+                onCancelConfirmation={store.cancelConfirmation}
                 onSubmitPassword={this.handleSubmitPassword}
                 price={store.price}
                 duration={store.duration}

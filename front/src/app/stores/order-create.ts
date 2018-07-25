@@ -3,11 +3,11 @@ import { updateUserInput } from './utils/update-user-input';
 import validatePositiveNumber from '../utils/validation/validate-positive-number';
 import { validatePositiveInteger } from '../utils/validation/validate-positive-integer';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import { IAccountItemView } from 'app/stores/types';
 import { IProfileBrief } from 'app/entities/profile';
 import { EnumProfileStatus } from 'app/api/types';
 import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
 import { asyncAction } from 'mobx-utils';
+import { RootStore } from 'app/stores';
 const { pending, catchErrors } = OnlineStore;
 
 interface IDealDetails {
@@ -38,12 +38,6 @@ interface IResourceParams {
 
 export type IOrderCreateParams = IDealDetails & IResourceParams;
 
-interface IOrderCreateExternals {
-    market: {
-        marketAccountView: IAccountItemView | undefined;
-    };
-}
-
 const defaultParams: IOrderCreateParams = {
     price: '',
     duration: '',
@@ -69,51 +63,47 @@ const defaultParams: IOrderCreateParams = {
 
 const VALIDATION_MSG = 'incorrect';
 
-const validateFloat = (value: string) => {
-    if (value === '0' || value === '') {
-        return '';
-    }
-    return validatePositiveNumber(value).join(', ');
-};
-
-const validateInteger = (value: string) => {
-    if (value === '0' || value === '') {
-        return '';
-    }
-    return validatePositiveInteger(value).join(', ');
-};
-
 export type IOrderCreateValidation = Partial<
     { [P in keyof IOrderCreateParams]: string }
 >;
 
-const validationIntegers: IOrderCreateValidation = {
-    cpuCount: '',
-    gpuCount: '',
-};
+const integerParams: Array<keyof IOrderCreateParams> = ['cpuCount', 'gpuCount'];
 
-const validationFloats: IOrderCreateValidation = {
-    price: '',
-    duration: '',
-    ramSize: '',
-    storageSize: '',
-    downloadSpeed: '',
-    uploadSpeed: '',
-    ethereumHashrate: '',
-    zcashHashrate: '',
-    redshiftBenchmark: '',
-};
+const floatParams: Array<keyof IOrderCreateParams> = [
+    'price',
+    'duration',
+    'ramSize',
+    'storageSize',
+    'downloadSpeed',
+    'uploadSpeed',
+    'ethereumHashrate',
+    'zcashHashrate',
+    'redshiftBenchmark',
+];
 
 export class OrderCreateStore extends OnlineStore
     implements IOrderCreateParams {
-    protected externals: IOrderCreateExternals;
+    //#region Private Static
+    protected static validateFloat = (value: string) => {
+        if (value === '0' || value === '') {
+            return '';
+        }
+        return validatePositiveNumber(value).join(', ');
+    };
 
-    constructor(
-        externals: IOrderCreateExternals,
-        services: IOnlineStoreServices,
-    ) {
+    protected static validateInteger = (value: string) => {
+        if (value === '0' || value === '') {
+            return '';
+        }
+        return validatePositiveInteger(value).join(', ');
+    };
+    //#endregion
+
+    protected rootStore: RootStore;
+
+    constructor(rootStore: RootStore, services: IOnlineStoreServices) {
         super(services);
-        this.externals = externals;
+        this.rootStore = rootStore;
     }
 
     @observable public userInput: IOrderCreateParams = defaultParams;
@@ -124,13 +114,13 @@ export class OrderCreateStore extends OnlineStore
     }
 
     @action.bound
-    public next() {
-        this.showConfirmation = true;
+    public showConfirmation() {
+        this.isConfirmationState = true;
     }
 
     @action.bound
-    public confirmationCancel() {
-        this.showConfirmation = false;
+    public cancelConfirmation() {
+        this.isConfirmationState = false;
         this.validationMessage = undefined;
     }
 
@@ -145,22 +135,21 @@ export class OrderCreateStore extends OnlineStore
     @asyncAction
     public *submit(password: string) {
         const result = yield this.mockApiCall(password); // ToDo replace with real API call
-        this.showConfirmation = false;
+        this.isConfirmationState = false;
         this.validationMessage = undefined;
         return result;
     }
 
     //#region Fields Validation
     protected validate = (
-        params: IOrderCreateValidation,
+        params: Array<keyof IOrderCreateParams>,
         method: (value: string) => string,
     ): IOrderCreateValidation => {
-        const result: IOrderCreateValidation = {};
-        for (const k in params) {
-            const key = k as keyof IOrderCreateParams;
-            result[key] = method(String(this.userInput[key])) && VALIDATION_MSG;
-        }
-        return result;
+        const initialAcc: IOrderCreateValidation = {};
+        return params.reduce((acc, key) => {
+            acc[key] = method(String(this.userInput[key])) && VALIDATION_MSG;
+            return acc;
+        }, initialAcc);
     };
 
     @computed
@@ -182,21 +171,21 @@ export class OrderCreateStore extends OnlineStore
     get validation(): IOrderCreateValidation {
         return {
             counterparty: this.validateCounterparty,
-            ...this.validate(validationIntegers, validateInteger),
-            ...this.validate(validationFloats, validateFloat),
+            ...this.validate(integerParams, OrderCreateStore.validateInteger),
+            ...this.validate(floatParams, OrderCreateStore.validateFloat),
         };
     }
     //#endregion
 
     @computed
     public get profile(): IProfileBrief {
-        const account = this.externals.market.marketAccountView;
+        const account = this.rootStore.marketStore.marketAccountView;
 
         return account !== undefined
             ? {
                   address: account.address,
                   name: account.name,
-                  status: EnumProfileStatus.anonimest, // ToDo a
+                  status: EnumProfileStatus.anonimest, // ToDo replace with actual account status
               }
             : {
                   address: '0',
@@ -206,11 +195,11 @@ export class OrderCreateStore extends OnlineStore
 
     @observable public validationMessage?: string = undefined;
 
-    @observable public showConfirmation: boolean = false;
+    @observable public isConfirmationState: boolean = false;
 
     @computed
     public get deposit(): string {
-        const account = this.externals.market.marketAccountView;
+        const account = this.rootStore.marketStore.marketAccountView;
         return account !== undefined ? account.primaryTokenBalance : ''; // ToDo a
     }
 
