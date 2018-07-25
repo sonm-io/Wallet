@@ -27,7 +27,6 @@ export class FormField extends React.PureComponent<IFormFieldProps, any> {
         if (
             event.currentTarget.querySelectorAll('input').length > 1 &&
             this.inputContainerRef !== undefined &&
-            event.target !== undefined &&
             !this.inputContainerRef.contains(event.target as HTMLElement)
         ) {
             event.preventDefault();
