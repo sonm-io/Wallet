@@ -118,7 +118,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                         </DownloadFile>
                         {this.props.onClickShowPrivateKey ? (
                             <a
-                                href="#show-private-key"
+                                href="/show-private-key"
                                 onClick={this.handleShowPrivateKey}
                             >
                                 <Icon
@@ -128,7 +128,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                             </a>
                         ) : null}
                         <a
-                            href="#show-private-key"
+                            href="/show-profile"
                             onClick={this.handleClickProfileIcon}
                         >
                             <Icon
