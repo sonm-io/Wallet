@@ -165,6 +165,7 @@ export class RootStore implements IHasLocalizator {
         this.orderCreateStore = new OrderCreateStore(this, {
             localizator,
             errorProcessor: this.uiStore,
+            profileApi: Api.profile,
         });
 
         this.dealFilterStore = new DealFilterStore(this);
