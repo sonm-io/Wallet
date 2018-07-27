@@ -40,6 +40,24 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
 
     protected isGreater = (a: string, b: string) => new BN(a).gt(new BN(b));
 
+    protected get hasPriceAdvantage(): boolean {
+        const p = this.props;
+        const requestPrice = p.request.price || '';
+
+        const mySide = p.state === EnumChangeRequestState.mySide;
+        const ask = p.request.requestType === EnumOrderSide.ask;
+
+        const isRequestPriceLower = this.isGreater(
+            p.dealParams.price,
+            requestPrice,
+        );
+
+        return (
+            (isRequestPriceLower && ((mySide && ask) || (!mySide && !ask))) ||
+            (!isRequestPriceLower && ((mySide && !ask) || (!mySide && ask)))
+        );
+    }
+
     protected handleClickButton = (
         event: React.MouseEvent<HTMLButtonElement>,
     ) => {
@@ -75,10 +93,7 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                         className="change-request__param"
                         initialValue={this.formatPrice(p.dealParams.price)}
                         changedValue={this.formatPrice(p.request.price)}
-                        hasAdvantage={this.isGreater(
-                            p.dealParams.price,
-                            p.request.price,
-                        )}
+                        hasAdvantage={this.hasPriceAdvantage}
                     />
                 ) : null}
                 {p.request.duration ? (
