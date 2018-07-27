@@ -48,10 +48,12 @@ export class ChangeRequestList extends React.Component<
     }
 
     protected getSortedRequests = () =>
-        this.props.requests.sort(
-            (a: IDealChangeRequest, b: IDealChangeRequest) =>
-                a.requestType === this.props.mySide ? -1 : 1,
-        );
+        this.props.requests
+            .slice(0)
+            .sort(
+                (a: IDealChangeRequest, b: IDealChangeRequest) =>
+                    a.requestType === this.props.mySide ? -1 : 1,
+            );
 
     public render() {
         const p = this.props;

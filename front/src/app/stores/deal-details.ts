@@ -154,6 +154,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         }
     }
 
+    @pending
     @asyncAction
     public *update() {
         this.deal = yield this.api.fetchById(this.dealId);
