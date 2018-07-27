@@ -78,6 +78,12 @@ export const en: ILocalizationDictionary = {
     'status-reg': 'REGISTERED',
     'status-ident': 'IDENTIFIED',
 
+    create_change_request_success: ([id, hash]: string[]) =>
+        `Change request for deal #${id} created. TxHash ${hash}.`,
+
+    cancel_change_request_success: ([id, hash]: string[]) =>
+        `Change request for deal #${id} is canceled. TxHash ${hash}.`,
+
     tx_buy_order_failed: ([id, hash]: string[]) =>
         `Buy order #${id} is failed. TxHash ${hash}.`,
 

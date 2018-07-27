@@ -28,6 +28,8 @@ export class OnlineStore implements IOnlineStore {
 
     protected services: IOnlineStoreServices;
 
+    public static readonly AUTO_UPDATE_DELAY = 5000;
+
     @asyncAction
     protected *goOffline() {
         if (this.isOffline) {

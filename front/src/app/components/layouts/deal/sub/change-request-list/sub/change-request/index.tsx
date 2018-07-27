@@ -121,15 +121,15 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                 ) : null}
                 {p.state === EnumChangeRequestState.otherSide ? (
                     <React.Fragment>
-                        <Button
-                            name="reject"
-                            className="change-request__button"
-                            transparent
-                            color="pink"
-                            onClick={this.handleClickButton}
-                        >
-                            Reject
-                        </Button>
+                        {/*<Button*/}
+                        {/*name="reject"*/}
+                        {/*className="change-request__button"*/}
+                        {/*transparent*/}
+                        {/*color="pink"*/}
+                        {/*onClick={this.handleClickButton}*/}
+                        {/*>*/}
+                        {/*Reject*/}
+                        {/*</Button>*/}
                         <Button
                             name="accept"
                             className="change-request__button"

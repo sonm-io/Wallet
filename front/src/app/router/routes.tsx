@@ -16,7 +16,6 @@ import { OrderList } from 'app/components/layouts/order-list';
 import { DealList } from 'app/components/layouts/deal-list';
 import { WorkerList } from 'app/components/layouts/worker-list';
 import { Deal } from 'app/components/layouts/deal';
-import { DealChangeRequest } from 'app/components/layouts/deal/sub/change';
 import { OrderDetails } from 'app/components/layouts/order-details';
 import { OrderCompleteBuy } from 'app/components/layouts/order-complete-buy';
 import { KycList } from 'app/components/layouts/kyc-list';
@@ -473,29 +472,7 @@ export const createRoutes = (
                                 browserTabTitle: 'Deal details',
                                 pageTitle: 'Deal details',
                                 content: (
-                                    <Deal
-                                        onNavigateToDeals={n.toDealList}
-                                        onNavigateToDealChangeRequest={
-                                            n.toDealChangeRequest
-                                        }
-                                    />
-                                ),
-                            };
-                        },
-                    },
-                    {
-                        path: '/deals/:dealId/change',
-                        breadcrumbTitle: 'Change requests',
-                        action: async (ctx: IContext, params: IUrlParams) => {
-                            l.loadDeal(params.dealId);
-
-                            return {
-                                browserTabTitle: 'Change requests',
-                                pageTitle: 'Change requests',
-                                content: (
-                                    <DealChangeRequest
-                                        onNavigateToDeal={n.toDeal}
-                                    />
+                                    <Deal onNavigateToDeals={n.toDealList} />
                                 ),
                             };
                         },

@@ -7,6 +7,7 @@ import { asyncAction } from 'mobx-utils';
 import { AlertType } from './types';
 import { EnumTransactionStatus, IDeal } from 'app/api/types';
 import { RootStore } from './';
+import validatePositiveNumber from '../utils/validation/validate-positive-number';
 
 export interface IDealDetailsInput {
     password: string;
@@ -100,6 +101,8 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     protected localizator: ILocalizator;
     protected errorProcessor: IErrorProcessor;
 
+    public static readonly AUTO_UPDATE_DELAY = 5000;
+
     @observable.ref public deal: IDeal;
     @observable public dealId: string = '';
 
@@ -151,7 +154,6 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         }
     }
 
-    @pending
     @asyncAction
     public *update() {
         this.deal = yield this.api.fetchById(this.dealId);
@@ -245,11 +247,11 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
 
     @pending
     @asyncAction
-    public *createChangeRequest() {
-        const password = this.password;
-        const id = this.dealId;
+    public *actionChangeRequest() {
         const newPrice = this.newPrice;
         const newDuration = this.newDuration;
+        const password = this.password;
+        const id = this.dealId;
         const accountAddress = this.externalStores.market.marketAccountAddress;
 
         const { data, validation } = yield this.api.createChangeRequest(
@@ -305,9 +307,45 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     }
 
     @computed
-    public get validationPassword() {
-        return this.serverValidation.password || '';
+    public get validation() {
+        return {
+            price: this.services.localizator.getMessageText(
+                validatePositiveNumber(String(this.userInput.newPrice)).join(
+                    ', ',
+                ),
+            ),
+            password: this.serverValidation.password || '',
+        };
     }
+
+    protected updateTick = async () => {
+        if (!this.isAutoUpdateEnabled) {
+            return;
+        }
+
+        await this.update();
+
+        await new Promise(done =>
+            setTimeout(done, DealDetails.AUTO_UPDATE_DELAY),
+        );
+
+        if (this.isAutoUpdateEnabled) {
+            this.updateTick();
+        }
+    };
+
+    protected isAutoUpdateEnabled = false;
+
+    public startAutoUpdate = () => {
+        if (this.isAutoUpdateEnabled === false) {
+            this.isAutoUpdateEnabled = true;
+            this.updateTick();
+        }
+    };
+
+    public stopAutoUpdate = () => {
+        this.isAutoUpdateEnabled = false;
+    };
 }
 
 export default DealDetails;

@@ -61,8 +61,12 @@ interface IProps {
     onChangeRequestReject: TChangeRequestAction;
     onChangeRequestAccept: TChangeRequestAction;
     onChangeRequestSubmit: (password: string) => void;
+    onChangeRequestDialogSubmit: (password: string) => void;
+    onChangeRequestDialogClose: () => void;
     onChangeRequestConfirmationCancel: () => void;
     changeRequestShowConfirmationPanel: boolean;
+
+    createChangeRequestDialog?: React.ReactElement<any>;
 }
 
 export class DealView extends React.Component<IProps, never> {
@@ -115,10 +119,6 @@ export class DealView extends React.Component<IProps, never> {
         },
     ];
 
-    public handleFinishDeal = (password: string) => {
-        this.props.onFinishDeal(password);
-    };
-
     public render() {
         const p = this.props;
 
@@ -152,7 +152,7 @@ export class DealView extends React.Component<IProps, never> {
                         p.showConfirmationPanel ? (
                             <div className="sonm-deal__column-right__confirmation-panel">
                                 <ConfirmationPanel
-                                    onSubmit={this.handleFinishDeal}
+                                    onSubmit={this.props.onFinishDeal}
                                     onCancel={
                                         this.props.onHideConfirmationPanel
                                     }
@@ -232,6 +232,8 @@ export class DealView extends React.Component<IProps, never> {
                         validationMessage={this.props.validationPassword}
                     />
                 ) : null}
+
+                {this.props.createChangeRequestDialog}
             </div>
         );
     }
