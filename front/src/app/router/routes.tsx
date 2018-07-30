@@ -88,8 +88,6 @@ export const createRoutes = (
                                 content: (
                                     <Send
                                         onNotAvailable={n.toMain}
-                                        initialAddress={ctx.query.address}
-                                        initialCurrency={ctx.query.currency}
                                         onRequireConfirmation={n.toConfirmation}
                                     />
                                 ),

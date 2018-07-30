@@ -121,6 +121,7 @@ export class RootStore implements IHasLocalizator {
                 send: Api.withdraw,
             },
             true,
+            '150000',
         );
 
         this.marketStore = new MarketStore(this, {

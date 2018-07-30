@@ -15,7 +15,7 @@ interface IProps {
     className?: string;
     initialAddress: string;
     onClickHistory: (fromAddress?: TEthereumAddress) => void;
-    onClickSend: (currencyAddress: TEthereumAddress) => void;
+    onClickSend: () => void;
 }
 
 enum Dialogs {
@@ -37,9 +37,9 @@ export class Account extends React.Component<IProps, any> {
         }
     }
 
-    protected handleChangeAccount = (accountAddres: any) => {
+    protected handleChangeAccount = (accountAddress: any) => {
         rootStore.sendStore.setUserInput({
-            fromAddress: accountAddres,
+            fromAddress: accountAddress,
         });
     };
 
@@ -50,7 +50,11 @@ export class Account extends React.Component<IProps, any> {
     protected handleSendClick = (event: any) => {
         const currencyAddress = event.target.name;
 
-        this.props.onClickSend(currencyAddress);
+        rootStore.sendStore.setUserInput({
+            currencyAddress,
+        });
+
+        this.props.onClickSend();
     };
 
     protected handleGiveMeMore = async (event: any) => {
