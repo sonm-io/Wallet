@@ -30,6 +30,7 @@ export const en: ILocalizationDictionary = {
     should_be_ether_address: 'Please input correct address',
     should_be_positive_integer: 'Should be positive integer',
     should_be_positive_number: 'Should be positive number',
+    price_to_small: 'Price to small',
     required_value: 'Required value',
     no_addres_in_account_file: 'Incorrect file: no address field',
     incorrect_file: 'Incorrect file',

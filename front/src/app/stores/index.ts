@@ -241,6 +241,7 @@ export class RootStore implements IHasLocalizator {
             this.withdrawStore,
             this.addTokenStore,
             this.orderDetailsStore,
+            this.dealDetailsStore,
         );
     }
 

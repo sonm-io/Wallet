@@ -8,6 +8,7 @@ import { BalanceUtils } from 'app/components/common/balance-view/utils';
 import { getPricePerHour } from 'app/components/common/price-per-hour/utils';
 import { ChangeRequestDialog } from './sub/create-dialog/index';
 import { IChangeParams } from '../../common/types';
+import { ChangeRequestList } from './sub/change-request-list/index';
 
 interface IProps {
     className?: string;
@@ -37,6 +38,7 @@ export class Deal extends React.Component<IProps, never> {
     };
 
     public componentDidMount() {
+        this.resetInput();
         dealDetailsStore.startAutoUpdate();
     }
 
@@ -56,11 +58,12 @@ export class Deal extends React.Component<IProps, never> {
         });
     };
 
+    private resetInput = () => {
+        dealDetailsStore.resetUserInput();
+    };
+
     public handleHideConfirmationPanel = () => {
-        dealDetailsStore.updateUserInput({
-            action: DealActions.none,
-            isBlacklisted: false,
-        });
+        this.resetInput();
     };
 
     public handleChangeRequestDialogSubmit = async () => {
@@ -87,12 +90,9 @@ export class Deal extends React.Component<IProps, never> {
     };
 
     public handleChangeRequestCreate = () => {
+        dealDetailsStore.resetUserInput();
         dealDetailsStore.updateUserInput({
-            newPrice: '',
-            newDuration: '',
             action: DealActions.createChangeRequest,
-            password: '',
-            changeRequestId: '',
         });
     };
 
@@ -195,7 +195,6 @@ export class Deal extends React.Component<IProps, never> {
                 duration={deal.duration}
                 price={deal.price}
                 totalPayout={deal.totalPayout}
-                changeRequests={deal.changeRequests}
                 benchmarkMap={deal.benchmarkMap}
                 marketAccountAddress={marketAccount}
                 showButtons={isOwner}
@@ -211,24 +210,38 @@ export class Deal extends React.Component<IProps, never> {
                 }
                 isBlacklisted={rootStore.dealDetailsStore.isBlacklisted}
                 onChangeCheckbox={this.handleChangeCheckbox}
-                mySide={mySide}
-                changeRequestShowConfirmationPanel={
-                    dealDetailsStore.action ===
-                        DealActions.cancelChangeRequest ||
-                    dealDetailsStore.action === DealActions.acceptChangeRequest
-                }
-                onChangeRequestCreate={this.handleChangeRequestCreate}
-                onChangeRequestChange={this.handleChangeRequestChange}
-                onChangeRequestCancel={this.handleChangeRequestCancel}
-                onChangeRequestReject={this.handleChangeRequestCancel}
-                onChangeRequestAccept={this.handleChangeRequestAccept}
-                onChangeRequestSubmit={this.handleChangeRequestSubmit}
-                onChangeRequestDialogSubmit={
-                    this.handleChangeRequestDialogSubmit
-                }
-                onChangeRequestDialogClose={this.handleChangeRequestDialogClose}
-                onChangeRequestConfirmationCancel={
-                    this.handleHideConfirmationPanel
+                changeRequestList={
+                    isOwner ? (
+                        <ChangeRequestList
+                            className="sonm-deal__change_request"
+                            requests={deal.changeRequests || []}
+                            dealParams={{
+                                price: deal.price,
+                                duration: deal.duration,
+                            }}
+                            mySide={mySide}
+                            onCreateRequest={this.handleChangeRequestCreate}
+                            onCancelRequest={this.handleChangeRequestCancel}
+                            onChangeRequest={this.handleChangeRequestChange}
+                            onRejectRequest={this.handleChangeRequestCancel}
+                            onAcceptRequest={this.handleChangeRequestAccept}
+                            onSubmit={this.handleChangeRequestSubmit}
+                            onConfirmationCancel={
+                                this.handleHideConfirmationPanel
+                            }
+                            showConfirmation={
+                                dealDetailsStore.action ===
+                                    DealActions.cancelChangeRequest ||
+                                dealDetailsStore.action ===
+                                    DealActions.acceptChangeRequest
+                            }
+                            validationMessage={
+                                rootStore.dealDetailsStore.validation.password
+                            }
+                        />
+                    ) : (
+                        undefined
+                    )
                 }
                 createChangeRequestDialog={
                     dealDetailsStore.action === DealActions.editChangeRequest ||

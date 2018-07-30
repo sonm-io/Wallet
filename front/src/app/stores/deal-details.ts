@@ -2,7 +2,6 @@ import { observable, computed, action } from 'mobx';
 import { OnlineStore, IErrorProcessor } from './online-store';
 import { ILocalizator } from 'app/localization';
 const { pending } = OnlineStore;
-import { updateUserInput } from './utils/update-user-input';
 import { asyncAction } from 'mobx-utils';
 import { AlertType } from './types';
 import { EnumTransactionStatus, IDeal } from 'app/api/types';
@@ -51,6 +50,16 @@ export interface IDealDetailsStoreExternal {
         marketAccountAddress: string;
     };
 }
+
+const emptyForm: IDealDetailsInput = {
+    password: '',
+    isBlacklisted: false,
+    newPrice: '',
+    newDuration: '',
+    changeRequestId: '',
+    action: '',
+};
+Object.freeze(emptyForm);
 
 export class DealDetails extends OnlineStore implements IDealDetailsInput {
     protected static readonly emptyDeal: IDeal = {
@@ -101,7 +110,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     protected localizator: ILocalizator;
     protected errorProcessor: IErrorProcessor;
 
-    public static readonly AUTO_UPDATE_DELAY = 5000;
+    public static readonly AUTO_UPDATE_DELAY = 2500;
 
     @observable.ref public deal: IDeal;
     @observable public dealId: string = '';
@@ -124,25 +133,46 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         this.deal = DealDetails.emptyDeal;
     }
 
-    @observable
-    public userInput: IDealDetailsInput = {
-        password: '',
-        isBlacklisted: false,
-        newPrice: '',
-        newDuration: '',
-        changeRequestId: '',
-        action: '',
-    };
+    @observable protected userInputTouched: Array<keyof IDealDetailsInput> = [];
+
+    @observable public userInput: IDealDetailsInput = { ...emptyForm };
+
+    protected isFieldTouched(fieldName: keyof IDealDetailsInput) {
+        return this.userInputTouched.indexOf(fieldName) !== -1;
+    }
 
     @observable
-    public serverValidation = {
-        password: '',
-    };
+    protected serverValidation: IDealDetailsInput = { ...emptyForm };
 
     @action.bound
     public updateUserInput(values: Partial<IDealDetailsInput>) {
-        updateUserInput<IDealDetailsInput>(this, values);
-        this.serverValidation.password = '';
+        const keys = Object.keys(values) as Array<keyof IDealDetailsInput>;
+
+        keys.forEach(key => {
+            if (values[key] !== undefined) {
+                this.userInput[key] = String(values[key]);
+
+                if (this.userInputTouched.indexOf(key) === -1) {
+                    this.userInputTouched.push(key);
+                }
+            }
+        });
+
+        this.resetServerValidation();
+    }
+
+    @action.bound
+    public resetServerValidation() {
+        this.serverValidation = { ...emptyForm };
+    }
+
+    @action.bound
+    public resetUserInput() {
+        this.resetServerValidation();
+        this.userInputTouched = [];
+        this.userInput = {
+            ...emptyForm,
+        };
     }
 
     @pending
@@ -157,7 +187,30 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @pending
     @asyncAction
     public *update() {
-        this.deal = yield this.api.fetchById(this.dealId);
+        const deal = yield this.api.fetchById(this.dealId);
+
+        if (this.checkPending('changeRequest')) {
+            if (
+                deal.price !== this.deal.price ||
+                deal.duration !== this.deal.duration ||
+                (deal.changeRequests.length && !this.deal.changeRequests) ||
+                (this.deal.changeRequests &&
+                    JSON.stringify(deal.changeRequests) !==
+                        JSON.stringify(this.deal.changeRequests))
+            ) {
+                this.stopPending('changeRequest');
+            }
+        }
+
+        this.deal = deal;
+    }
+
+    @computed
+    public get isPending() {
+        return (
+            this.checkPending('changeRequest') ||
+            this.checkPending('finishDeal')
+        );
     }
 
     private addAlert(
@@ -193,6 +246,8 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @pending
     @asyncAction
     public *finish() {
+        this.startPending('finishDeal', false);
+
         const password = this.password;
         const id = this.dealId;
         const isBlacklisted = this.isBlacklisted;
@@ -217,16 +272,20 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
                 'deal_finish_failed',
             );
         }
+
+        this.stopPending('finishDeal');
     }
 
     @pending
     @asyncAction
     public *cancelChangeRequest() {
+        this.startPending('changeRequest', false);
+
         const password = this.password;
         const id = this.changeRequestId;
         const accountAddress = this.externalStores.market.marketAccountAddress;
 
-        const { data, validation } = yield this.api.cancelChangeRequest(
+        const { validation } = yield this.api.cancelChangeRequest(
             accountAddress,
             password,
             id,
@@ -236,26 +295,23 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
             this.serverValidation.password = this.services.localizator.getMessageText(
                 validation.password,
             );
-        } else {
-            this.addAlert(
-                id,
-                data,
-                'cancel_change_request_success',
-                'cancel_change_request_failed',
-            );
+
+            this.stopPending('changeRequest');
         }
     }
 
     @pending
     @asyncAction
     public *actionChangeRequest() {
+        this.startPending('changeRequest', false);
+
         const newPrice = this.newPrice;
         const newDuration = this.newDuration;
         const password = this.password;
         const id = this.dealId;
         const accountAddress = this.externalStores.market.marketAccountAddress;
 
-        const { data, validation } = yield this.api.createChangeRequest(
+        const { validation } = yield this.api.createChangeRequest(
             accountAddress,
             password,
             id,
@@ -267,13 +323,8 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
             this.serverValidation.password = this.services.localizator.getMessageText(
                 validation.password,
             );
-        } else {
-            this.addAlert(
-                id,
-                data,
-                'create_change_request_success',
-                'create_change_request_failed',
-            );
+
+            this.stopPending('changeRequest');
         }
     }
 
@@ -307,13 +358,22 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         return this.userInput.action;
     }
 
+    private validatePrice = (value: string) => {
+        if (this.isFieldTouched('newPrice')) {
+            if (parseFloat(value) < 0.0001) {
+                return 'price_to_small';
+            }
+            return validatePositiveNumber(value).join(', ');
+        } else {
+            return '';
+        }
+    };
+
     @computed
     public get validation() {
         return {
             price: this.services.localizator.getMessageText(
-                validatePositiveNumber(String(this.userInput.newPrice)).join(
-                    ', ',
-                ),
+                this.validatePrice(String(this.userInput.newPrice)),
             ),
             password: this.serverValidation.password || '',
         };
