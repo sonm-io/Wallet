@@ -7,7 +7,7 @@ export interface IChangeRequestParamProps {
     name: string;
     initialValue: string;
     changedValue: string;
-    hasAdvantage: boolean;
+    hasAdvantage?: boolean;
 }
 
 export class ChangeRequestParam extends React.Component<
@@ -17,8 +17,12 @@ export class ChangeRequestParam extends React.Component<
     public render() {
         const p = this.props;
         const changedValueCss =
-            'change-request-param__value--' +
-            (p.hasAdvantage ? 'better' : 'worse');
+            'change-request-param__value' +
+            (p.hasAdvantage === true
+                ? '--better'
+                : p.hasAdvantage === false
+                    ? '--worse'
+                    : '');
         return (
             <div className={cn('change-request-param', p.className)}>
                 <div className="change-request-param__name">{p.name}: </div>

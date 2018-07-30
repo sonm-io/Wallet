@@ -102,10 +102,6 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                         changedValue={this.formatDuration(
                             parseInt(p.request.duration, 10),
                         )}
-                        hasAdvantage={
-                            parseInt(p.request.duration, 10) >
-                            p.dealParams.duration
-                        }
                     />
                 ) : null}
                 {p.state === EnumChangeRequestState.mySide ? (
