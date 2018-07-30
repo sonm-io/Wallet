@@ -1,6 +1,6 @@
 ### States demo
 
-With price and duration. Supplier. Cancel+Change.
+With price and duration. Customer. Cancel+Change.
 
 ```js
 <ChangeRequest
@@ -20,7 +20,7 @@ With price and duration. Supplier. Cancel+Change.
 />
 ```
 
-With price. Customer. Reject+Accept.
+With price. Supplier. Reject+Accept.
 
 ```js
 <ChangeRequest
@@ -39,7 +39,7 @@ With price. Customer. Reject+Accept.
 />
 ```
 
-With duration. Supplier. No buttons.
+With duration. Customer. No buttons.
 
 ```js
 <ChangeRequest
@@ -60,45 +60,7 @@ With duration. Supplier. No buttons.
 
 ### hasAdvantage
 
-Request price lower. ask. mySide. => true
-
-```js
-<ChangeRequest
-    dealParams={{
-        price: '123456789012345678',
-        duration: 12600,
-    }}
-    request={{
-        id: 1,
-        requestType: 2,
-        price: '23456789012345678',
-        status: 1,
-        createdAt: new Date(),
-    }}
-    state={0}
-/>
-```
-
-Request price lower. ask. otherSide. => false
-
-```js
-<ChangeRequest
-    dealParams={{
-        price: '123456789012345678',
-        duration: 12600,
-    }}
-    request={{
-        id: 1,
-        requestType: 2,
-        price: '23456789012345678',
-        status: 1,
-        createdAt: new Date(),
-    }}
-    state={1}
-/>
-```
-
-Request price lower. bid. mySide. => false
+Request price lower. buy. mySide. => true
 
 ```js
 <ChangeRequest
@@ -117,7 +79,7 @@ Request price lower. bid. mySide. => false
 />
 ```
 
-Request price lower. bid. otherSide. => true
+Request price lower. buy. otherSide. => false
 
 ```js
 <ChangeRequest
@@ -136,7 +98,7 @@ Request price lower. bid. otherSide. => true
 />
 ```
 
-Request price greater. ask. mySide. => false
+Request price lower. sell. mySide. => false
 
 ```js
 <ChangeRequest
@@ -147,6 +109,44 @@ Request price greater. ask. mySide. => false
     request={{
         id: 1,
         requestType: 2,
+        price: '23456789012345678',
+        status: 1,
+        createdAt: new Date(),
+    }}
+    state={0}
+/>
+```
+
+Request price lower. sell. otherSide. => true
+
+```js
+<ChangeRequest
+    dealParams={{
+        price: '123456789012345678',
+        duration: 12600,
+    }}
+    request={{
+        id: 1,
+        requestType: 2,
+        price: '23456789012345678',
+        status: 1,
+        createdAt: new Date(),
+    }}
+    state={1}
+/>
+```
+
+Request price greater. buy. mySide. => false
+
+```js
+<ChangeRequest
+    dealParams={{
+        price: '123456789012345678',
+        duration: 12600,
+    }}
+    request={{
+        id: 1,
+        requestType: 1,
         price: '923456789012345678',
         status: 1,
         createdAt: new Date(),
@@ -155,7 +155,7 @@ Request price greater. ask. mySide. => false
 />
 ```
 
-Request price greater. ask. otherSide. => true
+Request price greater. buy. otherSide. => true
 
 ```js
 <ChangeRequest
@@ -165,7 +165,7 @@ Request price greater. ask. otherSide. => true
     }}
     request={{
         id: 1,
-        requestType: 2,
+        requestType: 1,
         price: '923456789012345678',
         status: 1,
         createdAt: new Date(),
@@ -174,7 +174,7 @@ Request price greater. ask. otherSide. => true
 />
 ```
 
-Request price greater. bid. mySide. => true
+Request price greater. sell. mySide. => true
 
 ```js
 <ChangeRequest
@@ -184,7 +184,7 @@ Request price greater. bid. mySide. => true
     }}
     request={{
         id: 1,
-        requestType: 1,
+        requestType: 2,
         price: '923456789012345678',
         status: 1,
         createdAt: new Date(),
@@ -193,7 +193,7 @@ Request price greater. bid. mySide. => true
 />
 ```
 
-Request price greater. bid. otherSide. => false
+Request price greater. sell. otherSide. => false
 
 ```js
 <ChangeRequest
@@ -203,7 +203,7 @@ Request price greater. bid. otherSide. => false
     }}
     request={{
         id: 1,
-        requestType: 1,
+        requestType: 2,
         price: '923456789012345678',
         status: 1,
         createdAt: new Date(),

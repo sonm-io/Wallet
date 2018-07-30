@@ -45,17 +45,13 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
         const requestPrice = p.request.price || '';
 
         const mySide = p.state === EnumChangeRequestState.mySide;
-        const ask = p.request.requestType === EnumOrderSide.ask;
+        const buy = p.request.requestType === EnumOrderSide.buy;
 
-        const isRequestPriceLower = this.isGreater(
-            p.dealParams.price,
-            requestPrice,
-        );
+        let result = this.isGreater(p.dealParams.price, requestPrice);
 
-        return (
-            (isRequestPriceLower && ((mySide && ask) || (!mySide && !ask))) ||
-            (!isRequestPriceLower && ((mySide && !ask) || (!mySide && ask)))
-        );
+        result = buy ? result : !result;
+        result = mySide ? result : !result;
+        return result;
     }
 
     protected handleClickButton = (
@@ -83,7 +79,7 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
         return (
             <div className={cn('change-request', this.props.className)}>
                 <div className="change-request__side">
-                    {p.request.requestType === EnumOrderSide.bid
+                    {p.request.requestType === EnumOrderSide.buy
                         ? 'Customer'
                         : 'Supplier'}
                 </div>

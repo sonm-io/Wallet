@@ -174,8 +174,8 @@ export class Deal extends React.Component<IProps, never> {
             deal.consumer.address.toLowerCase() === marketAccount.toLowerCase();
         const mySide =
             deal.supplier.address.toLowerCase() === marketAccount.toLowerCase()
-                ? EnumOrderSide.ask
-                : EnumOrderSide.bid;
+                ? EnumOrderSide.sell
+                : EnumOrderSide.buy;
 
         const propertyList = {
             id: deal.id,
