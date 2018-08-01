@@ -168,17 +168,6 @@ export class Login extends React.Component<IProps, IState> {
         this.setState({ name, currentAction });
     }
 
-    // ToDo a
-    protected async fastLoginOld() {
-        if (window.localStorage.getItem('sonm-4ever')) {
-            const { data } = await Api.unlockWallet('2', '2');
-            if (data) {
-                const wallet = this.findWalletByName('2');
-                this.props.onLogin(wallet);
-            }
-        }
-    }
-
     protected async fastLogin() {
         if (window.localStorage.getItem('sonm-4ever')) {
             await loginStore.unlockWallet('2', '2');
@@ -224,40 +213,6 @@ export class Login extends React.Component<IProps, IState> {
 
         return wallet;
     }
-
-    // ToDo a
-    protected handleSubmitLoginOld = async (event: any) => {
-        event.preventDefault();
-
-        this.setState({ pending: true });
-
-        try {
-            // ToDo a
-            const { validation, data: success } = await Api.unlockWallet(
-                this.state.password,
-                this.state.name,
-            );
-
-            if (validation) {
-                this.setState({
-                    serverValidation: localizator.localizeValidationMessages(
-                        validation,
-                    ),
-                });
-            }
-
-            const wallet = this.findWalletByName(this.state.name);
-
-            if (success) {
-                this.props.onLogin(wallet);
-                return;
-            }
-        } catch (e) {
-            this.setState({ error: String(e) });
-        }
-
-        this.setState({ pending: false });
-    };
 
     protected handleSubmitLogin = async (event: any) => {
         event.preventDefault();
