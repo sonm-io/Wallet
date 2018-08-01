@@ -3,7 +3,7 @@ import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
 import { observable, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import { IAccountInfo, ICurrencyInfo } from 'app/api/types';
+import { IAccountInfo } from 'app/api/types';
 import { IAccountItemView } from 'app/stores/types';
 import Api from 'app/api';
 import { IValidation } from 'app/localization/types';
@@ -20,14 +20,6 @@ interface IMainFormValues {
 
 const sortByName = sortBy(['name', 'address']);
 
-const emptyCurrencyInfo = {
-    symbol: '',
-    decimalPointOffset: 2,
-    name: '',
-    address: '',
-    balance: '',
-};
-
 export class MyProfilesStore extends OnlineStore {
     protected rootStore: RootStore;
 
@@ -40,15 +32,6 @@ export class MyProfilesStore extends OnlineStore {
             }
         });
     }
-
-    /**
-     * selectedProfile
-     * Api.getAccountList()
-     * Api.getCurrencyList()
-     * rootStore.mainStore.fullBalanceList, Api.getCurrencyList()
-     */
-
-    //#region Accounts
 
     @observable public accountMap = new Map<string, IAccountInfo>();
 
@@ -76,10 +59,13 @@ export class MyProfilesStore extends OnlineStore {
     public transformAccountInfoToView = (
         info: IAccountInfo,
     ): IAccountItemView => {
-        const isCurrencyListEmpty = this.currencyMap.size === 0;
+        const isCurrencyListEmpty =
+            this.rootStore.currencyStore.currencyMap.size === 0;
         const primaryTokenBalance = isCurrencyListEmpty
             ? ''
-            : info.currencyBalanceMap[this.primaryTokenAddress];
+            : info.currencyBalanceMap[
+                  this.rootStore.currencyStore.primaryTokenAddress
+              ];
 
         const preview: IAccountItemView = {
             address: info.address,
@@ -87,9 +73,11 @@ export class MyProfilesStore extends OnlineStore {
             name: info.name,
             etherBalance: isCurrencyListEmpty
                 ? ''
-                : info.currencyBalanceMap[this.etherAddress],
+                : info.currencyBalanceMap[
+                      this.rootStore.currencyStore.etherAddress
+                  ],
             primaryTokenBalance,
-            primaryTokenInfo: this.primaryTokenInfo,
+            primaryTokenInfo: this.rootStore.currencyStore.primaryTokenInfo,
             usdBalance: info.marketUsdBalance,
             marketBalance: info.marketBalance,
         };
@@ -180,28 +168,4 @@ export class MyProfilesStore extends OnlineStore {
 
         return result;
     }
-
-    //#endregion
-
-    //#region Currency
-
-    @observable public currencyMap = new Map<string, ICurrencyInfo>();
-
-    protected primaryTokenAddr: string = '';
-    public get primaryTokenAddress(): string {
-        return this.primaryTokenAddr;
-    }
-
-    public static ADDRESS_ETHER = '0x'; // ToDo a What for this empty address?
-    public get etherAddress(): string {
-        return MyProfilesStore.ADDRESS_ETHER;
-    }
-
-    @computed
-    public get primaryTokenInfo(): ICurrencyInfo {
-        const result = this.currencyMap.get(this.primaryTokenAddress);
-        return result || emptyCurrencyInfo;
-    }
-
-    //#endregion
 }

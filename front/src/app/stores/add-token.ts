@@ -47,7 +47,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
 
         if (etherAddressValidation.length) {
             result = etherAddressValidation.join(' ;');
-        } else if (this.rootStore.mainStore.currencyMap.has(tokenAddress)) {
+        } else if (this.rootStore.currencyStore.currencyMap.has(tokenAddress)) {
             result = this.rootStore.localizator.getMessageText(
                 'token_already_exists',
             );
@@ -110,7 +110,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
         );
 
         if (currencyInfo) {
-            this.rootStore.mainStore.currencyMap.set(
+            this.rootStore.currencyStore.currencyMap.set(
                 currencyInfo.address,
                 normalizeCurrencyInfo(currencyInfo),
             );

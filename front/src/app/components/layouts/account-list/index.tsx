@@ -109,7 +109,7 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleDeleteToken = (address: string) => {
-        rootStore.mainStore.removeToken(address);
+        rootStore.currencyStore.removeToken(address);
     };
 
     protected handleShowPrivateKey = (address: string) => {

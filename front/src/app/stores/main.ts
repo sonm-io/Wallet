@@ -37,6 +37,7 @@ const emptyForm: IMainFormValues = {
     json: '',
 };
 
+// ToDo a
 const emptyCurrencyInfo = {
     symbol: '',
     decimalPointOffset: 2,
@@ -67,7 +68,10 @@ export class MainStore extends OnlineStore {
         };
 
         autorun(() => {
-            if (Array.from(this.currencyMap.keys()).length > 0) {
+            if (
+                Array.from(rootStore.currencyStore.currencyMap.keys()).length >
+                0
+            ) {
                 this.update();
             }
         });
@@ -104,12 +108,14 @@ export class MainStore extends OnlineStore {
 
     @observable public averageGasPrice = '';
 
-    @observable public currencyMap = new Map<string, ICurrencyInfo>();
+    // ToDo a
+    // @observable public currencyMap = new Map<string, ICurrencyInfo>();
 
-    @computed
-    public get currencyAddressList() {
-        return Array.from(this.currencyMap.keys());
-    }
+    // ToDo a
+    // @computed
+    // public get currencyAddressList() {
+    //     return Array.from(this.rootStore.currencyStore.currencyMap.keys());
+    // }
 
     @computed
     public get gasPriceThresholds(): [string, string] {
@@ -128,37 +134,41 @@ export class MainStore extends OnlineStore {
         return [min, max];
     }
 
-    public get etherAddress(): string {
-        return MainStore.ADDRESS_ETHER;
-    }
+    // ToDo a
+    // public get etherAddress(): string {
+    //     return MainStore.ADDRESS_ETHER;
+    // }
 
-    protected primaryTokenAddr: string = '';
-    public get primaryTokenAddress(): string {
-        return this.primaryTokenAddr;
-    }
+    // ToDo a
+    // protected primaryTokenAddr: string = '';
+    // public get primaryTokenAddress(): string {
+    //     return this.primaryTokenAddr;
+    // }
 
-    @computed
-    public get etherInfo(): ICurrencyInfo {
-        const result = this.currencyMap.get(this.etherAddress);
+    // ToDo a
+    // @computed
+    // public get etherInfo(): ICurrencyInfo {
+    //     const result = this.rootStore.currencyStore.currencyMap.get(this.rootStore.currencyStore.etherAddress);
 
-        if (!result) {
-            throw new Error(`Ether not found`);
-        }
+    //     if (!result) {
+    //         throw new Error(`Ether not found`);
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
-    @computed
-    public get primaryTokenInfo(): ICurrencyInfo {
-        const result = this.currencyMap.get(this.primaryTokenAddress);
-        return result || emptyCurrencyInfo;
-    }
+    // ToDo a
+    // @computed
+    // public get primaryTokenInfo(): ICurrencyInfo {
+    //     const result = this.rootStore.currencyStore.currencyMap.get(this.rootStore.currencyStore.primaryTokenAddress);
+    //     return result || emptyCurrencyInfo;
+    // }
 
     @computed
     public get etherBalance(): string {
         return MainStore.getTokenBalance(
             this.fullBalanceList,
-            this.etherAddress,
+            this.rootStore.currencyStore.etherAddress,
         );
     }
 
@@ -166,7 +176,7 @@ export class MainStore extends OnlineStore {
     public get primaryTokenBalance(): string {
         return MainStore.getTokenBalance(
             this.fullBalanceList,
-            this.primaryTokenAddress,
+            this.rootStore.currencyStore.primaryTokenAddress,
         );
     }
 
@@ -182,12 +192,14 @@ export class MainStore extends OnlineStore {
     public getBalanceListFor(...accounts: string[]): ICurrencyItemView[] {
         if (
             this.rootStore.myProfilesStore.accountMap === undefined ||
-            this.currencyMap === undefined
+            this.rootStore.currencyStore.currencyMap === undefined
         ) {
             return [];
         }
 
-        const result = Array.from(this.currencyMap.values()).map(
+        const result = Array.from(
+            this.rootStore.currencyStore.currencyMap.values(),
+        ).map(
             (currency): ICurrencyItemView => {
                 let touched = false;
                 const balance: BN = accounts.reduce(
@@ -234,17 +246,19 @@ export class MainStore extends OnlineStore {
     public *init(wallet: IWalletListItem) {
         this.walletInfo = wallet;
 
-        this.primaryTokenAddr = (yield Api.getSonmTokenAddress()).data;
+        // this.primaryTokenAddr = (yield Api.getSonmTokenAddress()).data; // ToDo a
 
+        // ToDo a
         const [{ data: currencyList }] = yield Promise.all([
             Api.getCurrencyList(),
 
             this.autoUpdateIteration(), // wait for first update
         ]);
 
+        // ToDo a
         updateAddressMap<ICurrencyInfo>(
             currencyList.map(normalizeCurrencyInfo),
-            this.currencyMap,
+            this.rootStore.currencyStore.currencyMap,
         );
 
         this.connectionInfo = (yield Api.getConnectionInfo()).data;
@@ -310,16 +324,17 @@ export class MainStore extends OnlineStore {
         }
     }
 
-    @pending
-    @catchErrors({ restart: true })
-    @asyncAction
-    public *removeToken(address: string) {
-        const success = yield Api.removeToken(address);
+    // ToDo a
+    // @pending
+    // @catchErrors({ restart: true })
+    // @asyncAction
+    // public *removeToken(address: string) {
+    //     const success = yield Api.removeToken(address);
 
-        if (success) {
-            this.currencyMap.delete(address);
-        }
-    }
+    //     if (success) {
+    //         this.rootStore.currencyStore.currencyMap.delete(address);
+    //     }
+    // }
 
     @pending
     @asyncAction

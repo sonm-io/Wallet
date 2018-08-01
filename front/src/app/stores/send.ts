@@ -225,7 +225,9 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     public get currentCurrency() {
-        return this.rootStore.mainStore.currencyMap.get(this.currencyAddress);
+        return this.rootStore.currencyStore.currencyMap.get(
+            this.currencyAddress,
+        );
     }
 
     @computed
@@ -268,7 +270,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     public get currencyAddress() {
         return (
             this.userInput.currencyAddress ||
-            this.rootStore.mainStore.currencyMap.keys().next().value ||
+            this.rootStore.currencyStore.currencyMap.keys().next().value ||
             ''
         );
     }
@@ -312,7 +314,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         const amountWei = this.currentBalanceMaximumWei;
         let result = '';
 
-        const currencyInfo = this.rootStore.mainStore.currencyMap.get(
+        const currencyInfo = this.rootStore.currencyStore.currencyMap.get(
             this.currencyAddress,
         );
 
@@ -339,7 +341,8 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
         if (amountWei) {
             if (
-                this.rootStore.mainStore.etherAddress === this.currencyAddress
+                this.rootStore.currencyStore.etherAddress ===
+                this.currencyAddress
             ) {
                 const gasPriceWei = createBigNumberFromFloat(
                     this.gasPriceGwei,

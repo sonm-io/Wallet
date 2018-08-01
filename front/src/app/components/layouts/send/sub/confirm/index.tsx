@@ -68,7 +68,9 @@ export class SendConfirm extends React.Component<IProps, any> {
             accountAddress,
         );
         const accountName = account ? account.name : '';
-        const currency = mainStore.currencyMap.get(sendStore.currencyAddress);
+        const currency = currencyStore.currencyMap.get(
+            sendStore.currencyAddress,
+        );
         const amount = sendStore.amount;
         const gasLimit = sendStore.gasLimit;
         const gasPrice = sendStore.gasPriceGwei;

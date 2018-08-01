@@ -57,12 +57,13 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     };
 
     protected getCurrency = () =>
-        rootStore.mainStore.currencyMap.get(this.store.currencyAddress);
+        rootStore.currencyStore.currencyMap.get(this.store.currencyAddress);
 
     protected syncStores() {
         autorun(() => {
             const fromAddress = rootStore.marketStore.marketAccountAddress;
-            const primaryTokenAddress = rootStore.mainStore.primaryTokenAddress;
+            const primaryTokenAddress =
+                rootStore.currencyStore.primaryTokenAddress;
 
             this.props.sendStore.setUserInput({
                 fromAddress,

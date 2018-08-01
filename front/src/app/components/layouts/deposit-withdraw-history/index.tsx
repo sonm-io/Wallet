@@ -64,7 +64,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
             className: 'sonm-dw-tx-list__cell-amount sonm-dw-tx-list__cell',
             title: 'Amount',
             render: (_, record) => {
-                const currency = rootStore.mainStore.primaryTokenInfo;
+                const currency = rootStore.currencyStore.primaryTokenInfo;
 
                 return (
                     <Balance
@@ -100,7 +100,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
             className: 'sonm-dw-tx-list__cell-commission sonm-dw-tx-list__cell',
             title: 'Commission',
             render: (_, record) => {
-                const currency = rootStore.mainStore.primaryTokenInfo;
+                const currency = rootStore.currencyStore.primaryTokenInfo;
 
                 return (
                     <Balance

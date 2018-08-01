@@ -32,6 +32,7 @@ import { KycListStore } from './kyc-list';
 import { ProfileDetails } from './profile-details';
 import { MyProfilesStore } from './my-profiles';
 import { LoginStore } from './login';
+import { CurrencyStore } from './currency';
 
 useStrict(true);
 
@@ -60,6 +61,7 @@ export class RootStore implements IHasLocalizator {
     public readonly dealDetailsStore: DealDetails;
     public readonly kycListStore: KycListStore;
     public readonly profileDetailsStore: ProfileDetails;
+    public readonly currencyStore: CurrencyStore;
     public readonly myProfilesStore: MyProfilesStore;
 
     constructor(localizator: ILocalizator) {
@@ -103,6 +105,11 @@ export class RootStore implements IHasLocalizator {
             },
             true,
         );
+
+        this.currencyStore = new CurrencyStore(this, {
+            localizator,
+            errorProcessor: this.uiStore,
+        });
 
         this.myProfilesStore = new MyProfilesStore(this, {
             localizator,
