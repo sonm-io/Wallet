@@ -50,7 +50,7 @@ export class History extends React.Component<IProps, any> {
             title: 'From',
             render: (_, record) => {
                 const addr = record.fromAddress;
-                const account = rootStore.mainStore.accountMap.get(addr);
+                const account = rootStore.myProfiles.accountMap.get(addr);
                 const name = account ? account.name : '';
 
                 return [
@@ -78,7 +78,7 @@ export class History extends React.Component<IProps, any> {
             title: 'To',
             render: (_, record) => {
                 const addr = record.toAddress;
-                const account = rootStore.mainStore.accountMap.get(addr);
+                const account = rootStore.myProfiles.accountMap.get(addr);
                 const name = account ? account.name : '';
 
                 return [
@@ -222,7 +222,7 @@ export class History extends React.Component<IProps, any> {
                     className="sonm-history__select-account"
                     returnPrimitive
                     onChange={this.handleChangeAccount}
-                    accounts={rootStore.mainStore.accountList}
+                    accounts={rootStore.myProfiles.accountList}
                     value={filterStore.fromAddress}
                     hasEmptyOption
                 />

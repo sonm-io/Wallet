@@ -6,7 +6,6 @@ const domLoading = new Promise(done => {
 });
 (async () => {
     await domLoading;
-
     if (PLATFORM) {
         // skip checking if electron
         run();

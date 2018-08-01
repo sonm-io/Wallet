@@ -135,12 +135,12 @@ export class MarketStore extends OnlineStore {
     public get marketAccountView(): IAccountItemView | undefined {
         let result;
 
-        const account = this.rootStore.mainStore.accountMap.get(
+        const account = this.rootStore.myProfiles.accountMap.get(
             this.marketAccountAddress,
         );
 
         if (account) {
-            result = this.rootStore.mainStore.transformAccountInfoToView(
+            result = this.rootStore.myProfiles.transformAccountInfoToView(
                 account,
             );
         }
@@ -162,7 +162,7 @@ export class MarketStore extends OnlineStore {
 
     @computed
     public get marketAccountViewList(): IAccountItemView[] {
-        return this.rootStore.mainStore.accountList;
+        return this.rootStore.myProfiles.accountList;
     }
 
     @computed

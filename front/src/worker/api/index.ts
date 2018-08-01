@@ -529,7 +529,6 @@ class Api {
     public getAccountList = async (): Promise<t.IResponse> => {
         const accounts = (await this.getAccounts()) || {};
         const addresses = Object.keys(accounts);
-
         //lazy init tokens
         try {
             if (
@@ -644,7 +643,6 @@ class Api {
                         token.address = token.address.toLowerCase();
                     }
                 }
-
                 return storage;
             } catch (err) {
                 // console.log(err);

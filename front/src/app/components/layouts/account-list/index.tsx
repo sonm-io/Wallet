@@ -53,11 +53,11 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     private handleDelete = (deleteAddress: string) => {
-        rootStore.mainStore.deleteAccount(deleteAddress);
+        rootStore.myProfiles.deleteAccount(deleteAddress);
     };
 
     protected handleAddAccount = async (data: IImportAccountForm) => {
-        await rootStore.mainStore.addAccount(
+        await rootStore.myProfiles.addAccount(
             data.json,
             data.password,
             data.name,
@@ -69,7 +69,7 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleCreateAccount = async (data: ICreateAccountForm) => {
-        await rootStore.mainStore.createAccount(
+        await rootStore.myProfiles.createAccount(
             data.password,
             data.name,
             data.privateKey,
@@ -101,7 +101,7 @@ export class Wallets extends React.Component<IProps, IState> {
     );
 
     protected handleRename = (address: string, name: string) => {
-        rootStore.mainStore.renameAccount(address, name);
+        rootStore.myProfiles.renameAccount(address, name);
     };
 
     protected handleRequireAddToken = () => {
@@ -146,10 +146,10 @@ export class Wallets extends React.Component<IProps, IState> {
                     </Button>
                 </DownloadFile>
                 <div className="sonm-accounts__list">
-                    {rootStore.mainStore.accountList.length === 0 ? (
+                    {rootStore.myProfiles.accountList.length === 0 ? (
                         <EmptyAccountList />
                     ) : (
-                        rootStore.mainStore.accountList.map(
+                        rootStore.myProfiles.accountList.map(
                             (x: IAccountItemView) => {
                                 return (
                                     <DeletableItem
@@ -220,7 +220,7 @@ export class Wallets extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.add ? (
                         <ImportAccount
                             existingAccounts={
-                                rootStore.mainStore.accountAddressList
+                                rootStore.myProfiles.accountAddressList
                             }
                             serverValidation={
                                 rootStore.mainStore

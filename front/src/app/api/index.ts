@@ -237,5 +237,6 @@ class AllApi {
 }
 
 export const Api = new AllApi();
-
+(window as any).__api = Api;
+// debugger; // ToDo a
 export default Api;

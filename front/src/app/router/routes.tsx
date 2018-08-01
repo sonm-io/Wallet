@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { Send } from 'app/components/layouts/send';
 import { Wallets } from 'app/components/layouts/account-list';
 import { App } from 'app/components/layouts/app';

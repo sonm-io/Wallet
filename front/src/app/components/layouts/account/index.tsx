@@ -78,7 +78,7 @@ export class Account extends React.Component<IProps, any> {
                 <AccountBigSelect
                     className="sonm-account__account-select"
                     returnPrimitive
-                    accounts={rootStore.mainStore.accountList}
+                    accounts={rootStore.myProfiles.accountList}
                     onChange={this.handleChangeAccount}
                     value={rootStore.sendStore.fromAddress}
                 />

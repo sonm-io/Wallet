@@ -78,7 +78,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
     protected *updateCandidateTokenInfo(address: string) {
         const { validation, data } = yield Api.getTokenInfo(
             address,
-            this.rootStore.mainStore.accountAddressList,
+            this.rootStore.myProfiles.accountAddressList,
         );
 
         if (validation) {

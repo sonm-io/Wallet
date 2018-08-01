@@ -22,6 +22,9 @@ import shortString from 'app/utils/short-string';
 import { Disclaimer } from './sub/disclaimer/index';
 import { localizator } from 'app/localization';
 import { IChangeParams } from 'app/components/common/types';
+import rootStore from 'app/stores';
+
+const loginStore = rootStore.loginStore;
 
 interface IProps {
     className?: string;
@@ -165,12 +168,22 @@ export class Login extends React.Component<IProps, IState> {
         this.setState({ name, currentAction });
     }
 
-    protected async fastLogin() {
+    // ToDo a
+    protected async fastLoginOld() {
         if (window.localStorage.getItem('sonm-4ever')) {
             const { data } = await Api.unlockWallet('2', '2');
             if (data) {
                 const wallet = this.findWalletByName('2');
+                this.props.onLogin(wallet);
+            }
+        }
+    }
 
+    protected async fastLogin() {
+        if (window.localStorage.getItem('sonm-4ever')) {
+            await loginStore.unlockWallet('2', '2');
+            if (loginStore.success) {
+                const wallet = this.findWalletByName('2');
                 this.props.onLogin(wallet);
             }
         }
@@ -212,12 +225,14 @@ export class Login extends React.Component<IProps, IState> {
         return wallet;
     }
 
-    protected handleSubmitLogin = async (event: any) => {
+    // ToDo a
+    protected handleSubmitLoginOld = async (event: any) => {
         event.preventDefault();
 
         this.setState({ pending: true });
 
         try {
+            // ToDo a
             const { validation, data: success } = await Api.unlockWallet(
                 this.state.password,
                 this.state.name,
@@ -234,6 +249,35 @@ export class Login extends React.Component<IProps, IState> {
             const wallet = this.findWalletByName(this.state.name);
 
             if (success) {
+                this.props.onLogin(wallet);
+                return;
+            }
+        } catch (e) {
+            this.setState({ error: String(e) });
+        }
+
+        this.setState({ pending: false });
+    };
+
+    protected handleSubmitLogin = async (event: any) => {
+        event.preventDefault();
+        this.setState({ pending: true });
+
+        try {
+            // ToDo a
+            await loginStore.unlockWallet(this.state.password, this.state.name);
+
+            if (loginStore.validation) {
+                this.setState({
+                    serverValidation: localizator.localizeValidationMessages(
+                        loginStore.validation,
+                    ),
+                });
+            }
+
+            const wallet = this.findWalletByName(this.state.name);
+
+            if (loginStore.success) {
                 this.props.onLogin(wallet);
                 return;
             }
