@@ -1,8 +1,7 @@
 import { observable, action, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import { Api, IAccountInfo, IConnectionInfo, ICurrencyInfo } from 'app/api';
+import { Api, IAccountInfo, IConnectionInfo } from 'app/api';
 import { AlertType, ICurrencyItemView } from './types';
-import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
 import { delay } from 'app/utils/async-delay';
@@ -16,7 +15,6 @@ import {
     ZERO,
     BN,
 } from '../utils/create-big-number';
-import { normalizeCurrencyInfo } from './utils/normalize-currency-info';
 import { ILocalizator, IValidation } from 'app/localization';
 
 const UPDATE_INTERVAL = 5000;
@@ -35,15 +33,6 @@ const emptyForm: IMainFormValues = {
     accountName: '',
     privateKey: '',
     json: '',
-};
-
-// ToDo a
-const emptyCurrencyInfo = {
-    symbol: '',
-    decimalPointOffset: 2,
-    name: '',
-    address: '',
-    balance: '',
 };
 
 interface IMainStoreServices {
@@ -108,15 +97,6 @@ export class MainStore extends OnlineStore {
 
     @observable public averageGasPrice = '';
 
-    // ToDo a
-    // @observable public currencyMap = new Map<string, ICurrencyInfo>();
-
-    // ToDo a
-    // @computed
-    // public get currencyAddressList() {
-    //     return Array.from(this.rootStore.currencyStore.currencyMap.keys());
-    // }
-
     @computed
     public get gasPriceThresholds(): [string, string] {
         let min = '5';
@@ -133,36 +113,6 @@ export class MainStore extends OnlineStore {
 
         return [min, max];
     }
-
-    // ToDo a
-    // public get etherAddress(): string {
-    //     return MainStore.ADDRESS_ETHER;
-    // }
-
-    // ToDo a
-    // protected primaryTokenAddr: string = '';
-    // public get primaryTokenAddress(): string {
-    //     return this.primaryTokenAddr;
-    // }
-
-    // ToDo a
-    // @computed
-    // public get etherInfo(): ICurrencyInfo {
-    //     const result = this.rootStore.currencyStore.currencyMap.get(this.rootStore.currencyStore.etherAddress);
-
-    //     if (!result) {
-    //         throw new Error(`Ether not found`);
-    //     }
-
-    //     return result;
-    // }
-
-    // ToDo a
-    // @computed
-    // public get primaryTokenInfo(): ICurrencyInfo {
-    //     const result = this.rootStore.currencyStore.currencyMap.get(this.rootStore.currencyStore.primaryTokenAddress);
-    //     return result || emptyCurrencyInfo;
-    // }
 
     @computed
     public get etherBalance(): string {
@@ -245,22 +195,7 @@ export class MainStore extends OnlineStore {
     @asyncAction
     public *init(wallet: IWalletListItem) {
         this.walletInfo = wallet;
-
-        // this.primaryTokenAddr = (yield Api.getSonmTokenAddress()).data; // ToDo a
-
-        // ToDo a
-        const [{ data: currencyList }] = yield Promise.all([
-            Api.getCurrencyList(),
-
-            this.autoUpdateIteration(), // wait for first update
-        ]);
-
-        // ToDo a
-        updateAddressMap<ICurrencyInfo>(
-            currencyList.map(normalizeCurrencyInfo),
-            this.rootStore.currencyStore.currencyMap,
-        );
-
+        yield this.autoUpdateIteration(); // wait for first update
         this.connectionInfo = (yield Api.getConnectionInfo()).data;
         this.rootStore.marketStore.updateValidators();
     }
@@ -271,10 +206,6 @@ export class MainStore extends OnlineStore {
     }
 
     public async update() {
-        // ToDo a
-        // const accountList = await Api.getAccountList();
-        // this.updateList(accountList);
-
         const { data: gasPrice } = await Api.getGasPrice();
         this.setAverageGasPrice(gasPrice);
     }
@@ -323,18 +254,6 @@ export class MainStore extends OnlineStore {
             });
         }
     }
-
-    // ToDo a
-    // @pending
-    // @catchErrors({ restart: true })
-    // @asyncAction
-    // public *removeToken(address: string) {
-    //     const success = yield Api.removeToken(address);
-
-    //     if (success) {
-    //         this.rootStore.currencyStore.currencyMap.delete(address);
-    //     }
-    // }
 
     @pending
     @asyncAction
