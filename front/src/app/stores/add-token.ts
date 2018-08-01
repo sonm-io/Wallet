@@ -59,25 +59,25 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
     }
 
     @action.bound
-    public setCandidateTokenAddress(address: string) {
-        if (this.candidateTokenAddress === address) {
+    public setCandidateTokenAddress(tokenAddress: string) {
+        if (this.candidateTokenAddress === tokenAddress) {
             return;
         }
 
-        this.candidateTokenAddress = address;
+        this.candidateTokenAddress = tokenAddress;
         this.candidateTokenInfo = undefined;
         this.validation.tokenAddress = '';
 
         if (this.validationCandidateToken === '') {
-            this.updateCandidateTokenInfo(address);
+            this.updateCandidateTokenInfo(tokenAddress);
         }
     }
 
     @catchErrors({ restart: true })
     @asyncAction
-    protected *updateCandidateTokenInfo(address: string) {
+    protected *updateCandidateTokenInfo(tokenAddress: string) {
         const { validation, data } = yield Api.getTokenInfo(
-            address,
+            tokenAddress,
             this.rootStore.myProfilesStore.accountAddressList,
         );
 
@@ -93,7 +93,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
                 return;
             }
 
-            if (address === this.candidateTokenAddress) {
+            if (tokenAddress === this.candidateTokenAddress) {
                 this.candidateTokenInfo = normalizeCurrencyInfo(data);
             }
         }
