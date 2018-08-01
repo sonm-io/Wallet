@@ -53,11 +53,11 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     private handleDelete = (deleteAddress: string) => {
-        rootStore.myProfiles.deleteAccount(deleteAddress);
+        rootStore.myProfilesStore.deleteAccount(deleteAddress);
     };
 
     protected handleAddAccount = async (data: IImportAccountForm) => {
-        await rootStore.myProfiles.addAccount(
+        await rootStore.myProfilesStore.addAccount(
             data.json,
             data.password,
             data.name,
@@ -69,7 +69,7 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleCreateAccount = async (data: ICreateAccountForm) => {
-        await rootStore.myProfiles.createAccount(
+        await rootStore.myProfilesStore.createAccount(
             data.password,
             data.name,
             data.privateKey,
@@ -101,7 +101,7 @@ export class Wallets extends React.Component<IProps, IState> {
     );
 
     protected handleRename = (address: string, name: string) => {
-        rootStore.myProfiles.renameAccount(address, name);
+        rootStore.myProfilesStore.renameAccount(address, name);
     };
 
     protected handleRequireAddToken = () => {
@@ -146,10 +146,10 @@ export class Wallets extends React.Component<IProps, IState> {
                     </Button>
                 </DownloadFile>
                 <div className="sonm-accounts__list">
-                    {rootStore.myProfiles.accountList.length === 0 ? (
+                    {rootStore.myProfilesStore.accountList.length === 0 ? (
                         <EmptyAccountList />
                     ) : (
-                        rootStore.myProfiles.accountList.map(
+                        rootStore.myProfilesStore.accountList.map(
                             (x: IAccountItemView) => {
                                 return (
                                     <DeletableItem
@@ -220,7 +220,7 @@ export class Wallets extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.add ? (
                         <ImportAccount
                             existingAccounts={
-                                rootStore.myProfiles.accountAddressList
+                                rootStore.myProfilesStore.accountAddressList
                             }
                             serverValidation={
                                 rootStore.mainStore

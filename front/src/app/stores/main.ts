@@ -181,7 +181,7 @@ export class MainStore extends OnlineStore {
 
     public getBalanceListFor(...accounts: string[]): ICurrencyItemView[] {
         if (
-            this.rootStore.myProfiles.accountMap === undefined ||
+            this.rootStore.myProfilesStore.accountMap === undefined ||
             this.currencyMap === undefined
         ) {
             return [];
@@ -192,7 +192,7 @@ export class MainStore extends OnlineStore {
                 let touched = false;
                 const balance: BN = accounts.reduce(
                     (sum: any, accountAddr: string) => {
-                        const account = this.rootStore.myProfiles.accountMap.get(
+                        const account = this.rootStore.myProfilesStore.accountMap.get(
                             accountAddr,
                         ) as IAccountInfo;
                         const userBalance =
@@ -223,7 +223,7 @@ export class MainStore extends OnlineStore {
 
     @computed
     public get fullBalanceList(): ICurrencyItemView[] {
-        const allAccountsAddresses = this.rootStore.myProfiles
+        const allAccountsAddresses = this.rootStore.myProfilesStore
             .accountAddressList;
         return this.getBalanceListFor(...allAccountsAddresses);
     }

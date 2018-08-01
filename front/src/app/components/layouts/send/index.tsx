@@ -27,7 +27,7 @@ const PriorityInput = ButtonGroup as PriorityInput;
 @observer
 export class Send extends React.Component<IProps, any> {
     public componentWillMount() {
-        if (rootStore.myProfiles.accountAddressList.length === 0) {
+        if (rootStore.myProfilesStore.accountAddressList.length === 0) {
             this.props.onNotAvailable();
         }
 
@@ -134,7 +134,7 @@ export class Send extends React.Component<IProps, any> {
                             <AccountBigSelect
                                 returnPrimitive
                                 onChange={this.handleChangeAccount}
-                                accounts={rootStore.myProfiles.accountList}
+                                accounts={rootStore.myProfilesStore.accountList}
                                 value={rootStore.sendStore.fromAddress}
                             />
                         </FormField>

@@ -73,7 +73,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     }
 
     public componentDidMount() {
-        if (rootStore.myProfiles.accountAddressList.length === 0) {
+        if (rootStore.myProfilesStore.accountAddressList.length === 0) {
             this.props.onNotAvailable();
         } else {
             this.syncStores();
@@ -140,7 +140,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     };
 
     public renderAccount() {
-        const account = rootStore.myProfiles.accountList.find(
+        const account = rootStore.myProfilesStore.accountList.find(
             item => item.address === this.store.fromAddress,
         );
         const className = cn(

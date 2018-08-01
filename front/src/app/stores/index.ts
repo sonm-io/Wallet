@@ -60,7 +60,7 @@ export class RootStore implements IHasLocalizator {
     public readonly dealDetailsStore: DealDetails;
     public readonly kycListStore: KycListStore;
     public readonly profileDetailsStore: ProfileDetails;
-    public readonly myProfiles: MyProfilesStore;
+    public readonly myProfilesStore: MyProfilesStore;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -104,7 +104,7 @@ export class RootStore implements IHasLocalizator {
             true,
         );
 
-        this.myProfiles = new MyProfilesStore(this, {
+        this.myProfilesStore = new MyProfilesStore(this, {
             localizator,
             errorProcessor: this.uiStore,
         });
