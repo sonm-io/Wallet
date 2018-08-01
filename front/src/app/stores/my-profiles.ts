@@ -168,4 +168,19 @@ export class MyProfilesStore extends OnlineStore {
 
         return result;
     }
+
+    @pending
+    @asyncAction
+    public *getPrivateKey(password: string, address: string) {
+        const { data: privateKey, validation } = yield Api.getPrivateKey(
+            password,
+            address,
+        );
+
+        if (validation) {
+            return '';
+        } else {
+            return privateKey;
+        }
+    }
 }

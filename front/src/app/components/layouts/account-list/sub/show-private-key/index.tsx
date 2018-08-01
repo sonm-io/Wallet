@@ -29,7 +29,7 @@ export class ShowPassword extends React.Component<IProps, any> {
     protected handleSubmit = async (event: any) => {
         event.preventDefault();
 
-        const privateKey = await rootStore.mainStore.getPrivateKey(
+        const privateKey = await rootStore.myProfilesStore.getPrivateKey(
             this.state.password,
             this.props.address,
         );
