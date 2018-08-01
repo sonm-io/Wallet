@@ -1,6 +1,5 @@
 import { observable, action, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-// import * as sortBy from 'lodash/fp/sortBy'; ToDo a
 import { Api, IAccountInfo, IConnectionInfo, ICurrencyInfo } from 'app/api';
 import { AlertType, ICurrencyItemView } from './types';
 import { updateAddressMap } from './utils/update-address-map';
@@ -20,7 +19,6 @@ import {
 import { normalizeCurrencyInfo } from './utils/normalize-currency-info';
 import { ILocalizator, IValidation } from 'app/localization';
 
-// const sortByName = sortBy(['name', 'address']); ToDo a
 const UPDATE_INTERVAL = 5000;
 
 interface IMainFormValues {
@@ -106,15 +104,6 @@ export class MainStore extends OnlineStore {
 
     @observable public averageGasPrice = '';
 
-    // ToDo a
-    // @observable public accountMap = new Map<string, IAccountInfo>();
-
-    // ToDo a
-    // @computed
-    // public get accountAddressList() {
-    //     return Array.from(this.accountMap.keys());
-    // }
-
     @observable public currencyMap = new Map<string, ICurrencyInfo>();
 
     @computed
@@ -190,40 +179,6 @@ export class MainStore extends OnlineStore {
         return balance || '0';
     }
 
-    // ToDo a
-    // @computed
-    // public get accountList(): IAccountItemView[] {
-    //     const result = Array.from(this.accountMap.values()).map(
-    //         this.transformAccountInfoToView,
-    //     );
-
-    //     return sortByName(result) as IAccountItemView[];
-    // }
-
-    // public transformAccountInfoToView = (
-    //     info: IAccountInfo,
-    // ): IAccountItemView => {
-    //     const isCurrencyListEmpty = this.currencyMap.size === 0;
-    //     const primaryTokenBalance = isCurrencyListEmpty
-    //         ? ''
-    //         : info.currencyBalanceMap[this.primaryTokenAddress];
-
-    //     const preview: IAccountItemView = {
-    //         address: info.address,
-    //         json: info.json,
-    //         name: info.name,
-    //         etherBalance: isCurrencyListEmpty
-    //             ? ''
-    //             : info.currencyBalanceMap[this.etherAddress],
-    //         primaryTokenBalance,
-    //         primaryTokenInfo: this.primaryTokenInfo,
-    //         usdBalance: info.marketUsdBalance,
-    //         marketBalance: info.marketBalance,
-    //     };
-
-    //     return preview;
-    // };
-
     public getBalanceListFor(...accounts: string[]): ICurrencyItemView[] {
         if (
             this.rootStore.myProfiles.accountMap === undefined ||
@@ -273,27 +228,6 @@ export class MainStore extends OnlineStore {
         return this.getBalanceListFor(...allAccountsAddresses);
     }
 
-    // ToDo a
-    // @catchErrors({ restart: false })
-    // @asyncAction
-    // public *deleteAccount(deleteAddress: string) {
-    //     const { data: success } = yield Api.removeAccount(deleteAddress);
-
-    //     if (success) {
-    //         this.accountMap.delete(deleteAddress);
-    //     }
-    // }
-
-    // @catchErrors({ restart: false })
-    // @asyncAction
-    // public *renameAccount(address: string, name: string) {
-    //     const { data: success } = yield Api.renameAccount(address, name);
-
-    //     if (success) {
-    //         (this.accountMap.get(address) as IAccountInfo).name = name;
-    //     }
-    // }
-
     @pending
     @catchErrors({ restart: true })
     @asyncAction
@@ -316,12 +250,6 @@ export class MainStore extends OnlineStore {
         this.connectionInfo = (yield Api.getConnectionInfo()).data;
         this.rootStore.marketStore.updateValidators();
     }
-
-    // ToDo a
-    // @action
-    // protected updateList(accountList: IAccountInfo[] = []) {
-    //     updateAddressMap<IAccountInfo>(accountList, this.rootStore.myProfiles.accountMap);
-    // }
 
     @action
     protected setAverageGasPrice(gasPrice: string = '') {
@@ -355,68 +283,6 @@ export class MainStore extends OnlineStore {
             }
         }
     }
-
-    // ToDo a
-    // @pending
-    // @catchErrors({ restart: false })
-    // @asyncAction
-    // public *addAccount(
-    //     json: string,
-    //     password: string,
-    //     name: string,
-    //     privateKey?: string,
-    // ) {
-    //     this.serverValidation = {};
-
-    //     const { data, validation } = yield Api.addAccount(json, password, name);
-
-    //     let result;
-
-    //     if (validation) {
-    //         const serverValidation = {
-    //             ...this.services.localizator.localizeValidationMessages(
-    //                 validation as IValidation,
-    //             ),
-    //         };
-
-    //         if (privateKey) {
-    //             serverValidation.privateKey = serverValidation.json;
-    //             delete serverValidation.json;
-    //         }
-
-    //         this.serverValidation = serverValidation;
-    //     } else {
-    //         result = this.accountMap.set(data.address, data);
-    //     }
-
-    //     return result;
-    // }
-
-    // @pending
-    // @catchErrors({ restart: false })
-    // @asyncAction
-    // public *createAccount(password: string, name: string, privateKey: string) {
-    //     this.serverValidation = {};
-
-    //     const { data, validation } = yield Api.createAccount(
-    //         password,
-    //         privateKey,
-    //     );
-
-    //     let result;
-
-    //     if (validation) {
-    //         this.serverValidation = {
-    //             ...this.services.localizator.localizeValidationMessages(
-    //                 validation as IValidation,
-    //             ),
-    //         };
-    //     } else {
-    //         result = yield this.addAccount(data, password, name, privateKey);
-    //     }
-
-    //     return result;
-    // }
 
     @pending
     @catchErrors({ restart: false })
