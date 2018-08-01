@@ -1,7 +1,7 @@
 import * as sortBy from 'lodash/fp/sortBy';
 import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import { observable, computed, action, autorun } from 'mobx';
+import { observable, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { IAccountInfo, ICurrencyInfo } from 'app/api/types';
 import { IAccountItemView } from 'app/stores/types';
@@ -36,7 +36,7 @@ export class MyProfilesStore extends OnlineStore {
         this.rootStore = rootStore;
         autorun(() => {
             if (this.rootStore.loginStore.success) {
-                this.update();
+                this.getAccountList();
             }
         });
     }
@@ -51,6 +51,12 @@ export class MyProfilesStore extends OnlineStore {
     //#region Accounts
 
     @observable public accountMap = new Map<string, IAccountInfo>();
+
+    @asyncAction
+    protected *getAccountList() {
+        const accountList = yield Api.getAccountList();
+        updateAddressMap<IAccountInfo>(accountList, this.accountMap);
+    }
 
     @computed
     public get accountAddressList() {
@@ -111,12 +117,7 @@ export class MyProfilesStore extends OnlineStore {
         }
     }
 
-    @action
-    protected updateList(accountList: IAccountInfo[] = []) {
-        updateAddressMap<IAccountInfo>(accountList, this.accountMap);
-    }
-
-    // ToDo a: ServerValidation is a common feature. But we do not want to copypaste it between stores.
+    // ToDo a: ServerValidation is a common feature. And we do not want to copypaste it between stores.
     @observable.ref public serverValidation: Partial<IMainFormValues> = {};
 
     @pending
@@ -154,7 +155,6 @@ export class MyProfilesStore extends OnlineStore {
         return result;
     }
 
-    // ToDo a What is the difference between addAccount and createAccount?
     @pending
     @catchErrors({ restart: false })
     @asyncAction
@@ -204,9 +204,4 @@ export class MyProfilesStore extends OnlineStore {
     }
 
     //#endregion
-
-    public async update() {
-        const accountList = await Api.getAccountList();
-        this.updateList(accountList);
-    }
 }
