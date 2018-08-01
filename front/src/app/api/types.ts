@@ -255,7 +255,7 @@ export interface IDealComparableParams {
     duration: number;
 }
 
-export enum EnumChangeRequestState {
+export enum EnumChangeRequestSide {
     /**
      * This is my change request, show Cancel and Change buttons.
      */

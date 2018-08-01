@@ -4,12 +4,11 @@ import { ChangeRequest } from './sub/change-request';
 import {
     IDealChangeRequest,
     IDealComparableParams,
-    EnumChangeRequestState,
     EnumOrderSide,
     TChangeRequestAction,
+    EnumChangeRequestSide,
 } from 'app/api/types';
 import Button from 'app/components/common/button';
-import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 
 export interface IChangeRequestListProps {
     className?: string;
@@ -23,12 +22,6 @@ export interface IChangeRequestListProps {
     onChangeRequest: TChangeRequestAction;
     onRejectRequest: TChangeRequestAction;
     onAcceptRequest: TChangeRequestAction;
-
-    // Confirmation panel:
-    showConfirmation: boolean;
-    validationMessage?: string;
-    onSubmit: (password: string) => void;
-    onConfirmationCancel: () => void;
 }
 
 export class ChangeRequestList extends React.Component<
@@ -70,14 +63,12 @@ export class ChangeRequestList extends React.Component<
                                 conditions may be changed if counterparty will
                                 accept it.
                             </div>
-                            {p.showConfirmation === false ? (
-                                <Button
-                                    className="change-request-list__create-button"
-                                    onClick={p.onCreateRequest}
-                                >
-                                    Create
-                                </Button>
-                            ) : null}
+                            <Button
+                                className="change-request-list__create-button"
+                                onClick={p.onCreateRequest}
+                            >
+                                Create
+                            </Button>
                         </div>
                     ) : null}
                     {this.getSortedRequests().map(i => (
@@ -86,12 +77,10 @@ export class ChangeRequestList extends React.Component<
                             key={i.id}
                             dealParams={p.dealParams}
                             request={i}
-                            state={
-                                p.showConfirmation
-                                    ? EnumChangeRequestState.noButtons
-                                    : p.mySide === i.requestType
-                                        ? EnumChangeRequestState.mySide
-                                        : EnumChangeRequestState.otherSide
+                            side={
+                                p.mySide === i.requestType
+                                    ? EnumChangeRequestSide.mySide
+                                    : EnumChangeRequestSide.otherSide
                             }
                             onCancel={p.onCancelRequest}
                             onChange={p.onChangeRequest}
@@ -100,18 +89,6 @@ export class ChangeRequestList extends React.Component<
                         />
                     ))}
                 </div>
-                {p.showConfirmation ? (
-                    <ConfirmationPanel
-                        className="change-request-list__confirmation-panel"
-                        validationMessage={p.validationMessage}
-                        onSubmit={p.onSubmit}
-                        onCancel={p.onConfirmationCancel}
-                        labelHeader="Please, enter account password"
-                        labelDescription=""
-                        labelCancel="CANCEL"
-                        labelSubmit="CONFIRM"
-                    />
-                ) : null}
             </div>
         );
     }

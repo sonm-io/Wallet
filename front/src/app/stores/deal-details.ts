@@ -379,6 +379,11 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         };
     }
 
+    @computed
+    public get isFormValid() {
+        return this.validation.price === '' && this.newPrice !== '';
+    }
+
     protected updateTick = async () => {
         if (!this.isAutoUpdateEnabled) {
             return;

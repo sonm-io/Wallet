@@ -3,7 +3,7 @@ import * as cn from 'classnames';
 import {
     IDealComparableParams,
     IDealChangeRequest,
-    EnumChangeRequestState,
+    EnumChangeRequestSide,
     EnumOrderSide,
     TChangeRequestAction,
 } from 'app/api/types';
@@ -17,7 +17,7 @@ export interface IChangeRequestProps {
     className?: string;
     dealParams: IDealComparableParams;
     request: IDealChangeRequest;
-    state: EnumChangeRequestState;
+    side: EnumChangeRequestSide;
     onCancel: TChangeRequestAction;
     onChange: TChangeRequestAction;
     onReject: TChangeRequestAction;
@@ -44,7 +44,7 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
         const p = this.props;
         const requestPrice = p.request.price || '';
 
-        const mySide = p.state === EnumChangeRequestState.mySide;
+        const mySide = p.side === EnumChangeRequestSide.mySide;
         const buy = p.request.requestType === EnumOrderSide.buy;
 
         let result = this.isGreater(p.dealParams.price, requestPrice);
@@ -104,7 +104,7 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                         )}
                     />
                 ) : null}
-                {p.state === EnumChangeRequestState.mySide ? (
+                {p.side === EnumChangeRequestSide.mySide ? (
                     <React.Fragment>
                         <Button
                             name="cancel"
@@ -126,7 +126,7 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                         </Button>
                     </React.Fragment>
                 ) : null}
-                {p.state === EnumChangeRequestState.otherSide ? (
+                {p.side === EnumChangeRequestSide.otherSide ? (
                     <React.Fragment>
                         <Button
                             name="reject"

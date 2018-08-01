@@ -6,37 +6,19 @@ import { ITogglerChangeParams } from '../../common/toggler';
 import { EnumOrderSide } from 'app/api';
 import { BalanceUtils } from 'app/components/common/balance-view/utils';
 import { getPricePerHour } from 'app/components/common/price-per-hour/utils';
-import { ChangeRequestDialog } from './sub/create-dialog/index';
 import { IChangeParams } from '../../common/types';
 import { ChangeRequestList } from './sub/change-request-list/index';
+import { DealActions } from './types';
 
 interface IProps {
     className?: string;
     onNavigateToDeals: () => void;
 }
 
-enum DealActions {
-    finish = 'finish',
-    createChangeRequest = 'createChangeRequest',
-    editChangeRequest = 'editChangeRequest',
-    cancelChangeRequest = 'cancelChangeRequest',
-    acceptChangeRequest = 'acceptChangeRequest',
-    none = '',
-}
-
 const dealDetailsStore = rootStore.dealDetailsStore;
 
 @observer
 export class Deal extends React.Component<IProps, never> {
-    public handleFinishDeal = async (password: string) => {
-        dealDetailsStore.updateUserInput({ password });
-        await dealDetailsStore.finish();
-
-        if (dealDetailsStore.validation.password === '') {
-            this.props.onNavigateToDeals();
-        }
-    };
-
     public componentDidMount() {
         this.resetInput();
         dealDetailsStore.startAutoUpdate();
@@ -46,13 +28,17 @@ export class Deal extends React.Component<IProps, never> {
         dealDetailsStore.stopAutoUpdate();
     }
 
+    public handleConfirmationDialogHide = () => {
+        this.resetInput();
+    };
+
     public handleChangeCheckbox = (params: ITogglerChangeParams) => {
         dealDetailsStore.updateUserInput({
             isBlacklisted: params.value,
         });
     };
 
-    public handleShowConfirmationPanel = () => {
+    public handleFinishDealShow = () => {
         dealDetailsStore.updateUserInput({
             action: DealActions.finish,
         });
@@ -62,26 +48,7 @@ export class Deal extends React.Component<IProps, never> {
         dealDetailsStore.resetUserInput();
     };
 
-    public handleHideConfirmationPanel = () => {
-        this.resetInput();
-    };
-
-    public handleChangeRequestDialogSubmit = async () => {
-        await dealDetailsStore.actionChangeRequest();
-
-        if (dealDetailsStore.validation.password === '') {
-            this.handleChangeRequestDialogClose();
-        }
-    };
-
-    public handleChangeRequestDialogClose = () => {
-        dealDetailsStore.updateUserInput({
-            action: DealActions.none,
-            password: '',
-        });
-    };
-
-    protected handleChangeRequestDialogChangeInput = (
+    protected handleConfirmationDialogChangeInput = (
         params: IChangeParams<string>,
     ) => {
         dealDetailsStore.updateUserInput({
@@ -96,7 +63,7 @@ export class Deal extends React.Component<IProps, never> {
         });
     };
 
-    public handleChangeRequestChange = (id: string) => {
+    public handleChangeRequestEdit = (id: string) => {
         const changeRequest =
             dealDetailsStore.deal.changeRequests &&
             dealDetailsStore.deal.changeRequests.find(
@@ -151,17 +118,28 @@ export class Deal extends React.Component<IProps, never> {
         });
     };
 
-    public handleChangeRequestSubmit = async (password: string) => {
-        dealDetailsStore.updateUserInput({ password });
+    public handleChangeRequestReject = (id: string) => {
+        dealDetailsStore.updateUserInput({
+            action: DealActions.rejectChangeRequest,
+            changeRequestId: id,
+        });
+    };
 
+    public handleConfirmationDialogSubmit = async () => {
         if (dealDetailsStore.action === DealActions.cancelChangeRequest) {
             await dealDetailsStore.cancelChangeRequest();
+        } else if (dealDetailsStore.action === DealActions.finish) {
+            await dealDetailsStore.finish();
         } else {
             await dealDetailsStore.actionChangeRequest();
         }
 
         if (dealDetailsStore.validation.password === '') {
-            this.handleHideConfirmationPanel();
+            if (dealDetailsStore.action === DealActions.finish) {
+                this.props.onNavigateToDeals();
+            }
+
+            this.handleConfirmationDialogHide();
         }
     };
 
@@ -199,17 +177,7 @@ export class Deal extends React.Component<IProps, never> {
                 marketAccountAddress={marketAccount}
                 showButtons={isOwner}
                 propertyList={propertyList}
-                onFinishDeal={this.handleFinishDeal}
-                onShowConfirmationPanel={this.handleShowConfirmationPanel}
-                onHideConfirmationPanel={this.handleHideConfirmationPanel}
-                showConfirmationPanel={
-                    dealDetailsStore.action === DealActions.finish
-                }
-                validationPassword={
-                    rootStore.dealDetailsStore.validation.password
-                }
-                isBlacklisted={rootStore.dealDetailsStore.isBlacklisted}
-                onChangeCheckbox={this.handleChangeCheckbox}
+                onFinishDealClick={this.handleFinishDealShow}
                 changeRequestList={
                     isOwner ? (
                         <ChangeRequestList
@@ -222,55 +190,36 @@ export class Deal extends React.Component<IProps, never> {
                             mySide={mySide}
                             onCreateRequest={this.handleChangeRequestCreate}
                             onCancelRequest={this.handleChangeRequestCancel}
-                            onChangeRequest={this.handleChangeRequestChange}
-                            onRejectRequest={this.handleChangeRequestCancel}
+                            onChangeRequest={this.handleChangeRequestEdit}
+                            onRejectRequest={this.handleChangeRequestReject}
                             onAcceptRequest={this.handleChangeRequestAccept}
-                            onSubmit={this.handleChangeRequestSubmit}
-                            onConfirmationCancel={
-                                this.handleHideConfirmationPanel
-                            }
-                            showConfirmation={
-                                dealDetailsStore.action ===
-                                    DealActions.cancelChangeRequest ||
-                                dealDetailsStore.action ===
-                                    DealActions.acceptChangeRequest
-                            }
-                            validationMessage={
-                                rootStore.dealDetailsStore.validation.password
-                            }
                         />
                     ) : (
                         undefined
                     )
                 }
-                createChangeRequestDialog={
-                    dealDetailsStore.action === DealActions.editChangeRequest ||
-                    dealDetailsStore.action ===
-                        DealActions.createChangeRequest ? (
-                        <ChangeRequestDialog
-                            onClose={this.handleChangeRequestDialogClose}
-                            onSubmit={this.handleChangeRequestDialogSubmit}
-                            onChangeInput={
-                                this.handleChangeRequestDialogChangeInput
-                            }
-                            validationPassword={
-                                rootStore.dealDetailsStore.validation.password
-                            }
-                            validationPrice={
-                                rootStore.dealDetailsStore.validation.price
-                            }
-                            password={rootStore.dealDetailsStore.password}
-                            newPrice={rootStore.dealDetailsStore.newPrice}
-                            newDuration={rootStore.dealDetailsStore.newDuration}
-                            showDuration={deal.duration > 0}
-                        />
-                    ) : (
-                        undefined
-                    )
+                confirmationDialogAction={dealDetailsStore.action}
+                confirmationDialogIsBlacklisted={dealDetailsStore.isBlacklisted}
+                confirmationDialogPassword={dealDetailsStore.password}
+                confirmationDialogPrice={dealDetailsStore.newPrice}
+                confirmationDialogValidationPassword={
+                    dealDetailsStore.validation.password
                 }
+                confirmationDialogValidationPrice={
+                    dealDetailsStore.validation.price
+                }
+                confirmationDialogOnCheckboxChange={this.handleChangeCheckbox}
+                confirmationDialogOnSubmit={this.handleConfirmationDialogSubmit}
+                confirmationDialogOnCancel={this.handleConfirmationDialogHide}
+                confirmationDialogOnClose={this.handleConfirmationDialogHide}
+                confirmationDialogOnChangePassword={
+                    this.handleConfirmationDialogChangeInput
+                }
+                confirmationDialogOnChangeInput={
+                    this.handleConfirmationDialogChangeInput
+                }
+                confirmationDialogIsFormValid={dealDetailsStore.isFormValid}
             />
         );
     }
 }
-
-export default Deal;

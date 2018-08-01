@@ -247,7 +247,7 @@ export class DWH {
         const multiplier = 1000000;
 
         return String(
-            new BN(String(parseFloat(price) * multiplier))
+            new BN(String(Math.round(parseFloat(price) * multiplier)))
                 .mul(DWH.priceMultiplierOut)
                 .div(new BN(multiplier)),
         );
