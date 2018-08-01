@@ -24,6 +24,7 @@
         "ban-comma-operator": false,
         "no-bitwise": false,
         "array-type": false,
-        "prefer-for-of": false
+        "prefer-for-of": false,
+        "forin": false
     }
 }

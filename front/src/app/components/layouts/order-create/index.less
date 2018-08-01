@@ -1,0 +1,93 @@
+@import 'guide.less';
+
+.order-create {
+    display: grid;
+    grid-template-areas:
+        'profile actions'
+        'details params';
+
+    grid-template-columns: 540px auto;
+
+    // Main grid areas
+
+    &__profile {
+        grid-area: profile;
+        margin: auto 0;
+    }
+
+    &__actions {
+        grid-area: actions;
+        height: 126px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        padding: 20px 20px 17px 20px;
+    }
+
+    &__details {
+        grid-area: details;
+        --field-label-width: 150px;
+
+        &-input {
+            width: 128px;
+        }
+
+        &-counterparty {
+            width: 350px;
+        }
+    }
+
+    &__params {
+        grid-area: params;
+        --field-label-width: 350px;
+
+        &-input {
+            width: 128px;
+        }
+    }
+
+    // Elements
+
+    &__confirmation {
+        background-color: @color-gray-bg;
+        padding: 20px 20px 0 20px;
+    }
+
+    &__button {
+        text-transform: capitalize;
+        min-width: 113px;
+        margin: 0 0 0 36px;
+    }
+
+    &__status-checkboxes {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-gap: 10px;
+    }
+
+    &__grid-header {
+        color: @color-font-gray;
+        font-size: 13px;
+        font-weight: bold;
+
+        &-details {
+            padding: 26px 0 0 0;
+        }
+
+        &-params {
+            border-top: 2px solid #fafafa;
+            padding: 24px 0 0 0;
+        }
+    }
+
+    &__input {
+        color: @color-font-dark;
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+    &__non-input {
+        padding-top: 15px;
+        padding-bottom: 6px;
+    }
+}
