@@ -1,7 +1,7 @@
 import * as t from 'app/api/types';
 
 export interface IDictionary {
-    [index: string]: string;
+    [index: string]: string | null;
 }
 
 export interface INodes {
@@ -31,7 +31,7 @@ export interface IAccounts {
 
 export interface IResponse<T = any> {
     data?: T;
-    validation?: any;
+    validation?: IDictionary;
 }
 
 export class Response<T> implements IResponse<T> {
