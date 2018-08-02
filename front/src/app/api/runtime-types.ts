@@ -6,7 +6,6 @@ import {
     IListResult,
     IAttribute,
     IProfileFull,
-    IAccountInfo,
     IOrder,
     IDeal,
     IMarketStats,
@@ -17,6 +16,7 @@ import {
     IKycValidator,
     IWorker,
 } from './types';
+import { IAccountInfo } from 'app/entities/account';
 
 const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
 
@@ -125,6 +125,8 @@ export const TypeAccountInfo = createStruct<IAccountInfo>(
     'IAccountInfo',
 );
 
+export const TypeAccountInfoList = t.list(TypeAccountInfo);
+
 export const TypeAccountBrief = createStruct<IAccountBrief>(
     {
         address: TypeEthereumAddress,
@@ -154,8 +156,6 @@ export const TypeBenchmarkMap = createStruct<IBenchmarkMap>(
     },
     'IBenchmarkMap',
 );
-
-export const TypeAccountInfoList = t.list(TypeAccountInfo);
 
 export const TypeOrder = createStruct<IOrder>(
     {

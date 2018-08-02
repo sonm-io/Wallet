@@ -21,6 +21,7 @@ const PENDING_HASH = 'waiting for hash...';
 
 import ipc from '../ipc';
 import { ICurrencyInfo } from 'app/entities/currency';
+import { IAccountInfo } from 'app/entities/account';
 
 async function ipcSend(type: string, payload?: any): Promise<any> {
     const res = await ipc.send(type, payload);
@@ -571,7 +572,7 @@ class Api {
         const rate =
             rateResponse && rateResponse.data ? rateResponse.data : undefined;
 
-        const list = [] as t.IAccountInfo[];
+        const list = [] as IAccountInfo[];
         for (let i = 0; i < addresses.length; i++) {
             const address = addresses[i];
 

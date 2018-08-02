@@ -3,11 +3,11 @@ import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
 import { observable, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import { IAccountInfo } from 'app/api/types';
 import { IAccountItemView } from 'app/stores/types';
 import Api from 'app/api';
 import { IValidation } from 'app/localization/types';
 import { RootStore } from 'app/stores';
+import { IAccountInfo } from 'app/entities/account';
 const { pending, catchErrors } = OnlineStore;
 
 interface IMainFormValues {

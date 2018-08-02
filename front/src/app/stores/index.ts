@@ -285,5 +285,5 @@ export class RootStore implements IHasLocalizator {
 export const rootStore = new RootStore(en);
 
 (window as any).__rootStore = rootStore;
-
+(window as any).$toJS = require('mobx').toJS;
 export default rootStore;

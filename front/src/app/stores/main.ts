@@ -1,6 +1,6 @@
 import { observable, action, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import { Api, IAccountInfo, IConnectionInfo } from 'app/api';
+import { Api, IConnectionInfo } from 'app/api';
 import { AlertType } from './types';
 import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
@@ -17,6 +17,7 @@ import {
     BN,
 } from '../utils/create-big-number';
 import { ILocalizator, IValidation } from 'app/localization';
+import { IAccountInfo } from 'app/entities/account';
 
 const UPDATE_INTERVAL = 5000;
 

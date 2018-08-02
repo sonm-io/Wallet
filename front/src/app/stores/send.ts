@@ -1,10 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import {
-    IAccountInfo,
-    ISendTransactionResult,
-    TransactionStatus,
-} from 'app/api';
+import { ISendTransactionResult, TransactionStatus } from 'app/api';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import {
     ISendFormValues,
@@ -29,6 +25,7 @@ import {
 } from 'app/utils/create-big-number';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { ILocalizator, IValidation, IHasLocalizator } from 'app/localization';
+import { IAccountInfo } from 'app/entities/account';
 
 const emptyForm: ISendFormValues = {
     fromAddress: '',

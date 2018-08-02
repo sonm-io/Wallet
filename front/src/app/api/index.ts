@@ -6,7 +6,6 @@ import { WorkerApi } from './sub/worker-api';
 import { HistoryApi } from './sub/history-api';
 import {
     ISendTransactionResult,
-    IAccountInfo,
     ISendTransaction,
     IResult,
     ISettings,
@@ -18,6 +17,7 @@ import {
 } from './types';
 import { TypeAccountInfoList } from './runtime-types';
 import { ICurrencyInfo } from 'app/entities/currency';
+import { IAccountInfo } from 'app/entities/account';
 
 export * from './types';
 

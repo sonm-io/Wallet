@@ -33,15 +33,6 @@ export interface ISendTransactionResult extends ISendTransaction {
     hash: string;
 }
 
-export interface IAccountInfo {
-    name: string;
-    address: string;
-    marketBalance: string;
-    marketUsdBalance: string;
-    currencyBalanceMap: ICurrencyBalanceMap;
-    json: string;
-}
-
 export interface ICurrencyBalanceMap {
     [address: string]: string; // address => balance
 }
