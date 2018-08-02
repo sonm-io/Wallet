@@ -1,6 +1,6 @@
 import OnlineStore, { IOnlineStoreServices } from './online-store';
 import { observable, action, computed } from 'mobx';
-import { IKycValidator } from 'app/api';
+import { Api, IKycValidator } from 'app/api';
 import { RootStore } from 'app/stores';
 import { asyncAction } from 'mobx-utils';
 const { pending, catchErrors } = OnlineStore;
@@ -60,19 +60,20 @@ export class KycListStore extends OnlineStore implements IKycListInput {
     @asyncAction
     public *fetchKycLink(itemIndex: number, password: string) {
         const links = this.links;
-        const validator = this.externalStores.market.validators[itemIndex];
-        const link = yield this.rootStore.mainStore.getKYCLink(
+        const kycValidator = this.externalStores.market.validators[itemIndex];
+
+        const { data: link, validation } = yield Api.getKYCLink(
             password,
             this.externalStores.market.marketAccountAddress,
-            validator.id,
-            validator.fee,
-        ) as any;
+            kycValidator.id,
+            kycValidator.fee,
+        );
 
         if (link) {
-            links[validator.id] = link;
+            links[kycValidator.id] = link;
             this.state.kycLinks = { ...links };
         } else {
-            this.state.validationMessage = this.externalStores.main.serverValidation.password;
+            this.state.validationMessage = validation.password;
         }
     }
 

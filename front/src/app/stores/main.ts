@@ -66,12 +66,35 @@ export class MainStore extends OnlineStore {
         });
     }
 
-    public static ADDRESS_ETHER = '0x';
-
     protected rootStore: RootStore;
 
-    @observable.ref protected walletInfo?: IWalletListItem;
+    @observable.ref public serverValidation: Partial<IMainFormValues> = {};
+
+    @action.bound
+    public resetServerValidation() {
+        this.serverValidation = {};
+    }
+
+    @computed
+    public get noValidationMessages(): boolean {
+        return Object.keys(this.serverValidation).length === 0;
+    }
+
+    //#region Wallet
+
     @observable.ref public connectionInfo: IConnectionInfo;
+
+    @pending
+    @catchErrors({ restart: true })
+    @asyncAction
+    public *init(wallet: IWalletListItem) {
+        this.walletInfo = wallet;
+        yield this.autoUpdateIteration(); // wait for first update
+        this.connectionInfo = (yield Api.getConnectionInfo()).data;
+        this.rootStore.marketStore.updateValidators();
+    }
+
+    @observable.ref protected walletInfo?: IWalletListItem;
 
     @computed
     public get walletName(): string {
@@ -88,31 +111,23 @@ export class MainStore extends OnlineStore {
         return this.walletInfo ? this.walletInfo.nodeUrl : '';
     }
 
-    @computed
-    public get noValidationMessages(): boolean {
-        return Object.keys(this.serverValidation).length === 0;
+    @pending
+    @asyncAction
+    protected *exportWallet() {
+        const { data: text } = yield Api.exportWallet();
+
+        return text;
     }
 
-    @observable.ref public serverValidation: Partial<IMainFormValues> = {};
+    public getWalletExportText = async () => {
+        const text = await this.exportWallet();
 
-    @observable public averageGasPrice = '';
+        return String(text);
+    };
 
-    @computed
-    public get gasPriceThresholds(): [string, string] {
-        let min = '5';
-        let max = '15';
+    //#endregion
 
-        if (this.averageGasPrice !== '') {
-            const bn = createBigNumber(this.averageGasPrice);
-
-            if (bn) {
-                min = trimZeros(bn.div(TWO));
-                max = trimZeros(bn.mul(THREE).div(TWO));
-            }
-        }
-
-        return [min, max];
-    }
+    //#region Balance
 
     @computed
     public get etherBalance(): string {
@@ -122,6 +137,7 @@ export class MainStore extends OnlineStore {
         );
     }
 
+    // ToDo a
     @computed
     public get primaryTokenBalance(): string {
         return MainStore.getTokenBalance(
@@ -130,6 +146,7 @@ export class MainStore extends OnlineStore {
         );
     }
 
+    // ToDo a
     private static getTokenBalance(
         fullList: ICurrencyItemView[],
         address: string,
@@ -139,6 +156,7 @@ export class MainStore extends OnlineStore {
         return balance || '0';
     }
 
+    // ToDo a
     public getBalanceListFor(...accounts: string[]): ICurrencyItemView[] {
         if (
             this.rootStore.myProfilesStore.accountMap === undefined ||
@@ -183,6 +201,7 @@ export class MainStore extends OnlineStore {
         return result;
     }
 
+    // ToDo a
     @computed
     public get fullBalanceList(): ICurrencyItemView[] {
         const allAccountsAddresses = this.rootStore.myProfilesStore
@@ -190,15 +209,11 @@ export class MainStore extends OnlineStore {
         return this.getBalanceListFor(...allAccountsAddresses);
     }
 
-    @pending
-    @catchErrors({ restart: true })
-    @asyncAction
-    public *init(wallet: IWalletListItem) {
-        this.walletInfo = wallet;
-        yield this.autoUpdateIteration(); // wait for first update
-        this.connectionInfo = (yield Api.getConnectionInfo()).data;
-        this.rootStore.marketStore.updateValidators();
-    }
+    //#endregion
+
+    //#region GasPrice
+
+    @observable public averageGasPrice = '';
 
     @action
     protected setAverageGasPrice(gasPrice: string = '') {
@@ -208,6 +223,23 @@ export class MainStore extends OnlineStore {
     public async update() {
         const { data: gasPrice } = await Api.getGasPrice();
         this.setAverageGasPrice(gasPrice);
+    }
+
+    @computed
+    public get gasPriceThresholds(): [string, string] {
+        let min = '5';
+        let max = '15';
+
+        if (this.averageGasPrice !== '') {
+            const bn = createBigNumber(this.averageGasPrice);
+
+            if (bn) {
+                min = trimZeros(bn.div(TWO));
+                max = trimZeros(bn.mul(THREE).div(TWO));
+            }
+        }
+
+        return [min, max];
     }
 
     @catchErrors({ restart: true })
@@ -228,6 +260,8 @@ export class MainStore extends OnlineStore {
             }
         }
     }
+
+    //#endregion
 
     @pending
     @catchErrors({ restart: false })
@@ -257,51 +291,6 @@ export class MainStore extends OnlineStore {
 
     @pending
     @asyncAction
-    public *getPrivateKey(password: string, address: string) {
-        const { data: privateKey, validation } = yield Api.getPrivateKey(
-            password,
-            address,
-        );
-
-        if (validation) {
-            return '';
-        } else {
-            return privateKey;
-        }
-    }
-
-    @pending
-    @asyncAction
-    public *getKYCLink(
-        password: string,
-        address: string,
-        kycAddress: string,
-        fee: string,
-    ) {
-        const { data: link, validation } = yield Api.getKYCLink(
-            password,
-            address,
-            kycAddress,
-            fee,
-        );
-
-        let result;
-        if (validation) {
-            this.serverValidation = {
-                ...this.services.localizator.localizeValidationMessages(
-                    validation as IValidation,
-                ),
-            };
-        } else {
-            result = link;
-            this.resetServerValidation();
-        }
-
-        return result;
-    }
-
-    @pending
-    @asyncAction
     public *confirmWorker(password: string, address: string, slaveId: string) {
         const { data: link, validation } = yield Api.worker.confirm(
             password,
@@ -322,25 +311,6 @@ export class MainStore extends OnlineStore {
         }
 
         return result;
-    }
-
-    @pending
-    @asyncAction
-    protected *exportWallet() {
-        const { data: text } = yield Api.exportWallet();
-
-        return text;
-    }
-
-    public getWalletExportText = async () => {
-        const text = await this.exportWallet();
-
-        return String(text);
-    };
-
-    @action.bound
-    public resetServerValidation() {
-        this.serverValidation = {};
     }
 }
 
