@@ -3,7 +3,6 @@ import * as cn from 'classnames';
 import {
     IDealComparableParams,
     IDealChangeRequest,
-    EnumChangeRequestSide,
     EnumOrderSide,
     TChangeRequestAction,
 } from 'app/api/types';
@@ -17,7 +16,7 @@ export interface IChangeRequestProps {
     className?: string;
     dealParams: IDealComparableParams;
     request: IDealChangeRequest;
-    side: EnumChangeRequestSide;
+    mySide: boolean;
     onCancel: TChangeRequestAction;
     onChange: TChangeRequestAction;
     onReject: TChangeRequestAction;
@@ -43,14 +42,12 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
     protected get hasPriceAdvantage(): boolean {
         const p = this.props;
         const requestPrice = p.request.price || '';
-
-        const mySide = p.side === EnumChangeRequestSide.mySide;
         const buy = p.request.requestType === EnumOrderSide.buy;
 
         let result = this.isGreater(p.dealParams.price, requestPrice);
 
         result = buy ? result : !result;
-        result = mySide ? result : !result;
+        result = p.mySide ? result : !result;
         return result;
     }
 
@@ -104,7 +101,7 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                         )}
                     />
                 ) : null}
-                {p.side === EnumChangeRequestSide.mySide ? (
+                {p.mySide ? (
                     <React.Fragment>
                         <Button
                             name="cancel"
@@ -125,8 +122,7 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                             Change
                         </Button>
                     </React.Fragment>
-                ) : null}
-                {p.side === EnumChangeRequestSide.otherSide ? (
+                ) : (
                     <React.Fragment>
                         <Button
                             name="reject"
@@ -147,7 +143,7 @@ export class ChangeRequest extends React.Component<IChangeRequestProps, never> {
                             Accept
                         </Button>
                     </React.Fragment>
-                ) : null}
+                )}
             </div>
         );
     }

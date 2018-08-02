@@ -255,21 +255,6 @@ export interface IDealComparableParams {
     duration: number;
 }
 
-export enum EnumChangeRequestSide {
-    /**
-     * This is my change request, show Cancel and Change buttons.
-     */
-    mySide = 0,
-    /**
-     * This is other side change request, show Reject and Accept buttons.
-     */
-    otherSide,
-    /**
-     * No buttons are shown
-     */
-    noButtons,
-}
-
 export enum EnumChangeRequestStatus {
     Created = 1,
     Canceled = 2,

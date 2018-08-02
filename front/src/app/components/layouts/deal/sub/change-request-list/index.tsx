@@ -6,7 +6,6 @@ import {
     IDealComparableParams,
     EnumOrderSide,
     TChangeRequestAction,
-    EnumChangeRequestSide,
 } from 'app/api/types';
 import Button from 'app/components/common/button';
 
@@ -77,11 +76,7 @@ export class ChangeRequestList extends React.Component<
                             key={i.id}
                             dealParams={p.dealParams}
                             request={i}
-                            side={
-                                p.mySide === i.requestType
-                                    ? EnumChangeRequestSide.mySide
-                                    : EnumChangeRequestSide.otherSide
-                            }
+                            mySide={p.mySide === i.requestType}
                             onCancel={p.onCancelRequest}
                             onChange={p.onChangeRequest}
                             onReject={p.onRejectRequest}

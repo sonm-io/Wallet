@@ -4,7 +4,6 @@ import { Button } from 'app/components/common/button';
 import { Dialog } from 'app/components/common/dialog';
 import { Form, FormRow, FormField } from 'app/components/common/form';
 import { IChangeParams } from 'app/components/common/types';
-import * as cn from 'classnames';
 
 export interface IConfirmationDialogProps {
     validationMessage?: string;
@@ -78,12 +77,7 @@ export class ConfirmationDialog extends React.Component<
                             fullWidth
                             label={placeholder}
                             error={p.validationMessage}
-                            className={cn(
-                                'sonm-confirmation-dialog__label',
-                                p.validationMessage !== ''
-                                    ? 'sonm-confirmation-dialog__label--error'
-                                    : '',
-                            )}
+                            className="sonm-confirmation-dialog__label"
                         >
                             <Password
                                 name="password"
