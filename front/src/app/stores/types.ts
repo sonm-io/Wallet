@@ -2,7 +2,8 @@ import { OnlineStore } from './online-store';
 
 export { OnlineStore } from './online-store';
 
-import { IValidation, ISendTransaction, ICurrencyInfo } from 'app/api';
+import { IValidation, ISendTransaction } from 'app/api';
+import { ICurrencyInfo } from 'app/entities/currency';
 
 export interface IHasAddress {
     address: string;
@@ -94,12 +95,4 @@ export interface IAccountItemView {
     marketBalance: string;
     primaryTokenBalance: string;
     primaryTokenInfo: ICurrencyInfo;
-}
-
-export interface ICurrencyItemView {
-    address: string;
-    name: string;
-    symbol: string;
-    balance: string;
-    decimalPointOffset: number;
 }

@@ -2,18 +2,18 @@ import { observable, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
 import Api from 'app/api';
-import { ICurrencyInfo } from 'app/api/types';
+import { ICurrencyInfo } from 'app/entities/currency';
 import updateAddressMap from 'app/stores/utils/update-address-map';
 import normalizeCurrencyInfo from 'app/stores/utils/normalize-currency-info';
 import { RootStore } from 'app/stores';
 const { pending, catchErrors } = OnlineStore;
 
-const emptyCurrencyInfo = {
+const emptyCurrencyInfo: ICurrencyInfo = {
     symbol: '',
     decimalPointOffset: 2,
     name: '',
     address: '',
-    balance: '', // ToDo a remove balance from Info interface
+    balance: '',
 };
 
 export class CurrencyStore extends OnlineStore {

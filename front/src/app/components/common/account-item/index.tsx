@@ -5,7 +5,7 @@ import { Icon } from '../icon';
 import { Balance } from '../balance-view';
 import { Hash } from '../hash-view';
 import { DownloadFile } from '../download-file';
-import { ICurrencyInfo } from 'app/api/types';
+import { ICurrencyInfo } from 'app/entities/currency';
 
 export interface IAccountItemProps {
     className?: string;

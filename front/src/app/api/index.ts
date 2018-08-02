@@ -7,7 +7,6 @@ import { HistoryApi } from './sub/history-api';
 import {
     ISendTransactionResult,
     IAccountInfo,
-    ICurrencyInfo,
     ISendTransaction,
     IResult,
     ISettings,
@@ -18,6 +17,7 @@ import {
     IConnectionInfo,
 } from './types';
 import { TypeAccountInfoList } from './runtime-types';
+import { ICurrencyInfo } from 'app/entities/currency';
 
 export * from './types';
 

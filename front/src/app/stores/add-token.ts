@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import { Api, ICurrencyInfo } from 'app/api';
+import { Api } from 'app/api';
+import { ICurrencyInfo } from 'app/entities/currency';
 import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
 import { RootStore } from './';

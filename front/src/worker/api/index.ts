@@ -20,6 +20,7 @@ const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
 
 import ipc from '../ipc';
+import { ICurrencyInfo } from 'app/entities/currency';
 
 async function ipcSend(type: string, payload?: any): Promise<any> {
     const res = await ipc.send(type, payload);
@@ -1159,7 +1160,7 @@ class Api {
 
             const transactions = this.storage.transactions;
             const token = this.storage.tokens.find(
-                (item: t.ICurrencyInfo) => item.address === currencyAddress,
+                (item: ICurrencyInfo) => item.address === currencyAddress,
             );
 
             const transaction = {

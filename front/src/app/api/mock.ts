@@ -1,4 +1,5 @@
 import * as t from './types';
+import { ICurrencyInfo } from 'app/entities/currency';
 
 const VASYA_ADDR = '0x88057f14236687831e1fd205e8efb9e45166fe72';
 const PETYA_ADDR = '0xfd0c80ba15cbf19770319e5e76ae05012314608f';
@@ -61,7 +62,7 @@ export const transactionListResult: t.IResult<
     ],
 };
 
-export const currencyListResult: t.IResult<t.ICurrencyInfo[]> = {
+export const currencyListResult: t.IResult<ICurrencyInfo[]> = {
     data: [
         {
             symbol: 'ETH',
@@ -88,7 +89,7 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             json: '',
             marketUsdBalance: '12345678',
             marketBalance: '0987654321',
-            currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
+            currencyBalanceMap: (currencyListResult.data as ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(
                         0,
@@ -106,7 +107,7 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             json: '',
             marketUsdBalance: '12345678',
             marketBalance: '0987654321',
-            currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
+            currencyBalanceMap: (currencyListResult.data as ICurrencyInfo[]).reduce(
                 (acc: t.ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(
                         0,

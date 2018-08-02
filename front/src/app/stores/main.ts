@@ -1,13 +1,14 @@
 import { observable, action, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Api, IAccountInfo, IConnectionInfo } from 'app/api';
-import { AlertType, ICurrencyItemView } from './types';
+import { AlertType } from './types';
 import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
 import { delay } from 'app/utils/async-delay';
 import { trimZeros } from '../utils/trim-zeros';
 import { RootStore } from './';
 import { IWalletListItem } from 'app/api/types';
+import { ICurrencyInfo } from 'app/entities/currency';
 import {
     createBigNumber,
     TWO,
@@ -147,17 +148,14 @@ export class MainStore extends OnlineStore {
     }
 
     // ToDo a
-    private static getTokenBalance(
-        fullList: ICurrencyItemView[],
-        address: string,
-    ) {
+    private static getTokenBalance(fullList: ICurrencyInfo[], address: string) {
         const item = fullList.find(x => x.address === address);
         const balance = item ? item.balance : '';
         return balance || '0';
     }
 
     // ToDo a
-    public getBalanceListFor(...accounts: string[]): ICurrencyItemView[] {
+    public getBalanceListFor(...accounts: string[]): ICurrencyInfo[] {
         if (
             this.rootStore.myProfilesStore.accountMap === undefined ||
             this.rootStore.currencyStore.currencyMap === undefined
@@ -168,7 +166,7 @@ export class MainStore extends OnlineStore {
         const result = Array.from(
             this.rootStore.currencyStore.currencyMap.values(),
         ).map(
-            (currency): ICurrencyItemView => {
+            (currency): ICurrencyInfo => {
                 let touched = false;
                 const balance: BN = accounts.reduce(
                     (sum: any, accountAddr: string) => {
@@ -203,7 +201,7 @@ export class MainStore extends OnlineStore {
 
     // ToDo a
     @computed
-    public get fullBalanceList(): ICurrencyItemView[] {
+    public get fullBalanceList(): ICurrencyInfo[] {
         const allAccountsAddresses = this.rootStore.myProfilesStore
             .accountAddressList;
         return this.getBalanceListFor(...allAccountsAddresses);
@@ -289,6 +287,7 @@ export class MainStore extends OnlineStore {
         }
     }
 
+    // ToDo Move to WorderList store.
     @pending
     @asyncAction
     public *confirmWorker(password: string, address: string, slaveId: string) {

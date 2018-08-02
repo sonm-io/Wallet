@@ -46,14 +46,6 @@ export interface ICurrencyBalanceMap {
     [address: string]: string; // address => balance
 }
 
-export interface ICurrencyInfo {
-    symbol: string;
-    decimalPointOffset: number;
-    name: string;
-    address: string;
-    balance: string; // ToDo a move it from here
-}
-
 export interface ITxListFilter {
     currencyAddress?: string;
     toAddress?: string;

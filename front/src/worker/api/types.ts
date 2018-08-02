@@ -1,4 +1,4 @@
-import * as t from 'app/api/types';
+import { ICurrencyInfo } from 'app/entities/currency';
 
 export interface IDictionary {
     [index: string]: string | null;
@@ -9,7 +9,7 @@ export interface INodes {
 }
 
 export interface ITokens {
-    [index: string]: t.ICurrencyInfo[];
+    [index: string]: ICurrencyInfo[];
 }
 
 export interface IPayload {
