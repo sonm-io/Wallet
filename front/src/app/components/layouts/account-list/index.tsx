@@ -183,7 +183,9 @@ export class Wallets extends React.Component<IProps, IState> {
                 </div>
                 <CurrencyBalanceList
                     className="sonm-accounts__balances"
-                    currencyBalanceList={rootStore.mainStore.fullBalanceList}
+                    currencyBalanceList={
+                        rootStore.myProfilesStore.fullBalanceList
+                    }
                     onRequireAddToken={
                         rootStore.isOffline
                             ? undefined

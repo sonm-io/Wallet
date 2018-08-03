@@ -369,7 +369,9 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
             return [];
         }
 
-        return this.rootStore.mainStore.getBalanceListFor(this.fromAddress);
+        return this.rootStore.myProfilesStore.getBalanceListFor(
+            this.fromAddress,
+        );
     }
 
     @action.bound

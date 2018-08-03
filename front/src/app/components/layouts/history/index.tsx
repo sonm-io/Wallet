@@ -240,7 +240,7 @@ export class History extends React.Component<IProps, any> {
                     value={filterStore.currencyAddress}
                     className="sonm-history__select-currency"
                 >
-                    {rootStore.mainStore.fullBalanceList.map(x => (
+                    {rootStore.myProfilesStore.fullBalanceList.map(x => (
                         <Option
                             key={x.address}
                             value={x.address}

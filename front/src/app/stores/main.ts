@@ -5,10 +5,7 @@ import { AlertType } from './types';
 import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
 import { RootStore } from './';
-import { ICurrencyInfo } from 'app/entities/currency';
-import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ILocalizator, IValidation } from 'app/localization';
-import { IAccountInfo } from 'app/entities/account';
 
 interface IMainFormValues {
     password: string;
@@ -64,81 +61,6 @@ export class MainStore extends OnlineStore {
         this.rootStore.marketStore.updateValidators();
     }
 
-    //#region Balance
-
-    @computed
-    public get etherBalance(): string {
-        return MainStore.getTokenBalance(
-            this.fullBalanceList,
-            this.rootStore.currencyStore.etherAddress,
-        );
-    }
-
-    // ToDo a
-    @computed
-    public get primaryTokenBalance(): string {
-        return MainStore.getTokenBalance(
-            this.fullBalanceList,
-            this.rootStore.currencyStore.primaryTokenAddress,
-        );
-    }
-
-    // ToDo a
-    private static getTokenBalance(fullList: ICurrencyInfo[], address: string) {
-        const item = fullList.find(x => x.address === address);
-        const balance = item ? item.balance : '';
-        return balance || '0';
-    }
-
-    // ToDo a
-    /**
-     * Returns balance amount of passed accounts for each currency.
-     */
-    public getBalanceListFor(...accounts: string[]): ICurrencyInfo[] {
-        const result = this.rootStore.currencyStore.list.map(
-            (currency: ICurrencyInfo) => {
-                let touched = false;
-                const balance: BN = accounts.reduce(
-                    (sum: any, accountAddr: string) => {
-                        const account = this.rootStore.myProfilesStore.accountMap.get(
-                            accountAddr,
-                        ) as IAccountInfo;
-                        const userBalance =
-                            account.currencyBalanceMap[currency.address];
-
-                        if (userBalance) {
-                            touched = true;
-                            sum = sum.add(createBigNumber(userBalance));
-                        }
-
-                        return sum;
-                    },
-                    ZERO,
-                );
-
-                return {
-                    name: currency.name,
-                    symbol: currency.symbol,
-                    decimalPointOffset: currency.decimalPointOffset,
-                    balance: touched ? balance.toString() : '',
-                    address: currency.address,
-                };
-            },
-        );
-
-        return result;
-    }
-
-    // ToDo a
-    @computed
-    public get fullBalanceList(): ICurrencyInfo[] {
-        const allAccountsAddresses = this.rootStore.myProfilesStore
-            .accountAddressList;
-        return this.getBalanceListFor(...allAccountsAddresses);
-    }
-
-    //#endregion
-
     @pending
     @catchErrors({ restart: false })
     @asyncAction
@@ -165,7 +87,7 @@ export class MainStore extends OnlineStore {
         }
     }
 
-    // ToDo Move to WorderList store.
+    // ToDo a Move to WorkerList store.
     @pending
     @asyncAction
     public *confirmWorker(password: string, address: string, slaveId: string) {
