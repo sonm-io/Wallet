@@ -5,10 +5,8 @@ import Button from 'app/components/common/button';
 import { FormField } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';
 import { IChangeParams } from 'app/components/common/types';
-import {
-    IOrderCreateParams,
-    IOrderCreateValidation,
-} from 'app/stores/order-create';
+import { IOrderCreateValidation } from 'app/stores/order-create';
+import { IOrderCreateParams } from 'app/api/types';
 import Balance from 'app/components/common/balance-view';
 import { Checkbox } from 'app/components/common/checkbox';
 import {

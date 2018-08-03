@@ -4,6 +4,7 @@ import {
     ISender,
     IListQuery,
     IOrderParams,
+    IOrderCreateParams,
 } from '../types';
 import { TypeOrder, TypeOrderList, TypeOrderParams } from '../runtime-types';
 
@@ -80,6 +81,20 @@ export class OrderApi {
             id,
         });
         return TypeOrderParams(response.data);
+    }
+
+    public async create(
+        password: string,
+        address: string,
+        order: IOrderCreateParams,
+    ) {
+        const { data, validation } = await this.ipc.send('order.create', {
+            address,
+            password,
+            order,
+        });
+
+        return { data, validation };
     }
 }
 

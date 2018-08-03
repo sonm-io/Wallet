@@ -120,18 +120,6 @@ class AllApi {
         });
     }
 
-    public async buyOrder(
-        password: string,
-        address: string,
-        id: number,
-    ): Promise<IResult<boolean>> {
-        return this.ipc.send('order.buy', {
-            password,
-            address,
-            id,
-        });
-    }
-
     public async renameAccount(
         address: string,
         name: string,

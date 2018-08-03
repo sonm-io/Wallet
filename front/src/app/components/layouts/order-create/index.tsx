@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { rootStore } from 'app/stores';
-import { IOrderCreateParams } from 'app/stores/order-create';
+import { IOrderCreateParams } from 'app/api/types';
 import { OrderCreateView } from './view';
 import { observer } from 'mobx-react';
 

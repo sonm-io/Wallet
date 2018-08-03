@@ -146,6 +146,7 @@ class Api {
             'worker.confirm': this.confirmWorker,
             'order.buy': this.buyOrder,
             'deal.close': this.closeDeal,
+            'order.create': this.createOrder,
             'order.getParams': wrapInResponse(this.getOrderParams),
             'order.waitForDeal': wrapInResponse(this.waitForOrderDeal),
             'market.getValidators': wrapInResponse(dwh.getValidators),
@@ -942,6 +943,20 @@ class Api {
                 [data.id, data.isBlacklisted || false],
                 true,
             )(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public createOrder = async (data: t.IPayload): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.order && data.password) {
+            return this.getMethod('createOrder', [data.order], true)(data);
         } else {
             throw new Error('required_params_missed');
         }

@@ -4,48 +4,30 @@ import validatePositiveNumber from '../utils/validation/validate-positive-number
 import { validatePositiveInteger } from '../utils/validation/validate-positive-integer';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
 import { IProfileBrief } from 'app/entities/profile';
-import { IProfileFull } from 'app/api/types';
+import { IProfileFull, IOrderCreateParams } from 'app/api/types';
 import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
 import { asyncAction } from 'mobx-utils';
 import { RootStore } from 'app/stores';
 import ProfileApi from 'app/api/sub/profile-api';
+import OrderApi from 'app/api/sub/order-api';
 import { ProfileDetails } from 'app/stores/profile-details';
 const { pending, catchErrors } = OnlineStore;
-
-interface IDealDetails {
-    price: string;
-    duration: string;
-    counterparty: string;
-    professional: boolean;
-    registered: boolean;
-    identified: boolean;
-    anonymous: boolean;
-    useBlacklist: boolean;
-}
-
-interface IResourceParams {
-    cpuCount: string;
-    gpuCount: string;
-    ramSize: string;
-    storageSize: string;
-    overlayAllowed: boolean;
-    outboundAllowed: boolean;
-    incomingAllowed: boolean;
-    downloadSpeed: string;
-    uploadSpeed: string;
-    ethereumHashrate: string;
-    zcashHashrate: string;
-    redshiftBenchmark: string;
-}
-
-export type IOrderCreateParams = IDealDetails & IResourceParams;
 
 export type IOrderCreateValidation = Partial<
     { [P in keyof IOrderCreateParams]: string }
 >;
 
+export interface ICreateOrderStoreApi {
+    create: (
+        password: string,
+        address: string,
+        order: IOrderCreateParams,
+    ) => {};
+}
+
 interface IOrderCreateStoreServices extends IOnlineStoreServices {
     profileApi: ProfileApi;
+    orderApi: OrderApi;
 }
 
 const defaultParams: IOrderCreateParams = {
@@ -107,11 +89,14 @@ export class OrderCreateStore extends OnlineStore
 
     protected rootStore: RootStore;
     protected profileApi: ProfileApi;
+    protected orderApi: OrderApi;
 
     constructor(rootStore: RootStore, services: IOrderCreateStoreServices) {
         super(services);
+
         this.rootStore = rootStore;
         this.profileApi = services.profileApi;
+        this.orderApi = services.orderApi;
 
         autorun(() => {
             if (this.rootStore.marketStore.marketAccountAddress !== '') {
@@ -141,20 +126,31 @@ export class OrderCreateStore extends OnlineStore
     @observable
     protected profileDetails: IProfileFull = ProfileDetails.emptyProfile;
 
-    private mockApiCall = async (password: string): Promise<string> => {
-        return new Promise<string>(function(resolve, reject) {
-            setTimeout(resolve, 2000, password);
-        });
-    };
+    // private mockApiCall = async (password: string): Promise<string> => {
+    //     return new Promise<string>(function(resolve, reject) {
+    //         setTimeout(resolve, 2000, password);
+    //     });
+    // };
 
     @pending
     @catchErrors({ restart: false })
     @asyncAction
     public *submit(password: string) {
-        const result = yield this.mockApiCall(password); // ToDo replace with real API call
-        this.isConfirmationState = false;
-        this.validationMessage = undefined;
-        return result;
+        console.log(this.userInput);
+
+        const { validation } = yield this.orderApi.create(
+            password,
+            this.rootStore.marketStore.marketAccountAddress,
+            this.userInput,
+        );
+
+        if (validation.password !== '') {
+            this.validationMessage = this.services.localizator.getMessageText(
+                validation.password,
+            );
+        } else {
+            this.isConfirmationState = false;
+        }
     }
 
     //#region Fields Validation
