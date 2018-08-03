@@ -1,25 +1,22 @@
 import { observable, action, computed } from 'mobx';
 import { IAlert, AlertType } from './types';
 import { RootStore } from 'app/stores';
-import { Api, IConnectionInfo } from 'app/api';
+import { Api } from 'app/api';
+import {
+    IConnectionInfo,
+    defaultConnectionInfo,
+} from 'app/entities/connection';
 
 const SUCCESS_ALERT_DELAY_CLOSE = 30000;
 
 export class UiStore {
-    // ToDo a move to entities
-    protected static defaultConnectionInfo = {
-        isTest: true,
-        ethNodeURL: '',
-        snmNodeURL: '',
-    };
-
     protected static alertIdx = 0;
 
     protected rootStore: RootStore;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
-        this.connectionInfo = UiStore.defaultConnectionInfo;
+        this.connectionInfo = defaultConnectionInfo;
     }
 
     public async init() {

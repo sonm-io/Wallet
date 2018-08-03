@@ -227,12 +227,6 @@ export interface IOrderParams {
     dealID: string;
 }
 
-export interface IConnectionInfo {
-    ethNodeURL: string;
-    snmNodeURL: string;
-    isTest: boolean;
-}
-
 export interface ISender {
     send: (messageType: string, payload?: any) => any;
 }
