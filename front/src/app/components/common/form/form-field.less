@@ -7,6 +7,7 @@
 :root {
     --color-form-field-text: @color-font-gray;
     --color-input-border: @color-border;
+    --field-label-width: auto;
 }
 
 .sonm-form-field {
@@ -46,6 +47,12 @@
         display: block;
     }
 
+    &--horizontal {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+    }
+
     &__help,
     &__label {
         line-height: 100%;
@@ -61,7 +68,11 @@
         margin: 0 0 @sonm-form-field-gap-width 0;
         font-size: @sonm-form-field-font-size;
         color: var(--color-form-field-text);
-        white-space: nowrap;
+        width: var(--field-label-width);
+
+        &--nowrap {
+            white-space: nowrap;
+        }
     }
 
     &__help {
