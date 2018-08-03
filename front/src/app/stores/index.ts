@@ -33,6 +33,7 @@ import { ProfileDetails } from './profile-details';
 import { MyProfilesStore } from './my-profiles';
 import { LoginStore } from './login';
 import { CurrencyStore } from './currency';
+import { WalletStore } from './wallet';
 
 useStrict(true);
 
@@ -63,6 +64,7 @@ export class RootStore implements IHasLocalizator {
     public readonly profileDetailsStore: ProfileDetails;
     public readonly currencyStore: CurrencyStore;
     public readonly myProfilesStore: MyProfilesStore;
+    public readonly walletStore: WalletStore;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -105,6 +107,11 @@ export class RootStore implements IHasLocalizator {
             },
             true,
         );
+
+        this.walletStore = new WalletStore({
+            localizator,
+            errorProcessor: this.uiStore,
+        });
 
         this.currencyStore = new CurrencyStore(this, {
             localizator,

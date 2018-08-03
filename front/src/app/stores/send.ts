@@ -66,7 +66,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     get defaultGasLimit() {
-        return this.rootStore.mainStore.networkName === 'livenet'
+        return this.rootStore.walletStore.networkName === 'livenet'
             ? this.defaultLivenetGasLimit
             : '1000000';
     }

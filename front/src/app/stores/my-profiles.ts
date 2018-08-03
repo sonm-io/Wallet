@@ -55,7 +55,6 @@ export class MyProfilesStore extends OnlineStore {
         return sortByName(result) as IAccountItemView[];
     }
 
-    // ToDo a Why?
     public transformAccountInfoToView = (
         info: IAccountInfo,
     ): IAccountItemView => {

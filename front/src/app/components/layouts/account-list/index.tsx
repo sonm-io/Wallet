@@ -127,10 +127,10 @@ export class Wallets extends React.Component<IProps, IState> {
         return (
             <div className={cn('sonm-accounts', className)}>
                 <DownloadFile
-                    getData={rootStore.mainStore.getWalletExportText}
+                    getData={rootStore.walletStore.getWalletExportText}
                     className="sonm-accounts__export-wallet"
                     fileName={`sonm-wallet-${
-                        rootStore.mainStore.walletName
+                        rootStore.walletStore.walletName
                     }.json`}
                 >
                     <Button

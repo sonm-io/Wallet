@@ -140,7 +140,7 @@ export class Account extends React.Component<IProps, any> {
                     </ul>
                 )}
 
-                {rootStore.mainStore.networkName === 'rinkeby' ? (
+                {rootStore.walletStore.networkName === 'rinkeby' ? (
                     <form
                         onSubmit={this.handleGiveMeMore}
                         className="sonm-account__give-me"
