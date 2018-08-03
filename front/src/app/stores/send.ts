@@ -267,8 +267,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     public get currencyAddress() {
         return (
             this.userInput.currencyAddress ||
-            this.rootStore.currencyStore.currencyMap.keys().next().value ||
-            ''
+            this.rootStore.currencyStore.etherAddress
         );
     }
 
