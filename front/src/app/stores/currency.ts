@@ -31,6 +31,8 @@ export class CurrencyStore extends OnlineStore {
         });
     }
 
+    @observable public currencyMap = new Map<string, ICurrencyInfo>();
+
     @asyncAction
     protected *init() {
         const { data: currencyList } = yield Api.getCurrencyList();
@@ -52,7 +54,21 @@ export class CurrencyStore extends OnlineStore {
         }
     }
 
-    @observable public currencyMap = new Map<string, ICurrencyInfo>();
+    @pending
+    @catchErrors({ restart: true })
+    @asyncAction
+    public *add(candidateTokenAddress: string) {
+        const { data: currencyInfo } = yield Api.addToken(
+            candidateTokenAddress,
+        );
+
+        if (currencyInfo) {
+            this.currencyMap.set(
+                currencyInfo.address,
+                normalizeCurrencyInfo(currencyInfo),
+            );
+        }
+    }
 
     @computed
     public get currencyAddressList() {

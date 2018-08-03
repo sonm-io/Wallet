@@ -106,16 +106,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
     public *approveCandidateToken() {
         const candidateTokenAddress = this.candidateTokenAddress;
         this.resetCandidateToken();
-        const { data: currencyInfo } = yield Api.addToken(
-            candidateTokenAddress,
-        );
-
-        if (currencyInfo) {
-            this.rootStore.currencyStore.currencyMap.set(
-                currencyInfo.address,
-                normalizeCurrencyInfo(currencyInfo),
-            );
-        }
+        yield this.rootStore.currencyStore.add(candidateTokenAddress);
     }
 
     @action
