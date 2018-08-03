@@ -282,7 +282,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         let result: TGasPricePriority = 'normal';
 
         if (this.userInput.gasPriceGwei !== '') {
-            const [min, max] = this.rootStore.mainStore.gasPriceThresholds;
+            const [min, max] = this.rootStore.gasPrice.gasPriceThresholds;
             const userInput = createBigNumber(
                 // gwei -> wei
                 moveDecimalPoint(this.userInput.gasPriceGwei, 9),
@@ -303,7 +303,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     get gasPriceGwei() {
         return this.userInput.gasPriceGwei
             ? this.userInput.gasPriceGwei
-            : moveDecimalPoint(this.rootStore.mainStore.averageGasPrice, -9);
+            : moveDecimalPoint(this.rootStore.gasPrice.averageGasPrice, -9);
     }
 
     @computed

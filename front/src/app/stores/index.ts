@@ -34,6 +34,7 @@ import { MyProfilesStore } from './my-profiles';
 import { LoginStore } from './login';
 import { CurrencyStore } from './currency';
 import { WalletStore } from './wallet';
+import { GasPriceStore } from './gas-price';
 
 useStrict(true);
 
@@ -65,6 +66,7 @@ export class RootStore implements IHasLocalizator {
     public readonly currencyStore: CurrencyStore;
     public readonly myProfilesStore: MyProfilesStore;
     public readonly walletStore: WalletStore;
+    public readonly gasPrice: GasPriceStore;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
@@ -107,6 +109,11 @@ export class RootStore implements IHasLocalizator {
             },
             true,
         );
+
+        this.gasPrice = new GasPriceStore({
+            localizator,
+            errorProcessor: this.uiStore,
+        });
 
         this.walletStore = new WalletStore({
             localizator,

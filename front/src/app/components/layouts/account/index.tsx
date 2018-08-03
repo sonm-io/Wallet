@@ -65,7 +65,7 @@ export class Account extends React.Component<IProps, any> {
             rootStore.sendStore.fromAddress,
         );
 
-        await rootStore.mainStore.update();
+        await rootStore.gasPrice.update();
     };
 
     public render() {

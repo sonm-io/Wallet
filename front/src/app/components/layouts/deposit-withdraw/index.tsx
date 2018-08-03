@@ -106,8 +106,8 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
 
     // TODO
     protected handleChangePriority = (value: string) => {
-        const [min, max] = rootStore.mainStore.gasPriceThresholds;
-        let gasPrice = rootStore.mainStore.averageGasPrice;
+        const [min, max] = rootStore.gasPrice.gasPriceThresholds;
+        let gasPrice = rootStore.gasPrice.averageGasPrice;
 
         if (value === 'low') {
             gasPrice = min;

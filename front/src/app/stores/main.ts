@@ -1,24 +1,14 @@
-import { observable, action, computed, autorun } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Api, IConnectionInfo } from 'app/api';
 import { AlertType } from './types';
 import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
-import { delay } from 'app/utils/async-delay';
-import { trimZeros } from '../utils/trim-zeros';
 import { RootStore } from './';
 import { ICurrencyInfo } from 'app/entities/currency';
-import {
-    createBigNumber,
-    TWO,
-    THREE,
-    ZERO,
-    BN,
-} from '../utils/create-big-number';
+import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ILocalizator, IValidation } from 'app/localization';
 import { IAccountInfo } from 'app/entities/account';
-
-const UPDATE_INTERVAL = 5000;
 
 interface IMainFormValues {
     password: string;
@@ -56,15 +46,6 @@ export class MainStore extends OnlineStore {
             ethNodeURL: '',
             snmNodeURL: '',
         };
-
-        autorun(() => {
-            if (
-                Array.from(rootStore.currencyStore.currencyMap.keys()).length >
-                0
-            ) {
-                this.update();
-            }
-        });
     }
 
     protected rootStore: RootStore;
@@ -87,7 +68,6 @@ export class MainStore extends OnlineStore {
     @catchErrors({ restart: true })
     @asyncAction
     public *init() {
-        yield this.autoUpdateIteration(); // wait for first update
         this.connectionInfo = (yield Api.getConnectionInfo()).data;
         this.rootStore.marketStore.updateValidators();
     }
@@ -172,58 +152,6 @@ export class MainStore extends OnlineStore {
         const allAccountsAddresses = this.rootStore.myProfilesStore
             .accountAddressList;
         return this.getBalanceListFor(...allAccountsAddresses);
-    }
-
-    //#endregion
-
-    //#region GasPrice
-
-    @observable public averageGasPrice = '';
-
-    @action
-    protected setAverageGasPrice(gasPrice: string = '') {
-        this.averageGasPrice = gasPrice;
-    }
-
-    public async update() {
-        const { data: gasPrice } = await Api.getGasPrice();
-        this.setAverageGasPrice(gasPrice);
-    }
-
-    @computed
-    public get gasPriceThresholds(): [string, string] {
-        let min = '5';
-        let max = '15';
-
-        if (this.averageGasPrice !== '') {
-            const bn = createBigNumber(this.averageGasPrice);
-
-            if (bn) {
-                min = trimZeros(bn.div(TWO));
-                max = trimZeros(bn.mul(THREE).div(TWO));
-            }
-        }
-
-        return [min, max];
-    }
-
-    @catchErrors({ restart: true })
-    protected async autoUpdateIteration(interval: number = UPDATE_INTERVAL) {
-        try {
-            if (IS_DEV) {
-                window.console.time('auto-update');
-            }
-
-            await this.update();
-
-            await delay(interval);
-
-            setTimeout(() => this.autoUpdateIteration(), 0);
-        } finally {
-            if (IS_DEV) {
-                window.console.timeEnd('auto-update');
-            }
-        }
     }
 
     //#endregion
