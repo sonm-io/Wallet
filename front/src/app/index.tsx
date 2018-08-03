@@ -32,6 +32,7 @@ async function handleLogin(wallet: IWalletListItem) {
         rootStore.mainStore.init(),
         rootStore.walletStore.init(wallet),
         rootStore.gasPrice.init(),
+        rootStore.uiStore.init(),
     ]);
 
     renderByPath((history as any).location);

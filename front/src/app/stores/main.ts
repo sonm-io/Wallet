@@ -1,6 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import { Api, IConnectionInfo } from 'app/api';
+import { Api } from 'app/api';
 import { AlertType } from './types';
 import { OnlineStore } from './online-store';
 const { pending, catchErrors } = OnlineStore;
@@ -40,12 +40,6 @@ export class MainStore extends OnlineStore {
         });
 
         this.rootStore = rootStore;
-
-        this.connectionInfo = {
-            isTest: true,
-            ethNodeURL: '',
-            snmNodeURL: '',
-        };
     }
 
     protected rootStore: RootStore;
@@ -62,13 +56,11 @@ export class MainStore extends OnlineStore {
         return Object.keys(this.serverValidation).length === 0;
     }
 
-    @observable.ref public connectionInfo: IConnectionInfo;
-
-    @pending
-    @catchErrors({ restart: true })
-    @asyncAction
-    public *init() {
-        this.connectionInfo = (yield Api.getConnectionInfo()).data;
+    // ToDo a
+    // @pending
+    // @catchErrors({ restart: true })
+    // @asyncAction
+    public init() {
         this.rootStore.marketStore.updateValidators();
     }
 
