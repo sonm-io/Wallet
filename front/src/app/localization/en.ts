@@ -30,6 +30,7 @@ export const en: ILocalizationDictionary = {
     should_be_ether_address: 'Please input correct address',
     should_be_positive_integer: 'Should be positive integer',
     should_be_positive_number: 'Should be positive number',
+    price_to_small: 'Price to small',
     required_value: 'Required value',
     no_addres_in_account_file: 'Incorrect file: no address field',
     incorrect_file: 'Incorrect file',
@@ -77,6 +78,12 @@ export const en: ILocalizationDictionary = {
     'status-anon': 'ANONYMOUS',
     'status-reg': 'REGISTERED',
     'status-ident': 'IDENTIFIED',
+
+    create_change_request_success: ([id, hash]: string[]) =>
+        `Change request for deal #${id} created. TxHash ${hash}.`,
+
+    cancel_change_request_success: ([id, hash]: string[]) =>
+        `Change request for deal #${id} is canceled. TxHash ${hash}.`,
 
     tx_buy_order_failed: ([id, hash]: string[]) =>
         `Buy order #${id} is failed. TxHash ${hash}.`,
