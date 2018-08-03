@@ -95,10 +95,8 @@ export class MainStore extends OnlineStore {
      * Returns balance amount of passed accounts for each currency.
      */
     public getBalanceListFor(...accounts: string[]): ICurrencyInfo[] {
-        const result = Array.from(
-            this.rootStore.currencyStore.currencyMap.values(),
-        ).map(
-            (currency): ICurrencyInfo => {
+        const result = this.rootStore.currencyStore.list.map(
+            (currency: ICurrencyInfo) => {
                 let touched = false;
                 const balance: BN = accounts.reduce(
                     (sum: any, accountAddr: string) => {

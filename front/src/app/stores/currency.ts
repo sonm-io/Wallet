@@ -31,8 +31,6 @@ export class CurrencyStore extends OnlineStore {
         });
     }
 
-    @observable public currencyMap = new Map<string, ICurrencyInfo>();
-
     @asyncAction
     protected *init() {
         const { data: currencyList } = yield Api.getCurrencyList();
@@ -41,6 +39,31 @@ export class CurrencyStore extends OnlineStore {
             currencyList.map(normalizeCurrencyInfo),
             this.currencyMap,
         );
+    }
+
+    @observable protected currencyMap = new Map<string, ICurrencyInfo>();
+
+    @computed
+    public get list(): ICurrencyInfo[] {
+        return Array.from(this.currencyMap.values());
+    }
+
+    @computed
+    public get currencyAddressList() {
+        return Array.from(this.currencyMap.keys());
+    }
+
+    @computed
+    public get size(): number {
+        return this.currencyMap.size;
+    }
+
+    public getItem(address: string) {
+        return this.currencyMap.get(address);
+    }
+
+    public has(address: string) {
+        return this.currencyMap.has(address);
     }
 
     @pending
@@ -68,11 +91,6 @@ export class CurrencyStore extends OnlineStore {
                 normalizeCurrencyInfo(currencyInfo),
             );
         }
-    }
-
-    @computed
-    public get currencyAddressList() {
-        return Array.from(this.currencyMap.keys());
     }
 
     @computed

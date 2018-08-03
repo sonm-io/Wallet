@@ -58,8 +58,7 @@ export class MyProfilesStore extends OnlineStore {
     public transformAccountInfoToView = (
         info: IAccountInfo,
     ): IAccountItemView => {
-        const isCurrencyListEmpty =
-            this.rootStore.currencyStore.currencyMap.size === 0;
+        const isCurrencyListEmpty = this.rootStore.currencyStore.size === 0;
         const primaryTokenBalance = isCurrencyListEmpty
             ? ''
             : info.currencyBalanceMap[

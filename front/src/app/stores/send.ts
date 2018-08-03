@@ -222,9 +222,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     public get currentCurrency() {
-        return this.rootStore.currencyStore.currencyMap.get(
-            this.currencyAddress,
-        );
+        return this.rootStore.currencyStore.getItem(this.currencyAddress);
     }
 
     @computed
@@ -310,7 +308,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         const amountWei = this.currentBalanceMaximumWei;
         let result = '';
 
-        const currencyInfo = this.rootStore.currencyStore.currencyMap.get(
+        const currencyInfo = this.rootStore.currencyStore.getItem(
             this.currencyAddress,
         );
 

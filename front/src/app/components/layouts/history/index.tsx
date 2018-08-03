@@ -110,9 +110,7 @@ export class History extends React.Component<IProps, any> {
                 let symbol = record.currencySymbol || '';
 
                 if (!symbol) {
-                    const currency = rootStore.currencyStore.currencyMap.get(
-                        addr,
-                    );
+                    const currency = rootStore.currencyStore.getItem(addr);
 
                     if (currency) {
                         symbol = currency.symbol;

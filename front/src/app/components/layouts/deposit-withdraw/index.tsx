@@ -57,7 +57,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     };
 
     protected getCurrency = () =>
-        rootStore.currencyStore.currencyMap.get(this.store.currencyAddress);
+        rootStore.currencyStore.getItem(this.store.currencyAddress);
 
     protected syncStores() {
         autorun(() => {

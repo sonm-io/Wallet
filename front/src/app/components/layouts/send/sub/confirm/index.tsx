@@ -68,7 +68,7 @@ export class SendConfirm extends React.Component<IProps, any> {
             accountAddress,
         );
         const accountName = account ? account.name : '';
-        const currency = rootStore.currencyStore.currencyMap.get(
+        const currency = rootStore.currencyStore.getItem(
             sendStore.currencyAddress,
         );
         const amount = sendStore.amount;
