@@ -27,14 +27,7 @@ async function renderByPath({ pathname, search }: ILocationParams) {
 
 async function handleLogin(wallet: IWalletListItem) {
     history.listen(renderByPath);
-    await Promise.all([
-        // ToDo a May be this can be depended on Login Store?
-        rootStore.mainStore.init(),
-        rootStore.walletStore.init(wallet),
-        rootStore.gasPrice.init(),
-        rootStore.uiStore.init(),
-    ]);
-
+    rootStore.loginStore.onLogin(wallet);
     renderByPath((history as any).location);
 }
 

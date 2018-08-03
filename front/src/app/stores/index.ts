@@ -74,7 +74,7 @@ export class RootStore implements IHasLocalizator {
         // should be first cause used in all stores;
         this.uiStore = new UiStore(this);
 
-        this.loginStore = new LoginStore({
+        this.loginStore = new LoginStore(this, {
             localizator,
             errorProcessor: this.uiStore,
         });
@@ -277,6 +277,7 @@ export class RootStore implements IHasLocalizator {
             this.addTokenStore,
             this.orderDetailsStore,
             this.dealDetailsStore,
+            this.loginStore,
         );
     }
 

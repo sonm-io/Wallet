@@ -1,7 +1,9 @@
 import { observable, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import Api, { IValidation } from 'app/api';
+import Api, { IValidation, IWalletListItem } from 'app/api';
+import { RootStore } from 'app/stores';
+const { pending, catchErrors } = OnlineStore;
 
 interface ILoginStoreState {
     success: boolean;
@@ -9,8 +11,22 @@ interface ILoginStoreState {
 }
 
 export class LoginStore extends OnlineStore {
-    constructor(services: IOnlineStoreServices) {
+    protected rootStore: RootStore;
+
+    constructor(rootStore: RootStore, services: IOnlineStoreServices) {
         super(services);
+        this.rootStore = rootStore;
+    }
+
+    @catchErrors({ restart: true })
+    @pending
+    public *onLogin(wallet: IWalletListItem) {
+        yield Promise.all([
+            this.rootStore.mainStore.init(),
+            this.rootStore.walletStore.init(wallet),
+            this.rootStore.gasPrice.init(),
+            this.rootStore.uiStore.init(),
+        ]);
     }
 
     @observable
