@@ -24,8 +24,6 @@ import { localizator } from 'app/localization';
 import { IChangeParams } from 'app/components/common/types';
 import rootStore from 'app/stores';
 
-const loginStore = rootStore.loginStore;
-
 interface IProps {
     className?: string;
     onLogin: (wallet: IWalletListItem) => void;
@@ -170,8 +168,8 @@ export class Login extends React.Component<IProps, IState> {
 
     protected async fastLogin() {
         if (window.localStorage.getItem('sonm-4ever')) {
-            await loginStore.unlockWallet('2', '2');
-            if (loginStore.success) {
+            await rootStore.walletStore.unlockWallet('2', '2');
+            if (rootStore.walletStore.isLoginSuccess) {
                 const wallet = this.findWalletByName('2');
                 this.props.onLogin(wallet);
             }
@@ -220,19 +218,22 @@ export class Login extends React.Component<IProps, IState> {
 
         try {
             // ToDo a
-            await loginStore.unlockWallet(this.state.password, this.state.name);
+            await rootStore.walletStore.unlockWallet(
+                this.state.password,
+                this.state.name,
+            );
 
-            if (loginStore.validation) {
+            if (rootStore.walletStore.loginValidation) {
                 this.setState({
                     serverValidation: localizator.localizeValidationMessages(
-                        loginStore.validation,
+                        rootStore.walletStore.loginValidation,
                     ),
                 });
             }
 
             const wallet = this.findWalletByName(this.state.name);
 
-            if (loginStore.success) {
+            if (rootStore.walletStore.isLoginSuccess) {
                 this.props.onLogin(wallet);
                 return;
             }

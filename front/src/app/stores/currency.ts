@@ -25,7 +25,7 @@ export class CurrencyStore extends OnlineStore {
         super(services);
         this.rootStore = rootStore;
         autorun(() => {
-            if (this.rootStore.loginStore.success) {
+            if (this.rootStore.walletStore.isLoginSuccess) {
                 this.init();
             }
         });
