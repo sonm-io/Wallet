@@ -3,7 +3,7 @@ import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 import * as invariant from 'fbjs/lib/invariant';
 import { observer } from 'mobx-react';
-import rootStore from 'app/stores';
+import { rootStore } from 'app/stores';
 
 type TItem<T> = [
     string, // Title

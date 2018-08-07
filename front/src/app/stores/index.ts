@@ -31,7 +31,6 @@ import { DealDetails } from './deal-details';
 import { KycListStore } from './kyc-list';
 import { ProfileDetails } from './profile-details';
 import { MyProfilesStore } from './my-profiles';
-import { LoginStore } from './login';
 import { CurrencyStore } from './currency';
 import { WalletStore } from './wallet';
 import { GasPriceStore } from './gas-price';
@@ -39,7 +38,6 @@ import { GasPriceStore } from './gas-price';
 useStrict(true);
 
 export class RootStore implements IHasLocalizator {
-    public readonly loginStore: LoginStore;
     public readonly walletHistoryListStore: HistoryListStore;
     public readonly walletHistoryFilterStore: HistoryFilterStore;
     public readonly dwHistoryListStore: HistoryListStore;
@@ -73,11 +71,6 @@ export class RootStore implements IHasLocalizator {
 
         // should be first cause used in all stores;
         this.uiStore = new UiStore(this);
-
-        this.loginStore = new LoginStore(this, {
-            localizator,
-            errorProcessor: this.uiStore,
-        });
 
         this.walletHistoryFilterStore = new HistoryFilterStore(
             EnumHistorySourceMode.wallet,
@@ -277,7 +270,6 @@ export class RootStore implements IHasLocalizator {
             this.addTokenStore,
             this.orderDetailsStore,
             this.dealDetailsStore,
-            this.loginStore,
         );
     }
 

@@ -22,7 +22,7 @@ import shortString from 'app/utils/short-string';
 import { Disclaimer } from './sub/disclaimer/index';
 import { localizator } from 'app/localization';
 import { IChangeParams } from 'app/components/common/types';
-import rootStore from 'app/stores';
+import { rootStore } from 'app/stores';
 
 interface IProps {
     className?: string;

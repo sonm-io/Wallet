@@ -27,7 +27,12 @@ async function renderByPath({ pathname, search }: ILocationParams) {
 
 async function handleLogin(wallet: IWalletListItem) {
     history.listen(renderByPath);
-    rootStore.loginStore.onLogin(wallet);
+    await Promise.all([
+        rootStore.mainStore.init(),
+        rootStore.walletStore.init(wallet),
+        rootStore.gasPrice.init(),
+        rootStore.uiStore.init(),
+    ]);
     renderByPath((history as any).location);
 }
 

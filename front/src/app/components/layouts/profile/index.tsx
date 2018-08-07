@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ProfileView } from './view';
-import rootStore from 'app/stores';
+import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 
 interface IProps {

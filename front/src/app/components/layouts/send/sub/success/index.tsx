@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cn from 'classnames';
 import { toJS } from 'mobx';
 
-import rootStore from 'app/stores';
+import { rootStore } from 'app/stores';
 
 interface IProps {
     className?: string;

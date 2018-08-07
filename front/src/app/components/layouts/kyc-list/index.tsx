@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { KycListView } from './view';
-import rootStore from 'app/stores';
+import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 
 const store = rootStore.kycListStore;
