@@ -43,17 +43,20 @@ Object.freeze(emptyForm);
 // const allFormKeys = Object.keys(emptyForm) as Array<keyof ISendFormValues>;
 
 export class SendStore extends OnlineStore implements IHasLocalizator {
+    public static readonly GAS_LIMIT_SEND_LIVENET = '70000';
+    public static readonly GAS_LIMIT_SEND_TESTNET = '1000000';
+
     protected rootStore: RootStore;
     protected api: IApiSend;
     protected disableToAddressValidation: boolean;
-    protected defaultLivenetGasLimit: string;
+    protected initialGasLimit: string;
 
     constructor(
         rootStore: RootStore,
         localizator: ILocalizator,
         api: IApiSend,
         disableToAddressValidation: boolean = false,
-        defaultLivenetGasLimit: string = '50000',
+        initialGasLimit: string = SendStore.GAS_LIMIT_SEND_LIVENET,
     ) {
         super({
             errorProcessor: rootStore.uiStore,
@@ -64,14 +67,14 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         this.localizator = localizator;
         this.disableToAddressValidation = disableToAddressValidation;
         this.api = api;
-        this.defaultLivenetGasLimit = defaultLivenetGasLimit;
+        this.initialGasLimit = initialGasLimit;
     }
 
     @computed
     get defaultGasLimit() {
-        return this.rootStore.mainStore.networkName === 'livenet'
-            ? this.defaultLivenetGasLimit
-            : '1000000';
+        return this.rootStore.mainStore.isLivenet
+            ? this.initialGasLimit
+            : SendStore.GAS_LIMIT_SEND_TESTNET;
     }
 
     @observable public userInput: ISendFormValues = { ...emptyForm };
@@ -417,6 +420,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     }
 
     protected passwordCache: IPasswordCache = {};
+
     @pending
     @asyncAction
     public *checkSelectedAccountPassword(password: string) {
