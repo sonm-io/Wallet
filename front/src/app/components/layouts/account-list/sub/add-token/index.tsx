@@ -10,36 +10,38 @@ import {
 import { Input } from 'app/components/common/input';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores';
 import { Balance } from 'app/components/common/balance-view';
+import {
+    Layout,
+    injectRootStore,
+    IHasRootStore,
+} from 'app/components/layouts/layout';
 
-export interface IProps {
+export interface IProps extends IHasRootStore {
     onClickCross: () => void;
 }
 
+@injectRootStore
 @observer
-export class AddToken extends React.Component<IProps, {}> {
+export class AddToken extends Layout<IProps> {
     protected handleSubmit = (event: any) => {
         event.preventDefault();
-
-        rootStore.addTokenStore.approveCandidateToken();
-
+        this.rootStore.addTokenStore.approveCandidateToken();
         this.props.onClickCross();
     };
 
     protected handleChangeInput = async (event: any) => {
         const address = event.target.value.trim();
-
-        rootStore.addTokenStore.setCandidateTokenAddress(address);
+        this.rootStore.addTokenStore.setCandidateTokenAddress(address);
     };
 
     protected handleClose = () => {
-        rootStore.addTokenStore.resetCandidateToken();
-
+        this.rootStore.addTokenStore.resetCandidateToken();
         this.props.onClickCross();
     };
 
     public render() {
+        const rootStore = this.rootStore;
         const tokenInfo = rootStore.addTokenStore.candidateTokenInfo;
         const tokenAddress = rootStore.addTokenStore.candidateTokenAddress;
         const validation = rootStore.addTokenStore.validationCandidateToken;

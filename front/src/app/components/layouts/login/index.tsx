@@ -22,9 +22,10 @@ import shortString from 'app/utils/short-string';
 import { Disclaimer } from './sub/disclaimer/index';
 import { localizator } from 'app/localization';
 import { IChangeParams } from 'app/components/common/types';
-import { rootStore } from 'app/stores';
+import { RootStore } from 'app/stores';
+import { injectRootStore, IHasRootStore } from '../layout';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onLogin: (wallet: IWalletListItem) => void;
 }
@@ -77,7 +78,14 @@ const emptyForm: Pick<IState, any> = {
     network: defaultNetwork,
 };
 
+@injectRootStore
 export class Login extends React.Component<IProps, IState> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     protected nodes: IRefs = {
         loginBtn: null,
     };
@@ -168,8 +176,8 @@ export class Login extends React.Component<IProps, IState> {
 
     protected async fastLogin() {
         if (window.localStorage.getItem('sonm-4ever')) {
-            await rootStore.walletStore.unlockWallet('2', '2');
-            if (rootStore.walletStore.isLoginSuccess) {
+            await this.rootStore.walletStore.unlockWallet('2', '2');
+            if (this.rootStore.walletStore.isLoginSuccess) {
                 const wallet = this.findWalletByName('2');
                 this.props.onLogin(wallet);
             }
@@ -215,7 +223,7 @@ export class Login extends React.Component<IProps, IState> {
     protected handleSubmitLogin = async (event: any) => {
         event.preventDefault();
         this.setState({ pending: true });
-
+        const rootStore = this.rootStore;
         try {
             // ToDo a
             await rootStore.walletStore.unlockWallet(

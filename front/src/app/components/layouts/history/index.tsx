@@ -16,7 +16,6 @@ import { IdentIcon } from 'app/components/common/ident-icon';
 import { Balance } from 'app/components/common/balance-view';
 import { Hash } from 'app/components/common/hash-view';
 import { injectRootStore, Layout, IHasRootStore } from '../layout';
-import rootStore from 'app/stores';
 
 const Option = Select.Option;
 
@@ -79,7 +78,9 @@ export class History extends Layout<IProps> {
             title: 'To',
             render: (_, record) => {
                 const addr = record.toAddress;
-                const account = rootStore.myProfilesStore.accountMap.get(addr);
+                const account = this.rootStore.myProfilesStore.accountMap.get(
+                    addr,
+                );
                 const name = account ? account.name : '';
 
                 return [
@@ -111,7 +112,7 @@ export class History extends Layout<IProps> {
                 let symbol = record.currencySymbol || '';
 
                 if (!symbol) {
-                    const currency = rootStore.currencyStore.getItem(addr);
+                    const currency = this.rootStore.currencyStore.getItem(addr);
 
                     if (currency) {
                         symbol = currency.symbol;

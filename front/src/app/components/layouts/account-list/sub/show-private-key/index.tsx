@@ -10,16 +10,24 @@ import {
     FormHeader,
     FormButtons,
 } from 'app/components/common/form';
-import { rootStore } from 'app/stores/';
+import { RootStore } from 'app/stores/';
 import { Hash } from 'app/components/common/hash-view';
+import { injectRootStore, IHasRootStore } from 'app/components/layouts/layout';
 
-export interface IProps {
+export interface IProps extends IHasRootStore {
     address: string;
     className?: string;
     onClose: () => void;
 }
 
+@injectRootStore
 export class ShowPassword extends React.Component<IProps, any> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         password: '',
         privateKey: '',
@@ -29,7 +37,7 @@ export class ShowPassword extends React.Component<IProps, any> {
     protected handleSubmit = async (event: any) => {
         event.preventDefault();
 
-        const privateKey = await rootStore.myProfilesStore.getPrivateKey(
+        const privateKey = await this.rootStore.myProfilesStore.getPrivateKey(
             this.state.password,
             this.props.address,
         );
@@ -41,7 +49,7 @@ export class ShowPassword extends React.Component<IProps, any> {
             });
         } else {
             this.setState({
-                validationPassword: rootStore.localizator.getMessageText(
+                validationPassword: this.rootStore.localizator.getMessageText(
                     'incorrect_password',
                 ),
                 privateKey: '',

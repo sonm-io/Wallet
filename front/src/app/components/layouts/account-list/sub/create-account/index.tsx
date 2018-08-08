@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { IValidation } from 'ipc/types';
-import { rootStore } from 'app/stores';
+import { RootStore } from 'app/stores';
 import { validateHex } from 'app/utils/validation/validate-ether-address';
 import { CreateAccountView } from './view';
+import { IHasRootStore, injectRootStore } from 'app/components/layouts/layout';
 
 export interface ICreateAccountForm {
     password: string;
@@ -11,7 +12,7 @@ export interface ICreateAccountForm {
     privateKey: string;
 }
 
-export interface IProps {
+export interface IProps extends IHasRootStore {
     serverValidation: IValidation;
     onSubmit: (data: ICreateAccountForm) => void;
     onClickCross: () => void;
@@ -26,7 +27,14 @@ const emptyForm: ICreateAccountForm = {
 
 const emptyObject = {};
 
+@injectRootStore
 export class CreateAccount extends React.Component<IProps, any> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         form: emptyForm,
         validation: emptyObject as any,
@@ -36,7 +44,7 @@ export class CreateAccount extends React.Component<IProps, any> {
     protected handleSubmit = (event: any) => {
         event.preventDefault();
 
-        const l = rootStore.localizator.getMessageText;
+        const l = this.rootStore.localizator.getMessageText;
         const validation = {} as any;
         const form = this.state.form;
 
@@ -118,7 +126,7 @@ export class CreateAccount extends React.Component<IProps, any> {
                 validationName={this.getValidation('name')}
                 validationPassword={this.getValidation('password')}
                 validationPrivateKey={this.getValidation('privateKey')}
-                getMessageText={rootStore.localizator.getMessageText}
+                getMessageText={this.rootStore.localizator.getMessageText}
             />
         );
     }
