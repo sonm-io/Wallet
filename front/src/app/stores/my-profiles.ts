@@ -28,12 +28,13 @@ export class MyProfilesStore extends OnlineStore {
     constructor(rootStore: RootStore, services: IOnlineStoreServices) {
         super(services);
         this.rootStore = rootStore;
+        this.getAccountList();
     }
 
     @observable public accountMap = new Map<string, IAccountInfo>();
 
     @asyncAction
-    public *getAccountList() {
+    protected *getAccountList() {
         const accountList = yield Api.getAccountList();
         updateAddressMap<IAccountInfo>(accountList, this.accountMap);
     }

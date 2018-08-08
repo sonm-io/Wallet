@@ -53,14 +53,6 @@ export class MainStore extends OnlineStore {
         return Object.keys(this.serverValidation).length === 0;
     }
 
-    // ToDo a
-    // @pending
-    // @catchErrors({ restart: true })
-    // @asyncAction
-    public init() {
-        this.rootStore.marketStore.updateValidators();
-    }
-
     @pending
     @catchErrors({ restart: false })
     @asyncAction

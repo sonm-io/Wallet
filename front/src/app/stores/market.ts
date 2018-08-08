@@ -58,6 +58,7 @@ export class MarketStore extends OnlineStore {
         reaction(() => this.userInput.marketAccountAddress, this.update, {
             name: 'reaction marketAccountAddress',
         });
+        this.updateValidators();
     }
 
     protected update = () => {

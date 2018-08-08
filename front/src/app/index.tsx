@@ -47,14 +47,7 @@ async function handleLogin(wallet: IWalletListItem) {
     const rootStore = new RootStore(en);
     const renderer = new Renderer(rootStore);
     history.listen(renderer.renderByPath.bind(renderer));
-    await Promise.all([
-        rootStore.mainStore.init(),
-        rootStore.walletStore.init(wallet),
-        rootStore.gasPrice.init(),
-        rootStore.uiStore.init(),
-        rootStore.currencyStore.init(),
-        rootStore.myProfilesStore.getAccountList(),
-    ]);
+    await Promise.all([rootStore.walletStore.init(wallet)]);
     renderer.renderByPath((history as any).location);
 }
 

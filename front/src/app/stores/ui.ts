@@ -6,6 +6,7 @@ import {
     IConnectionInfo,
     defaultConnectionInfo,
 } from 'app/entities/connection';
+import { asyncAction } from 'mobx-utils';
 
 const SUCCESS_ALERT_DELAY_CLOSE = 30000;
 
@@ -17,10 +18,12 @@ export class UiStore {
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
         this.connectionInfo = defaultConnectionInfo;
+        this.init();
     }
 
-    public async init() {
-        const result = await Api.getConnectionInfo();
+    @asyncAction
+    protected *init() {
+        const result = yield Api.getConnectionInfo();
         if (result.data) {
             this.connectionInfo = result.data;
         }

@@ -11,14 +11,10 @@ const UPDATE_INTERVAL = 5000;
 export class GasPriceStore extends OnlineStore {
     constructor(services: IOnlineStoreServices) {
         super(services);
+        this.autoUpdateIteration();
     }
 
     @observable public averageGasPrice = '';
-
-    @action
-    public init() {
-        this.autoUpdateIteration();
-    }
 
     @action
     protected setAverageGasPrice(gasPrice: string = '') {
