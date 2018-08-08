@@ -1,19 +1,20 @@
 import * as React from 'react';
 import { OrderView } from './view';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app//stores';
+import { injectRootStore, Layout, IHasRootStore } from '../layout';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onCompleteBuyingOrder: () => void;
     onNavigateBack: () => void;
     onNavigateDeposit: () => void;
 }
 
+@injectRootStore
 @observer
-export class OrderDetails extends React.Component<IProps, never> {
+export class OrderDetails extends Layout<IProps> {
     public handleSubmit = async (password: string) => {
-        const orderDetailsStore = rootStore.orderDetailsStore;
+        const orderDetailsStore = this.rootStore.orderDetailsStore;
 
         orderDetailsStore.updateUserInput({ password });
         await orderDetailsStore.submit();
@@ -25,6 +26,7 @@ export class OrderDetails extends React.Component<IProps, never> {
 
     public render() {
         const p = this.props;
+        const rootStore = this.rootStore;
         return (
             <OrderView
                 order={rootStore.orderDetailsStore.order}

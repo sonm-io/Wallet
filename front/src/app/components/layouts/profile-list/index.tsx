@@ -1,32 +1,33 @@
 import * as React from 'react';
 import { ProfileListView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import { IProfileBrief } from 'app/api/types';
+import { injectRootStore, Layout, IHasRootStore } from '../layout';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onNavigate: (address: string) => void;
 }
 
+@injectRootStore
 @observer
-export class ProfileList extends React.Component<IProps, any> {
+export class ProfileList extends Layout<IProps> {
     public handleRowClick = (record: IProfileBrief) => {
         this.props.onNavigate(record.address);
     };
 
     public handleChangeFilter = (key: string, value: any) => {
-        rootStore.profileFilterStore.updateUserInput({ [key]: value });
+        this.rootStore.profileFilterStore.updateUserInput({ [key]: value });
     };
 
     public handleChangePage(page: number) {
-        rootStore.profileListStore.updateUserInput({ page });
+        this.rootStore.profileListStore.updateUserInput({ page });
     }
 
     public handleTableChange = (pagination: any, filters: any, sorter: any) => {
         if (sorter.field) {
-            rootStore.profileListStore.updateUserInput({
+            this.rootStore.profileListStore.updateUserInput({
                 sortBy: sorter.field,
                 sortDesc: sorter.order === 'descend',
             });
@@ -34,8 +35,8 @@ export class ProfileList extends React.Component<IProps, any> {
     };
 
     public render() {
-        const listStore = rootStore.profileListStore;
-        const filterStore = rootStore.profileFilterStore;
+        const listStore = this.rootStore.profileListStore;
+        const filterStore = this.rootStore.profileFilterStore;
         const dataSource = toJS(listStore.records);
 
         return (

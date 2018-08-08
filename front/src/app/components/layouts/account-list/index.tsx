@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores/';
 import {
     AccountItem,
     IAccountItemProps,
@@ -20,6 +19,8 @@ import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
 import { IValidation } from 'app/api/types';
 import { IAccountItemView } from 'app/stores/types';
+import { injectRootStore, IHasRootStore } from '../layout';
+import { RootStore } from 'app/stores';
 
 enum WalletDialogs {
     new,
@@ -29,7 +30,7 @@ enum WalletDialogs {
     showPrivateKey,
 }
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     navigateToProfile: (address: string) => void;
 }
@@ -41,8 +42,14 @@ interface IState {
 
 class DeletableItem extends DeletableItemWithConfirmation<IAccountItemProps> {}
 
+@injectRootStore
 @observer
 export class Wallets extends React.Component<IProps, IState> {
+    // ToDo make stateless
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         visibleDialog: WalletDialogs.none,
         visibleDialogProps: [] as any[],
@@ -53,29 +60,29 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     private handleDelete = (deleteAddress: string) => {
-        rootStore.myProfilesStore.deleteAccount(deleteAddress);
+        this.rootStore.myProfilesStore.deleteAccount(deleteAddress);
     };
 
     protected handleAddAccount = async (data: IImportAccountForm) => {
-        await rootStore.myProfilesStore.addAccount(
+        await this.rootStore.myProfilesStore.addAccount(
             data.json,
             data.password,
             data.name,
         );
 
-        if (rootStore.mainStore.noValidationMessages) {
+        if (this.rootStore.mainStore.noValidationMessages) {
             this.closeDialog();
         }
     };
 
     protected handleCreateAccount = async (data: ICreateAccountForm) => {
-        await rootStore.myProfilesStore.createAccount(
+        await this.rootStore.myProfilesStore.createAccount(
             data.password,
             data.name,
             data.privateKey,
         );
 
-        if (rootStore.mainStore.noValidationMessages) {
+        if (this.rootStore.mainStore.noValidationMessages) {
             this.closeDialog();
         }
     };
@@ -88,7 +95,7 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     protected closeDialog = () => {
-        rootStore.mainStore.resetServerValidation();
+        this.rootStore.mainStore.resetServerValidation();
         this.switchDialog(WalletDialogs.none);
     };
     protected openNewWalletDialog = this.switchDialog.bind(
@@ -101,7 +108,7 @@ export class Wallets extends React.Component<IProps, IState> {
     );
 
     protected handleRename = (address: string, name: string) => {
-        rootStore.myProfilesStore.renameAccount(address, name);
+        this.rootStore.myProfilesStore.renameAccount(address, name);
     };
 
     protected handleRequireAddToken = () => {
@@ -109,7 +116,7 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleDeleteToken = (address: string) => {
-        rootStore.currencyStore.removeToken(address);
+        this.rootStore.currencyStore.removeToken(address);
     };
 
     protected handleShowPrivateKey = (address: string) => {
@@ -117,13 +124,13 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleClickProfileIcon = (address: string) => {
-        rootStore.marketStore.setMarketAccountAddress(address);
+        this.rootStore.marketStore.setMarketAccountAddress(address);
         this.props.navigateToProfile(address);
     };
 
     public render() {
         const { className } = this.props;
-
+        const rootStore = this.rootStore;
         return (
             <div className={cn('sonm-accounts', className)}>
                 <DownloadFile

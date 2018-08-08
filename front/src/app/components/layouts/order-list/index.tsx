@@ -3,7 +3,11 @@ import { observer } from 'mobx-react';
 import { OrderListView } from './view';
 import { OrderFilterPanel } from './sub/order-filter-panel';
 import { IOrderFilter } from 'app/stores/order-filter';
-import { Layout, injectRootStore, IHasRootStore } from '../layout';
+import {
+    injectRootStore,
+    Layout,
+    IHasRootStore,
+} from 'app/components/layouts/layout';
 
 interface IProps extends IHasRootStore {
     onNavigateToOrder: (orderId: string) => void;

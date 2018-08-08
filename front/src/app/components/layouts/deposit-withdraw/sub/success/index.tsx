@@ -1,15 +1,21 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { Header } from 'app/components/common/header';
+import {
+    injectRootStore,
+    Layout,
+    IHasRootStore,
+} from 'app/components/layouts/layout';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onClickHistory: () => void;
     onClickDeposit: () => void;
     onClickWithdraw: () => void;
 }
 
-export class DepositWithdrawSuccess extends React.PureComponent<IProps, any> {
+@injectRootStore
+export class DepositWithdrawSuccess extends Layout<IProps> {
     protected handleClickHistory = this.props
         ? this.props.onClickHistory.bind(undefined, 'all', 'all')
         : null;

@@ -1,25 +1,29 @@
 import * as React from 'react';
 import { KycListView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
+import { injectRootStore, Layout, IHasRootStore } from '../layout';
 
-const store = rootStore.kycListStore;
-
-interface IProps {
+interface IProps extends IHasRootStore {
     onNavigateDeposit: () => void;
 }
 
+@injectRootStore
 @observer
-export class KycList extends React.Component<IProps, never> {
+export class KycList extends Layout<IProps> {
+    protected get store() {
+        return this.rootStore.kycListStore;
+    }
+
     protected handleSubmitPassword(itemIndex: number, password: string) {
-        store.fetchKycLink(itemIndex, password);
+        this.store.fetchKycLink(itemIndex, password);
     }
 
     public componentDidMount() {
-        rootStore.marketStore.updateValidators();
+        this.rootStore.marketStore.updateValidators();
     }
 
     public render() {
+        const store = this.store;
         return (
             <KycListView
                 list={store.validators}
@@ -29,7 +33,7 @@ export class KycList extends React.Component<IProps, never> {
                 onSubmitPassword={this.handleSubmitPassword}
                 onClickItem={store.select}
                 onCloseBottom={store.unselect}
-                marketBalance={rootStore.marketStore.marketBalance}
+                marketBalance={this.rootStore.marketStore.marketBalance}
                 onNavigateDeposit={this.props.onNavigateDeposit}
             />
         );

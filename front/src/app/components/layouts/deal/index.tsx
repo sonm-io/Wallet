@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { DealView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { ITogglerChangeParams } from '../../common/toggler';
+import { injectRootStore, IHasRootStore } from '../layout';
+import { RootStore } from 'app/stores';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onNavigateToDeals: () => void;
 }
@@ -14,15 +15,21 @@ interface IState {
     validationMessage: string;
 }
 
+@injectRootStore
 @observer
 export class Deal extends React.Component<IProps, IState> {
+    // ToDo make stateless
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         showConfirmationPanel: false,
         validationMessage: '',
     };
 
     public handleFinishDeal = async (password: string) => {
-        const dealDetailsStore = rootStore.dealDetailsStore;
+        const dealDetailsStore = this.rootStore.dealDetailsStore;
 
         dealDetailsStore.updateUserInput({ password });
         await dealDetailsStore.submit();
@@ -33,7 +40,7 @@ export class Deal extends React.Component<IProps, IState> {
     };
 
     public handleChangeCheckbox = (params: ITogglerChangeParams) => {
-        rootStore.dealDetailsStore.updateUserInput({
+        this.rootStore.dealDetailsStore.updateUserInput({
             isBlacklisted: params.value,
         });
     };
@@ -49,12 +56,13 @@ export class Deal extends React.Component<IProps, IState> {
             showConfirmationPanel: false,
         });
 
-        rootStore.dealDetailsStore.updateUserInput({
+        this.rootStore.dealDetailsStore.updateUserInput({
             isBlacklisted: false,
         });
     };
 
     public render() {
+        const rootStore = this.rootStore;
         const deal = rootStore.dealDetailsStore.deal;
         const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
         const isOwner =

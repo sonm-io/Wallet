@@ -8,7 +8,6 @@ import Select from 'antd/es/select';
 import Input from 'antd/es/input';
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores';
 import { ISendTransactionResult } from 'app/api';
 import { ColumnProps } from 'antd/lib/table';
 import * as moment from 'moment';
@@ -16,20 +15,20 @@ import { AccountBigSelect } from 'app/components/common/account-big-select';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Balance } from 'app/components/common/balance-view';
 import { Hash } from 'app/components/common/hash-view';
+import { injectRootStore, Layout, IHasRootStore } from '../layout';
+import rootStore from 'app/stores';
 
 const Option = Select.Option;
 
-const filterStore = rootStore.walletHistoryFilterStore;
-const listStore = rootStore.walletHistoryListStore;
-
 class TxTable extends Table<ISendTransactionResult> {}
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
 }
 
+@injectRootStore
 @observer
-export class History extends React.Component<IProps, any> {
+export class History extends Layout<IProps> {
     protected static columns: Array<ColumnProps<ISendTransactionResult>> = [
         {
             className: 'sonm-tx-list__cell-time sonm-tx-list__cell',
@@ -50,7 +49,7 @@ export class History extends React.Component<IProps, any> {
             title: 'From',
             render: (_, record) => {
                 const addr = record.fromAddress;
-                const account = rootStore.myProfilesStore.accountMap.get(addr);
+                const account = rootStore.myProfilesStore.accountMap.get(addr); // ToDo a
                 const name = account ? account.name : '';
 
                 return [
@@ -174,19 +173,27 @@ export class History extends React.Component<IProps, any> {
         },
     ];
 
+    protected get filterStore() {
+        return this.rootStore.walletHistoryFilterStore;
+    }
+
+    protected get listStore() {
+        return this.rootStore.walletHistoryListStore;
+    }
+
     constructor(props: IProps) {
         super(props);
-        listStore.update();
+        this.listStore.update();
     }
 
     protected handleChangeAccount = (from: string) => {
-        filterStore.updateUserInput({
+        this.filterStore.updateUserInput({
             fromAddress: from === 'all' ? '' : from,
         });
     };
 
     protected handleChangeTime = (params: IDateRangeChangeParams) => {
-        filterStore.updateUserInput({
+        this.filterStore.updateUserInput({
             timeStart: params.value[0].valueOf(),
             timeEnd: params.value[1].valueOf(),
         });
@@ -194,20 +201,23 @@ export class History extends React.Component<IProps, any> {
 
     protected handleSelectCurrency = (value: any) => {
         const currencyAddress = value as string;
-        filterStore.updateUserInput({ currencyAddress });
+        this.filterStore.updateUserInput({ currencyAddress });
     };
 
     protected handleChangeQuery = (event: any) => {
         const query = event.target.value;
-        filterStore.updateUserInput({ query });
+        this.filterStore.updateUserInput({ query });
     };
 
     public handleChangePage(page: number) {
-        listStore.updateUserInput({ page });
+        this.listStore.updateUserInput({ page });
     }
 
     public render() {
         const { className } = this.props;
+
+        const listStore = this.listStore;
+        const filterStore = this.filterStore;
 
         const pagination = {
             total: listStore.total,
@@ -222,7 +232,7 @@ export class History extends React.Component<IProps, any> {
                     className="sonm-history__select-account"
                     returnPrimitive
                     onChange={this.handleChangeAccount}
-                    accounts={rootStore.myProfilesStore.accountList}
+                    accounts={this.rootStore.myProfilesStore.accountList}
                     value={filterStore.fromAddress}
                     hasEmptyOption
                 />
@@ -240,7 +250,7 @@ export class History extends React.Component<IProps, any> {
                     value={filterStore.currencyAddress}
                     className="sonm-history__select-currency"
                 >
-                    {rootStore.myProfilesStore.fullBalanceList.map(x => (
+                    {this.rootStore.myProfilesStore.fullBalanceList.map(x => (
                         <Option
                             key={x.address}
                             value={x.address}

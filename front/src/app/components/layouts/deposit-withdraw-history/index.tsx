@@ -7,7 +7,6 @@ import {
 import Select from 'antd/es/select'; // TODO replace with common component
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores';
 import { ISendTransactionResult } from 'app/api';
 import { ColumnProps } from 'antd/lib/table';
 import * as moment from 'moment';
@@ -15,15 +14,14 @@ import { Balance } from 'app/components/common/balance-view';
 import { Hash } from 'app/components/common/hash-view';
 import { Button } from 'app/components/common/button';
 import { Icon } from 'app/components/common/icon';
-
-const filterStore = rootStore.dwHistoryFilterStore;
-const listStore = rootStore.dwHistoryListStore;
+import { injectRootStore, Layout, IHasRootStore } from '../layout';
+import rootStore from 'app/stores';
 
 const Option = Select.Option;
 
 class TxTable extends Table<ISendTransactionResult> {}
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onClickDeposit: () => void;
     onClickWithdraw: () => void;
@@ -31,8 +29,9 @@ interface IProps {
 
 // TODO create pure component view.tsx
 
+@injectRootStore
 @observer
-export class DepositWithdrawHistory extends React.Component<IProps, any> {
+export class DepositWithdrawHistory extends Layout<IProps> {
     protected static columns: Array<ColumnProps<ISendTransactionResult>> = [
         {
             className: 'sonm-dw-tx-list__cell-time sonm-dw-tx-list__cell',
@@ -64,7 +63,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
             className: 'sonm-dw-tx-list__cell-amount sonm-dw-tx-list__cell',
             title: 'Amount',
             render: (_, record) => {
-                const currency = rootStore.currencyStore.primaryTokenInfo;
+                const currency = rootStore.currencyStore.primaryTokenInfo; // ToDo a
 
                 return (
                     <Balance
@@ -100,7 +99,7 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
             className: 'sonm-dw-tx-list__cell-commission sonm-dw-tx-list__cell',
             title: 'Commission',
             render: (_, record) => {
-                const currency = rootStore.currencyStore.primaryTokenInfo;
+                const currency = rootStore.currencyStore.primaryTokenInfo; // ToDo a
 
                 return (
                     <Balance
@@ -157,29 +156,38 @@ export class DepositWithdrawHistory extends React.Component<IProps, any> {
         },
     ];
 
+    protected get filterStore() {
+        return this.rootStore.dwHistoryFilterStore;
+    }
+
+    protected get listStore() {
+        return this.rootStore.dwHistoryListStore;
+    }
+
     constructor(props: IProps) {
         super(props);
-        listStore.update();
+        this.listStore.update();
     }
 
     protected handleChangeTime = (params: IDateRangeChangeParams) => {
-        filterStore.updateUserInput({
+        this.filterStore.updateUserInput({
             timeStart: params.value[0].valueOf(),
             timeEnd: params.value[1].valueOf(),
         });
     };
 
     protected handleSelectOperation = (value: any) => {
-        filterStore.updateUserInput({ operation: value as string });
+        this.filterStore.updateUserInput({ operation: value as string });
     };
 
     public handleChangePage(page: number) {
-        listStore.updateUserInput({ page });
+        this.listStore.updateUserInput({ page });
     }
 
     public render() {
         const { className } = this.props;
-
+        const listStore = this.listStore;
+        const filterStore = this.filterStore;
         const pagination = {
             total: listStore.total,
             defaultPageSize: listStore.limit,

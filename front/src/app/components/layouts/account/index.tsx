@@ -8,10 +8,11 @@ import { Button } from 'app/components/common/button';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
 import { Balance } from 'app/components/common/balance-view';
-import { rootStore } from 'app/stores';
 import { TEthereumAddress } from 'app/entities/types';
+import { injectRootStore, IHasRootStore } from '../layout';
+import { RootStore } from 'app/stores';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     initialAddress: string;
     onClickHistory: (fromAddress?: TEthereumAddress) => void;
@@ -23,34 +24,41 @@ enum Dialogs {
     none = '',
 }
 
+@injectRootStore
 @observer
 export class Account extends React.Component<IProps, any> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         visibleDialog: Dialogs.none,
     };
 
     public componentWillMount() {
         if (this.props.initialAddress) {
-            rootStore.sendStore.setUserInput({
+            this.rootStore.sendStore.setUserInput({
                 fromAddress: this.props.initialAddress,
             });
         }
     }
 
     protected handleChangeAccount = (accountAddress: any) => {
-        rootStore.sendStore.setUserInput({
+        this.rootStore.sendStore.setUserInput({
             fromAddress: accountAddress,
         });
     };
 
     protected handleClickHistory = () => {
-        this.props.onClickHistory(rootStore.sendStore.fromAddress);
+        this.props.onClickHistory(this.rootStore.sendStore.fromAddress);
     };
 
     protected handleSendClick = (event: any) => {
         const currencyAddress = event.target.name;
 
-        rootStore.sendStore.setUserInput({
+        this.rootStore.sendStore.setUserInput({
             currencyAddress,
         });
 
@@ -60,17 +68,17 @@ export class Account extends React.Component<IProps, any> {
     protected handleGiveMeMore = async (event: any) => {
         event.preventDefault();
 
-        await rootStore.mainStore.giveMeMore(
+        await this.rootStore.mainStore.giveMeMore(
             event.target.password.value,
-            rootStore.sendStore.fromAddress,
+            this.rootStore.sendStore.fromAddress,
         );
 
-        await rootStore.gasPrice.update();
+        await this.rootStore.gasPrice.update();
     };
 
     public render() {
         const { className } = this.props;
-
+        const rootStore = this.rootStore;
         const testEtherUrl = 'https://faucet.rinkeby.io/';
 
         return (

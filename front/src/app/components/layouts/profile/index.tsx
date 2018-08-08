@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ProfileView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
+import { injectRootStore, Layout, IHasRootStore } from '../layout';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onNavigateToOrders: (address: string) => void;
     onNavigateToKyc: () => void;
@@ -11,11 +11,12 @@ interface IProps {
 
 const returnFirstArg = (...as: any[]) => String(as[0]);
 
+@injectRootStore
 @observer
-export class Profile extends React.Component<IProps, never> {
+export class Profile extends Layout<IProps> {
     public render() {
         const props = this.props;
-        const store = rootStore.profileDetailsStore;
+        const store = this.rootStore.profileDetailsStore;
         const profile = store.profile;
 
         return (
@@ -33,7 +34,7 @@ export class Profile extends React.Component<IProps, never> {
                 supplierToken="--"
                 my={
                     profile.address.toLowerCase() ===
-                    rootStore.marketStore.marketAccountAddress.toLowerCase()
+                    this.rootStore.marketStore.marketAccountAddress.toLowerCase()
                 }
                 userName={profile.name}
                 countryAbCode2={profile.country}

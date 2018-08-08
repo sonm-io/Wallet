@@ -1,24 +1,21 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { Header } from 'app/components/common/header';
-import { rootStore } from 'app/stores';
 import { IOrder } from 'app/api/types';
 import { TEthereumAddress } from 'app/entities/types';
+import { injectRootStore, Layout, IHasRootStore } from '../layout';
 
-const orderDetailsStore = rootStore.orderDetailsStore;
-
-export interface IOrderBuySuccessProps {
+export interface IOrderBuySuccessProps extends IHasRootStore {
     className?: string;
     onClickDeals: () => void;
     onClickMarket: (order: IOrder) => void;
     onClickOrders: (myAddress: TEthereumAddress) => void;
 }
 
-export class OrderCompleteBuy extends React.Component<
-    IOrderBuySuccessProps,
-    never
-> {
+@injectRootStore
+export class OrderCompleteBuy extends Layout<IOrderBuySuccessProps> {
     protected handleClickMarket = () => {
+        const orderDetailsStore = this.rootStore.orderDetailsStore;
         const order = orderDetailsStore.order;
         if (order !== undefined) {
             this.props.onClickMarket(order);
@@ -26,7 +23,7 @@ export class OrderCompleteBuy extends React.Component<
     };
 
     protected handleClickOrder = () => {
-        const address = rootStore.marketStore.marketAccountAddress;
+        const address = this.rootStore.marketStore.marketAccountAddress;
 
         this.props.onClickOrders(address);
     };

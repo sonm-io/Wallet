@@ -1,48 +1,53 @@
 import * as React from 'react';
 import { DealListView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import { DealFilterPanel } from './sub/deal-filter-panel';
 import { IDealFilter } from 'app/stores/deal-filter';
 import { DealListEmpty } from './sub/deal-list-empty';
+import { injectRootStore, Layout, IHasRootStore } from '../layout';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     filterByAddress?: string;
     onClickDeal: (dealId: string) => void;
     onClickViewMarket: () => void;
 }
 
-const listStore = rootStore.dealListStore;
-
-const filterStore = rootStore.dealFilterStore;
-
 const emptyFn = () => {};
 
+@injectRootStore
 @observer
-export class DealList extends React.Component<IProps, any> {
+export class DealList extends Layout<IProps> {
+    protected get filterStore() {
+        return this.rootStore.dealFilterStore;
+    }
+
+    protected get listStore() {
+        return this.rootStore.dealListStore;
+    }
+
     public componentDidMount() {
-        rootStore.dealListStore.startAutoUpdate();
+        this.rootStore.dealListStore.startAutoUpdate();
     }
 
     public componentWillUnmount() {
-        rootStore.dealListStore.stopAutoUpdate();
+        this.rootStore.dealListStore.stopAutoUpdate();
     }
 
     protected handleUpdateFilter = (
         key: keyof IDealFilter,
         value: string | boolean | [Date, Date],
     ) => {
-        filterStore.updateUserInput({ [key]: value });
+        this.filterStore.updateUserInput({ [key]: value });
     };
 
     protected handleChangePage = (page: number) => {
-        listStore.updateUserInput({ page });
+        this.listStore.updateUserInput({ page });
     };
 
     protected handleChangeOrder = (orderKey: string, isDesc: boolean) => {
-        listStore.updateUserInput({
+        this.listStore.updateUserInput({
             sortBy: orderKey,
             sortDesc: isDesc,
         });
@@ -50,6 +55,9 @@ export class DealList extends React.Component<IProps, any> {
 
     public render() {
         const p = this.props;
+        const listStore = this.listStore;
+        const filterStore = this.filterStore;
+
         const filterPanel = (
             <DealFilterPanel
                 query={filterStore.query}
@@ -69,7 +77,7 @@ export class DealList extends React.Component<IProps, any> {
             <DealListView
                 data={data}
                 marketAccountAddress={
-                    rootStore.marketStore.marketAccountAddress
+                    this.rootStore.marketStore.marketAccountAddress
                 }
                 filterPanel={filterPanel}
                 onClickRow={p.onClickDeal}

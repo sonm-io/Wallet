@@ -2,29 +2,36 @@ import * as React from 'react';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
 import { Form, FormField } from 'app/components/common/form';
-
 import * as cn from 'classnames';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores/';
+import { injectRootStore, IHasRootStore } from 'app/components/layouts/layout';
+import { RootStore } from 'app/stores';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onSuccess: () => void;
     onBack: () => void;
 }
 
+@injectRootStore
 @observer
 export class SendConfirm extends React.Component<IProps, any> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         password: '',
         validationPassword: '',
     };
 
     public handleConfrim = async (event: any) => {
-        const sendStore = rootStore.sendStore;
-        const historyStore = rootStore.walletHistoryListStore;
+        const sendStore = this.rootStore.sendStore;
+        const historyStore = this.rootStore.walletHistoryListStore;
 
         event.preventDefault();
 
@@ -50,7 +57,7 @@ export class SendConfirm extends React.Component<IProps, any> {
     };
 
     public handleCancel = () => {
-        rootStore.sendStore.resetServerValidation();
+        this.rootStore.sendStore.resetServerValidation();
 
         this.props.onBack();
     };
@@ -60,6 +67,7 @@ export class SendConfirm extends React.Component<IProps, any> {
     };
 
     public render() {
+        const rootStore = this.rootStore;
         const mainStore = rootStore.mainStore;
         const sendStore = rootStore.sendStore;
 

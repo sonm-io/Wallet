@@ -1,23 +1,31 @@
 import * as React from 'react';
 import { WorkerListView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
+import { injectRootStore, IHasRootStore } from '../layout';
+import { RootStore } from 'app/stores';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     filterByAddress?: string;
 }
 
+@injectRootStore
 @observer
 export class WorkerList extends React.Component<IProps, any> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         showConfirm: false,
         slaveId: '',
     };
 
     public handleChangePage(page: number) {
-        rootStore.workerListStore.updateUserInput({ page });
+        this.rootStore.workerListStore.updateUserInput({ page });
     }
 
     protected handleClickConfirm = async (slaveId: string) => {
@@ -34,6 +42,7 @@ export class WorkerList extends React.Component<IProps, any> {
     };
 
     protected handleSubmitConfirm = async (password: string) => {
+        const rootStore = this.rootStore;
         const link = await rootStore.mainStore.confirmWorker(
             password,
             rootStore.marketStore.marketAccountAddress,
@@ -52,21 +61,21 @@ export class WorkerList extends React.Component<IProps, any> {
     };
 
     public componentDidMount() {
-        rootStore.workerListStore.startAutoUpdate();
+        this.rootStore.workerListStore.startAutoUpdate();
     }
 
     public componentWillUnmount() {
-        rootStore.workerListStore.stopAutoUpdate();
+        this.rootStore.workerListStore.stopAutoUpdate();
     }
 
     public render() {
-        const listStore = rootStore.workerListStore;
+        const listStore = this.rootStore.workerListStore;
         const dataSource = toJS(listStore.records);
 
         return (
             <WorkerListView
                 marketAccountAddress={
-                    rootStore.marketStore.marketAccountAddress
+                    this.rootStore.marketStore.marketAccountAddress
                 }
                 page={listStore.page}
                 total={toJS(listStore.total)}
@@ -78,7 +87,7 @@ export class WorkerList extends React.Component<IProps, any> {
                 onSubmitConfirm={this.handleSubmitConfirm}
                 showConfirm={this.state.showConfirm}
                 validationPassword={
-                    rootStore.mainStore.serverValidation.password
+                    this.rootStore.mainStore.serverValidation.password
                 }
             />
         );

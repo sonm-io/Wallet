@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 // import { toJS } from 'mobx';
-import { rootStore } from 'app/stores/index';
 import { AppView } from './view';
 import { IAccount } from './sub/account-select/index';
 import { TMenuItem } from './sub/nav-menu-dropdown';
 import { INavigator } from 'app/router/types';
+import { injectRootStore, Layout, IHasRootStore } from '../layout';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     children: any;
     path: string;
@@ -17,8 +17,9 @@ interface IProps {
     navigator: INavigator;
 }
 
+@injectRootStore
 @observer
-export class App extends React.Component<IProps, never> {
+export class App extends Layout<IProps> {
     constructor(props: IProps) {
         super(props);
 
@@ -56,18 +57,19 @@ export class App extends React.Component<IProps, never> {
     };
 
     protected handleChangeMarketAccount = (account: IAccount) => {
-        rootStore.marketStore.setMarketAccountAddress(account.address);
+        this.rootStore.marketStore.setMarketAccountAddress(account.address);
     };
 
     protected handleClickMyProfile = () => {
         this.props.navigator.toProfile(
-            rootStore.marketStore.marketAccountAddress,
+            this.rootStore.marketStore.marketAccountAddress,
         );
     };
 
     protected headerMenuConfig: Array<TMenuItem> = Array.prototype;
 
     public render() {
+        const rootStore = this.rootStore;
         const p = this.props;
         const t = rootStore.localizator.getMessageText;
         const marketStore = rootStore.marketStore;
