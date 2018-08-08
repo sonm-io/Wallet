@@ -20,6 +20,7 @@ import {
     validateEtherAddress,
     validatePositiveNumber,
     validatePositiveInteger,
+    validateNumberPositiveNumberWithMin,
 } from 'app/utils/validation/';
 import {
     createBigNumber,
@@ -146,9 +147,10 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
                 result.push(this.localizator.getMessageText('required_value'));
             } else {
                 result.push(
-                    ...validatePositiveNumber(gasPrice).map(
-                        this.localizator.getMessageText,
-                    ),
+                    ...validateNumberPositiveNumberWithMin(
+                        gasPrice,
+                        '0.0000001',
+                    ).map(this.localizator.getMessageText),
                 );
             }
         }
