@@ -15,7 +15,6 @@ import { Hash } from 'app/components/common/hash-view';
 import { Button } from 'app/components/common/button';
 import { Icon } from 'app/components/common/icon';
 import { injectRootStore, Layout, IHasRootStore } from '../layout';
-import rootStore from 'app/stores';
 
 const Option = Select.Option;
 
@@ -32,7 +31,7 @@ interface IProps extends IHasRootStore {
 @injectRootStore
 @observer
 export class DepositWithdrawHistory extends Layout<IProps> {
-    protected static columns: Array<ColumnProps<ISendTransactionResult>> = [
+    protected columns: Array<ColumnProps<ISendTransactionResult>> = [
         {
             className: 'sonm-dw-tx-list__cell-time sonm-dw-tx-list__cell',
             dataIndex: 'timestamp',
@@ -63,7 +62,7 @@ export class DepositWithdrawHistory extends Layout<IProps> {
             className: 'sonm-dw-tx-list__cell-amount sonm-dw-tx-list__cell',
             title: 'Amount',
             render: (_, record) => {
-                const currency = rootStore.currencyStore.primaryTokenInfo; // ToDo a
+                const currency = this.rootStore.currencyStore.primaryTokenInfo;
 
                 return (
                     <Balance
@@ -99,7 +98,7 @@ export class DepositWithdrawHistory extends Layout<IProps> {
             className: 'sonm-dw-tx-list__cell-commission sonm-dw-tx-list__cell',
             title: 'Commission',
             render: (_, record) => {
-                const currency = rootStore.currencyStore.primaryTokenInfo; // ToDo a
+                const currency = this.rootStore.currencyStore.primaryTokenInfo;
 
                 return (
                     <Balance
@@ -240,7 +239,7 @@ export class DepositWithdrawHistory extends Layout<IProps> {
                 <TxTable
                     className="sonm-dw-history__table sonm-dw-tx-list"
                     dataSource={listStore.records}
-                    columns={DepositWithdrawHistory.columns}
+                    columns={this.columns}
                     pagination={pagination}
                     rowKey="timestamp"
                 />

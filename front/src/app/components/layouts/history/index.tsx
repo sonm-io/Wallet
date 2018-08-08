@@ -29,7 +29,7 @@ interface IProps extends IHasRootStore {
 @injectRootStore
 @observer
 export class History extends Layout<IProps> {
-    protected static columns: Array<ColumnProps<ISendTransactionResult>> = [
+    protected columns: Array<ColumnProps<ISendTransactionResult>> = [
         {
             className: 'sonm-tx-list__cell-time sonm-tx-list__cell',
             dataIndex: 'timestamp',
@@ -49,7 +49,9 @@ export class History extends Layout<IProps> {
             title: 'From',
             render: (_, record) => {
                 const addr = record.fromAddress;
-                const account = rootStore.myProfilesStore.accountMap.get(addr); // ToDo a
+                const account = this.rootStore.myProfilesStore.accountMap.get(
+                    addr,
+                );
                 const name = account ? account.name : '';
 
                 return [
@@ -273,7 +275,7 @@ export class History extends Layout<IProps> {
                 <TxTable
                     className="sonm-history__table sonm-tx-list"
                     dataSource={listStore.records}
-                    columns={History.columns}
+                    columns={this.columns}
                     pagination={pagination}
                     rowKey="hash"
                 />
