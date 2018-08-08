@@ -6,6 +6,7 @@ import { history } from './router/history';
 import { rootStore } from './stores';
 import { Login } from './components/layouts/login';
 import { IWalletListItem } from 'app/api/types';
+import { Provider } from 'mobx-react';
 
 interface ILocationParams {
     pathname: string;
@@ -22,7 +23,10 @@ async function renderByPath({ pathname, search }: ILocationParams) {
 
     window.document.title = browserTabTitle;
 
-    render(content, window.document.querySelector('#root'));
+    render(
+        <Provider rootStore={rootStore}>{content}</Provider>,
+        window.document.querySelector('#root'),
+    );
 }
 
 async function handleLogin(wallet: IWalletListItem) {

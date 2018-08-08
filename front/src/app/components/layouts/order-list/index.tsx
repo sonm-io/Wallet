@@ -2,35 +2,41 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import { OrderListView } from './view';
 import { OrderFilterPanel } from './sub/order-filter-panel';
-import { rootStore } from 'app/stores';
 import { IOrderFilter } from 'app/stores/order-filter';
+import { Layout, injectRootStore, IHasRootStore } from '../layout';
 
-const store = rootStore.ordersListStore;
-const filterStore = rootStore.orderFilterStore;
-
-interface IProps {
+interface IProps extends IHasRootStore {
     onNavigateToOrder: (orderId: string) => void;
 }
 
+@injectRootStore
 @observer
-export class OrderList extends React.Component<IProps, never> {
+export class OrderList extends Layout<IProps> {
+    protected get store() {
+        return this.rootStore.ordersListStore;
+    }
+
+    protected get filterStore() {
+        return this.rootStore.orderFilterStore;
+    }
+
     public componentDidMount() {
-        store.update();
+        this.store.update();
     }
 
     protected handleChangeLimit = (limit: number) => {
-        store.updateUserInput({ limit });
+        this.store.updateUserInput({ limit });
     };
 
     protected handleChangeOrder = (orderKey: string, isDesc: boolean) => {
-        store.updateUserInput({
+        this.store.updateUserInput({
             sortBy: orderKey,
             sortDesc: isDesc,
         });
     };
 
     protected handleRefresh = () => {
-        store.update();
+        this.store.update();
     };
 
     protected handleClickRow = (orderId: string) => {
@@ -43,10 +49,13 @@ export class OrderList extends React.Component<IProps, never> {
     ) => {
         const values: Partial<IOrderFilter> = {};
         values[key] = value;
-        filterStore.updateUserInput(values);
+        this.filterStore.updateUserInput(values);
     };
 
     public render() {
+        const store = this.store;
+        const filterStore = this.filterStore;
+
         return (
             <OrderListView
                 isListPending={store.isPending}
