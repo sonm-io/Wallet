@@ -97,9 +97,9 @@ export class App extends React.Component<IProps, never> {
                 headerMenu={this.headerMenuConfig}
                 disableAccountSelect={p.disableAccountSelect}
                 onClickMyProfile={this.handleClickMyProfile}
-                isTestNet={rootStore.mainStore.connectionInfo.isTest}
-                ethNodeURL={rootStore.mainStore.connectionInfo.ethNodeURL}
-                snmNodeURL={rootStore.mainStore.connectionInfo.snmNodeURL}
+                isTestNet={!rootStore.mainStore.isLivenet}
+                ethNodeURL={rootStore.mainStore.ethNodeUrl}
+                snmNodeURL={rootStore.mainStore.sidechainNodeUrl}
             >
                 {p.children}
             </AppView>
