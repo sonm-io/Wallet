@@ -176,8 +176,8 @@ export class Login extends React.Component<IProps, IState> {
 
     protected async fastLogin() {
         if (window.localStorage.getItem('sonm-4ever')) {
-            await this.rootStore.walletStore.unlockWallet('2', '2');
-            if (this.rootStore.walletStore.isLoginSuccess) {
+            const { data: success } = await Api.unlockWallet('2', '2');
+            if (success) {
                 const wallet = this.findWalletByName('2');
                 this.props.onLogin(wallet);
             }
@@ -223,25 +223,24 @@ export class Login extends React.Component<IProps, IState> {
     protected handleSubmitLogin = async (event: any) => {
         event.preventDefault();
         this.setState({ pending: true });
-        const rootStore = this.rootStore;
         try {
             // ToDo a
-            await rootStore.walletStore.unlockWallet(
+            const { validation, data: success } = await Api.unlockWallet(
                 this.state.password,
                 this.state.name,
             );
 
-            if (rootStore.walletStore.loginValidation) {
+            if (validation) {
                 this.setState({
                     serverValidation: localizator.localizeValidationMessages(
-                        rootStore.walletStore.loginValidation,
+                        validation,
                     ),
                 });
             }
 
             const wallet = this.findWalletByName(this.state.name);
 
-            if (rootStore.walletStore.isLoginSuccess) {
+            if (success) {
                 this.props.onLogin(wallet);
                 return;
             }

@@ -1,13 +1,8 @@
 import { observable, computed, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import Api, { IWalletListItem, IValidation } from 'app/api';
+import Api, { IWalletListItem } from 'app/api';
 const { pending } = OnlineStore;
-
-interface ILoginState {
-    success: boolean;
-    validation?: IValidation;
-}
 
 export class WalletStore extends OnlineStore {
     constructor(services: IOnlineStoreServices) {
@@ -49,29 +44,4 @@ export class WalletStore extends OnlineStore {
 
         return String(text);
     };
-
-    @observable
-    private loginState: ILoginState = {
-        success: false,
-    };
-
-    @computed
-    public get isLoginSuccess(): boolean {
-        return this.loginState.success;
-    }
-
-    @computed
-    public get loginValidation(): IValidation | undefined {
-        return this.loginState.validation;
-    }
-
-    @asyncAction
-    public *unlockWallet(password: string, name: string) {
-        const { validation, data: success } = yield Api.unlockWallet(
-            password,
-            name,
-        );
-        this.loginState.success = success;
-        this.loginState.validation = validation;
-    }
 }

@@ -1,7 +1,7 @@
 import * as sortBy from 'lodash/fp/sortBy';
 import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import { observable, computed, autorun } from 'mobx';
+import { observable, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { IAccountItemView } from 'app/stores/types';
 import Api from 'app/api';
@@ -28,17 +28,12 @@ export class MyProfilesStore extends OnlineStore {
     constructor(rootStore: RootStore, services: IOnlineStoreServices) {
         super(services);
         this.rootStore = rootStore;
-        autorun(() => {
-            if (this.rootStore.walletStore.isLoginSuccess) {
-                this.getAccountList();
-            }
-        });
     }
 
     @observable public accountMap = new Map<string, IAccountInfo>();
 
     @asyncAction
-    protected *getAccountList() {
+    public *getAccountList() {
         const accountList = yield Api.getAccountList();
         updateAddressMap<IAccountInfo>(accountList, this.accountMap);
     }

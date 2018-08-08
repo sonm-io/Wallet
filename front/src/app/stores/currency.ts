@@ -1,4 +1,4 @@
-import { observable, computed, autorun } from 'mobx';
+import { observable, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
 import Api from 'app/api';
@@ -24,15 +24,10 @@ export class CurrencyStore extends OnlineStore {
     constructor(rootStore: RootStore, services: IOnlineStoreServices) {
         super(services);
         this.rootStore = rootStore;
-        autorun(() => {
-            if (this.rootStore.walletStore.isLoginSuccess) {
-                this.init();
-            }
-        });
     }
 
     @asyncAction
-    protected *init() {
+    public *init() {
         const { data: currencyList } = yield Api.getCurrencyList();
         this.primaryTokenAddr = (yield Api.getSonmTokenAddress()).data;
         updateAddressMap<ICurrencyInfo>(

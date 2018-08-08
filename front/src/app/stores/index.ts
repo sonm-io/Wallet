@@ -12,11 +12,7 @@ import { OnlineStore } from './online-store';
 import { ProfileFilterStore } from './profile-filter';
 import { DealFilterStore } from './deal-filter';
 import { OrderFilterStore } from './order-filter';
-import {
-    localizator as en,
-    ILocalizator,
-    IHasLocalizator,
-} from 'app/localization';
+import { ILocalizator, IHasLocalizator } from 'app/localization';
 import { ProfileList } from './profile-list';
 import { OrdersList } from './orders-list';
 import { DealList } from './deal-list';
@@ -288,9 +284,3 @@ export class RootStore implements IHasLocalizator {
 
     public readonly localizator: ILocalizator;
 }
-
-export const rootStore = new RootStore(en);
-
-(window as any).__rootStore = rootStore;
-(window as any).$toJS = require('mobx').toJS;
-export default rootStore;
