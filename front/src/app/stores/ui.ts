@@ -31,7 +31,7 @@ export class UiStore {
 
     @observable public mapIdToAlert: Map<string, IAlert> = new Map();
 
-    @observable.ref public connectionInfo: IConnectionInfo;
+    @observable.ref protected connectionInfo: IConnectionInfo;
 
     protected getNextId() {
         return `${new Date()}-${UiStore.alertIdx++}`;
@@ -87,6 +87,21 @@ export class UiStore {
             result.push('Market');
         }
         return result;
+    }
+
+    @computed
+    public get isLivenet() {
+        return !this.connectionInfo.isTest;
+    }
+
+    @computed
+    public get ethNodeUrl() {
+        return this.connectionInfo.ethNodeURL;
+    }
+
+    @computed
+    public get sidechainNodeUrl() {
+        return this.connectionInfo.snmNodeURL;
     }
 }
 
