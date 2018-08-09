@@ -148,6 +148,8 @@ class Api {
             'worker.confirm': this.confirmWorker,
             'order.buy': this.buyOrder,
             'deal.close': this.closeDeal,
+            'deal.createChangeRequest': this.createChangeRequest,
+            'deal.cancelChangeRequest': this.cancelChangeRequest,
             'order.getParams': wrapInResponse(this.getOrderParams),
             'order.waitForDeal': wrapInResponse(this.waitForOrderDeal),
             'market.getValidators': wrapInResponse(dwh.getValidators),
@@ -946,6 +948,46 @@ class Api {
                 [data.id, data.isBlacklisted || false],
                 true,
             )(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public createChangeRequest = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.id && data.password) {
+            data.newPrice = data.newPrice
+                ? DWH.recalculatePriceOut(data.newPrice)
+                : '0';
+
+            return this.getMethod(
+                'createChangeRequest',
+                [data.id, data.newPrice, data.newDuration || 0],
+                true,
+            )(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public cancelChangeRequest = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.id && data.password) {
+            return this.getMethod('cancelChangeRequest', [data.id], true)(data);
         } else {
             throw new Error('required_params_missed');
         }

@@ -143,9 +143,8 @@ export interface IBenchmarkMap {
 }
 
 export enum EnumOrderSide {
-    any = 0,
-    bid = 1,
-    ask = 2,
+    buy = 1,
+    sell = 2,
 }
 
 export enum EnumTransactionStatus {
@@ -191,6 +190,7 @@ export interface IDeal {
     endTime: number;
     benchmarkMap: IBenchmarkMap;
     timeLeft: number;
+    changeRequests?: Array<IDealChangeRequest>;
 }
 
 export interface IKycValidator {
@@ -227,8 +227,36 @@ export interface IOrderParams {
     dealID: string;
 }
 
+export interface IConnectionInfo {
+    ethNodeURL: string;
+    snmNodeURL: string;
+    isTest: boolean;
+}
+
+export interface IDealComparableParams {
+    price: string;
+    duration: number;
+}
+
+export enum EnumChangeRequestStatus {
+    Created = 1,
+    Canceled = 2,
+    Rejected = 3,
+    Accepted = 4,
+}
+
+export interface IDealChangeRequest {
+    id: string;
+    requestType: EnumOrderSide;
+    duration?: string;
+    price?: string;
+    status: EnumChangeRequestStatus;
+}
+
 export interface ISender {
     send: (messageType: string, payload?: any) => any;
 }
+
+export type TChangeRequestAction = (requestId: string) => void;
 
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

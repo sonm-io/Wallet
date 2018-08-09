@@ -26,6 +26,8 @@ export class Navigator implements INavigator {
     public toProfile = (address: string) =>
         this.n({ path: `/market/profiles/${address}` });
     public toDeal = (id: string) => this.n({ path: `/market/deals/${id}` });
+    public toDealChangeRequest = (id: string) =>
+        this.n({ path: `/market/deals/${id}/change` });
     public toDealList = () => this.n({ path: `/market/deals/` });
     public toDepositSuccess = () =>
         this.n({ path: `/market/dw/deposit/success` });

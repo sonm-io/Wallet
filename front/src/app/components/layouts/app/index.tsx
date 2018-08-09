@@ -99,9 +99,9 @@ export class App extends Layout<IProps> {
                 headerMenu={this.headerMenuConfig}
                 disableAccountSelect={p.disableAccountSelect}
                 onClickMyProfile={this.handleClickMyProfile}
-                isTestNet={rootStore.uiStore.connectionInfo.isTest}
-                ethNodeURL={rootStore.uiStore.connectionInfo.ethNodeURL}
-                snmNodeURL={rootStore.uiStore.connectionInfo.snmNodeURL}
+                isTestNet={!rootStore.uiStore.isLivenet}
+                ethNodeURL={rootStore.uiStore.ethNodeUrl}
+                snmNodeURL={rootStore.uiStore.sidechainNodeUrl}
             >
                 {p.children}
             </AppView>
