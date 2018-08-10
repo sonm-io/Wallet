@@ -115,6 +115,20 @@ export interface IProfileFull extends IProfileBrief {
     certificates: Array<ICertificate>;
 }
 
+export const emptyProfile: IProfileFull = Object.freeze({
+    attributes: [],
+    description: '',
+    certificates: [],
+    sellOrders: 0,
+    buyOrders: 0,
+    deals: 0,
+    country: 'uk',
+    logoUrl: '',
+    name: '',
+    address: '',
+    status: EnumProfileStatus.anon,
+});
+
 export const TypeProfileFull = createStruct<IProfileFull>(
     {
         attributes: t.list(TypeAttribute),

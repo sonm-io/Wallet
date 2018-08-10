@@ -7,11 +7,10 @@ import { IAccountItemView } from 'app/stores/types';
 import Api, { IMarketStats } from 'app/api';
 import { IValidation } from 'app/localization/types';
 import { RootStore } from 'app/stores';
-import { IAccountInfo, IProfileFull } from 'app/entities/account';
+import { IAccountInfo, IProfileFull, emptyProfile } from 'app/entities/account';
 const { pending, catchErrors } = OnlineStore;
 import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ICurrencyInfo } from 'app/entities/currency';
-import ProfileDetails from 'app/stores/profile-details';
 import ProfileApi from 'app/api/sub/profile-api';
 
 interface IMainFormValues {
@@ -89,7 +88,7 @@ export class MyProfilesStore extends OnlineStore {
     @observable protected currentProfileAddressInner: string = '';
 
     @observable
-    protected currentProfileInner: IProfileFull = ProfileDetails.emptyProfile; // ToDo a move to entities
+    protected currentProfileInner: IProfileFull = { ...emptyProfile };
 
     @observable protected marketAllBalanceInner: string = '0';
 

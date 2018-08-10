@@ -6,7 +6,11 @@ import { asyncAction } from 'mobx-utils';
 import { RootStore } from './';
 import { IKycValidator } from 'app/api/types';
 import { TEthereumAddress } from '../entities/types';
-import { EnumProfileStatus, IProfileFull } from 'app/entities/account';
+import {
+    EnumProfileStatus,
+    IProfileFull,
+    emptyProfile,
+} from 'app/entities/account';
 
 export interface IOrderDetails {
     setAddress(address: TEthereumAddress): TEthereumAddress;
@@ -61,7 +65,7 @@ export class ProfileDetails extends OnlineStore implements IOrderDetails {
         return (this.address = address);
     }
 
-    @observable.ref public profile: IProfileFull = ProfileDetails.emptyProfile;
+    @observable.ref public profile: IProfileFull = { ...emptyProfile };
 
     @pending
     @catchErrors({ restart: true })
@@ -95,20 +99,6 @@ export class ProfileDetails extends OnlineStore implements IOrderDetails {
             };
         });
     }
-
-    public static emptyProfile: IProfileFull = {
-        attributes: [],
-        description: '',
-        certificates: [],
-        sellOrders: 0,
-        buyOrders: 0,
-        deals: 0,
-        country: 'uk',
-        logoUrl: '',
-        name: '',
-        address: '',
-        status: EnumProfileStatus.anon,
-    };
 }
 
 export default ProfileDetails;
