@@ -5,7 +5,7 @@ import { HistoryFilterStore } from './history-filter';
 import { MainStore } from './main';
 import { SendStore } from './send';
 import { WithdrawStore } from './withdraw';
-import { MarketStore } from './market';
+import { ValidatorsStore } from './validators';
 import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
 import { OnlineStore } from './online-store';
@@ -51,7 +51,7 @@ export class RootStore implements IHasLocalizator {
     public readonly workerFilterStore: WorkerFilterStore;
     public readonly ordersListStore: IListStore<IOrder>;
     public readonly orderCreateStore: OrderCreateStore;
-    public readonly marketStore: MarketStore;
+    public readonly validatorsStore: ValidatorsStore;
     public readonly profileFilterStore: ProfileFilterStore;
     public readonly dealFilterStore: DealFilterStore;
     public readonly orderFilterStore: OrderFilterStore;
@@ -122,7 +122,6 @@ export class RootStore implements IHasLocalizator {
             profileApi: Api.profile,
             marketApi: {
                 fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
-                fetchValidators: unwrapApiResult(Api.getValidators),
                 fetchMarketStats: Api.deal.fetchStats,
             },
         });
@@ -156,13 +155,11 @@ export class RootStore implements IHasLocalizator {
             '150000',
         );
 
-        this.marketStore = new MarketStore(this, {
+        this.validatorsStore = new ValidatorsStore(this, {
             localizator: this.localizator,
             errorProcessor: this.uiStore,
             api: {
-                fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
                 fetchValidators: unwrapApiResult(Api.getValidators),
-                fetchMarketStats: Api.deal.fetchStats,
             },
         });
 

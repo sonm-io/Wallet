@@ -13,7 +13,6 @@ import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ICurrencyInfo } from 'app/entities/currency';
 import ProfileDetails from 'app/stores/profile-details';
 import ProfileApi from 'app/api/sub/profile-api';
-import { IMarketStoreApi } from './market';
 
 interface IMainFormValues {
     password: string;
@@ -21,6 +20,11 @@ interface IMainFormValues {
     accountName: string;
     privateKey: string;
     json: string;
+}
+
+interface IMarketStoreApi {
+    fetchMarketBalance(addr: string): Promise<string>;
+    fetchMarketStats(addr: string): Promise<IMarketStats>;
 }
 
 interface IMyProfilesStoreServices extends IOnlineStoreServices {

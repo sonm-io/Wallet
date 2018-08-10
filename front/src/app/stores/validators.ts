@@ -1,45 +1,26 @@
 import { observable, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import { ISendFormValues } from './types';
 import { OnlineStore, IErrorProcessor } from './online-store';
 const { catchErrors } = OnlineStore;
 import { RootStore } from './';
 import { ILocalizator } from 'app/localization';
-import { IMarketStats, IKycValidator } from 'app/api/types';
+import { IKycValidator } from 'app/api/types';
 
-const emptyForm: ISendFormValues = {
-    fromAddress: '',
-    toAddress: '',
-    currencyAddress: '',
-    amountEther: '',
-    gasLimit: '',
-    gasPriceGwei: '',
-    password: '',
-};
-Object.freeze(emptyForm);
-
-export interface IMarketStoreApi {
-    fetchMarketBalance(addr: string): Promise<string>;
-    fetchMarketStats(addr: string): Promise<IMarketStats>;
+export interface IValidatorsStoreApi {
     fetchValidators(): Promise<IKycValidator[]>;
 }
 
-export interface IMarketStoreServices {
+export interface IValidatorsStoreServices {
     localizator: ILocalizator;
     errorProcessor: IErrorProcessor;
-    api: IMarketStoreApi;
+    api: IValidatorsStoreApi;
 }
 
-export interface IMarketStoreForm {
-    marketAccountAddress: string;
-}
-
-export class MarketStore extends OnlineStore {
+export class ValidatorsStore extends OnlineStore {
     protected rootStore: RootStore;
+    protected services: IValidatorsStoreServices;
 
-    public services: IMarketStoreServices;
-
-    constructor(rootStore: RootStore, services: IMarketStoreServices) {
+    constructor(rootStore: RootStore, services: IValidatorsStoreServices) {
         super(services);
         this.rootStore = rootStore;
         this.services = { ...services };
@@ -61,6 +42,6 @@ export class MarketStore extends OnlineStore {
     }
 }
 
-export default MarketStore;
+export default ValidatorsStore;
 
 export * from './types';

@@ -19,7 +19,7 @@ export class KycList extends Layout<IProps> {
     }
 
     public componentDidMount() {
-        this.rootStore.marketStore.updateValidators();
+        this.rootStore.validatorsStore.updateValidators();
     }
 
     public render() {

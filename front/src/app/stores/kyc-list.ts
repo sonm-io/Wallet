@@ -42,7 +42,9 @@ export class KycListStore extends OnlineStore implements IKycListInput {
     @asyncAction
     public *fetchKycLink(itemIndex: number, password: string) {
         const links = this.links;
-        const kycValidator = this.rootStore.marketStore.validators[itemIndex];
+        const kycValidator = this.rootStore.validatorsStore.validators[
+            itemIndex
+        ];
 
         const { data: link, validation } = yield Api.getKYCLink(
             password,
@@ -86,7 +88,7 @@ export class KycListStore extends OnlineStore implements IKycListInput {
 
     @computed
     public get validators() {
-        return this.rootStore.marketStore.validators;
+        return this.rootStore.validatorsStore.validators;
     }
 
     @computed
