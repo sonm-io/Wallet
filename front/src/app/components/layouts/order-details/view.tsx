@@ -40,7 +40,7 @@ export class OrderView extends React.Component<IProps, never> {
             id: 'orderSide',
             name: 'Type',
             renderValue: (orderType: number) =>
-                orderType === EnumOrderSide.bid ? 'Bid' : 'Ask',
+                orderType === EnumOrderSide.buy ? 'Bid' : 'Ask',
         },
         {
             id: 'orderStatus',
@@ -64,7 +64,7 @@ export class OrderView extends React.Component<IProps, never> {
                     data={p.order}
                     config={OrderView.orderViewConfig}
                 />
-                {p.order.orderSide === EnumOrderSide.ask ? (
+                {p.order.orderSide === EnumOrderSide.sell ? (
                     p.isBuyingAvailable ? (
                         <ConfirmationPanel
                             className="order-view__confirmation"

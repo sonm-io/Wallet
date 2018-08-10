@@ -1,0 +1,28 @@
+@import 'guide.less';
+
+.change-request-param {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &__name {
+        color: @color-light-font;
+        width: 125px;
+    }
+
+    &__icon {
+        margin: auto 10px;
+    }
+
+    &__value {
+        color: @color-font-dark;
+
+        &--better {
+            color: @color-green;
+        }
+
+        &--worse {
+            color: @color-pink;
+        }
+    }
+}

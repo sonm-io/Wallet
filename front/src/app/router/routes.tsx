@@ -31,6 +31,7 @@ import {
 
 import { reload, firstByDefault, replaceWithChild } from './utils';
 import { navigateBack } from './navigate';
+import { OrderCreate } from 'app/components/layouts/order-create';
 
 let defaultAction;
 
@@ -415,6 +416,19 @@ export const createRoutes = (
                             },
                         ),
                         children: [
+                            {
+                                breadcrumbTitle: 'Order creation',
+                                path: '/create',
+                                action: async (ctx: IContext) => {
+                                    return {
+                                        content: (
+                                            <OrderCreate onCancel={() => {}} />
+                                        ),
+                                        browserTabTitle: 'Order creation',
+                                        pageTitle: 'Order creation',
+                                    };
+                                },
+                            },
                             {
                                 breadcrumbTitle: '',
                                 path: '/complete-buy',

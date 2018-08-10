@@ -27,8 +27,9 @@ export class DealListEmpty extends React.Component<IDealListEmptyProps, never> {
                 </div>
                 <div className="deal-list-empty__buttons">
                     <Button
-                        className="deal-list-empty__button deal-list-empty__button-market"
+                        className="deal-list-empty__button"
                         color="violet"
+                        transparent
                         onClick={this.props.onClickViewMarket}
                     >
                         VIEW MARKET
