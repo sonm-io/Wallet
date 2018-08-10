@@ -1,10 +1,10 @@
 import * as sortBy from 'lodash/fp/sortBy';
 import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import { observable, computed, autorun } from 'mobx';
+import { observable, computed, action, reaction } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { IAccountItemView } from 'app/stores/types';
-import Api, { IProfileFull } from 'app/api';
+import Api, { IProfileFull, IMarketStats } from 'app/api';
 import { IValidation } from 'app/localization/types';
 import { RootStore } from 'app/stores';
 import { IAccountInfo } from 'app/entities/account';
@@ -13,6 +13,7 @@ import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ICurrencyInfo } from 'app/entities/currency';
 import ProfileDetails from 'app/stores/profile-details';
 import ProfileApi from 'app/api/sub/profile-api';
+import { IMarketStoreApi } from './market';
 
 interface IMainFormValues {
     password: string;
@@ -24,44 +25,103 @@ interface IMainFormValues {
 
 interface IMyProfilesStoreServices extends IOnlineStoreServices {
     profileApi: ProfileApi;
+    marketApi: IMarketStoreApi;
 }
 
 const sortByName = sortBy(['name', 'address']);
 
 export class MyProfilesStore extends OnlineStore {
     protected rootStore: RootStore;
-    protected profileApi: ProfileApi;
+    protected services: IMyProfilesStoreServices;
 
     constructor(rootStore: RootStore, services: IMyProfilesStoreServices) {
         super(services);
         this.rootStore = rootStore;
-        this.profileApi = services.profileApi;
+        this.services = services;
         this.getAccountList();
-    }
 
-    public init() {
-        // ToDo a move it to constructor after move marketAccountAddress to this store.
-        autorun(() => {
-            if (this.rootStore.marketStore.marketAccountAddress !== '') {
-                this.fetchProfileDetails();
-            }
+        reaction(() => this.accountMap.size, () => this.setCurrentProfile(), {
+            fireImmediately: true,
+            name: 'reaction accountMap.size',
         });
+
+        reaction(
+            () => this.currentProfileAddress,
+            () => this.fetchProfileDetails(),
+            {
+                name: 'reaction currentProfileAddress',
+            },
+        );
+
+        reaction(
+            () => this.accountAddressList,
+            () => this.updateTotalBalance(),
+            {
+                name:
+                    'reaction rootStore.myProfilesStore.currentProfileAddress',
+            },
+        );
     }
 
     //#region Private State
 
     @observable protected accountMap = new Map<string, IAccountInfo>();
 
+    @observable protected currentProfileAddressInner: string = '';
+
     @observable
     protected currentProfileInner: IProfileFull = ProfileDetails.emptyProfile; // ToDo a move to entities
+
+    // ToDo a make private
+
+    @observable public marketAllBalance: string = '0';
+
+    @observable public marketBalance: string = '';
+
+    @observable
+    public marketStats: IMarketStats = {
+        dealsCount: 0,
+        dealsPrice: '0',
+        daysLeft: 0,
+    };
 
     //#endregion
 
     public getItem = (key: string) => this.accountMap.get(key);
 
     @computed
-    public get currentProfile() {
+    public get currentProfileAddress() {
+        return this.currentProfileAddressInner;
+    }
+
+    @computed
+    public get currentProfile(): IProfileFull {
         return { ...this.currentProfileInner };
+    }
+
+    @computed
+    public get currentProfileView(): IAccountItemView | undefined {
+        const currentAccount = this.getItem(this.currentProfileAddress);
+        if (currentAccount) {
+            return this.transformAccountInfoToView(currentAccount);
+        }
+        return undefined;
+    }
+
+    @action.bound
+    public setCurrentProfile(accountAddress?: string) {
+        if (accountAddress === undefined) {
+            if (
+                !this.accountMap.has(this.currentProfileAddress) &&
+                this.accountMap.size > 0
+            ) {
+                this.currentProfileAddressInner = this.accountAddressList[0];
+            } else {
+                return;
+            }
+        } else {
+            this.currentProfileAddressInner = accountAddress;
+        }
     }
 
     @asyncAction
@@ -215,9 +275,11 @@ export class MyProfilesStore extends OnlineStore {
     @catchErrors({ restart: false })
     @asyncAction
     protected *fetchProfileDetails() {
-        this.currentProfileInner = yield this.profileApi.fetchByAddress(
-            this.rootStore.marketStore.marketAccountAddress,
+        this.currentProfileInner = yield this.services.profileApi.fetchByAddress(
+            this.rootStore.myProfilesStore.currentProfileAddress,
         );
+        this.updatePublicBalance();
+        this.updateMarketStats();
     }
 
     //#region Balance
@@ -291,6 +353,42 @@ export class MyProfilesStore extends OnlineStore {
         const allAccountsAddresses = this.rootStore.myProfilesStore
             .accountAddressList;
         return this.getBalanceListFor(...allAccountsAddresses);
+    }
+
+    //#endregion
+
+    //#region Market Balance and stats
+
+    @catchErrors({ restart: true })
+    @asyncAction
+    protected *updateTotalBalance() {
+        let balance = new BN(0);
+        for (const account of this.accountList) {
+            const accountBalance = yield this.services.marketApi.fetchMarketBalance(
+                account.address,
+            );
+            balance = balance.add(new BN(accountBalance));
+        }
+
+        this.marketAllBalance = balance.toString(10);
+    }
+
+    @catchErrors({ restart: true })
+    @asyncAction
+    protected *updatePublicBalance() {
+        const balance = yield this.services.marketApi.fetchMarketBalance(
+            this.currentProfileAddress,
+        );
+
+        this.marketBalance = balance;
+    }
+
+    @catchErrors({ restart: true })
+    @asyncAction
+    protected *updateMarketStats() {
+        this.marketStats = yield this.services.marketApi.fetchMarketStats(
+            this.currentProfileAddress,
+        );
     }
 
     //#endregion

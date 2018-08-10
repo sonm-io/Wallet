@@ -124,7 +124,7 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleClickProfileIcon = (address: string) => {
-        this.rootStore.marketStore.setMarketAccountAddress(address);
+        this.rootStore.myProfilesStore.setCurrentProfile(address);
         this.props.navigateToProfile(address);
     };
 

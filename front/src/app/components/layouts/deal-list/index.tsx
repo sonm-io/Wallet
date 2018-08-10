@@ -77,7 +77,7 @@ export class DealList extends Layout<IProps> {
             <DealListView
                 data={data}
                 marketAccountAddress={
-                    this.rootStore.marketStore.marketAccountAddress
+                    this.rootStore.myProfilesStore.currentProfileAddress
                 }
                 filterPanel={filterPanel}
                 onClickRow={p.onClickDeal}

@@ -45,12 +45,6 @@ export interface IDealDetailsStoreApi {
     fetchById: (id: string) => Promise<IDeal>;
 }
 
-export interface IDealDetailsStoreExternal {
-    market: {
-        marketAccountAddress: string;
-    };
-}
-
 const emptyForm: IDealDetailsInput = {
     password: '',
     isBlacklisted: false,
@@ -105,7 +99,6 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     };
 
     protected rootStore: RootStore;
-    protected externalStores: IDealDetailsStoreExternal;
     protected api: IDealDetailsStoreApi;
     protected localizator: ILocalizator;
     protected errorProcessor: IErrorProcessor;
@@ -115,17 +108,12 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     @observable.ref public deal: IDeal;
     @observable public dealId: string = '';
 
-    constructor(
-        rootStore: RootStore,
-        externalStores: IDealDetailsStoreExternal,
-        params: IDealDetailsStoreServices,
-    ) {
+    constructor(rootStore: RootStore, params: IDealDetailsStoreServices) {
         super({
             localizator: params.localizator,
             errorProcessor: params.errorProcessor,
         });
 
-        this.externalStores = externalStores;
         this.api = params.api;
         this.localizator = params.localizator;
         this.errorProcessor = params.errorProcessor;
@@ -251,7 +239,8 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         const password = this.password;
         const id = this.dealId;
         const isBlacklisted = this.isBlacklisted;
-        const accountAddress = this.externalStores.market.marketAccountAddress;
+        const accountAddress = this.rootStore.myProfilesStore
+            .currentProfileAddress;
 
         const { data, validation } = yield this.api.close(
             accountAddress,
@@ -283,7 +272,8 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
 
         const password = this.password;
         const id = this.changeRequestId;
-        const accountAddress = this.externalStores.market.marketAccountAddress;
+        const accountAddress = this.rootStore.myProfilesStore
+            .currentProfileAddress;
 
         const { validation } = yield this.api.cancelChangeRequest(
             accountAddress,
@@ -309,7 +299,8 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         const newDuration = this.newDuration;
         const password = this.password;
         const id = this.dealId;
-        const accountAddress = this.externalStores.market.marketAccountAddress;
+        const accountAddress = this.rootStore.myProfilesStore
+            .currentProfileAddress;
 
         const { validation } = yield this.api.createChangeRequest(
             accountAddress,

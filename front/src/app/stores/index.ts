@@ -120,6 +120,11 @@ export class RootStore implements IHasLocalizator {
             localizator,
             errorProcessor: this.uiStore,
             profileApi: Api.profile,
+            marketApi: {
+                fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
+                fetchValidators: unwrapApiResult(Api.getValidators),
+                fetchMarketStats: Api.deal.fetchStats,
+            },
         });
 
         this.mainStore = new MainStore(this, { localizator: this.localizator });
@@ -160,7 +165,6 @@ export class RootStore implements IHasLocalizator {
                 fetchMarketStats: Api.deal.fetchStats,
             },
         });
-        this.myProfilesStore.init(); // ToDo a remove it after move marketAccountAddress to MyProfilesStore.
 
         this.profileFilterStore = new ProfileFilterStore();
 
@@ -221,41 +225,22 @@ export class RootStore implements IHasLocalizator {
             },
         );
 
-        this.orderDetailsStore = new OrderDetails(
-            this,
-            {
-                market: this.marketStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.order,
-            },
-        );
+        this.orderDetailsStore = new OrderDetails(this, {
+            localizator,
+            errorProcessor: this.uiStore,
+            api: Api.order,
+        });
 
-        this.dealDetailsStore = new DealDetails(
-            this,
-            {
-                market: this.marketStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.deal,
-            },
-        );
+        this.dealDetailsStore = new DealDetails(this, {
+            localizator,
+            errorProcessor: this.uiStore,
+            api: Api.deal,
+        });
 
-        this.kycListStore = new KycListStore(
-            this,
-            {
-                main: this.mainStore,
-                market: this.marketStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-            },
-        );
+        this.kycListStore = new KycListStore(this, {
+            localizator,
+            errorProcessor: this.uiStore,
+        });
 
         this.profileDetailsStore = new ProfileDetails(this, {
             localizator,

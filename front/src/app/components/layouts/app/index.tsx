@@ -57,12 +57,12 @@ export class App extends Layout<IProps> {
     };
 
     protected handleChangeMarketAccount = (account: IAccount) => {
-        this.rootStore.marketStore.setMarketAccountAddress(account.address);
+        this.rootStore.myProfilesStore.setCurrentProfile(account.address);
     };
 
     protected handleClickMyProfile = () => {
         this.props.navigator.toProfile(
-            this.rootStore.marketStore.marketAccountAddress,
+            this.rootStore.myProfilesStore.currentProfileAddress,
         );
     };
 
@@ -72,7 +72,7 @@ export class App extends Layout<IProps> {
         const rootStore = this.rootStore;
         const p = this.props;
         const t = rootStore.localizator.getMessageText;
-        const marketStore = rootStore.marketStore;
+        const myProfilesStore = rootStore.myProfilesStore;
         const uiStore = rootStore.uiStore;
 
         return (
@@ -83,25 +83,25 @@ export class App extends Layout<IProps> {
                 breadcrumbs={[]}
                 hasMarketAccountSelect={p.path.startsWith('/market')}
                 onChangeMarketAccount={this.handleChangeMarketAccount}
-                marketAccountList={marketStore.marketAccountViewList}
-                marketAccount={marketStore.marketAccountView}
-                marketBalance={marketStore.marketAllBalance}
-                marketStats={marketStore.marketStats}
+                marketAccountList={myProfilesStore.accountList}
+                marketAccount={myProfilesStore.currentProfileView}
+                marketBalance={myProfilesStore.marketAllBalance}
+                marketStats={myProfilesStore.marketStats}
                 networkError={
                     rootStore.isOffline ? t('sonmapi_network_error') : ''
                 }
                 isPending={rootStore.isPending}
                 alerts={uiStore.alertList}
                 onCloseAlert={uiStore.closeAlert}
-                snmBalance={rootStore.myProfilesStore.primaryTokenBalance}
-                etherBalance={rootStore.myProfilesStore.etherBalance}
+                snmBalance={myProfilesStore.primaryTokenBalance}
+                etherBalance={myProfilesStore.etherBalance}
                 title={p.title}
                 headerMenu={this.headerMenuConfig}
                 disableAccountSelect={p.disableAccountSelect}
                 onClickMyProfile={this.handleClickMyProfile}
-                isTestNet={!rootStore.uiStore.isLivenet}
-                ethNodeURL={rootStore.uiStore.ethNodeUrl}
-                snmNodeURL={rootStore.uiStore.sidechainNodeUrl}
+                isTestNet={!uiStore.isLivenet}
+                ethNodeURL={uiStore.ethNodeUrl}
+                snmNodeURL={uiStore.sidechainNodeUrl}
             >
                 {p.children}
             </AppView>

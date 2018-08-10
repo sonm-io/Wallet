@@ -150,7 +150,7 @@ export class Deal extends Layout<IProps> {
     public render() {
         const dealDetailsStore = this.dealDetailsStore;
         const deal = dealDetailsStore.deal;
-        const marketAccount = this.rootStore.marketStore.marketAccountAddress.toLowerCase();
+        const marketAccount = this.rootStore.myProfilesStore.currentProfileAddress.toLowerCase();
         const isOwner =
             deal.supplier.address.toLowerCase() ===
                 marketAccount.toLowerCase() ||

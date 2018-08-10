@@ -77,7 +77,8 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
 
     protected syncStores() {
         autorun(() => {
-            const fromAddress = this.rootStore.marketStore.marketAccountAddress;
+            const fromAddress = this.rootStore.myProfilesStore
+                .currentProfileAddress;
             const primaryTokenAddress = this.rootStore.currencyStore
                 .primaryTokenAddress;
 

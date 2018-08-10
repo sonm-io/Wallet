@@ -23,7 +23,7 @@ export class OrderCompleteBuy extends Layout<IOrderBuySuccessProps> {
     };
 
     protected handleClickOrder = () => {
-        const address = this.rootStore.marketStore.marketAccountAddress;
+        const address = this.rootStore.myProfilesStore.currentProfileAddress;
 
         this.props.onClickOrders(address);
     };

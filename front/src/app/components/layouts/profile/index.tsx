@@ -34,7 +34,7 @@ export class Profile extends Layout<IProps> {
                 supplierToken="--"
                 my={
                     profile.address.toLowerCase() ===
-                    this.rootStore.marketStore.marketAccountAddress.toLowerCase()
+                    this.rootStore.myProfilesStore.currentProfileAddress.toLowerCase()
                 }
                 userName={profile.name}
                 countryAbCode2={profile.country}

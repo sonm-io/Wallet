@@ -39,30 +39,18 @@ export interface IOrderDetailsStoreApi {
     waitForDeal: (accountAddress: string, id: string) => Promise<IOrderParams>;
 }
 
-export interface IOrderDetailsStoreExternal {
-    market: {
-        marketAccountAddress: string;
-    };
-}
-
 export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     protected rootStore: RootStore;
-    protected externalStores: IOrderDetailsStoreExternal;
     protected api: IOrderDetailsStoreApi;
     protected localizator: ILocalizator;
     protected errorProcessor: IErrorProcessor;
 
-    constructor(
-        rootStore: RootStore,
-        externalStores: IOrderDetailsStoreExternal,
-        params: IOrderDetailsStoreServices,
-    ) {
+    constructor(rootStore: RootStore, params: IOrderDetailsStoreServices) {
         super({
             localizator: params.localizator,
             errorProcessor: params.errorProcessor,
         });
 
-        this.externalStores = externalStores;
         this.api = params.api;
         this.localizator = params.localizator;
         this.errorProcessor = params.errorProcessor;
@@ -137,7 +125,8 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         const password = this.password;
         const orderId = this.orderId;
         const duration = this.duration;
-        const accountAddress = this.externalStores.market.marketAccountAddress;
+        const accountAddress = this.rootStore.myProfilesStore
+            .currentProfileAddress;
 
         const { data, validation } = yield this.api.quickBuy(
             accountAddress,
@@ -230,10 +219,10 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
         if (price !== undefined && duration !== undefined) {
             const balance =
-                this.rootStore.marketStore.marketAccountView === undefined
+                this.rootStore.myProfilesStore.currentProfileView === undefined
                     ? undefined
                     : new BN(
-                          this.rootStore.marketStore.marketAccountView.usdBalance,
+                          this.rootStore.myProfilesStore.currentProfileView.usdBalance,
                       );
 
             if (balance !== undefined) {

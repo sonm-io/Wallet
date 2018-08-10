@@ -45,7 +45,7 @@ export class WorkerList extends React.Component<IProps, any> {
         const rootStore = this.rootStore;
         const link = await rootStore.mainStore.confirmWorker(
             password,
-            rootStore.marketStore.marketAccountAddress,
+            rootStore.myProfilesStore.currentProfileAddress,
             this.state.slaveId,
         );
 
@@ -75,7 +75,7 @@ export class WorkerList extends React.Component<IProps, any> {
         return (
             <WorkerListView
                 marketAccountAddress={
-                    this.rootStore.marketStore.marketAccountAddress
+                    this.rootStore.myProfilesStore.currentProfileAddress
                 }
                 page={listStore.page}
                 total={toJS(listStore.total)}

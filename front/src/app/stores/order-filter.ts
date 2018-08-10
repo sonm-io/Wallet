@@ -182,7 +182,7 @@ export class OrderFilterStore implements IFilterStore {
 
     @computed
     public get myAddress() {
-        return this.rootStore.marketStore.marketAccountAddress;
+        return this.rootStore.myProfilesStore.currentProfileAddress;
     }
 
     @computed
