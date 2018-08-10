@@ -1,38 +1,17 @@
 Fullscreen load mask
 
 ```js
-class LoadMaskPreview extends React.Component {
-    constructor(props) {
-        super(props);
+const LoadMaskPreview = require('./preview.tsx');
 
-        this.state = {
-            isLoadMaskVisible: false,
-        };
+<LoadMaskPreview delay={5000} />;
+```
 
-        this.handleClick = this.handleClick.bind(this);
-    }
+Appearance is debounced
 
-    handleClick() {
-        if (!this.state.isLoadMaskVisible) {
-            this.setState({ isLoadMaskVisible: true });
-            setTimeout(() => this.setState({ isLoadMaskVisible: false }), 5000);
-        }
-    }
+```js
+const LoadMaskPreview = require('./preview.tsx');
 
-    render() {
-        return (
-            <LoadMask visible={this.state.isLoadMaskVisible}>
-                <button onClick={this.handleClick}>
-                    {this.state.isLoadMaskVisible
-                        ? 'Please wait for 5 seconds'
-                        : 'Show load mask (5 sec)'}
-                </button>
-            </LoadMask>
-        );
-    }
-}
-
-<LoadMaskPreview />;
+<LoadMaskPreview delay={200} />;
 ```
 
 Region load mask with incorrect parent
@@ -58,7 +37,7 @@ Region load
 Big region load
 
 ```js
-<div style={{ position: 'relative', width: '300px', height: '1000px' }}>
+<div style={{ position: 'relative', width: '300px', height: '2000px' }}>
     <LoadMask region white visible>
         <h1>Text text text</h1>
     </LoadMask>
