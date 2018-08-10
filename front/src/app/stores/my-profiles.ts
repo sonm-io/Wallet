@@ -1,7 +1,7 @@
 import * as sortBy from 'lodash/fp/sortBy';
 import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import { observable, computed, action, reaction } from 'mobx';
+import { observable, computed, action, reaction, IReactionPublic } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { IAccountItemView } from 'app/stores/types';
 import Api, { IProfileFull, IMarketStats } from 'app/api';
@@ -35,6 +35,9 @@ interface IMyProfilesStoreServices extends IOnlineStoreServices {
 const sortByName = sortBy(['name', 'address']);
 
 export class MyProfilesStore extends OnlineStore {
+    protected static PROFILE_INTERVAL = 60 * 1000;
+    protected static BALANCE_INTERVAL = 2000;
+
     protected rootStore: RootStore;
     protected services: IMyProfilesStoreServices;
 
@@ -51,9 +54,22 @@ export class MyProfilesStore extends OnlineStore {
 
         reaction(
             () => this.currentProfileAddress,
-            () => this.fetchProfileDetails(),
+            () => this.updateProfileDetails(),
             {
                 name: 'reaction currentProfileAddress',
+            },
+        );
+
+        reaction(
+            () => this.currentProfileAddress,
+            (_: string, r: IReactionPublic) => {
+                setInterval(async () => {
+                    await this.fetchProfileDetails();
+                }, MyProfilesStore.PROFILE_INTERVAL);
+                setInterval(async () => {
+                    await this.updateBalanceAndStats();
+                }, MyProfilesStore.BALANCE_INTERVAL);
+                r.dispose();
             },
         );
 
@@ -61,8 +77,7 @@ export class MyProfilesStore extends OnlineStore {
             () => this.accountAddressList,
             () => this.updateTotalBalance(),
             {
-                name:
-                    'reaction rootStore.myProfilesStore.currentProfileAddress',
+                name: 'reaction accountAddressList',
             },
         );
     }
@@ -291,12 +306,26 @@ export class MyProfilesStore extends OnlineStore {
     @pending
     @catchErrors({ restart: false })
     @asyncAction
+    protected *updateProfileDetails() {
+        yield this.fetchProfileDetails();
+        yield this.updateBalanceAndStats();
+    }
+
+    @pending
+    @catchErrors({ restart: false })
+    @asyncAction
     protected *fetchProfileDetails() {
         this.currentProfileInner = yield this.services.profileApi.fetchByAddress(
             this.rootStore.myProfilesStore.currentProfileAddress,
         );
-        this.updatePublicBalance();
-        this.updateMarketStats();
+    }
+
+    @pending
+    @catchErrors({ restart: false })
+    @asyncAction
+    protected *updateBalanceAndStats() {
+        yield this.updatePublicBalance();
+        yield this.updateMarketStats();
     }
 
     //#region Balance
