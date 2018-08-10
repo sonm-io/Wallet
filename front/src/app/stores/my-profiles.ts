@@ -31,7 +31,9 @@ export class MyProfilesStore extends OnlineStore {
         this.getAccountList();
     }
 
-    @observable public accountMap = new Map<string, IAccountInfo>();
+    @observable protected accountMap = new Map<string, IAccountInfo>();
+
+    public getItem = (key: string) => this.accountMap.get(key);
 
     @asyncAction
     protected *getAccountList() {

@@ -136,7 +136,7 @@ export class MarketStore extends OnlineStore {
     public get marketAccountView(): IAccountItemView | undefined {
         let result;
 
-        const account = this.rootStore.myProfilesStore.accountMap.get(
+        const account = this.rootStore.myProfilesStore.getItem(
             this.marketAccountAddress,
         );
 

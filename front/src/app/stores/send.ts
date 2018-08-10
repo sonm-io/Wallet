@@ -261,7 +261,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     public get fromAddress() {
         return (
             this.userInput.fromAddress ||
-            this.rootStore.myProfilesStore.accountMap.keys().next().value ||
+            this.rootStore.myProfilesStore.accountAddressList[0] ||
             ''
         );
     }
@@ -330,7 +330,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     get currentBalanceMaximumWei() {
-        const account = this.rootStore.myProfilesStore.accountMap.get(
+        const account = this.rootStore.myProfilesStore.getItem(
             this.fromAddress,
         ) as IAccountInfo;
 

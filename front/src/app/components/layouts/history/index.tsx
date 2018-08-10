@@ -48,9 +48,7 @@ export class History extends Layout<IProps> {
             title: 'From',
             render: (_, record) => {
                 const addr = record.fromAddress;
-                const account = this.rootStore.myProfilesStore.accountMap.get(
-                    addr,
-                );
+                const account = this.rootStore.myProfilesStore.getItem(addr);
                 const name = account ? account.name : '';
 
                 return [
@@ -78,9 +76,7 @@ export class History extends Layout<IProps> {
             title: 'To',
             render: (_, record) => {
                 const addr = record.toAddress;
-                const account = this.rootStore.myProfilesStore.accountMap.get(
-                    addr,
-                );
+                const account = this.rootStore.myProfilesStore.getItem(addr);
                 const name = account ? account.name : '';
 
                 return [
