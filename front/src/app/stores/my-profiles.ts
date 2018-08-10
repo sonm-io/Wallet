@@ -72,14 +72,12 @@ export class MyProfilesStore extends OnlineStore {
     @observable
     protected currentProfileInner: IProfileFull = ProfileDetails.emptyProfile; // ToDo a move to entities
 
-    // ToDo a make private
+    @observable protected marketAllBalanceInner: string = '0';
 
-    @observable public marketAllBalance: string = '0';
-
-    @observable public marketBalance: string = '';
+    @observable protected marketBalanceInner: string = '';
 
     @observable
-    public marketStats: IMarketStats = {
+    protected marketStatsInner: IMarketStats = {
         dealsCount: 0,
         dealsPrice: '0',
         daysLeft: 0,
@@ -88,6 +86,21 @@ export class MyProfilesStore extends OnlineStore {
     //#endregion
 
     public getItem = (key: string) => this.accountMap.get(key);
+
+    @computed
+    public get marketAllBalance() {
+        return this.marketAllBalanceInner;
+    }
+
+    @computed
+    public get marketBalance() {
+        return this.marketBalanceInner;
+    }
+
+    @computed
+    public get marketStats(): IMarketStats {
+        return { ...this.marketStatsInner };
+    }
 
     @computed
     public get currentProfileAddress() {
@@ -144,7 +157,7 @@ export class MyProfilesStore extends OnlineStore {
         return sortByName(result) as IAccountItemView[];
     }
 
-    public transformAccountInfoToView = (
+    protected transformAccountInfoToView = (
         info: IAccountInfo,
     ): IAccountItemView => {
         const isCurrencyListEmpty = this.rootStore.currencyStore.size === 0;
@@ -370,7 +383,7 @@ export class MyProfilesStore extends OnlineStore {
             balance = balance.add(new BN(accountBalance));
         }
 
-        this.marketAllBalance = balance.toString(10);
+        this.marketAllBalanceInner = balance.toString(10);
     }
 
     @catchErrors({ restart: true })
@@ -380,13 +393,13 @@ export class MyProfilesStore extends OnlineStore {
             this.currentProfileAddress,
         );
 
-        this.marketBalance = balance;
+        this.marketBalanceInner = balance;
     }
 
     @catchErrors({ restart: true })
     @asyncAction
     protected *updateMarketStats() {
-        this.marketStats = yield this.services.marketApi.fetchMarketStats(
+        this.marketStatsInner = yield this.services.marketApi.fetchMarketStats(
             this.currentProfileAddress,
         );
     }
