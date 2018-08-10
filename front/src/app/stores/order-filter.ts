@@ -1,14 +1,11 @@
 import { observable, computed, action } from 'mobx';
-import {
-    EnumProfileStatus,
-    EnumOrderSide,
-    EnumOrderStatus,
-} from 'app/api/types';
+import { EnumOrderSide, EnumOrderStatus } from 'app/api/types';
 import { RootStore } from 'app/stores';
 import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
 import { validatePositiveInteger } from '../utils/validation/validate-positive-integer';
 import { IFilterStore } from './list-store';
 import validatePositiveNumber from '../utils/validation/validate-positive-number';
+import { EnumProfileStatus } from 'app/entities/account';
 
 export enum EnumOrderOwnerType {
     market,

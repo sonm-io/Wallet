@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { EnumProfileStatus } from 'app/api/types';
 import { ProfileStatus } from 'app/components/common/profile-status/index';
+import { EnumProfileStatus } from 'app/entities/account';
 
 export interface ICertificateProps {
     className?: string;

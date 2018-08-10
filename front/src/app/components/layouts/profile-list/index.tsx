@@ -2,8 +2,8 @@ import * as React from 'react';
 import { ProfileListView } from './view';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
-import { IProfileBrief } from 'app/api/types';
 import { injectRootStore, Layout, IHasRootStore } from '../layout';
+import { IProfileBrief } from 'app/entities/account';
 
 interface IProps extends IHasRootStore {
     className?: string;

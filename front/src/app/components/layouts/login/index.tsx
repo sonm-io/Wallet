@@ -224,7 +224,6 @@ export class Login extends React.Component<IProps, IState> {
         event.preventDefault();
         this.setState({ pending: true });
         try {
-            // ToDo a
             const { validation, data: success } = await Api.unlockWallet(
                 this.state.password,
                 this.state.name,

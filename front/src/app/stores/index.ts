@@ -1,5 +1,5 @@
 import { useStrict } from 'mobx';
-import { IProfileBrief, IOrder, IDeal, IWorker } from 'app/api/types';
+import { IOrder, IDeal, IWorker } from 'app/api/types';
 import { HistoryListStore } from './history-list';
 import { HistoryFilterStore } from './history-filter';
 import { MainStore } from './main';
@@ -31,6 +31,7 @@ import { MyProfilesStore } from './my-profiles';
 import { CurrencyStore } from './currency';
 import { WalletStore } from './wallet';
 import { GasPriceStore } from './gas-price';
+import { IProfileBrief } from 'app/entities/account';
 
 useStrict(true);
 

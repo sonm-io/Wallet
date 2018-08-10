@@ -4,17 +4,14 @@ import Input from 'antd/es/input';
 import * as cn from 'classnames';
 import { ColumnProps } from 'antd/lib/table';
 import { FixedSelect, ISelectItem } from 'app/components/common/fixed-select';
-import {
-    IProfileBrief,
-    EnumProfileStatus,
-    EnumProfileRole,
-} from 'app/api/types';
+import { EnumProfileRole } from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { Country } from 'app/components/common/country';
 import { getMap } from 'app/components/common/country/lands-utils';
 import { ProfileStatus } from 'app/components/common/profile-status';
 import { MultiSelect } from 'app/components/common/multiselect/index';
+import { EnumProfileStatus, IProfileBrief } from 'app/entities/account';
 
 class ProfileTable extends Table<IProfileBrief> {}
 

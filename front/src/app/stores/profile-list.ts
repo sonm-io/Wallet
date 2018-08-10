@@ -1,4 +1,4 @@
 import { ListStore } from './list-store';
-import { IProfileBrief } from '../api/types';
+import { IProfileBrief } from 'app/entities/account';
 
 export class ProfileList extends ListStore<IProfileBrief> {}

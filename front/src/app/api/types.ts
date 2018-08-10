@@ -1,4 +1,5 @@
 import { TUsdWeiPerSeconds, TSeconds } from 'app/entities/types';
+import { IAccountBrief } from 'app/entities/account';
 
 export interface IRawAccount {
     json: string;
@@ -31,10 +32,6 @@ export interface ISendTransactionResult extends ISendTransaction {
     confirmCount: number;
     status: TransactionStatus;
     hash: string;
-}
-
-export interface ICurrencyBalanceMap {
-    [address: string]: string; // address => balance
 }
 
 export interface ITxListFilter {
@@ -76,52 +73,14 @@ export enum NetworkEnum {
     rinkeby = 'rinkeby',
 }
 
-export enum EnumProfileStatus {
-    anonimest = 0,
-    anon = 1,
-    reg = 2,
-    ident = 3,
-    pro = 4,
-}
-
 export enum EnumProfileRole {
     customer = 2,
     supplier = 1,
 }
 
-export interface IAttribute {
-    label: string;
-    value: string;
-}
-
-export interface IProfileBrief extends IAccountBrief {
-    sellOrders: number;
-    buyOrders: number;
-    deals: number;
-    country: string;
-    logoUrl: string;
-}
-
-export interface IProfileFull extends IProfileBrief {
-    attributes: Array<IAttribute>;
-    description: string;
-    certificates: Array<ICertificate>;
-}
-
-export interface ICertificate {
-    status: EnumProfileStatus;
-    address: string;
-}
-
 export interface IListResult<T> {
     records: Array<T>;
     total: number;
-}
-
-export interface IAccountBrief {
-    name?: string;
-    address: string;
-    status: EnumProfileStatus;
 }
 
 export interface IBenchmarkMap {

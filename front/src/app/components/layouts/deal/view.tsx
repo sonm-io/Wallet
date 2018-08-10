@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IAccountBrief, IBenchmarkMap } from 'app/api/types';
+import { IBenchmarkMap } from 'app/api/types';
 import { Benchmark } from 'app/components/common/benchmark';
 import {
     PropertyList,
@@ -19,6 +19,7 @@ import { Checkbox } from 'app/components/common/checkbox';
 import { FormRow, FormField } from 'app/components/common/form';
 import { DealActions } from './types';
 import { IChangeParams } from 'app/components/common/types';
+import { IAccountBrief } from 'app/entities/account';
 
 interface IDealData {
     id: string;

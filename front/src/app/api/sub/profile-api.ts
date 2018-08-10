@@ -1,11 +1,10 @@
+import { IListResult, IListQuery, ISender } from '../types';
 import {
-    IListResult,
-    IListQuery,
+    TypeProfileList,
+    TypeProfileFull,
     IProfileBrief,
-    ISender,
     IProfileFull,
-} from '../types';
-import { TypeProfileList, TypeProfileFull } from '../runtime-types';
+} from 'app/entities/account';
 
 export class ProfileApi {
     private ipc: ISender;

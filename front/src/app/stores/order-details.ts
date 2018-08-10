@@ -9,11 +9,11 @@ import { RootStore } from './';
 import {
     IOrderParams,
     EnumOrderStatus,
-    EnumProfileStatus,
     IOrder,
     EnumOrderSide,
 } from 'app/api/types';
 import { createBigNumber, BN } from '../utils/create-big-number';
+import { EnumProfileStatus } from 'app/entities/account';
 
 const SECS_IN_HOUR = new BN('3600');
 const SECS_IN_DAY = SECS_IN_HOUR.mul(new BN('24'));

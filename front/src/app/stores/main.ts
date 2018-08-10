@@ -79,7 +79,7 @@ export class MainStore extends OnlineStore {
         }
     }
 
-    // ToDo a Move to WorkerList store.
+    // ToDo a Move to WorkerList store after create FormStore.
     @pending
     @asyncAction
     public *confirmWorker(password: string, address: string, slaveId: string) {

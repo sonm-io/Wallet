@@ -14,9 +14,8 @@ import {
     IKycValidator,
     IWorker,
 } from './types';
-import { TypeAccountInfoList } from './runtime-types';
 import { ICurrencyInfo } from 'app/entities/currency';
-import { IAccountInfo } from 'app/entities/account';
+import { IAccountInfo, TypeAccountInfoList } from 'app/entities/account';
 import { IConnectionInfo } from 'app/entities/connection';
 
 export * from './types';
@@ -238,5 +237,4 @@ class AllApi {
 
 export const Api = new AllApi();
 (window as any).__api = Api;
-// debugger; // ToDo a
 export default Api;

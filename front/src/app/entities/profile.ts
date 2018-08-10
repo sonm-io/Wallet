@@ -1,5 +1,5 @@
-import { EnumProfileStatus } from '../api/types';
 import { TPrice, TEthereumAddress } from './types';
+import { EnumProfileStatus } from 'app/entities/account';
 
 export interface IProfileBrief {
     logoUrl?: string;

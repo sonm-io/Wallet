@@ -4,8 +4,9 @@ import { ILocalizator } from 'app/localization';
 const { pending, catchErrors } = OnlineStore;
 import { asyncAction } from 'mobx-utils';
 import { RootStore } from './';
-import { IProfileFull, EnumProfileStatus, IKycValidator } from 'app/api/types';
+import { IKycValidator } from 'app/api/types';
 import { TEthereumAddress } from '../entities/types';
+import { EnumProfileStatus, IProfileFull } from 'app/entities/account';
 
 export interface IOrderDetails {
     setAddress(address: TEthereumAddress): TEthereumAddress;
