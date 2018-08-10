@@ -206,7 +206,7 @@ export class OrderCreateStore extends OnlineStore
     @computed
     public get deposit(): string {
         const account = this.rootStore.myProfilesStore.currentProfileView;
-        return account !== undefined ? account.primaryTokenBalance : ''; // ToDo a
+        return account !== undefined ? account.primaryTokenBalance : '';
     }
 
     //#region UserInput

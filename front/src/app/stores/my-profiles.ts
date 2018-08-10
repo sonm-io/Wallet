@@ -337,7 +337,6 @@ export class MyProfilesStore extends OnlineStore {
         );
     }
 
-    // ToDo a
     @computed
     public get primaryTokenBalance(): string {
         return MyProfilesStore.getTokenBalance(
@@ -346,14 +345,12 @@ export class MyProfilesStore extends OnlineStore {
         );
     }
 
-    // ToDo a
     private static getTokenBalance(fullList: ICurrencyInfo[], address: string) {
         const item = fullList.find(x => x.address === address);
         const balance = item ? item.balance : '';
         return balance || '0';
     }
 
-    // ToDo a
     /**
      * Returns balance amount of passed accounts for each currency.
      */
@@ -392,7 +389,6 @@ export class MyProfilesStore extends OnlineStore {
         return result;
     }
 
-    // ToDo a
     @computed
     public get fullBalanceList(): ICurrencyInfo[] {
         const allAccountsAddresses = this.rootStore.myProfilesStore
