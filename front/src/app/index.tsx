@@ -45,6 +45,9 @@ class Renderer {
 
 async function handleLogin(wallet: IWalletListItem) {
     const rootStore = new RootStore(en);
+    if (IS_DEV) {
+        (window as any).__rootStore = rootStore;
+    }
     const renderer = new Renderer(rootStore);
     history.listen(renderer.renderByPath.bind(renderer));
     await Promise.all([rootStore.walletStore.init(wallet)]);
