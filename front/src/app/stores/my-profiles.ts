@@ -1,16 +1,18 @@
 import * as sortBy from 'lodash/fp/sortBy';
 import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import { observable, computed } from 'mobx';
+import { observable, computed, autorun } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { IAccountItemView } from 'app/stores/types';
-import Api from 'app/api';
+import Api, { IProfileFull } from 'app/api';
 import { IValidation } from 'app/localization/types';
 import { RootStore } from 'app/stores';
 import { IAccountInfo } from 'app/entities/account';
 const { pending, catchErrors } = OnlineStore;
 import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ICurrencyInfo } from 'app/entities/currency';
+import ProfileDetails from 'app/stores/profile-details';
+import ProfileApi from 'app/api/sub/profile-api';
 
 interface IMainFormValues {
     password: string;
@@ -20,20 +22,47 @@ interface IMainFormValues {
     json: string;
 }
 
+interface IMyProfilesStoreServices extends IOnlineStoreServices {
+    profileApi: ProfileApi;
+}
+
 const sortByName = sortBy(['name', 'address']);
 
 export class MyProfilesStore extends OnlineStore {
     protected rootStore: RootStore;
+    protected profileApi: ProfileApi;
 
-    constructor(rootStore: RootStore, services: IOnlineStoreServices) {
+    constructor(rootStore: RootStore, services: IMyProfilesStoreServices) {
         super(services);
         this.rootStore = rootStore;
+        this.profileApi = services.profileApi;
         this.getAccountList();
     }
 
+    public init() {
+        // ToDo a move it to constructor after move marketAccountAddress to this store.
+        autorun(() => {
+            if (this.rootStore.marketStore.marketAccountAddress !== '') {
+                this.fetchProfileDetails();
+            }
+        });
+    }
+
+    //#region Private State
+
     @observable protected accountMap = new Map<string, IAccountInfo>();
 
+    @observable
+    protected currentProfileInner: IProfileFull = ProfileDetails.emptyProfile; // ToDo a move to entities
+
+    //#endregion
+
     public getItem = (key: string) => this.accountMap.get(key);
+
+    @computed
+    public get currentProfile() {
+        return { ...this.currentProfileInner };
+    }
 
     @asyncAction
     protected *getAccountList() {
@@ -180,6 +209,15 @@ export class MyProfilesStore extends OnlineStore {
         } else {
             return privateKey;
         }
+    }
+
+    @pending
+    @catchErrors({ restart: false })
+    @asyncAction
+    protected *fetchProfileDetails() {
+        this.currentProfileInner = yield this.profileApi.fetchByAddress(
+            this.rootStore.marketStore.marketAccountAddress,
+        );
     }
 
     //#region Balance

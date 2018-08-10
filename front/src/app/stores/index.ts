@@ -119,6 +119,7 @@ export class RootStore implements IHasLocalizator {
         this.myProfilesStore = new MyProfilesStore(this, {
             localizator,
             errorProcessor: this.uiStore,
+            profileApi: Api.profile,
         });
 
         this.mainStore = new MainStore(this, { localizator: this.localizator });
@@ -159,6 +160,7 @@ export class RootStore implements IHasLocalizator {
                 fetchMarketStats: Api.deal.fetchStats,
             },
         });
+        this.myProfilesStore.init(); // ToDo a remove it after move marketAccountAddress to MyProfilesStore.
 
         this.profileFilterStore = new ProfileFilterStore();
 

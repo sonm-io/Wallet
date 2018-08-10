@@ -1,15 +1,13 @@
-import { observable, computed, action, autorun } from 'mobx';
+import { observable, computed, action } from 'mobx';
 import { updateUserInput } from './utils/update-user-input';
 import validatePositiveNumber from '../utils/validation/validate-positive-number';
 import { validatePositiveInteger } from '../utils/validation/validate-positive-integer';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
 import { IProfileBrief } from 'app/entities/profile';
-import { IProfileFull } from 'app/api/types';
 import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
 import { asyncAction } from 'mobx-utils';
 import { RootStore } from 'app/stores';
 import ProfileApi from 'app/api/sub/profile-api';
-import { ProfileDetails } from 'app/stores/profile-details';
 const { pending, catchErrors } = OnlineStore;
 
 interface IDealDetails {
@@ -112,12 +110,6 @@ export class OrderCreateStore extends OnlineStore
         super(services);
         this.rootStore = rootStore;
         this.profileApi = services.profileApi;
-
-        autorun(() => {
-            if (this.rootStore.marketStore.marketAccountAddress !== '') {
-                this.fetchProfileDetails();
-            }
-        });
     }
 
     @observable public userInput: IOrderCreateParams = defaultParams;
@@ -137,9 +129,6 @@ export class OrderCreateStore extends OnlineStore
         this.isConfirmationState = false;
         this.validationMessage = undefined;
     }
-
-    @observable
-    protected profileDetails: IProfileFull = ProfileDetails.emptyProfile;
 
     private mockApiCall = async (password: string): Promise<string> => {
         return new Promise<string>(function(resolve, reject) {
@@ -194,28 +183,19 @@ export class OrderCreateStore extends OnlineStore
     }
     //#endregion
 
-    @pending
-    @catchErrors({ restart: false })
-    @asyncAction
-    protected *fetchProfileDetails() {
-        this.profileDetails = yield this.profileApi.fetchByAddress(
-            this.rootStore.marketStore.marketAccountAddress,
-        );
-    }
-
     @computed
     public get profile(): IProfileBrief {
         const account = this.rootStore.marketStore.marketAccountView;
-
+        const status = this.rootStore.myProfilesStore.currentProfile.status;
         return account !== undefined
             ? {
                   address: account.address,
                   name: account.name,
-                  status: this.profileDetails.status,
+                  status,
               }
             : {
                   address: '0',
-                  status: this.profileDetails.status,
+                  status,
               };
     }
 
