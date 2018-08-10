@@ -80,7 +80,7 @@ export class MainStore extends OnlineStore {
     protected rootStore: RootStore;
 
     @observable.ref protected walletInfo?: IWalletListItem;
-    @observable.ref public connectionInfo: IConnectionInfo;
+    @observable.ref protected connectionInfo: IConnectionInfo;
 
     @computed
     get firstAccountAddress(): IAccountInfo {
@@ -95,11 +95,6 @@ export class MainStore extends OnlineStore {
     @computed
     public get networkName(): string {
         return (this.walletInfo ? this.walletInfo.chainId : '').toLowerCase();
-    }
-
-    @computed
-    public get nodeUrl(): string {
-        return this.walletInfo ? this.walletInfo.nodeUrl : '';
     }
 
     @computed
@@ -312,6 +307,9 @@ export class MainStore extends OnlineStore {
         );
 
         this.connectionInfo = (yield Api.getConnectionInfo()).data;
+
+        // FIXME WHAT THE FUCK ?
+        // REMOVE IT FROM HERE NAHUY PLEASE
         this.rootStore.marketStore.updateValidators();
     }
 
@@ -536,6 +534,21 @@ export class MainStore extends OnlineStore {
     @action.bound
     public resetServerValidation() {
         this.serverValidation = {};
+    }
+
+    @computed
+    public get isLivenet() {
+        return !this.connectionInfo.isTest;
+    }
+
+    @computed
+    public get ethNodeUrl() {
+        return this.connectionInfo.ethNodeURL;
+    }
+
+    @computed
+    public get sidechainNodeUrl() {
+        return this.connectionInfo.snmNodeURL;
     }
 }
 
