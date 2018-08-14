@@ -12,7 +12,7 @@ import { Input } from 'app/components/common/input';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 import { IChangeParams } from 'app/components/common/types';
 import {
-    injectRootStore,
+    withRootStore,
     IHasRootStore,
     Layout,
 } from 'app/components/layouts/layout';
@@ -35,31 +35,33 @@ interface IDWProps extends IProps {
 type PriorityInput = new () => ButtonGroup<string>;
 const PriorityInput = ButtonGroup as PriorityInput;
 
-@injectRootStore
-export class Deposit extends Layout<IProps> {
-    public render() {
-        return (
-            <DepositWithdraw
-                {...this.props}
-                sendStore={this.rootStore.depositStore}
-                title="Deposit"
-            />
-        );
-    }
-}
+export const Deposit = withRootStore(
+    class extends Layout<IProps> {
+        public render() {
+            return (
+                <DepositWithdraw
+                    {...this.props}
+                    sendStore={this.rootStore.depositStore}
+                    title="Deposit"
+                />
+            );
+        }
+    },
+);
 
-@injectRootStore
-export class Withdraw extends Layout<IProps> {
-    public render() {
-        return (
-            <DepositWithdraw
-                {...this.props}
-                sendStore={this.rootStore.withdrawStore}
-                title="Withdraw"
-            />
-        );
-    }
-}
+export const Withdraw = withRootStore(
+    class extends Layout<IProps> {
+        public render() {
+            return (
+                <DepositWithdraw
+                    {...this.props}
+                    sendStore={this.rootStore.withdrawStore}
+                    title="Withdraw"
+                />
+            );
+        }
+    },
+);
 
 @observer
 class DepositWithdraw extends React.Component<IDWProps, any> {

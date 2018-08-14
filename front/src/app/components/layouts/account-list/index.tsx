@@ -19,7 +19,7 @@ import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
 import { IValidation } from 'app/api/types';
 import { IAccountItemView } from 'app/stores/types';
-import { injectRootStore, IHasRootStore } from '../layout';
+import { IHasRootStore, withRootStore } from '../layout';
 import { RootStore } from 'app/stores';
 
 enum WalletDialogs {
@@ -42,217 +42,228 @@ interface IState {
 
 class DeletableItem extends DeletableItemWithConfirmation<IAccountItemProps> {}
 
-@injectRootStore
-@observer
-export class Wallets extends React.Component<IProps, IState> {
-    // ToDo make stateless
-    protected get rootStore() {
-        return this.props.rootStore as RootStore;
-    }
+export const Wallets = withRootStore(
+    observer(
+        class extends React.Component<IProps, IState> {
+            // ToDo make stateless
+            protected get rootStore() {
+                return this.props.rootStore as RootStore;
+            }
 
-    public state = {
-        visibleDialog: WalletDialogs.none,
-        visibleDialogProps: [] as any[],
-    };
+            public state = {
+                visibleDialog: WalletDialogs.none,
+                visibleDialogProps: [] as any[],
+            };
 
-    protected handleClickAccount(address: string) {
-        navigate({ path: `/wallet/accounts/${address}` }); // TODO move to router
-    }
+            protected handleClickAccount(address: string) {
+                navigate({ path: `/wallet/accounts/${address}` }); // TODO move to router
+            }
 
-    private handleDelete = (deleteAddress: string) => {
-        this.rootStore.myProfilesStore.deleteAccount(deleteAddress);
-    };
+            private handleDelete = (deleteAddress: string) => {
+                this.rootStore.myProfilesStore.deleteAccount(deleteAddress);
+            };
 
-    protected handleAddAccount = async (data: IImportAccountForm) => {
-        await this.rootStore.myProfilesStore.addAccount(
-            data.json,
-            data.password,
-            data.name,
-        );
+            protected handleAddAccount = async (data: IImportAccountForm) => {
+                await this.rootStore.myProfilesStore.addAccount(
+                    data.json,
+                    data.password,
+                    data.name,
+                );
 
-        if (this.rootStore.mainStore.noValidationMessages) {
-            this.closeDialog();
-        }
-    };
+                if (this.rootStore.mainStore.noValidationMessages) {
+                    this.closeDialog();
+                }
+            };
 
-    protected handleCreateAccount = async (data: ICreateAccountForm) => {
-        await this.rootStore.myProfilesStore.createAccount(
-            data.password,
-            data.name,
-            data.privateKey,
-        );
+            protected handleCreateAccount = async (
+                data: ICreateAccountForm,
+            ) => {
+                await this.rootStore.myProfilesStore.createAccount(
+                    data.password,
+                    data.name,
+                    data.privateKey,
+                );
 
-        if (this.rootStore.mainStore.noValidationMessages) {
-            this.closeDialog();
-        }
-    };
+                if (this.rootStore.mainStore.noValidationMessages) {
+                    this.closeDialog();
+                }
+            };
 
-    protected switchDialog(name: WalletDialogs, ...args: any[]) {
-        this.setState({
-            visibleDialog: name,
-            visibleDialogProps: args,
-        });
-    }
+            protected switchDialog(name: WalletDialogs, ...args: any[]) {
+                this.setState({
+                    visibleDialog: name,
+                    visibleDialogProps: args,
+                });
+            }
 
-    protected closeDialog = () => {
-        this.rootStore.mainStore.resetServerValidation();
-        this.switchDialog(WalletDialogs.none);
-    };
-    protected openNewWalletDialog = this.switchDialog.bind(
-        this,
-        WalletDialogs.new,
-    );
-    protected openAddWalletDialog = this.switchDialog.bind(
-        this,
-        WalletDialogs.add,
-    );
+            protected closeDialog = () => {
+                this.rootStore.mainStore.resetServerValidation();
+                this.switchDialog(WalletDialogs.none);
+            };
+            protected openNewWalletDialog = this.switchDialog.bind(
+                this,
+                WalletDialogs.new,
+            );
+            protected openAddWalletDialog = this.switchDialog.bind(
+                this,
+                WalletDialogs.add,
+            );
 
-    protected handleRename = (address: string, name: string) => {
-        this.rootStore.myProfilesStore.renameAccount(address, name);
-    };
+            protected handleRename = (address: string, name: string) => {
+                this.rootStore.myProfilesStore.renameAccount(address, name);
+            };
 
-    protected handleRequireAddToken = () => {
-        this.switchDialog(WalletDialogs.addToken);
-    };
+            protected handleRequireAddToken = () => {
+                this.switchDialog(WalletDialogs.addToken);
+            };
 
-    protected handleDeleteToken = (address: string) => {
-        this.rootStore.currencyStore.removeToken(address);
-    };
+            protected handleDeleteToken = (address: string) => {
+                this.rootStore.currencyStore.removeToken(address);
+            };
 
-    protected handleShowPrivateKey = (address: string) => {
-        this.switchDialog(WalletDialogs.showPrivateKey, address);
-    };
+            protected handleShowPrivateKey = (address: string) => {
+                this.switchDialog(WalletDialogs.showPrivateKey, address);
+            };
 
-    protected handleClickProfileIcon = (address: string) => {
-        this.rootStore.myProfilesStore.setCurrentProfile(address);
-        this.props.navigateToProfile(address);
-    };
+            protected handleClickProfileIcon = (address: string) => {
+                this.rootStore.myProfilesStore.setCurrentProfile(address);
+                this.props.navigateToProfile(address);
+            };
 
-    public render() {
-        const { className } = this.props;
-        const rootStore = this.rootStore;
-        return (
-            <div className={cn('sonm-accounts', className)}>
-                <DownloadFile
-                    getData={rootStore.walletStore.getWalletExportText}
-                    className="sonm-accounts__export-wallet"
-                    fileName={`sonm-wallet-${
-                        rootStore.walletStore.walletName
-                    }.json`}
-                >
-                    <Button
-                        tag="div"
-                        color="gray"
-                        square
-                        transparent
-                        height={40}
-                        className="sonm-accounts__export-wallet-button"
-                    >
-                        <Icon i="Export" />
-                        {' Export wallet'}
-                    </Button>
-                </DownloadFile>
-                <div className="sonm-accounts__list">
-                    {rootStore.myProfilesStore.accountList.length === 0 ? (
-                        <EmptyAccountList />
-                    ) : (
-                        rootStore.myProfilesStore.accountList.map(
-                            (x: IAccountItemView) => {
-                                return (
-                                    <DeletableItem
-                                        item={x}
-                                        Confirmation={DeleteAccountConfirmation}
-                                        className="sonm-accounts__list-item"
-                                        onDelete={this.handleDelete}
-                                        key={x.address}
-                                        id={x.address}
-                                    >
-                                        <AccountItem
-                                            {...x}
-                                            onClickIcon={
-                                                this.handleClickAccount
-                                            }
-                                            onClickShowPrivateKey={
-                                                this.handleShowPrivateKey
-                                            }
-                                            onClickProfileIcon={
-                                                this.handleClickProfileIcon
-                                            }
-                                            onRename={this.handleRename}
-                                            className="sonm-accounts__list-item-inner"
-                                            hasButtons
-                                        />
-                                    </DeletableItem>
-                                );
-                            },
-                        )
-                    )}
-                </div>
-                <CurrencyBalanceList
-                    className="sonm-accounts__balances"
-                    currencyBalanceList={
-                        rootStore.myProfilesStore.fullBalanceList
-                    }
-                    onRequireAddToken={
-                        rootStore.isOffline
-                            ? undefined
-                            : this.handleRequireAddToken
-                    }
-                    onDeleteToken={this.handleDeleteToken}
-                />
-                <div className="sonm-accounts__buttons">
-                    <Button
-                        type="button"
-                        onClick={this.openAddWalletDialog}
-                        color="violet"
-                        className="sonm-accounts__button"
-                    >
-                        IMPORT ACCOUNT
-                    </Button>
-                    <Button
-                        type="button"
-                        onClick={this.openNewWalletDialog}
-                        className="sonm-accounts__button"
-                    >
-                        CREATE ACCOUNT
-                    </Button>
-                    {this.state.visibleDialog === WalletDialogs.new ? (
-                        <CreateAccount
-                            serverValidation={
-                                rootStore.mainStore
-                                    .serverValidation as IValidation
+            public render() {
+                const { className } = this.props;
+                const rootStore = this.rootStore;
+                return (
+                    <div className={cn('sonm-accounts', className)}>
+                        <DownloadFile
+                            getData={rootStore.walletStore.getWalletExportText}
+                            className="sonm-accounts__export-wallet"
+                            fileName={`sonm-wallet-${
+                                rootStore.walletStore.walletName
+                            }.json`}
+                        >
+                            <Button
+                                tag="div"
+                                color="gray"
+                                square
+                                transparent
+                                height={40}
+                                className="sonm-accounts__export-wallet-button"
+                            >
+                                <Icon i="Export" />
+                                {' Export wallet'}
+                            </Button>
+                        </DownloadFile>
+                        <div className="sonm-accounts__list">
+                            {rootStore.myProfilesStore.accountList.length ===
+                            0 ? (
+                                <EmptyAccountList />
+                            ) : (
+                                rootStore.myProfilesStore.accountList.map(
+                                    (x: IAccountItemView) => {
+                                        return (
+                                            <DeletableItem
+                                                item={x}
+                                                Confirmation={
+                                                    DeleteAccountConfirmation
+                                                }
+                                                className="sonm-accounts__list-item"
+                                                onDelete={this.handleDelete}
+                                                key={x.address}
+                                                id={x.address}
+                                            >
+                                                <AccountItem
+                                                    {...x}
+                                                    onClickIcon={
+                                                        this.handleClickAccount
+                                                    }
+                                                    onClickShowPrivateKey={
+                                                        this
+                                                            .handleShowPrivateKey
+                                                    }
+                                                    onClickProfileIcon={
+                                                        this
+                                                            .handleClickProfileIcon
+                                                    }
+                                                    onRename={this.handleRename}
+                                                    className="sonm-accounts__list-item-inner"
+                                                    hasButtons
+                                                />
+                                            </DeletableItem>
+                                        );
+                                    },
+                                )
+                            )}
+                        </div>
+                        <CurrencyBalanceList
+                            className="sonm-accounts__balances"
+                            currencyBalanceList={
+                                rootStore.myProfilesStore.fullBalanceList
                             }
-                            onSubmit={this.handleCreateAccount}
-                            onClickCross={this.closeDialog}
-                        />
-                    ) : null}
-                    {this.state.visibleDialog === WalletDialogs.add ? (
-                        <ImportAccount
-                            existingAccounts={
-                                rootStore.myProfilesStore.accountAddressList
+                            onRequireAddToken={
+                                rootStore.isOffline
+                                    ? undefined
+                                    : this.handleRequireAddToken
                             }
-                            serverValidation={
-                                rootStore.mainStore
-                                    .serverValidation as IImportAccountForm
-                            }
-                            onSubmit={this.handleAddAccount}
-                            onClickCross={this.closeDialog}
+                            onDeleteToken={this.handleDeleteToken}
                         />
-                    ) : null}
-                    {this.state.visibleDialog === WalletDialogs.addToken ? (
-                        <AddToken onClickCross={this.closeDialog} />
-                    ) : null}
-                    {this.state.visibleDialog ===
-                    WalletDialogs.showPrivateKey ? (
-                        <ShowPassword
-                            address={this.state.visibleDialogProps[0]}
-                            onClose={this.closeDialog}
-                        />
-                    ) : null}
-                </div>
-            </div>
-        );
-    }
-}
+                        <div className="sonm-accounts__buttons">
+                            <Button
+                                type="button"
+                                onClick={this.openAddWalletDialog}
+                                color="violet"
+                                className="sonm-accounts__button"
+                            >
+                                IMPORT ACCOUNT
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={this.openNewWalletDialog}
+                                className="sonm-accounts__button"
+                            >
+                                CREATE ACCOUNT
+                            </Button>
+                            {this.state.visibleDialog === WalletDialogs.new ? (
+                                <CreateAccount
+                                    serverValidation={
+                                        rootStore.mainStore
+                                            .serverValidation as IValidation
+                                    }
+                                    onSubmit={this.handleCreateAccount}
+                                    onClickCross={this.closeDialog}
+                                />
+                            ) : null}
+                            {this.state.visibleDialog === WalletDialogs.add ? (
+                                <ImportAccount
+                                    existingAccounts={
+                                        rootStore.myProfilesStore
+                                            .accountAddressList
+                                    }
+                                    serverValidation={
+                                        rootStore.mainStore
+                                            .serverValidation as IImportAccountForm
+                                    }
+                                    onSubmit={this.handleAddAccount}
+                                    onClickCross={this.closeDialog}
+                                />
+                            ) : null}
+                            {this.state.visibleDialog ===
+                            WalletDialogs.addToken ? (
+                                <AddToken onClickCross={this.closeDialog} />
+                            ) : null}
+                            {this.state.visibleDialog ===
+                            WalletDialogs.showPrivateKey ? (
+                                <ShowPassword
+                                    address={this.state.visibleDialogProps[0]}
+                                    onClose={this.closeDialog}
+                                />
+                            ) : null}
+                        </div>
+                    </div>
+                );
+            }
+        },
+    ),
+);
 
 // TODO

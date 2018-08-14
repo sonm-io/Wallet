@@ -3,7 +3,7 @@ import { IFileOpenResult } from 'app/components/common/upload';
 import { shortString } from 'app/utils/short-string';
 import { RootStore } from 'app/stores';
 import { ImportAccountView } from './view';
-import { injectRootStore, IHasRootStore } from 'app/components/layouts/layout';
+import { withRootStore, IHasRootStore } from 'app/components/layouts/layout';
 
 export interface IImportAccountForm {
     json: string;
@@ -27,181 +27,187 @@ const emptyForm: IImportAccountForm = {
 
 const emptyObject: any = {};
 
-@injectRootStore
-export class ImportAccount extends React.Component<IProps, any> {
-    // ToDo make stateless
+export const ImportAccount = withRootStore(
+    class extends React.Component<IProps, any> {
+        // ToDo make stateless
 
-    protected get rootStore() {
-        return this.props.rootStore as RootStore;
-    }
-
-    public state = {
-        fileSuccess: '',
-        address: '',
-        form: emptyForm,
-        validation: emptyObject,
-        dirty: emptyObject,
-    };
-
-    protected handleSubmit = (event: any) => {
-        event.preventDefault();
-
-        const validation = {} as any;
-        const form = this.state.form;
-        const l = this.rootStore.localizator.getMessageText;
-
-        if (!form.password) {
-            validation.password = l('password_required');
+        protected get rootStore() {
+            return this.props.rootStore as RootStore;
         }
 
-        if (!form.name) {
-            validation.name = l('name_required');
-        }
-
-        if (!form.json) {
-            validation.json = l('select_file');
-        } else if (
-            this.props.existingAccounts.indexOf(this.state.address) !== -1
-        ) {
-            validation.json = l('account_already_exists');
-        }
-
-        this.setState({
+        public state = {
+            fileSuccess: '',
+            address: '',
+            form: emptyForm,
+            validation: emptyObject,
             dirty: emptyObject,
-            validation,
-        });
+        };
 
-        if (Object.keys(validation).length === 0) {
-            this.props.onSubmit({
-                json: form.json,
-                password: form.password,
-                name: form.name,
+        protected handleSubmit = (event: any) => {
+            event.preventDefault();
+
+            const validation = {} as any;
+            const form = this.state.form;
+            const l = this.rootStore.localizator.getMessageText;
+
+            if (!form.password) {
+                validation.password = l('password_required');
+            }
+
+            if (!form.name) {
+                validation.name = l('name_required');
+            }
+
+            if (!form.json) {
+                validation.json = l('select_file');
+            } else if (
+                this.props.existingAccounts.indexOf(this.state.address) !== -1
+            ) {
+                validation.json = l('account_already_exists');
+            }
+
+            this.setState({
+                dirty: emptyObject,
+                validation,
             });
+
+            if (Object.keys(validation).length === 0) {
+                this.props.onSubmit({
+                    json: form.json,
+                    password: form.password,
+                    name: form.name,
+                });
+            }
+        };
+
+        protected handleClickCross = () => {
+            this.props.onClickCross();
+        };
+
+        protected nodes: any = {};
+
+        protected saveInputNode(
+            name: string,
+            ref: HTMLInputElement | HTMLButtonElement | null,
+        ) {
+            if (ref && this.nodes[name] !== ref) {
+                this.nodes[name] = ref;
+            }
         }
-    };
 
-    protected handleClickCross = () => {
-        this.props.onClickCross();
-    };
+        protected saveNameInputNode = this.saveInputNode.bind(this, 'name');
 
-    protected nodes: any = {};
+        protected saveUploadInputNode = this.saveInputNode.bind(this, 'upload');
 
-    protected saveInputNode(
-        name: string,
-        ref: HTMLInputElement | HTMLButtonElement | null,
-    ) {
-        if (ref && this.nodes[name] !== ref) {
-            this.nodes[name] = ref;
-        }
-    }
+        protected handleOpenTextFile = (params: IFileOpenResult): boolean => {
+            const update = {} as any;
+            let isCompleted;
 
-    protected saveNameInputNode = this.saveInputNode.bind(this, 'name');
+            try {
+                if (params.error) {
+                    throw new Error(params.error);
+                }
 
-    protected saveUploadInputNode = this.saveInputNode.bind(this, 'upload');
+                const lowerCase = String(
+                    params.text && params.text,
+                ).toLowerCase();
+                const json = JSON.parse(lowerCase);
 
-    protected handleOpenTextFile = (params: IFileOpenResult): boolean => {
-        const update = {} as any;
-        let isCompleted;
+                const address = json.address;
 
-        try {
-            if (params.error) {
-                throw new Error(params.error);
+                if (!address) {
+                    throw new Error('no_addres_in_account_file');
+                }
+
+                update.address = address.startsWith('0x')
+                    ? address
+                    : `0x${address}`;
+
+                update.fileSuccess = params.fileName;
+
+                update.form = {
+                    ...this.state.form,
+                    json: lowerCase,
+                };
+                update.validation = {
+                    ...this.state.validation,
+                    json: '',
+                };
+                update.dirty = {
+                    ...this.state.dirty,
+                    json: true,
+                };
+
+                isCompleted = true;
+            } catch (e) {
+                update.fileSuccess = '';
+                update.address = '';
+                update.validation = {
+                    ...this.state.validation,
+                    json: e.message || 'incorrect_file',
+                };
+
+                isCompleted = false;
             }
 
-            const lowerCase = String(params.text && params.text).toLowerCase();
-            const json = JSON.parse(lowerCase);
+            this.setState(update);
 
-            const address = json.address;
+            return isCompleted;
+        };
 
-            if (!address) {
-                throw new Error('no_addres_in_account_file');
-            }
+        protected handleChangeInput = (event: any) => {
+            const name = event.target.name;
 
-            update.address = address.startsWith('0x')
-                ? address
-                : `0x${address}`;
+            this.setState({
+                form: {
+                    ...this.state.form,
+                    [name]: event.target.value,
+                },
+                validation: {
+                    ...this.state.validation,
+                    [name]: '',
+                },
+                dirty: {
+                    ...this.state.dirty,
+                    [name]: true,
+                },
+            });
+        };
 
-            update.fileSuccess = params.fileName;
+        protected getValidation(fieldName: keyof IImportAccountForm): string {
+            const hasLocalValidation =
+                Object.keys(this.state.validation).length !== 0;
+            const hasBeenChanged = (this.state.dirty as any)[fieldName];
 
-            update.form = {
-                ...this.state.form,
-                json: lowerCase,
-            };
-            update.validation = {
-                ...this.state.validation,
-                json: '',
-            };
-            update.dirty = {
-                ...this.state.dirty,
-                json: true,
-            };
-
-            isCompleted = true;
-        } catch (e) {
-            update.fileSuccess = '';
-            update.address = '';
-            update.validation = {
-                ...this.state.validation,
-                json: e.message || 'incorrect_file',
-            };
-
-            isCompleted = false;
+            return hasBeenChanged
+                ? ''
+                : (hasLocalValidation
+                      ? this.state.validation[fieldName]
+                      : this.props.serverValidation[fieldName]) || '';
         }
 
-        this.setState(update);
+        public render() {
+            const state = this.state;
 
-        return isCompleted;
-    };
-
-    protected handleChangeInput = (event: any) => {
-        const name = event.target.name;
-
-        this.setState({
-            form: {
-                ...this.state.form,
-                [name]: event.target.value,
-            },
-            validation: {
-                ...this.state.validation,
-                [name]: '',
-            },
-            dirty: {
-                ...this.state.dirty,
-                [name]: true,
-            },
-        });
-    };
-
-    protected getValidation(fieldName: keyof IImportAccountForm): string {
-        const hasLocalValidation =
-            Object.keys(this.state.validation).length !== 0;
-        const hasBeenChanged = (this.state.dirty as any)[fieldName];
-
-        return hasBeenChanged
-            ? ''
-            : (hasLocalValidation
-                  ? this.state.validation[fieldName]
-                  : this.props.serverValidation[fieldName]) || '';
-    }
-
-    public render() {
-        const state = this.state;
-
-        return (
-            <ImportAccountView
-                address={state.address}
-                onClickCross={this.handleClickCross}
-                validationJson={this.getValidation('json')}
-                validationName={this.getValidation('name')}
-                validationPassword={this.getValidation('password')}
-                fileHasBeenUplodedText={shortString(this.state.fileSuccess, 20)}
-                existingAccounts={this.props.existingAccounts}
-                onChangeInput={this.handleChangeInput}
-                onOpenTextFile={this.handleOpenTextFile}
-                onSubmit={this.handleSubmit}
-            />
-        );
-    }
-}
+            return (
+                <ImportAccountView
+                    address={state.address}
+                    onClickCross={this.handleClickCross}
+                    validationJson={this.getValidation('json')}
+                    validationName={this.getValidation('name')}
+                    validationPassword={this.getValidation('password')}
+                    fileHasBeenUplodedText={shortString(
+                        this.state.fileSuccess,
+                        20,
+                    )}
+                    existingAccounts={this.props.existingAccounts}
+                    onChangeInput={this.handleChangeInput}
+                    onOpenTextFile={this.handleOpenTextFile}
+                    onSubmit={this.handleSubmit}
+                />
+            );
+        }
+    },
+);
 
 export default ImportAccount;
