@@ -9,7 +9,7 @@ import {
     AlertType,
     IApiSend,
 } from './types';
-import { OnlineStore } from './online-store';
+import { OnlineStore, IOnlineStoreServices } from './online-store';
 const { pending, catchErrors } = OnlineStore;
 import { RootStore } from './';
 import {
@@ -25,7 +25,7 @@ import {
     ZERO,
 } from 'app/utils/create-big-number';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
-import { ILocalizator, IValidation, IHasLocalizator } from 'app/localization';
+import { IValidation } from 'app/localization';
 import { IAccountInfo } from 'app/entities/account';
 
 const emptyForm: ISendFormValues = {
@@ -40,7 +40,7 @@ const emptyForm: ISendFormValues = {
 Object.freeze(emptyForm);
 // const allFormKeys = Object.keys(emptyForm) as Array<keyof ISendFormValues>;
 
-export class SendStore extends OnlineStore implements IHasLocalizator {
+export class SendStore extends OnlineStore {
     public static readonly GAS_LIMIT_SEND_LIVENET = '70000';
     public static readonly GAS_LIMIT_SEND_TESTNET = '1000000';
 
@@ -51,21 +51,20 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     constructor(
         rootStore: RootStore,
-        localizator: ILocalizator,
+        services: IOnlineStoreServices,
         api: IApiSend,
         disableToAddressValidation: boolean = false,
         initialGasLimit: string = SendStore.GAS_LIMIT_SEND_LIVENET,
     ) {
-        super({
-            errorProcessor: rootStore.ui,
-            localizator,
-        });
-
+        super(services);
         this.rootStore = rootStore;
-        this.localizator = localizator;
         this.disableToAddressValidation = disableToAddressValidation;
         this.api = api;
         this.initialGasLimit = initialGasLimit;
+    }
+
+    protected get localizator() {
+        return this.services.localizator;
     }
 
     @computed
@@ -515,8 +514,6 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
         return result;
     }
-
-    public readonly localizator: ILocalizator;
 }
 
 export default SendStore;

@@ -2,10 +2,10 @@ import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { Api } from 'app/api';
 import { AlertType } from './types';
-import { OnlineStore } from './online-store';
+import { OnlineStore, IOnlineStoreServices } from './online-store';
 const { pending, catchErrors } = OnlineStore;
 import { RootStore } from './';
-import { ILocalizator, IValidation } from 'app/localization';
+import { IValidation } from 'app/localization';
 
 interface IMainFormValues {
     password: string;
@@ -23,19 +23,11 @@ const emptyForm: IMainFormValues = {
     json: '',
 };
 
-interface IMainStoreServices {
-    localizator: ILocalizator;
-}
-
 Object.freeze(emptyForm);
 
 export class MainStore extends OnlineStore {
-    constructor(rootStore: RootStore, services: IMainStoreServices) {
-        super({
-            errorProcessor: rootStore.ui,
-            localizator: services.localizator,
-        });
-
+    constructor(rootStore: RootStore, services: IOnlineStoreServices) {
+        super(services);
         this.rootStore = rootStore;
     }
 

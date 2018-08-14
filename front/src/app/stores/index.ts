@@ -104,13 +104,47 @@ export class RootStore implements IHasLocalizator {
         });
     }
 
-    protected create<T>(
+    protected createWithRoot<T>(
         StoreClass: new (root: RootStore, services: IOnlineStoreServices) => T,
     ) {
         return new StoreClass(this, {
             localizator: this.localizator,
             errorProcessor: this.ui,
         });
+    }
+
+    protected createWithServices<T, TService extends object>(
+        StoreClass: new (
+            root: RootStore,
+            services: TService & IOnlineStoreServices,
+        ) => T,
+        services: TService,
+    ) {
+        // Can't write with strict types because of https://github.com/Microsoft/TypeScript/issues/14409
+        const args: any = {
+            ...(services as object),
+            localizator: this.localizator,
+            errorProcessor: this.ui,
+        };
+        return new StoreClass(this, args as TService & IOnlineStoreServices);
+    }
+
+    protected create<T>(
+        StoreClass: new (
+            root: RootStore,
+            services: IOnlineStoreServices,
+            ...rest: any[]
+        ) => T,
+        ...rest: any[]
+    ) {
+        return new StoreClass(
+            this,
+            {
+                localizator: this.localizator,
+                errorProcessor: this.ui,
+            },
+            ...rest,
+        );
     }
     //#endregion
 
@@ -146,11 +180,9 @@ export class RootStore implements IHasLocalizator {
 
         this.wallet = this.createOnline(WalletStore);
 
-        this.currency = this.create(CurrencyStore);
+        this.currency = this.createWithRoot(CurrencyStore);
 
-        this.myProfiles = new MyProfilesStore(this, {
-            localizator,
-            errorProcessor: this.ui,
+        this.myProfiles = this.createWithServices(MyProfilesStore, {
             profileApi: Api.profile,
             marketApi: {
                 fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
@@ -158,16 +190,15 @@ export class RootStore implements IHasLocalizator {
             },
         });
 
-        this.main = new MainStore(this, { localizator: this.localizator });
+        this.main = this.createWithRoot(MainStore);
 
-        this.send = new SendStore(this, this.localizator, {
+        this.send = this.create(SendStore, {
             getPrivateKey: Api.getPrivateKey,
             send: Api.send,
         });
 
-        this.deposit = new SendStore(
-            this,
-            this.localizator,
+        this.deposit = this.create(
+            SendStore,
             {
                 getPrivateKey: Api.getPrivateKey,
                 send: Api.deposit,
@@ -176,9 +207,8 @@ export class RootStore implements IHasLocalizator {
             '150000',
         );
 
-        this.withdraw = new WithdrawStore(
-            this,
-            this.localizator,
+        this.withdraw = this.create(
+            WithdrawStore,
             {
                 getPrivateKey: Api.getPrivateKey,
                 send: Api.withdraw,
@@ -187,9 +217,7 @@ export class RootStore implements IHasLocalizator {
             '150000',
         );
 
-        this.validators = new ValidatorsStore(this, {
-            localizator: this.localizator,
-            errorProcessor: this.ui,
+        this.validators = this.createWithServices(ValidatorsStore, {
             api: {
                 fetchValidators: unwrapApiResult(Api.getValidators),
             },
@@ -211,9 +239,7 @@ export class RootStore implements IHasLocalizator {
             Api.order,
         );
 
-        this.orderCreate = new OrderCreateStore(this, {
-            localizator,
-            errorProcessor: this.ui,
+        this.orderCreate = this.createWithServices(OrderCreateStore, {
             profileApi: Api.profile,
         });
 
@@ -227,26 +253,17 @@ export class RootStore implements IHasLocalizator {
             Api.worker,
         );
 
-        this.orderDetails = new OrderDetails(this, {
-            localizator,
-            errorProcessor: this.ui,
+        this.orderDetails = this.createWithServices(OrderDetails, {
             api: Api.order,
         });
 
-        this.dealDetails = new DealDetails(this, {
-            localizator,
-            errorProcessor: this.ui,
+        this.dealDetails = this.createWithServices(DealDetails, {
             api: Api.deal,
         });
 
-        this.kycList = new KycListStore(this, {
-            localizator,
-            errorProcessor: this.ui,
-        });
+        this.kycList = this.createWithRoot(KycListStore);
 
-        this.profileDetails = new ProfileDetails(this, {
-            localizator,
-            errorProcessor: this.ui,
+        this.profileDetails = this.createWithServices(ProfileDetails, {
             api: Api.profile,
         });
     }
