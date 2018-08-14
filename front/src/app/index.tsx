@@ -9,6 +9,12 @@ import { localizator as en } from 'app/localization';
 import { RootStore } from 'app/stores';
 import { getResolveMethod } from 'app/router';
 
+const { Provider: RootStoreProfider, Consumer } = React.createContext<
+    RootStore | undefined
+>(undefined);
+
+export const RootStoreConsumer = Consumer;
+
 interface ILocationParams {
     pathname: string;
     search: string;
@@ -37,7 +43,11 @@ class Renderer {
         window.document.title = browserTabTitle;
 
         render(
-            <Provider rootStore={this.rootStore}>{content}</Provider>,
+            <Provider rootStore={this.rootStore}>
+                <RootStoreProfider value={this.rootStore}>
+                    {content}
+                </RootStoreProfider>
+            </Provider>,
             window.document.querySelector('#root'),
         );
     }
