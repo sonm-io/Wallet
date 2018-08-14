@@ -8,7 +8,7 @@ import { WithdrawStore } from './withdraw';
 import { ValidatorsStore } from './validators';
 import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
-import { OnlineStore } from './online-store';
+import { OnlineStore, IOnlineStoreServices } from './online-store';
 import { ProfileFilterStore } from './profile-filter';
 import { DealFilterStore } from './deal-filter';
 import { OrderFilterStore } from './order-filter';
@@ -21,7 +21,13 @@ import { WorkerList } from './worker-list';
 import { WorkerFilterStore } from './worker-filter';
 import { Api } from 'app/api';
 import { EnumHistorySourceMode } from './types';
-import { IListStore } from './list-store';
+import {
+    IListStore,
+    IReactiveDependecies,
+    IFilterRead,
+    IListStoreServices,
+    IListStoreApi,
+} from './list-store';
 import { unwrapApiResult } from '../api/utils/unwrap-api-result';
 import { OrderDetails } from './order-details';
 import { DealDetails } from './deal-details';
@@ -65,6 +71,49 @@ export class RootStore implements IHasLocalizator {
     public readonly wallet: WalletStore;
     public readonly gasPrice: GasPriceStore;
 
+    //#region Store Factories
+    protected createList<T, TItem>(
+        StoreClass: new (
+            filter: IReactiveDependecies,
+            services: IListStoreServices<TItem>,
+            allowFetch?: boolean,
+        ) => T,
+        filter: IFilterRead,
+        api: IListStoreApi<TItem>,
+        allowFetch?: boolean,
+    ) {
+        return new StoreClass(
+            {
+                filter,
+            },
+            {
+                localizator: this.localizator,
+                errorProcessor: this.ui,
+                api,
+            },
+            allowFetch,
+        );
+    }
+
+    protected createOnline<T>(
+        StoreClass: new (services: IOnlineStoreServices) => T,
+    ) {
+        return new StoreClass({
+            localizator: this.localizator,
+            errorProcessor: this.ui,
+        });
+    }
+
+    protected create<T>(
+        StoreClass: new (root: RootStore, services: IOnlineStoreServices) => T,
+    ) {
+        return new StoreClass(this, {
+            localizator: this.localizator,
+            errorProcessor: this.ui,
+        });
+    }
+    //#endregion
+
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
 
@@ -74,15 +123,11 @@ export class RootStore implements IHasLocalizator {
         this.walletHistoryFilter = new HistoryFilterStore(
             EnumHistorySourceMode.wallet,
         );
-        this.walletHistoryList = new HistoryListStore(
-            {
-                filter: this.walletHistoryFilter,
-            },
-            {
-                localizator,
-                errorProcessor: this.ui,
-                api: Api.history,
-            },
+
+        this.walletHistoryList = this.createList(
+            HistoryListStore,
+            this.walletHistoryFilter,
+            Api.history,
             true,
         );
 
@@ -90,32 +135,18 @@ export class RootStore implements IHasLocalizator {
             EnumHistorySourceMode.market,
         );
 
-        this.dwHistoryList = new HistoryListStore(
-            {
-                filter: this.dwHistoryFilter,
-            },
-            {
-                localizator,
-                errorProcessor: this.ui,
-                api: Api.history,
-            },
+        this.dwHistoryList = this.createList(
+            HistoryListStore,
+            this.dwHistoryFilter,
+            Api.history,
             true,
         );
 
-        this.gasPrice = new GasPriceStore({
-            localizator,
-            errorProcessor: this.ui,
-        });
+        this.gasPrice = this.createOnline(GasPriceStore);
 
-        this.wallet = new WalletStore({
-            localizator,
-            errorProcessor: this.ui,
-        });
+        this.wallet = this.createOnline(WalletStore);
 
-        this.currency = new CurrencyStore(this, {
-            localizator,
-            errorProcessor: this.ui,
-        });
+        this.currency = this.create(CurrencyStore);
 
         this.myProfiles = new MyProfilesStore(this, {
             localizator,
@@ -167,28 +198,17 @@ export class RootStore implements IHasLocalizator {
         this.profileFilter = new ProfileFilterStore();
 
         this.addToken = new AddTokenStore(this, this.localizator);
-        this.profileList = new ProfileList(
-            {
-                filter: this.profileFilter,
-            },
-            {
-                localizator,
-                errorProcessor: this.ui,
-                api: Api.profile,
-            },
+        this.profileList = this.createList(
+            ProfileList,
+            this.profileFilter,
+            Api.profile,
         );
 
         this.orderFilter = new OrderFilterStore(this);
-
-        this.ordersList = new OrdersList(
-            {
-                filter: this.orderFilter,
-            },
-            {
-                localizator,
-                errorProcessor: this.ui,
-                api: Api.order,
-            },
+        this.ordersList = this.createList(
+            OrdersList,
+            this.orderFilter,
+            Api.order,
         );
 
         this.orderCreate = new OrderCreateStore(this, {
@@ -198,29 +218,13 @@ export class RootStore implements IHasLocalizator {
         });
 
         this.dealFilter = new DealFilterStore(this);
-
-        this.dealList = new DealList(
-            {
-                filter: this.dealFilter,
-            },
-            {
-                localizator,
-                errorProcessor: this.ui,
-                api: Api.deal,
-            },
-        );
+        this.dealList = this.createList(DealList, this.dealFilter, Api.deal);
 
         this.workerFilter = new WorkerFilterStore(this);
-
-        this.workerList = new WorkerList(
-            {
-                filter: this.workerFilter,
-            },
-            {
-                localizator,
-                errorProcessor: this.ui,
-                api: Api.worker,
-            },
+        this.workerList = this.createList(
+            WorkerList,
+            this.workerFilter,
+            Api.worker,
         );
 
         this.orderDetails = new OrderDetails(this, {
