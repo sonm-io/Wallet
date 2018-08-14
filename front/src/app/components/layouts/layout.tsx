@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RootStore } from 'app/stores';
-import { inject, IReactComponent, observer } from 'mobx-react';
-import { RootStoreConsumer } from 'app';
+import { inject, IReactComponent } from 'mobx-react';
+import { RootStoreContext } from 'app/contexts/root-store-context';
 
 export interface IHasRootStore {
     rootStore?: RootStore;
@@ -27,10 +27,9 @@ export function injectRootStore<T extends IReactComponent<any>>(
 export function withRootStore<T>(
     LayoutComponent: React.ComponentType<T & IHasRootStore>,
 ) {
-    const Observer = observer(LayoutComponent);
     return (props: T & IHasRootStore) => (
-        <RootStoreConsumer>
-            {rootStore => <Observer {...props} rootStore={rootStore} />}
-        </RootStoreConsumer>
+        <RootStoreContext.Consumer>
+            {rootStore => <LayoutComponent {...props} rootStore={rootStore} />}
+        </RootStoreContext.Consumer>
     );
 }

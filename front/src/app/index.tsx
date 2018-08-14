@@ -8,12 +8,7 @@ import { Provider } from 'mobx-react';
 import { localizator as en } from 'app/localization';
 import { RootStore } from 'app/stores';
 import { getResolveMethod } from 'app/router';
-
-const { Provider: RootStoreProfider, Consumer } = React.createContext<
-    RootStore | undefined
->(undefined);
-
-export const RootStoreConsumer = Consumer;
+import { RootStoreContext } from 'app/contexts/root-store-context';
 
 interface ILocationParams {
     pathname: string;
@@ -44,9 +39,9 @@ class Renderer {
 
         render(
             <Provider rootStore={this.rootStore}>
-                <RootStoreProfider value={this.rootStore}>
+                <RootStoreContext.Provider value={this.rootStore}>
                     {content}
-                </RootStoreProfider>
+                </RootStoreContext.Provider>
             </Provider>,
             window.document.querySelector('#root'),
         );
