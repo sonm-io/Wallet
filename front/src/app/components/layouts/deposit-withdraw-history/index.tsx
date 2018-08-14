@@ -67,7 +67,7 @@ export const DepositWithdrawHistory = withRootStore(
                         'sonm-dw-tx-list__cell-amount sonm-dw-tx-list__cell',
                     title: 'Amount',
                     render: (_, record) => {
-                        const currency = this.rootStore.currencyStore
+                        const currency = this.rootStore.currency
                             .primaryTokenInfo;
 
                         return (
@@ -106,7 +106,7 @@ export const DepositWithdrawHistory = withRootStore(
                         'sonm-dw-tx-list__cell-commission sonm-dw-tx-list__cell',
                     title: 'Commission',
                     render: (_, record) => {
-                        const currency = this.rootStore.currencyStore
+                        const currency = this.rootStore.currency
                             .primaryTokenInfo;
 
                         return (
@@ -172,11 +172,11 @@ export const DepositWithdrawHistory = withRootStore(
             ];
 
             protected get filterStore() {
-                return this.rootStore.dwHistoryFilterStore;
+                return this.rootStore.dwHistoryFilter;
             }
 
             protected get listStore() {
-                return this.rootStore.dwHistoryListStore;
+                return this.rootStore.dwHistoryList;
             }
 
             constructor(props: IProps) {

@@ -32,7 +32,7 @@ Object.freeze(emptyForm);
 export class MainStore extends OnlineStore {
     constructor(rootStore: RootStore, services: IMainStoreServices) {
         super({
-            errorProcessor: rootStore.uiStore,
+            errorProcessor: rootStore.ui,
             localizator: services.localizator,
         });
 
@@ -63,14 +63,14 @@ export class MainStore extends OnlineStore {
         );
 
         if (validation) {
-            this.rootStore.uiStore.addAlert({
+            this.rootStore.ui.addAlert({
                 type: AlertType.error,
                 message: `SNM delivery delayed cause: ${this.rootStore.localizator.getMessageText(
                     validation.password,
                 )}`,
             });
         } else {
-            this.rootStore.uiStore.addAlert({
+            this.rootStore.ui.addAlert({
                 type: AlertType.success,
                 message: this.rootStore.localizator.getMessageText(
                     'wait_your_tokens',

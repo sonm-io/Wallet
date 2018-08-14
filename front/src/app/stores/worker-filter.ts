@@ -13,7 +13,7 @@ export class WorkerFilterStore implements IFilterStore {
     public get filter(): any {
         const result: any = {
             address: {
-                $eq: this.rootStore.myProfilesStore.currentProfileAddress,
+                $eq: this.rootStore.myProfiles.currentProfileAddress,
             },
         };
 

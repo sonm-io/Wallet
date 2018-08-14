@@ -39,26 +39,26 @@ export const Account = withRootStore(
 
             public componentWillMount() {
                 if (this.props.initialAddress) {
-                    this.rootStore.sendStore.setUserInput({
+                    this.rootStore.send.setUserInput({
                         fromAddress: this.props.initialAddress,
                     });
                 }
             }
 
             protected handleChangeAccount = (accountAddress: any) => {
-                this.rootStore.sendStore.setUserInput({
+                this.rootStore.send.setUserInput({
                     fromAddress: accountAddress,
                 });
             };
 
             protected handleClickHistory = () => {
-                this.props.onClickHistory(this.rootStore.sendStore.fromAddress);
+                this.props.onClickHistory(this.rootStore.send.fromAddress);
             };
 
             protected handleSendClick = (event: any) => {
                 const currencyAddress = event.target.name;
 
-                this.rootStore.sendStore.setUserInput({
+                this.rootStore.send.setUserInput({
                     currencyAddress,
                 });
 
@@ -68,9 +68,9 @@ export const Account = withRootStore(
             protected handleGiveMeMore = async (event: any) => {
                 event.preventDefault();
 
-                await this.rootStore.mainStore.giveMeMore(
+                await this.rootStore.main.giveMeMore(
                     event.target.password.value,
-                    this.rootStore.sendStore.fromAddress,
+                    this.rootStore.send.fromAddress,
                 );
 
                 await this.rootStore.gasPrice.update();
@@ -89,9 +89,9 @@ export const Account = withRootStore(
                         <AccountBigSelect
                             className="sonm-account__account-select"
                             returnPrimitive
-                            accounts={rootStore.myProfilesStore.accountList}
+                            accounts={rootStore.myProfiles.accountList}
                             onChange={this.handleChangeAccount}
-                            value={rootStore.sendStore.fromAddress}
+                            value={rootStore.send.fromAddress}
                         />
 
                         <button
@@ -101,13 +101,13 @@ export const Account = withRootStore(
                             View operation history
                         </button>
 
-                        {rootStore.sendStore.currentBalanceList.length ===
+                        {rootStore.send.currentBalanceList.length ===
                         0 ? null : (
                             <ul className="sonm-account__tokens">
                                 <Header className="sonm-account__header">
                                     Coins and tokens
                                 </Header>
-                                {rootStore.sendStore.currentBalanceList.map(
+                                {rootStore.send.currentBalanceList.map(
                                     ({
                                         symbol,
                                         address,
@@ -154,7 +154,7 @@ export const Account = withRootStore(
                             </ul>
                         )}
 
-                        {rootStore.walletStore.networkName === 'rinkeby' ? (
+                        {rootStore.wallet.networkName === 'rinkeby' ? (
                             <form
                                 onSubmit={this.handleGiveMeMore}
                                 className="sonm-account__give-me"

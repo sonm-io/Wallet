@@ -30,8 +30,8 @@ export const SendConfirm = withRootStore(
             };
 
             public handleConfrim = async (event: any) => {
-                const sendStore = this.rootStore.sendStore;
-                const historyStore = this.rootStore.walletHistoryListStore;
+                const sendStore = this.rootStore.send;
+                const historyStore = this.rootStore.walletHistoryList;
 
                 event.preventDefault();
 
@@ -57,7 +57,7 @@ export const SendConfirm = withRootStore(
             };
 
             public handleCancel = () => {
-                this.rootStore.sendStore.resetServerValidation();
+                this.rootStore.send.resetServerValidation();
 
                 this.props.onBack();
             };
@@ -68,15 +68,13 @@ export const SendConfirm = withRootStore(
 
             public render() {
                 const rootStore = this.rootStore;
-                const mainStore = rootStore.mainStore;
-                const sendStore = rootStore.sendStore;
+                const mainStore = rootStore.main;
+                const sendStore = rootStore.send;
 
                 const accountAddress = sendStore.fromAddress;
-                const account = rootStore.myProfilesStore.getItem(
-                    accountAddress,
-                );
+                const account = rootStore.myProfiles.getItem(accountAddress);
                 const accountName = account ? account.name : '';
-                const currency = rootStore.currencyStore.getItem(
+                const currency = rootStore.currency.getItem(
                     sendStore.currencyAddress,
                 );
                 const amount = sendStore.amount;

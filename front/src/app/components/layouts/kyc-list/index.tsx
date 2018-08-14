@@ -11,7 +11,7 @@ export const KycList = withRootStore(
     observer(
         class extends Layout<IProps> {
             protected get store() {
-                return this.rootStore.kycListStore;
+                return this.rootStore.kycList;
             }
 
             protected handleSubmitPassword(
@@ -22,7 +22,7 @@ export const KycList = withRootStore(
             }
 
             public componentDidMount() {
-                this.rootStore.validatorsStore.updateValidators();
+                this.rootStore.validators.updateValidators();
             }
 
             public render() {
@@ -36,9 +36,7 @@ export const KycList = withRootStore(
                         onSubmitPassword={this.handleSubmitPassword}
                         onClickItem={store.select}
                         onCloseBottom={store.unselect}
-                        marketBalance={
-                            this.rootStore.myProfilesStore.marketBalance
-                        }
+                        marketBalance={this.rootStore.myProfiles.marketBalance}
                         onNavigateDeposit={this.props.onNavigateDeposit}
                     />
                 );

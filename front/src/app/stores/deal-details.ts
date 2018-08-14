@@ -228,7 +228,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         }
 
         this.serverValidation.password = '';
-        this.rootStore.uiStore.addAlert(alert);
+        this.rootStore.ui.addAlert(alert);
     }
 
     @pending
@@ -239,8 +239,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         const password = this.password;
         const id = this.dealId;
         const isBlacklisted = this.isBlacklisted;
-        const accountAddress = this.rootStore.myProfilesStore
-            .currentProfileAddress;
+        const accountAddress = this.rootStore.myProfiles.currentProfileAddress;
 
         const { data, validation } = yield this.api.close(
             accountAddress,
@@ -272,8 +271,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
 
         const password = this.password;
         const id = this.changeRequestId;
-        const accountAddress = this.rootStore.myProfilesStore
-            .currentProfileAddress;
+        const accountAddress = this.rootStore.myProfiles.currentProfileAddress;
 
         const { validation } = yield this.api.cancelChangeRequest(
             accountAddress,
@@ -299,8 +297,7 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
         const newDuration = this.newDuration;
         const password = this.password;
         const id = this.dealId;
-        const accountAddress = this.rootStore.myProfilesStore
-            .currentProfileAddress;
+        const accountAddress = this.rootStore.myProfiles.currentProfileAddress;
 
         const { validation } = yield this.api.createChangeRequest(
             accountAddress,

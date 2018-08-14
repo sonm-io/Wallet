@@ -18,9 +18,7 @@ interface IProps extends IHasRootStore {
 export const SendSuccess = withRootStore(
     class extends Layout<IProps> {
         protected handleClickHistory = () => {
-            this.props.onClickHistory(
-                toJS(this.rootStore.sendStore.fromAddress),
-            );
+            this.props.onClickHistory(toJS(this.rootStore.send.fromAddress));
         };
 
         public render() {

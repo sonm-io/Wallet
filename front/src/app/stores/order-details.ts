@@ -85,7 +85,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         orderId: string,
         transactionHash: string,
     ): string {
-        return this.rootStore.uiStore.addAlert({
+        return this.rootStore.ui.addAlert({
             type: AlertType.warning,
             message: this.localizator.getMessageText([
                 'tx_buy_order_matching',
@@ -95,7 +95,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     }
 
     protected showDealSuccess(orderId: string, dealId: string) {
-        return this.rootStore.uiStore.addAlert({
+        return this.rootStore.ui.addAlert({
             type: AlertType.success,
             message: this.localizator.getMessageText([
                 'tx_buy_order_matched',
@@ -105,7 +105,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     }
 
     protected showFail(orderId: string) {
-        return this.rootStore.uiStore.addAlert({
+        return this.rootStore.ui.addAlert({
             type: AlertType.error,
             message: this.localizator.getMessageText([
                 'tx_buy_order_match_failed',
@@ -125,8 +125,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         const password = this.password;
         const orderId = this.orderId;
         const duration = this.duration;
-        const accountAddress = this.rootStore.myProfilesStore
-            .currentProfileAddress;
+        const accountAddress = this.rootStore.myProfiles.currentProfileAddress;
 
         const { data, validation } = yield this.api.quickBuy(
             accountAddress,
@@ -148,7 +147,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
                 yield this.waitForDeal(accountAddress, orderId);
 
-                this.rootStore.uiStore.closeAlert(alertId);
+                this.rootStore.ui.closeAlert(alertId);
             } else {
                 this.showFail(orderId);
             }
@@ -219,10 +218,10 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
         if (price !== undefined && duration !== undefined) {
             const balance =
-                this.rootStore.myProfilesStore.currentProfileView === undefined
+                this.rootStore.myProfiles.currentProfileView === undefined
                     ? undefined
                     : new BN(
-                          this.rootStore.myProfilesStore.currentProfileView.usdBalance,
+                          this.rootStore.myProfiles.currentProfileView.usdBalance,
                       );
 
             if (balance !== undefined) {

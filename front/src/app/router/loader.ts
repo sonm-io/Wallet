@@ -17,11 +17,11 @@ export class DataLoader {
     }
 
     public loadOrder(orderId: string) {
-        this.rootStore.orderDetailsStore.setOrderId(orderId);
+        this.rootStore.orderDetails.setOrderId(orderId);
     }
 
     public loadOrderListByParams(filter: Partial<IOrderFilter>) {
-        this.rootStore.orderFilterStore.setUserInput(filter);
+        this.rootStore.orderFilter.setUserInput(filter);
     }
 
     public loadOrderListByOrder(order: IOrder) {
@@ -46,46 +46,46 @@ export class DataLoader {
         fromAddress: TEthereumAddress,
         currencyAddress: TEthereumAddress,
     ) {
-        this.rootStore.walletHistoryFilterStore.updateUserInput({
+        this.rootStore.walletHistoryFilter.updateUserInput({
             fromAddress,
             currencyAddress,
         });
     }
 
     public loadProfileDetails(address: TEthereumAddress) {
-        this.rootStore.profileDetailsStore.setAddress(address);
+        this.rootStore.profileDetails.setAddress(address);
     }
 
     public loadDwhHistory() {
-        this.rootStore.dwHistoryListStore.update();
+        this.rootStore.dwHistoryList.update();
     }
 
     public loadWalletHistory() {
-        this.rootStore.dwHistoryListStore.update();
+        this.rootStore.dwHistoryList.update();
     }
 
     public loadDeal(dealId: string) {
-        this.rootStore.dealDetailsStore.setDealId(dealId);
+        this.rootStore.dealDetails.setDealId(dealId);
     }
 
     public loadDealList() {
-        this.rootStore.dealListStore.update();
+        this.rootStore.dealList.update();
     }
 
     public loadProfileList() {
-        this.rootStore.profileListStore.update();
+        this.rootStore.profileList.update();
     }
 
     public loadOrderList() {
-        this.rootStore.ordersListStore.update();
+        this.rootStore.ordersList.update();
     }
 
     public loadFullOrderList() {
-        this.rootStore.orderFilterStore.resetFilters();
+        this.rootStore.orderFilter.resetFilters();
     }
 
     public loadWorkerList() {
-        this.rootStore.workerListStore.update();
+        this.rootStore.workerList.update();
     }
 
     public loadKycList() {}

@@ -55,7 +55,7 @@ async function handleLogin(wallet: IWalletListItem) {
     }
     const renderer = new Renderer(rootStore);
     history.listen(renderer.renderByPath.bind(renderer));
-    await Promise.all([rootStore.walletStore.init(wallet)]);
+    await Promise.all([rootStore.wallet.init(wallet)]);
     renderer.renderByPath((history as any).location);
 }
 

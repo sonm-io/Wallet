@@ -18,13 +18,13 @@ export const ProfileList = withRootStore(
             };
 
             public handleChangeFilter = (key: string, value: any) => {
-                this.rootStore.profileFilterStore.updateUserInput({
+                this.rootStore.profileFilter.updateUserInput({
                     [key]: value,
                 });
             };
 
             public handleChangePage(page: number) {
-                this.rootStore.profileListStore.updateUserInput({ page });
+                this.rootStore.profileList.updateUserInput({ page });
             }
 
             public handleTableChange = (
@@ -33,7 +33,7 @@ export const ProfileList = withRootStore(
                 sorter: any,
             ) => {
                 if (sorter.field) {
-                    this.rootStore.profileListStore.updateUserInput({
+                    this.rootStore.profileList.updateUserInput({
                         sortBy: sorter.field,
                         sortDesc: sorter.order === 'descend',
                     });
@@ -41,8 +41,8 @@ export const ProfileList = withRootStore(
             };
 
             public render() {
-                const listStore = this.rootStore.profileListStore;
-                const filterStore = this.rootStore.profileFilterStore;
+                const listStore = this.rootStore.profileList;
+                const filterStore = this.rootStore.profileFilter;
                 const dataSource = toJS(listStore.records);
 
                 return (

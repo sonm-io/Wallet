@@ -178,11 +178,11 @@ export class MyProfilesStore extends OnlineStore {
     protected transformAccountInfoToView = (
         info: IAccountInfo,
     ): IAccountItemView => {
-        const isCurrencyListEmpty = this.rootStore.currencyStore.size === 0;
+        const isCurrencyListEmpty = this.rootStore.currency.size === 0;
         const primaryTokenBalance = isCurrencyListEmpty
             ? ''
             : info.currencyBalanceMap[
-                  this.rootStore.currencyStore.primaryTokenAddress
+                  this.rootStore.currency.primaryTokenAddress
               ];
 
         const preview: IAccountItemView = {
@@ -191,11 +191,9 @@ export class MyProfilesStore extends OnlineStore {
             name: info.name,
             etherBalance: isCurrencyListEmpty
                 ? ''
-                : info.currencyBalanceMap[
-                      this.rootStore.currencyStore.etherAddress
-                  ],
+                : info.currencyBalanceMap[this.rootStore.currency.etherAddress],
             primaryTokenBalance,
-            primaryTokenInfo: this.rootStore.currencyStore.primaryTokenInfo,
+            primaryTokenInfo: this.rootStore.currency.primaryTokenInfo,
             usdBalance: info.marketUsdBalance,
             marketBalance: info.marketBalance,
         };
@@ -315,7 +313,7 @@ export class MyProfilesStore extends OnlineStore {
     @asyncAction
     protected *fetchProfileDetails() {
         this.currentProfileInner = yield this.services.profileApi.fetchByAddress(
-            this.rootStore.myProfilesStore.currentProfileAddress,
+            this.rootStore.myProfiles.currentProfileAddress,
         );
     }
 
@@ -333,7 +331,7 @@ export class MyProfilesStore extends OnlineStore {
     public get etherBalance(): string {
         return MyProfilesStore.getTokenBalance(
             this.fullBalanceList,
-            this.rootStore.currencyStore.etherAddress,
+            this.rootStore.currency.etherAddress,
         );
     }
 
@@ -341,7 +339,7 @@ export class MyProfilesStore extends OnlineStore {
     public get primaryTokenBalance(): string {
         return MyProfilesStore.getTokenBalance(
             this.fullBalanceList,
-            this.rootStore.currencyStore.primaryTokenAddress,
+            this.rootStore.currency.primaryTokenAddress,
         );
     }
 
@@ -355,12 +353,12 @@ export class MyProfilesStore extends OnlineStore {
      * Returns balance amount of passed accounts for each currency.
      */
     public getBalanceListFor(...accounts: string[]): ICurrencyInfo[] {
-        const result = this.rootStore.currencyStore.list.map(
+        const result = this.rootStore.currency.list.map(
             (currency: ICurrencyInfo) => {
                 let touched = false;
                 const balance: BN = accounts.reduce(
                     (sum: any, accountAddr: string) => {
-                        const account = this.rootStore.myProfilesStore.accountMap.get(
+                        const account = this.rootStore.myProfiles.accountMap.get(
                             accountAddr,
                         ) as IAccountInfo;
                         const userBalance =
@@ -391,7 +389,7 @@ export class MyProfilesStore extends OnlineStore {
 
     @computed
     public get fullBalanceList(): ICurrencyInfo[] {
-        const allAccountsAddresses = this.rootStore.myProfilesStore
+        const allAccountsAddresses = this.rootStore.myProfiles
             .accountAddressList;
         return this.getBalanceListFor(...allAccountsAddresses);
     }

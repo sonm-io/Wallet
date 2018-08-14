@@ -26,7 +26,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
 
     constructor(rootStore: RootStore, localizator: ILocalizator) {
         super({
-            errorProcessor: rootStore.uiStore,
+            errorProcessor: rootStore.ui,
             localizator: rootStore.localizator,
         });
 
@@ -48,7 +48,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
 
         if (etherAddressValidation.length) {
             result = etherAddressValidation.join(' ;');
-        } else if (this.rootStore.currencyStore.has(tokenAddress)) {
+        } else if (this.rootStore.currency.has(tokenAddress)) {
             result = this.rootStore.localizator.getMessageText(
                 'token_already_exists',
             );
@@ -79,7 +79,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
     protected *updateCandidateTokenInfo(tokenAddress: string) {
         const { validation, data } = yield Api.getTokenInfo(
             tokenAddress,
-            this.rootStore.myProfilesStore.accountAddressList,
+            this.rootStore.myProfiles.accountAddressList,
         );
 
         if (validation) {
@@ -106,7 +106,7 @@ export class AddTokenStore extends OnlineStore implements IHasLocalizator {
     public *approveCandidateToken() {
         const candidateTokenAddress = this.candidateTokenAddress;
         this.resetCandidateToken();
-        yield this.rootStore.currencyStore.add(candidateTokenAddress);
+        yield this.rootStore.currency.add(candidateTokenAddress);
     }
 
     @action

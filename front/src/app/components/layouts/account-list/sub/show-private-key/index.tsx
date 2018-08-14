@@ -37,7 +37,7 @@ export const ShowPassword = withRootStore(
         protected handleSubmit = async (event: any) => {
             event.preventDefault();
 
-            const privateKey = await this.rootStore.myProfilesStore.getPrivateKey(
+            const privateKey = await this.rootStore.myProfiles.getPrivateKey(
                 this.state.password,
                 this.props.address,
             );

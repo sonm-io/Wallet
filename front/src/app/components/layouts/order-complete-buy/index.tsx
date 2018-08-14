@@ -15,7 +15,7 @@ export interface IOrderBuySuccessProps extends IHasRootStore {
 export const OrderCompleteBuy = withRootStore(
     class extends Layout<IOrderBuySuccessProps> {
         protected handleClickMarket = () => {
-            const orderDetailsStore = this.rootStore.orderDetailsStore;
+            const orderDetailsStore = this.rootStore.orderDetails;
             const order = orderDetailsStore.order;
             if (order !== undefined) {
                 this.props.onClickMarket(order);
@@ -23,8 +23,7 @@ export const OrderCompleteBuy = withRootStore(
         };
 
         protected handleClickOrder = () => {
-            const address = this.rootStore.myProfilesStore
-                .currentProfileAddress;
+            const address = this.rootStore.myProfiles.currentProfileAddress;
 
             this.props.onClickOrders(address);
         };

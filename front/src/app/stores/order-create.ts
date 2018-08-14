@@ -185,8 +185,8 @@ export class OrderCreateStore extends OnlineStore
 
     @computed
     public get profile(): IProfileBrief {
-        const account = this.rootStore.myProfilesStore.currentProfileView;
-        const status = this.rootStore.myProfilesStore.currentProfile.status;
+        const account = this.rootStore.myProfiles.currentProfileView;
+        const status = this.rootStore.myProfiles.currentProfile.status;
         return account !== undefined
             ? {
                   address: account.address,
@@ -205,7 +205,7 @@ export class OrderCreateStore extends OnlineStore
 
     @computed
     public get deposit(): string {
-        const account = this.rootStore.myProfilesStore.currentProfileView;
+        const account = this.rootStore.myProfiles.currentProfileView;
         return account !== undefined ? account.primaryTokenBalance : '';
     }
 

@@ -20,19 +20,19 @@ export const DealList = withRootStore(
     observer(
         class extends Layout<IProps> {
             protected get filterStore() {
-                return this.rootStore.dealFilterStore;
+                return this.rootStore.dealFilter;
             }
 
             protected get listStore() {
-                return this.rootStore.dealListStore;
+                return this.rootStore.dealList;
             }
 
             public componentDidMount() {
-                this.rootStore.dealListStore.startAutoUpdate();
+                this.rootStore.dealList.startAutoUpdate();
             }
 
             public componentWillUnmount() {
-                this.rootStore.dealListStore.stopAutoUpdate();
+                this.rootStore.dealList.stopAutoUpdate();
             }
 
             protected handleUpdateFilter = (
@@ -80,7 +80,7 @@ export const DealList = withRootStore(
                     <DealListView
                         data={data}
                         marketAccountAddress={
-                            this.rootStore.myProfilesStore.currentProfileAddress
+                            this.rootStore.myProfiles.currentProfileAddress
                         }
                         filterPanel={filterPanel}
                         onClickRow={p.onClickDeal}

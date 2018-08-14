@@ -85,7 +85,7 @@ export class ProfileDetails extends OnlineStore implements IOrderDetails {
 
     @computed
     get certificates(): IKycCertificate[] {
-        const validators = this.rootStore.validatorsStore.validators;
+        const validators = this.rootStore.validators.validators;
 
         return this.profile.certificates.map(x => {
             const validator = validators.find(z => z.id === x.address);

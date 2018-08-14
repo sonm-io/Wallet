@@ -14,7 +14,7 @@ export const OrderDetails = withRootStore(
     observer(
         class extends Layout<IProps> {
             public handleSubmit = async (password: string) => {
-                const orderDetailsStore = this.rootStore.orderDetailsStore;
+                const orderDetailsStore = this.rootStore.orderDetails;
 
                 orderDetailsStore.updateUserInput({ password });
                 await orderDetailsStore.submit();
@@ -29,15 +29,15 @@ export const OrderDetails = withRootStore(
                 const rootStore = this.rootStore;
                 return (
                     <OrderView
-                        order={rootStore.orderDetailsStore.order}
+                        order={rootStore.orderDetails.order}
                         validationPassword={
-                            rootStore.orderDetailsStore.validationPassword
+                            rootStore.orderDetails.validationPassword
                         }
                         onSubmit={this.handleSubmit}
                         onNavigateBack={p.onNavigateBack}
                         onNavigateDeposit={p.onNavigateDeposit}
                         isBuyingAvailable={
-                            rootStore.orderDetailsStore.isBuyingAvailable
+                            rootStore.orderDetails.isBuyingAvailable
                         }
                     />
                 );

@@ -30,41 +30,41 @@ export const Send = withRootStore(
             public componentWillMount() {
                 const rootStore = this.rootStore;
 
-                if (rootStore.myProfilesStore.accountAddressList.length === 0) {
+                if (rootStore.myProfiles.accountAddressList.length === 0) {
                     this.props.onNotAvailable();
                 }
 
                 if (this.props.initialAddress) {
-                    rootStore.sendStore.setUserInput({
+                    rootStore.send.setUserInput({
                         fromAddress: this.props.initialAddress,
                     });
                 }
 
                 if (this.props.initialCurrency) {
-                    rootStore.sendStore.setUserInput({
+                    rootStore.send.setUserInput({
                         currencyAddress: this.props.initialCurrency,
                     });
                 }
 
                 this.setState({
-                    addressTarget: rootStore.sendStore.toAddress,
+                    addressTarget: rootStore.send.toAddress,
                 });
             }
 
             protected get sendStore(): SendStore {
-                return this.rootStore.sendStore;
+                return this.rootStore.send;
             }
 
             protected handleSubmit = (event: any) => {
                 event.preventDefault();
 
-                if (this.rootStore.sendStore.isFormValid) {
+                if (this.rootStore.send.isFormValid) {
                     this.props.onRequireConfirmation();
                 }
             };
 
             protected handleChangeFormInput(value: Partial<ISendFormValues>) {
-                this.rootStore.sendStore.setUserInput(value);
+                this.rootStore.send.setUserInput(value);
             }
 
             protected handleChangeFormInputEvent(
@@ -99,8 +99,8 @@ export const Send = withRootStore(
             ) => this.handleChangeFormInputEvent('gasPriceGwei', event);
 
             protected handleSetMaximum = () => {
-                this.rootStore.sendStore.setUserInput({
-                    amountEther: this.rootStore.sendStore.currentBalanceMaximum,
+                this.rootStore.send.setUserInput({
+                    amountEther: this.rootStore.send.currentBalanceMaximum,
                 });
             };
 
@@ -117,13 +117,13 @@ export const Send = withRootStore(
 
                 const gasPriceGwei = moveDecimalPoint(gasPrice, -9);
 
-                this.rootStore.sendStore.setUserInput({ gasPriceGwei });
+                this.rootStore.send.setUserInput({ gasPriceGwei });
             };
 
             public render() {
                 const { className } = this.props;
                 const rootStore = this.rootStore;
-                const sendStore = rootStore.sendStore;
+                const sendStore = rootStore.send;
                 const balanceList = sendStore.currentBalanceList;
 
                 return (
@@ -141,10 +141,9 @@ export const Send = withRootStore(
                                         returnPrimitive
                                         onChange={this.handleChangeAccount}
                                         accounts={
-                                            rootStore.myProfilesStore
-                                                .accountList
+                                            rootStore.myProfiles.accountList
                                         }
-                                        value={rootStore.sendStore.fromAddress}
+                                        value={rootStore.send.fromAddress}
                                     />
                                 </FormField>
                             </FormRow>
@@ -240,7 +239,7 @@ export const Send = withRootStore(
                                 <PriorityInput
                                     className="sonm-send__gas-price-buttons"
                                     valueList={['low', 'normal', 'high']}
-                                    value={rootStore.sendStore.priority}
+                                    value={rootStore.send.priority}
                                     onChange={this.handleChangePriority}
                                 />
                             </FormRow>

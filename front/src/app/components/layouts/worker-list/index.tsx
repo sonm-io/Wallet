@@ -25,7 +25,7 @@ export const WorkerList = withRootStore(
             };
 
             public handleChangePage(page: number) {
-                this.rootStore.workerListStore.updateUserInput({ page });
+                this.rootStore.workerList.updateUserInput({ page });
             }
 
             protected handleClickConfirm = async (slaveId: string) => {
@@ -43,39 +43,39 @@ export const WorkerList = withRootStore(
 
             protected handleSubmitConfirm = async (password: string) => {
                 const rootStore = this.rootStore;
-                const link = await rootStore.mainStore.confirmWorker(
+                const link = await rootStore.main.confirmWorker(
                     password,
-                    rootStore.myProfilesStore.currentProfileAddress,
+                    rootStore.myProfiles.currentProfileAddress,
                     this.state.slaveId,
                 );
 
                 if (link) {
                     this.handleCloseConfirm();
-                    rootStore.workerListStore.update();
+                    rootStore.workerList.update();
                 } else {
                     this.setState({
                         validationPassword:
-                            rootStore.mainStore.serverValidation.password,
+                            rootStore.main.serverValidation.password,
                     });
                 }
             };
 
             public componentDidMount() {
-                this.rootStore.workerListStore.startAutoUpdate();
+                this.rootStore.workerList.startAutoUpdate();
             }
 
             public componentWillUnmount() {
-                this.rootStore.workerListStore.stopAutoUpdate();
+                this.rootStore.workerList.stopAutoUpdate();
             }
 
             public render() {
-                const listStore = this.rootStore.workerListStore;
+                const listStore = this.rootStore.workerList;
                 const dataSource = toJS(listStore.records);
 
                 return (
                     <WorkerListView
                         marketAccountAddress={
-                            this.rootStore.myProfilesStore.currentProfileAddress
+                            this.rootStore.myProfiles.currentProfileAddress
                         }
                         page={listStore.page}
                         total={toJS(listStore.total)}
@@ -87,7 +87,7 @@ export const WorkerList = withRootStore(
                         onSubmitConfirm={this.handleSubmitConfirm}
                         showConfirm={this.state.showConfirm}
                         validationPassword={
-                            this.rootStore.mainStore.serverValidation.password
+                            this.rootStore.main.serverValidation.password
                         }
                     />
                 );

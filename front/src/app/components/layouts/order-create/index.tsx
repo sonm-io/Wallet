@@ -12,7 +12,7 @@ export const OrderCreate = withRootStore(
     observer(
         class extends Layout<IOrderCreateProps> {
             protected get store() {
-                return this.rootStore.orderCreateStore;
+                return this.rootStore.orderCreate;
             }
 
             protected handleUpdateField = (

@@ -19,7 +19,7 @@ export const Deal = withRootStore(
     observer(
         class extends Layout<IProps> {
             protected get dealDetailsStore() {
-                return this.rootStore.dealDetailsStore;
+                return this.rootStore.dealDetails;
             }
 
             public componentDidMount() {
@@ -154,7 +154,7 @@ export const Deal = withRootStore(
             public render() {
                 const dealDetailsStore = this.dealDetailsStore;
                 const deal = dealDetailsStore.deal;
-                const marketAccount = this.rootStore.myProfilesStore.currentProfileAddress.toLowerCase();
+                const marketAccount = this.rootStore.myProfiles.currentProfileAddress.toLowerCase();
                 const isOwner =
                     deal.supplier.address.toLowerCase() ===
                         marketAccount.toLowerCase() ||

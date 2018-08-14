@@ -117,7 +117,7 @@ export const NavMenuDropdown = withRootStore(
                         {this.props.items.map((item: TMenuItem, index) => {
                             const [title, , children = Array.prototype] = item;
                             const isDisabled =
-                                this.rootStore.uiStore.disabledMenuItems.indexOf(
+                                this.rootStore.ui.disabledMenuItems.indexOf(
                                     item[0],
                                 ) > -1;
 

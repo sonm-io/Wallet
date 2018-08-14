@@ -48,9 +48,7 @@ export const History = withRootStore(
                     title: 'From',
                     render: (_, record) => {
                         const addr = record.fromAddress;
-                        const account = this.rootStore.myProfilesStore.getItem(
-                            addr,
-                        );
+                        const account = this.rootStore.myProfiles.getItem(addr);
                         const name = account ? account.name : '';
 
                         return [
@@ -81,9 +79,7 @@ export const History = withRootStore(
                     title: 'To',
                     render: (_, record) => {
                         const addr = record.toAddress;
-                        const account = this.rootStore.myProfilesStore.getItem(
-                            addr,
-                        );
+                        const account = this.rootStore.myProfiles.getItem(addr);
                         const name = account ? account.name : '';
 
                         return [
@@ -118,7 +114,7 @@ export const History = withRootStore(
                         let symbol = record.currencySymbol || '';
 
                         if (!symbol) {
-                            const currency = this.rootStore.currencyStore.getItem(
+                            const currency = this.rootStore.currency.getItem(
                                 addr,
                             );
 
@@ -191,11 +187,11 @@ export const History = withRootStore(
             ];
 
             protected get filterStore() {
-                return this.rootStore.walletHistoryFilterStore;
+                return this.rootStore.walletHistoryFilter;
             }
 
             protected get listStore() {
-                return this.rootStore.walletHistoryListStore;
+                return this.rootStore.walletHistoryList;
             }
 
             constructor(props: IProps) {
@@ -249,9 +245,7 @@ export const History = withRootStore(
                             className="sonm-history__select-account"
                             returnPrimitive
                             onChange={this.handleChangeAccount}
-                            accounts={
-                                this.rootStore.myProfilesStore.accountList
-                            }
+                            accounts={this.rootStore.myProfiles.accountList}
                             value={filterStore.fromAddress}
                             hasEmptyOption
                         />
@@ -269,7 +263,7 @@ export const History = withRootStore(
                             value={filterStore.currencyAddress}
                             className="sonm-history__select-currency"
                         >
-                            {this.rootStore.myProfilesStore.fullBalanceList.map(
+                            {this.rootStore.myProfiles.fullBalanceList.map(
                                 x => (
                                     <Option
                                         key={x.address}

@@ -57,7 +57,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         initialGasLimit: string = SendStore.GAS_LIMIT_SEND_LIVENET,
     ) {
         super({
-            errorProcessor: rootStore.uiStore,
+            errorProcessor: rootStore.ui,
             localizator,
         });
 
@@ -70,7 +70,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     get defaultGasLimit() {
-        return this.rootStore.uiStore.isLivenet
+        return this.rootStore.ui.isLivenet
             ? this.initialGasLimit
             : SendStore.GAS_LIMIT_SEND_TESTNET;
     }
@@ -227,7 +227,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     public get currentCurrency() {
-        return this.rootStore.currencyStore.getItem(this.currencyAddress);
+        return this.rootStore.currency.getItem(this.currencyAddress);
     }
 
     @computed
@@ -261,7 +261,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     public get fromAddress() {
         return (
             this.userInput.fromAddress ||
-            this.rootStore.myProfilesStore.accountAddressList[0] ||
+            this.rootStore.myProfiles.accountAddressList[0] ||
             ''
         );
     }
@@ -270,7 +270,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     public get currencyAddress() {
         return (
             this.userInput.currencyAddress ||
-            this.rootStore.currencyStore.etherAddress
+            this.rootStore.currency.etherAddress
         );
     }
 
@@ -313,7 +313,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         const amountWei = this.currentBalanceMaximumWei;
         let result = '';
 
-        const currencyInfo = this.rootStore.currencyStore.getItem(
+        const currencyInfo = this.rootStore.currency.getItem(
             this.currencyAddress,
         );
 
@@ -330,7 +330,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     get currentBalanceMaximumWei() {
-        const account = this.rootStore.myProfilesStore.getItem(
+        const account = this.rootStore.myProfiles.getItem(
             this.fromAddress,
         ) as IAccountInfo;
 
@@ -339,10 +339,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         );
 
         if (amountWei) {
-            if (
-                this.rootStore.currencyStore.etherAddress ===
-                this.currencyAddress
-            ) {
+            if (this.rootStore.currency.etherAddress === this.currencyAddress) {
                 const gasPriceWei = createBigNumberFromFloat(
                     this.gasPriceGwei,
                     9,
@@ -374,9 +371,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
             return [];
         }
 
-        return this.rootStore.myProfilesStore.getBalanceListFor(
-            this.fromAddress,
-        );
+        return this.rootStore.myProfiles.getBalanceListFor(this.fromAddress);
     }
 
     @action.bound
@@ -472,7 +467,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         this.userInput.amountEther = '';
 
         if (tx.toAddress === tx.fromAddress) {
-            this.rootStore.uiStore.addAlert({
+            this.rootStore.ui.addAlert({
                 type: AlertType.warning,
                 message: this.localizator.getMessageText([
                     'tx_sidechain_delay',
@@ -516,7 +511,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
             };
         }
 
-        this.rootStore.uiStore.addAlert(alert);
+        this.rootStore.ui.addAlert(alert);
 
         return result;
     }

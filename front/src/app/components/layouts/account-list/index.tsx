@@ -60,17 +60,17 @@ export const Wallets = withRootStore(
             }
 
             private handleDelete = (deleteAddress: string) => {
-                this.rootStore.myProfilesStore.deleteAccount(deleteAddress);
+                this.rootStore.myProfiles.deleteAccount(deleteAddress);
             };
 
             protected handleAddAccount = async (data: IImportAccountForm) => {
-                await this.rootStore.myProfilesStore.addAccount(
+                await this.rootStore.myProfiles.addAccount(
                     data.json,
                     data.password,
                     data.name,
                 );
 
-                if (this.rootStore.mainStore.noValidationMessages) {
+                if (this.rootStore.main.noValidationMessages) {
                     this.closeDialog();
                 }
             };
@@ -78,13 +78,13 @@ export const Wallets = withRootStore(
             protected handleCreateAccount = async (
                 data: ICreateAccountForm,
             ) => {
-                await this.rootStore.myProfilesStore.createAccount(
+                await this.rootStore.myProfiles.createAccount(
                     data.password,
                     data.name,
                     data.privateKey,
                 );
 
-                if (this.rootStore.mainStore.noValidationMessages) {
+                if (this.rootStore.main.noValidationMessages) {
                     this.closeDialog();
                 }
             };
@@ -97,7 +97,7 @@ export const Wallets = withRootStore(
             }
 
             protected closeDialog = () => {
-                this.rootStore.mainStore.resetServerValidation();
+                this.rootStore.main.resetServerValidation();
                 this.switchDialog(WalletDialogs.none);
             };
             protected openNewWalletDialog = this.switchDialog.bind(
@@ -110,7 +110,7 @@ export const Wallets = withRootStore(
             );
 
             protected handleRename = (address: string, name: string) => {
-                this.rootStore.myProfilesStore.renameAccount(address, name);
+                this.rootStore.myProfiles.renameAccount(address, name);
             };
 
             protected handleRequireAddToken = () => {
@@ -118,7 +118,7 @@ export const Wallets = withRootStore(
             };
 
             protected handleDeleteToken = (address: string) => {
-                this.rootStore.currencyStore.removeToken(address);
+                this.rootStore.currency.removeToken(address);
             };
 
             protected handleShowPrivateKey = (address: string) => {
@@ -126,7 +126,7 @@ export const Wallets = withRootStore(
             };
 
             protected handleClickProfileIcon = (address: string) => {
-                this.rootStore.myProfilesStore.setCurrentProfile(address);
+                this.rootStore.myProfiles.setCurrentProfile(address);
                 this.props.navigateToProfile(address);
             };
 
@@ -136,10 +136,10 @@ export const Wallets = withRootStore(
                 return (
                     <div className={cn('sonm-accounts', className)}>
                         <DownloadFile
-                            getData={rootStore.walletStore.getWalletExportText}
+                            getData={rootStore.wallet.getWalletExportText}
                             className="sonm-accounts__export-wallet"
                             fileName={`sonm-wallet-${
-                                rootStore.walletStore.walletName
+                                rootStore.wallet.walletName
                             }.json`}
                         >
                             <Button
@@ -155,11 +155,10 @@ export const Wallets = withRootStore(
                             </Button>
                         </DownloadFile>
                         <div className="sonm-accounts__list">
-                            {rootStore.myProfilesStore.accountList.length ===
-                            0 ? (
+                            {rootStore.myProfiles.accountList.length === 0 ? (
                                 <EmptyAccountList />
                             ) : (
-                                rootStore.myProfilesStore.accountList.map(
+                                rootStore.myProfiles.accountList.map(
                                     (x: IAccountItemView) => {
                                         return (
                                             <DeletableItem
@@ -198,7 +197,7 @@ export const Wallets = withRootStore(
                         <CurrencyBalanceList
                             className="sonm-accounts__balances"
                             currencyBalanceList={
-                                rootStore.myProfilesStore.fullBalanceList
+                                rootStore.myProfiles.fullBalanceList
                             }
                             onRequireAddToken={
                                 rootStore.isOffline
@@ -226,7 +225,7 @@ export const Wallets = withRootStore(
                             {this.state.visibleDialog === WalletDialogs.new ? (
                                 <CreateAccount
                                     serverValidation={
-                                        rootStore.mainStore
+                                        rootStore.main
                                             .serverValidation as IValidation
                                     }
                                     onSubmit={this.handleCreateAccount}
@@ -236,11 +235,10 @@ export const Wallets = withRootStore(
                             {this.state.visibleDialog === WalletDialogs.add ? (
                                 <ImportAccount
                                     existingAccounts={
-                                        rootStore.myProfilesStore
-                                            .accountAddressList
+                                        rootStore.myProfiles.accountAddressList
                                     }
                                     serverValidation={
-                                        rootStore.mainStore
+                                        rootStore.main
                                             .serverValidation as IImportAccountForm
                                     }
                                     onSubmit={this.handleAddAccount}

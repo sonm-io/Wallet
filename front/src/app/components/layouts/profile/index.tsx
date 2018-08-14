@@ -16,7 +16,7 @@ export const Profile = withRootStore(
         class extends Layout<IProps> {
             public render() {
                 const props = this.props;
-                const store = this.rootStore.profileDetailsStore;
+                const store = this.rootStore.profileDetails;
                 const profile = store.profile;
 
                 return (
@@ -34,7 +34,7 @@ export const Profile = withRootStore(
                         supplierToken="--"
                         my={
                             profile.address.toLowerCase() ===
-                            this.rootStore.myProfilesStore.currentProfileAddress.toLowerCase()
+                            this.rootStore.myProfiles.currentProfileAddress.toLowerCase()
                         }
                         userName={profile.name}
                         countryAbCode2={profile.country}

@@ -36,67 +36,67 @@ import { IProfileBrief } from 'app/entities/account';
 useStrict(true);
 
 export class RootStore implements IHasLocalizator {
-    public readonly walletHistoryListStore: HistoryListStore;
-    public readonly walletHistoryFilterStore: HistoryFilterStore;
-    public readonly dwHistoryListStore: HistoryListStore;
-    public readonly dwHistoryFilterStore: HistoryFilterStore;
-    public readonly mainStore: MainStore;
-    public readonly sendStore: SendStore;
-    public readonly depositStore: SendStore;
-    public readonly withdrawStore: WithdrawStore;
-    public readonly uiStore: UiStore;
-    public readonly addTokenStore: AddTokenStore;
-    public readonly profileListStore: IListStore<IProfileBrief>;
-    public readonly dealListStore: IListStore<IDeal>;
-    public readonly workerListStore: IListStore<IWorker>;
-    public readonly workerFilterStore: WorkerFilterStore;
-    public readonly ordersListStore: IListStore<IOrder>;
-    public readonly orderCreateStore: OrderCreateStore;
-    public readonly validatorsStore: ValidatorsStore;
-    public readonly profileFilterStore: ProfileFilterStore;
-    public readonly dealFilterStore: DealFilterStore;
-    public readonly orderFilterStore: OrderFilterStore;
-    public readonly orderDetailsStore: OrderDetails;
-    public readonly dealDetailsStore: DealDetails;
-    public readonly kycListStore: KycListStore;
-    public readonly profileDetailsStore: ProfileDetails;
-    public readonly currencyStore: CurrencyStore;
-    public readonly myProfilesStore: MyProfilesStore;
-    public readonly walletStore: WalletStore;
+    public readonly walletHistoryList: HistoryListStore;
+    public readonly walletHistoryFilter: HistoryFilterStore;
+    public readonly dwHistoryList: HistoryListStore;
+    public readonly dwHistoryFilter: HistoryFilterStore;
+    public readonly main: MainStore;
+    public readonly send: SendStore;
+    public readonly deposit: SendStore;
+    public readonly withdraw: WithdrawStore;
+    public readonly ui: UiStore;
+    public readonly addToken: AddTokenStore;
+    public readonly profileList: IListStore<IProfileBrief>;
+    public readonly dealList: IListStore<IDeal>;
+    public readonly workerList: IListStore<IWorker>;
+    public readonly workerFilter: WorkerFilterStore;
+    public readonly ordersList: IListStore<IOrder>;
+    public readonly orderCreate: OrderCreateStore;
+    public readonly validators: ValidatorsStore;
+    public readonly profileFilter: ProfileFilterStore;
+    public readonly dealFilter: DealFilterStore;
+    public readonly orderFilter: OrderFilterStore;
+    public readonly orderDetails: OrderDetails;
+    public readonly dealDetails: DealDetails;
+    public readonly kycList: KycListStore;
+    public readonly profileDetails: ProfileDetails;
+    public readonly currency: CurrencyStore;
+    public readonly myProfiles: MyProfilesStore;
+    public readonly wallet: WalletStore;
     public readonly gasPrice: GasPriceStore;
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
 
         // should be first cause used in all stores;
-        this.uiStore = new UiStore(this);
+        this.ui = new UiStore(this);
 
-        this.walletHistoryFilterStore = new HistoryFilterStore(
+        this.walletHistoryFilter = new HistoryFilterStore(
             EnumHistorySourceMode.wallet,
         );
-        this.walletHistoryListStore = new HistoryListStore(
+        this.walletHistoryList = new HistoryListStore(
             {
-                filter: this.walletHistoryFilterStore,
+                filter: this.walletHistoryFilter,
             },
             {
                 localizator,
-                errorProcessor: this.uiStore,
+                errorProcessor: this.ui,
                 api: Api.history,
             },
             true,
         );
 
-        this.dwHistoryFilterStore = new HistoryFilterStore(
+        this.dwHistoryFilter = new HistoryFilterStore(
             EnumHistorySourceMode.market,
         );
 
-        this.dwHistoryListStore = new HistoryListStore(
+        this.dwHistoryList = new HistoryListStore(
             {
-                filter: this.dwHistoryFilterStore,
+                filter: this.dwHistoryFilter,
             },
             {
                 localizator,
-                errorProcessor: this.uiStore,
+                errorProcessor: this.ui,
                 api: Api.history,
             },
             true,
@@ -104,22 +104,22 @@ export class RootStore implements IHasLocalizator {
 
         this.gasPrice = new GasPriceStore({
             localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
         });
 
-        this.walletStore = new WalletStore({
+        this.wallet = new WalletStore({
             localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
         });
 
-        this.currencyStore = new CurrencyStore(this, {
+        this.currency = new CurrencyStore(this, {
             localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
         });
 
-        this.myProfilesStore = new MyProfilesStore(this, {
+        this.myProfiles = new MyProfilesStore(this, {
             localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
             profileApi: Api.profile,
             marketApi: {
                 fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
@@ -127,14 +127,14 @@ export class RootStore implements IHasLocalizator {
             },
         });
 
-        this.mainStore = new MainStore(this, { localizator: this.localizator });
+        this.main = new MainStore(this, { localizator: this.localizator });
 
-        this.sendStore = new SendStore(this, this.localizator, {
+        this.send = new SendStore(this, this.localizator, {
             getPrivateKey: Api.getPrivateKey,
             send: Api.send,
         });
 
-        this.depositStore = new SendStore(
+        this.deposit = new SendStore(
             this,
             this.localizator,
             {
@@ -145,7 +145,7 @@ export class RootStore implements IHasLocalizator {
             '150000',
         );
 
-        this.withdrawStore = new WithdrawStore(
+        this.withdraw = new WithdrawStore(
             this,
             this.localizator,
             {
@@ -156,93 +156,93 @@ export class RootStore implements IHasLocalizator {
             '150000',
         );
 
-        this.validatorsStore = new ValidatorsStore(this, {
+        this.validators = new ValidatorsStore(this, {
             localizator: this.localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
             api: {
                 fetchValidators: unwrapApiResult(Api.getValidators),
             },
         });
 
-        this.profileFilterStore = new ProfileFilterStore();
+        this.profileFilter = new ProfileFilterStore();
 
-        this.addTokenStore = new AddTokenStore(this, this.localizator);
-        this.profileListStore = new ProfileList(
+        this.addToken = new AddTokenStore(this, this.localizator);
+        this.profileList = new ProfileList(
             {
-                filter: this.profileFilterStore,
+                filter: this.profileFilter,
             },
             {
                 localizator,
-                errorProcessor: this.uiStore,
+                errorProcessor: this.ui,
                 api: Api.profile,
             },
         );
 
-        this.orderFilterStore = new OrderFilterStore(this);
+        this.orderFilter = new OrderFilterStore(this);
 
-        this.ordersListStore = new OrdersList(
+        this.ordersList = new OrdersList(
             {
-                filter: this.orderFilterStore,
+                filter: this.orderFilter,
             },
             {
                 localizator,
-                errorProcessor: this.uiStore,
+                errorProcessor: this.ui,
                 api: Api.order,
             },
         );
 
-        this.orderCreateStore = new OrderCreateStore(this, {
+        this.orderCreate = new OrderCreateStore(this, {
             localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
             profileApi: Api.profile,
         });
 
-        this.dealFilterStore = new DealFilterStore(this);
+        this.dealFilter = new DealFilterStore(this);
 
-        this.dealListStore = new DealList(
+        this.dealList = new DealList(
             {
-                filter: this.dealFilterStore,
+                filter: this.dealFilter,
             },
             {
                 localizator,
-                errorProcessor: this.uiStore,
+                errorProcessor: this.ui,
                 api: Api.deal,
             },
         );
 
-        this.workerFilterStore = new WorkerFilterStore(this);
+        this.workerFilter = new WorkerFilterStore(this);
 
-        this.workerListStore = new WorkerList(
+        this.workerList = new WorkerList(
             {
-                filter: this.workerFilterStore,
+                filter: this.workerFilter,
             },
             {
                 localizator,
-                errorProcessor: this.uiStore,
+                errorProcessor: this.ui,
                 api: Api.worker,
             },
         );
 
-        this.orderDetailsStore = new OrderDetails(this, {
+        this.orderDetails = new OrderDetails(this, {
             localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
             api: Api.order,
         });
 
-        this.dealDetailsStore = new DealDetails(this, {
+        this.dealDetails = new DealDetails(this, {
             localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
             api: Api.deal,
         });
 
-        this.kycListStore = new KycListStore(this, {
+        this.kycList = new KycListStore(this, {
             localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
         });
 
-        this.profileDetailsStore = new ProfileDetails(this, {
+        this.profileDetails = new ProfileDetails(this, {
             localizator,
-            errorProcessor: this.uiStore,
+            errorProcessor: this.ui,
             api: Api.profile,
         });
     }
@@ -250,29 +250,29 @@ export class RootStore implements IHasLocalizator {
     public get isPending() {
         return OnlineStore.getAccumulatedFlag(
             'isPending',
-            this.walletHistoryListStore,
-            this.dwHistoryListStore,
-            this.mainStore,
-            this.sendStore,
-            this.depositStore,
-            this.withdrawStore,
-            this.addTokenStore,
-            this.orderDetailsStore,
-            this.dealDetailsStore,
-            this.orderCreateStore,
+            this.walletHistoryList,
+            this.dwHistoryList,
+            this.main,
+            this.send,
+            this.deposit,
+            this.withdraw,
+            this.addToken,
+            this.orderDetails,
+            this.dealDetails,
+            this.orderCreate,
         );
     }
 
     public get isOffline() {
         return OnlineStore.getAccumulatedFlag(
             'isOffline',
-            this.walletHistoryListStore,
-            this.dwHistoryListStore,
-            this.mainStore,
-            this.sendStore,
-            this.addTokenStore,
-            this.depositStore,
-            this.withdrawStore,
+            this.walletHistoryList,
+            this.dwHistoryList,
+            this.main,
+            this.send,
+            this.addToken,
+            this.deposit,
+            this.withdraw,
         );
     }
 

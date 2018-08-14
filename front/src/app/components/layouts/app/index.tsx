@@ -65,14 +65,12 @@ export const App = withRootStore(
             };
 
             protected handleChangeMarketAccount = (account: IAccount) => {
-                this.rootStore.myProfilesStore.setCurrentProfile(
-                    account.address,
-                );
+                this.rootStore.myProfiles.setCurrentProfile(account.address);
             };
 
             protected handleClickMyProfile = () => {
                 this.props.navigator.toProfile(
-                    this.rootStore.myProfilesStore.currentProfileAddress,
+                    this.rootStore.myProfiles.currentProfileAddress,
                 );
             };
 
@@ -82,8 +80,8 @@ export const App = withRootStore(
                 const rootStore = this.rootStore;
                 const p = this.props;
                 const t = rootStore.localizator.getMessageText;
-                const myProfilesStore = rootStore.myProfilesStore;
-                const uiStore = rootStore.uiStore;
+                const myProfilesStore = rootStore.myProfiles;
+                const uiStore = rootStore.ui;
 
                 return (
                     <AppView

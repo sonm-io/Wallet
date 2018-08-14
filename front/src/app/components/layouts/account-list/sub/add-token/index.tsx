@@ -26,27 +26,25 @@ export const AddToken = withRootStore(
         class extends Layout<IProps> {
             protected handleSubmit = (event: any) => {
                 event.preventDefault();
-                this.rootStore.addTokenStore.approveCandidateToken();
+                this.rootStore.addToken.approveCandidateToken();
                 this.props.onClickCross();
             };
 
             protected handleChangeInput = async (event: any) => {
                 const address = event.target.value.trim();
-                this.rootStore.addTokenStore.setCandidateTokenAddress(address);
+                this.rootStore.addToken.setCandidateTokenAddress(address);
             };
 
             protected handleClose = () => {
-                this.rootStore.addTokenStore.resetCandidateToken();
+                this.rootStore.addToken.resetCandidateToken();
                 this.props.onClickCross();
             };
 
             public render() {
                 const rootStore = this.rootStore;
-                const tokenInfo = rootStore.addTokenStore.candidateTokenInfo;
-                const tokenAddress =
-                    rootStore.addTokenStore.candidateTokenAddress;
-                const validation =
-                    rootStore.addTokenStore.validationCandidateToken;
+                const tokenInfo = rootStore.addToken.candidateTokenInfo;
+                const tokenAddress = rootStore.addToken.candidateTokenAddress;
+                const validation = rootStore.addToken.validationCandidateToken;
 
                 return (
                     <Dialog

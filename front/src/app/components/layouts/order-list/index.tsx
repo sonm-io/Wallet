@@ -17,11 +17,11 @@ export const OrderList = withRootStore(
     observer(
         class extends Layout<IProps> {
             protected get store() {
-                return this.rootStore.ordersListStore;
+                return this.rootStore.ordersList;
             }
 
             protected get filterStore() {
-                return this.rootStore.orderFilterStore;
+                return this.rootStore.orderFilter;
             }
 
             public componentDidMount() {
