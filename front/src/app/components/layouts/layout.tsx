@@ -20,9 +20,7 @@ export function withRootStore<T>(
 ) {
     return (props: T & IHasRootStore) => (
         <RootStoreContext.Consumer>
-            {(rootStore: RootStore) => (
-                <LayoutComponent {...props} rootStore={rootStore} />
-            )}
+            {rootStore => <LayoutComponent {...props} rootStore={rootStore} />}
         </RootStoreContext.Consumer>
     );
 }
