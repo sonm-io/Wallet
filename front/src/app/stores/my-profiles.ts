@@ -12,6 +12,7 @@ const { pending, catchErrors } = OnlineStore;
 import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ICurrencyInfo } from 'app/entities/currency';
 import ProfileApi from 'app/api/sub/profile-api';
+import { setIntervalAsync } from 'app/utils/set-interval-async';
 
 interface IMainFormValues {
     password: string;
@@ -62,10 +63,10 @@ export class MyProfilesStore extends OnlineStore {
         reaction(
             () => this.currentProfileAddress,
             (_: string, r: IReactionPublic) => {
-                setInterval(async () => {
+                setIntervalAsync(async () => {
                     await this.fetchProfileDetails();
                 }, MyProfilesStore.PROFILE_INTERVAL);
-                setInterval(async () => {
+                setIntervalAsync(async () => {
                     await this.updateBalanceAndStats();
                 }, MyProfilesStore.BALANCE_INTERVAL);
                 r.dispose();
