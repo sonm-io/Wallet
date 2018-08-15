@@ -85,17 +85,16 @@ export class MyProfilesStore extends OnlineStore {
 
     @observable protected accountMap = new Map<string, IAccountInfo>();
 
-    @observable protected currentProfileAddressInner: string = '';
+    @observable public currentProfileAddress: string = '';
+
+    @observable public currentProfile: IProfileFull = { ...emptyProfile };
+
+    @observable public marketAllBalance: string = '0';
+
+    @observable public marketBalance: string = '';
 
     @observable
-    protected currentProfileInner: IProfileFull = { ...emptyProfile };
-
-    @observable protected marketAllBalanceInner: string = '0';
-
-    @observable protected marketBalanceInner: string = '';
-
-    @observable
-    protected marketStatsInner: IMarketStats = {
+    public marketStats: IMarketStats = {
         dealsCount: 0,
         dealsPrice: '0',
         daysLeft: 0,
@@ -104,31 +103,6 @@ export class MyProfilesStore extends OnlineStore {
     //#endregion
 
     public getItem = (key: string) => this.accountMap.get(key);
-
-    @computed
-    public get marketAllBalance() {
-        return this.marketAllBalanceInner;
-    }
-
-    @computed
-    public get marketBalance() {
-        return this.marketBalanceInner;
-    }
-
-    @computed
-    public get marketStats(): IMarketStats {
-        return { ...this.marketStatsInner };
-    }
-
-    @computed
-    public get currentProfileAddress() {
-        return this.currentProfileAddressInner;
-    }
-
-    @computed
-    public get currentProfile(): IProfileFull {
-        return { ...this.currentProfileInner };
-    }
 
     @computed
     public get currentProfileView(): IAccountItemView | undefined {
@@ -146,12 +120,12 @@ export class MyProfilesStore extends OnlineStore {
                 !this.accountMap.has(this.currentProfileAddress) &&
                 this.accountMap.size > 0
             ) {
-                this.currentProfileAddressInner = this.accountAddressList[0];
+                this.currentProfileAddress = this.accountAddressList[0];
             } else {
                 return;
             }
         } else {
-            this.currentProfileAddressInner = accountAddress;
+            this.currentProfileAddress = accountAddress;
         }
     }
 
@@ -312,7 +286,7 @@ export class MyProfilesStore extends OnlineStore {
     @catchErrors({ restart: false })
     @asyncAction
     protected *fetchProfileDetails() {
-        this.currentProfileInner = yield this.services.profileApi.fetchByAddress(
+        this.currentProfile = yield this.services.profileApi.fetchByAddress(
             this.rootStore.myProfiles.currentProfileAddress,
         );
     }
@@ -409,7 +383,7 @@ export class MyProfilesStore extends OnlineStore {
             balance = balance.add(new BN(accountBalance));
         }
 
-        this.marketAllBalanceInner = balance.toString(10);
+        this.marketAllBalance = balance.toString(10);
     }
 
     @catchErrors({ restart: true })
@@ -419,13 +393,13 @@ export class MyProfilesStore extends OnlineStore {
             this.currentProfileAddress,
         );
 
-        this.marketBalanceInner = balance;
+        this.marketBalance = balance;
     }
 
     @catchErrors({ restart: true })
     @asyncAction
     protected *updateMarketStats() {
-        this.marketStatsInner = yield this.services.marketApi.fetchMarketStats(
+        this.marketStats = yield this.services.marketApi.fetchMarketStats(
             this.currentProfileAddress,
         );
     }
