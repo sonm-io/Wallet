@@ -1,20 +1,22 @@
-import { IWalletList } from '../app/api/types';
+import { IWalletList, Wallet } from 'app/entities/wallet';
 import moveDecimalPoint from 'app/utils/move-decimal-point';
 
 const migrations = {
     wallet_list: {
         0: (list: any) => {
-            const newList = {
+            const newList: IWalletList = {
                 version: 1,
                 data: [],
-            } as IWalletList;
+            };
 
             for (const item of list.data) {
-                newList.data.push({
-                    name: item,
-                    chainId: 'rinkeby',
-                    nodeUrl: 'https://rinkeby.infura.io',
-                });
+                newList.data.push(
+                    new Wallet({
+                        name: item,
+                        chainId: 'rinkeby',
+                        nodeUrl: 'https://rinkeby.infura.io',
+                    }),
+                );
             }
 
             return newList;

@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import * as queryStr from 'query-string';
 import { history } from './router/history';
 import { Login } from './components/layouts/login';
-import { IWalletListItem } from 'app/api/types';
+import { Wallet } from 'app/entities/wallet';
 import { Provider } from 'mobx-react';
 import { localizator as en } from 'app/localization';
 import { RootStore } from 'app/stores';
@@ -48,7 +48,7 @@ class Renderer {
     }
 }
 
-async function handleLogin(wallet: IWalletListItem) {
+async function handleLogin(wallet: Wallet) {
     const rootStore = new RootStore(en);
     if (IS_DEV) {
         (window as any).__rootStore = rootStore;

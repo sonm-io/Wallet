@@ -109,9 +109,9 @@ export const App = withRootStore(
                         headerMenu={this.headerMenuConfig}
                         disableAccountSelect={p.disableAccountSelect}
                         onClickMyProfile={this.handleClickMyProfile}
-                        isTestNet={!uiStore.isLivenet}
-                        ethNodeURL={uiStore.ethNodeUrl}
-                        snmNodeURL={uiStore.sidechainNodeUrl}
+                        isTestNet={!rootStore.wallet.isLivenet}
+                        ethNodeURL={rootStore.wallet.ethNodeUrl}
+                        snmNodeURL={rootStore.wallet.sidechainNodeUrl}
                     >
                         {p.children}
                     </AppView>

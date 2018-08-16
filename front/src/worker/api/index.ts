@@ -22,21 +22,13 @@ const PENDING_HASH = 'waiting for hash...';
 import ipc from '../ipc';
 import { ICurrencyInfo } from 'app/entities/currency';
 import { IAccountInfo } from 'app/entities/account';
+import { Wallet } from 'app/entities/wallet';
+import { DEFAULT_NODES } from './default-nodes';
 
 async function ipcSend(type: string, payload?: any): Promise<any> {
     const res = await ipc.send(type, payload);
     return res.data || null;
 }
-
-const DEFAULT_NODES: t.INodes = {
-    default: 'https://mainnet.infura.io',
-    livenet: 'https://mainnet.infura.io',
-    livenet_private: 'https://sidechain.livenet.sonm.com',
-    rinkeby: 'https://rinkeby.infura.io',
-    rinkeby_private: 'https://sidechain-dev.sonm.com',
-    testrpc: 'https://proxy.test.sonm.com:8545',
-    testrpc_private: 'https://proxy.test.sonm.com:8546',
-};
 
 const ZERO_ADDRESS = Array(41).join('0');
 const WEI_PRECISION = Array(19).join('0');
@@ -117,8 +109,6 @@ class Api {
             importWallet: this.importWallet,
             exportWallet: this.exportWallet,
 
-            getConnectionInfo: this.getConnectionInfo,
-
             'account.add': this.addAccount,
             'account.create': this.createAccount,
             'account.createFromPrivateKey': this.createAccountFromPrivateKey,
@@ -180,7 +170,9 @@ class Api {
 
     public getWalletList = async (): Promise<t.IResponse> => {
         return {
-            data: (await this.getWallets()).data,
+            data: (await this.getWallets()).data.map(
+                (w: Wallet) => new Wallet(w),
+            ),
         };
     };
 
@@ -203,20 +195,6 @@ class Api {
     public getSettings = async (): Promise<t.IResponse> => {
         return {
             data: this.storage.settings,
-        };
-    };
-
-    public getConnectionInfo = async (): Promise<t.IResponse> => {
-        const chainId = this.storage.settings.chainId;
-        return {
-            data: {
-                ethNodeURL: DEFAULT_NODES[chainId].replace('https://', ''),
-                snmNodeURL: DEFAULT_NODES[`${chainId}_private`].replace(
-                    'https://',
-                    '',
-                ),
-                isTest: chainId !== 'livenet',
-            },
         };
     };
 

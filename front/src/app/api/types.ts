@@ -57,17 +57,6 @@ export interface ISettings {
     language: string;
 }
 
-export interface IWalletListItem {
-    name: string;
-    chainId: string;
-    nodeUrl: string;
-}
-
-export interface IWalletList {
-    version: number;
-    data: IWalletListItem[];
-}
-
 export enum NetworkEnum {
     live = 'livenet',
     rinkeby = 'rinkeby',

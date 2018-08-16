@@ -69,7 +69,7 @@ export class SendStore extends OnlineStore {
 
     @computed
     get defaultGasLimit() {
-        return this.rootStore.ui.isLivenet
+        return this.rootStore.wallet.isLivenet
             ? this.initialGasLimit
             : SendStore.GAS_LIMIT_SEND_TESTNET;
     }

@@ -1,12 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { IAlert, AlertType } from './types';
 import { RootStore } from 'app/stores';
-import { Api } from 'app/api';
-import {
-    IConnectionInfo,
-    defaultConnectionInfo,
-} from 'app/entities/connection';
-import { asyncAction } from 'mobx-utils';
 
 const SUCCESS_ALERT_DELAY_CLOSE = 30000;
 
@@ -17,21 +11,9 @@ export class UiStore {
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
-        this.connectionInfo = defaultConnectionInfo;
-        this.init();
-    }
-
-    @asyncAction
-    protected *init() {
-        const result = yield Api.getConnectionInfo();
-        if (result.data) {
-            this.connectionInfo = result.data;
-        }
     }
 
     @observable public mapIdToAlert: Map<string, IAlert> = new Map();
-
-    @observable.ref protected connectionInfo: IConnectionInfo;
 
     protected getNextId() {
         return `${new Date()}-${UiStore.alertIdx++}`;
@@ -87,21 +69,6 @@ export class UiStore {
             result.push('Market');
         }
         return result;
-    }
-
-    @computed
-    public get isLivenet() {
-        return !this.connectionInfo.isTest;
-    }
-
-    @computed
-    public get ethNodeUrl() {
-        return this.connectionInfo.ethNodeURL;
-    }
-
-    @computed
-    public get sidechainNodeUrl() {
-        return this.connectionInfo.snmNodeURL;
     }
 }
 

@@ -9,14 +9,13 @@ import {
     ISendTransaction,
     IResult,
     ISettings,
-    IWalletListItem,
     ISender,
     IKycValidator,
     IWorker,
 } from './types';
 import { ICurrencyInfo } from 'app/entities/currency';
 import { IAccountInfo, TypeAccountInfoList } from 'app/entities/account';
-import { IConnectionInfo } from 'app/entities/connection';
+import { Wallet } from 'app/entities/wallet';
 
 export * from './types';
 
@@ -33,7 +32,7 @@ class AllApi {
         password: string,
         walletName: string,
         chainId: string,
-    ): Promise<IResult<IWalletListItem>> {
+    ): Promise<IResult<Wallet>> {
         return this.ipc.send('createWallet', { password, walletName, chainId });
     }
 
@@ -48,12 +47,8 @@ class AllApi {
         password: string,
         walletName: string,
         file: string,
-    ): Promise<IResult<IWalletListItem>> {
+    ): Promise<IResult<Wallet>> {
         return this.ipc.send('importWallet', { password, walletName, file });
-    }
-
-    public async getConnectionInfo(): Promise<IResult<IConnectionInfo>> {
-        return this.ipc.send('getConnectionInfo');
     }
 
     public async exportWallet(): Promise<IResult<string>> {
@@ -85,7 +80,7 @@ class AllApi {
         }
     }
 
-    public async getWalletList(): Promise<IResult<IWalletListItem[]>> {
+    public async getWalletList(): Promise<IResult<Wallet[]>> {
         return this.ipc.send('getWalletList');
     }
 

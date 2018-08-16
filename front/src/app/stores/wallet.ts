@@ -1,7 +1,8 @@
 import { observable, computed, action } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import Api, { IWalletListItem } from 'app/api';
+import Api from 'app/api';
+import { Wallet, defaultWallet } from 'app/entities/wallet';
 const { pending } = OnlineStore;
 
 export class WalletStore extends OnlineStore {
@@ -10,11 +11,11 @@ export class WalletStore extends OnlineStore {
     }
 
     @action
-    public init(wallet: IWalletListItem) {
+    public init(wallet: Wallet) {
         this.walletInfo = wallet;
     }
 
-    @observable.ref protected walletInfo?: IWalletListItem;
+    @observable.ref protected walletInfo: Wallet = defaultWallet;
 
     @computed
     public get walletName(): string {
@@ -29,6 +30,21 @@ export class WalletStore extends OnlineStore {
     @computed
     public get nodeUrl(): string {
         return this.walletInfo ? this.walletInfo.nodeUrl : '';
+    }
+
+    @computed
+    public get isLivenet() {
+        return this.walletInfo.isLivenet;
+    }
+
+    @computed
+    public get ethNodeUrl() {
+        return this.walletInfo.ethNodeUrl;
+    }
+
+    @computed
+    public get sidechainNodeUrl() {
+        return this.walletInfo.sidechainNodeUrl;
     }
 
     @pending
