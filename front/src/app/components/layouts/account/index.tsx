@@ -24,184 +24,176 @@ enum Dialogs {
     none = '',
 }
 
-export const Account = withRootStore(
-    observer(
-        class extends React.Component<IProps, any> {
-            // ToDo make stateless
+class AccountLayout extends React.Component<IProps, any> {
+    // ToDo make stateless
 
-            protected get rootStore() {
-                return this.props.rootStore as RootStore;
-            }
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
 
-            public state = {
-                visibleDialog: Dialogs.none,
-            };
+    public state = {
+        visibleDialog: Dialogs.none,
+    };
 
-            public componentWillMount() {
-                if (this.props.initialAddress) {
-                    this.rootStore.send.setUserInput({
-                        fromAddress: this.props.initialAddress,
-                    });
-                }
-            }
+    public componentWillMount() {
+        if (this.props.initialAddress) {
+            this.rootStore.send.setUserInput({
+                fromAddress: this.props.initialAddress,
+            });
+        }
+    }
 
-            protected handleChangeAccount = (accountAddress: any) => {
-                this.rootStore.send.setUserInput({
-                    fromAddress: accountAddress,
-                });
-            };
+    protected handleChangeAccount = (accountAddress: any) => {
+        this.rootStore.send.setUserInput({
+            fromAddress: accountAddress,
+        });
+    };
 
-            protected handleClickHistory = () => {
-                this.props.onClickHistory(this.rootStore.send.fromAddress);
-            };
+    protected handleClickHistory = () => {
+        this.props.onClickHistory(this.rootStore.send.fromAddress);
+    };
 
-            protected handleSendClick = (event: any) => {
-                const currencyAddress = event.target.name;
+    protected handleSendClick = (event: any) => {
+        const currencyAddress = event.target.name;
 
-                this.rootStore.send.setUserInput({
-                    currencyAddress,
-                });
+        this.rootStore.send.setUserInput({
+            currencyAddress,
+        });
 
-                this.props.onClickSend();
-            };
+        this.props.onClickSend();
+    };
 
-            protected handleGiveMeMore = async (event: any) => {
-                event.preventDefault();
+    protected handleGiveMeMore = async (event: any) => {
+        event.preventDefault();
 
-                await this.rootStore.main.giveMeMore(
-                    event.target.password.value,
-                    this.rootStore.send.fromAddress,
-                );
+        await this.rootStore.main.giveMeMore(
+            event.target.password.value,
+            this.rootStore.send.fromAddress,
+        );
 
-                await this.rootStore.gasPrice.update();
-            };
+        await this.rootStore.gasPrice.update();
+    };
 
-            public render() {
-                const { className } = this.props;
-                const rootStore = this.rootStore;
-                const testEtherUrl = 'https://faucet.rinkeby.io/';
+    public render() {
+        const { className } = this.props;
+        const rootStore = this.rootStore;
+        const testEtherUrl = 'https://faucet.rinkeby.io/';
 
-                return (
-                    <div
-                        className={cn('sonm-account', className)}
-                        key="account"
-                    >
-                        <AccountBigSelect
-                            className="sonm-account__account-select"
-                            returnPrimitive
-                            accounts={rootStore.myProfiles.accountList}
-                            onChange={this.handleChangeAccount}
-                            value={rootStore.send.fromAddress}
-                        />
+        return (
+            <div className={cn('sonm-account', className)} key="account">
+                <AccountBigSelect
+                    className="sonm-account__account-select"
+                    returnPrimitive
+                    accounts={rootStore.myProfiles.accountList}
+                    onChange={this.handleChangeAccount}
+                    value={rootStore.send.fromAddress}
+                />
 
-                        <button
-                            className="sonm-account__go-to-history"
-                            onClick={this.handleClickHistory}
-                        >
-                            View operation history
-                        </button>
+                <button
+                    className="sonm-account__go-to-history"
+                    onClick={this.handleClickHistory}
+                >
+                    View operation history
+                </button>
 
-                        {rootStore.send.currentBalanceList.length ===
-                        0 ? null : (
-                            <ul className="sonm-account__tokens">
-                                <Header className="sonm-account__header">
-                                    Coins and tokens
-                                </Header>
-                                {rootStore.send.currentBalanceList.map(
-                                    ({
-                                        symbol,
-                                        address,
-                                        name,
-                                        balance,
-                                        decimalPointOffset,
-                                    }) => {
-                                        return (
-                                            <li
-                                                className="sonm-account-token-list__currency"
-                                                key={address}
-                                            >
-                                                <IdentIcon
-                                                    address={address}
-                                                    sizePx={40}
-                                                    className="sonm-account-token-list__currency-blockies"
-                                                />
-                                                <div className="sonm-account-token-list__currency-name">
-                                                    {name}
-                                                </div>
-                                                <Balance
-                                                    className="sonm-account-token-list__currency-balance"
-                                                    balance={balance}
-                                                    symbol={symbol}
-                                                    decimalPointOffset={
-                                                        decimalPointOffset
-                                                    }
-                                                />
-                                                <button
-                                                    name={address}
-                                                    className="sonm-account-token-list__currency-button"
-                                                    onClick={
-                                                        this.handleSendClick
-                                                    }
-                                                >
-                                                    {rootStore.localizator.getMessageText(
-                                                        'send',
-                                                    )}
-                                                </button>
-                                            </li>
-                                        );
-                                    },
-                                )}
-                            </ul>
-                        )}
-
-                        {rootStore.wallet.networkName === 'rinkeby' ? (
-                            <form
-                                onSubmit={this.handleGiveMeMore}
-                                className="sonm-account__give-me"
-                            >
-                                <Header className="sonm-account__header">
-                                    {rootStore.localizator.getMessageText(
-                                        'test_token_request',
-                                    )}
-                                </Header>
-                                <div className="sonm-account__warning">
-                                    {rootStore.localizator.getMessageText(
-                                        'you_need_test_ether',
-                                    )}
-                                    <a href={testEtherUrl} target="_blank">
-                                        {testEtherUrl}
-                                    </a>
-                                </div>
-                                <div className="sonm-account__give-me-ct">
-                                    <Input
-                                        autoComplete="off"
-                                        name="password"
-                                        className="sonm-account__give-me-password"
-                                        prefix={
-                                            <Icon
-                                                type="lock"
-                                                style={{ fontSize: 13 }}
-                                            />
-                                        }
-                                        type="password"
-                                        placeholder="Account password"
-                                    />
-                                    <Button
-                                        type="submit"
-                                        className="sonm-account__give-me-button"
-                                        square
-                                        transparent
+                {rootStore.send.currentBalanceList.length === 0 ? null : (
+                    <ul className="sonm-account__tokens">
+                        <Header className="sonm-account__header">
+                            Coins and tokens
+                        </Header>
+                        {rootStore.send.currentBalanceList.map(
+                            ({
+                                symbol,
+                                address,
+                                name,
+                                balance,
+                                decimalPointOffset,
+                            }) => {
+                                return (
+                                    <li
+                                        className="sonm-account-token-list__currency"
+                                        key={address}
                                     >
-                                        {rootStore.localizator.getMessageText(
-                                            'give_me_more',
-                                        )}
-                                    </Button>
-                                </div>
-                            </form>
-                        ) : null}
-                    </div>
-                );
-            }
-        },
-    ),
-);
+                                        <IdentIcon
+                                            address={address}
+                                            sizePx={40}
+                                            className="sonm-account-token-list__currency-blockies"
+                                        />
+                                        <div className="sonm-account-token-list__currency-name">
+                                            {name}
+                                        </div>
+                                        <Balance
+                                            className="sonm-account-token-list__currency-balance"
+                                            balance={balance}
+                                            symbol={symbol}
+                                            decimalPointOffset={
+                                                decimalPointOffset
+                                            }
+                                        />
+                                        <button
+                                            name={address}
+                                            className="sonm-account-token-list__currency-button"
+                                            onClick={this.handleSendClick}
+                                        >
+                                            {rootStore.localizator.getMessageText(
+                                                'send',
+                                            )}
+                                        </button>
+                                    </li>
+                                );
+                            },
+                        )}
+                    </ul>
+                )}
+
+                {rootStore.wallet.networkName === 'rinkeby' ? (
+                    <form
+                        onSubmit={this.handleGiveMeMore}
+                        className="sonm-account__give-me"
+                    >
+                        <Header className="sonm-account__header">
+                            {rootStore.localizator.getMessageText(
+                                'test_token_request',
+                            )}
+                        </Header>
+                        <div className="sonm-account__warning">
+                            {rootStore.localizator.getMessageText(
+                                'you_need_test_ether',
+                            )}
+                            <a href={testEtherUrl} target="_blank">
+                                {testEtherUrl}
+                            </a>
+                        </div>
+                        <div className="sonm-account__give-me-ct">
+                            <Input
+                                autoComplete="off"
+                                name="password"
+                                className="sonm-account__give-me-password"
+                                prefix={
+                                    <Icon
+                                        type="lock"
+                                        style={{ fontSize: 13 }}
+                                    />
+                                }
+                                type="password"
+                                placeholder="Account password"
+                            />
+                            <Button
+                                type="submit"
+                                className="sonm-account__give-me-button"
+                                square
+                                transparent
+                            >
+                                {rootStore.localizator.getMessageText(
+                                    'give_me_more',
+                                )}
+                            </Button>
+                        </div>
+                    </form>
+                ) : null}
+            </div>
+        );
+    }
+}
+
+export const Account = withRootStore(observer(AccountLayout));

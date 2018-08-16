@@ -20,111 +20,109 @@ export interface IProps extends IHasRootStore {
     onClose: () => void;
 }
 
-export const ShowPassword = withRootStore(
-    class extends React.Component<IProps, any> {
-        // ToDo make stateless
+class ShowPasswordLayout extends React.Component<IProps, any> {
+    // ToDo make stateless
 
-        protected get rootStore() {
-            return this.props.rootStore as RootStore;
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
+    public state = {
+        password: '',
+        privateKey: '',
+        validationPassword: '',
+    };
+
+    protected handleSubmit = async (event: any) => {
+        event.preventDefault();
+
+        const privateKey = await this.rootStore.myProfiles.getPrivateKey(
+            this.state.password,
+            this.props.address,
+        );
+
+        if (privateKey) {
+            this.setState({
+                validationPassword: '',
+                privateKey,
+            });
+        } else {
+            this.setState({
+                validationPassword: this.rootStore.localizator.getMessageText(
+                    'incorrect_password',
+                ),
+                privateKey: '',
+            });
         }
+    };
 
-        public state = {
-            password: '',
-            privateKey: '',
-            validationPassword: '',
-        };
+    protected handleChangePassword = (event: any) => {
+        this.setState({ password: event.target.value });
+    };
 
-        protected handleSubmit = async (event: any) => {
-            event.preventDefault();
+    public render() {
+        const when = this.state.privateKey === '' ? 'before' : 'after';
 
-            const privateKey = await this.rootStore.myProfiles.getPrivateKey(
-                this.state.password,
-                this.props.address,
-            );
-
-            if (privateKey) {
-                this.setState({
-                    validationPassword: '',
-                    privateKey,
-                });
-            } else {
-                this.setState({
-                    validationPassword: this.rootStore.localizator.getMessageText(
-                        'incorrect_password',
-                    ),
-                    privateKey: '',
-                });
-            }
-        };
-
-        protected handleChangePassword = (event: any) => {
-            this.setState({ password: event.target.value });
-        };
-
-        public render() {
-            const when = this.state.privateKey === '' ? 'before' : 'after';
-
-            return (
-                <Dialog
-                    onClickCross={this.props.onClose}
-                    className={`sonm-show-key__dialog sonm-show-key__dialog--${when}`}
+        return (
+            <Dialog
+                onClickCross={this.props.onClose}
+                className={`sonm-show-key__dialog sonm-show-key__dialog--${when}`}
+            >
+                <Form
+                    onSubmit={this.handleSubmit}
+                    className="sonm-show-key__form"
                 >
-                    <Form
-                        onSubmit={this.handleSubmit}
-                        className="sonm-show-key__form"
-                    >
-                        <FormHeader>
-                            {when === 'before'
-                                ? 'Show private key'
-                                : 'Private key'}
-                        </FormHeader>
-                        {when === 'before' ? (
-                            <FormRow key="before">
-                                <FormField
-                                    fullWidth
-                                    label="Password"
-                                    error={this.state.validationPassword}
-                                >
-                                    <Input
-                                        name="password"
-                                        autoFocus
-                                        type="password"
-                                        value={this.state.password}
-                                        onChangeDeprecated={
-                                            this.handleChangePassword
-                                        }
-                                    />
-                                </FormField>
-                            </FormRow>
-                        ) : null}
-                        {when === 'after' ? (
-                            <Hash
-                                hash={this.state.privateKey}
-                                keepHashString
-                                hasCopyButton
-                                className={cn('sonm-show-key__hash', {
-                                    'sonm-show-key__hash--visible':
-                                        when === 'after',
-                                })}
-                            />
-                        ) : null}
-                        <FormButtons key="b">
-                            <Button
-                                onClick={
-                                    when === 'after'
-                                        ? this.props.onClose
-                                        : undefined
-                                }
-                                type={when === 'after' ? 'button' : 'submit'}
+                    <FormHeader>
+                        {when === 'before' ? 'Show private key' : 'Private key'}
+                    </FormHeader>
+                    {when === 'before' ? (
+                        <FormRow key="before">
+                            <FormField
+                                fullWidth
+                                label="Password"
+                                error={this.state.validationPassword}
                             >
-                                {when === 'before' ? 'Show' : 'Close'}
-                            </Button>
-                        </FormButtons>
-                    </Form>
-                </Dialog>
-            );
-        }
-    },
-);
+                                <Input
+                                    name="password"
+                                    autoFocus
+                                    type="password"
+                                    value={this.state.password}
+                                    onChangeDeprecated={
+                                        this.handleChangePassword
+                                    }
+                                />
+                            </FormField>
+                        </FormRow>
+                    ) : null}
+                    {when === 'after' ? (
+                        <Hash
+                            hash={this.state.privateKey}
+                            keepHashString
+                            hasCopyButton
+                            className={cn('sonm-show-key__hash', {
+                                'sonm-show-key__hash--visible':
+                                    when === 'after',
+                            })}
+                        />
+                    ) : null}
+                    <FormButtons key="b">
+                        <Button
+                            onClick={
+                                when === 'after'
+                                    ? this.props.onClose
+                                    : undefined
+                            }
+                            type={when === 'after' ? 'button' : 'submit'}
+                        >
+                            {when === 'before' ? 'Show' : 'Close'}
+                        </Button>
+                    </FormButtons>
+                </Form>
+            </Dialog>
+        );
+    }
+}
+
+export const ShowPassword = withRootStore(ShowPasswordLayout);
 
 export default ShowPassword;

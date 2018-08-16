@@ -15,41 +15,41 @@ interface IProps extends IHasRootStore {
 
 // TODO replace DIV and SPAN with A
 
-export const SendSuccess = withRootStore(
-    class extends Layout<IProps> {
-        protected handleClickHistory = () => {
-            this.props.onClickHistory(toJS(this.rootStore.send.fromAddress));
-        };
+class SendSuccessLayout extends Layout<IProps> {
+    protected handleClickHistory = () => {
+        this.props.onClickHistory(toJS(this.rootStore.send.fromAddress));
+    };
 
-        public render() {
-            return (
-                <div
-                    className={cn('sonm-send-success', this.props.className)}
-                    key="success"
+    public render() {
+        return (
+            <div
+                className={cn('sonm-send-success', this.props.className)}
+                key="success"
+            >
+                <button
+                    onClick={this.handleClickHistory}
+                    className="sonm-send-success__button"
                 >
-                    <button
-                        onClick={this.handleClickHistory}
-                        className="sonm-send-success__button"
-                    >
-                        <div className="sonm-send-success__icon-history" />
-                        <div className="sonm-send-success__label">
-                            Transaction history
-                        </div>
-                    </button>
-                    <button
-                        onClick={this.props.onClickSend}
-                        className="sonm-send-success__button"
-                        tabIndex={0}
-                    >
-                        <div className="sonm-send-success__icon-send" />
-                        <div className="sonm-send-success__label">
-                            New transaction
-                        </div>
-                    </button>
-                </div>
-            );
-        }
-    },
-);
+                    <div className="sonm-send-success__icon-history" />
+                    <div className="sonm-send-success__label">
+                        Transaction history
+                    </div>
+                </button>
+                <button
+                    onClick={this.props.onClickSend}
+                    className="sonm-send-success__button"
+                    tabIndex={0}
+                >
+                    <div className="sonm-send-success__icon-send" />
+                    <div className="sonm-send-success__label">
+                        New transaction
+                    </div>
+                </button>
+            </div>
+        );
+    }
+}
+
+export const SendSuccess = withRootStore(SendSuccessLayout);
 
 export default SendSuccess;

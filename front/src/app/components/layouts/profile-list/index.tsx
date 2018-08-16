@@ -10,60 +10,54 @@ interface IProps extends IHasRootStore {
     onNavigate: (address: string) => void;
 }
 
-export const ProfileList = withRootStore(
-    observer(
-        class extends Layout<IProps> {
-            public handleRowClick = (record: IProfileBrief) => {
-                this.props.onNavigate(record.address);
-            };
+class ProfileListLayout extends Layout<IProps> {
+    public handleRowClick = (record: IProfileBrief) => {
+        this.props.onNavigate(record.address);
+    };
 
-            public handleChangeFilter = (key: string, value: any) => {
-                this.rootStore.profileFilter.updateUserInput({
-                    [key]: value,
-                });
-            };
+    public handleChangeFilter = (key: string, value: any) => {
+        this.rootStore.profileFilter.updateUserInput({
+            [key]: value,
+        });
+    };
 
-            public handleChangePage(page: number) {
-                this.rootStore.profileList.updateUserInput({ page });
-            }
+    public handleChangePage(page: number) {
+        this.rootStore.profileList.updateUserInput({ page });
+    }
 
-            public handleTableChange = (
-                pagination: any,
-                filters: any,
-                sorter: any,
-            ) => {
-                if (sorter.field) {
-                    this.rootStore.profileList.updateUserInput({
-                        sortBy: sorter.field,
-                        sortDesc: sorter.order === 'descend',
-                    });
-                }
-            };
+    public handleTableChange = (pagination: any, filters: any, sorter: any) => {
+        if (sorter.field) {
+            this.rootStore.profileList.updateUserInput({
+                sortBy: sorter.field,
+                sortDesc: sorter.order === 'descend',
+            });
+        }
+    };
 
-            public render() {
-                const listStore = this.rootStore.profileList;
-                const filterStore = this.rootStore.profileFilter;
-                const dataSource = toJS(listStore.records);
+    public render() {
+        const listStore = this.rootStore.profileList;
+        const filterStore = this.rootStore.profileFilter;
+        const dataSource = toJS(listStore.records);
 
-                return (
-                    <ProfileListView
-                        page={listStore.page}
-                        total={toJS(listStore.total)}
-                        limit={listStore.limit}
-                        dataSource={dataSource}
-                        filter={ProfileListView.defaultFilter}
-                        onChangePage={this.handleChangePage}
-                        onChangeFilter={this.handleChangeFilter}
-                        onTableChange={this.handleTableChange}
-                        onClickRow={this.handleRowClick}
-                        filterCountry={filterStore.country}
-                        filterQuery={''}
-                        filterRole={filterStore.role}
-                        filterStatus={filterStore.status}
-                        filterMinDeals={filterStore.minDeals}
-                    />
-                );
-            }
-        },
-    ),
-);
+        return (
+            <ProfileListView
+                page={listStore.page}
+                total={toJS(listStore.total)}
+                limit={listStore.limit}
+                dataSource={dataSource}
+                filter={ProfileListView.defaultFilter}
+                onChangePage={this.handleChangePage}
+                onChangeFilter={this.handleChangeFilter}
+                onTableChange={this.handleTableChange}
+                onClickRow={this.handleRowClick}
+                filterCountry={filterStore.country}
+                filterQuery={''}
+                filterRole={filterStore.role}
+                filterStatus={filterStore.status}
+                filterMinDeals={filterStore.minDeals}
+            />
+        );
+    }
+}
+
+export const ProfileList = withRootStore(observer(ProfileListLayout));

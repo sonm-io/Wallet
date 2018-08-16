@@ -35,35 +35,30 @@ interface IDWProps extends IProps {
 type PriorityInput = new () => ButtonGroup<string>;
 const PriorityInput = ButtonGroup as PriorityInput;
 
-export const Deposit = withRootStore(
-    class extends Layout<IProps> {
-        public render() {
-            return (
-                <DepositWithdraw
-                    {...this.props}
-                    sendStore={this.rootStore.deposit}
-                    title="Deposit"
-                />
-            );
-        }
-    },
-);
+class DepositLayout extends Layout<IProps> {
+    public render() {
+        return (
+            <DepositWithdraw
+                {...this.props}
+                sendStore={this.rootStore.deposit}
+                title="Deposit"
+            />
+        );
+    }
+}
 
-export const Withdraw = withRootStore(
-    class extends Layout<IProps> {
-        public render() {
-            return (
-                <DepositWithdraw
-                    {...this.props}
-                    sendStore={this.rootStore.withdraw}
-                    title="Withdraw"
-                />
-            );
-        }
-    },
-);
+class WithdrawLayout extends Layout<IProps> {
+    public render() {
+        return (
+            <DepositWithdraw
+                {...this.props}
+                sendStore={this.rootStore.withdraw}
+                title="Withdraw"
+            />
+        );
+    }
+}
 
-@observer
 class DepositWithdraw extends React.Component<IDWProps, any> {
     // ToDo make stateless
     protected get rootStore() {
@@ -342,3 +337,6 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         );
     }
 }
+
+export const Deposit = withRootStore(observer(DepositLayout));
+export const Withdraw = withRootStore(observer(WithdrawLayout));

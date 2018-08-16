@@ -16,87 +16,82 @@ interface IProps extends IHasRootStore {
 
 const emptyFn = () => {};
 
-export const DealList = withRootStore(
-    observer(
-        class extends Layout<IProps> {
-            protected get filterStore() {
-                return this.rootStore.dealFilter;
-            }
+class DealListLayout extends Layout<IProps> {
+    protected get filterStore() {
+        return this.rootStore.dealFilter;
+    }
 
-            protected get listStore() {
-                return this.rootStore.dealList;
-            }
+    protected get listStore() {
+        return this.rootStore.dealList;
+    }
 
-            public componentDidMount() {
-                this.rootStore.dealList.startAutoUpdate();
-            }
+    public componentDidMount() {
+        this.rootStore.dealList.startAutoUpdate();
+    }
 
-            public componentWillUnmount() {
-                this.rootStore.dealList.stopAutoUpdate();
-            }
+    public componentWillUnmount() {
+        this.rootStore.dealList.stopAutoUpdate();
+    }
 
-            protected handleUpdateFilter = (
-                key: keyof IDealFilter,
-                value: string | boolean | [Date, Date],
-            ) => {
-                this.filterStore.updateUserInput({ [key]: value });
-            };
+    protected handleUpdateFilter = (
+        key: keyof IDealFilter,
+        value: string | boolean | [Date, Date],
+    ) => {
+        this.filterStore.updateUserInput({ [key]: value });
+    };
 
-            protected handleChangePage = (page: number) => {
-                this.listStore.updateUserInput({ page });
-            };
+    protected handleChangePage = (page: number) => {
+        this.listStore.updateUserInput({ page });
+    };
 
-            protected handleChangeOrder = (
-                orderKey: string,
-                isDesc: boolean,
-            ) => {
-                this.listStore.updateUserInput({
-                    sortBy: orderKey,
-                    sortDesc: isDesc,
-                });
-            };
+    protected handleChangeOrder = (orderKey: string, isDesc: boolean) => {
+        this.listStore.updateUserInput({
+            sortBy: orderKey,
+            sortDesc: isDesc,
+        });
+    };
 
-            public render() {
-                const p = this.props;
-                const listStore = this.listStore;
-                const filterStore = this.filterStore;
+    public render() {
+        const p = this.props;
+        const listStore = this.listStore;
+        const filterStore = this.filterStore;
 
-                const filterPanel = (
-                    <DealFilterPanel
-                        query={filterStore.query}
-                        dateRange={filterStore.dateRange}
-                        onlyActive={filterStore.onlyActive}
-                        onUpdateFilter={this.handleUpdateFilter}
-                    />
-                );
-                const data = toJS(listStore.records);
+        const filterPanel = (
+            <DealFilterPanel
+                query={filterStore.query}
+                dateRange={filterStore.dateRange}
+                onlyActive={filterStore.onlyActive}
+                onUpdateFilter={this.handleUpdateFilter}
+            />
+        );
+        const data = toJS(listStore.records);
 
-                return data.length === 0 ? (
-                    <DealListEmpty
-                        onClickViewMarket={p.onClickViewMarket}
-                        onClickBuyResources={emptyFn}
-                    />
-                ) : (
-                    <DealListView
-                        data={data}
-                        marketAccountAddress={
-                            this.rootStore.myProfiles.currentProfileAddress
-                        }
-                        filterPanel={filterPanel}
-                        onClickRow={p.onClickDeal}
-                        onClickBuyResources={emptyFn}
-                        orderBy={listStore.sortBy}
-                        orderDesc={listStore.sortDesc}
-                        onChangeOrder={this.handleChangeOrder}
-                        currentPage={listStore.page}
-                        pageSize={listStore.limit}
-                        totalRecords={listStore.records.length}
-                        onChangePage={this.handleChangePage}
-                    />
-                );
-            }
-        },
-    ),
-);
+        return data.length === 0 ? (
+            <DealListEmpty
+                onClickViewMarket={p.onClickViewMarket}
+                onClickBuyResources={emptyFn}
+            />
+        ) : (
+            <DealListView
+                data={data}
+                marketAccountAddress={
+                    this.rootStore.myProfiles.currentProfileAddress
+                }
+                filterPanel={filterPanel}
+                onClickRow={p.onClickDeal}
+                onClickBuyResources={emptyFn}
+                orderBy={listStore.sortBy}
+                orderDesc={listStore.sortDesc}
+                onChangeOrder={this.handleChangeOrder}
+                currentPage={listStore.page}
+                pageSize={listStore.limit}
+                totalRecords={listStore.records.length}
+                onChangePage={this.handleChangePage}
+            />
+        );
+    }
+}
+
+export const DealList = withRootStore(observer(DealListLayout));
 
 export { DealListView };

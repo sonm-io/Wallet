@@ -10,40 +10,34 @@ interface IProps extends IHasRootStore {
     onNavigateDeposit: () => void;
 }
 
-export const OrderDetails = withRootStore(
-    observer(
-        class extends Layout<IProps> {
-            public handleSubmit = async (password: string) => {
-                const orderDetailsStore = this.rootStore.orderDetails;
+class OrderDetailsLayout extends Layout<IProps> {
+    public handleSubmit = async (password: string) => {
+        const orderDetailsStore = this.rootStore.orderDetails;
 
-                orderDetailsStore.updateUserInput({ password });
-                await orderDetailsStore.submit();
+        orderDetailsStore.updateUserInput({ password });
+        await orderDetailsStore.submit();
 
-                if (orderDetailsStore.validationPassword === '') {
-                    this.props.onCompleteBuyingOrder();
-                }
-            };
+        if (orderDetailsStore.validationPassword === '') {
+            this.props.onCompleteBuyingOrder();
+        }
+    };
 
-            public render() {
-                const p = this.props;
-                const rootStore = this.rootStore;
-                return (
-                    <OrderView
-                        order={rootStore.orderDetails.order}
-                        validationPassword={
-                            rootStore.orderDetails.validationPassword
-                        }
-                        onSubmit={this.handleSubmit}
-                        onNavigateBack={p.onNavigateBack}
-                        onNavigateDeposit={p.onNavigateDeposit}
-                        isBuyingAvailable={
-                            rootStore.orderDetails.isBuyingAvailable
-                        }
-                    />
-                );
-            }
-        },
-    ),
-);
+    public render() {
+        const p = this.props;
+        const rootStore = this.rootStore;
+        return (
+            <OrderView
+                order={rootStore.orderDetails.order}
+                validationPassword={rootStore.orderDetails.validationPassword}
+                onSubmit={this.handleSubmit}
+                onNavigateBack={p.onNavigateBack}
+                onNavigateDeposit={p.onNavigateDeposit}
+                isBuyingAvailable={rootStore.orderDetails.isBuyingAvailable}
+            />
+        );
+    }
+}
+
+export const OrderDetails = withRootStore(observer(OrderDetailsLayout));
 
 export default OrderDetails;
