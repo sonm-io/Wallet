@@ -296,7 +296,7 @@ export class DWH {
             masterID: get('creator.address.$eq', mongoLikeQuery),
             type: get('orderSide.$eq', mongoLikeQuery),
             creatorIdentityLevel: get('creator.status.$in', mongoLikeQuery),
-            status: get('orderStatus.$eq', mongoLikeQuery),
+            status: 2,
             price: DWH.getMinMaxFilter(
                 get('price', mongoLikeQuery),
                 DWH.recalculatePriceOut,
@@ -389,7 +389,7 @@ export class DWH {
             gpuCount: benchmarks.values[7] || 0,
             gpuRamSize: Math.round(benchmarks.values[8] / MB_SIZE) || 0,
             ethHashrate:
-                Math.round(100 * benchmarks.values[9] / MB_SIZE) / 100 || 0,
+                Math.round((100 * benchmarks.values[9]) / MB_SIZE) / 100 || 0,
             zcashHashrate: benchmarks.values[10] || 0,
             redshiftGpu: benchmarks.values[11] || 0,
             networkOverlay: Boolean(netflags & NETWORK_OVERLAY),
@@ -495,6 +495,7 @@ export class DWH {
                 ? mongoLikeQuery.address.$eq
                 : null,
             limit,
+            status: 1,
             sortings: [
                 {
                     field: sortField,
@@ -598,27 +599,25 @@ export class DWH {
         const res = await this.fetchData('GetValidators');
         const validators = 'validators' in res ? res.validators : [];
 
-        return validators
-            .filter((x: any) => x.url)
-            .map(
-                ({
-                    validator,
-                    name,
-                    level,
-                    price,
-                    url,
-                    description,
-                    icon,
-                }: any): t.IKycValidator => ({
-                    id: validator.id,
-                    level: validator.level,
-                    name,
-                    description,
-                    fee: price,
-                    url,
-                    logo: icon,
-                }),
-            );
+        return validators.filter((x: any) => x.url).map(
+            ({
+                validator,
+                name,
+                level,
+                price,
+                url,
+                description,
+                icon,
+            }: any): t.IKycValidator => ({
+                id: validator.id,
+                level: validator.level,
+                name,
+                description,
+                fee: price,
+                url,
+                logo: icon,
+            }),
+        );
     };
 
     public getWorkers = async ({

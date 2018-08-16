@@ -51,7 +51,7 @@ export class AppView extends React.PureComponent<IProps, any> {
         return (
             <div
                 className={cn('sonm-app', p.className)}
-                {...{ 'data-display-id': `sonm-app` }}
+                data-display-id="sonm-app"
             >
                 <LoadMask white visible={p.isPending}>
                     <AppHeader
@@ -88,11 +88,6 @@ export class AppView extends React.PureComponent<IProps, any> {
                         <div className="sonm-app__content-scroll-ct">
                             {p.title ? (
                                 <div className="sonm-app__common sonm-app-common-block">
-                                    {/*<BreadCrumbs*/}
-                                    {/*className="sonm-app__breadcrumbs"*/}
-                                    {/*items={p.breadcrumbs}*/}
-                                    {/*onNavigate={p.onNavigate}*/}
-                                    {/*/>*/}
                                     <Header className="sonm-app-common-block__title">
                                         {p.title}
                                     </Header>

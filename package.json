@@ -1,7 +1,7 @@
 {
     "private": false,
     "name": "sonm-gui",
-    "version": "2.0.13",
+    "version": "2.0.14",
     "description": "SONM GUI",
     "main": "main.js",
     "directories": {},
@@ -98,7 +98,7 @@
         "react": "^16.4.1",
         "react-addons-transition-group": "^15.6.2",
         "react-dom": "^16.1.0",
-        "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v2.0.17",
+        "sonm-api": "git+https://github.com/sonm-io/blockchain-api-js.git#v2.0.20",
         "tcomb": "^3.2.27",
         "universal-router": "^4.3.0"
     },
