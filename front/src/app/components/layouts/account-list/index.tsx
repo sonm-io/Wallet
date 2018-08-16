@@ -42,7 +42,7 @@ interface IState {
 
 class DeletableItem extends DeletableItemWithConfirmation<IAccountItemProps> {}
 
-class WalletsLayout extends React.Component<IProps, IState> {
+class AccountListLayout extends React.Component<IProps, IState> {
     // ToDo make stateless
     protected get rootStore() {
         return this.props.rootStore as RootStore;
@@ -248,6 +248,6 @@ class WalletsLayout extends React.Component<IProps, IState> {
     }
 }
 
-export const Wallets = withRootStore(observer(WalletsLayout));
+export const AccountList = withRootStore(observer(AccountListLayout));
 
 // TODO
