@@ -503,7 +503,6 @@ export class DWH {
                 },
             ],
             WithCount: true,
-            status: 1,
         });
         const records = [] as t.IDeal[];
 
