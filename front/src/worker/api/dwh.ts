@@ -491,6 +491,7 @@ export class DWH {
                 ? mongoLikeQuery.address.$eq
                 : null,
             limit,
+            status: 1,
             sortings: [
                 {
                     field: sortField,
