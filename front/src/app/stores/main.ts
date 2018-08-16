@@ -280,10 +280,13 @@ export class MainStore extends OnlineStore {
     @catchErrors({ restart: false })
     @asyncAction
     public *renameAccount(address: string, name: string) {
+        const account = this.accountMap.get(address) as IAccountInfo;
+        const oldName = (account.name = name);
+
         const { data: success } = yield Api.renameAccount(address, name);
 
-        if (success) {
-            (this.accountMap.get(address) as IAccountInfo).name = name;
+        if (!success) {
+            account.name = oldName;
         }
     }
 
