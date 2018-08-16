@@ -5,15 +5,23 @@ import {
     TypeCurrencyBalanceMap,
     ICurrencyBalanceMap,
     TypeEthereumAddress,
+    ICurrencyInfo,
 } from './currency';
 
 export interface IAccountInfo {
     name: string;
     address: string;
+    json: string;
+
     marketBalance: string;
     marketUsdBalance: string;
     currencyBalanceMap: ICurrencyBalanceMap;
-    json: string;
+}
+
+export interface IAccountItemView extends IAccountInfo {
+    etherBalance: string;
+    primaryTokenBalance: string;
+    primaryTokenInfo: ICurrencyInfo;
 }
 
 export const TypeAccountInfo = createStruct<IAccountInfo>(

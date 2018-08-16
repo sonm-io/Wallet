@@ -3,7 +3,6 @@ import { OnlineStore } from './online-store';
 export { OnlineStore } from './online-store';
 
 import { IValidation, ISendTransaction } from 'app/api';
-import { ICurrencyInfo } from 'app/entities/currency';
 
 export interface IHasAddress {
     address: string;
@@ -84,15 +83,4 @@ export enum Status {
     PENDING,
     ERROR,
     LOADED,
-}
-
-export interface IAccountItemView {
-    address: string;
-    json: string;
-    name: string;
-    etherBalance: string;
-    usdBalance: string;
-    marketBalance: string;
-    primaryTokenBalance: string;
-    primaryTokenInfo: ICurrencyInfo;
 }

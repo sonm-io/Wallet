@@ -221,7 +221,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
                 this.rootStore.myProfiles.currentProfileView === undefined
                     ? undefined
                     : new BN(
-                          this.rootStore.myProfiles.currentProfileView.usdBalance,
+                          this.rootStore.myProfiles.currentProfileView.marketUsdBalance,
                       );
 
             if (balance !== undefined) {

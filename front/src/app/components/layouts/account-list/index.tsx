@@ -18,9 +18,9 @@ import { DownloadFile } from 'app/components/common/download-file';
 import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
 import { IValidation } from 'app/api/types';
-import { IAccountItemView } from 'app/stores/types';
 import { IHasRootStore, withRootStore } from '../layout';
 import { RootStore } from 'app/stores';
+import { IAccountItemView } from 'app/entities/account';
 
 enum WalletDialogs {
     new,

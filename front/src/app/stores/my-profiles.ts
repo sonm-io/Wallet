@@ -3,11 +3,15 @@ import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
 import { observable, computed, action, reaction, IReactionPublic } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import { IAccountItemView } from 'app/stores/types';
 import Api, { IMarketStats } from 'app/api';
 import { IValidation } from 'app/localization/types';
 import { RootStore } from 'app/stores';
-import { IAccountInfo, IProfileFull, emptyProfile } from 'app/entities/account';
+import {
+    IAccountInfo,
+    IProfileFull,
+    emptyProfile,
+    IAccountItemView,
+} from 'app/entities/account';
 const { pending, catchErrors } = OnlineStore;
 import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ICurrencyInfo } from 'app/entities/currency';
@@ -46,7 +50,6 @@ export class MyProfilesStore extends OnlineStore {
         this.rootStore = rootStore;
         this.services = services;
         this.getAccountList();
-
         reaction(() => this.accountMap.size, () => this.setCurrentProfile(), {
             fireImmediately: true,
             name: 'reaction accountMap.size',
@@ -161,16 +164,12 @@ export class MyProfilesStore extends OnlineStore {
               ];
 
         const preview: IAccountItemView = {
-            address: info.address,
-            json: info.json,
-            name: info.name,
+            ...info,
             etherBalance: isCurrencyListEmpty
                 ? ''
                 : info.currencyBalanceMap[this.rootStore.currency.etherAddress],
             primaryTokenBalance,
             primaryTokenInfo: this.rootStore.currency.primaryTokenInfo,
-            usdBalance: info.marketUsdBalance,
-            marketBalance: info.marketBalance,
         };
 
         return preview;
