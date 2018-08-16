@@ -292,7 +292,7 @@ export class DWH {
             masterID: get('creator.address.$eq', mongoLikeQuery),
             type: get('orderSide.$eq', mongoLikeQuery),
             creatorIdentityLevel: get('creator.status.$in', mongoLikeQuery),
-            status: get('orderStatus.$eq', mongoLikeQuery),
+            status: 2,
             price: DWH.getMinMaxFilter(
                 get('price', mongoLikeQuery),
                 DWH.recalculatePriceOut,
@@ -502,6 +502,7 @@ export class DWH {
                 },
             ],
             WithCount: true,
+            status: 1,
         });
         const records = [] as t.IDeal[];
 
