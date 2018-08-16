@@ -79,8 +79,10 @@ export class MainStore extends OnlineStore {
 
     protected rootStore: RootStore;
 
-    @observable.ref protected walletInfo?: IWalletListItem;
-    @observable.ref protected connectionInfo: IConnectionInfo;
+    @observable.ref
+    protected walletInfo?: IWalletListItem;
+    @observable.ref
+    protected connectionInfo: IConnectionInfo;
 
     @computed
     get firstAccountAddress(): IAccountInfo {
@@ -102,18 +104,22 @@ export class MainStore extends OnlineStore {
         return Object.keys(this.serverValidation).length === 0;
     }
 
-    @observable.ref public serverValidation: Partial<IMainFormValues> = {};
+    @observable.ref
+    public serverValidation: Partial<IMainFormValues> = {};
 
-    @observable public averageGasPrice = '';
+    @observable
+    public averageGasPrice = '';
 
-    @observable public accountMap = new Map<string, IAccountInfo>();
+    @observable
+    public accountMap = new Map<string, IAccountInfo>();
 
     @computed
     public get accountAddressList() {
         return Array.from(this.accountMap.keys());
     }
 
-    @observable public currencyMap = new Map<string, ICurrencyInfo>();
+    @observable
+    public currencyMap = new Map<string, ICurrencyInfo>();
 
     @computed
     public get currencyAddressList() {
@@ -280,13 +286,16 @@ export class MainStore extends OnlineStore {
     @catchErrors({ restart: false })
     @asyncAction
     public *renameAccount(address: string, name: string) {
-        const account = this.accountMap.get(address) as IAccountInfo;
-        const oldName = (account.name = name);
+        const account = this.accountMap.get(address);
+        if (account !== undefined) {
+            const updated = { ...account, name };
+            this.accountMap.set(address, updated);
 
-        const { data: success } = yield Api.renameAccount(address, name);
+            const { data: success } = yield Api.renameAccount(address, name);
 
-        if (!success) {
-            account.name = oldName;
+            if (!success) {
+                this.accountMap.set(address, account);
+            }
         }
     }
 
