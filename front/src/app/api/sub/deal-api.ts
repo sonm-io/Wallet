@@ -52,7 +52,7 @@ export class DealApi {
             dealsCount: deals.total,
             dealsPrice: total.toString(),
             daysLeft: 0,
-        } as IMarketStats);
+        });
     };
 
     public async close(
