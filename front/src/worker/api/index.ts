@@ -20,8 +20,8 @@ const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
 
 import ipc from '../ipc';
-import { ICurrencyInfo } from 'app/entities/currency';
-import { IAccountInfo } from 'app/entities/account';
+import { ICurrencyInfo } from 'common/types/currency';
+import { IAccountInfo } from 'app/api/types/account';
 import { Wallet } from 'app/entities/wallet';
 import { DEFAULT_NODES } from './default-nodes';
 

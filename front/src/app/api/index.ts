@@ -13,9 +13,10 @@ import {
     IKycValidator,
     IWorker,
 } from './types';
-import { ICurrencyInfo } from 'app/entities/currency';
-import { IAccountInfo, TypeAccountInfoList } from 'app/entities/account';
+import { ICurrencyInfo } from 'common/types/currency';
 import { Wallet } from 'app/entities/wallet';
+import { IAccountInfo } from 'app/api/types/account';
+import { TypeAccountInfoList } from 'app/api/types/runtime/account';
 
 export * from './types';
 

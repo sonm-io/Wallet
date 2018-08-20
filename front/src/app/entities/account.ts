@@ -1,42 +1,15 @@
 import * as t from 'tcomb';
 import { createStruct } from 'app/api/utils/runtime-types-utils';
 import { IListResult } from 'app/api/types';
-import {
-    TypeCurrencyBalanceMap,
-    ICurrencyBalanceMap,
-    TypeEthereumAddress,
-    ICurrencyInfo,
-} from './currency';
-
-export interface IAccountInfo {
-    name: string;
-    address: string;
-    json: string;
-
-    marketBalance: string;
-    marketUsdBalance: string;
-    currencyBalanceMap: ICurrencyBalanceMap;
-}
+import { IAccountInfo } from 'app/api/types/account';
+import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
+import { ICurrencyInfo } from 'common/types/currency';
 
 export interface IAccountItemView extends IAccountInfo {
     etherBalance: string;
     primaryTokenBalance: string;
     primaryTokenInfo: ICurrencyInfo;
 }
-
-export const TypeAccountInfo = createStruct<IAccountInfo>(
-    {
-        address: TypeEthereumAddress,
-        name: t.String,
-        marketBalance: t.String,
-        marketUsdBalance: t.String,
-        currencyBalanceMap: TypeCurrencyBalanceMap,
-        json: t.String,
-    },
-    'IAccountInfo',
-);
-
-export const TypeAccountInfoList = t.list(TypeAccountInfo);
 
 export enum EnumProfileStatus {
     anonimest = 0,

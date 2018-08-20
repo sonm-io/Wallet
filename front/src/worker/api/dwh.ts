@@ -13,7 +13,7 @@ import {
     IProfileBrief,
     IProfileFull,
 } from 'app/entities/account';
-import { TypeEthereumAddress } from 'app/entities/currency';
+import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
 
 interface IDictionary<T> {
     [index: string]: keyof T;

@@ -2,7 +2,7 @@ import { observable, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
 import Api from 'app/api';
-import { ICurrencyInfo } from 'app/entities/currency';
+import { ICurrencyInfo } from 'common/types/currency';
 import updateAddressMap from 'app/stores/utils/update-address-map';
 import normalizeCurrencyInfo from 'app/stores/utils/normalize-currency-info';
 import { RootStore } from 'app/stores';

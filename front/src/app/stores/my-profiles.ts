@@ -7,16 +7,16 @@ import Api, { IMarketStats } from 'app/api';
 import { IValidation } from 'app/localization/types';
 import { RootStore } from 'app/stores';
 import {
-    IAccountInfo,
     IProfileFull,
     emptyProfile,
     IAccountItemView,
 } from 'app/entities/account';
 const { pending, catchErrors } = OnlineStore;
 import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
-import { ICurrencyInfo } from 'app/entities/currency';
+import { ICurrencyInfo } from 'common/types/currency';
 import ProfileApi from 'app/api/sub/profile-api';
 import { setIntervalAsync } from 'app/utils/set-interval-async';
+import { IAccountInfo } from 'app/api/types/account';
 
 interface IMainFormValues {
     password: string;

@@ -13,8 +13,8 @@ import {
     IDealChangeRequest,
 } from './types';
 import { TypeAccountBrief } from 'app/entities/account';
-import { isDigits, isHexDeximal } from './runtime-types-common';
-import { TypeEthereumAddress } from 'app/entities/currency';
+import { isHexDeximal, isDigits } from 'common/utils';
+import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
 
 export const TypeNotStrictEthereumAddress = t.refinement(
     t.String,
