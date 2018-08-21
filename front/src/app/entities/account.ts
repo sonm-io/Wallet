@@ -19,11 +19,18 @@ export interface IAccount {
 
 export class Account implements IAccount {
     constructor(
-        data: Partial<IAccount>,
+        data: IAccountInfo,
         etherAddress: string,
         primaryTokenAddress: string,
     ) {
-        Object.assign(this, data);
+        this.name = data.name;
+        this.address = data.address;
+        this.json = data.json;
+        this.marketBalance = data.marketBalance;
+        this.marketUsdBalance = data.marketUsdBalance;
+        this.currencyBalanceMap = data.currencyBalanceMap;
+
+        // computed properties:
         this.etherBalance = this.currencyBalanceMap[etherAddress];
         this.primaryTokenBalance = this.currencyBalanceMap[primaryTokenAddress];
     }
