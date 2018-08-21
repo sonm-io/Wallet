@@ -1,6 +1,6 @@
 import * as t from './types';
 import { ICurrencyInfo } from 'common/types/currency';
-import { IProfileBrief } from 'common/types/profile';
+import { IProfile } from 'common/types/profile';
 import { ICurrencyBalanceMap, IAccountInfo } from 'common/types/account';
 import { EnumProfileStatus } from 'common/types/profile-status';
 
@@ -159,7 +159,7 @@ export function send(
     return result;
 }
 
-export const profileListResult: t.IResult<t.IListResult<IProfileBrief>> = {
+export const profileListResult: t.IResult<t.IListResult<IProfile>> = {
     data: {
         records: [
             {

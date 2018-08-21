@@ -2,13 +2,13 @@ import { EnumProfileStatus } from './profile-status';
 import { IProfileAttribute } from './profile-attribute';
 import { ICertificate } from './profile-certificate';
 
-export interface IAccountBrief {
+export interface IProfileBrief {
     name?: string;
     address: string;
     status: EnumProfileStatus;
 }
 
-export interface IProfileBrief extends IAccountBrief {
+export interface IProfile extends IProfileBrief {
     sellOrders: number;
     buyOrders: number;
     deals: number;
@@ -16,13 +16,13 @@ export interface IProfileBrief extends IAccountBrief {
     logoUrl: string;
 }
 
-export interface IProfileFull extends IProfileBrief {
+export interface IProfileInfo extends IProfile {
     attributes: Array<IProfileAttribute>;
     description: string;
     certificates: Array<ICertificate>;
 }
 
-export const emptyProfile: IProfileFull = Object.freeze({
+export const emptyProfile: IProfileInfo = Object.freeze({
     attributes: [],
     description: '',
     certificates: [],

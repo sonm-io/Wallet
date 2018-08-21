@@ -1,12 +1,12 @@
 import * as t from 'tcomb';
 import { createStruct } from 'app/api/utils/runtime-types-utils';
 import { TypeEthereumAddress } from './etherium-address';
-import { IAccountBrief, IProfileBrief, IProfileFull } from '../profile';
+import { IProfileBrief, IProfile, IProfileInfo } from '../profile';
 import { IListResult } from 'common/types';
 import { TypeProfileAttribute } from './profile-attribute';
 import { TypeCertifcate } from './profile-certificate';
 
-export const TypeAccountBrief = createStruct<IAccountBrief>(
+export const TypeProfileBrief = createStruct<IProfileBrief>(
     {
         address: TypeEthereumAddress,
         name: t.String,
@@ -15,7 +15,7 @@ export const TypeAccountBrief = createStruct<IAccountBrief>(
     'IAccountBrief',
 );
 
-export const TypeProfileBrief = createStruct<IProfileBrief>(
+export const TypeProfile = createStruct<IProfile>(
     {
         address: t.String,
         status: t.Number,
@@ -29,15 +29,15 @@ export const TypeProfileBrief = createStruct<IProfileBrief>(
     'IProfileBrief',
 );
 
-export const TypeProfileList = createStruct<IListResult<IProfileBrief>>(
+export const TypeProfileList = createStruct<IListResult<IProfile>>(
     {
-        records: t.list(TypeProfileBrief),
+        records: t.list(TypeProfile),
         total: t.Number,
     },
     'IListResult<IProfileBrief>',
 );
 
-export const TypeProfileFull = createStruct<IProfileFull>(
+export const TypeProfileInfo = createStruct<IProfileInfo>(
     {
         attributes: t.list(TypeProfileAttribute),
         address: TypeEthereumAddress,

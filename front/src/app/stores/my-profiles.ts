@@ -13,7 +13,7 @@ import { ICurrencyInfo } from 'common/types/currency';
 import ProfileApi from 'app/api/sub/profile-api';
 import { setIntervalAsync } from 'app/utils/set-interval-async';
 import { IAccountInfo } from 'common/types/account';
-import { emptyProfile, IProfileFull } from 'common/types/profile';
+import { emptyProfile, IProfileInfo } from 'common/types/profile';
 
 interface IMainFormValues {
     password: string;
@@ -88,7 +88,7 @@ export class MyProfilesStore extends OnlineStore {
 
     @observable public currentProfileAddress: string = '';
 
-    @observable public currentProfile: IProfileFull = { ...emptyProfile };
+    @observable public currentProfile: IProfileInfo = { ...emptyProfile };
 
     @observable public marketAllBalance: string = '0';
 

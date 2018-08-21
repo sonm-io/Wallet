@@ -19,7 +19,7 @@ import { Checkbox } from 'app/components/common/checkbox';
 import { FormRow, FormField } from 'app/components/common/form';
 import { DealActions } from './types';
 import { IChangeParams } from 'app/components/common/types';
-import { IAccountBrief } from 'common/types/profile';
+import { IProfileBrief } from 'common/types/profile';
 
 interface IDealData {
     id: string;
@@ -34,8 +34,8 @@ interface IDealData {
 
 interface IProps {
     className?: string;
-    supplier: IAccountBrief;
-    consumer: IAccountBrief;
+    supplier: IProfileBrief;
+    consumer: IProfileBrief;
     duration: number;
     price: string;
     totalPayout: string;

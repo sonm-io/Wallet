@@ -7,7 +7,7 @@ import { BN } from 'bn.js';
 import { IBenchmarkMap } from '../../app/api/types';
 import * as moment from 'moment';
 import * as get from 'lodash/fp/get';
-import { IProfileBrief, IProfileFull } from 'common/types/profile';
+import { IProfile, IProfileInfo } from 'common/types/profile';
 import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
 import { EnumProfileStatus } from 'common/types/profile-status';
 import { ICertificate } from 'common/types/profile-certificate';
@@ -61,7 +61,7 @@ export class DWH {
         [8, 'gpuRamSize', MB_SIZE],
     ];
 
-    public static readonly mapProfile: IDictionary<IProfileBrief> = {
+    public static readonly mapProfile: IDictionary<IProfile> = {
         UserID: 'address',
         IdentityLevel: 'status',
         Name: 'name',
@@ -74,7 +74,7 @@ export class DWH {
         (Object as any).values(DWH.mapProfile),
     );
 
-    public static readonly defaultProfile: IProfileBrief = {
+    public static readonly defaultProfile: IProfile = {
         name: '',
         address: '0x0',
         status: EnumProfileStatus.anonimest,
@@ -105,12 +105,12 @@ export class DWH {
         [t.EnumAttributes.Kyc4]: EnumProfileStatus.ident,
     };
 
-    private processProfile(item: any): IProfileBrief {
+    private processProfile(item: any): IProfile {
         const renamed = DWH.renameProfileKeys(item);
         const picked = DWH.pickProfileKeys(renamed);
         const result = { ...DWH.defaultProfile, ...picked };
 
-        return result as IProfileBrief;
+        return result as IProfile;
     }
 
     public getProfiles = async ({
@@ -119,7 +119,7 @@ export class DWH {
         offset,
         sortBy,
         sortDesc,
-    }: t.IListQuery): Promise<t.IListResult<IProfileBrief>> => {
+    }: t.IListQuery): Promise<t.IListResult<IProfile>> => {
         tcomb.maybe(tcomb.String)(filter);
         tcomb.Number(limit);
         tcomb.Number(offset);
@@ -180,7 +180,7 @@ export class DWH {
         };
     };
 
-    public getProfileFull = async ({ address }: any): Promise<IProfileFull> => {
+    public getProfileFull = async ({ address }: any): Promise<IProfileInfo> => {
         TypeEthereumAddress(address);
 
         const res = await this.fetchData('GetProfileInfo', { Id: address });

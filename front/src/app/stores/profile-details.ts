@@ -7,12 +7,12 @@ import { RootStore } from './';
 import { IKycValidator } from 'app/api/types';
 import { TEthereumAddress } from '../entities/types';
 import { EnumProfileStatus } from 'common/types/profile-status';
-import { IProfileFull, emptyProfile } from 'common/types/profile';
+import { IProfileInfo, emptyProfile } from 'common/types/profile';
 
 export interface IOrderDetails {
     setAddress(address: TEthereumAddress): TEthereumAddress;
     address: TEthereumAddress;
-    profile: IProfileFull;
+    profile: IProfileInfo;
 }
 
 export interface IProfileDetailsStoreServices {
@@ -22,7 +22,7 @@ export interface IProfileDetailsStoreServices {
 }
 
 export interface IProfileDetailsStoreApi {
-    fetchByAddress: (address: string) => Promise<IProfileFull>;
+    fetchByAddress: (address: string) => Promise<IProfileInfo>;
 }
 
 export interface IKycCertificate {
@@ -62,7 +62,7 @@ export class ProfileDetails extends OnlineStore implements IOrderDetails {
         return (this.address = address);
     }
 
-    @observable.ref public profile: IProfileFull = { ...emptyProfile };
+    @observable.ref public profile: IProfileInfo = { ...emptyProfile };
 
     @pending
     @catchErrors({ restart: true })

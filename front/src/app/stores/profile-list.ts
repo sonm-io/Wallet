@@ -1,4 +1,4 @@
 import { ListStore } from './list-store';
-import { IProfileBrief } from 'common/types/profile';
+import { IProfile } from 'common/types/profile';
 
-export class ProfileList extends ListStore<IProfileBrief> {}
+export class ProfileList extends ListStore<IProfile> {}

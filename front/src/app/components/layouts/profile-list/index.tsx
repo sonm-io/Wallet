@@ -3,7 +3,7 @@ import { ProfileListView } from './view';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import { withRootStore, Layout, IHasRootStore } from '../layout';
-import { IProfileBrief } from 'common/types/profile';
+import { IProfile } from 'common/types/profile';
 
 interface IProps extends IHasRootStore {
     className?: string;
@@ -11,7 +11,7 @@ interface IProps extends IHasRootStore {
 }
 
 class ProfileListLayout extends Layout<IProps> {
-    public handleRowClick = (record: IProfileBrief) => {
+    public handleRowClick = (record: IProfile) => {
         this.props.onNavigate(record.address);
     };
 

@@ -1,5 +1,5 @@
 import { TUsdWeiPerSeconds, TSeconds } from 'app/entities/types';
-import { IAccountBrief } from 'common/types/profile';
+import { IProfileBrief } from 'common/types/profile';
 
 export interface IRawAccount {
     json: string;
@@ -109,7 +109,7 @@ export enum EnumOrderStatus {
 export interface IOrder {
     id: string;
     orderSide: EnumOrderSide;
-    creator: IAccountBrief;
+    creator: IProfileBrief;
     usdWeiPerSeconds: TUsdWeiPerSeconds;
     durationSeconds: TSeconds;
     orderStatus: EnumOrderStatus;
@@ -124,8 +124,8 @@ export enum EnumDealStatus {
 
 export interface IDeal {
     id: string;
-    supplier: IAccountBrief;
-    consumer: IAccountBrief;
+    supplier: IProfileBrief;
+    consumer: IProfileBrief;
     masterID: string;
     askID: string;
     bidID: string;

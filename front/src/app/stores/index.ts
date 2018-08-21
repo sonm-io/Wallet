@@ -37,7 +37,7 @@ import { MyProfilesStore } from './my-profiles';
 import { CurrencyStore } from './currency';
 import { WalletStore } from './wallet';
 import { GasPriceStore } from './gas-price';
-import { IProfileBrief } from 'common/types/profile';
+import { IProfile } from 'common/types/profile';
 
 useStrict(true);
 
@@ -52,7 +52,7 @@ export class RootStore implements IHasLocalizator {
     public readonly withdraw: WithdrawStore;
     public readonly ui: UiStore;
     public readonly addToken: AddTokenStore;
-    public readonly profileList: IListStore<IProfileBrief>;
+    public readonly profileList: IListStore<IProfile>;
     public readonly dealList: IListStore<IDeal>;
     public readonly workerList: IListStore<IWorker>;
     public readonly workerFilter: WorkerFilterStore;
