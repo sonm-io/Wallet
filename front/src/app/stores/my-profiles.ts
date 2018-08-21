@@ -13,7 +13,6 @@ import { ICurrencyInfo } from 'common/types/currency';
 import ProfileApi from 'app/api/sub/profile-api';
 import { setIntervalAsync } from 'app/utils/set-interval-async';
 import { IAccountInfo } from 'common/types/account';
-import { emptyProfile, IProfileInfo } from 'common/types/profile';
 
 interface IMainFormValues {
     password: string;
@@ -36,8 +35,7 @@ interface IMyProfilesStoreServices extends IOnlineStoreServices {
 const sortByName = sortBy(['name', 'address']);
 
 export class MyProfilesStore extends OnlineStore {
-    protected static PROFILE_INTERVAL = 60 * 1000;
-    protected static BALANCE_INTERVAL = 2000;
+    protected static CURRENT_INTERVAL = 5000;
 
     protected rootStore: RootStore;
     protected services: IMyProfilesStoreServices;
@@ -47,6 +45,7 @@ export class MyProfilesStore extends OnlineStore {
         this.rootStore = rootStore;
         this.services = services;
         this.getAccountList();
+
         reaction(() => this.accountMap.size, () => this.setCurrentProfile(), {
             fireImmediately: true,
             name: 'reaction accountMap.size',
@@ -54,28 +53,18 @@ export class MyProfilesStore extends OnlineStore {
 
         reaction(
             () => this.currentProfileAddress,
-            () => this.updateProfileDetails(),
-            {
-                name: 'reaction currentProfileAddress',
-            },
-        );
-
-        reaction(
-            () => this.currentProfileAddress,
             (_: string, r: IReactionPublic) => {
+                this.updateCurrentAccount();
                 setIntervalAsync(async () => {
-                    await this.fetchProfileDetails();
-                }, MyProfilesStore.PROFILE_INTERVAL);
-                setIntervalAsync(async () => {
-                    await this.updateBalanceAndStats();
-                }, MyProfilesStore.BALANCE_INTERVAL);
+                    await this.updateCurrentAccount();
+                }, MyProfilesStore.CURRENT_INTERVAL);
                 r.dispose();
             },
         );
 
         reaction(
             () => this.accountAddressList,
-            () => this.updateTotalBalance(),
+            () => this.updateMarketBalance(),
             {
                 name: 'reaction accountAddressList',
             },
@@ -86,14 +75,12 @@ export class MyProfilesStore extends OnlineStore {
 
     @observable public currentProfileAddress: string = '';
 
-    @observable public currentProfile: IProfileInfo = { ...emptyProfile };
-
     @observable public marketAllBalance: string = '0';
 
-    // ToDo a rename Current profile market balance
+    // ToDo a remove
     @observable public marketBalance: string = '';
 
-    // ToDo a rename Current profile market stats
+    // ToDo a remove
     @observable
     public marketStats: IMarketStats = {
         dealsCount: 0,
@@ -104,8 +91,7 @@ export class MyProfilesStore extends OnlineStore {
     public getItem = (key: string) => this.accountMap.get(key);
 
     @computed
-    public get currentProfileView(): IAccount | undefined {
-        // ToDo a rename
+    public get current(): IAccount | undefined {
         return this.getItem(this.currentProfileAddress);
     }
 
@@ -247,30 +233,64 @@ export class MyProfilesStore extends OnlineStore {
         }
     }
 
+    //#region Updates
+
     @pending
     @catchErrors({ restart: false })
     @asyncAction
-    protected *updateProfileDetails() {
-        yield this.fetchProfileDetails();
-        yield this.updateBalanceAndStats();
+    public *updateAllAccounts() {
+        for (const address of this.accountAddressList) {
+            yield this.updateAccount(address);
+        }
     }
 
     @pending
     @catchErrors({ restart: false })
     @asyncAction
-    protected *fetchProfileDetails() {
-        this.currentProfile = yield this.services.profileApi.fetchByAddress(
-            this.rootStore.myProfiles.currentProfileAddress,
-        );
+    protected *updateCurrentAccount() {
+        yield this.updateAccount(this.currentProfileAddress);
     }
 
     @pending
     @catchErrors({ restart: false })
     @asyncAction
-    protected *updateBalanceAndStats() {
-        yield this.updatePublicBalance();
-        yield this.updateMarketStats();
+    protected *updateAccount(address: string) {
+        const account = this.getItem(address);
+        if (account) {
+            account.profile = yield this.services.profileApi.fetchByAddress(
+                address,
+            );
+            account.marketBalance = yield this.services.marketApi.fetchMarketBalance(
+                address,
+            );
+            account.marketStats = yield this.services.marketApi.fetchMarketStats(
+                address,
+            );
+        }
     }
+
+    @pending
+    @catchErrors({ restart: false })
+    @asyncAction
+    protected *updateMarketBalance() {
+        for (const account of this.accountList) {
+            account.marketBalance = yield this.services.marketApi.fetchMarketBalance(
+                account.address,
+            );
+        }
+        this.updateTotalBalance();
+    }
+
+    @action.bound
+    protected updateTotalBalance() {
+        let balance = new BN(0);
+        for (const account of this.accountList) {
+            balance = balance.add(new BN(account.marketBalance));
+        }
+        this.marketAllBalance = balance.toString(10);
+    }
+
+    //#endregion
 
     //#region Balance
 
@@ -305,7 +325,7 @@ export class MyProfilesStore extends OnlineStore {
                 let touched = false;
                 const balance: BN = accounts.reduce(
                     (sum: any, accountAddr: string) => {
-                        const account = this.rootStore.myProfiles.accountMap.get(
+                        const account = this.accountMap.get(
                             accountAddr,
                         ) as IAccount;
 
@@ -337,45 +357,7 @@ export class MyProfilesStore extends OnlineStore {
 
     @computed
     public get fullBalanceList(): ICurrencyInfo[] {
-        const allAccountsAddresses = this.rootStore.myProfiles
-            .accountAddressList;
-        return this.getBalanceListFor(...allAccountsAddresses);
-    }
-
-    //#endregion
-
-    //#region Market Balance and stats
-
-    @catchErrors({ restart: true })
-    @asyncAction
-    protected *updateTotalBalance() {
-        let balance = new BN(0);
-        for (const account of this.accountList) {
-            const accountBalance = yield this.services.marketApi.fetchMarketBalance(
-                account.address,
-            );
-            balance = balance.add(new BN(accountBalance));
-        }
-
-        this.marketAllBalance = balance.toString(10);
-    }
-
-    @catchErrors({ restart: true })
-    @asyncAction
-    protected *updatePublicBalance() {
-        const balance = yield this.services.marketApi.fetchMarketBalance(
-            this.currentProfileAddress,
-        );
-
-        this.marketBalance = balance;
-    }
-
-    @catchErrors({ restart: true })
-    @asyncAction
-    protected *updateMarketStats() {
-        this.marketStats = yield this.services.marketApi.fetchMarketStats(
-            this.currentProfileAddress,
-        );
+        return this.getBalanceListFor(...this.accountAddressList);
     }
 
     //#endregion

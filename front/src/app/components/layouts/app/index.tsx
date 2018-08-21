@@ -82,7 +82,7 @@ class AppLayout extends Layout<IProps> {
                 hasMarketAccountSelect={p.path.startsWith('/market')}
                 onChangeMarketAccount={this.handleChangeMarketAccount}
                 marketAccountList={myProfilesStore.accountList}
-                marketAccount={myProfilesStore.currentProfileView}
+                marketAccount={myProfilesStore.current}
                 marketBalance={myProfilesStore.marketAllBalance}
                 marketStats={myProfilesStore.marketStats}
                 networkError={

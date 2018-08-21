@@ -1,4 +1,6 @@
 import { IAccountInfo, ICurrencyBalanceMap } from 'common/types/account';
+import { IProfileInfo } from 'common/types/profile';
+import { IMarketStats } from 'app/api';
 
 export interface IAccount {
     name: string;
@@ -10,6 +12,9 @@ export interface IAccount {
     currencyBalanceMap: ICurrencyBalanceMap;
     etherBalance: string;
     primaryTokenBalance: string;
+
+    profile?: IProfileInfo;
+    marketStats: IMarketStats;
 }
 
 export class Account implements IAccount {
@@ -22,7 +27,7 @@ export class Account implements IAccount {
         this.address = data.address;
         this.json = data.json;
         this.marketBalance = data.marketBalance;
-        this.marketUsdBalance = data.marketUsdBalance;
+        this.marketUsdBalance = data.marketUsdBalance; // ToDo a make computed
         this.currencyBalanceMap = data.currencyBalanceMap;
 
         // computed properties:
@@ -40,4 +45,12 @@ export class Account implements IAccount {
 
     public etherBalance: string;
     public primaryTokenBalance: string;
+
+    public profile?: IProfileInfo;
+
+    public marketStats: IMarketStats = {
+        dealsCount: 0,
+        dealsPrice: '0',
+        daysLeft: 0,
+    };
 }

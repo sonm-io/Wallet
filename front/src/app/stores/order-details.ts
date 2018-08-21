@@ -218,10 +218,10 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
         if (price !== undefined && duration !== undefined) {
             const balance =
-                this.rootStore.myProfiles.currentProfileView === undefined
+                this.rootStore.myProfiles.current === undefined
                     ? undefined
                     : new BN(
-                          this.rootStore.myProfiles.currentProfileView.marketUsdBalance,
+                          this.rootStore.myProfiles.current.marketUsdBalance,
                       );
 
             if (balance !== undefined) {
