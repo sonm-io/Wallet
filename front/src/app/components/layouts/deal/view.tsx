@@ -188,17 +188,11 @@ export class DealView extends React.Component<IProps, never> {
                 <div className="sonm-deal__column-left">
                     <div className="sonm-deal__column-left__consumer">
                         <h4 className="sonm-deal__header">Consumer</h4>
-                        <ProfileBrief
-                            profile={p.consumer}
-                            showBalances={false}
-                        />
+                        <ProfileBrief profile={p.consumer} />
                     </div>
                     <div className="sonm-deal__colum-left__supplier">
                         <h4 className="sonm-deal__header">Supplier</h4>
-                        <ProfileBrief
-                            profile={p.supplier}
-                            showBalances={false}
-                        />
+                        <ProfileBrief profile={p.supplier} />
                     </div>
                     <div className="sonm-deal__column-left__details">
                         <h4 className="sonm-deal__header">Details</h4>

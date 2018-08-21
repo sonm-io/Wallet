@@ -3,7 +3,7 @@ import { updateUserInput } from './utils/update-user-input';
 import validatePositiveNumber from '../utils/validation/validate-positive-number';
 import { validatePositiveInteger } from '../utils/validation/validate-positive-integer';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
-import { IProfileBrief } from 'app/entities/profile';
+import { IProfileBrief, emptyProfile } from 'common/types/profile';
 import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
 import { asyncAction } from 'mobx-utils';
 import { RootStore } from 'app/stores';
@@ -185,17 +185,9 @@ export class OrderCreateStore extends OnlineStore
 
     @computed
     public get profile(): IProfileBrief {
-        const account = this.rootStore.myProfiles.current;
-        return account && account.profile
-            ? {
-                  address: account.address,
-                  name: account.name,
-                  status: account.profile.status,
-              }
-            : {
-                  address: '0',
-                  status: 0,
-              };
+        return (
+            this.rootStore.myProfiles.currentRequired.profile || emptyProfile
+        );
     }
 
     @observable public validationMessage?: string = undefined;

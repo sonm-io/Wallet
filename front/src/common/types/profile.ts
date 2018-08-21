@@ -9,11 +9,12 @@ export interface IProfileBrief {
 }
 
 export interface IProfile extends IProfileBrief {
+    logoUrl: string;
+    country: string;
+
     sellOrders: number;
     buyOrders: number;
     deals: number;
-    country: string;
-    logoUrl: string;
 }
 
 export interface IProfileInfo extends IProfile {
