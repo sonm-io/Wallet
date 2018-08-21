@@ -2,7 +2,6 @@ import * as t from 'tcomb';
 import { createStruct } from './utils/runtime-types-utils';
 
 import {
-    IListResult,
     IOrder,
     IDeal,
     IMarketStats,
@@ -15,6 +14,7 @@ import {
 import { isHexDeximal, isDigits } from 'common/utils';
 import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
 import { TypeProfileBrief } from 'common/types/runtime/profile';
+import { IListResult } from 'common/types';
 
 export const TypeNotStrictEthereumAddress = t.refinement(
     t.String,

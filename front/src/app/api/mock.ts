@@ -3,6 +3,7 @@ import { ICurrencyInfo } from 'common/types/currency';
 import { IProfile } from 'common/types/profile';
 import { ICurrencyBalanceMap, IAccountInfo } from 'common/types/account';
 import { EnumProfileStatus } from 'common/types/profile-status';
+import { IListResult } from 'common/types';
 
 const VASYA_ADDR = '0x88057f14236687831e1fd205e8efb9e45166fe72';
 const PETYA_ADDR = '0xfd0c80ba15cbf19770319e5e76ae05012314608f';
@@ -159,7 +160,7 @@ export function send(
     return result;
 }
 
-export const profileListResult: t.IResult<t.IListResult<IProfile>> = {
+export const profileListResult: t.IResult<IListResult<IProfile>> = {
     data: {
         records: [
             {

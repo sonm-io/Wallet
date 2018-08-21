@@ -11,6 +11,7 @@ import { IProfile, IProfileInfo } from 'common/types/profile';
 import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
 import { EnumProfileStatus } from 'common/types/profile-status';
 import { IProfileCertificate } from 'common/types/profile-certificate';
+import { IListResult } from 'common/types';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -119,7 +120,7 @@ export class DWH {
         offset,
         sortBy,
         sortDesc,
-    }: t.IListQuery): Promise<t.IListResult<IProfile>> => {
+    }: t.IListQuery): Promise<IListResult<IProfile>> => {
         tcomb.maybe(tcomb.String)(filter);
         tcomb.Number(limit);
         tcomb.Number(offset);
@@ -260,7 +261,7 @@ export class DWH {
         filter,
         sortBy,
         sortDesc,
-    }: t.IListQuery): Promise<t.IListResult<t.IOrder>> => {
+    }: t.IListQuery): Promise<IListResult<t.IOrder>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
@@ -465,7 +466,7 @@ export class DWH {
         filter,
         sortBy,
         sortDesc,
-    }: t.IListQuery): Promise<t.IListResult<t.IDeal>> => {
+    }: t.IListQuery): Promise<IListResult<t.IDeal>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
@@ -621,7 +622,7 @@ export class DWH {
         limit,
         offset,
         filter,
-    }: t.IListQuery): Promise<t.IListResult<t.IWorker>> => {
+    }: t.IListQuery): Promise<IListResult<t.IWorker>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);

@@ -1,9 +1,5 @@
-import {
-    IListResult,
-    IListQuery,
-    ISender,
-    ISendTransactionResult,
-} from '../types';
+import { IListQuery, ISender, ISendTransactionResult } from '../types';
+import { IListResult } from 'common/types';
 
 export class HistoryApi {
     private ipc: ISender;

@@ -24,6 +24,7 @@ import { ICurrencyInfo } from 'common/types/currency';
 import { IAccountInfo } from 'common/types/account';
 import { Wallet } from 'app/entities/wallet';
 import { DEFAULT_NODES } from './default-nodes';
+import { IListResult } from 'common/types';
 
 async function ipcSend(type: string, payload?: any): Promise<any> {
     const res = await ipc.send(type, payload);
@@ -1293,7 +1294,7 @@ class Api {
 
     public getTransactionList = async (
         data: t.IPayload,
-    ): Promise<t.IListResult<t.ISendTransactionResult>> => {
+    ): Promise<IListResult<t.ISendTransactionResult>> => {
         let { filter, limit, offset } = data;
         filter = filter ? JSON.parse(filter) : {};
 

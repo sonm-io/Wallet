@@ -67,11 +67,6 @@ export enum EnumProfileRole {
     supplier = 1,
 }
 
-export interface IListResult<T> {
-    records: Array<T>;
-    total: number;
-}
-
 export interface IBenchmarkMap {
     cpuSysbenchMulti: number;
     cpuSysbenchOne: number;

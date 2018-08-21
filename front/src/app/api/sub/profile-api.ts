@@ -1,6 +1,7 @@
-import { IListResult, IListQuery, ISender } from '../types';
+import { IListQuery, ISender } from '../types';
 import { IProfile, IProfileInfo } from 'common/types/profile';
 import { TypeProfileList, TypeProfileInfo } from 'common/types/runtime/profile';
+import { IListResult } from 'common/types';
 
 export class ProfileApi {
     private ipc: ISender;
