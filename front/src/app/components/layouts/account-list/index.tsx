@@ -20,7 +20,7 @@ import ShowPassword from './sub/show-private-key/index';
 import { IValidation } from 'app/api/types';
 import { IHasRootStore, withRootStore } from '../layout';
 import { RootStore } from 'app/stores';
-import { IAccountItemView } from 'app/entities/account';
+import { IAccount } from 'app/entities/account';
 
 enum WalletDialogs {
     new,
@@ -152,40 +152,36 @@ class AccountListLayout extends React.Component<IProps, IState> {
                     {rootStore.myProfiles.accountList.length === 0 ? (
                         <EmptyAccountList />
                     ) : (
-                        rootStore.myProfiles.accountList.map(
-                            (x: IAccountItemView) => {
-                                return (
-                                    <DeletableItem
-                                        item={x}
-                                        Confirmation={DeleteAccountConfirmation}
-                                        className="sonm-accounts__list-item"
-                                        onDelete={this.handleDelete}
-                                        key={x.address}
-                                        id={x.address}
-                                    >
-                                        <AccountItem
-                                            {...x}
-                                            primaryTokenInfo={
-                                                this.rootStore.currency
-                                                    .primaryTokenInfo
-                                            }
-                                            onClickIcon={
-                                                this.handleClickAccount
-                                            }
-                                            onClickShowPrivateKey={
-                                                this.handleShowPrivateKey
-                                            }
-                                            onClickProfileIcon={
-                                                this.handleClickProfileIcon
-                                            }
-                                            onRename={this.handleRename}
-                                            className="sonm-accounts__list-item-inner"
-                                            hasButtons
-                                        />
-                                    </DeletableItem>
-                                );
-                            },
-                        )
+                        rootStore.myProfiles.accountList.map((x: IAccount) => {
+                            return (
+                                <DeletableItem
+                                    item={x}
+                                    Confirmation={DeleteAccountConfirmation}
+                                    className="sonm-accounts__list-item"
+                                    onDelete={this.handleDelete}
+                                    key={x.address}
+                                    id={x.address}
+                                >
+                                    <AccountItem
+                                        {...x}
+                                        primaryTokenInfo={
+                                            this.rootStore.currency
+                                                .primaryTokenInfo
+                                        }
+                                        onClickIcon={this.handleClickAccount}
+                                        onClickShowPrivateKey={
+                                            this.handleShowPrivateKey
+                                        }
+                                        onClickProfileIcon={
+                                            this.handleClickProfileIcon
+                                        }
+                                        onRename={this.handleRename}
+                                        className="sonm-accounts__list-item-inner"
+                                        hasButtons
+                                    />
+                                </DeletableItem>
+                            );
+                        })
                     )}
                 </div>
                 <CurrencyBalanceList

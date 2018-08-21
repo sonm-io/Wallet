@@ -3,10 +3,10 @@ import { updateAddressMap } from './utils/update-address-map';
 import { OnlineStore, IOnlineStoreServices } from './online-store';
 import { observable, computed, action, reaction, IReactionPublic } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import Api, { IMarketStats } from 'app/api';
+import Api, { IMarketStats, IResult } from 'app/api';
 import { IValidation } from 'app/localization/types';
 import { RootStore } from 'app/stores';
-import { IAccountItemView } from 'app/entities/account';
+import { Account, IAccount } from 'app/entities/account';
 const { pending, catchErrors } = OnlineStore;
 import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ICurrencyInfo } from 'common/types/currency';
@@ -82,9 +82,7 @@ export class MyProfilesStore extends OnlineStore {
         );
     }
 
-    //#region Private State
-
-    @observable protected accountMap = new Map<string, IAccountInfo>();
+    @observable protected accountMap = new Map<string, IAccount>();
 
     @observable public currentProfileAddress: string = '';
 
@@ -92,8 +90,10 @@ export class MyProfilesStore extends OnlineStore {
 
     @observable public marketAllBalance: string = '0';
 
+    // ToDo a rename Current profile market balance
     @observable public marketBalance: string = '';
 
+    // ToDo a rename Current profile market stats
     @observable
     public marketStats: IMarketStats = {
         dealsCount: 0,
@@ -101,17 +101,12 @@ export class MyProfilesStore extends OnlineStore {
         daysLeft: 0,
     };
 
-    //#endregion
-
     public getItem = (key: string) => this.accountMap.get(key);
 
     @computed
-    public get currentProfileView(): IAccountItemView | undefined {
-        const currentAccount = this.getItem(this.currentProfileAddress);
-        if (currentAccount) {
-            return this.transformAccountInfoToView(currentAccount);
-        }
-        return undefined;
+    public get currentProfileView(): IAccount | undefined {
+        // ToDo a rename
+        return this.getItem(this.currentProfileAddress);
     }
 
     @action.bound
@@ -132,8 +127,11 @@ export class MyProfilesStore extends OnlineStore {
 
     @asyncAction
     protected *getAccountList() {
-        const accountList = yield Api.getAccountList();
-        updateAddressMap<IAccountInfo>(accountList, this.accountMap);
+        const accountList: IAccountInfo[] = yield Api.getAccountList();
+        updateAddressMap<IAccountInfo>(
+            accountList.map(this.accountFactory),
+            this.accountMap,
+        );
     }
 
     @computed
@@ -142,34 +140,10 @@ export class MyProfilesStore extends OnlineStore {
     }
 
     @computed
-    public get accountList(): IAccountItemView[] {
-        const result = Array.from(this.accountMap.values()).map(
-            this.transformAccountInfoToView,
-        );
-
-        return sortByName(result) as IAccountItemView[];
+    public get accountList(): IAccount[] {
+        const result = Array.from(this.accountMap.values());
+        return sortByName(result) as IAccount[];
     }
-
-    protected transformAccountInfoToView = (
-        info: IAccountInfo,
-    ): IAccountItemView => {
-        const isCurrencyListEmpty = this.rootStore.currency.size === 0;
-        const primaryTokenBalance = isCurrencyListEmpty
-            ? ''
-            : info.currencyBalanceMap[
-                  this.rootStore.currency.primaryTokenAddress
-              ];
-
-        const preview: IAccountItemView = {
-            ...info,
-            etherBalance: isCurrencyListEmpty
-                ? ''
-                : info.currencyBalanceMap[this.rootStore.currency.etherAddress],
-            primaryTokenBalance,
-        };
-
-        return preview;
-    };
 
     @catchErrors({ restart: false })
     @asyncAction
@@ -187,7 +161,10 @@ export class MyProfilesStore extends OnlineStore {
         const { data: success } = yield Api.renameAccount(address, name);
 
         if (success) {
-            (this.accountMap.get(address) as IAccountInfo).name = name;
+            const account = this.getItem(address);
+            if (account) {
+                account.name = name;
+            }
         }
     }
 
@@ -205,9 +182,10 @@ export class MyProfilesStore extends OnlineStore {
     ) {
         this.serverValidation = {};
 
-        const { data, validation } = yield Api.addAccount(json, password, name);
-
-        let result;
+        const {
+            data,
+            validation,
+        }: IResult<IAccountInfo> = yield Api.addAccount(json, password, name);
 
         if (validation) {
             const serverValidation = {
@@ -222,11 +200,10 @@ export class MyProfilesStore extends OnlineStore {
             }
 
             this.serverValidation = serverValidation;
-        } else {
-            result = this.accountMap.set(data.address, data);
+        } else if (data) {
+            return this.accountMap.set(data.address, this.accountFactory(data));
         }
-
-        return result;
+        return undefined;
     }
 
     @pending
@@ -330,7 +307,8 @@ export class MyProfilesStore extends OnlineStore {
                     (sum: any, accountAddr: string) => {
                         const account = this.rootStore.myProfiles.accountMap.get(
                             accountAddr,
-                        ) as IAccountInfo;
+                        ) as IAccount;
+
                         const userBalance =
                             account.currencyBalanceMap[currency.address];
 
@@ -401,4 +379,12 @@ export class MyProfilesStore extends OnlineStore {
     }
 
     //#endregion
+
+    protected accountFactory = (data: IAccountInfo): Account => {
+        return new Account(
+            data,
+            this.rootStore.currency.etherAddress,
+            this.rootStore.currency.primaryTokenAddress,
+        );
+    };
 }
