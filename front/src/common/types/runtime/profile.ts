@@ -3,7 +3,7 @@ import { createStruct } from 'app/api/utils/runtime-types-utils';
 import { TypeEthereumAddress } from './etherium-address';
 import { IAccountBrief, IProfileBrief, IProfileFull } from '../profile';
 import { IListResult } from 'common/types';
-import { TypeAttribute } from './profile-attribute';
+import { TypeProfileAttribute } from './profile-attribute';
 import { TypeCertifcate } from './profile-certificate';
 
 export const TypeAccountBrief = createStruct<IAccountBrief>(
@@ -39,7 +39,7 @@ export const TypeProfileList = createStruct<IListResult<IProfileBrief>>(
 
 export const TypeProfileFull = createStruct<IProfileFull>(
     {
-        attributes: t.list(TypeAttribute),
+        attributes: t.list(TypeProfileAttribute),
         address: TypeEthereumAddress,
         status: t.Number,
         name: t.String,

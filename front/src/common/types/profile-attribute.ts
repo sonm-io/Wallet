@@ -1,4 +1,4 @@
-export interface IAttribute {
+export interface IProfileAttribute {
     label: string;
     value: string;
 }

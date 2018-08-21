@@ -1,5 +1,5 @@
 import { EnumProfileStatus } from './profile-status';
-import { IAttribute } from './profile-attribute';
+import { IProfileAttribute } from './profile-attribute';
 import { ICertificate } from './profile-certificate';
 
 export interface IAccountBrief {
@@ -17,7 +17,7 @@ export interface IProfileBrief extends IAccountBrief {
 }
 
 export interface IProfileFull extends IProfileBrief {
-    attributes: Array<IAttribute>;
+    attributes: Array<IProfileAttribute>;
     description: string;
     certificates: Array<ICertificate>;
 }

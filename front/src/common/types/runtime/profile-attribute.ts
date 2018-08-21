@@ -1,8 +1,8 @@
 import * as t from 'tcomb';
 import { createStruct } from 'app/api/utils/runtime-types-utils';
-import { IAttribute } from '../profile-attribute';
+import { IProfileAttribute } from '../profile-attribute';
 
-export const TypeAttribute = createStruct<IAttribute>(
+export const TypeProfileAttribute = createStruct<IProfileAttribute>(
     {
         label: t.String,
         value: t.String,
