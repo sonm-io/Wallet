@@ -165,6 +165,10 @@ class AccountListLayout extends React.Component<IProps, IState> {
                                     >
                                         <AccountItem
                                             {...x}
+                                            primaryTokenInfo={
+                                                this.rootStore.currency
+                                                    .primaryTokenInfo
+                                            }
                                             onClickIcon={
                                                 this.handleClickAccount
                                             }

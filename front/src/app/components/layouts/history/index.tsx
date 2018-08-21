@@ -230,6 +230,7 @@ class HistoryLayout extends Layout<IProps> {
                     returnPrimitive
                     onChange={this.handleChangeAccount}
                     accounts={this.rootStore.myProfiles.accountList}
+                    primaryTokenInfo={this.rootStore.currency.primaryTokenInfo}
                     value={filterStore.fromAddress}
                     hasEmptyOption
                 />

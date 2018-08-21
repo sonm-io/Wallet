@@ -7,13 +7,16 @@ import { Hash } from '../hash-view';
 import { DownloadFile } from '../download-file';
 import { ICurrencyInfo } from 'common/types/currency';
 
-export interface IAccountItemProps {
-    className?: string;
+export interface IAccountItem {
     address: string;
     json?: string;
     name: string;
     etherBalance?: string;
     primaryTokenBalance?: string;
+}
+
+export interface IAccountItemProps extends IAccountItem {
+    className?: string;
     onRename?: (newName: string, address: string) => void;
     onClickIcon?: (address: string) => void;
     onClickShowPrivateKey?: (address: string) => void;

@@ -85,6 +85,7 @@ class AccountLayout extends React.Component<IProps, any> {
                     className="sonm-account__account-select"
                     returnPrimitive
                     accounts={rootStore.myProfiles.accountList}
+                    primaryTokenInfo={this.rootStore.currency.primaryTokenInfo}
                     onChange={this.handleChangeAccount}
                     value={rootStore.send.fromAddress}
                 />

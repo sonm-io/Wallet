@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { BigSelect, Option } from '../big-select';
-import { AccountItem, IAccountItemProps } from '../account-item';
+import { AccountItem, IAccountItem } from '../account-item';
 
 import * as cn from 'classnames';
+import { ICurrencyInfo } from 'common/types/currency';
 
 export interface IAccountBigSelectProps {
     className?: string;
-    accounts?: IAccountItemProps[];
+    accounts?: IAccountItem[];
+    primaryTokenInfo: ICurrencyInfo;
     value?: string;
     onChange?: (value: any) => void;
     returnPrimitive?: boolean;
@@ -37,6 +39,9 @@ export class AccountBigSelect extends React.PureComponent<
                               >
                                   <AccountItem
                                       {...account}
+                                      primaryTokenInfo={
+                                          this.props.primaryTokenInfo
+                                      }
                                       className="sonm-account-big-select__option"
                                   />
                               </Option>

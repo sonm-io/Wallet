@@ -166,7 +166,6 @@ export class MyProfilesStore extends OnlineStore {
                 ? ''
                 : info.currencyBalanceMap[this.rootStore.currency.etherAddress],
             primaryTokenBalance,
-            primaryTokenInfo: this.rootStore.currency.primaryTokenInfo,
         };
 
         return preview;

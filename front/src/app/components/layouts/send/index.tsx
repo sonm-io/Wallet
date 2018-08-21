@@ -136,6 +136,9 @@ class SendLayout extends Layout<IProps> {
                                 returnPrimitive
                                 onChange={this.handleChangeAccount}
                                 accounts={rootStore.myProfiles.accountList}
+                                primaryTokenInfo={
+                                    this.rootStore.currency.primaryTokenInfo
+                                }
                                 value={rootStore.send.fromAddress}
                             />
                         </FormField>

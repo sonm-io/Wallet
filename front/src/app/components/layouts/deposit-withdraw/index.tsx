@@ -171,10 +171,15 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                 <AccountItem
                     name={name}
                     address={address}
+                    primaryTokenInfo={this.rootStore.currency.primaryTokenInfo}
                     className={className}
                 />
             ) : (
-                <AccountItem {...account} className={className} />
+                <AccountItem
+                    {...account}
+                    primaryTokenInfo={this.rootStore.currency.primaryTokenInfo}
+                    className={className}
+                />
             );
         } else {
             return null;
