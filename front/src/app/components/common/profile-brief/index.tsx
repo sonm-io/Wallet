@@ -64,7 +64,7 @@ export function ProfileBrief(props: IProps) {
                                 balance={props.profile.etherBalance}
                             />
                         ) : null}
-                        {props.profile.etherBalance !== undefined ? (
+                        {props.profile.snmBalance !== undefined ? (
                             <Balance
                                 symbol="SNM"
                                 className="sonm-profile-brief__balance"
