@@ -75,6 +75,8 @@ export class MyProfilesStore extends OnlineStore {
 
     @observable protected accountMap = new Map<string, IAccount>();
 
+    @observable protected rate: string = '0';
+
     @observable public currentProfileAddress: string = '';
 
     @observable public marketAllBalance: string = '0';
@@ -85,6 +87,7 @@ export class MyProfilesStore extends OnlineStore {
 
     @asyncAction
     protected *getAccountList() {
+        this.rate = yield this.getRate();
         const accountList: IAccountInfo[] = yield Api.getAccountList();
         updateAddressMap<IAccountInfo>(
             accountList.map(this.accountFactory),
@@ -92,11 +95,20 @@ export class MyProfilesStore extends OnlineStore {
         );
     }
 
+    @asyncAction
+    protected *getRate() {
+        const rateResponse: IResult<string> = yield Api.getTokenExchangeRate();
+        const rate: string =
+            rateResponse && rateResponse.data ? rateResponse.data : '0';
+        return rate;
+    }
+
     protected accountFactory = (data: IAccountInfo): Account => {
         return new Account(
             data,
             this.rootStore.currency.etherAddress,
             this.rootStore.currency.primaryTokenAddress,
+            this.rate,
         );
     };
 

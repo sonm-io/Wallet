@@ -1,3 +1,4 @@
+import { BN } from 'bn.js';
 import { IAccountInfo, ICurrencyBalanceMap } from 'common/types/account';
 import { IProfileInfo } from 'common/types/profile';
 import { IMarketStats } from 'app/api';
@@ -24,21 +25,30 @@ export interface IAccount {
 }
 
 export class Account implements IAccount {
+    protected static WEI_PRECISION = Array(19).join('0');
+
+    protected static toUsd = (value: string, rate: string) => {
+        return parseInt(rate, 10) > 0
+            ? new BN(value + Account.WEI_PRECISION).div(new BN(rate)).toString()
+            : '0';
+    };
+
     constructor(
         data: IAccountInfo,
         etherAddress: string,
         primaryTokenAddress: string,
+        rate: string,
     ) {
         this.name = data.name;
         this.address = data.address;
         this.json = data.json;
         this.marketBalance = data.marketBalance;
-        this.marketUsdBalance = data.marketUsdBalance; // ToDo a make computed
         this.currencyBalanceMap = data.currencyBalanceMap;
 
         // computed properties:
         this.etherBalance = this.currencyBalanceMap[etherAddress];
         this.primaryTokenBalance = this.currencyBalanceMap[primaryTokenAddress];
+        this.marketUsdBalance = Account.toUsd(this.marketBalance, rate);
     }
 
     public name: string = '';
