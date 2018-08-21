@@ -1,6 +1,6 @@
 import { EnumProfileStatus } from './profile-status';
 import { IProfileAttribute } from './profile-attribute';
-import { ICertificate } from './profile-certificate';
+import { IProfileCertificate } from './profile-certificate';
 
 export interface IProfileBrief {
     name?: string;
@@ -19,7 +19,7 @@ export interface IProfile extends IProfileBrief {
 export interface IProfileInfo extends IProfile {
     attributes: Array<IProfileAttribute>;
     description: string;
-    certificates: Array<ICertificate>;
+    certificates: Array<IProfileCertificate>;
 }
 
 export const emptyProfile: IProfileInfo = Object.freeze({

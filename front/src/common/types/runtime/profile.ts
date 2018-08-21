@@ -4,7 +4,7 @@ import { TypeEthereumAddress } from './etherium-address';
 import { IProfileBrief, IProfile, IProfileInfo } from '../profile';
 import { IListResult } from 'common/types';
 import { TypeProfileAttribute } from './profile-attribute';
-import { TypeCertifcate } from './profile-certificate';
+import { TypeProfileCertifcate } from './profile-certificate';
 
 export const TypeProfileBrief = createStruct<IProfileBrief>(
     {
@@ -49,7 +49,7 @@ export const TypeProfileInfo = createStruct<IProfileInfo>(
         country: t.String,
         logoUrl: t.String,
         description: t.String,
-        certificates: t.list(TypeCertifcate),
+        certificates: t.list(TypeProfileCertifcate),
     },
     'IProfileFull',
 );

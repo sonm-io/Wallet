@@ -10,7 +10,7 @@ import * as get from 'lodash/fp/get';
 import { IProfile, IProfileInfo } from 'common/types/profile';
 import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
 import { EnumProfileStatus } from 'common/types/profile-status';
-import { ICertificate } from 'common/types/profile-certificate';
+import { IProfileCertificate } from 'common/types/profile-certificate';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -544,7 +544,7 @@ export class DWH {
         return attrMap;
     }
 
-    protected getKycCertificates(certificates: any[]): ICertificate[] {
+    protected getKycCertificates(certificates: any[]): IProfileCertificate[] {
         return certificates
             .filter(x => x.attribute in DWH.kycAttributesToStatus)
             .map(x => ({

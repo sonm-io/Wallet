@@ -1,6 +1,6 @@
 import { EnumProfileStatus } from './profile-status';
 
-export interface ICertificate {
+export interface IProfileCertificate {
     status: EnumProfileStatus;
     address: string;
 }
