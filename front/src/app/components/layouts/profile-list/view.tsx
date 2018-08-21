@@ -11,7 +11,8 @@ import { Country } from 'app/components/common/country';
 import { getMap } from 'app/components/common/country/lands-utils';
 import { ProfileStatus } from 'app/components/common/profile-status';
 import { MultiSelect } from 'app/components/common/multiselect/index';
-import { EnumProfileStatus, IProfileBrief } from 'app/entities/account';
+import { IProfileBrief } from 'common/types/profile';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 class ProfileTable extends Table<IProfileBrief> {}
 

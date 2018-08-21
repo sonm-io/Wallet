@@ -5,7 +5,7 @@ import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
 import { validatePositiveInteger } from '../utils/validation/validate-positive-integer';
 import { IFilterStore } from './list-store';
 import validatePositiveNumber from '../utils/validation/validate-positive-number';
-import { EnumProfileStatus } from 'app/entities/account';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 export enum EnumOrderOwnerType {
     market,

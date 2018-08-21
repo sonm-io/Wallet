@@ -6,11 +6,8 @@ import { asyncAction } from 'mobx-utils';
 import { RootStore } from './';
 import { IKycValidator } from 'app/api/types';
 import { TEthereumAddress } from '../entities/types';
-import {
-    EnumProfileStatus,
-    IProfileFull,
-    emptyProfile,
-} from 'app/entities/account';
+import { EnumProfileStatus } from 'common/types/profile-status';
+import { IProfileFull, emptyProfile } from 'common/types/profile';
 
 export interface IOrderDetails {
     setAddress(address: TEthereumAddress): TEthereumAddress;

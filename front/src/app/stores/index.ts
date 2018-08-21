@@ -37,7 +37,7 @@ import { MyProfilesStore } from './my-profiles';
 import { CurrencyStore } from './currency';
 import { WalletStore } from './wallet';
 import { GasPriceStore } from './gas-price';
-import { IProfileBrief } from 'app/entities/account';
+import { IProfileBrief } from 'common/types/profile';
 
 useStrict(true);
 

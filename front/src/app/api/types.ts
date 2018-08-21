@@ -1,5 +1,5 @@
 import { TUsdWeiPerSeconds, TSeconds } from 'app/entities/types';
-import { IAccountBrief } from 'app/entities/account';
+import { IAccountBrief } from 'common/types/profile';
 
 export interface IRawAccount {
     json: string;

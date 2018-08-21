@@ -1,7 +1,7 @@
 import { observable, computed, action } from 'mobx';
 import { EnumProfileRole } from '../api/types';
 import { IFilterStore } from './filter-base';
-import { EnumProfileStatus } from 'app/entities/account';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 export interface IOrderFilter {
     status: EnumProfileStatus;

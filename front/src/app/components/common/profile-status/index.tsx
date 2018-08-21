@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { EnumProfileStatus } from 'app/entities/account';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 interface IProfileStatusProps {
     status: EnumProfileStatus;

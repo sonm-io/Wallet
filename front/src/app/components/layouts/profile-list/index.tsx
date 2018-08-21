@@ -3,7 +3,7 @@ import { ProfileListView } from './view';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
 import { withRootStore, Layout, IHasRootStore } from '../layout';
-import { IProfileBrief } from 'app/entities/account';
+import { IProfileBrief } from 'common/types/profile';
 
 interface IProps extends IHasRootStore {
     className?: string;

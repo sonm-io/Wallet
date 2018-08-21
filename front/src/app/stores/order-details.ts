@@ -13,7 +13,7 @@ import {
     EnumOrderSide,
 } from 'app/api/types';
 import { createBigNumber, BN } from '../utils/create-big-number';
-import { EnumProfileStatus } from 'app/entities/account';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 const SECS_IN_HOUR = new BN('3600');
 const SECS_IN_DAY = SECS_IN_HOUR.mul(new BN('24'));

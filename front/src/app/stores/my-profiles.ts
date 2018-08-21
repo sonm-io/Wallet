@@ -6,17 +6,14 @@ import { asyncAction } from 'mobx-utils';
 import Api, { IMarketStats } from 'app/api';
 import { IValidation } from 'app/localization/types';
 import { RootStore } from 'app/stores';
-import {
-    IProfileFull,
-    emptyProfile,
-    IAccountItemView,
-} from 'app/entities/account';
+import { IAccountItemView } from 'app/entities/account';
 const { pending, catchErrors } = OnlineStore;
 import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ICurrencyInfo } from 'common/types/currency';
 import ProfileApi from 'app/api/sub/profile-api';
 import { setIntervalAsync } from 'app/utils/set-interval-async';
 import { IAccountInfo } from 'common/types/account';
+import { emptyProfile, IProfileFull } from 'common/types/profile';
 
 interface IMainFormValues {
     password: string;

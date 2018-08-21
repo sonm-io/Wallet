@@ -7,13 +7,10 @@ import { BN } from 'bn.js';
 import { IBenchmarkMap } from '../../app/api/types';
 import * as moment from 'moment';
 import * as get from 'lodash/fp/get';
-import {
-    EnumProfileStatus,
-    ICertificate,
-    IProfileBrief,
-    IProfileFull,
-} from 'app/entities/account';
+import { IProfileBrief, IProfileFull } from 'common/types/profile';
 import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
+import { EnumProfileStatus } from 'common/types/profile-status';
+import { ICertificate } from 'common/types/profile-certificate';
 
 interface IDictionary<T> {
     [index: string]: keyof T;

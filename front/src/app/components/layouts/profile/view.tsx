@@ -7,7 +7,7 @@ import { ICertificateProps } from './sub/certificate';
 import { CertificatesPanel } from './sub/certificates-panel';
 import { Panel } from 'app/components/common/panel';
 import { Button } from 'app/components/common/button';
-import { EnumProfileStatus } from 'app/entities/account';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 interface IProps {
     className?: string;

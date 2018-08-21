@@ -12,9 +12,9 @@ import {
     IWorker,
     IDealChangeRequest,
 } from './types';
-import { TypeAccountBrief } from 'app/entities/account';
 import { isHexDeximal, isDigits } from 'common/utils';
 import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
+import { TypeAccountBrief } from 'common/types/runtime/profile';
 
 export const TypeNotStrictEthereumAddress = t.refinement(
     t.String,

@@ -7,7 +7,7 @@ import { Hash } from 'app/components/common/hash-view';
 import { InfoBalloon } from 'app/components/common/info-balloon';
 import { Country } from 'app/components/common/country';
 import { ProfileStatus } from 'app/components/common/profile-status';
-import { EnumProfileStatus } from 'app/entities/account';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 export interface IProfileDefinition {
     label: string;

@@ -19,7 +19,7 @@ import { Checkbox } from 'app/components/common/checkbox';
 import { FormRow, FormField } from 'app/components/common/form';
 import { DealActions } from './types';
 import { IChangeParams } from 'app/components/common/types';
-import { IAccountBrief } from 'app/entities/account';
+import { IAccountBrief } from 'common/types/profile';
 
 interface IDealData {
     id: string;
