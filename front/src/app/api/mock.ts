@@ -1,7 +1,7 @@
 import * as t from './types';
 import { ICurrencyInfo } from 'common/types/currency';
 import { EnumProfileStatus, IProfileBrief } from 'app/entities/account';
-import { ICurrencyBalanceMap, IAccountInfo } from 'app/api/types/account';
+import { ICurrencyBalanceMap, IAccountInfo } from 'common/types/account';
 
 const VASYA_ADDR = '0x88057f14236687831e1fd205e8efb9e45166fe72';
 const PETYA_ADDR = '0xfd0c80ba15cbf19770319e5e76ae05012314608f';

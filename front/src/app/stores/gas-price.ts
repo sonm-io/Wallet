@@ -47,7 +47,7 @@ export class GasPriceStore extends OnlineStore {
     protected async autoUpdateIteration(interval: number = UPDATE_INTERVAL) {
         try {
             if (IS_DEV) {
-                window.console.time('auto-update');
+                // window.console.time('auto-update');
             }
 
             await this.update();
@@ -57,7 +57,7 @@ export class GasPriceStore extends OnlineStore {
             setTimeout(() => this.autoUpdateIteration(), 0);
         } finally {
             if (IS_DEV) {
-                window.console.timeEnd('auto-update');
+                // window.console.timeEnd('auto-update');
             }
         }
     }

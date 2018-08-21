@@ -1,7 +1,7 @@
 import * as t from 'tcomb';
 import { createStruct } from 'app/api/utils/runtime-types-utils';
 import { IListResult } from 'app/api/types';
-import { IAccountInfo } from 'app/api/types/account';
+import { IAccountInfo } from 'common/types/account';
 import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
 import { ICurrencyInfo } from 'common/types/currency';
 

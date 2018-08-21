@@ -15,8 +15,8 @@ import {
 } from './types';
 import { ICurrencyInfo } from 'common/types/currency';
 import { Wallet } from 'app/entities/wallet';
-import { IAccountInfo } from 'app/api/types/account';
-import { TypeAccountInfoList } from 'app/api/types/runtime/account';
+import { IAccountInfo } from 'common/types/account';
+import { TypeAccountInfoList } from 'common/types/runtime/account';
 
 export * from './types';
 

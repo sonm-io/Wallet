@@ -21,7 +21,7 @@ const PENDING_HASH = 'waiting for hash...';
 
 import ipc from '../ipc';
 import { ICurrencyInfo } from 'common/types/currency';
-import { IAccountInfo } from 'app/api/types/account';
+import { IAccountInfo } from 'common/types/account';
 import { Wallet } from 'app/entities/wallet';
 import { DEFAULT_NODES } from './default-nodes';
 

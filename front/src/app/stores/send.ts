@@ -26,7 +26,7 @@ import {
 } from 'app/utils/create-big-number';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { IValidation } from 'app/localization';
-import { IAccountInfo } from 'app/api/types/account';
+import { IAccountInfo } from 'common/types/account';
 
 const emptyForm: ISendFormValues = {
     fromAddress: '',
