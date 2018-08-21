@@ -2,6 +2,12 @@ import { IAccountInfo, ICurrencyBalanceMap } from 'common/types/account';
 import { IProfileInfo } from 'common/types/profile';
 import { IMarketStats } from 'app/api';
 
+const emptyMarketStats: IMarketStats = Object.freeze({
+    dealsCount: 0,
+    dealsPrice: '0',
+    daysLeft: 0,
+});
+
 export interface IAccount {
     name: string;
     address: string;
@@ -48,9 +54,20 @@ export class Account implements IAccount {
 
     public profile?: IProfileInfo;
 
-    public marketStats: IMarketStats = {
-        dealsCount: 0,
-        dealsPrice: '0',
-        daysLeft: 0,
-    };
+    public marketStats: IMarketStats = { ...emptyMarketStats };
 }
+
+export const emptyAccount: IAccount = {
+    name: '',
+    address: '',
+    json: '',
+
+    marketBalance: '0',
+    marketUsdBalance: '0',
+    currencyBalanceMap: {},
+    etherBalance: '0',
+    primaryTokenBalance: '0',
+
+    profile: undefined,
+    marketStats: { ...emptyMarketStats },
+};

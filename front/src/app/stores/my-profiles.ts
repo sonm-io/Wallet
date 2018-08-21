@@ -6,7 +6,7 @@ import { asyncAction } from 'mobx-utils';
 import Api, { IMarketStats, IResult } from 'app/api';
 import { IValidation } from 'app/localization/types';
 import { RootStore } from 'app/stores';
-import { Account, IAccount } from 'app/entities/account';
+import { Account, IAccount, emptyAccount } from 'app/entities/account';
 const { pending, catchErrors } = OnlineStore;
 import { createBigNumber, ZERO, BN } from '../utils/create-big-number';
 import { ICurrencyInfo } from 'common/types/currency';
@@ -46,7 +46,7 @@ export class MyProfilesStore extends OnlineStore {
         this.services = services;
         this.getAccountList();
 
-        reaction(() => this.accountMap.size, () => this.setCurrentProfile(), {
+        reaction(() => this.accountMap.size, () => this.setCurrent(), {
             fireImmediately: true,
             name: 'reaction accountMap.size',
         });
@@ -71,22 +71,39 @@ export class MyProfilesStore extends OnlineStore {
         );
     }
 
+    //#region Observables
+
     @observable protected accountMap = new Map<string, IAccount>();
 
     @observable public currentProfileAddress: string = '';
 
     @observable public marketAllBalance: string = '0';
 
-    // ToDo a remove
-    @observable public marketBalance: string = '';
+    //#endregion
 
-    // ToDo a remove
-    @observable
-    public marketStats: IMarketStats = {
-        dealsCount: 0,
-        dealsPrice: '0',
-        daysLeft: 0,
+    //#region Private
+
+    @asyncAction
+    protected *getAccountList() {
+        const accountList: IAccountInfo[] = yield Api.getAccountList();
+        updateAddressMap<IAccountInfo>(
+            accountList.map(this.accountFactory),
+            this.accountMap,
+        );
+    }
+
+    protected accountFactory = (data: IAccountInfo): Account => {
+        return new Account(
+            data,
+            this.rootStore.currency.etherAddress,
+            this.rootStore.currency.primaryTokenAddress,
+        );
     };
+
+    //#endregion
+
+    // ToDo a: ServerValidation is a common feature. And we do not want to copypaste it between stores.
+    @observable.ref public serverValidation: Partial<IMainFormValues> = {};
 
     public getItem = (key: string) => this.accountMap.get(key);
 
@@ -95,8 +112,13 @@ export class MyProfilesStore extends OnlineStore {
         return this.getItem(this.currentProfileAddress);
     }
 
+    @computed
+    public get currentRequired(): IAccount {
+        return this.current || emptyAccount;
+    }
+
     @action.bound
-    public setCurrentProfile(accountAddress?: string) {
+    public setCurrent(accountAddress?: string) {
         if (accountAddress === undefined) {
             if (
                 !this.accountMap.has(this.currentProfileAddress) &&
@@ -111,15 +133,6 @@ export class MyProfilesStore extends OnlineStore {
         }
     }
 
-    @asyncAction
-    protected *getAccountList() {
-        const accountList: IAccountInfo[] = yield Api.getAccountList();
-        updateAddressMap<IAccountInfo>(
-            accountList.map(this.accountFactory),
-            this.accountMap,
-        );
-    }
-
     @computed
     public get accountAddressList() {
         return Array.from(this.accountMap.keys());
@@ -130,6 +143,8 @@ export class MyProfilesStore extends OnlineStore {
         const result = Array.from(this.accountMap.values());
         return sortByName(result) as IAccount[];
     }
+
+    //#region Account: create, rename, delete
 
     @catchErrors({ restart: false })
     @asyncAction
@@ -153,9 +168,6 @@ export class MyProfilesStore extends OnlineStore {
             }
         }
     }
-
-    // ToDo a: ServerValidation is a common feature. And we do not want to copypaste it between stores.
-    @observable.ref public serverValidation: Partial<IMainFormValues> = {};
 
     @pending
     @catchErrors({ restart: false })
@@ -218,20 +230,7 @@ export class MyProfilesStore extends OnlineStore {
         return result;
     }
 
-    @pending
-    @asyncAction
-    public *getPrivateKey(password: string, address: string) {
-        const { data: privateKey, validation } = yield Api.getPrivateKey(
-            password,
-            address,
-        );
-
-        if (validation) {
-            return '';
-        } else {
-            return privateKey;
-        }
-    }
+    //#endregion
 
     //#region Updates
 
@@ -310,6 +309,11 @@ export class MyProfilesStore extends OnlineStore {
         );
     }
 
+    @computed
+    public get fullBalanceList(): ICurrencyInfo[] {
+        return this.getBalanceListFor(...this.accountAddressList);
+    }
+
     private static getTokenBalance(fullList: ICurrencyInfo[], address: string) {
         const item = fullList.find(x => x.address === address);
         const balance = item ? item.balance : '';
@@ -355,18 +359,20 @@ export class MyProfilesStore extends OnlineStore {
         return result;
     }
 
-    @computed
-    public get fullBalanceList(): ICurrencyInfo[] {
-        return this.getBalanceListFor(...this.accountAddressList);
-    }
-
     //#endregion
 
-    protected accountFactory = (data: IAccountInfo): Account => {
-        return new Account(
-            data,
-            this.rootStore.currency.etherAddress,
-            this.rootStore.currency.primaryTokenAddress,
+    @pending
+    @asyncAction
+    public *getPrivateKey(password: string, address: string) {
+        const { data: privateKey, validation } = yield Api.getPrivateKey(
+            password,
+            address,
         );
-    };
+
+        if (validation) {
+            return '';
+        } else {
+            return privateKey;
+        }
+    }
 }

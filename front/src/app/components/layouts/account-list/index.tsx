@@ -122,7 +122,7 @@ class AccountListLayout extends React.Component<IProps, IState> {
     };
 
     protected handleClickProfileIcon = (address: string) => {
-        this.rootStore.myProfiles.setCurrentProfile(address);
+        this.rootStore.myProfiles.setCurrent(address);
         this.props.navigateToProfile(address);
     };
 

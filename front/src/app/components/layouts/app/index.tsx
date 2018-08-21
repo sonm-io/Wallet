@@ -55,7 +55,7 @@ class AppLayout extends Layout<IProps> {
     };
 
     protected handleChangeMarketAccount = (account: IAccount) => {
-        this.rootStore.myProfiles.setCurrentProfile(account.address);
+        this.rootStore.myProfiles.setCurrent(account.address);
     };
 
     protected handleClickMyProfile = () => {
@@ -84,7 +84,7 @@ class AppLayout extends Layout<IProps> {
                 marketAccountList={myProfilesStore.accountList}
                 marketAccount={myProfilesStore.current}
                 marketBalance={myProfilesStore.marketAllBalance}
-                marketStats={myProfilesStore.marketStats}
+                marketStats={myProfilesStore.currentRequired.marketStats}
                 networkError={
                     rootStore.isOffline ? t('sonmapi_network_error') : ''
                 }

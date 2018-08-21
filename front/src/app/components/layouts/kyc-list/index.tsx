@@ -31,7 +31,9 @@ class KycListLayout extends Layout<IProps> {
                 onSubmitPassword={this.handleSubmitPassword}
                 onClickItem={store.select}
                 onCloseBottom={store.unselect}
-                marketBalance={this.rootStore.myProfiles.marketBalance}
+                marketBalance={
+                    this.rootStore.myProfiles.currentRequired.marketBalance
+                }
                 onNavigateDeposit={this.props.onNavigateDeposit}
             />
         );
