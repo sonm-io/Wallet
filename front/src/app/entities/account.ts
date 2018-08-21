@@ -1,10 +1,5 @@
 import { IAccountInfo, ICurrencyBalanceMap } from 'common/types/account';
 
-export interface IAccountItemView extends IAccountInfo {
-    etherBalance: string;
-    primaryTokenBalance: string;
-}
-
 export interface IAccount {
     name: string;
     address: string;
