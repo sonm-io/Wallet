@@ -165,18 +165,16 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         );
 
         if (account) {
-            const { name, address } = account;
-
             return this.props.isConfirmation ? (
                 <AccountItem
-                    name={name}
-                    address={address}
+                    account={account}
+                    hideBalance
                     primaryTokenInfo={this.rootStore.currency.primaryTokenInfo}
                     className={className}
                 />
             ) : (
                 <AccountItem
-                    {...account}
+                    account={account}
                     primaryTokenInfo={this.rootStore.currency.primaryTokenInfo}
                     className={className}
                 />

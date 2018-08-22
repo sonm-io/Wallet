@@ -153,9 +153,14 @@ class AccountListLayout extends React.Component<IProps, IState> {
                         <EmptyAccountList />
                     ) : (
                         rootStore.myProfiles.accountList.map((x: IAccount) => {
+                            const item: IAccountItemProps = {
+                                account: x,
+                                primaryTokenInfo: this.rootStore.currency
+                                    .primaryTokenInfo,
+                            };
                             return (
                                 <DeletableItem
-                                    item={x}
+                                    item={item}
                                     Confirmation={DeleteAccountConfirmation}
                                     className="sonm-accounts__list-item"
                                     onDelete={this.handleDelete}
@@ -163,7 +168,7 @@ class AccountListLayout extends React.Component<IProps, IState> {
                                     id={x.address}
                                 >
                                     <AccountItem
-                                        {...x}
+                                        account={x}
                                         primaryTokenInfo={
                                             this.rootStore.currency
                                                 .primaryTokenInfo
