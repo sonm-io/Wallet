@@ -1,4 +1,4 @@
-import { IWalletList, Wallet } from 'app/entities/wallet';
+import { IWalletList, IWallet } from 'common/types/wallet';
 import moveDecimalPoint from 'app/utils/move-decimal-point';
 
 const migrations = {
@@ -9,14 +9,13 @@ const migrations = {
                 data: [],
             };
 
-            for (const item of list.data) {
-                newList.data.push(
-                    new Wallet({
-                        name: item,
-                        chainId: 'rinkeby',
-                        nodeUrl: 'https://rinkeby.infura.io',
-                    }),
-                );
+            for (const name of list.data) {
+                const item: IWallet = {
+                    name,
+                    chainId: 'rinkeby',
+                    nodeUrl: 'https://rinkeby.infura.io',
+                };
+                newList.data.push(item);
             }
 
             return newList;

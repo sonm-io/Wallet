@@ -14,9 +14,9 @@ import {
     IWorker,
 } from './types';
 import { ICurrencyInfo } from 'common/types/currency';
-import { Wallet } from 'app/entities/wallet';
 import { IAccountInfo } from 'common/types/account';
 import { TypeAccountInfoList } from 'common/types/runtime/account';
+import { IWallet } from 'common/types/wallet';
 
 export * from './types';
 
@@ -33,7 +33,7 @@ class AllApi {
         password: string,
         walletName: string,
         chainId: string,
-    ): Promise<IResult<Wallet>> {
+    ): Promise<IResult<IWallet>> {
         return this.ipc.send('createWallet', { password, walletName, chainId });
     }
 
@@ -48,7 +48,7 @@ class AllApi {
         password: string,
         walletName: string,
         file: string,
-    ): Promise<IResult<Wallet>> {
+    ): Promise<IResult<IWallet>> {
         return this.ipc.send('importWallet', { password, walletName, file });
     }
 
@@ -81,7 +81,7 @@ class AllApi {
         }
     }
 
-    public async getWalletList(): Promise<IResult<Wallet[]>> {
+    public async getWalletList(): Promise<IResult<IWallet[]>> {
         return this.ipc.send('getWalletList');
     }
 
