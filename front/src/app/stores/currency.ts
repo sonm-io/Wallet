@@ -24,11 +24,10 @@ export class CurrencyStore extends OnlineStore {
     constructor(rootStore: RootStore, services: IOnlineStoreServices) {
         super(services);
         this.rootStore = rootStore;
-        this.init();
     }
 
     @asyncAction
-    protected *init() {
+    public *init() {
         const { data: currencyList } = yield Api.getCurrencyList();
         this.primaryTokenAddr = (yield Api.getSonmTokenAddress()).data;
         updateAddressMap<ICurrencyInfo>(

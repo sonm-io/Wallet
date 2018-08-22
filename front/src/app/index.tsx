@@ -55,7 +55,11 @@ async function handleLogin(wallet: Wallet) {
     }
     const renderer = new Renderer(rootStore);
     history.listen(renderer.renderByPath.bind(renderer));
-    await Promise.all([rootStore.wallet.init(wallet)]);
+    await Promise.all([
+        rootStore.currency.init(),
+        rootStore.myProfiles.init(),
+        rootStore.wallet.init(wallet),
+    ]);
     renderer.renderByPath((history as any).location);
 }
 

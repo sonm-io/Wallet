@@ -44,13 +44,29 @@ export class MyProfilesStore extends OnlineStore {
         super(services);
         this.rootStore = rootStore;
         this.services = services;
-        this.getAccountList();
+    }
 
-        reaction(() => this.accountMap.size, () => this.setCurrent(), {
-            fireImmediately: true,
-            name: 'reaction accountMap.size',
-        });
+    @asyncAction
+    public *init() {
+        yield this.getAccountList();
+        this.setReactions();
+    }
 
+    //#region Observables
+
+    @observable protected accountMap = new Map<string, IAccount>();
+
+    @observable protected rate: string = '0';
+
+    @observable public currentProfileAddress: string = '';
+
+    @observable public marketAllBalance: string = '0';
+
+    //#endregion
+
+    //#region Private
+
+    protected setReactions() {
         reaction(
             () => this.currentProfileAddress,
             (_: string, r: IReactionPublic) => {
@@ -68,21 +84,12 @@ export class MyProfilesStore extends OnlineStore {
                 name: 'reaction accountAddressList',
             },
         );
+
+        reaction(() => this.accountMap.size, () => this.setCurrent(), {
+            fireImmediately: true,
+            name: 'reaction accountMap.size',
+        });
     }
-
-    //#region Observables
-
-    @observable protected accountMap = new Map<string, IAccount>();
-
-    @observable protected rate: string = '0';
-
-    @observable public currentProfileAddress: string = '';
-
-    @observable public marketAllBalance: string = '0';
-
-    //#endregion
-
-    //#region Private
 
     @asyncAction
     protected *getAccountList() {
