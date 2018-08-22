@@ -59,6 +59,7 @@ class WithdrawLayout extends Layout<IProps> {
     }
 }
 
+@observer
 class DepositWithdraw extends React.Component<IDWProps, any> {
     // ToDo make stateless
     protected get rootStore() {
@@ -341,5 +342,5 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     }
 }
 
-export const Deposit = withRootStore(observer(DepositLayout));
-export const Withdraw = withRootStore(observer(WithdrawLayout));
+export const Deposit = withRootStore(DepositLayout);
+export const Withdraw = withRootStore(WithdrawLayout);
