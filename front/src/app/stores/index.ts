@@ -281,6 +281,7 @@ export class RootStore implements IHasLocalizator {
             this.orderDetails,
             this.dealDetails,
             this.orderCreate,
+            this.myProfiles,
         );
     }
 

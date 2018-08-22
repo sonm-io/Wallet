@@ -256,7 +256,6 @@ export class MyProfilesStore extends OnlineStore {
 
     //#region Updates
 
-    @pending
     @catchErrors({ restart: false })
     @asyncAction
     public *updateAllAccounts() {
@@ -265,14 +264,12 @@ export class MyProfilesStore extends OnlineStore {
         }
     }
 
-    @pending
     @catchErrors({ restart: false })
     @asyncAction
     protected *updateCurrentAccount() {
         yield this.updateAccount(this.currentProfileAddress);
     }
 
-    @pending
     @catchErrors({ restart: false })
     @asyncAction
     protected *updateAccount(address: string) {
@@ -290,7 +287,6 @@ export class MyProfilesStore extends OnlineStore {
         }
     }
 
-    @pending
     @catchErrors({ restart: false })
     @asyncAction
     protected *updateMarketBalance() {
