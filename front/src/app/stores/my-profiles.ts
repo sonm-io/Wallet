@@ -54,7 +54,6 @@ export class MyProfilesStore extends OnlineStore {
         reaction(
             () => this.currentProfileAddress,
             (_: string, r: IReactionPublic) => {
-                this.updateCurrentAccount();
                 setIntervalAsync(async () => {
                     await this.updateCurrentAccount();
                 }, MyProfilesStore.CURRENT_INTERVAL);
