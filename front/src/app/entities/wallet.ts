@@ -1,13 +1,26 @@
 import { DEFAULT_NODES } from 'worker/api/default-nodes';
+import { IWallet as IApiWallet } from 'common/types/wallet';
 
-export class Wallet {
-    constructor(wallet: Partial<Wallet>) {
-        Object.assign(this, wallet);
+export interface IWallet {
+    name: string;
+    chainId: string;
+    nodeUrl: string;
+
+    isLivenet: boolean;
+    ethNodeUrl: string;
+    sidechainNodeUrl: string;
+}
+
+export class Wallet implements IWallet {
+    constructor(data: IApiWallet) {
+        this.name = data.name;
+        this.chainId = data.chainId;
+        this.nodeUrl = data.nodeUrl;
     }
 
-    public name: string = '';
-    public chainId: string = '';
-    public nodeUrl: string = '';
+    public name: string;
+    public chainId: string;
+    public nodeUrl: string;
 
     public get isLivenet() {
         return this.chainId === 'livenet';
@@ -22,9 +35,8 @@ export class Wallet {
     }
 }
 
-export const defaultWallet = new Wallet({});
-
-export interface IWalletList {
-    version: number;
-    data: Wallet[];
-}
+export const defaultWallet = new Wallet({
+    name: '',
+    chainId: '',
+    nodeUrl: '',
+});

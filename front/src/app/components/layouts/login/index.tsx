@@ -131,7 +131,7 @@ class LoginLayout extends React.Component<IProps, IState> {
             return;
         }
 
-        const listOfWallets = walletlList;
+        const listOfWallets = walletlList.map(w => new Wallet(w));
 
         let name = this.state.name;
         const savedName = window.localStorage.getItem('sonm-last-used-wallet');
@@ -282,7 +282,7 @@ class LoginLayout extends React.Component<IProps, IState> {
                         this.state.newName,
                     );
 
-                    this.props.onLogin(walletListItem);
+                    this.props.onLogin(new Wallet(walletListItem));
                     return;
                 }
             } catch (e) {
@@ -322,7 +322,7 @@ class LoginLayout extends React.Component<IProps, IState> {
                     pending: false,
                 });
             } else if (walletInfo) {
-                this.props.onLogin(walletInfo);
+                this.props.onLogin(new Wallet(walletInfo));
                 return;
             }
         }
