@@ -19,9 +19,7 @@ const call = async (
     task: IntervalTask,
     args: any[],
 ) => {
-    if (task.isActive) {
-        await asyncFn(...args);
-    }
+    await asyncFn(...args);
     if (task.isActive) {
         task.timeoutId = window.setTimeout(
             () => call(asyncFn, interval, task, args),
