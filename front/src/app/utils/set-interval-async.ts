@@ -1,12 +1,15 @@
 class IntervalTask {
     protected activeValue = true;
 
+    public timeoutId: number = 0;
+
     public get isActive() {
         return this.activeValue;
     }
 
     public stop = () => {
         this.activeValue = false;
+        window.clearTimeout(this.timeoutId);
     };
 }
 
@@ -18,7 +21,12 @@ const call = async (
 ) => {
     if (task.isActive) {
         await asyncFn(...args);
-        setTimeout(() => call(asyncFn, interval, task, args), interval);
+    }
+    if (task.isActive) {
+        task.timeoutId = window.setTimeout(
+            () => call(asyncFn, interval, task, args),
+            interval,
+        );
     }
 };
 
