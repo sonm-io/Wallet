@@ -1,22 +1,13 @@
-class IntervalTask {
-    protected activeValue = true;
-
-    public timeoutId: number = 0;
-
-    public get isActive() {
-        return this.activeValue;
-    }
-
-    public stop = () => {
-        this.activeValue = false;
-        window.clearTimeout(this.timeoutId);
-    };
+interface IIntervalTask {
+    timeoutId: number;
+    isActive: boolean;
+    stop: (this: IIntervalTask) => void;
 }
 
 const call = async (
     asyncFn: (...args: any[]) => Promise<void>,
     interval: number,
-    task: IntervalTask,
+    task: IIntervalTask,
     args: any[],
 ) => {
     await asyncFn(...args);
@@ -33,7 +24,14 @@ export const setIntervalAsync = (
     interval: number,
     ...args: any[]
 ) => {
-    const task = new IntervalTask();
+    const task: IIntervalTask = {
+        timeoutId: 0,
+        isActive: true,
+        stop(this: IIntervalTask) {
+            this.isActive = false;
+            window.clearTimeout(this.timeoutId);
+        },
+    };
     call(asyncFn, interval, task, args);
     return task;
 };
