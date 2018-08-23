@@ -54,13 +54,17 @@ export class MyProfilesStore extends OnlineStore {
 
     //#region Observables
 
-    @observable protected accountMap = new Map<string, IAccount>();
+    @observable
+    protected accountMap = new Map<string, IAccount>();
 
-    @observable protected rate: string = '0';
+    @observable
+    protected rate: string = '0';
 
-    @observable public currentProfileAddress: string = '';
+    @observable
+    public currentProfileAddress: string = '';
 
-    @observable public marketAllBalance: string = '0';
+    @observable
+    public marketAllBalance: string = '0';
 
     //#endregion
 
@@ -120,8 +124,22 @@ export class MyProfilesStore extends OnlineStore {
 
     //#endregion
 
-    // ToDo a: ServerValidation is a common feature. And we do not want to copypaste it between stores.
-    @observable.ref public serverValidation: Partial<IMainFormValues> = {};
+    //#region Form Validation ToDo move it to base FormsStore
+
+    @observable.ref
+    public serverValidation: Partial<IMainFormValues> = {};
+
+    @computed
+    public get noValidationMessages(): boolean {
+        return Object.keys(this.serverValidation).length === 0;
+    }
+
+    @action.bound
+    public resetServerValidation() {
+        this.serverValidation = {};
+    }
+
+    //#endregion
 
     public getItem = (key: string) => this.accountMap.get(key);
 

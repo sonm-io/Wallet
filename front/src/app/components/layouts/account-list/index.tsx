@@ -68,7 +68,7 @@ class AccountListLayout extends React.Component<IProps, IState> {
             data.name,
         );
 
-        if (this.rootStore.main.noValidationMessages) {
+        if (this.rootStore.myProfiles.noValidationMessages) {
             this.closeDialog();
         }
     };
@@ -80,7 +80,7 @@ class AccountListLayout extends React.Component<IProps, IState> {
             data.privateKey,
         );
 
-        if (this.rootStore.main.noValidationMessages) {
+        if (this.rootStore.myProfiles.noValidationMessages) {
             this.closeDialog();
         }
     };
@@ -93,7 +93,7 @@ class AccountListLayout extends React.Component<IProps, IState> {
     }
 
     protected closeDialog = () => {
-        this.rootStore.main.resetServerValidation();
+        this.rootStore.myProfiles.resetServerValidation();
         this.switchDialog(WalletDialogs.none);
     };
     protected openNewWalletDialog = this.switchDialog.bind(
@@ -218,7 +218,8 @@ class AccountListLayout extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.new ? (
                         <CreateAccount
                             serverValidation={
-                                rootStore.main.serverValidation as IValidation
+                                rootStore.myProfiles
+                                    .serverValidation as IValidation
                             }
                             onSubmit={this.handleCreateAccount}
                             onClickCross={this.closeDialog}
@@ -230,7 +231,7 @@ class AccountListLayout extends React.Component<IProps, IState> {
                                 rootStore.myProfiles.accountAddressList
                             }
                             serverValidation={
-                                rootStore.main
+                                rootStore.myProfiles
                                     .serverValidation as IImportAccountForm
                             }
                             onSubmit={this.handleAddAccount}
