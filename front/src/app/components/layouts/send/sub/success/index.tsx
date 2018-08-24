@@ -1,10 +1,13 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { toJS } from 'mobx';
+import {
+    withRootStore,
+    Layout,
+    IHasRootStore,
+} from 'app/components/layouts/layout';
 
-import rootStore from 'app/stores';
-
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onClickHistory: (accountAddress: string) => void;
     onClickSend: () => void;
@@ -12,9 +15,9 @@ interface IProps {
 
 // TODO replace DIV and SPAN with A
 
-export class SendSuccess extends React.PureComponent<IProps, any> {
+class SendSuccessLayout extends Layout<IProps> {
     protected handleClickHistory = () => {
-        this.props.onClickHistory(toJS(rootStore.sendStore.fromAddress));
+        this.props.onClickHistory(toJS(this.rootStore.send.fromAddress));
     };
 
     public render() {
@@ -46,5 +49,7 @@ export class SendSuccess extends React.PureComponent<IProps, any> {
         );
     }
 }
+
+export const SendSuccess = withRootStore(SendSuccessLayout);
 
 export default SendSuccess;

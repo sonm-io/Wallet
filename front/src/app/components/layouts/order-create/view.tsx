@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ProfileBrief } from 'app/components/common/profile-brief';
-import { IProfileBrief } from 'app/entities/profile';
+import { IProfileBrief } from 'common/types/profile';
 import Button from 'app/components/common/button';
 import { FormField } from 'app/components/common/form';
 import { Input } from 'app/components/common/input';

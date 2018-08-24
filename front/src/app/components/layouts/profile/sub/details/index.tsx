@@ -6,8 +6,8 @@ import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { InfoBalloon } from 'app/components/common/info-balloon';
 import { Country } from 'app/components/common/country';
-import { EnumProfileStatus } from 'app/api/types';
 import { ProfileStatus } from 'app/components/common/profile-status';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 export interface IProfileDefinition {
     label: string;

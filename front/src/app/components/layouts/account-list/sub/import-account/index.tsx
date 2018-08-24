@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { IFileOpenResult } from 'app/components/common/upload';
 import { shortString } from 'app/utils/short-string';
-import { rootStore } from 'app/stores';
+import { RootStore } from 'app/stores';
 import { ImportAccountView } from './view';
+import { withRootStore, IHasRootStore } from 'app/components/layouts/layout';
 
 export interface IImportAccountForm {
     json: string;
@@ -10,7 +11,7 @@ export interface IImportAccountForm {
     name: string;
 }
 
-export interface IProps {
+export interface IProps extends IHasRootStore {
     className?: string;
     serverValidation: IImportAccountForm;
     onSubmit: (data: IImportAccountForm) => void;
@@ -26,7 +27,13 @@ const emptyForm: IImportAccountForm = {
 
 const emptyObject: any = {};
 
-export class ImportAccount extends React.Component<IProps, any> {
+class ImportAccountLayout extends React.Component<IProps, any> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         fileSuccess: '',
         address: '',
@@ -40,7 +47,7 @@ export class ImportAccount extends React.Component<IProps, any> {
 
         const validation = {} as any;
         const form = this.state.form;
-        const l = rootStore.localizator.getMessageText;
+        const l = this.rootStore.localizator.getMessageText;
 
         if (!form.password) {
             validation.password = l('password_required');
@@ -195,5 +202,7 @@ export class ImportAccount extends React.Component<IProps, any> {
         );
     }
 }
+
+export const ImportAccount = withRootStore(ImportAccountLayout);
 
 export default ImportAccount;

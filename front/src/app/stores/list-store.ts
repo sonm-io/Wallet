@@ -30,9 +30,12 @@ export interface IUserInput {
     sortDesc: boolean;
 }
 
-export interface IFilterStore {
-    readonly filter: any;
+export interface IFilterRead {
     readonly filterAsString: string;
+}
+
+export interface IFilterStore extends IFilterRead {
+    readonly filter: any;
 }
 
 export interface IListStore<T> extends IOnlineStore {

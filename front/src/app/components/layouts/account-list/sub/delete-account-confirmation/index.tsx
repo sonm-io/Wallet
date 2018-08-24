@@ -12,10 +12,7 @@ export function DeleteAccountConfirmation(props: IAccountItemProps) {
             </h4>
             <AccountItem
                 key="del-preview"
-                address={props.address}
-                name={props.name}
-                etherBalance={props.etherBalance}
-                primaryTokenBalance={props.primaryTokenBalance}
+                account={props.account}
                 primaryTokenInfo={props.primaryTokenInfo}
             />
         </div>

@@ -1,29 +1,31 @@
 import * as React from 'react';
-import { rootStore } from 'app/stores';
 import { IOrderCreateParams } from 'app/stores/order-create';
 import { OrderCreateView } from './view';
 import { observer } from 'mobx-react';
+import { withRootStore, Layout, IHasRootStore } from '../layout';
 
-const store = rootStore.orderCreateStore;
-
-interface IOrderCreateProps {
+interface IOrderCreateProps extends IHasRootStore {
     onCancel: () => void;
 }
 
-@observer
-export class OrderCreate extends React.Component<IOrderCreateProps, never> {
+class OrderCreateLayout extends Layout<IOrderCreateProps> {
+    protected get store() {
+        return this.rootStore.orderCreate;
+    }
+
     protected handleUpdateField = (
         key: keyof IOrderCreateParams,
         value: IOrderCreateParams[keyof IOrderCreateParams],
     ) => {
-        store.updateUserInput({ [key]: value });
+        this.store.updateUserInput({ [key]: value });
     };
 
     protected handleSubmitPassword(password: string) {
-        store.submit(password);
+        this.store.submit(password);
     }
 
     public render() {
+        const store = this.store;
         const p = this.props;
         return (
             <OrderCreateView
@@ -61,3 +63,5 @@ export class OrderCreate extends React.Component<IOrderCreateProps, never> {
         );
     }
 }
+
+export const OrderCreate = withRootStore(observer(OrderCreateLayout));

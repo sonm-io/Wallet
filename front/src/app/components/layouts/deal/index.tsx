@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { DealView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { ITogglerChangeParams } from '../../common/toggler';
+import { withRootStore, IHasRootStore, Layout } from '../layout';
 import { EnumOrderSide } from 'app/api';
 import { BalanceUtils } from 'app/components/common/balance-view/utils';
 import { getPricePerHour } from 'app/components/common/price-per-hour/utils';
@@ -10,22 +10,23 @@ import { IChangeParams } from '../../common/types';
 import { ChangeRequestList } from './sub/change-request-list/index';
 import { DealActions } from './types';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onNavigateToDeals: () => void;
 }
 
-const dealDetailsStore = rootStore.dealDetailsStore;
+class DealLayout extends Layout<IProps> {
+    protected get dealDetailsStore() {
+        return this.rootStore.dealDetails;
+    }
 
-@observer
-export class Deal extends React.Component<IProps, never> {
     public componentDidMount() {
         this.resetInput();
-        dealDetailsStore.startAutoUpdate();
+        this.dealDetailsStore.startAutoUpdate();
     }
 
     public componentWillUnmount() {
-        dealDetailsStore.stopAutoUpdate();
+        this.dealDetailsStore.stopAutoUpdate();
     }
 
     public handleConfirmationDialogHide = () => {
@@ -33,44 +34,44 @@ export class Deal extends React.Component<IProps, never> {
     };
 
     public handleChangeCheckbox = (params: ITogglerChangeParams) => {
-        dealDetailsStore.updateUserInput({
+        this.dealDetailsStore.updateUserInput({
             isBlacklisted: params.value,
         });
     };
 
     public handleFinishDealShow = () => {
-        dealDetailsStore.updateUserInput({
+        this.dealDetailsStore.updateUserInput({
             action: DealActions.finish,
         });
     };
 
     private resetInput = () => {
-        dealDetailsStore.resetUserInput();
+        this.dealDetailsStore.resetUserInput();
     };
 
     protected handleConfirmationDialogChangeInput = (
         params: IChangeParams<string>,
     ) => {
-        dealDetailsStore.updateUserInput({
+        this.dealDetailsStore.updateUserInput({
             [params.name]: params.value,
         });
     };
 
     public handleChangeRequestCreate = () => {
-        dealDetailsStore.resetUserInput();
-        dealDetailsStore.updateUserInput({
+        this.dealDetailsStore.resetUserInput();
+        this.dealDetailsStore.updateUserInput({
             action: DealActions.createChangeRequest,
         });
     };
 
     public handleChangeRequestEdit = (id: string) => {
         const changeRequest =
-            dealDetailsStore.deal.changeRequests &&
-            dealDetailsStore.deal.changeRequests.find(
+            this.dealDetailsStore.deal.changeRequests &&
+            this.dealDetailsStore.deal.changeRequests.find(
                 (item: any) => item.id === id,
             );
 
-        dealDetailsStore.updateUserInput({
+        this.dealDetailsStore.updateUserInput({
             newPrice:
                 changeRequest && changeRequest.price
                     ? BalanceUtils.formatBalance(
@@ -89,12 +90,12 @@ export class Deal extends React.Component<IProps, never> {
 
     public handleChangeRequestAccept = (id: string) => {
         const changeRequest =
-            dealDetailsStore.deal.changeRequests &&
-            dealDetailsStore.deal.changeRequests.find(
+            this.dealDetailsStore.deal.changeRequests &&
+            this.dealDetailsStore.deal.changeRequests.find(
                 (item: any) => item.id === id,
             );
 
-        dealDetailsStore.updateUserInput({
+        this.dealDetailsStore.updateUserInput({
             newPrice:
                 changeRequest && changeRequest.price
                     ? BalanceUtils.formatBalance(
@@ -112,20 +113,21 @@ export class Deal extends React.Component<IProps, never> {
     };
 
     public handleChangeRequestCancel = (id: string) => {
-        dealDetailsStore.updateUserInput({
+        this.dealDetailsStore.updateUserInput({
             action: DealActions.cancelChangeRequest,
             changeRequestId: id,
         });
     };
 
     public handleChangeRequestReject = (id: string) => {
-        dealDetailsStore.updateUserInput({
+        this.dealDetailsStore.updateUserInput({
             action: DealActions.rejectChangeRequest,
             changeRequestId: id,
         });
     };
 
     public handleConfirmationDialogSubmit = async () => {
+        const dealDetailsStore = this.dealDetailsStore;
         if (dealDetailsStore.action === DealActions.cancelChangeRequest) {
             await dealDetailsStore.cancelChangeRequest();
         } else if (dealDetailsStore.action === DealActions.finish) {
@@ -144,8 +146,9 @@ export class Deal extends React.Component<IProps, never> {
     };
 
     public render() {
+        const dealDetailsStore = this.dealDetailsStore;
         const deal = dealDetailsStore.deal;
-        const marketAccount = rootStore.marketStore.marketAccountAddress.toLowerCase();
+        const marketAccount = this.rootStore.myProfiles.currentProfileAddress.toLowerCase();
         const isOwner =
             deal.supplier.address.toLowerCase() ===
                 marketAccount.toLowerCase() ||
@@ -223,3 +226,5 @@ export class Deal extends React.Component<IProps, never> {
         );
     }
 }
+
+export const Deal = withRootStore(observer(DealLayout));

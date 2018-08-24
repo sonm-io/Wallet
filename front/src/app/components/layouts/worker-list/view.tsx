@@ -35,7 +35,6 @@ export class WorkerListView extends React.PureComponent<IProps, any> {
                 return (
                     <ProfileBrief
                         profile={{ address: record.slaveId, status: 0 }}
-                        showBalances={false}
                         key={record.slaveId}
                     />
                 );

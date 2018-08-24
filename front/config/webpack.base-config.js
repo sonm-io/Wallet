@@ -36,6 +36,7 @@ module.exports = {
         alias: {
             'bn.js': 'node_modules/bn.js/lib/bn.js',
             './guide.less$': getFullPath('src/app/less/guide.less'),
+            common: getFullPath('src/common'),
             app: getFullPath('src/app'),
             worker: getFullPath('src/worker'),
             './node_modules': getFullPath('../node_modules'),

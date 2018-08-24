@@ -1,11 +1,6 @@
-import {
-    IOrder,
-    IListResult,
-    ISender,
-    IListQuery,
-    IOrderParams,
-} from '../types';
+import { IOrder, ISender, IListQuery, IOrderParams } from '../types';
 import { TypeOrder, TypeOrderList, TypeOrderParams } from '../runtime-types';
+import { IListResult } from 'common/types';
 
 export class OrderApi {
     private ipc: ISender;

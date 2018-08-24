@@ -1,7 +1,6 @@
 import ipc from './ipc';
 import { api } from './api';
 import { TResultPromise, IValidation } from '../ipc/types';
-import { instanceOf } from 'prop-types';
 
 ipc.setRequestProcessor(
     async (type: string, payload: any): TResultPromise<any> => {

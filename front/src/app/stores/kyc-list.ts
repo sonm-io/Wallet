@@ -1,21 +1,9 @@
 import OnlineStore, { IOnlineStoreServices } from './online-store';
 import { observable, action, computed } from 'mobx';
-import { IKycValidator } from 'app/api';
+import { Api } from 'app/api';
 import { RootStore } from 'app/stores';
 import { asyncAction } from 'mobx-utils';
 const { pending, catchErrors } = OnlineStore;
-
-export interface IKycListStoreExternal {
-    market: {
-        marketAccountAddress: string;
-        validators: IKycValidator[];
-    };
-    main: {
-        serverValidation: {
-            password?: string;
-        };
-    };
-}
 
 interface IKycListState {
     kycLinks: { [kycEthAddress: string]: string };
@@ -28,7 +16,6 @@ interface IKycListInput {
 
 export class KycListStore extends OnlineStore implements IKycListInput {
     protected rootStore: RootStore;
-    protected externalStores: IKycListStoreExternal;
 
     protected static defaultUserInput: IKycListInput = {
         selectedIndex: undefined,
@@ -45,14 +32,9 @@ export class KycListStore extends OnlineStore implements IKycListInput {
     @observable
     protected userInput: IKycListInput = { ...KycListStore.defaultUserInput };
 
-    constructor(
-        rootStore: RootStore,
-        externalStores: IKycListStoreExternal,
-        params: IOnlineStoreServices,
-    ) {
+    constructor(rootStore: RootStore, params: IOnlineStoreServices) {
         super(params);
         this.rootStore = rootStore;
-        this.externalStores = externalStores;
     }
 
     @pending
@@ -60,19 +42,20 @@ export class KycListStore extends OnlineStore implements IKycListInput {
     @asyncAction
     public *fetchKycLink(itemIndex: number, password: string) {
         const links = this.links;
-        const validator = this.externalStores.market.validators[itemIndex];
-        const link = yield this.rootStore.mainStore.getKYCLink(
+        const kycValidator = this.rootStore.validators.validators[itemIndex];
+
+        const { data: link, validation } = yield Api.getKYCLink(
             password,
-            this.externalStores.market.marketAccountAddress,
-            validator.id,
-            validator.fee,
-        ) as any;
+            this.rootStore.myProfiles.currentProfileAddress,
+            kycValidator.id,
+            kycValidator.fee,
+        );
 
         if (link) {
-            links[validator.id] = link;
+            links[kycValidator.id] = link;
             this.state.kycLinks = { ...links };
         } else {
-            this.state.validationMessage = this.externalStores.main.serverValidation.password;
+            this.state.validationMessage = validation.password;
         }
     }
 
@@ -103,7 +86,7 @@ export class KycListStore extends OnlineStore implements IKycListInput {
 
     @computed
     public get validators() {
-        return this.externalStores.market.validators;
+        return this.rootStore.validators.validators;
     }
 
     @computed

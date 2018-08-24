@@ -10,39 +10,39 @@ import {
 import { Input } from 'app/components/common/input';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores';
 import { Balance } from 'app/components/common/balance-view';
+import {
+    Layout,
+    IHasRootStore,
+    withRootStore,
+} from 'app/components/layouts/layout';
 
-export interface IProps {
+export interface IProps extends IHasRootStore {
     onClickCross: () => void;
 }
 
-@observer
-export class AddToken extends React.Component<IProps, {}> {
+class AddTokenLayout extends Layout<IProps> {
     protected handleSubmit = (event: any) => {
         event.preventDefault();
-
-        rootStore.addTokenStore.approveCandidateToken();
-
+        this.rootStore.addToken.approveCandidateToken();
         this.props.onClickCross();
     };
 
     protected handleChangeInput = async (event: any) => {
         const address = event.target.value.trim();
-
-        rootStore.addTokenStore.setCandidateTokenAddress(address);
+        this.rootStore.addToken.setCandidateTokenAddress(address);
     };
 
     protected handleClose = () => {
-        rootStore.addTokenStore.resetCandidateToken();
-
+        this.rootStore.addToken.resetCandidateToken();
         this.props.onClickCross();
     };
 
     public render() {
-        const tokenInfo = rootStore.addTokenStore.candidateTokenInfo;
-        const tokenAddress = rootStore.addTokenStore.candidateTokenAddress;
-        const validation = rootStore.addTokenStore.validationCandidateToken;
+        const rootStore = this.rootStore;
+        const tokenInfo = rootStore.addToken.candidateTokenInfo;
+        const tokenAddress = rootStore.addToken.candidateTokenAddress;
+        const validation = rootStore.addToken.validationCandidateToken;
 
         return (
             <Dialog
@@ -111,5 +111,7 @@ export class AddToken extends React.Component<IProps, {}> {
         );
     }
 }
+
+export const AddToken = withRootStore(observer(AddTokenLayout));
 
 export default AddToken;

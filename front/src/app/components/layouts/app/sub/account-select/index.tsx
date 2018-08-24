@@ -7,7 +7,7 @@ import { Balance } from 'app/components/common/balance-view';
 export interface IAccount {
     name: string;
     address: string;
-    usdBalance: string;
+    marketUsdBalance: string;
     marketBalance: string;
 }
 
@@ -70,7 +70,7 @@ export class MarketAccountSelect extends React.PureComponent<
                     </div>
                     <div className="sonm-market-select-item__balance">
                         <Balance
-                            balance={p.usdBalance}
+                            balance={p.marketUsdBalance}
                             decimalPointOffset={18}
                             decimalDigitAmount={2}
                             symbol="USD"
