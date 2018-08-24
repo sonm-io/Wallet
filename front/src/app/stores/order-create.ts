@@ -126,11 +126,19 @@ export class OrderCreateStore extends OnlineStore
     @observable
     protected profileDetails: IProfileFull = ProfileDetails.emptyProfile;
 
-    // private mockApiCall = async (password: string): Promise<string> => {
-    //     return new Promise<string>(function(resolve, reject) {
-    //         setTimeout(resolve, 2000, password);
-    //     });
-    // };
+    private mockApiCall = async (): Promise<void> => {
+        return new Promise<void>(function(resolve, reject) {
+            setTimeout(resolve, 2000);
+        });
+    };
+
+    @pending
+    @catchErrors({ restart: false })
+    @asyncAction
+    public *requestOptimusPrice() {
+        yield this.mockApiCall();
+        this.updateUserInput({ price: '12.1234' });
+    }
 
     @pending
     @catchErrors({ restart: false })

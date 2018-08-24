@@ -24,6 +24,7 @@ interface IOrderCreateProps extends IOrderCreateParams {
     deposit: string;
     showConfirmation: boolean;
     validationMessage?: string;
+    onRequestOptimusPrice: () => void;
     onCancel: () => void;
     onShowConfirmation: () => void;
     onCancelConfirmation: () => void;
@@ -96,13 +97,23 @@ export class OrderCreateView extends React.Component<IOrderCreateProps, never> {
                     error={p.validation.price}
                     horizontal
                 >
-                    <Input
-                        className="order-create__input order-create__details-input"
-                        name="price"
-                        prefix="to"
-                        value={p.price}
-                        onChange={this.handleChangeInput}
-                    />
+                    <div className="order-create__price-container">
+                        <Input
+                            className="order-create__input order-create__details-input"
+                            name="price"
+                            prefix="to"
+                            value={p.price}
+                            onChange={this.handleChangeInput}
+                        />
+                        <Button
+                            color="violet"
+                            square
+                            onClick={this.props.onRequestOptimusPrice}
+                            className="order-create__optimus-btn"
+                        >
+                            Optimum
+                        </Button>
+                    </div>
                 </FormField>
                 <FormField
                     label="Duration, hours"

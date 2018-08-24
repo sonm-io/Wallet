@@ -23,6 +23,10 @@ export class OrderCreate extends React.Component<IOrderCreateProps, never> {
         store.submit(password);
     }
 
+    protected handleRequestOptimusPrice() {
+        store.requestOptimusPrice();
+    }
+
     public render() {
         const p = this.props;
         return (
@@ -32,6 +36,7 @@ export class OrderCreate extends React.Component<IOrderCreateProps, never> {
                 deposit={store.deposit}
                 showConfirmation={store.isConfirmationState}
                 validationMessage={store.validationMessage}
+                onRequestOptimusPrice={this.handleRequestOptimusPrice}
                 onUpdateField={this.handleUpdateField}
                 onCancel={p.onCancel}
                 onShowConfirmation={store.showConfirmation}
