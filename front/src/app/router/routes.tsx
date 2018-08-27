@@ -31,6 +31,7 @@ import {
 import { reload, firstByDefault, replaceWithChild } from './utils';
 import { navigateBack } from './navigate';
 import { OrderCreate } from 'app/components/layouts/order-create';
+import { FormsStoreTest } from 'app/components/layouts/forms-store-test';
 
 let defaultAction;
 
@@ -139,6 +140,19 @@ export const createRoutes = (
                                 browserTabTitle: 'History',
                                 pageTitle: 'History',
                                 content: <History />,
+                            };
+                        },
+                    },
+                    {
+                        path: '/test',
+                        breadcrumbTitle: 'Test',
+                        action: async (ctx: IContext, params: IUrlParams) => {
+                            l.loadWalletHistory();
+
+                            return {
+                                browserTabTitle: 'Test',
+                                pageTitle: 'Test',
+                                content: <FormsStoreTest />,
                             };
                         },
                     },
