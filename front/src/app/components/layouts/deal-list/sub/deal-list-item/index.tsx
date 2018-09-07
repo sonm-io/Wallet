@@ -100,7 +100,6 @@ export class DealListItem extends React.Component<IDealListItem, never> {
                             ? p.deal.supplier
                             : p.deal.consumer
                     }
-                    showBalances={false}
                     logoSizePx={50}
                 />
                 <div className="deal-list-item__buysell">

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
 // import { toJS } from 'mobx';
-import { rootStore } from 'app/stores/index';
 import { AppView } from './view';
 import { IAccount } from './sub/account-select/index';
 import { TMenuItem } from './sub/nav-menu-dropdown';
 import { INavigator } from 'app/router/types';
+import { withRootStore, Layout, IHasRootStore } from '../layout';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     children: any;
     path: string;
@@ -17,8 +17,7 @@ interface IProps {
     navigator: INavigator;
 }
 
-@observer
-export class App extends React.Component<IProps, never> {
+class AppLayout extends Layout<IProps> {
     constructor(props: IProps) {
         super(props);
 
@@ -56,22 +55,23 @@ export class App extends React.Component<IProps, never> {
     };
 
     protected handleChangeMarketAccount = (account: IAccount) => {
-        rootStore.marketStore.setMarketAccountAddress(account.address);
+        this.rootStore.myProfiles.setCurrent(account.address);
     };
 
     protected handleClickMyProfile = () => {
         this.props.navigator.toProfile(
-            rootStore.marketStore.marketAccountAddress,
+            this.rootStore.myProfiles.currentProfileAddress,
         );
     };
 
     protected headerMenuConfig: Array<TMenuItem> = Array.prototype;
 
     public render() {
+        const rootStore = this.rootStore;
         const p = this.props;
         const t = rootStore.localizator.getMessageText;
-        const marketStore = rootStore.marketStore;
-        const uiStore = rootStore.uiStore;
+        const myProfilesStore = rootStore.myProfiles;
+        const uiStore = rootStore.ui;
 
         return (
             <AppView
@@ -81,28 +81,30 @@ export class App extends React.Component<IProps, never> {
                 breadcrumbs={[]}
                 hasMarketAccountSelect={p.path.startsWith('/market')}
                 onChangeMarketAccount={this.handleChangeMarketAccount}
-                marketAccountList={marketStore.marketAccountViewList}
-                marketAccount={marketStore.marketAccountView}
-                marketBalance={marketStore.marketAllBalance}
-                marketStats={marketStore.marketStats}
+                marketAccountList={myProfilesStore.accountList}
+                marketAccount={myProfilesStore.current}
+                marketBalance={myProfilesStore.marketAllBalance}
+                marketStats={myProfilesStore.currentRequired.marketStats}
                 networkError={
                     rootStore.isOffline ? t('sonmapi_network_error') : ''
                 }
                 isPending={rootStore.isPending}
                 alerts={uiStore.alertList}
                 onCloseAlert={uiStore.closeAlert}
-                snmBalance={rootStore.mainStore.primaryTokenBalance}
-                etherBalance={rootStore.mainStore.etherBalance}
+                snmBalance={myProfilesStore.primaryTokenBalance}
+                etherBalance={myProfilesStore.etherBalance}
                 title={p.title}
                 headerMenu={this.headerMenuConfig}
                 disableAccountSelect={p.disableAccountSelect}
                 onClickMyProfile={this.handleClickMyProfile}
-                isTestNet={!rootStore.mainStore.isLivenet}
-                ethNodeURL={rootStore.mainStore.ethNodeUrl}
-                snmNodeURL={rootStore.mainStore.sidechainNodeUrl}
+                isTestNet={!rootStore.wallet.isLivenet}
+                ethNodeURL={rootStore.wallet.ethNodeUrl}
+                snmNodeURL={rootStore.wallet.sidechainNodeUrl}
             >
                 {p.children}
             </AppView>
         );
     }
 }
+
+export const App = withRootStore(observer(AppLayout));

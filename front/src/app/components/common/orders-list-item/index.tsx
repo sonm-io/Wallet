@@ -32,7 +32,6 @@ export class OrdersListItem extends React.Component<IOrdersListItemProps, any> {
                 <ProfileBrief
                     className="orders-list-item__account"
                     profile={this.props.order.creator}
-                    showBalances={false}
                     logoSizePx={50}
                 />
 

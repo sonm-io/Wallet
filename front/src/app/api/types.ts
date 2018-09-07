@@ -1,4 +1,5 @@
 import { TUsdWeiPerSeconds, TSeconds } from 'app/entities/types';
+import { IProfileBrief } from 'common/types/profile';
 
 export interface IRawAccount {
     json: string;
@@ -33,27 +34,6 @@ export interface ISendTransactionResult extends ISendTransaction {
     hash: string;
 }
 
-export interface IAccountInfo {
-    name: string;
-    address: string;
-    marketBalance: string;
-    marketUsdBalance: string;
-    currencyBalanceMap: ICurrencyBalanceMap;
-    json: string;
-}
-
-export interface ICurrencyBalanceMap {
-    [address: string]: string; // address => balance
-}
-
-export interface ICurrencyInfo {
-    symbol: string;
-    decimalPointOffset: number;
-    name: string;
-    address: string;
-    balance: string;
-}
-
 export interface ITxListFilter {
     currencyAddress?: string;
     toAddress?: string;
@@ -77,68 +57,14 @@ export interface ISettings {
     language: string;
 }
 
-export interface IWalletListItem {
-    name: string;
-    chainId: string;
-    nodeUrl: string;
-}
-
-export interface IWalletList {
-    version: number;
-    data: IWalletListItem[];
-}
-
 export enum NetworkEnum {
     live = 'livenet',
     rinkeby = 'rinkeby',
 }
 
-export enum EnumProfileStatus {
-    anonimest = 0,
-    anon = 1,
-    reg = 2,
-    ident = 3,
-    pro = 4,
-}
-
 export enum EnumProfileRole {
     customer = 2,
     supplier = 1,
-}
-
-export interface IAttribute {
-    label: string;
-    value: string;
-}
-
-export interface IProfileBrief extends IAccountBrief {
-    sellOrders: number;
-    buyOrders: number;
-    deals: number;
-    country: string;
-    logoUrl: string;
-}
-
-export interface IProfileFull extends IProfileBrief {
-    attributes: Array<IAttribute>;
-    description: string;
-    certificates: Array<ICertificate>;
-}
-
-export interface ICertificate {
-    status: EnumProfileStatus;
-    address: string;
-}
-
-export interface IListResult<T> {
-    records: Array<T>;
-    total: number;
-}
-
-export interface IAccountBrief {
-    name?: string;
-    address: string;
-    status: EnumProfileStatus;
 }
 
 export interface IBenchmarkMap {
@@ -178,7 +104,7 @@ export enum EnumOrderStatus {
 export interface IOrder {
     id: string;
     orderSide: EnumOrderSide;
-    creator: IAccountBrief;
+    creator: IProfileBrief;
     usdWeiPerSeconds: TUsdWeiPerSeconds;
     durationSeconds: TSeconds;
     orderStatus: EnumOrderStatus;
@@ -193,8 +119,8 @@ export enum EnumDealStatus {
 
 export interface IDeal {
     id: string;
-    supplier: IAccountBrief;
-    consumer: IAccountBrief;
+    supplier: IProfileBrief;
+    consumer: IProfileBrief;
     masterID: string;
     askID: string;
     bidID: string;
@@ -242,12 +168,6 @@ export interface IMarketStats {
 export interface IOrderParams {
     orderStatus: string;
     dealID: string;
-}
-
-export interface IConnectionInfo {
-    ethNodeURL: string;
-    snmNodeURL: string;
-    isTest: boolean;
 }
 
 export interface IDealComparableParams {

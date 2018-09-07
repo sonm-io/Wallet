@@ -64,7 +64,7 @@ export class DealFilterStore implements IDealFilter, IFilterStore {
     public get filter(): any {
         const result: any = {
             address: {
-                $eq: this.rootStore.marketStore.marketAccountAddress,
+                $eq: this.rootStore.myProfiles.currentProfileAddress,
             },
             date: {
                 $gte: this.dateRange[0].valueOf(),

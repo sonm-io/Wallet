@@ -1,4 +1,9 @@
 import * as t from './types';
+import { ICurrencyInfo } from 'common/types/currency';
+import { IProfile } from 'common/types/profile';
+import { ICurrencyBalanceMap, IAccountInfo } from 'common/types/account';
+import { EnumProfileStatus } from 'common/types/profile-status';
+import { IListResult } from 'common/types';
 
 const VASYA_ADDR = '0x88057f14236687831e1fd205e8efb9e45166fe72';
 const PETYA_ADDR = '0xfd0c80ba15cbf19770319e5e76ae05012314608f';
@@ -10,7 +15,7 @@ export async function delay(timeout: number) {
     return new Promise((resolve, reject) => setTimeout(resolve, timeout));
 }
 
-export const newAccount: t.IAccountInfo = {
+export const newAccount: IAccountInfo = {
     name: 'new',
     address: '0x1234567890123456789012345678901234567890',
     json: '',
@@ -61,7 +66,7 @@ export const transactionListResult: t.IResult<
     ],
 };
 
-export const currencyListResult: t.IResult<t.ICurrencyInfo[]> = {
+export const currencyListResult: t.IResult<ICurrencyInfo[]> = {
     data: [
         {
             symbol: 'ETH',
@@ -80,7 +85,7 @@ export const currencyListResult: t.IResult<t.ICurrencyInfo[]> = {
     ],
 };
 
-export const accountListResult: t.IResult<t.IAccountInfo[]> = {
+export const accountListResult: t.IResult<IAccountInfo[]> = {
     data: [
         {
             name: 'Vasya',
@@ -88,8 +93,8 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             json: '',
             marketUsdBalance: '12345678',
             marketBalance: '0987654321',
-            currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
-                (acc: t.ICurrencyBalanceMap, currency) => {
+            currencyBalanceMap: (currencyListResult.data as ICurrencyInfo[]).reduce(
+                (acc: ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(
                         0,
                         15,
@@ -106,8 +111,8 @@ export const accountListResult: t.IResult<t.IAccountInfo[]> = {
             json: '',
             marketUsdBalance: '12345678',
             marketBalance: '0987654321',
-            currencyBalanceMap: (currencyListResult.data as t.ICurrencyInfo[]).reduce(
-                (acc: t.ICurrencyBalanceMap, currency) => {
+            currencyBalanceMap: (currencyListResult.data as ICurrencyInfo[]).reduce(
+                (acc: ICurrencyBalanceMap, currency) => {
                     acc[currency.address] = String(Math.random() * 100).substr(
                         0,
                         15,
@@ -155,7 +160,7 @@ export function send(
     return result;
 }
 
-export const profileListResult: t.IResult<t.IListResult<t.IProfileBrief>> = {
+export const profileListResult: t.IResult<IListResult<IProfile>> = {
     data: {
         records: [
             {
@@ -166,7 +171,7 @@ export const profileListResult: t.IResult<t.IListResult<t.IProfileBrief>> = {
                 deals: 98,
                 country: 'ru',
                 logoUrl: '',
-                status: t.EnumProfileStatus.anon,
+                status: EnumProfileStatus.anon,
             },
             {
                 name: '',
@@ -176,7 +181,7 @@ export const profileListResult: t.IResult<t.IListResult<t.IProfileBrief>> = {
                 deals: 98,
                 country: 'ru',
                 logoUrl: '',
-                status: t.EnumProfileStatus.anon,
+                status: EnumProfileStatus.anon,
             },
             {
                 name: 'Ololan Ololoshevich',
@@ -186,7 +191,7 @@ export const profileListResult: t.IResult<t.IListResult<t.IProfileBrief>> = {
                 deals: 98,
                 country: 'gb',
                 logoUrl: '',
-                status: t.EnumProfileStatus.anon,
+                status: EnumProfileStatus.anon,
             },
             {
                 name: 'BG',
@@ -196,7 +201,7 @@ export const profileListResult: t.IResult<t.IListResult<t.IProfileBrief>> = {
                 deals: 98,
                 country: 'us',
                 logoUrl: '',
-                status: t.EnumProfileStatus.anon,
+                status: EnumProfileStatus.anon,
             },
         ],
         total: 5,

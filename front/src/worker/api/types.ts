@@ -1,7 +1,7 @@
-import * as t from 'app/api/types';
+import { ICurrencyInfo } from 'common/types/currency';
 
 export interface IDictionary {
-    [index: string]: string;
+    [index: string]: string | null;
 }
 
 export interface INodes {
@@ -9,7 +9,7 @@ export interface INodes {
 }
 
 export interface ITokens {
-    [index: string]: t.ICurrencyInfo[];
+    [index: string]: ICurrencyInfo[];
 }
 
 export interface IPayload {
@@ -31,7 +31,7 @@ export interface IAccounts {
 
 export interface IResponse<T = any> {
     data?: T;
-    validation?: any;
+    validation?: IDictionary;
 }
 
 export class Response<T> implements IResponse<T> {

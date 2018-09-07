@@ -1,14 +1,11 @@
 import { observable, computed, action } from 'mobx';
-import {
-    EnumProfileStatus,
-    EnumOrderSide,
-    EnumOrderStatus,
-} from 'app/api/types';
+import { EnumOrderSide, EnumOrderStatus } from 'app/api/types';
 import { RootStore } from 'app/stores';
 import { TypeNotStrictEthereumAddress } from '../api/runtime-types';
 import { validatePositiveInteger } from '../utils/validation/validate-positive-integer';
 import { IFilterStore } from './list-store';
 import validatePositiveNumber from '../utils/validation/validate-positive-number';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 export enum EnumOrderOwnerType {
     market,
@@ -182,7 +179,7 @@ export class OrderFilterStore implements IFilterStore {
 
     @computed
     public get myAddress() {
-        return this.rootStore.marketStore.marketAccountAddress;
+        return this.rootStore.myProfiles.currentProfileAddress;
     }
 
     @computed

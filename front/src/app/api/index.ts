@@ -6,18 +6,17 @@ import { WorkerApi } from './sub/worker-api';
 import { HistoryApi } from './sub/history-api';
 import {
     ISendTransactionResult,
-    IAccountInfo,
-    ICurrencyInfo,
     ISendTransaction,
     IResult,
     ISettings,
-    IWalletListItem,
     ISender,
     IKycValidator,
     IWorker,
-    IConnectionInfo,
 } from './types';
-import { TypeAccountInfoList } from './runtime-types';
+import { ICurrencyInfo } from 'common/types/currency';
+import { IAccountInfo } from 'common/types/account';
+import { TypeAccountInfoList } from 'common/types/runtime/account';
+import { IWallet } from 'common/types/wallet';
 
 export * from './types';
 
@@ -34,7 +33,7 @@ class AllApi {
         password: string,
         walletName: string,
         chainId: string,
-    ): Promise<IResult<IWalletListItem>> {
+    ): Promise<IResult<IWallet>> {
         return this.ipc.send('createWallet', { password, walletName, chainId });
     }
 
@@ -49,12 +48,8 @@ class AllApi {
         password: string,
         walletName: string,
         file: string,
-    ): Promise<IResult<IWalletListItem>> {
+    ): Promise<IResult<IWallet>> {
         return this.ipc.send('importWallet', { password, walletName, file });
-    }
-
-    public async getConnectionInfo(): Promise<IResult<IConnectionInfo>> {
-        return this.ipc.send('getConnectionInfo');
     }
 
     public async exportWallet(): Promise<IResult<string>> {
@@ -86,7 +81,7 @@ class AllApi {
         }
     }
 
-    public async getWalletList(): Promise<IResult<IWalletListItem[]>> {
+    public async getWalletList(): Promise<IResult<IWallet[]>> {
         return this.ipc.send('getWalletList');
     }
 
@@ -237,5 +232,5 @@ class AllApi {
 }
 
 export const Api = new AllApi();
-
+(window as any).__api = Api;
 export default Api;

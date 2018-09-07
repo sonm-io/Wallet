@@ -5,20 +5,25 @@ import { Icon } from '../icon';
 import { Balance } from '../balance-view';
 import { Hash } from '../hash-view';
 import { DownloadFile } from '../download-file';
-import { ICurrencyInfo } from 'app/api/types';
+import { ICurrencyInfo } from 'common/types/currency';
+
+export interface IAccount {
+    address: string;
+    name: string;
+    json?: string;
+    etherBalance?: string;
+    primaryTokenBalance?: string;
+}
 
 export interface IAccountItemProps {
     className?: string;
-    address: string;
-    json?: string;
-    name: string;
-    etherBalance?: string;
-    primaryTokenBalance?: string;
+    account: IAccount;
     onRename?: (newName: string, address: string) => void;
     onClickIcon?: (address: string) => void;
     onClickShowPrivateKey?: (address: string) => void;
     onClickProfileIcon?: (address: string) => void;
     hasButtons?: boolean;
+    hideBalance?: boolean;
     primaryTokenInfo?: ICurrencyInfo;
 }
 
@@ -35,7 +40,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         event.preventDefault();
 
         if (this.props.onClickIcon) {
-            this.props.onClickIcon(this.props.address);
+            this.props.onClickIcon(this.props.account.address);
         }
     };
 
@@ -43,7 +48,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         event.preventDefault();
 
         if (this.props.onClickShowPrivateKey) {
-            this.props.onClickShowPrivateKey(this.props.address);
+            this.props.onClickShowPrivateKey(this.props.account.address);
         }
     };
 
@@ -51,21 +56,21 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         event.preventDefault();
 
         if (this.props.onClickProfileIcon) {
-            this.props.onClickProfileIcon(this.props.address);
+            this.props.onClickProfileIcon(this.props.account.address);
         }
     };
 
     public render() {
         const {
             className,
-            address,
-            etherBalance,
-            primaryTokenBalance,
+            account,
             primaryTokenInfo,
             onClickIcon,
-            json,
             hasButtons,
+            hideBalance,
         } = this.props;
+
+        const { address, json, etherBalance, primaryTokenBalance } = account;
 
         return (
             <div className={cn('sonm-account-item', className)}>
@@ -83,7 +88,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                 <span className="sonm-account-item__name-wrapper">
                     {this.renderName()}
                 </span>
-                {etherBalance !== undefined ? (
+                {!hideBalance && etherBalance !== undefined ? (
                     <Balance
                         className="sonm-account-item__sonm"
                         balance={etherBalance}
@@ -97,7 +102,9 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                     hash={address}
                     onClick={this.handleClickIcon}
                 />
-                {primaryTokenBalance !== undefined && primaryTokenInfo ? (
+                {!hideBalance &&
+                primaryTokenBalance !== undefined &&
+                primaryTokenInfo ? (
                     <Balance
                         className="sonm-account-item__ether"
                         balance={primaryTokenBalance}
@@ -168,7 +175,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         if (this.props.onRename) {
             const text = this.inputRef.value;
             if (text) {
-                this.props.onRename(this.props.address, text);
+                this.props.onRename(this.props.account.address, text);
             }
         }
 
@@ -188,7 +195,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
     };
 
     public renderName() {
-        const { name, onRename } = this.props;
+        const { account, onRename } = this.props;
 
         const result = [];
 
@@ -197,7 +204,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
                 <input
                     required
                     spellCheck={false}
-                    defaultValue={this.props.name}
+                    defaultValue={account.name}
                     ref={this.saveRef}
                     onBlur={this.cancelEdit}
                     key="i"
@@ -209,7 +216,7 @@ export class AccountItem extends React.Component<IAccountItemProps, any> {
         } else {
             result.push(
                 <span className="sonm-account-item__name-text" key="s">
-                    {name}
+                    {account.name}
                 </span>,
             );
 

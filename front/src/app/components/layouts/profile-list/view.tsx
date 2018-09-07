@@ -4,19 +4,17 @@ import Input from 'antd/es/input';
 import * as cn from 'classnames';
 import { ColumnProps } from 'antd/lib/table';
 import { FixedSelect, ISelectItem } from 'app/components/common/fixed-select';
-import {
-    IProfileBrief,
-    EnumProfileStatus,
-    EnumProfileRole,
-} from 'app/api/types';
+import { EnumProfileRole } from 'app/api/types';
 import { IdentIcon } from 'app/components/common/ident-icon';
 import { Hash } from 'app/components/common/hash-view';
 import { Country } from 'app/components/common/country';
 import { getMap } from 'app/components/common/country/lands-utils';
 import { ProfileStatus } from 'app/components/common/profile-status';
 import { MultiSelect } from 'app/components/common/multiselect/index';
+import { IProfile } from 'common/types/profile';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
-class ProfileTable extends Table<IProfileBrief> {}
+class ProfileTable extends Table<IProfile> {}
 
 class DealsFilter extends FixedSelect<number | undefined> {}
 
@@ -25,12 +23,12 @@ interface IProps {
     page: number;
     total: number;
     limit: number;
-    dataSource: Array<IProfileBrief>;
+    dataSource: Array<IProfile>;
     filter: string;
     onChangePage: (page: number) => void;
     onChangeFilter: (name: string, value: any) => void;
     onTableChange: (pagination: any, filters: any, sorter: any) => void;
-    onClickRow: (record: IProfileBrief) => void;
+    onClickRow: (record: IProfile) => void;
     filterRole: EnumProfileRole;
     filterStatus: EnumProfileStatus;
     filterQuery: string;
@@ -48,13 +46,13 @@ const mapAbCode2ToLand = getMap();
 const lands = (Object as any).values(mapAbCode2ToLand);
 
 export class ProfileListView extends React.PureComponent<IProps, any> {
-    protected static columns: Array<ColumnProps<IProfileBrief>> = [
+    protected static columns: Array<ColumnProps<IProfile>> = [
         {
             className: 'sonm-cell-address sonm-profiles__cell',
             dataIndex: 'address',
             title: 'User',
             sorter: true,
-            render: (address: string, record: IProfileBrief) => {
+            render: (address: string, record: IProfile) => {
                 return (
                     <React.Fragment>
                         {record.logoUrl ? (
@@ -88,7 +86,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             dataIndex: 'status',
             title: 'Status',
             sorter: true,
-            render: (status: EnumProfileStatus, record: IProfileBrief) => {
+            render: (status: EnumProfileStatus, record: IProfile) => {
                 return <ProfileStatus status={status} />;
             },
         },
@@ -97,7 +95,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             dataIndex: 'buyOrders',
             title: 'Buy orders',
             sorter: true,
-            render: (buyOrders: number, record: IProfileBrief) => {
+            render: (buyOrders: number, record: IProfile) => {
                 return buyOrders;
             },
         },
@@ -106,7 +104,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             dataIndex: 'sellOrders',
             title: 'Sell orders',
             sorter: true,
-            render: (sellOrders: number, record: IProfileBrief) => {
+            render: (sellOrders: number, record: IProfile) => {
                 return sellOrders;
             },
         },
@@ -115,7 +113,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             dataIndex: 'country',
             title: 'Country',
             sorter: true,
-            render: (contry: string, record: IProfileBrief) => {
+            render: (contry: string, record: IProfile) => {
                 return <Country flagHeightPx={20} abCode2={contry} hasName />;
             },
         },
@@ -172,7 +170,7 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
 
     public static defaultFilter = JSON.stringify(defaultFilter);
 
-    public getRowProps = (record: IProfileBrief) => ({
+    public getRowProps = (record: IProfile) => ({
         onClick: () => this.props.onClickRow(record),
     });
 

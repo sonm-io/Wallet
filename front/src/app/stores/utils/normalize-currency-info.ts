@@ -1,4 +1,4 @@
-import { ICurrencyInfo } from 'app/api';
+import { ICurrencyInfo } from 'common/types/currency';
 
 export function normalizeCurrencyInfo(currencyInfo: any): ICurrencyInfo {
     const result: ICurrencyInfo = {

@@ -65,7 +65,7 @@ export class UiStore {
     @computed
     public get disabledMenuItems() {
         const result = [];
-        if (this.rootStore.marketStore.marketAccountViewList.length === 0) {
+        if (this.rootStore.myProfiles.accountList.length === 0) {
             result.push('Market');
         }
         return result;

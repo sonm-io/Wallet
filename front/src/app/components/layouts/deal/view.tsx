@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { IAccountBrief, IBenchmarkMap } from 'app/api/types';
+import { IBenchmarkMap } from 'app/api/types';
 import { Benchmark } from 'app/components/common/benchmark';
 import {
     PropertyList,
@@ -19,6 +19,7 @@ import { Checkbox } from 'app/components/common/checkbox';
 import { FormRow, FormField } from 'app/components/common/form';
 import { DealActions } from './types';
 import { IChangeParams } from 'app/components/common/types';
+import { IProfileBrief } from 'common/types/profile';
 
 interface IDealData {
     id: string;
@@ -33,8 +34,8 @@ interface IDealData {
 
 interface IProps {
     className?: string;
-    supplier: IAccountBrief;
-    consumer: IAccountBrief;
+    supplier: IProfileBrief;
+    consumer: IProfileBrief;
     duration: number;
     price: string;
     totalPayout: string;
@@ -187,17 +188,11 @@ export class DealView extends React.Component<IProps, never> {
                 <div className="sonm-deal__column-left">
                     <div className="sonm-deal__column-left__consumer">
                         <h4 className="sonm-deal__header">Consumer</h4>
-                        <ProfileBrief
-                            profile={p.consumer}
-                            showBalances={false}
-                        />
+                        <ProfileBrief profile={p.consumer} />
                     </div>
                     <div className="sonm-deal__colum-left__supplier">
                         <h4 className="sonm-deal__header">Supplier</h4>
-                        <ProfileBrief
-                            profile={p.supplier}
-                            showBalances={false}
-                        />
+                        <ProfileBrief profile={p.supplier} />
                     </div>
                     <div className="sonm-deal__column-left__details">
                         <h4 className="sonm-deal__header">Details</h4>

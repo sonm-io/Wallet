@@ -2,12 +2,16 @@ import * as t from './types';
 // import { IAttribute } from '../../app/api/types';
 import * as mapKeys from 'lodash/fp/mapKeys';
 import * as pick from 'lodash/fp/pick';
-import { TypeEthereumAddress } from '../../app/api/runtime-types';
 import * as tcomb from 'tcomb';
 import { BN } from 'bn.js';
-import { EnumProfileStatus, IBenchmarkMap } from '../../app/api/types';
+import { IBenchmarkMap } from '../../app/api/types';
 import * as moment from 'moment';
 import * as get from 'lodash/fp/get';
+import { IProfile, IProfileInfo } from 'common/types/profile';
+import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
+import { EnumProfileStatus } from 'common/types/profile-status';
+import { IProfileCertificate } from 'common/types/profile-certificate';
+import { IListResult } from 'common/types';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -58,7 +62,7 @@ export class DWH {
         [8, 'gpuRamSize', MB_SIZE],
     ];
 
-    public static readonly mapProfile: IDictionary<t.IProfileBrief> = {
+    public static readonly mapProfile: IDictionary<IProfile> = {
         UserID: 'address',
         IdentityLevel: 'status',
         Name: 'name',
@@ -71,10 +75,10 @@ export class DWH {
         (Object as any).values(DWH.mapProfile),
     );
 
-    public static readonly defaultProfile: t.IProfileBrief = {
+    public static readonly defaultProfile: IProfile = {
         name: '',
         address: '0x0',
-        status: t.EnumProfileStatus.anonimest,
+        status: EnumProfileStatus.anonimest,
         sellOrders: 0,
         buyOrders: 0,
         deals: 0,
@@ -97,17 +101,17 @@ export class DWH {
     };
 
     public static kycAttributesToStatus = {
-        [t.EnumAttributes.Kyc2]: t.EnumProfileStatus.reg,
-        [t.EnumAttributes.Kyc3]: t.EnumProfileStatus.ident,
-        [t.EnumAttributes.Kyc4]: t.EnumProfileStatus.ident,
+        [t.EnumAttributes.Kyc2]: EnumProfileStatus.reg,
+        [t.EnumAttributes.Kyc3]: EnumProfileStatus.ident,
+        [t.EnumAttributes.Kyc4]: EnumProfileStatus.ident,
     };
 
-    private processProfile(item: any): t.IProfileBrief {
+    private processProfile(item: any): IProfile {
         const renamed = DWH.renameProfileKeys(item);
         const picked = DWH.pickProfileKeys(renamed);
         const result = { ...DWH.defaultProfile, ...picked };
 
-        return result as t.IProfileBrief;
+        return result as IProfile;
     }
 
     public getProfiles = async ({
@@ -116,7 +120,7 @@ export class DWH {
         offset,
         sortBy,
         sortDesc,
-    }: t.IListQuery): Promise<t.IListResult<t.IProfileBrief>> => {
+    }: t.IListQuery): Promise<IListResult<IProfile>> => {
         tcomb.maybe(tcomb.String)(filter);
         tcomb.Number(limit);
         tcomb.Number(offset);
@@ -177,9 +181,7 @@ export class DWH {
         };
     };
 
-    public getProfileFull = async ({
-        address,
-    }: any): Promise<t.IProfileFull> => {
+    public getProfileFull = async ({ address }: any): Promise<IProfileInfo> => {
         TypeEthereumAddress(address);
 
         const res = await this.fetchData('GetProfileInfo', { Id: address });
@@ -259,7 +261,7 @@ export class DWH {
         filter,
         sortBy,
         sortDesc,
-    }: t.IListQuery): Promise<t.IListResult<t.IOrder>> => {
+    }: t.IListQuery): Promise<IListResult<t.IOrder>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
@@ -464,7 +466,7 @@ export class DWH {
         filter,
         sortBy,
         sortDesc,
-    }: t.IListQuery): Promise<t.IListResult<t.IDeal>> => {
+    }: t.IListQuery): Promise<IListResult<t.IDeal>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
@@ -543,7 +545,7 @@ export class DWH {
         return attrMap;
     }
 
-    protected getKycCertificates(certificates: any[]): t.ICertificate[] {
+    protected getKycCertificates(certificates: any[]): IProfileCertificate[] {
         return certificates
             .filter(x => x.attribute in DWH.kycAttributesToStatus)
             .map(x => ({
@@ -620,7 +622,7 @@ export class DWH {
         limit,
         offset,
         filter,
-    }: t.IListQuery): Promise<t.IListResult<t.IWorker>> => {
+    }: t.IListQuery): Promise<IListResult<t.IWorker>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);

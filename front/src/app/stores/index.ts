@@ -1,23 +1,19 @@
 import { useStrict } from 'mobx';
-import { IProfileBrief, IOrder, IDeal, IWorker } from 'app/api/types';
+import { IOrder, IDeal, IWorker } from 'app/api/types';
 import { HistoryListStore } from './history-list';
 import { HistoryFilterStore } from './history-filter';
 import { MainStore } from './main';
 import { SendStore } from './send';
 import { WithdrawStore } from './withdraw';
-import { MarketStore } from './market';
+import { ValidatorsStore } from './validators';
 import { UiStore } from './ui';
 import { AddTokenStore } from './add-token';
-import { OnlineStore } from './online-store';
+import { OnlineStore, IOnlineStoreServices } from './online-store';
 import { ProfileFilterStore } from './profile-filter';
 import { DealFilterStore } from './deal-filter';
 import { OrderFilterStore } from './order-filter';
 import { OrderCreateStore } from './order-create';
-import {
-    localizator as en,
-    ILocalizator,
-    IHasLocalizator,
-} from 'app/localization';
+import { ILocalizator, IHasLocalizator } from 'app/localization';
 import { ProfileList } from './profile-list';
 import { OrdersList } from './orders-list';
 import { DealList } from './deal-list';
@@ -25,88 +21,184 @@ import { WorkerList } from './worker-list';
 import { WorkerFilterStore } from './worker-filter';
 import { Api } from 'app/api';
 import { EnumHistorySourceMode } from './types';
-import { IListStore } from './list-store';
+import {
+    IListStore,
+    IReactiveDependecies,
+    IFilterRead,
+    IListStoreServices,
+    IListStoreApi,
+} from './list-store';
 import { unwrapApiResult } from '../api/utils/unwrap-api-result';
 import { OrderDetails } from './order-details';
 import { DealDetails } from './deal-details';
 import { KycListStore } from './kyc-list';
 import { ProfileDetails } from './profile-details';
+import { MyProfilesStore } from './my-profiles';
+import { CurrencyStore } from './currency';
+import { WalletStore } from './wallet';
+import { GasPriceStore } from './gas-price';
+import { IProfile } from 'common/types/profile';
 
 useStrict(true);
 
 export class RootStore implements IHasLocalizator {
-    public readonly walletHistoryListStore: HistoryListStore;
-    public readonly walletHistoryFilterStore: HistoryFilterStore;
-    public readonly dwHistoryListStore: HistoryListStore;
-    public readonly dwHistoryFilterStore: HistoryFilterStore;
-    public readonly mainStore: MainStore;
-    public readonly sendStore: SendStore;
-    public readonly depositStore: SendStore;
-    public readonly withdrawStore: WithdrawStore;
-    public readonly uiStore: UiStore;
-    public readonly addTokenStore: AddTokenStore;
-    public readonly profileListStore: IListStore<IProfileBrief>;
-    public readonly dealListStore: IListStore<IDeal>;
-    public readonly workerListStore: IListStore<IWorker>;
-    public readonly workerFilterStore: WorkerFilterStore;
-    public readonly ordersListStore: IListStore<IOrder>;
-    public readonly orderCreateStore: OrderCreateStore;
-    public readonly marketStore: MarketStore;
-    public readonly profileFilterStore: ProfileFilterStore;
-    public readonly dealFilterStore: DealFilterStore;
-    public readonly orderFilterStore: OrderFilterStore;
-    public readonly orderDetailsStore: OrderDetails;
-    public readonly dealDetailsStore: DealDetails;
-    public readonly kycListStore: KycListStore;
-    public readonly profileDetailsStore: ProfileDetails;
+    public readonly walletHistoryList: HistoryListStore;
+    public readonly walletHistoryFilter: HistoryFilterStore;
+    public readonly dwHistoryList: HistoryListStore;
+    public readonly dwHistoryFilter: HistoryFilterStore;
+    public readonly main: MainStore;
+    public readonly send: SendStore;
+    public readonly deposit: SendStore;
+    public readonly withdraw: WithdrawStore;
+    public readonly ui: UiStore;
+    public readonly addToken: AddTokenStore;
+    public readonly profileList: IListStore<IProfile>;
+    public readonly dealList: IListStore<IDeal>;
+    public readonly workerList: IListStore<IWorker>;
+    public readonly workerFilter: WorkerFilterStore;
+    public readonly ordersList: IListStore<IOrder>;
+    public readonly orderCreate: OrderCreateStore;
+    public readonly validators: ValidatorsStore;
+    public readonly profileFilter: ProfileFilterStore;
+    public readonly dealFilter: DealFilterStore;
+    public readonly orderFilter: OrderFilterStore;
+    public readonly orderDetails: OrderDetails;
+    public readonly dealDetails: DealDetails;
+    public readonly kycList: KycListStore;
+    public readonly profileDetails: ProfileDetails;
+    public readonly currency: CurrencyStore;
+    public readonly myProfiles: MyProfilesStore;
+    public readonly wallet: WalletStore;
+    public readonly gasPrice: GasPriceStore;
+
+    //#region Store Factories
+    protected createList<T, TItem>(
+        StoreClass: new (
+            filter: IReactiveDependecies,
+            services: IListStoreServices<TItem>,
+            allowFetch?: boolean,
+        ) => T,
+        filter: IFilterRead,
+        api: IListStoreApi<TItem>,
+        allowFetch?: boolean,
+    ) {
+        return new StoreClass(
+            {
+                filter,
+            },
+            {
+                localizator: this.localizator,
+                errorProcessor: this.ui,
+                api,
+            },
+            allowFetch,
+        );
+    }
+
+    protected createOnline<T>(
+        StoreClass: new (services: IOnlineStoreServices) => T,
+    ) {
+        return new StoreClass({
+            localizator: this.localizator,
+            errorProcessor: this.ui,
+        });
+    }
+
+    protected createWithRoot<T>(
+        StoreClass: new (root: RootStore, services: IOnlineStoreServices) => T,
+    ) {
+        return new StoreClass(this, {
+            localizator: this.localizator,
+            errorProcessor: this.ui,
+        });
+    }
+
+    protected createWithServices<T, TService extends object>(
+        StoreClass: new (
+            root: RootStore,
+            services: TService & IOnlineStoreServices,
+        ) => T,
+        services: TService,
+    ) {
+        // Can't write with strict types because of https://github.com/Microsoft/TypeScript/issues/14409
+        const args: any = {
+            ...(services as object),
+            localizator: this.localizator,
+            errorProcessor: this.ui,
+        };
+        return new StoreClass(this, args as TService & IOnlineStoreServices);
+    }
+
+    protected create<T>(
+        StoreClass: new (
+            root: RootStore,
+            services: IOnlineStoreServices,
+            ...rest: any[]
+        ) => T,
+        ...rest: any[]
+    ) {
+        return new StoreClass(
+            this,
+            {
+                localizator: this.localizator,
+                errorProcessor: this.ui,
+            },
+            ...rest,
+        );
+    }
+    //#endregion
 
     constructor(localizator: ILocalizator) {
         this.localizator = localizator;
 
         // should be first cause used in all stores;
-        this.uiStore = new UiStore(this);
+        this.ui = new UiStore(this);
 
-        this.walletHistoryFilterStore = new HistoryFilterStore(
+        this.walletHistoryFilter = new HistoryFilterStore(
             EnumHistorySourceMode.wallet,
         );
-        this.walletHistoryListStore = new HistoryListStore(
-            {
-                filter: this.walletHistoryFilterStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.history,
-            },
+
+        this.walletHistoryList = this.createList(
+            HistoryListStore,
+            this.walletHistoryFilter,
+            Api.history,
             true,
         );
 
-        this.dwHistoryFilterStore = new HistoryFilterStore(
+        this.dwHistoryFilter = new HistoryFilterStore(
             EnumHistorySourceMode.market,
         );
 
-        this.dwHistoryListStore = new HistoryListStore(
-            {
-                filter: this.dwHistoryFilterStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.history,
-            },
+        this.dwHistoryList = this.createList(
+            HistoryListStore,
+            this.dwHistoryFilter,
+            Api.history,
             true,
         );
 
-        this.mainStore = new MainStore(this, { localizator: this.localizator });
+        this.gasPrice = this.createOnline(GasPriceStore);
 
-        this.sendStore = new SendStore(this, this.localizator, {
+        this.wallet = this.createOnline(WalletStore);
+
+        this.currency = this.createWithRoot(CurrencyStore);
+
+        this.myProfiles = this.createWithServices(MyProfilesStore, {
+            profileApi: Api.profile,
+            marketApi: {
+                fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
+                fetchMarketStats: Api.deal.fetchStats,
+            },
+        });
+
+        this.main = this.createWithRoot(MainStore);
+
+        this.send = this.create(SendStore, {
             getPrivateKey: Api.getPrivateKey,
             send: Api.send,
         });
 
-        this.depositStore = new SendStore(
-            this,
-            this.localizator,
+        this.deposit = this.create(
+            SendStore,
             {
                 getPrivateKey: Api.getPrivateKey,
                 send: Api.deposit,
@@ -115,9 +207,8 @@ export class RootStore implements IHasLocalizator {
             '150000',
         );
 
-        this.withdrawStore = new WithdrawStore(
-            this,
-            this.localizator,
+        this.withdraw = this.create(
+            WithdrawStore,
             {
                 getPrivateKey: Api.getPrivateKey,
                 send: Api.withdraw,
@@ -126,114 +217,53 @@ export class RootStore implements IHasLocalizator {
             '150000',
         );
 
-        this.marketStore = new MarketStore(this, {
-            localizator: this.localizator,
-            errorProcessor: this.uiStore,
+        this.validators = this.createWithServices(ValidatorsStore, {
             api: {
-                fetchMarketBalance: unwrapApiResult(Api.getMarketBalance),
                 fetchValidators: unwrapApiResult(Api.getValidators),
-                fetchMarketStats: Api.deal.fetchStats,
             },
         });
 
-        this.profileFilterStore = new ProfileFilterStore();
+        this.profileFilter = new ProfileFilterStore();
 
-        this.addTokenStore = new AddTokenStore(this, this.localizator);
-        this.profileListStore = new ProfileList(
-            {
-                filter: this.profileFilterStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.profile,
-            },
+        this.addToken = new AddTokenStore(this, this.localizator);
+        this.profileList = this.createList(
+            ProfileList,
+            this.profileFilter,
+            Api.profile,
         );
 
-        this.orderFilterStore = new OrderFilterStore(this);
-
-        this.ordersListStore = new OrdersList(
-            {
-                filter: this.orderFilterStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.order,
-            },
+        this.orderFilter = new OrderFilterStore(this);
+        this.ordersList = this.createList(
+            OrdersList,
+            this.orderFilter,
+            Api.order,
         );
 
-        this.orderCreateStore = new OrderCreateStore(this, {
-            localizator,
-            errorProcessor: this.uiStore,
+        this.orderCreate = this.createWithServices(OrderCreateStore, {
             profileApi: Api.profile,
         });
 
-        this.dealFilterStore = new DealFilterStore(this);
+        this.dealFilter = new DealFilterStore(this);
+        this.dealList = this.createList(DealList, this.dealFilter, Api.deal);
 
-        this.dealListStore = new DealList(
-            {
-                filter: this.dealFilterStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.deal,
-            },
+        this.workerFilter = new WorkerFilterStore(this);
+        this.workerList = this.createList(
+            WorkerList,
+            this.workerFilter,
+            Api.worker,
         );
 
-        this.workerFilterStore = new WorkerFilterStore(this);
+        this.orderDetails = this.createWithServices(OrderDetails, {
+            api: Api.order,
+        });
 
-        this.workerListStore = new WorkerList(
-            {
-                filter: this.workerFilterStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.worker,
-            },
-        );
+        this.dealDetails = this.createWithServices(DealDetails, {
+            api: Api.deal,
+        });
 
-        this.orderDetailsStore = new OrderDetails(
-            this,
-            {
-                market: this.marketStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.order,
-            },
-        );
+        this.kycList = this.createWithRoot(KycListStore);
 
-        this.dealDetailsStore = new DealDetails(
-            this,
-            {
-                market: this.marketStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-                api: Api.deal,
-            },
-        );
-
-        this.kycListStore = new KycListStore(
-            this,
-            {
-                main: this.mainStore,
-                market: this.marketStore,
-            },
-            {
-                localizator,
-                errorProcessor: this.uiStore,
-            },
-        );
-
-        this.profileDetailsStore = new ProfileDetails(this, {
-            localizator,
-            errorProcessor: this.uiStore,
+        this.profileDetails = this.createWithServices(ProfileDetails, {
             api: Api.profile,
         });
     }
@@ -241,37 +271,32 @@ export class RootStore implements IHasLocalizator {
     public get isPending() {
         return OnlineStore.getAccumulatedFlag(
             'isPending',
-            this.walletHistoryListStore,
-            this.dwHistoryListStore,
-            this.mainStore,
-            this.sendStore,
-            this.depositStore,
-            this.withdrawStore,
-            this.addTokenStore,
-            this.orderDetailsStore,
-            this.dealDetailsStore,
-            this.orderCreateStore,
+            this.walletHistoryList,
+            this.dwHistoryList,
+            this.main,
+            this.send,
+            this.deposit,
+            this.withdraw,
+            this.addToken,
+            this.orderDetails,
+            this.dealDetails,
+            this.orderCreate,
+            this.myProfiles,
         );
     }
 
     public get isOffline() {
         return OnlineStore.getAccumulatedFlag(
             'isOffline',
-            this.walletHistoryListStore,
-            this.dwHistoryListStore,
-            this.mainStore,
-            this.sendStore,
-            this.addTokenStore,
-            this.depositStore,
-            this.withdrawStore,
+            this.walletHistoryList,
+            this.dwHistoryList,
+            this.main,
+            this.send,
+            this.addToken,
+            this.deposit,
+            this.withdraw,
         );
     }
 
     public readonly localizator: ILocalizator;
 }
-
-export const rootStore = new RootStore(en);
-
-(window as any).__rootStore = rootStore;
-
-export default rootStore;

@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { OrderView } from './view';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app//stores';
+import { withRootStore, Layout, IHasRootStore } from '../layout';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onCompleteBuyingOrder: () => void;
     onNavigateBack: () => void;
     onNavigateDeposit: () => void;
 }
 
-@observer
-export class OrderDetails extends React.Component<IProps, never> {
+class OrderDetailsLayout extends Layout<IProps> {
     public handleSubmit = async (password: string) => {
-        const orderDetailsStore = rootStore.orderDetailsStore;
+        const orderDetailsStore = this.rootStore.orderDetails;
 
         orderDetailsStore.updateUserInput({ password });
         await orderDetailsStore.submit();
@@ -25,21 +24,20 @@ export class OrderDetails extends React.Component<IProps, never> {
 
     public render() {
         const p = this.props;
+        const rootStore = this.rootStore;
         return (
             <OrderView
-                order={rootStore.orderDetailsStore.order}
-                validationPassword={
-                    rootStore.orderDetailsStore.validationPassword
-                }
+                order={rootStore.orderDetails.order}
+                validationPassword={rootStore.orderDetails.validationPassword}
                 onSubmit={this.handleSubmit}
                 onNavigateBack={p.onNavigateBack}
                 onNavigateDeposit={p.onNavigateDeposit}
-                isBuyingAvailable={
-                    rootStore.orderDetailsStore.isBuyingAvailable
-                }
+                isBuyingAvailable={rootStore.orderDetails.isBuyingAvailable}
             />
         );
     }
 }
+
+export const OrderDetails = withRootStore(observer(OrderDetailsLayout));
 
 export default OrderDetails;

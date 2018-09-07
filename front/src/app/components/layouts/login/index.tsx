@@ -7,7 +7,6 @@ import { BlackSelect } from 'app/components/common/black-select';
 import { Dialog } from 'app/components/common/dialog';
 import { LoadMask } from 'app/components/common/load-mask';
 import { setFocus } from 'app/components/common/utils/setFocus';
-import { IWalletListItem } from 'app/api/types';
 import { IFileOpenResult, Upload } from 'app/components/common/upload';
 import { Icon } from 'app/components/common/icon';
 import { Input } from 'app/components/common/input';
@@ -22,13 +21,16 @@ import shortString from 'app/utils/short-string';
 import { Disclaimer } from './sub/disclaimer/index';
 import { localizator } from 'app/localization';
 import { IChangeParams } from 'app/components/common/types';
+import { RootStore } from 'app/stores';
+import { withRootStore, IHasRootStore } from '../layout';
+import { Wallet } from 'app/entities/wallet';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
-    onLogin: (wallet: IWalletListItem) => void;
+    onLogin: (wallet: Wallet) => void;
 }
 
-class BlackWalletSelect extends BlackSelect<IWalletListItem> {}
+class BlackWalletSelect extends BlackSelect<Wallet> {}
 
 enum EnumAction {
     selectWallet,
@@ -58,7 +60,7 @@ interface IState {
     newPasswordConfirmation: string;
     encodedWallet: string;
     encodedWalletFileName: string;
-    listOfWallets: IWalletListItem[];
+    listOfWallets: Wallet[];
     name: string;
     pending: boolean;
     error: string;
@@ -76,7 +78,13 @@ const emptyForm: Pick<IState, any> = {
     network: defaultNetwork,
 };
 
-export class Login extends React.Component<IProps, IState> {
+class LoginLayout extends React.Component<IProps, IState> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     protected nodes: IRefs = {
         loginBtn: null,
     };
@@ -89,7 +97,7 @@ export class Login extends React.Component<IProps, IState> {
         newPasswordConfirmation: '',
         encodedWallet: '',
         encodedWalletFileName: '',
-        listOfWallets: [] as IWalletListItem[],
+        listOfWallets: [] as Wallet[],
         name: '',
         pending: false,
         error: '',
@@ -123,7 +131,7 @@ export class Login extends React.Component<IProps, IState> {
             return;
         }
 
-        const listOfWallets = walletlList;
+        const listOfWallets = walletlList.map(w => new Wallet(w));
 
         let name = this.state.name;
         const savedName = window.localStorage.getItem('sonm-last-used-wallet');
@@ -167,10 +175,9 @@ export class Login extends React.Component<IProps, IState> {
 
     protected async fastLogin() {
         if (window.localStorage.getItem('sonm-4ever')) {
-            const { data } = await Api.unlockWallet('2', '2');
-            if (data) {
+            const { data: success } = await Api.unlockWallet('2', '2');
+            if (success) {
                 const wallet = this.findWalletByName('2');
-
                 this.props.onLogin(wallet);
             }
         }
@@ -214,9 +221,7 @@ export class Login extends React.Component<IProps, IState> {
 
     protected handleSubmitLogin = async (event: any) => {
         event.preventDefault();
-
         this.setState({ pending: true });
-
         try {
             const { validation, data: success } = await Api.unlockWallet(
                 this.state.password,
@@ -277,7 +282,7 @@ export class Login extends React.Component<IProps, IState> {
                         this.state.newName,
                     );
 
-                    this.props.onLogin(walletListItem);
+                    this.props.onLogin(new Wallet(walletListItem));
                     return;
                 }
             } catch (e) {
@@ -317,7 +322,7 @@ export class Login extends React.Component<IProps, IState> {
                     pending: false,
                 });
             } else if (walletInfo) {
-                this.props.onLogin(walletInfo);
+                this.props.onLogin(new Wallet(walletInfo));
                 return;
             }
         }
@@ -425,7 +430,7 @@ export class Login extends React.Component<IProps, IState> {
         this.nodes.loginBtn = ref;
     };
 
-    protected renderWalletOption(record: IWalletListItem) {
+    protected renderWalletOption(record: Wallet) {
         return (
             <span
                 className={`sonm-login__wallet-option sonm-login__wallet-option--${
@@ -759,3 +764,5 @@ export class Login extends React.Component<IProps, IState> {
         );
     }
 }
+
+export const Login = withRootStore(LoginLayout);
