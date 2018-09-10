@@ -38,7 +38,7 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
 
     @computed
     public get status(): EnumProfileStatus {
-        return Number(this.userInput.status) || EnumProfileStatus.anon;
+        return Number(this.userInput.status) || EnumProfileStatus.reg;
     }
 
     @computed

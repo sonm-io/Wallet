@@ -121,20 +121,12 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
 
     protected static statusOptions: Array<ISelectItem<any>> = [
         {
-            value: (defaultFilter.status = EnumProfileStatus.anon),
-            stringValue: <ProfileStatus status={EnumProfileStatus.anon} />,
-        },
-        {
             value: EnumProfileStatus.reg,
             stringValue: <ProfileStatus status={EnumProfileStatus.reg} />,
         },
         {
             value: EnumProfileStatus.ident,
             stringValue: <ProfileStatus status={EnumProfileStatus.ident} />,
-        },
-        {
-            value: EnumProfileStatus.pro,
-            stringValue: <ProfileStatus status={EnumProfileStatus.pro} />,
         },
     ];
 
