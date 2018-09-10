@@ -108,10 +108,7 @@ class LoginLayout extends React.Component<IProps, IState> {
     protected noTimer = false;
 
     public componentDidMount() {
-        const hideDisclaimer = Boolean(
-            window.localStorage.getItem('sonm-hide-disclaimer'),
-        );
-
+        const hideDisclaimer = true;
         this.noTimer = hideDisclaimer;
         this.setState({
             currentAction: hideDisclaimer
