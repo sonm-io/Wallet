@@ -11,7 +11,7 @@ export interface ICertificateProps {
 
 export class Certificate extends React.Component<ICertificateProps, any> {
     public static mapStatusToStyle: { [key: string]: string } = {
-        [String(EnumProfileStatus.anonimest)]: 'anon',
+        [String(EnumProfileStatus.undefined)]: 'anon',
         [String(EnumProfileStatus.anon)]: 'anon',
         [String(EnumProfileStatus.reg)]: 'reg',
         [String(EnumProfileStatus.ident)]: 'ident',

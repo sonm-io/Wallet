@@ -121,6 +121,10 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
 
     protected static statusOptions: Array<ISelectItem<any>> = [
         {
+            value: (defaultFilter.status = EnumProfileStatus.undefined),
+            stringValue: <ProfileStatus status={EnumProfileStatus.undefined} />,
+        },
+        {
             value: EnumProfileStatus.reg,
             stringValue: <ProfileStatus status={EnumProfileStatus.reg} />,
         },
@@ -131,6 +135,10 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
     ];
 
     protected static roleOptions: Array<ISelectItem<any>> = [
+        {
+            value: EnumProfileRole.undefined,
+            stringValue: 'Any',
+        },
         {
             value: EnumProfileRole.supplier,
             stringValue: 'Supplier',

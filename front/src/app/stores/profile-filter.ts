@@ -38,12 +38,12 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
 
     @computed
     public get status(): EnumProfileStatus {
-        return Number(this.userInput.status) || EnumProfileStatus.reg;
+        return Number(this.userInput.status) || EnumProfileStatus.undefined;
     }
 
     @computed
     public get role(): EnumProfileRole {
-        return Number(this.userInput.role) || EnumProfileRole.supplier;
+        return Number(this.userInput.role) || EnumProfileRole.undefined;
     }
 
     @computed
