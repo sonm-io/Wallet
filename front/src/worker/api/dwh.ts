@@ -78,7 +78,7 @@ export class DWH {
     public static readonly defaultProfile: IProfile = {
         name: '',
         address: '0x0',
-        status: EnumProfileStatus.anonimest,
+        status: EnumProfileStatus.undefined,
         sellOrders: 0,
         buyOrders: 0,
         deals: 0,
@@ -411,7 +411,7 @@ export class DWH {
             creator: {
                 status:
                     item.creatorIdentityLevel === undefined
-                        ? EnumProfileStatus.anonimest
+                        ? EnumProfileStatus.undefined
                         : item.creatorIdentityLevel,
                 name: item.creatorName || '',
                 address: item.masterID || item.order.authorID,
@@ -568,12 +568,12 @@ export class DWH {
         );
         deal.supplier = {
             address: deal.masterID,
-            status: supplier.status || EnumProfileStatus.anonimest,
+            status: supplier.status || EnumProfileStatus.undefined,
             name: supplier.name || '',
         };
         deal.consumer = {
             address: deal.consumerID,
-            status: consumer.status || EnumProfileStatus.anonimest,
+            status: consumer.status || EnumProfileStatus.undefined,
             name: consumer.name || '',
         };
         deal.duration = deal.duration ? DWH.parseDuration(deal.duration) : 0;

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { IDeal, EnumDealStatus } from 'app/api/types';
 import ProfileBrief from 'app/components/common/profile-brief';
 import Benchmark from 'app/components/common/benchmark';
-import { Balance } from 'app/components/common/balance-view';
 import formatSeconds from 'app/utils/format-seconds';
 import {
     PropertyList,
@@ -111,18 +110,8 @@ export class DealListItem extends React.Component<IDealListItem, never> {
                     </div>
                 ) : null}
                 <div className="deal-list-item__cost">
-                    {p.deal.status !== EnumDealStatus.Closed ? (
-                        <Balance
-                            className="deal-list-item__blocked-balance"
-                            balance={p.deal.blockedBalance}
-                            decimalDigitAmount={4}
-                            decimalPointOffset={18}
-                            symbol="SNM"
-                            round
-                        />
-                    ) : null}
                     <div className="deal-list-item__price">
-                        {price} USD/h ({totalPayout} USD total)
+                        {price} USD/h ({totalPayout} SNM total)
                     </div>
                     <div className="deal-list-item__time-left">
                         {this.getTimeLeft()}

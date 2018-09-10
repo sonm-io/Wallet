@@ -26,6 +26,7 @@ interface IDealData {
     startTime: number;
     endTime: number;
     timeLeft: number;
+    totalPayout: string;
     blockedBalance: string;
     status: number;
     supplierAddress: string;
@@ -105,6 +106,12 @@ export class DealView extends React.Component<IProps, never> {
         },
         {
             name: 'Executed payment',
+            id: 'totalPayout',
+            renderValue: (value: string) =>
+                `${moveDecimalPoint(value, -18, 2)} SNM`,
+        },
+        {
+            name: 'Blocked funds',
             id: 'blockedBalance',
             renderValue: (value: string) =>
                 `${moveDecimalPoint(value, -18, 2)} SNM`,

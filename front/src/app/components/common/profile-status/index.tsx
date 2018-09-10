@@ -20,6 +20,9 @@ export function ProfileStatus(p: IProfileStatusProps) {
     } else if (p.status === EnumProfileStatus.pro) {
         name = 'PROFESSIONAL';
         modifier = 'pro';
+    } else if (p.status === EnumProfileStatus.undefined) {
+        name = 'ANY';
+        modifier = 'undefined';
     }
 
     return (

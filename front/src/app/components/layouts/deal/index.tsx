@@ -161,6 +161,7 @@ class DealLayout extends Layout<IProps> {
         const propertyList = {
             id: deal.id,
             status: deal.status,
+            totalPayout: deal.totalPayout,
             blockedBalance: deal.blockedBalance,
             startTime: deal.startTime,
             endTime: deal.endTime,
