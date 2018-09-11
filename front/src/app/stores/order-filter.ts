@@ -358,7 +358,7 @@ export class OrderFilterStore implements IFilterStore {
                             : { $ne: this.myAddress },
                 status: {
                     $in: [
-                        [EnumProfileStatus.anonimest, this.anonymous],
+                        [EnumProfileStatus.undefined, this.anonymous],
                         [EnumProfileStatus.ident, this.identified],
                         [EnumProfileStatus.reg, this.registered],
                         [EnumProfileStatus.pro, this.professional],

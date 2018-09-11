@@ -63,8 +63,9 @@ export enum NetworkEnum {
 }
 
 export enum EnumProfileRole {
-    customer = 2,
+    undefined = 0,
     supplier = 1,
+    customer = 2,
 }
 
 export interface IBenchmarkMap {

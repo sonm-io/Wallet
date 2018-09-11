@@ -1,5 +1,5 @@
 export enum EnumProfileStatus {
-    anonimest = 0,
+    undefined = 0,
     anon = 1,
     reg = 2,
     ident = 3,

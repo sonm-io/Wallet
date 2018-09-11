@@ -48,7 +48,7 @@ interface IRefs {
 const networkSelectList = [NetworkEnum.live, NetworkEnum.rinkeby].map(x =>
     x.toString(),
 );
-const defaultNetwork = NetworkEnum.rinkeby;
+const defaultNetwork = NetworkEnum.live;
 
 const emptyValidation: IValidation = {};
 
@@ -108,10 +108,7 @@ class LoginLayout extends React.Component<IProps, IState> {
     protected noTimer = false;
 
     public componentDidMount() {
-        const hideDisclaimer = Boolean(
-            window.localStorage.getItem('sonm-hide-disclaimer'),
-        );
-
+        const hideDisclaimer = true;
         this.noTimer = hideDisclaimer;
         this.setState({
             currentAction: hideDisclaimer
