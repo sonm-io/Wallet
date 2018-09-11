@@ -12,9 +12,9 @@ class KycListLayout extends Layout<IProps> {
         return this.rootStore.kycList;
     }
 
-    protected handleSubmitPassword(itemIndex: number, password: string) {
+    protected handleSubmitPassword = (itemIndex: number, password: string) => {
         this.store.fetchKycLink(itemIndex, password);
-    }
+    };
 
     public componentDidMount() {
         this.rootStore.validators.updateValidators();
