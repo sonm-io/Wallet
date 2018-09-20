@@ -125,10 +125,6 @@ export class ProfileListView extends React.PureComponent<IProps, any> {
             stringValue: <ProfileStatus status={EnumProfileStatus.undefined} />,
         },
         {
-            value: EnumProfileStatus.reg,
-            stringValue: <ProfileStatus status={EnumProfileStatus.reg} />,
-        },
-        {
             value: EnumProfileStatus.ident,
             stringValue: <ProfileStatus status={EnumProfileStatus.ident} />,
         },
