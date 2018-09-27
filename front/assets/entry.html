@@ -149,6 +149,17 @@
             100% { opacity: 1 }
         }
     </style>
+    <script>
+        (function(){
+            if(window.location.hostname === 'market.sonm.com') 
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','GTM-M97D473');
+        })();
+    </script>
+</head>
 <body>
 <div id="root" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
     <div class="sonm-not-supported">
@@ -167,7 +178,7 @@
                     <li class="sonm-not-supported__firefox sonm-not-supported__item"><a href="https://www.mozilla.org/ru/firefox/new/">Firefox</a></li>
                 </ul>
                 <div class="sonm-not-supported__intruction">
-                    Also you may <a href="https://docs.sonm.io/guides/sonm-wallet-guide">click here</a> and follow the instruction
+                    Also you may <a href="https://docs.sonm.com/guides/sonm-wallet-guide">click here</a> and follow the instruction
                 </div>
             </div>
         </div>
