@@ -1362,6 +1362,11 @@ class Api {
     public async resolve(type: string, payload: any): Promise<t.IResponse> {
         if (this.routes[type]) {
             return this.routes[type](payload);
+        } else if (typeof (this as any)[type] === 'function') {
+            const result = (this as any)[type].apply(this, payload);
+            return result.then((r: any) => {
+                return { data: r };
+            });
         } else {
             throw new Error('route_not_exists');
         }

@@ -231,6 +231,15 @@ class AllApi {
     }
 }
 
+if (IS_DEV) {
+    import('sonm-api').then(sonmApi => {
+        (window as any).__sonmApi = sonmApi;
+    });
+    import('worker/api/default-nodes').then(i => {
+        (window as any).__DEFAULT_NODES = i.DEFAULT_NODES;
+    });
+}
+
 export const Api = new AllApi();
 (window as any).__api = Api;
 export default Api;
