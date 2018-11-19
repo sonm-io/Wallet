@@ -50,21 +50,18 @@ export class MyProfilesStore extends OnlineStore {
     public *init() {
         yield this.getAccountList();
         this.setReactions();
+        this.updateTotalBalance();
     }
 
     //#region Observables
 
-    @observable
-    protected accountMap = new Map<string, IAccount>();
+    @observable protected accountMap = new Map<string, IAccount>();
 
-    @observable
-    protected rate: string = '0';
+    @observable protected rate: string = '0';
 
-    @observable
-    public currentProfileAddress: string = '';
+    @observable public currentProfileAddress: string = '';
 
-    @observable
-    public marketAllBalance: string = '0';
+    @observable public marketAllBalance: string = '0';
 
     //#endregion
 
@@ -126,8 +123,7 @@ export class MyProfilesStore extends OnlineStore {
 
     //#region Form Validation ToDo move it to base FormsStore
 
-    @observable.ref
-    public serverValidation: Partial<IMainFormValues> = {};
+    @observable.ref public serverValidation: Partial<IMainFormValues> = {};
 
     @computed
     public get noValidationMessages(): boolean {
