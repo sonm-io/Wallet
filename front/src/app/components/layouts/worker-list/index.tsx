@@ -22,9 +22,9 @@ class WorkerListLayout extends React.Component<IProps, any> {
         slaveId: '',
     };
 
-    public handleChangePage(page: number) {
+    public handleChangePage = (page: number) => {
         this.rootStore.workerList.updateUserInput({ page });
-    }
+    };
 
     protected handleClickConfirm = async (slaveId: string) => {
         this.setState({
