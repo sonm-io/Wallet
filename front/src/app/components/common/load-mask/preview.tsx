@@ -1,7 +1,7 @@
-const React = require('react');
-const LoadMask = require('./index.tsx').LoadMask;
+import * as React from 'react';
+import { LoadMask } from './index';
 
-module.exports = class LoadMaskPreview extends React.Component {
+export class LoadMaskPreview extends React.Component<any> {
     public state = {
         isLoadMaskVisible: false,
     };
@@ -27,4 +27,4 @@ module.exports = class LoadMaskPreview extends React.Component {
             </LoadMask>
         );
     }
-};
+}
