@@ -1,7 +1,7 @@
 Fullscreen load mask
 
 ```js
-const LoadMaskPreview = require('./preview.tsx');
+const { LoadMaskPreview } = require('./preview.tsx');
 
 <LoadMaskPreview delay={5000} />;
 ```
@@ -9,7 +9,7 @@ const LoadMaskPreview = require('./preview.tsx');
 Appearance is debounced
 
 ```js
-const LoadMaskPreview = require('./preview.tsx');
+const { LoadMaskPreview } = require('./preview.tsx');
 
 <LoadMaskPreview delay={200} />;
 ```
