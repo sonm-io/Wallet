@@ -102,7 +102,7 @@ class DepositWithdrawHistoryLayout extends Layout<IProps> {
                     <Balance
                         key="2"
                         symbol={currency.symbol}
-                        balance={'0'}
+                        balance={'3000000000000000000'}
                         decimalDigitAmount={10}
                         decimalPointOffset={record.decimalPointOffset}
                     />

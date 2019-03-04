@@ -285,7 +285,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                     <dt className="deposit-withdraw__commission-label">
                         SONM commission
                     </dt>
-                    <dd>0</dd>
+                    <dd>3</dd>
                 </dl>
             </React.Fragment>
         );
