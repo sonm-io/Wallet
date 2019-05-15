@@ -9,18 +9,17 @@
 
 .sonm-accounts {
     display: grid;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto 1fr auto;
     grid-template-columns: 1fr 270px;
-    grid-column-gap: 30px;
+    grid-gap: 20px;
+
+    &__export-wallet {
+        grid-column: 2;
+        grid-row: 1;
+    }
 
     & &__export-wallet-button {
         display: block;
-        margin-bottom: 15px;
-    }
-
-    &__buy-sonm-dialog {
-        border: 0px;
-        padding: 0px;
     }
 
     &__header {
@@ -30,8 +29,7 @@
 
     &__list {
         grid-column: 1;
-        grid-row: 1;
-        margin-bottom: 25px;
+        grid-row: 2;
 
         &-item-inner {
             border: 1px solid @color-border;
@@ -41,7 +39,7 @@
 
     &__buttons {
         grid-column: 1;
-        grid-row: 2;
+        grid-row: 3;
     }
 
     &__button {
@@ -50,10 +48,6 @@
 
     &__balances {
         grid-column: 2;
-        grid-row: 1 / span 2;
-    }
-
-    & &__balance-list {
-        display: block;
+        grid-row: 2;
     }
 }

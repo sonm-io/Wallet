@@ -28,7 +28,6 @@ enum WalletDialogs {
     addToken,
     none,
     showPrivateKey,
-    changelly,
 }
 
 interface IProps extends IHasRootStore {
@@ -132,39 +131,23 @@ class AccountListLayout extends React.Component<IProps, IState> {
         const rootStore = this.rootStore;
         return (
             <div className={cn('sonm-accounts', className)}>
-                <div className="sonm-accounts__balances">
-                    <DownloadFile
-                        getData={rootStore.wallet.getWalletExportText}
+                <DownloadFile
+                    getData={rootStore.wallet.getWalletExportText}
+                    className="sonm-accounts__export-wallet"
+                    fileName={`sonm-wallet-${rootStore.wallet.walletName}.json`}
+                >
+                    <Button
+                        tag="div"
+                        color="gray"
+                        square
+                        transparent
+                        height={40}
                         className="sonm-accounts__export-wallet-button"
-                        fileName={`sonm-wallet-${
-                            rootStore.wallet.walletName
-                        }.json`}
                     >
-                        <Button
-                            tag="div"
-                            color="gray"
-                            square
-                            transparent
-                            height={40}
-                            className="sonm-accounts__export-wallet-button"
-                        >
-                            <Icon i="Export" />
-                            {' Export wallet'}
-                        </Button>
-                    </DownloadFile>
-                    <CurrencyBalanceList
-                        className="sonm-accounts__balance-list"
-                        currencyBalanceList={
-                            rootStore.myProfiles.fullBalanceList
-                        }
-                        onRequireAddToken={
-                            rootStore.isOffline
-                                ? undefined
-                                : this.handleRequireAddToken
-                        }
-                        onDeleteToken={this.handleDeleteToken}
-                    />
-                </div>
+                        <Icon i="Export" />
+                        {' Export wallet'}
+                    </Button>
+                </DownloadFile>
                 <div className="sonm-accounts__list">
                     {rootStore.myProfiles.accountList.length === 0 ? (
                         <EmptyAccountList />
@@ -272,5 +255,3 @@ class AccountListLayout extends React.Component<IProps, IState> {
 }
 
 export const AccountList = withRootStore(observer(AccountListLayout));
-
-// TODO
