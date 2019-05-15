@@ -13,7 +13,8 @@ export class UiStore {
         this.rootStore = rootStore;
     }
 
-    @observable public mapIdToAlert: Map<string, IAlert> = new Map();
+    @observable
+    public mapIdToAlert: Map<string, IAlert> = new Map();
 
     protected getNextId() {
         return `${new Date()}-${UiStore.alertIdx++}`;
@@ -65,7 +66,7 @@ export class UiStore {
     @computed
     public get disabledMenuItems() {
         const result = [];
-        if (this.rootStore.marketStore.marketAccountViewList.length === 0) {
+        if (this.rootStore.myProfiles.accountList.length === 0) {
             result.push('Market');
         }
         return result;

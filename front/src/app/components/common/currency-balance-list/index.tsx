@@ -65,20 +65,21 @@ export class CurrencyBalanceList extends React.Component<
                             </li>
                         );
                     })}
-                    {this.props.onRequireAddToken && (
-                        <li
-                            key="add"
-                            className="sonm-currency-balance-list__item"
-                        >
-                            <a
-                                href="#add-token"
-                                onClick={this.handleRequireAddToken}
-                                className="sonm-currency-balance-list__add-token"
+                    {false /* Do not show button */ &&
+                        this.props.onRequireAddToken && (
+                            <li
+                                key="add"
+                                className="sonm-currency-balance-list__item"
                             >
-                                + ADD TOKEN
-                            </a>
-                        </li>
-                    )}
+                                <a
+                                    href="#add-token"
+                                    onClick={this.handleRequireAddToken}
+                                    className="sonm-currency-balance-list__add-token"
+                                >
+                                    + ADD TOKEN
+                                </a>
+                            </li>
+                        )}
                 </ul>
             </div>
         );

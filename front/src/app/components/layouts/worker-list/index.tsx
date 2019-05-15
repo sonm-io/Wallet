@@ -1,24 +1,30 @@
 import * as React from 'react';
 import { WorkerListView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
+import { withRootStore, IHasRootStore } from '../layout';
+import { RootStore } from 'app/stores';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     filterByAddress?: string;
 }
 
-@observer
-export class WorkerList extends React.Component<IProps, any> {
+class WorkerListLayout extends React.Component<IProps, any> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         showConfirm: false,
         slaveId: '',
     };
 
-    public handleChangePage(page: number) {
-        rootStore.workerListStore.updateUserInput({ page });
-    }
+    public handleChangePage = (page: number) => {
+        this.rootStore.workerList.updateUserInput({ page });
+    };
 
     protected handleClickConfirm = async (slaveId: string) => {
         this.setState({
@@ -34,39 +40,39 @@ export class WorkerList extends React.Component<IProps, any> {
     };
 
     protected handleSubmitConfirm = async (password: string) => {
-        const link = await rootStore.mainStore.confirmWorker(
+        const rootStore = this.rootStore;
+        const link = await rootStore.main.confirmWorker(
             password,
-            rootStore.marketStore.marketAccountAddress,
+            rootStore.myProfiles.currentProfileAddress,
             this.state.slaveId,
         );
 
         if (link) {
             this.handleCloseConfirm();
-            rootStore.workerListStore.update();
+            rootStore.workerList.update();
         } else {
             this.setState({
-                validationPassword:
-                    rootStore.mainStore.serverValidation.password,
+                validationPassword: rootStore.main.serverValidation.password,
             });
         }
     };
 
     public componentDidMount() {
-        rootStore.workerListStore.startAutoUpdate();
+        this.rootStore.workerList.startAutoUpdate();
     }
 
     public componentWillUnmount() {
-        rootStore.workerListStore.stopAutoUpdate();
+        this.rootStore.workerList.stopAutoUpdate();
     }
 
     public render() {
-        const listStore = rootStore.workerListStore;
+        const listStore = this.rootStore.workerList;
         const dataSource = toJS(listStore.records);
 
         return (
             <WorkerListView
                 marketAccountAddress={
-                    rootStore.marketStore.marketAccountAddress
+                    this.rootStore.myProfiles.currentProfileAddress
                 }
                 page={listStore.page}
                 total={toJS(listStore.total)}
@@ -78,9 +84,11 @@ export class WorkerList extends React.Component<IProps, any> {
                 onSubmitConfirm={this.handleSubmitConfirm}
                 showConfirm={this.state.showConfirm}
                 validationPassword={
-                    rootStore.mainStore.serverValidation.password
+                    this.rootStore.main.serverValidation.password
                 }
             />
         );
     }
 }
+
+export const WorkerList = withRootStore(observer(WorkerListLayout));

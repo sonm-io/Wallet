@@ -33,7 +33,7 @@ export class AppBalance extends React.PureComponent<IAppBalanceProps, any> {
                                 decimalPointOffset={18}
                                 symbol="ETH"
                                 decimalDigitAmount={2}
-                            />,{' '}
+                            />
                             <Balance
                                 className="app-balance__value"
                                 balance={p.snmBalance}
@@ -55,16 +55,14 @@ export class AppBalance extends React.PureComponent<IAppBalanceProps, any> {
                     </React.Fragment>
                 ) : (
                     <div className="app-balance__row">
-                        <span className="app-balance__label">
-                            Market stat:{' '}
-                        </span>
+                        <span className="app-balance__label">Market stat:</span>
                         <span className="app-balance__value">
-                            {p.marketDealsCount} deals,
-                            <PricePerHour
-                                className="app-balance__value"
-                                usdWeiPerSeconds={p.marketDealsPrice}
-                            />
+                            {`${p.marketDealsCount} deals, `}
                         </span>
+                        <PricePerHour
+                            className="app-balance__value"
+                            usdWeiPerSeconds={p.marketDealsPrice}
+                        />
                     </div>
                 )}
             </div>

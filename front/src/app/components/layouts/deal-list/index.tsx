@@ -1,88 +1,97 @@
 import * as React from 'react';
 import { DealListView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
-import { IDateRangeChangeParams } from 'app/components/common/date-range-dropdown';
-import { ITogglerChangeParams } from 'app/components/common/toggler';
-import * as debounce from 'lodash/fp/debounce';
-import { IDeal } from 'app/api/types';
+import { DealFilterPanel } from './sub/deal-filter-panel';
+import { IDealFilter } from 'app/stores/deal-filter';
+import { DealListEmpty } from './sub/deal-list-empty';
+import { withRootStore, Layout, IHasRootStore } from '../layout';
 
-const debounce500 = debounce(500);
-
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     filterByAddress?: string;
     onClickDeal: (dealId: string) => void;
+    onClickViewMarket: () => void;
 }
 
-const filterStore = rootStore.dealFilterStore;
+const emptyFn = () => {};
 
-@observer
-export class DealList extends React.Component<IProps, any> {
-    public state = {
-        query: '',
-    };
+class DealListLayout extends Layout<IProps> {
+    protected get filterStore() {
+        return this.rootStore.dealFilter;
+    }
 
-    constructor(props: IProps) {
-        super(props);
+    protected get listStore() {
+        return this.rootStore.dealList;
     }
 
     public componentDidMount() {
-        rootStore.dealListStore.startAutoUpdate();
+        this.rootStore.dealList.startAutoUpdate();
     }
 
     public componentWillUnmount() {
-        rootStore.dealListStore.stopAutoUpdate();
+        this.rootStore.dealList.stopAutoUpdate();
     }
 
-    protected handleChangeTime = (params: IDateRangeChangeParams) => {
-        filterStore.updateUserInput({
-            dateFrom: params.value[0].valueOf(),
-            dateTo: params.value[1].valueOf(),
-        });
+    protected handleUpdateFilter = (
+        key: keyof IDealFilter,
+        value: string | boolean | [Date, Date],
+    ) => {
+        this.filterStore.updateUserInput({ [key]: value });
     };
 
-    protected handleChangeQuery = (event: any) => {
-        const query = event.target.value;
-
-        this.setState({ query });
-        this.setQueryDebonced(query);
+    protected handleChangePage = (page: number) => {
+        this.listStore.updateUserInput({ page });
     };
 
-    protected setQueryDebonced = debounce500((query: string) => {
-        filterStore.updateUserInput({
-            query,
+    protected handleChangeOrder = (orderKey: string, isDesc: boolean) => {
+        this.listStore.updateUserInput({
+            sortBy: orderKey,
+            sortDesc: isDesc,
         });
-    });
-
-    protected handleChangeActive = (change: ITogglerChangeParams) => {
-        filterStore.updateUserInput({
-            onlyActive: change.value,
-        });
-    };
-
-    public handleRowClick = (record: IDeal) => {
-        this.props.onClickDeal(record.id);
     };
 
     public render() {
-        const listStore = rootStore.dealListStore;
-        const dataSource = toJS(listStore.records);
+        const p = this.props;
+        const listStore = this.listStore;
+        const filterStore = this.filterStore;
 
-        return (
+        const filterPanel = (
+            <DealFilterPanel
+                query={filterStore.query}
+                dateRange={filterStore.dateRange}
+                onlyActive={filterStore.onlyActive}
+                onUpdateFilter={this.handleUpdateFilter}
+            />
+        );
+        const data = toJS(listStore.records);
+
+        return data.length === 0 ? (
+            <DealListEmpty
+                onClickViewMarket={p.onClickViewMarket}
+                onClickBuyResources={emptyFn}
+            />
+        ) : (
             <DealListView
-                dataSource={dataSource}
+                data={data}
                 marketAccountAddress={
-                    rootStore.marketStore.marketAccountAddress
+                    this.rootStore.myProfiles.currentProfileAddress
                 }
-                handleChangeQuery={this.handleChangeQuery}
-                handleChangeTime={this.handleChangeTime}
-                handleChangeActive={this.handleChangeActive}
-                filterStore={filterStore}
-                queryValue={this.state.query}
-                onClickRow={this.handleRowClick}
+                filterPanel={filterPanel}
+                onClickRow={p.onClickDeal}
+                onClickBuyResources={emptyFn}
+                orderBy={listStore.sortBy}
+                orderDesc={listStore.sortDesc}
+                onChangeOrder={this.handleChangeOrder}
+                currentPage={listStore.page}
+                pageSize={listStore.limit}
+                totalRecords={listStore.records.length}
+                onChangePage={this.handleChangePage}
             />
         );
     }
 }
+
+export const DealList = withRootStore(observer(DealListLayout));
+
+export { DealListView };

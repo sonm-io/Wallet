@@ -2,29 +2,34 @@ import * as React from 'react';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
 import { Form, FormField } from 'app/components/common/form';
-
 import * as cn from 'classnames';
 import { IdentIcon } from 'app/components/common/ident-icon/index';
 import { Button } from 'app/components/common/button/index';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores/';
+import { withRootStore, IHasRootStore } from 'app/components/layouts/layout';
+import { RootStore } from 'app/stores';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onSuccess: () => void;
     onBack: () => void;
 }
 
-@observer
-export class SendConfirm extends React.Component<IProps, any> {
+class SendConfirmLayout extends React.Component<IProps, any> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         password: '',
         validationPassword: '',
     };
 
     public handleConfrim = async (event: any) => {
-        const sendStore = rootStore.sendStore;
-        const historyStore = rootStore.walletHistoryListStore;
+        const sendStore = this.rootStore.send;
+        const historyStore = this.rootStore.walletHistoryList;
 
         event.preventDefault();
 
@@ -50,7 +55,7 @@ export class SendConfirm extends React.Component<IProps, any> {
     };
 
     public handleCancel = () => {
-        rootStore.sendStore.resetServerValidation();
+        this.rootStore.send.resetServerValidation();
 
         this.props.onBack();
     };
@@ -60,13 +65,14 @@ export class SendConfirm extends React.Component<IProps, any> {
     };
 
     public render() {
-        const mainStore = rootStore.mainStore;
-        const sendStore = rootStore.sendStore;
+        const rootStore = this.rootStore;
+        const mainStore = rootStore.main;
+        const sendStore = rootStore.send;
 
         const accountAddress = sendStore.fromAddress;
-        const account = mainStore.accountMap.get(accountAddress);
+        const account = rootStore.myProfiles.getItem(accountAddress);
         const accountName = account ? account.name : '';
-        const currency = mainStore.currencyMap.get(sendStore.currencyAddress);
+        const currency = rootStore.currency.getItem(sendStore.currencyAddress);
         const amount = sendStore.amount;
         const gasLimit = sendStore.gasLimit;
         const gasPrice = sendStore.gasPriceGwei;
@@ -165,5 +171,7 @@ export class SendConfirm extends React.Component<IProps, any> {
         );
     }
 }
+
+export const SendConfirm = withRootStore(observer(SendConfirmLayout));
 
 export default SendConfirm;

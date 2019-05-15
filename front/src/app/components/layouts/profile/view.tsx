@@ -6,8 +6,8 @@ import { Statistic } from './sub/statistic';
 import { ICertificateProps } from './sub/certificate';
 import { CertificatesPanel } from './sub/certificates-panel';
 import { Panel } from 'app/components/common/panel';
-import { EnumProfileStatus } from 'app/api/types';
 import { Button } from 'app/components/common/button';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 interface IProps {
     className?: string;

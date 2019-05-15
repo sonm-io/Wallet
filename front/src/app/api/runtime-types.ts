@@ -2,35 +2,19 @@ import * as t from 'tcomb';
 import { createStruct } from './utils/runtime-types-utils';
 
 import {
-    IProfileBrief,
-    IListResult,
-    IAttribute,
-    IProfileFull,
-    IAccountInfo,
     IOrder,
     IDeal,
     IMarketStats,
     IOrderParams,
-    IAccountBrief,
     IBenchmarkMap,
-    ICertificate,
     IKycValidator,
     IWorker,
+    IDealChangeRequest,
 } from './types';
-
-const hexDeximalRegex = /^(0x)?[a-f0-9]+$/i;
-
-const isHexDeximal = (x: string) => hexDeximalRegex.test(x);
-
-const digitsRegex = /^[0-9]+$/;
-
-const isDigits = (x: string) => digitsRegex.test(x);
-
-export const TypeEthereumAddress = t.refinement(
-    t.String,
-    (s: string) => s.length === 42 && s.startsWith('0x') && isHexDeximal(s),
-    'EthereumAddress',
-);
+import { isHexDeximal, isDigits } from 'common/utils';
+import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
+import { TypeProfileBrief } from 'common/types/runtime/profile';
+import { IListResult } from 'common/types';
 
 export const TypeNotStrictEthereumAddress = t.refinement(
     t.String,
@@ -40,99 +24,7 @@ export const TypeNotStrictEthereumAddress = t.refinement(
     'EthereumAddress',
 );
 
-export const TypeCurrencyAddress = t.refinement(
-    t.String,
-    (s: string) => s === '0x' || s === '0x1' || Boolean(TypeEthereumAddress(s)),
-    'CurrencyAddress',
-);
-
 export const TypeBalance = t.refinement(t.String, isDigits);
-
-export const TypeProfileBrief = createStruct<IProfileBrief>(
-    {
-        address: t.String,
-        status: t.Number,
-        name: t.String,
-        sellOrders: t.Number,
-        buyOrders: t.Number,
-        deals: t.Number,
-        country: t.String,
-        logoUrl: t.String,
-    },
-    'IProfileBrief',
-);
-
-export const TypeProfileList = createStruct<IListResult<IProfileBrief>>(
-    {
-        records: t.list(TypeProfileBrief),
-        total: t.Number,
-    },
-    'IListResult<IProfileBrief>',
-);
-
-export const TypeAttribute = createStruct<IAttribute>(
-    {
-        label: t.String,
-        value: t.String,
-    },
-    'IAttribute',
-);
-
-export const TypeCertifcate = createStruct<ICertificate>(
-    {
-        address: TypeEthereumAddress,
-        status: t.Number,
-    },
-    'ICertificate',
-);
-
-export const TypeProfileFull = createStruct<IProfileFull>(
-    {
-        attributes: t.list(TypeAttribute),
-        address: TypeEthereumAddress,
-        status: t.Number,
-        name: t.String,
-        sellOrders: t.Number,
-        buyOrders: t.Number,
-        deals: t.Number,
-        country: t.String,
-        logoUrl: t.String,
-        description: t.String,
-        certificates: t.list(TypeCertifcate),
-    },
-    'IProfileFull',
-);
-
-export const TypeCurrencyBalanceMap = t.irreducible(
-    'CurrencyBalanceMap',
-    (x: any) =>
-        x !== null &&
-        typeof x === 'object' &&
-        Object.keys(x).every(
-            key => Boolean(TypeCurrencyAddress(key)) && isDigits(x[key]),
-        ),
-);
-
-export const TypeAccountInfo = createStruct<IAccountInfo>(
-    {
-        address: TypeEthereumAddress,
-        name: t.String,
-        marketBalance: t.String,
-        marketUsdBalance: t.String,
-        currencyBalanceMap: TypeCurrencyBalanceMap,
-        json: t.String,
-    },
-    'IAccountInfo',
-);
-
-export const TypeAccountBrief = createStruct<IAccountBrief>(
-    {
-        address: TypeEthereumAddress,
-        name: t.String,
-        status: t.Number,
-    },
-    'IAccountInfo',
-);
 
 export const TypeBenchmarkMap = createStruct<IBenchmarkMap>(
     {
@@ -155,13 +47,11 @@ export const TypeBenchmarkMap = createStruct<IBenchmarkMap>(
     'IBenchmarkMap',
 );
 
-export const TypeAccountInfoList = t.list(TypeAccountInfo);
-
 export const TypeOrder = createStruct<IOrder>(
     {
         id: t.String,
         orderSide: t.Number,
-        creator: TypeAccountBrief,
+        creator: TypeProfileBrief,
         usdWeiPerSeconds: t.String,
         durationSeconds: t.Number,
         orderStatus: t.Number,
@@ -178,11 +68,22 @@ export const TypeOrderList = createStruct<IListResult<IOrder>>(
     'IListResult<IOrder>',
 );
 
+export const TypeDealChangeRequest = createStruct<IDealChangeRequest>(
+    {
+        id: t.String,
+        price: t.maybe(t.String),
+        duration: t.maybe(t.String),
+        status: t.Number,
+        requestType: t.Number,
+    },
+    'IDealChangeRequest',
+);
+
 export const TypeDeal = createStruct<IDeal>(
     {
         id: t.String,
-        supplier: TypeAccountBrief,
-        consumer: TypeAccountBrief,
+        supplier: TypeProfileBrief,
+        consumer: TypeProfileBrief,
         masterID: t.String,
         askID: t.String,
         bidID: t.String,
@@ -195,6 +96,7 @@ export const TypeDeal = createStruct<IDeal>(
         endTime: t.Number,
         benchmarkMap: TypeBenchmarkMap,
         timeLeft: t.Number,
+        changeRequests: t.maybe(t.list(TypeDealChangeRequest)),
     },
     'IDeal',
 );

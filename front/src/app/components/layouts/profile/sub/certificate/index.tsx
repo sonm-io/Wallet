@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { EnumProfileStatus } from 'app/api/types';
 import { ProfileStatus } from 'app/components/common/profile-status/index';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 export interface ICertificateProps {
     className?: string;
@@ -11,7 +11,7 @@ export interface ICertificateProps {
 
 export class Certificate extends React.Component<ICertificateProps, any> {
     public static mapStatusToStyle: { [key: string]: string } = {
-        [String(EnumProfileStatus.anonimest)]: 'anon',
+        [String(EnumProfileStatus.undefined)]: 'anon',
         [String(EnumProfileStatus.anon)]: 'anon',
         [String(EnumProfileStatus.reg)]: 'reg',
         [String(EnumProfileStatus.ident)]: 'ident',

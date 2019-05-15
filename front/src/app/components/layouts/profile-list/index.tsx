@@ -1,37 +1,33 @@
 import * as React from 'react';
 import { ProfileListView } from './view';
-import { rootStore } from 'app/stores';
 import { observer } from 'mobx-react';
 import { toJS } from 'mobx';
-import { IProfileBrief } from 'app/api/types';
+import { withRootStore, Layout, IHasRootStore } from '../layout';
+import { IProfile } from 'common/types/profile';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onNavigate: (address: string) => void;
 }
 
-@observer
-export class ProfileList extends React.Component<IProps, any> {
-    constructor(props: IProps) {
-        super(props);
-        rootStore.profileListStore.update();
-    }
-
-    public handleRowClick = (record: IProfileBrief) => {
+class ProfileListLayout extends Layout<IProps> {
+    public handleRowClick = (record: IProfile) => {
         this.props.onNavigate(record.address);
     };
 
     public handleChangeFilter = (key: string, value: any) => {
-        rootStore.profileFilterStore.updateUserInput({ [key]: value });
+        this.rootStore.profileFilter.updateUserInput({
+            [key]: value,
+        });
     };
 
     public handleChangePage(page: number) {
-        rootStore.profileListStore.updateUserInput({ page });
+        this.rootStore.profileList.updateUserInput({ page });
     }
 
     public handleTableChange = (pagination: any, filters: any, sorter: any) => {
         if (sorter.field) {
-            rootStore.profileListStore.updateUserInput({
+            this.rootStore.profileList.updateUserInput({
                 sortBy: sorter.field,
                 sortDesc: sorter.order === 'descend',
             });
@@ -39,8 +35,8 @@ export class ProfileList extends React.Component<IProps, any> {
     };
 
     public render() {
-        const listStore = rootStore.profileListStore;
-        const filterStore = rootStore.profileFilterStore;
+        const listStore = this.rootStore.profileList;
+        const filterStore = this.rootStore.profileFilter;
         const dataSource = toJS(listStore.records);
 
         return (
@@ -63,3 +59,5 @@ export class ProfileList extends React.Component<IProps, any> {
         );
     }
 }
+
+export const ProfileList = withRootStore(observer(ProfileListLayout));

@@ -1,7 +1,6 @@
 import * as React from 'react';
-
 import { Send } from 'app/components/layouts/send';
-import { Wallets } from 'app/components/layouts/account-list';
+import { AccountList } from 'app/components/layouts/account-list';
 import { App } from 'app/components/layouts/app';
 import { History } from 'app/components/layouts/history';
 import { SendSuccess } from 'app/components/layouts/send/sub/success';
@@ -31,6 +30,7 @@ import {
 
 import { reload, firstByDefault, replaceWithChild } from './utils';
 import { navigateBack } from './navigate';
+import { OrderCreate } from 'app/components/layouts/order-create';
 
 let defaultAction;
 
@@ -88,8 +88,6 @@ export const createRoutes = (
                                 content: (
                                     <Send
                                         onNotAvailable={n.toMain}
-                                        initialAddress={ctx.query.address}
-                                        initialCurrency={ctx.query.currency}
                                         onRequireConfirmation={n.toConfirmation}
                                     />
                                 ),
@@ -152,7 +150,9 @@ export const createRoutes = (
                                 browserTabTitle: 'Accounts',
                                 pageTitle: 'Accounts',
                                 content: (
-                                    <Wallets navigateToProfile={n.toProfile} />
+                                    <AccountList
+                                        navigateToProfile={n.toProfile}
+                                    />
                                 ),
                             }),
                         )),
@@ -418,6 +418,19 @@ export const createRoutes = (
                         ),
                         children: [
                             {
+                                breadcrumbTitle: 'Order creation',
+                                path: '/create',
+                                action: async (ctx: IContext) => {
+                                    return {
+                                        content: (
+                                            <OrderCreate onCancel={() => {}} />
+                                        ),
+                                        browserTabTitle: 'Order creation',
+                                        pageTitle: 'Order creation',
+                                    };
+                                },
+                            },
+                            {
                                 breadcrumbTitle: '',
                                 path: '/complete-buy',
                                 action: async (ctx: IContext) => {
@@ -488,7 +501,12 @@ export const createRoutes = (
                             return {
                                 browserTabTitle: 'Deals',
                                 pageTitle: 'Deals',
-                                content: <DealList onClickDeal={n.toDeal} />,
+                                content: (
+                                    <DealList
+                                        onClickDeal={n.toDeal}
+                                        onClickViewMarket={n.toOrders}
+                                    />
+                                ),
                             };
                         },
                     },

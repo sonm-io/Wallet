@@ -1,48 +1,61 @@
 @import 'guide.less';
 
-@load-mask-transition: opacity 0.15s ease-in 0.2s;
+:root {
+    --load-mask-debounce-delay: 0.25s;
+}
 
 .sonm-load-mask {
-    visibility: hidden;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 1;
+    z-index: @z-everest;
+    transition: opacity 0.5s var(--load-mask-debounce-delay);
+
+    &--region {
+        position: absolute;
+    }
+
+    &--top {
+        z-index: @z-everest + 1;
+    }
+
+    &--hidden {
+        z-index: -1;
+        opacity: 0;
+    }
 
     &__pale {
-        position: fixed;
+        opacity: 0.8;
+        background-color: @color-brand-bg;
+        cursor: progress;
+        pointer-events: none;
+        position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
-        background-color: @color-brand-bg;
-        opacity: 0;
-        z-index: @z-everest;
-        transition: @load-mask-transition;
-        cursor: progress;
+
+        &--white {
+            opacity: 0.6;
+            background-color: @color-white;
+        }
     }
 
     &__spinner {
-        opacity: 0;
-        z-index: @z-everest + 1;
-        transition: @load-mask-transition;
-        cursor: progress;
-    }
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
 
-    &--visible {
-        visibility: visible;
-    }
+        &--screen-center {
+            position: fixed;
+        }
 
-    &--white &__pale {
-        background-color: @color-white;
-    }
-
-    &--visible&--white &__pale {
-        opacity: 0.4;
-    }
-
-    &--visible &__pale {
-        opacity: 0.8;
-    }
-
-    &--visible &__spinner {
-        opacity: 1;
+        &--region-center {
+            position: absolute;
+        }
     }
 }
 

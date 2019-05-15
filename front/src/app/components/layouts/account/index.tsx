@@ -8,15 +8,16 @@ import { Button } from 'app/components/common/button';
 import Input from 'antd/es/input';
 import Icon from 'antd/es/icon';
 import { Balance } from 'app/components/common/balance-view';
-import { rootStore } from 'app/stores';
 import { TEthereumAddress } from 'app/entities/types';
 import { Changelly } from './sub/changelly';
+import { withRootStore, IHasRootStore } from '../layout';
+import { RootStore } from 'app/stores';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     initialAddress: string;
     onClickHistory: (fromAddress?: TEthereumAddress) => void;
-    onClickSend: (currencyAddress: TEthereumAddress) => void;
+    onClickSend: () => void;
 }
 
 enum Dialogs {
@@ -31,8 +32,13 @@ enum Currencies {
     none = '',
 }
 
-@observer
-export class Account extends React.Component<IProps, any> {
+class AccountLayout extends React.Component<IProps, any> {
+    // ToDo make stateless
+
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         visibleDialog: Dialogs.none,
         currency: Currencies.none,
@@ -40,36 +46,41 @@ export class Account extends React.Component<IProps, any> {
 
     public componentWillMount() {
         if (this.props.initialAddress) {
-            rootStore.sendStore.setUserInput({
+            this.rootStore.send.setUserInput({
                 fromAddress: this.props.initialAddress,
             });
         }
     }
 
-    protected handleChangeAccount = (accountAddres: any) => {
-        rootStore.sendStore.setUserInput({
-            fromAddress: accountAddres,
+    protected handleChangeAccount = (accountAddress: any) => {
+        this.rootStore.send.setUserInput({
+            fromAddress: accountAddress,
         });
     };
 
     protected handleClickHistory = () => {
-        this.props.onClickHistory(rootStore.sendStore.fromAddress);
+        this.props.onClickHistory(this.rootStore.send.fromAddress);
     };
 
     protected handleSendClick = (event: any) => {
-        const currencyAddress = event.target.id;
-        this.props.onClickSend(currencyAddress);
+        const currencyAddress = event.target.name;
+
+        this.rootStore.send.setUserInput({
+            currencyAddress,
+        });
+
+        this.props.onClickSend();
     };
 
     protected handleGiveMeMore = async (event: any) => {
         event.preventDefault();
 
-        await rootStore.mainStore.giveMeMore(
+        await this.rootStore.main.giveMeMore(
             event.target.password.value,
-            rootStore.sendStore.fromAddress,
+            this.rootStore.send.fromAddress,
         );
 
-        await rootStore.mainStore.update();
+        await this.rootStore.gasPrice.update();
     };
 
     protected handleBuySonm = (event: any) => {
@@ -88,7 +99,7 @@ export class Account extends React.Component<IProps, any> {
 
     public render() {
         const { className } = this.props;
-
+        const rootStore = this.rootStore;
         const testEtherUrl = 'https://faucet.rinkeby.io/';
 
         return (
@@ -96,9 +107,10 @@ export class Account extends React.Component<IProps, any> {
                 <AccountBigSelect
                     className="sonm-account__account-select"
                     returnPrimitive
-                    accounts={rootStore.mainStore.accountList}
+                    accounts={rootStore.myProfiles.accountList}
+                    primaryTokenInfo={this.rootStore.currency.primaryTokenInfo}
                     onChange={this.handleChangeAccount}
-                    value={rootStore.sendStore.fromAddress}
+                    value={rootStore.send.fromAddress}
                 />
 
                 <button
@@ -108,12 +120,12 @@ export class Account extends React.Component<IProps, any> {
                     View operation history
                 </button>
 
-                {rootStore.sendStore.currentBalanceList.length === 0 ? null : (
+                {rootStore.send.currentBalanceList.length === 0 ? null : (
                     <ul className="sonm-account__tokens">
                         <Header className="sonm-account__header">
                             Coins and tokens
                         </Header>
-                        {rootStore.sendStore.currentBalanceList.map(
+                        {rootStore.send.currentBalanceList.map(
                             (
                                 {
                                     symbol,
@@ -145,7 +157,7 @@ export class Account extends React.Component<IProps, any> {
                                                 decimalPointOffset
                                             }
                                         />
-                                        {rootStore.mainStore.networkName ===
+                                        {rootStore.wallet.networkName ===
                                             'livenet' && index < 2 ? (
                                             <div
                                                 className="sonm-account__buy-sonm-button"
@@ -173,7 +185,7 @@ export class Account extends React.Component<IProps, any> {
                     </ul>
                 )}
 
-                {rootStore.mainStore.networkName === 'rinkeby' ? (
+                {rootStore.wallet.networkName === 'rinkeby' ? (
                     <form
                         onSubmit={this.handleGiveMeMore}
                         className="sonm-account__give-me"
@@ -219,15 +231,17 @@ export class Account extends React.Component<IProps, any> {
                     </form>
                 ) : null}
 
-                {rootStore.mainStore.networkName === 'livenet' &&
+                {rootStore.wallet.networkName === 'livenet' &&
                 this.state.visibleDialog === Dialogs.changelly ? (
                     <Changelly
                         onClickCross={this.closeDialog}
                         currency={this.state.currency}
-                        address={rootStore.sendStore.fromAddress}
+                        address={rootStore.send.fromAddress}
                     />
                 ) : null}
             </div>
         );
     }
 }
+
+export const Account = withRootStore(observer(AccountLayout));

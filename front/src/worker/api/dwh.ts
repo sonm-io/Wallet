@@ -2,12 +2,16 @@ import * as t from './types';
 // import { IAttribute } from '../../app/api/types';
 import * as mapKeys from 'lodash/fp/mapKeys';
 import * as pick from 'lodash/fp/pick';
-import { TypeEthereumAddress } from '../../app/api/runtime-types';
 import * as tcomb from 'tcomb';
 import { BN } from 'bn.js';
-import { EnumProfileStatus, IBenchmarkMap } from '../../app/api/types';
+import { IBenchmarkMap } from '../../app/api/types';
 import * as moment from 'moment';
 import * as get from 'lodash/fp/get';
+import { IProfile, IProfileInfo } from 'common/types/profile';
+import { TypeEthereumAddress } from 'common/types/runtime/etherium-address';
+import { EnumProfileStatus } from 'common/types/profile-status';
+import { IProfileCertificate } from 'common/types/profile-certificate';
+import { IListResult } from 'common/types';
 
 interface IDictionary<T> {
     [index: string]: keyof T;
@@ -22,9 +26,11 @@ const NETWORK_INCOMING = 0x4;
 const DEFAULT_NODES: t.INodes = {
     livenet: 'https://dwh.livenet.sonm.com:15022/DWHServer/',
     rinkeby: 'https://dwh-testnet.sonm.com:15022/DWHServer/',
+    testrpc: 'https://proxy.test.sonm.com:15123/DWHServer/',
 };
 
 const MB_SIZE = 1000 * 1000;
+const SEC_IN_HOUR = new BN('3600');
 
 export class DWH {
     private url: string;
@@ -56,7 +62,7 @@ export class DWH {
         [8, 'gpuRamSize', MB_SIZE],
     ];
 
-    public static readonly mapProfile: IDictionary<t.IProfileBrief> = {
+    public static readonly mapProfile: IDictionary<IProfile> = {
         UserID: 'address',
         IdentityLevel: 'status',
         Name: 'name',
@@ -69,10 +75,10 @@ export class DWH {
         (Object as any).values(DWH.mapProfile),
     );
 
-    public static readonly defaultProfile: t.IProfileBrief = {
+    public static readonly defaultProfile: IProfile = {
         name: '',
         address: '0x0',
-        status: t.EnumProfileStatus.anonimest,
+        status: EnumProfileStatus.undefined,
         sellOrders: 0,
         buyOrders: 0,
         deals: 0,
@@ -95,17 +101,17 @@ export class DWH {
     };
 
     public static kycAttributesToStatus = {
-        [t.EnumAttributes.Kyc2]: t.EnumProfileStatus.reg,
-        [t.EnumAttributes.Kyc3]: t.EnumProfileStatus.ident,
-        [t.EnumAttributes.Kyc4]: t.EnumProfileStatus.ident,
+        [t.EnumAttributes.Kyc2]: EnumProfileStatus.reg,
+        [t.EnumAttributes.Kyc3]: EnumProfileStatus.ident,
+        [t.EnumAttributes.Kyc4]: EnumProfileStatus.ident,
     };
 
-    private processProfile(item: any): t.IProfileBrief {
+    private processProfile(item: any): IProfile {
         const renamed = DWH.renameProfileKeys(item);
         const picked = DWH.pickProfileKeys(renamed);
         const result = { ...DWH.defaultProfile, ...picked };
 
-        return result as t.IProfileBrief;
+        return result as IProfile;
     }
 
     public getProfiles = async ({
@@ -114,7 +120,7 @@ export class DWH {
         offset,
         sortBy,
         sortDesc,
-    }: t.IListQuery): Promise<t.IListResult<t.IProfileBrief>> => {
+    }: t.IListQuery): Promise<IListResult<IProfile>> => {
         tcomb.maybe(tcomb.String)(filter);
         tcomb.Number(limit);
         tcomb.Number(offset);
@@ -175,9 +181,7 @@ export class DWH {
         };
     };
 
-    public getProfileFull = async ({
-        address,
-    }: any): Promise<t.IProfileFull> => {
+    public getProfileFull = async ({ address }: any): Promise<IProfileInfo> => {
         TypeEthereumAddress(address);
 
         const res = await this.fetchData('GetProfileInfo', { Id: address });
@@ -238,14 +242,14 @@ export class DWH {
     };
 
     protected static priceMultiplierOut = new BN('1000000000000000000').div(
-        new BN('3600'),
+        SEC_IN_HOUR,
     );
 
     public static recalculatePriceOut(price: string) {
         const multiplier = 1000000;
 
         return String(
-            new BN(String(parseFloat(price) * multiplier))
+            new BN(String(Math.round(parseFloat(price) * multiplier)))
                 .mul(DWH.priceMultiplierOut)
                 .div(new BN(multiplier)),
         );
@@ -257,7 +261,7 @@ export class DWH {
         filter,
         sortBy,
         sortDesc,
-    }: t.IListQuery): Promise<t.IListResult<t.IOrder>> => {
+    }: t.IListQuery): Promise<IListResult<t.IOrder>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
@@ -290,7 +294,7 @@ export class DWH {
             masterID: get('creator.address.$eq', mongoLikeQuery),
             type: get('orderSide.$eq', mongoLikeQuery),
             creatorIdentityLevel: get('creator.status.$in', mongoLikeQuery),
-            status: get('orderStatus.$eq', mongoLikeQuery),
+            status: 2,
             price: DWH.getMinMaxFilter(
                 get('price', mongoLikeQuery),
                 DWH.recalculatePriceOut,
@@ -303,6 +307,10 @@ export class DWH {
                 {
                     field: sortField,
                     order: sortDesc ? 1 : 0,
+                },
+                {
+                    field: 'id',
+                    order: 0,
                 },
             ],
             counterpartyID: [
@@ -403,7 +411,7 @@ export class DWH {
             creator: {
                 status:
                     item.creatorIdentityLevel === undefined
-                        ? EnumProfileStatus.anonimest
+                        ? EnumProfileStatus.undefined
                         : item.creatorIdentityLevel,
                 name: item.creatorName || '',
                 address: item.masterID || item.order.authorID,
@@ -423,18 +431,60 @@ export class DWH {
     }
 
     public getDealFull = async ({ id }: any): Promise<t.IDeal> => {
-        const res = await this.fetchData('GetDealDetails', id);
-        return this.parseDeal(res);
+        const [deal, changeRequests] = await Promise.all([
+            this.fetchData('GetDealDetails', id),
+            this.fetchData('GetDealChangeRequests', id),
+        ]);
+
+        const parsedDeal = this.parseDeal(deal);
+
+        parsedDeal.changeRequests =
+            changeRequests && changeRequests.requests
+                ? changeRequests.requests.map(
+                      ({
+                          id,
+                          status,
+                          price,
+                          duration,
+                          requestType,
+                      }: any): t.IDealChangeRequest => ({
+                          id,
+                          status,
+                          price,
+                          duration,
+                          requestType,
+                      }),
+                  )
+                : [];
+
+        return parsedDeal;
     };
 
     public getDeals = async ({
         limit,
         offset,
         filter,
-    }: t.IListQuery): Promise<t.IListResult<t.IDeal>> => {
+        sortBy,
+        sortDesc,
+    }: t.IListQuery): Promise<IListResult<t.IDeal>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);
+        tcomb.maybe(tcomb.String)(sortBy);
+        tcomb.maybe(tcomb.Boolean)(sortDesc);
+
+        let sortField = 'StartTime';
+        switch (sortBy) {
+            case 'price':
+            case 'duration':
+                sortField = sortBy;
+                break;
+            case 'status':
+                sortField = sortBy;
+                break;
+            default:
+                break;
+        }
 
         const mongoLikeQuery = filter ? JSON.parse(filter) : {};
         const res = await this.fetchData('GetDeals', {
@@ -443,10 +493,15 @@ export class DWH {
                 ? mongoLikeQuery.address.$eq
                 : null,
             limit,
+            status: 1,
             sortings: [
                 {
-                    field: 'StartTime',
-                    order: 1,
+                    field: sortField,
+                    order: sortDesc ? 1 : 0,
+                },
+                {
+                    field: 'id',
+                    order: 0,
                 },
             ],
             WithCount: true,
@@ -490,7 +545,7 @@ export class DWH {
         return attrMap;
     }
 
-    protected getKycCertificates(certificates: any[]): t.ICertificate[] {
+    protected getKycCertificates(certificates: any[]): IProfileCertificate[] {
         return certificates
             .filter(x => x.attribute in DWH.kycAttributesToStatus)
             .map(x => ({
@@ -513,12 +568,12 @@ export class DWH {
         );
         deal.supplier = {
             address: deal.masterID,
-            status: supplier.status || EnumProfileStatus.anonimest,
+            status: supplier.status || EnumProfileStatus.undefined,
             name: supplier.name || '',
         };
         deal.consumer = {
             address: deal.consumerID,
-            status: consumer.status || EnumProfileStatus.anonimest,
+            status: consumer.status || EnumProfileStatus.undefined,
             name: consumer.name || '',
         };
         deal.duration = deal.duration ? DWH.parseDuration(deal.duration) : 0;
@@ -567,7 +622,7 @@ export class DWH {
         limit,
         offset,
         filter,
-    }: t.IListQuery): Promise<t.IListResult<t.IWorker>> => {
+    }: t.IListQuery): Promise<IListResult<t.IWorker>> => {
         tcomb.Number(limit);
         tcomb.Number(offset);
         tcomb.maybe(tcomb.String)(filter);

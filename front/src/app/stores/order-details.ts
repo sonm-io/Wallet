@@ -9,11 +9,11 @@ import { RootStore } from './';
 import {
     IOrderParams,
     EnumOrderStatus,
-    EnumProfileStatus,
     IOrder,
     EnumOrderSide,
 } from 'app/api/types';
 import { createBigNumber, BN } from '../utils/create-big-number';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 const SECS_IN_HOUR = new BN('3600');
 const SECS_IN_DAY = SECS_IN_HOUR.mul(new BN('24'));
@@ -39,30 +39,18 @@ export interface IOrderDetailsStoreApi {
     waitForDeal: (accountAddress: string, id: string) => Promise<IOrderParams>;
 }
 
-export interface IOrderDetailsStoreExternal {
-    market: {
-        marketAccountAddress: string;
-    };
-}
-
 export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     protected rootStore: RootStore;
-    protected externalStores: IOrderDetailsStoreExternal;
     protected api: IOrderDetailsStoreApi;
     protected localizator: ILocalizator;
     protected errorProcessor: IErrorProcessor;
 
-    constructor(
-        rootStore: RootStore,
-        externalStores: IOrderDetailsStoreExternal,
-        params: IOrderDetailsStoreServices,
-    ) {
+    constructor(rootStore: RootStore, params: IOrderDetailsStoreServices) {
         super({
             localizator: params.localizator,
             errorProcessor: params.errorProcessor,
         });
 
-        this.externalStores = externalStores;
         this.api = params.api;
         this.localizator = params.localizator;
         this.errorProcessor = params.errorProcessor;
@@ -85,7 +73,8 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         password: '',
     };
 
-    @observable.ref public order: IOrder = OrderDetails.emptyOrder;
+    @observable.ref
+    public order: IOrder = OrderDetails.emptyOrder;
 
     @action.bound
     public updateUserInput(values: Partial<IOrderDetailsInput>) {
@@ -97,7 +86,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         orderId: string,
         transactionHash: string,
     ): string {
-        return this.rootStore.uiStore.addAlert({
+        return this.rootStore.ui.addAlert({
             type: AlertType.warning,
             message: this.localizator.getMessageText([
                 'tx_buy_order_matching',
@@ -107,7 +96,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     }
 
     protected showDealSuccess(orderId: string, dealId: string) {
-        return this.rootStore.uiStore.addAlert({
+        return this.rootStore.ui.addAlert({
             type: AlertType.success,
             message: this.localizator.getMessageText([
                 'tx_buy_order_matched',
@@ -117,7 +106,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
     }
 
     protected showFail(orderId: string) {
-        return this.rootStore.uiStore.addAlert({
+        return this.rootStore.ui.addAlert({
             type: AlertType.error,
             message: this.localizator.getMessageText([
                 'tx_buy_order_match_failed',
@@ -137,7 +126,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         const password = this.password;
         const orderId = this.orderId;
         const duration = this.duration;
-        const accountAddress = this.externalStores.market.marketAccountAddress;
+        const accountAddress = this.rootStore.myProfiles.currentProfileAddress;
 
         const { data, validation } = yield this.api.quickBuy(
             accountAddress,
@@ -159,7 +148,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
                 yield this.waitForDeal(accountAddress, orderId);
 
-                this.rootStore.uiStore.closeAlert(alertId);
+                this.rootStore.ui.closeAlert(alertId);
             } else {
                 this.showFail(orderId);
             }
@@ -177,8 +166,10 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
         this.showDealSuccess(orderId, dealResult.dealID);
     }
 
-    @observable public orderId: string = '';
-    @observable public duration: number = 0;
+    @observable
+    public orderId: string = '';
+    @observable
+    public duration: number = 0;
 
     @action.bound
     public setOrderId(orderId: string) {
@@ -230,10 +221,10 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
         if (price !== undefined && duration !== undefined) {
             const balance =
-                this.rootStore.marketStore.marketAccountView === undefined
+                this.rootStore.myProfiles.current === undefined
                     ? undefined
                     : new BN(
-                          this.rootStore.marketStore.marketAccountView.usdBalance,
+                          this.rootStore.myProfiles.current.marketUsdBalance,
                       );
 
             if (balance !== undefined) {
@@ -256,7 +247,7 @@ export class OrderDetails extends OnlineStore implements IOrderDetailsInput {
 
     public static emptyOrder: IOrder = {
         id: '0',
-        orderSide: EnumOrderSide.any,
+        orderSide: EnumOrderSide.buy,
         creator: {
             address: '0x1234567890123456789012345678901234567890',
             status: EnumProfileStatus.anon,

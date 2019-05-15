@@ -1,0 +1,115 @@
+@deal-list-item__border: 2px solid @color-gray-bg;
+
+.deal-list-item {
+    display: grid;
+    grid-template-areas:
+        'profile buysell pending cost'
+        'bm      bm      bm      fromto';
+
+    grid-template-columns: 485px 188px 1fr 1fr;
+    grid-row-gap: 20px;
+
+    border-bottom: @deal-list-item__border;
+    padding: 20px;
+
+    &:hover {
+        background-color: @color-gray-bg;
+    }
+
+    &__dash {
+        color: @color-border;
+    }
+
+    &__profile {
+        grid-area: profile;
+    }
+
+    &__buysell {
+        grid-area: buysell;
+        margin: 20px 0 0 40px;
+
+        color: @color-observatory;
+        font-size: 15px;
+        font-weight: 550;
+        text-transform: uppercase;
+    }
+    &--finished {
+        .deal-list-item__buysell {
+            color: @color-light-font;
+        }
+    }
+
+    &__pending {
+        grid-area: pending;
+        margin: 22px 0 0 0;
+
+        width: 137px;
+        height: 16px;
+        background-color: @color-pink;
+
+        color: @color-white;
+        font-size: 10px;
+        font-weight: 550;
+        text-transform: uppercase;
+
+        text-align: center;
+    }
+
+    // #region Cost Area
+    &__cost {
+        grid-area: cost;
+        display: flex;
+        flex-direction: column;
+    }
+    &__blocked-balance {
+        color: @color-light-font;
+        font-size: 12px;
+        font-weight: 200;
+        margin: 0 0 0 auto;
+    }
+    &__price {
+        color: @color-font-dark;
+        font-size: 16px;
+        font-weight: 250;
+        margin: 0 0 0 auto;
+        white-space: nowrap;
+    }
+    &__time-left {
+        color: @color-light-font;
+        font-size: 16px;
+        font-weight: 200;
+        margin: 0 0 0 auto;
+    }
+    &__public-ip {
+        color: @color-violet;
+        font-size: 12px;
+        font-weight: 200;
+        line-height: 24px;
+        text-transform: uppercase;
+        letter-spacing: -0.48px;
+        color: @color-violet;
+        margin: 0 0 0 auto;
+    }
+    // #endregion
+
+    &__benchmarks {
+        grid-area: bm;
+
+        display: grid;
+        grid-template-columns: repeat(3, max-content 118px);
+        grid-row-gap: 0px;
+        grid-column-gap: 22px;
+
+        font-size: 14px;
+        padding-left: 60px;
+    }
+
+    &__fromto {
+        grid-area: fromto;
+
+        display: grid;
+        grid-template-columns: max-content max-content;
+        grid-column-gap: 22px;
+        margin: 0 0 0 auto;
+    }
+}

@@ -1,4 +1,5 @@
 import { TUsdWeiPerSeconds, TSeconds } from 'app/entities/types';
+import { IProfileBrief } from 'common/types/profile';
 
 export interface IRawAccount {
     json: string;
@@ -33,27 +34,6 @@ export interface ISendTransactionResult extends ISendTransaction {
     hash: string;
 }
 
-export interface IAccountInfo {
-    name: string;
-    address: string;
-    marketBalance: string;
-    marketUsdBalance: string;
-    currencyBalanceMap: ICurrencyBalanceMap;
-    json: string;
-}
-
-export interface ICurrencyBalanceMap {
-    [address: string]: string; // address => balance
-}
-
-export interface ICurrencyInfo {
-    symbol: string;
-    decimalPointOffset: number;
-    name: string;
-    address: string;
-    balance: string;
-}
-
 export interface ITxListFilter {
     currencyAddress?: string;
     toAddress?: string;
@@ -77,68 +57,15 @@ export interface ISettings {
     language: string;
 }
 
-export interface IWalletListItem {
-    name: string;
-    chainId: string;
-    nodeUrl: string;
-}
-
-export interface IWalletList {
-    version: number;
-    data: IWalletListItem[];
-}
-
 export enum NetworkEnum {
     live = 'livenet',
     rinkeby = 'rinkeby',
 }
 
-export enum EnumProfileStatus {
-    anonimest = 0,
-    anon = 1,
-    reg = 2,
-    ident = 3,
-    pro = 4,
-}
-
 export enum EnumProfileRole {
-    customer = 2,
+    undefined = 0,
     supplier = 1,
-}
-
-export interface IAttribute {
-    label: string;
-    value: string;
-}
-
-export interface IProfileBrief extends IAccountBrief {
-    sellOrders: number;
-    buyOrders: number;
-    deals: number;
-    country: string;
-    logoUrl: string;
-}
-
-export interface IProfileFull extends IProfileBrief {
-    attributes: Array<IAttribute>;
-    description: string;
-    certificates: Array<ICertificate>;
-}
-
-export interface ICertificate {
-    status: EnumProfileStatus;
-    address: string;
-}
-
-export interface IListResult<T> {
-    records: Array<T>;
-    total: number;
-}
-
-export interface IAccountBrief {
-    name?: string;
-    address: string;
-    status: EnumProfileStatus;
+    customer = 2,
 }
 
 export interface IBenchmarkMap {
@@ -160,9 +87,8 @@ export interface IBenchmarkMap {
 }
 
 export enum EnumOrderSide {
-    any = 0,
-    bid = 1,
-    ask = 2,
+    buy = 1,
+    sell = 2,
 }
 
 export enum EnumTransactionStatus {
@@ -179,29 +105,36 @@ export enum EnumOrderStatus {
 export interface IOrder {
     id: string;
     orderSide: EnumOrderSide;
-    creator: IAccountBrief;
+    creator: IProfileBrief;
     usdWeiPerSeconds: TUsdWeiPerSeconds;
     durationSeconds: TSeconds;
     orderStatus: EnumOrderStatus;
     benchmarkMap: Partial<IBenchmarkMap>;
 }
 
+export enum EnumDealStatus {
+    Unknown = 0,
+    Accepted,
+    Closed,
+}
+
 export interface IDeal {
     id: string;
-    supplier: IAccountBrief;
-    consumer: IAccountBrief;
+    supplier: IProfileBrief;
+    consumer: IProfileBrief;
     masterID: string;
     askID: string;
     bidID: string;
     duration: number;
     price: string;
-    status: number;
+    status: EnumDealStatus;
     blockedBalance: string;
     totalPayout: string;
     startTime: number;
     endTime: number;
     benchmarkMap: IBenchmarkMap;
     timeLeft: number;
+    changeRequests?: Array<IDealChangeRequest>;
 }
 
 export interface IKycValidator {
@@ -238,14 +171,30 @@ export interface IOrderParams {
     dealID: string;
 }
 
-export interface IConnectionInfo {
-    ethNodeURL: string;
-    snmNodeURL: string;
-    isTest: boolean;
+export interface IDealComparableParams {
+    price: string;
+    duration: number;
+}
+
+export enum EnumChangeRequestStatus {
+    Created = 1,
+    Canceled = 2,
+    Rejected = 3,
+    Accepted = 4,
+}
+
+export interface IDealChangeRequest {
+    id: string;
+    requestType: EnumOrderSide;
+    duration?: string;
+    price?: string;
+    status: EnumChangeRequestStatus;
 }
 
 export interface ISender {
     send: (messageType: string, payload?: any) => any;
 }
+
+export type TChangeRequestAction = (requestId: string) => void;
 
 export { IResult, IValidation, TResultPromise, IResponse } from 'ipc/types';

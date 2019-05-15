@@ -1,10 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { asyncAction } from 'mobx-utils';
-import {
-    IAccountInfo,
-    ISendTransactionResult,
-    TransactionStatus,
-} from 'app/api';
+import { ISendTransactionResult, TransactionStatus } from 'app/api';
 import { ICurrencyItemProps } from 'app/components/common/currency-big-select';
 import {
     ISendFormValues,
@@ -13,13 +9,14 @@ import {
     AlertType,
     IApiSend,
 } from './types';
-import { OnlineStore } from './online-store';
+import { OnlineStore, IOnlineStoreServices } from './online-store';
 const { pending, catchErrors } = OnlineStore;
 import { RootStore } from './';
 import {
     validateEtherAddress,
     validatePositiveNumber,
     validatePositiveInteger,
+    validateNumberPositiveNumberWithMin,
 } from 'app/utils/validation/';
 import {
     createBigNumber,
@@ -28,7 +25,8 @@ import {
     ZERO,
 } from 'app/utils/create-big-number';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
-import { ILocalizator, IValidation, IHasLocalizator } from 'app/localization';
+import { IValidation } from 'app/localization';
+import { IAccountInfo } from 'common/types/account';
 
 const emptyForm: ISendFormValues = {
     fromAddress: '',
@@ -42,43 +40,48 @@ const emptyForm: ISendFormValues = {
 Object.freeze(emptyForm);
 // const allFormKeys = Object.keys(emptyForm) as Array<keyof ISendFormValues>;
 
-export class SendStore extends OnlineStore implements IHasLocalizator {
+export class SendStore extends OnlineStore {
+    public static readonly GAS_LIMIT_SEND_LIVENET = '70000';
+    public static readonly GAS_LIMIT_SEND_TESTNET = '1000000';
+
     protected rootStore: RootStore;
     protected api: IApiSend;
     protected disableToAddressValidation: boolean;
-    protected defaultLivenetGasLimit: string;
+    protected initialGasLimit: string;
 
     constructor(
         rootStore: RootStore,
-        localizator: ILocalizator,
+        services: IOnlineStoreServices,
         api: IApiSend,
         disableToAddressValidation: boolean = false,
-        defaultLivenetGasLimit: string = '50000',
+        initialGasLimit: string = SendStore.GAS_LIMIT_SEND_LIVENET,
     ) {
-        super({
-            errorProcessor: rootStore.uiStore,
-            localizator,
-        });
-
+        super(services);
         this.rootStore = rootStore;
-        this.localizator = localizator;
         this.disableToAddressValidation = disableToAddressValidation;
         this.api = api;
-        this.defaultLivenetGasLimit = defaultLivenetGasLimit;
+        this.initialGasLimit = initialGasLimit;
+    }
+
+    protected get localizator() {
+        return this.services.localizator;
     }
 
     @computed
     get defaultGasLimit() {
-        return this.rootStore.mainStore.networkName === 'livenet'
-            ? this.defaultLivenetGasLimit
-            : '1000000';
+        return this.rootStore.wallet.isLivenet
+            ? this.initialGasLimit
+            : SendStore.GAS_LIMIT_SEND_TESTNET;
     }
 
-    @observable public userInput: ISendFormValues = { ...emptyForm };
+    @observable
+    public userInput: ISendFormValues = { ...emptyForm };
 
-    @observable protected userInputTouched: Array<keyof ISendFormValues> = [];
+    @observable
+    protected userInputTouched: Array<keyof ISendFormValues> = [];
 
-    @observable protected serverValidation: ISendFormValues = { ...emptyForm };
+    @observable
+    protected serverValidation: ISendFormValues = { ...emptyForm };
 
     protected isFieldTouched(fieldName: keyof ISendFormValues) {
         return this.userInputTouched.indexOf(fieldName) !== -1;
@@ -146,9 +149,10 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
                 result.push(this.localizator.getMessageText('required_value'));
             } else {
                 result.push(
-                    ...validatePositiveNumber(gasPrice).map(
-                        this.localizator.getMessageText,
-                    ),
+                    ...validateNumberPositiveNumberWithMin(
+                        gasPrice,
+                        '0.0000001',
+                    ).map(this.localizator.getMessageText),
                 );
             }
         }
@@ -225,7 +229,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     public get currentCurrency() {
-        return this.rootStore.mainStore.currencyMap.get(this.currencyAddress);
+        return this.rootStore.currency.getItem(this.currencyAddress);
     }
 
     @computed
@@ -259,7 +263,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     public get fromAddress() {
         return (
             this.userInput.fromAddress ||
-            this.rootStore.mainStore.accountMap.keys().next().value ||
+            this.rootStore.myProfiles.accountAddressList[0] ||
             ''
         );
     }
@@ -268,8 +272,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     public get currencyAddress() {
         return (
             this.userInput.currencyAddress ||
-            this.rootStore.mainStore.currencyMap.keys().next().value ||
-            ''
+            this.rootStore.currency.etherAddress
         );
     }
 
@@ -283,7 +286,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         let result: TGasPricePriority = 'normal';
 
         if (this.userInput.gasPriceGwei !== '') {
-            const [min, max] = this.rootStore.mainStore.gasPriceThresholds;
+            const [min, max] = this.rootStore.gasPrice.gasPriceThresholds;
             const userInput = createBigNumber(
                 // gwei -> wei
                 moveDecimalPoint(this.userInput.gasPriceGwei, 9),
@@ -304,7 +307,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     get gasPriceGwei() {
         return this.userInput.gasPriceGwei
             ? this.userInput.gasPriceGwei
-            : moveDecimalPoint(this.rootStore.mainStore.averageGasPrice, -9);
+            : moveDecimalPoint(this.rootStore.gasPrice.averageGasPrice, -9);
     }
 
     @computed
@@ -312,7 +315,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         const amountWei = this.currentBalanceMaximumWei;
         let result = '';
 
-        const currencyInfo = this.rootStore.mainStore.currencyMap.get(
+        const currencyInfo = this.rootStore.currency.getItem(
             this.currencyAddress,
         );
 
@@ -329,7 +332,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
 
     @computed
     get currentBalanceMaximumWei() {
-        const account = this.rootStore.mainStore.accountMap.get(
+        const account = this.rootStore.myProfiles.getItem(
             this.fromAddress,
         ) as IAccountInfo;
 
@@ -338,9 +341,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         );
 
         if (amountWei) {
-            if (
-                this.rootStore.mainStore.etherAddress === this.currencyAddress
-            ) {
+            if (this.rootStore.currency.etherAddress === this.currencyAddress) {
                 const gasPriceWei = createBigNumberFromFloat(
                     this.gasPriceGwei,
                     9,
@@ -372,7 +373,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
             return [];
         }
 
-        return this.rootStore.mainStore.getBalanceListFor(this.fromAddress);
+        return this.rootStore.myProfiles.getBalanceListFor(this.fromAddress);
     }
 
     @action.bound
@@ -417,6 +418,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
     }
 
     protected passwordCache: IPasswordCache = {};
+
     @pending
     @asyncAction
     public *checkSelectedAccountPassword(password: string) {
@@ -467,7 +469,7 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
         this.userInput.amountEther = '';
 
         if (tx.toAddress === tx.fromAddress) {
-            this.rootStore.uiStore.addAlert({
+            this.rootStore.ui.addAlert({
                 type: AlertType.warning,
                 message: this.localizator.getMessageText([
                     'tx_sidechain_delay',
@@ -511,12 +513,10 @@ export class SendStore extends OnlineStore implements IHasLocalizator {
             };
         }
 
-        this.rootStore.uiStore.addAlert(alert);
+        this.rootStore.ui.addAlert(alert);
 
         return result;
     }
-
-    public readonly localizator: ILocalizator;
 }
 
 export default SendStore;

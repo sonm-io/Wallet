@@ -1,12 +1,7 @@
-import {
-    IDeal,
-    IListResult,
-    ISender,
-    IListQuery,
-    IMarketStats,
-} from '../types';
+import { IDeal, ISender, IListQuery, IMarketStats } from '../types';
 import { TypeDeal, TypeDealList, TypeDealStats } from '../runtime-types';
 import { BN } from 'bn.js';
+import { IListResult } from 'common/types';
 
 export class DealApi {
     private ipc: ISender;
@@ -52,7 +47,7 @@ export class DealApi {
             dealsCount: deals.total,
             dealsPrice: total.toString(),
             daysLeft: 0,
-        } as IMarketStats);
+        });
     };
 
     public async close(
@@ -67,6 +62,44 @@ export class DealApi {
             password,
             isBlacklisted,
         });
+
+        return { data, validation };
+    }
+
+    public async createChangeRequest(
+        address: string,
+        password: string,
+        dealId: string,
+        newPrice: string,
+        newDuration: string,
+    ) {
+        const { data, validation } = await this.ipc.send(
+            'deal.createChangeRequest',
+            {
+                address,
+                id: dealId,
+                password,
+                newPrice,
+                newDuration,
+            },
+        );
+
+        return { data, validation };
+    }
+
+    public async cancelChangeRequest(
+        address: string,
+        password: string,
+        dealId: string,
+    ) {
+        const { data, validation } = await this.ipc.send(
+            'deal.cancelChangeRequest',
+            {
+                address,
+                id: dealId,
+                password,
+            },
+        );
 
         return { data, validation };
     }

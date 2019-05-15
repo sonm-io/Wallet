@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
 import { observer } from 'mobx-react';
-import { rootStore } from 'app/stores/';
 import {
     AccountItem,
     IAccountItemProps,
@@ -19,7 +18,9 @@ import { DownloadFile } from 'app/components/common/download-file';
 import { Icon } from 'app/components/common/icon';
 import ShowPassword from './sub/show-private-key/index';
 import { IValidation } from 'app/api/types';
-import { IAccountItemView } from 'app/stores/types';
+import { IHasRootStore, withRootStore } from '../layout';
+import { RootStore } from 'app/stores';
+import { IAccount } from 'app/entities/account';
 
 enum WalletDialogs {
     new,
@@ -30,7 +31,7 @@ enum WalletDialogs {
     changelly,
 }
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     navigateToProfile: (address: string) => void;
 }
@@ -42,8 +43,12 @@ interface IState {
 
 class DeletableItem extends DeletableItemWithConfirmation<IAccountItemProps> {}
 
-@observer
-export class Wallets extends React.Component<IProps, IState> {
+class AccountListLayout extends React.Component<IProps, IState> {
+    // ToDo make stateless
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         visibleDialog: WalletDialogs.none,
         visibleDialogProps: [] as any[],
@@ -54,29 +59,29 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     private handleDelete = (deleteAddress: string) => {
-        rootStore.mainStore.deleteAccount(deleteAddress);
+        this.rootStore.myProfiles.deleteAccount(deleteAddress);
     };
 
     protected handleAddAccount = async (data: IImportAccountForm) => {
-        await rootStore.mainStore.addAccount(
+        await this.rootStore.myProfiles.addAccount(
             data.json,
             data.password,
             data.name,
         );
 
-        if (rootStore.mainStore.noValidationMessages) {
+        if (this.rootStore.myProfiles.noValidationMessages) {
             this.closeDialog();
         }
     };
 
     protected handleCreateAccount = async (data: ICreateAccountForm) => {
-        await rootStore.mainStore.createAccount(
+        await this.rootStore.myProfiles.createAccount(
             data.password,
             data.name,
             data.privateKey,
         );
 
-        if (rootStore.mainStore.noValidationMessages) {
+        if (this.rootStore.myProfiles.noValidationMessages) {
             this.closeDialog();
         }
     };
@@ -89,7 +94,7 @@ export class Wallets extends React.Component<IProps, IState> {
     }
 
     protected closeDialog = () => {
-        rootStore.mainStore.resetServerValidation();
+        this.rootStore.myProfiles.resetServerValidation();
         this.switchDialog(WalletDialogs.none);
     };
     protected openNewWalletDialog = this.switchDialog.bind(
@@ -102,7 +107,7 @@ export class Wallets extends React.Component<IProps, IState> {
     );
 
     protected handleRename = (address: string, name: string) => {
-        rootStore.mainStore.renameAccount(address, name);
+        this.rootStore.myProfiles.renameAccount(address, name);
     };
 
     protected handleRequireAddToken = () => {
@@ -110,7 +115,7 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleDeleteToken = (address: string) => {
-        rootStore.mainStore.removeToken(address);
+        this.rootStore.currency.removeToken(address);
     };
 
     protected handleShowPrivateKey = (address: string) => {
@@ -118,21 +123,21 @@ export class Wallets extends React.Component<IProps, IState> {
     };
 
     protected handleClickProfileIcon = (address: string) => {
-        rootStore.marketStore.setMarketAccountAddress(address);
+        this.rootStore.myProfiles.setCurrent(address);
         this.props.navigateToProfile(address);
     };
 
     public render() {
         const { className } = this.props;
-
+        const rootStore = this.rootStore;
         return (
             <div className={cn('sonm-accounts', className)}>
                 <div className="sonm-accounts__balances">
                     <DownloadFile
-                        getData={rootStore.mainStore.getWalletExportText}
+                        getData={rootStore.wallet.getWalletExportText}
                         className="sonm-accounts__export-wallet-button"
                         fileName={`sonm-wallet-${
-                            rootStore.mainStore.walletName
+                            rootStore.wallet.walletName
                         }.json`}
                     >
                         <Button
@@ -150,7 +155,7 @@ export class Wallets extends React.Component<IProps, IState> {
                     <CurrencyBalanceList
                         className="sonm-accounts__balance-list"
                         currencyBalanceList={
-                            rootStore.mainStore.fullBalanceList
+                            rootStore.myProfiles.fullBalanceList
                         }
                         onRequireAddToken={
                             rootStore.isOffline
@@ -161,41 +166,56 @@ export class Wallets extends React.Component<IProps, IState> {
                     />
                 </div>
                 <div className="sonm-accounts__list">
-                    {rootStore.mainStore.accountList.length === 0 ? (
+                    {rootStore.myProfiles.accountList.length === 0 ? (
                         <EmptyAccountList />
                     ) : (
-                        rootStore.mainStore.accountList.map(
-                            (x: IAccountItemView) => {
-                                return (
-                                    <DeletableItem
-                                        item={x}
-                                        Confirmation={DeleteAccountConfirmation}
-                                        className="sonm-accounts__list-item"
-                                        onDelete={this.handleDelete}
-                                        key={x.address}
-                                        id={x.address}
-                                    >
-                                        <AccountItem
-                                            {...x}
-                                            onClickIcon={
-                                                this.handleClickAccount
-                                            }
-                                            onClickShowPrivateKey={
-                                                this.handleShowPrivateKey
-                                            }
-                                            onClickProfileIcon={
-                                                this.handleClickProfileIcon
-                                            }
-                                            onRename={this.handleRename}
-                                            className="sonm-accounts__list-item-inner"
-                                            hasButtons
-                                        />
-                                    </DeletableItem>
-                                );
-                            },
-                        )
+                        rootStore.myProfiles.accountList.map((x: IAccount) => {
+                            const item: IAccountItemProps = {
+                                account: x,
+                                primaryTokenInfo: this.rootStore.currency
+                                    .primaryTokenInfo,
+                            };
+                            return (
+                                <DeletableItem
+                                    item={item}
+                                    Confirmation={DeleteAccountConfirmation}
+                                    className="sonm-accounts__list-item"
+                                    onDelete={this.handleDelete}
+                                    key={x.address}
+                                    id={x.address}
+                                >
+                                    <AccountItem
+                                        account={x}
+                                        primaryTokenInfo={
+                                            this.rootStore.currency
+                                                .primaryTokenInfo
+                                        }
+                                        onClickIcon={this.handleClickAccount}
+                                        onClickShowPrivateKey={
+                                            this.handleShowPrivateKey
+                                        }
+                                        onClickProfileIcon={
+                                            this.handleClickProfileIcon
+                                        }
+                                        onRename={this.handleRename}
+                                        className="sonm-accounts__list-item-inner"
+                                        hasButtons
+                                    />
+                                </DeletableItem>
+                            );
+                        })
                     )}
                 </div>
+                <CurrencyBalanceList
+                    className="sonm-accounts__balances"
+                    currencyBalanceList={rootStore.myProfiles.fullBalanceList}
+                    onRequireAddToken={
+                        rootStore.isOffline
+                            ? undefined
+                            : this.handleRequireAddToken
+                    }
+                    onDeleteToken={this.handleDeleteToken}
+                />
                 <div className="sonm-accounts__buttons">
                     <Button
                         type="button"
@@ -215,7 +235,7 @@ export class Wallets extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.new ? (
                         <CreateAccount
                             serverValidation={
-                                rootStore.mainStore
+                                rootStore.myProfiles
                                     .serverValidation as IValidation
                             }
                             onSubmit={this.handleCreateAccount}
@@ -225,10 +245,10 @@ export class Wallets extends React.Component<IProps, IState> {
                     {this.state.visibleDialog === WalletDialogs.add ? (
                         <ImportAccount
                             existingAccounts={
-                                rootStore.mainStore.accountAddressList
+                                rootStore.myProfiles.accountAddressList
                             }
                             serverValidation={
-                                rootStore.mainStore
+                                rootStore.myProfiles
                                     .serverValidation as IImportAccountForm
                             }
                             onSubmit={this.handleAddAccount}
@@ -250,5 +270,7 @@ export class Wallets extends React.Component<IProps, IState> {
         );
     }
 }
+
+export const AccountList = withRootStore(observer(AccountListLayout));
 
 // TODO

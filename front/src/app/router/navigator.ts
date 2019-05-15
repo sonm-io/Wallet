@@ -15,8 +15,7 @@ export class Navigator implements INavigator {
         this.n = navigateFn;
     }
 
-    public toSend = (address?: string) =>
-        this.n({ path: `/wallet/send/${address}` });
+    public toSend = () => this.n({ path: `/wallet/send/` });
     public toHistory = () => {
         this.n({ path: '/wallet/history' });
     };
@@ -27,6 +26,8 @@ export class Navigator implements INavigator {
     public toProfile = (address: string) =>
         this.n({ path: `/market/profiles/${address}` });
     public toDeal = (id: string) => this.n({ path: `/market/deals/${id}` });
+    public toDealChangeRequest = (id: string) =>
+        this.n({ path: `/market/deals/${id}/change` });
     public toDealList = () => this.n({ path: `/market/deals/` });
     public toDepositSuccess = () =>
         this.n({ path: `/market/dw/deposit/success` });

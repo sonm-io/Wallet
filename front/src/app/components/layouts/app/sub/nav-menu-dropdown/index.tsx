@@ -3,7 +3,12 @@ import * as cn from 'classnames';
 import { DropdownInput } from 'app/components/common/dropdown-input';
 import * as invariant from 'fbjs/lib/invariant';
 import { observer } from 'mobx-react';
-import rootStore from 'app/stores';
+import {
+    Layout,
+    withRootStore,
+    IHasRootStore,
+} from 'app/components/layouts/layout';
+import { RootStore } from 'app/stores';
 
 type TItem<T> = [
     string, // Title
@@ -13,20 +18,20 @@ type TItem<T> = [
 
 export type TMenuItem = TItem<TItem<undefined>>;
 
-export interface INavMenuDropdownProps {
+export interface INavMenuDropdownProps extends IHasRootStore {
     items: Array<TMenuItem>;
     topMenuActiveItem: number;
     className?: string;
 }
 
-interface ISubItemProps {
+interface ISubItemProps extends IHasRootStore {
     onClick: () => void;
     onClose: () => void;
     isDisabled: boolean;
     title: string;
 }
 
-class SubMenuItem extends React.Component<ISubItemProps, never> {
+class SubMenuItemLayout extends Layout<ISubItemProps> {
     protected handleClick = (event: any) => {
         event.preventDefault();
 
@@ -59,11 +64,14 @@ class SubMenuItem extends React.Component<ISubItemProps, never> {
     }
 }
 
-@observer
-export class NavMenuDropdown extends React.Component<
+class NavMenuDropdownLayout extends React.Component<
     INavMenuDropdownProps,
     any
 > {
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         opened: '',
     };
@@ -105,7 +113,7 @@ export class NavMenuDropdown extends React.Component<
                 {this.props.items.map((item: TMenuItem, index) => {
                     const [title, , children = Array.prototype] = item;
                     const isDisabled =
-                        rootStore.uiStore.disabledMenuItems.indexOf(item[0]) >
+                        this.rootStore.ui.disabledMenuItems.indexOf(item[0]) >
                         -1;
 
                     return (
@@ -124,7 +132,7 @@ export class NavMenuDropdown extends React.Component<
                             onRequireClose={this.handleCloseTopMenu}
                             disabled={isDisabled}
                             dropdownCssClasses={
-                                NavMenuDropdown.dropdownCssClasses
+                                NavMenuDropdownLayout.dropdownCssClasses
                             }
                         >
                             <ul className="sonm-nav-menu__sub-item-list">
@@ -164,5 +172,8 @@ export class NavMenuDropdown extends React.Component<
         );
     }
 }
+
+export const SubMenuItem = withRootStore(SubMenuItemLayout);
+export const NavMenuDropdown = withRootStore(observer(NavMenuDropdownLayout));
 
 export default NavMenuDropdown;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cn from 'classnames';
-import { EnumProfileStatus } from 'app/api/types';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 interface IProfileStatusProps {
     status: EnumProfileStatus;
@@ -20,6 +20,9 @@ export function ProfileStatus(p: IProfileStatusProps) {
     } else if (p.status === EnumProfileStatus.pro) {
         name = 'PROFESSIONAL';
         modifier = 'pro';
+    } else if (p.status === EnumProfileStatus.undefined) {
+        name = 'ANY';
+        modifier = 'undefined';
     }
 
     return (

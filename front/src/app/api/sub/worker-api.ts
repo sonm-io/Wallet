@@ -1,5 +1,6 @@
-import { IWorker, IListResult, ISender, IListQuery } from '../types';
+import { IWorker, ISender, IListQuery } from '../types';
 import { TypeWorkerList } from '../runtime-types';
+import { IListResult } from 'common/types';
 
 export class WorkerApi {
     private ipc: ISender;

@@ -2,15 +2,19 @@ import { observable, computed, action } from 'mobx';
 import { OnlineStore, IErrorProcessor } from './online-store';
 import { ILocalizator } from 'app/localization';
 const { pending } = OnlineStore;
-import { updateUserInput } from './utils/update-user-input';
 import { asyncAction } from 'mobx-utils';
 import { AlertType } from './types';
 import { EnumTransactionStatus, IDeal } from 'app/api/types';
 import { RootStore } from './';
+import validatePositiveNumber from '../utils/validation/validate-positive-number';
 
 export interface IDealDetailsInput {
     password: string;
     isBlacklisted: boolean;
+    newPrice: string;
+    newDuration: string;
+    changeRequestId: string;
+    action: string;
 }
 
 export interface IDealDetailsStoreServices {
@@ -26,14 +30,30 @@ export interface IDealDetailsStoreApi {
         dealId: string,
         isBlacklisted: boolean,
     ) => {};
+    createChangeRequest: (
+        accountAddress: string,
+        password: string,
+        dealId: string,
+        newPrice: string,
+        newDuration: string,
+    ) => {};
+    cancelChangeRequest: (
+        accountAddress: string,
+        password: string,
+        dealId: string,
+    ) => {};
     fetchById: (id: string) => Promise<IDeal>;
 }
 
-export interface IDealDetailsStoreExternal {
-    market: {
-        marketAccountAddress: string;
-    };
-}
+const emptyForm: IDealDetailsInput = {
+    password: '',
+    isBlacklisted: false,
+    newPrice: '',
+    newDuration: '',
+    changeRequestId: '',
+    action: '',
+};
+Object.freeze(emptyForm);
 
 export class DealDetails extends OnlineStore implements IDealDetailsInput {
     protected static readonly emptyDeal: IDeal = {
@@ -79,25 +99,23 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     };
 
     protected rootStore: RootStore;
-    protected externalStores: IDealDetailsStoreExternal;
     protected api: IDealDetailsStoreApi;
     protected localizator: ILocalizator;
     protected errorProcessor: IErrorProcessor;
 
-    @observable.ref public deal: IDeal;
-    @observable public dealId: string = '';
+    public static readonly AUTO_UPDATE_DELAY = 2500;
 
-    constructor(
-        rootStore: RootStore,
-        externalStores: IDealDetailsStoreExternal,
-        params: IDealDetailsStoreServices,
-    ) {
+    @observable.ref
+    public deal: IDeal;
+    @observable
+    public dealId: string = '';
+
+    constructor(rootStore: RootStore, params: IDealDetailsStoreServices) {
         super({
             localizator: params.localizator,
             errorProcessor: params.errorProcessor,
         });
 
-        this.externalStores = externalStores;
         this.api = params.api;
         this.localizator = params.localizator;
         this.errorProcessor = params.errorProcessor;
@@ -106,20 +124,47 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     }
 
     @observable
-    public userInput: IDealDetailsInput = {
-        password: '',
-        isBlacklisted: false,
-    };
+    protected userInputTouched: Array<keyof IDealDetailsInput> = [];
 
     @observable
-    public serverValidation = {
-        password: '',
-    };
+    public userInput: IDealDetailsInput = { ...emptyForm };
+
+    protected isFieldTouched(fieldName: keyof IDealDetailsInput) {
+        return this.userInputTouched.indexOf(fieldName) !== -1;
+    }
+
+    @observable
+    protected serverValidation: IDealDetailsInput = { ...emptyForm };
 
     @action.bound
     public updateUserInput(values: Partial<IDealDetailsInput>) {
-        updateUserInput<IDealDetailsInput>(this, values);
-        this.serverValidation.password = '';
+        const keys = Object.keys(values) as Array<keyof IDealDetailsInput>;
+
+        keys.forEach(key => {
+            if (values[key] !== undefined) {
+                this.userInput[key] = String(values[key]);
+
+                if (this.userInputTouched.indexOf(key) === -1) {
+                    this.userInputTouched.push(key);
+                }
+            }
+        });
+
+        this.resetServerValidation();
+    }
+
+    @action.bound
+    public resetServerValidation() {
+        this.serverValidation = { ...emptyForm };
+    }
+
+    @action.bound
+    public resetUserInput() {
+        this.resetServerValidation();
+        this.userInputTouched = [];
+        this.userInput = {
+            ...emptyForm,
+        };
     }
 
     @pending
@@ -133,11 +178,72 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
 
     @pending
     @asyncAction
-    public *submit() {
+    public *update() {
+        const deal = yield this.api.fetchById(this.dealId);
+
+        if (this.checkPending('changeRequest')) {
+            if (
+                deal.price !== this.deal.price ||
+                deal.duration !== this.deal.duration ||
+                (deal.changeRequests.length && !this.deal.changeRequests) ||
+                (this.deal.changeRequests &&
+                    JSON.stringify(deal.changeRequests) !==
+                        JSON.stringify(this.deal.changeRequests))
+            ) {
+                this.stopPending('changeRequest');
+            }
+        }
+
+        this.deal = deal;
+    }
+
+    @computed
+    public get isPending() {
+        return (
+            this.checkPending('changeRequest') ||
+            this.checkPending('finishDeal')
+        );
+    }
+
+    private addAlert(
+        id: string,
+        data: any,
+        successMessage: string,
+        failMessage: string,
+    ) {
+        let alert;
+
+        if (data.status === EnumTransactionStatus.fail) {
+            alert = {
+                type: AlertType.error,
+                message: this.localizator.getMessageText([
+                    failMessage,
+                    [id, data.transactionHash],
+                ]),
+            };
+        } else {
+            alert = {
+                type: AlertType.success,
+                message: this.localizator.getMessageText([
+                    successMessage,
+                    [id, data.transactionHash],
+                ]),
+            };
+        }
+
+        this.serverValidation.password = '';
+        this.rootStore.ui.addAlert(alert);
+    }
+
+    @pending
+    @asyncAction
+    public *finish() {
+        this.startPending('finishDeal', false);
+
         const password = this.password;
         const id = this.dealId;
         const isBlacklisted = this.isBlacklisted;
-        const accountAddress = this.externalStores.market.marketAccountAddress;
+        const accountAddress = this.rootStore.myProfiles.currentProfileAddress;
 
         const { data, validation } = yield this.api.close(
             accountAddress,
@@ -151,28 +257,66 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
                 validation.password,
             );
         } else {
-            let alert;
+            this.addAlert(
+                id,
+                data,
+                'deal_finish_success',
+                'deal_finish_failed',
+            );
+        }
 
-            if (data.status === EnumTransactionStatus.fail) {
-                alert = {
-                    type: AlertType.error,
-                    message: this.localizator.getMessageText([
-                        'deal_finish_failed',
-                        [id, data.transactionHash],
-                    ]),
-                };
-            } else {
-                alert = {
-                    type: AlertType.success,
-                    message: this.localizator.getMessageText([
-                        'deal_finish_success',
-                        [id, data.transactionHash],
-                    ]),
-                };
-            }
+        this.stopPending('finishDeal');
+    }
 
-            this.serverValidation.password = '';
-            this.rootStore.uiStore.addAlert(alert);
+    @pending
+    @asyncAction
+    public *cancelChangeRequest() {
+        this.startPending('changeRequest', false);
+
+        const password = this.password;
+        const id = this.changeRequestId;
+        const accountAddress = this.rootStore.myProfiles.currentProfileAddress;
+
+        const { validation } = yield this.api.cancelChangeRequest(
+            accountAddress,
+            password,
+            id,
+        );
+
+        if (validation && validation.password) {
+            this.serverValidation.password = this.services.localizator.getMessageText(
+                validation.password,
+            );
+
+            this.stopPending('changeRequest');
+        }
+    }
+
+    @pending
+    @asyncAction
+    public *actionChangeRequest() {
+        this.startPending('changeRequest', false);
+
+        const newPrice = this.newPrice;
+        const newDuration = this.newDuration;
+        const password = this.password;
+        const id = this.dealId;
+        const accountAddress = this.rootStore.myProfiles.currentProfileAddress;
+
+        const { validation } = yield this.api.createChangeRequest(
+            accountAddress,
+            password,
+            id,
+            newPrice,
+            newDuration,
+        );
+
+        if (validation && validation.password) {
+            this.serverValidation.password = this.services.localizator.getMessageText(
+                validation.password,
+            );
+
+            this.stopPending('changeRequest');
         }
     }
 
@@ -182,14 +326,84 @@ export class DealDetails extends OnlineStore implements IDealDetailsInput {
     }
 
     @computed
+    public get newPrice() {
+        return this.userInput.newPrice;
+    }
+
+    @computed
+    public get newDuration() {
+        return this.userInput.newDuration;
+    }
+
+    @computed
     public get isBlacklisted() {
         return this.userInput.isBlacklisted;
     }
 
     @computed
-    public get validationPassword() {
-        return this.serverValidation.password || '';
+    public get changeRequestId() {
+        return this.userInput.changeRequestId;
     }
+
+    @computed
+    public get action() {
+        return this.userInput.action;
+    }
+
+    private validatePrice = (value: string) => {
+        if (this.isFieldTouched('newPrice')) {
+            if (parseFloat(value) < 0.0001) {
+                return 'price_to_small';
+            }
+            return validatePositiveNumber(value).join(', ');
+        } else {
+            return '';
+        }
+    };
+
+    @computed
+    public get validation() {
+        return {
+            price: this.services.localizator.getMessageText(
+                this.validatePrice(String(this.userInput.newPrice)),
+            ),
+            password: this.serverValidation.password || '',
+        };
+    }
+
+    @computed
+    public get isFormValid() {
+        return this.validation.price === '' && this.newPrice !== '';
+    }
+
+    protected updateTick = async () => {
+        if (!this.isAutoUpdateEnabled) {
+            return;
+        }
+
+        await this.update();
+
+        await new Promise(done =>
+            setTimeout(done, DealDetails.AUTO_UPDATE_DELAY),
+        );
+
+        if (this.isAutoUpdateEnabled) {
+            this.updateTick();
+        }
+    };
+
+    protected isAutoUpdateEnabled = false;
+
+    public startAutoUpdate = () => {
+        if (this.isAutoUpdateEnabled === false) {
+            this.isAutoUpdateEnabled = true;
+            this.updateTick();
+        }
+    };
+
+    public stopAutoUpdate = () => {
+        this.isAutoUpdateEnabled = false;
+    };
 }
 
 export default DealDetails;

@@ -8,6 +8,9 @@ module.exports = {
         mobxReact: 'mobx-react',
         moment: 'moment',
     },
+    theme: {
+        maxWidth: 1200,
+    },
     styles: {
         Playground: {
             preview: {

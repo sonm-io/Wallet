@@ -20,20 +20,16 @@ const KEY_WALLETS_LIST = 'sonm_wallets';
 const PENDING_HASH = 'waiting for hash...';
 
 import ipc from '../ipc';
+import { ICurrencyInfo } from 'common/types/currency';
+import { IAccountInfo } from 'common/types/account';
+import { DEFAULT_NODES } from './default-nodes';
+import { IListResult } from 'common/types';
+import { IWallet } from 'common/types/wallet';
 
 async function ipcSend(type: string, payload?: any): Promise<any> {
     const res = await ipc.send(type, payload);
     return res.data || null;
 }
-
-const DEFAULT_NODES: t.INodes = {
-    default: 'https://mainnet.infura.io',
-    livenet: 'https://mainnet.infura.io',
-    livenet_private: 'https://sidechain.livenet.sonm.com',
-    rinkeby: 'https://rinkeby.infura.io',
-    rinkeby_private: 'https://sidechain-dev.sonm.com',
-    testrpc: 'http://localhost:8545',
-};
 
 const ZERO_ADDRESS = Array(41).join('0');
 const WEI_PRECISION = Array(19).join('0');
@@ -114,8 +110,6 @@ class Api {
             importWallet: this.importWallet,
             exportWallet: this.exportWallet,
 
-            getConnectionInfo: this.getConnectionInfo,
-
             'account.add': this.addAccount,
             'account.create': this.createAccount,
             'account.createFromPrivateKey': this.createAccountFromPrivateKey,
@@ -145,6 +139,8 @@ class Api {
             'worker.confirm': this.confirmWorker,
             'order.buy': this.buyOrder,
             'deal.close': this.closeDeal,
+            'deal.createChangeRequest': this.createChangeRequest,
+            'deal.cancelChangeRequest': this.cancelChangeRequest,
             'order.getParams': wrapInResponse(this.getOrderParams),
             'order.waitForDeal': wrapInResponse(this.waitForOrderDeal),
             'market.getValidators': wrapInResponse(dwh.getValidators),
@@ -175,7 +171,7 @@ class Api {
 
     public getWalletList = async (): Promise<t.IResponse> => {
         return {
-            data: (await this.getWallets()).data,
+            data: (await this.getWallets()).data as IWallet[],
         };
     };
 
@@ -198,20 +194,6 @@ class Api {
     public getSettings = async (): Promise<t.IResponse> => {
         return {
             data: this.storage.settings,
-        };
-    };
-
-    public getConnectionInfo = async (): Promise<t.IResponse> => {
-        const chainId = this.storage.settings.chainId;
-        return {
-            data: {
-                ethNodeURL: DEFAULT_NODES[chainId].replace('https://', ''),
-                snmNodeURL: DEFAULT_NODES[`${chainId}_private`].replace(
-                    'https://',
-                    '',
-                ),
-                isTest: chainId !== 'livenet',
-            },
         };
     };
 
@@ -342,7 +324,9 @@ class Api {
         this.hash = `sonm_${SHA256(name).toString(Hex)}`;
     }
 
-    public createWallet = async (data: t.IPayload): Promise<t.IResponse> => {
+    public createWallet = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse<IWallet>> => {
         if (data.password && data.walletName && data.chainId) {
             this.setWalletHash(data.walletName);
             this.secretKey = data.password;
@@ -365,7 +349,7 @@ class Api {
 
             // add wallet to list
             const walletList = await this.getWallets();
-            const wallet = {
+            const wallet: IWallet = {
                 name: data.walletName,
                 chainId: this.storage.settings.chainId,
                 nodeUrl: this.storage.settings.nodeUrl,
@@ -396,7 +380,9 @@ class Api {
         }
     };
 
-    public importWallet = async (data: t.IPayload): Promise<t.IResponse> => {
+    public importWallet = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse<IWallet>> => {
         if (data.password && data.file && data.walletName) {
             if (data.file.substr(0, 4) === 'sonm') {
                 try {
@@ -418,7 +404,7 @@ class Api {
                     // add wallet to list
                     const walletList = await this.getWallets();
 
-                    const walletInfo = {
+                    const walletInfo: IWallet = {
                         name: data.walletName,
                         chainId: this.storage.settings.chainId,
                         nodeUrl: this.storage.settings.nodeUrl,
@@ -528,7 +514,6 @@ class Api {
     public getAccountList = async (): Promise<t.IResponse> => {
         const accounts = (await this.getAccounts()) || {};
         const addresses = Object.keys(accounts);
-
         //lazy init tokens
         try {
             if (
@@ -570,7 +555,7 @@ class Api {
         const rate =
             rateResponse && rateResponse.data ? rateResponse.data : undefined;
 
-        const list = [] as t.IAccountInfo[];
+        const list = [] as IAccountInfo[];
         for (let i = 0; i < addresses.length; i++) {
             const address = addresses[i];
 
@@ -638,8 +623,11 @@ class Api {
 
                 if (key !== KEY_WALLETS_LIST) {
                     this.dwh.setNetworkURL(storage.settings.chainId);
-                }
 
+                    for (const token of storage.tokens) {
+                        token.address = token.address.toLowerCase();
+                    }
+                }
                 return storage;
             } catch (err) {
                 // console.log(err);
@@ -946,6 +934,46 @@ class Api {
         }
     };
 
+    public createChangeRequest = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.id && data.password) {
+            data.newPrice = data.newPrice
+                ? DWH.recalculatePriceOut(data.newPrice)
+                : '0';
+
+            return this.getMethod(
+                'createChangeRequest',
+                [data.id, data.newPrice, data.newDuration || 0],
+                true,
+            )(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
+    public cancelChangeRequest = async (
+        data: t.IPayload,
+    ): Promise<t.IResponse> => {
+        if (!data.password) {
+            return {
+                validation: {
+                    password: 'password_not_valid',
+                },
+            };
+        } else if (data.address && data.id && data.password) {
+            return this.getMethod('cancelChangeRequest', [data.id], true)(data);
+        } else {
+            throw new Error('required_params_missed');
+        }
+    };
+
     public getOrderParams = async ({
         address,
         id,
@@ -1156,7 +1184,7 @@ class Api {
 
             const transactions = this.storage.transactions;
             const token = this.storage.tokens.find(
-                (item: t.ICurrencyInfo) => item.address === currencyAddress,
+                (item: ICurrencyInfo) => item.address === currencyAddress,
             );
 
             const transaction = {
@@ -1268,7 +1296,7 @@ class Api {
 
     public getTransactionList = async (
         data: t.IPayload,
-    ): Promise<t.IListResult<t.ISendTransactionResult>> => {
+    ): Promise<IListResult<t.ISendTransactionResult>> => {
         let { filter, limit, offset } = data;
         filter = filter ? JSON.parse(filter) : {};
 
@@ -1334,6 +1362,11 @@ class Api {
     public async resolve(type: string, payload: any): Promise<t.IResponse> {
         if (this.routes[type]) {
             return this.routes[type](payload);
+        } else if (typeof (this as any)[type] === 'function') {
+            const result = (this as any)[type].apply(this, payload);
+            return result.then((r: any) => {
+                return { data: r };
+            });
         } else {
             throw new Error('route_not_exists');
         }

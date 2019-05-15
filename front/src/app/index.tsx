@@ -1,36 +1,66 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 import * as queryStr from 'query-string';
-import { resolve } from './router';
 import { history } from './router/history';
-import { rootStore } from './stores';
 import { Login } from './components/layouts/login';
-import { IWalletListItem } from 'app/api/types';
+import { Wallet } from 'app/entities/wallet';
+import { Provider } from 'mobx-react';
+import { localizator as en } from 'app/localization';
+import { RootStore } from 'app/stores';
+import { getResolveMethod } from 'app/router';
+import { RootStoreContext } from 'app/contexts/root-store-context';
 
 interface ILocationParams {
     pathname: string;
     search: string;
 }
 
-/**
- * Renders app with state corresponding to given location
- * @param {Object} location
- */
-async function renderByPath({ pathname, search }: ILocationParams) {
-    const query = queryStr.parse(search);
-    const { content, browserTabTitle } = await resolve({ pathname, query });
+class Renderer {
+    protected rootStore: RootStore;
+    protected resolve: any;
 
-    window.document.title = browserTabTitle;
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
+        this.resolve = getResolveMethod(rootStore);
+    }
 
-    render(content, window.document.querySelector('#root'));
+    /**
+     * Renders app with state corresponding to given location
+     * @param {Object} location
+     */
+    public async renderByPath({ pathname, search }: ILocationParams) {
+        const query = queryStr.parse(search);
+        const { content, browserTabTitle } = await this.resolve({
+            pathname,
+            query,
+        });
+
+        window.document.title = browserTabTitle;
+
+        render(
+            <Provider rootStore={this.rootStore}>
+                <RootStoreContext.Provider value={this.rootStore}>
+                    {content}
+                </RootStoreContext.Provider>
+            </Provider>,
+            window.document.querySelector('#root'),
+        );
+    }
 }
 
-async function handleLogin(wallet: IWalletListItem) {
-    history.listen(renderByPath);
-
-    await Promise.all([rootStore.mainStore.init(wallet)]);
-
-    renderByPath((history as any).location);
+async function handleLogin(wallet: Wallet) {
+    const rootStore = new RootStore(en);
+    if (IS_DEV) {
+        (window as any).__rootStore = rootStore;
+    }
+    const renderer = new Renderer(rootStore);
+    history.listen(renderer.renderByPath.bind(renderer));
+    await Promise.all([
+        rootStore.currency.init(),
+        rootStore.myProfiles.init(),
+        rootStore.wallet.init(wallet),
+    ]);
+    renderer.renderByPath((history as any).location);
 }
 
 export async function run() {

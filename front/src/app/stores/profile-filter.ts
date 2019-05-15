@@ -1,6 +1,7 @@
 import { observable, computed, action } from 'mobx';
-import { EnumProfileStatus, EnumProfileRole } from '../api/types';
+import { EnumProfileRole } from '../api/types';
 import { IFilterStore } from './filter-base';
+import { EnumProfileStatus } from 'common/types/profile-status';
 
 export interface IOrderFilter {
     status: EnumProfileStatus;
@@ -37,12 +38,12 @@ export class ProfileFilterStore implements IOrderFilter, IFilterStore {
 
     @computed
     public get status(): EnumProfileStatus {
-        return Number(this.userInput.status) || EnumProfileStatus.anon;
+        return Number(this.userInput.status) || EnumProfileStatus.undefined;
     }
 
     @computed
     public get role(): EnumProfileRole {
-        return Number(this.userInput.role) || EnumProfileRole.supplier;
+        return Number(this.userInput.role) || EnumProfileRole.undefined;
     }
 
     @computed

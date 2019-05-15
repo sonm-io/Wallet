@@ -6,14 +6,19 @@ import { Button } from 'app/components/common/button';
 import { ButtonGroup } from 'app/components/common/button-group';
 import { FormField } from 'app/components/common/form';
 import { SendStore } from 'app/stores/send';
-import { rootStore } from 'app/stores';
 import { moveDecimalPoint } from 'app/utils/move-decimal-point';
 import { AccountItem } from 'app/components/common/account-item';
 import { Input } from 'app/components/common/input';
 import { ConfirmationPanel } from 'app/components/common/confirmation-panel';
 import { IChangeParams } from 'app/components/common/types';
+import {
+    withRootStore,
+    IHasRootStore,
+    Layout,
+} from 'app/components/layouts/layout';
+import { RootStore } from 'app/stores';
 
-interface IProps {
+interface IProps extends IHasRootStore {
     className?: string;
     onSuccess: () => void;
     onNotAvailable: () => void;
@@ -30,39 +35,49 @@ interface IDWProps extends IProps {
 type PriorityInput = new () => ButtonGroup<string>;
 const PriorityInput = ButtonGroup as PriorityInput;
 
-export function Deposit(props: IProps) {
-    return (
-        <DepositWithdraw
-            {...props}
-            sendStore={rootStore.depositStore}
-            title="Deposit"
-        />
-    );
+class DepositLayout extends Layout<IProps> {
+    public render() {
+        return (
+            <DepositWithdraw
+                {...this.props}
+                sendStore={this.rootStore.deposit}
+                title="Deposit"
+            />
+        );
+    }
 }
 
-export function Withdraw(props: IProps) {
-    return (
-        <DepositWithdraw
-            {...props}
-            sendStore={rootStore.withdrawStore}
-            title="Withdraw"
-        />
-    );
+class WithdrawLayout extends Layout<IProps> {
+    public render() {
+        return (
+            <DepositWithdraw
+                {...this.props}
+                sendStore={this.rootStore.withdraw}
+                title="Withdraw"
+            />
+        );
+    }
 }
 
 @observer
 class DepositWithdraw extends React.Component<IDWProps, any> {
+    // ToDo make stateless
+    protected get rootStore() {
+        return this.props.rootStore as RootStore;
+    }
+
     public state = {
         validationPassword: '',
     };
 
     protected getCurrency = () =>
-        rootStore.mainStore.currencyMap.get(this.store.currencyAddress);
+        this.rootStore.currency.getItem(this.store.currencyAddress);
 
     protected syncStores() {
         autorun(() => {
-            const fromAddress = rootStore.marketStore.marketAccountAddress;
-            const primaryTokenAddress = rootStore.mainStore.primaryTokenAddress;
+            const fromAddress = this.rootStore.myProfiles.currentProfileAddress;
+            const primaryTokenAddress = this.rootStore.currency
+                .primaryTokenAddress;
 
             this.props.sendStore.setUserInput({
                 fromAddress,
@@ -73,7 +88,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     }
 
     public componentDidMount() {
-        if (rootStore.mainStore.accountAddressList.length === 0) {
+        if (this.rootStore.myProfiles.accountAddressList.length === 0) {
             this.props.onNotAvailable();
         } else {
             this.syncStores();
@@ -105,8 +120,8 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
 
     // TODO
     protected handleChangePriority = (value: string) => {
-        const [min, max] = rootStore.mainStore.gasPriceThresholds;
-        let gasPrice = rootStore.mainStore.averageGasPrice;
+        const [min, max] = this.rootStore.gasPrice.gasPriceThresholds;
+        let gasPrice = this.rootStore.gasPrice.averageGasPrice;
 
         if (value === 'low') {
             gasPrice = min;
@@ -126,7 +141,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
 
         if (isPasswordValid) {
             (this.store.confirmTransaction(password) as any).then(() =>
-                rootStore.dwHistoryListStore.update(),
+                this.rootStore.dwHistoryList.update(),
             );
 
             this.store.resetUserInput();
@@ -140,7 +155,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
     };
 
     public renderAccount() {
-        const account = rootStore.mainStore.accountList.find(
+        const account = this.rootStore.myProfiles.accountList.find(
             item => item.address === this.store.fromAddress,
         );
         const className = cn(
@@ -151,16 +166,19 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         );
 
         if (account) {
-            const { name, address } = account;
-
             return this.props.isConfirmation ? (
                 <AccountItem
-                    name={name}
-                    address={address}
+                    account={account}
+                    hideBalance
+                    primaryTokenInfo={this.rootStore.currency.primaryTokenInfo}
                     className={className}
                 />
             ) : (
-                <AccountItem {...account} className={className} />
+                <AccountItem
+                    account={account}
+                    primaryTokenInfo={this.rootStore.currency.primaryTokenInfo}
+                    className={className}
+                />
             );
         } else {
             return null;
@@ -267,7 +285,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                     <dt className="deposit-withdraw__commission-label">
                         SONM commission
                     </dt>
-                    <dd>0</dd>
+                    <dd>3</dd>
                 </dl>
             </React.Fragment>
         );
@@ -279,7 +297,7 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
                 className="deposit-withdraw__confirmation-panel"
                 labelSubmit={this.props.title.toUpperCase()}
                 onSubmit={
-                    !rootStore.mainStore.isOffline
+                    !this.rootStore.main.isOffline
                         ? this.handleConfrim
                         : undefined
                 }
@@ -323,3 +341,6 @@ class DepositWithdraw extends React.Component<IDWProps, any> {
         );
     }
 }
+
+export const Deposit = withRootStore(DepositLayout);
+export const Withdraw = withRootStore(WithdrawLayout);

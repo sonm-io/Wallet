@@ -1,4 +1,4 @@
-import { rootStore } from 'app/stores';
+import { RootStore } from 'app/stores';
 import { IOrderFilter } from 'app/stores/order-filter';
 import { IOrder } from 'app/api/types';
 import { TEthereumAddress } from '../entities/types';
@@ -10,12 +10,18 @@ const str = (x: any) => (x === undefined ? '' : String(x));
 const SECS_IN_HOUR = new BN('3600');
 
 export class DataLoader {
+    protected rootStore: RootStore;
+
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
+    }
+
     public loadOrder(orderId: string) {
-        rootStore.orderDetailsStore.setOrderId(orderId);
+        this.rootStore.orderDetails.setOrderId(orderId);
     }
 
     public loadOrderListByParams(filter: Partial<IOrderFilter>) {
-        rootStore.orderFilterStore.setUserInput(filter);
+        this.rootStore.orderFilter.setUserInput(filter);
     }
 
     public loadOrderListByOrder(order: IOrder) {
@@ -40,46 +46,46 @@ export class DataLoader {
         fromAddress: TEthereumAddress,
         currencyAddress: TEthereumAddress,
     ) {
-        rootStore.walletHistoryFilterStore.updateUserInput({
+        this.rootStore.walletHistoryFilter.updateUserInput({
             fromAddress,
             currencyAddress,
         });
     }
 
     public loadProfileDetails(address: TEthereumAddress) {
-        rootStore.profileDetailsStore.setAddress(address);
+        this.rootStore.profileDetails.setAddress(address);
     }
 
     public loadDwhHistory() {
-        rootStore.dwHistoryListStore.update();
+        this.rootStore.dwHistoryList.update();
     }
 
     public loadWalletHistory() {
-        rootStore.dwHistoryListStore.update();
+        this.rootStore.dwHistoryList.update();
     }
 
     public loadDeal(dealId: string) {
-        rootStore.dealDetailsStore.setDealId(dealId);
+        this.rootStore.dealDetails.setDealId(dealId);
     }
 
     public loadDealList() {
-        rootStore.dealListStore.update();
+        this.rootStore.dealList.update();
     }
 
     public loadProfileList() {
-        rootStore.profileListStore.update();
+        this.rootStore.profileList.update();
     }
 
     public loadOrderList() {
-        rootStore.ordersListStore.update();
+        this.rootStore.ordersList.update();
     }
 
     public loadFullOrderList() {
-        rootStore.orderFilterStore.resetFilters();
+        this.rootStore.orderFilter.resetFilters();
     }
 
     public loadWorkerList() {
-        rootStore.workerListStore.update();
+        this.rootStore.workerList.update();
     }
 
     public loadKycList() {}

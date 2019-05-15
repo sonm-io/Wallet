@@ -25,27 +25,27 @@ interface IProps {
 class OrderPropertyList extends PropertyList<IOrder> {}
 
 export class OrderView extends React.Component<IProps, never> {
-    public static orderViewConfig: Array<IPropertyItemConfig<keyof IOrder>> = [
+    public static orderViewConfig: Array<IPropertyItemConfig<IOrder>> = [
         {
-            key: 'id',
+            id: 'id',
             name: 'ID',
         },
         {
-            key: 'durationSeconds',
+            id: 'durationSeconds',
             name: 'Duration',
-            render: (seconds: number) =>
+            renderValue: (seconds: number) =>
                 seconds ? formatSeconds(seconds) : '--',
         },
         {
-            key: 'orderSide',
+            id: 'orderSide',
             name: 'Type',
-            render: (orderType: number) =>
-                orderType === EnumOrderSide.bid ? 'Bid' : 'Ask',
+            renderValue: (orderType: number) =>
+                orderType === EnumOrderSide.buy ? 'Bid' : 'Ask',
         },
         {
-            key: 'orderStatus',
+            id: 'orderStatus',
             name: 'Status',
-            render: (status: number) =>
+            renderValue: (status: number) =>
                 status === EnumOrderStatus.active ? 'Active' : 'Not Active',
         },
     ];
@@ -61,10 +61,10 @@ export class OrderView extends React.Component<IProps, never> {
                 <OrderPropertyList
                     title="Details"
                     className="order-view__details"
-                    dataSource={p.order}
+                    data={p.order}
                     config={OrderView.orderViewConfig}
                 />
-                {p.order.orderSide === EnumOrderSide.ask ? (
+                {p.order.orderSide === EnumOrderSide.sell ? (
                     p.isBuyingAvailable ? (
                         <ConfirmationPanel
                             className="order-view__confirmation"
@@ -85,6 +85,8 @@ export class OrderView extends React.Component<IProps, never> {
                     title="Resource parameters"
                     className="order-view__benchmark"
                     data={p.order.benchmarkMap}
+                    ids={Benchmark.detailsPanelIds}
+                    names={Benchmark.detailsPanelNames}
                 />
                 <div className="order-view__price">
                     <h4 className="order-view__header">Price</h4>

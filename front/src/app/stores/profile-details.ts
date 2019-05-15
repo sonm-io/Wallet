@@ -4,13 +4,15 @@ import { ILocalizator } from 'app/localization';
 const { pending, catchErrors } = OnlineStore;
 import { asyncAction } from 'mobx-utils';
 import { RootStore } from './';
-import { IProfileFull, EnumProfileStatus, IKycValidator } from 'app/api/types';
+import { IKycValidator } from 'app/api/types';
 import { TEthereumAddress } from '../entities/types';
+import { EnumProfileStatus } from 'common/types/profile-status';
+import { IProfileInfo, emptyProfile } from 'common/types/profile';
 
 export interface IOrderDetails {
     setAddress(address: TEthereumAddress): TEthereumAddress;
     address: TEthereumAddress;
-    profile: IProfileFull;
+    profile: IProfileInfo;
 }
 
 export interface IProfileDetailsStoreServices {
@@ -20,7 +22,7 @@ export interface IProfileDetailsStoreServices {
 }
 
 export interface IProfileDetailsStoreApi {
-    fetchByAddress: (address: string) => Promise<IProfileFull>;
+    fetchByAddress: (address: string) => Promise<IProfileInfo>;
 }
 
 export interface IKycCertificate {
@@ -53,14 +55,16 @@ export class ProfileDetails extends OnlineStore implements IOrderDetails {
         });
     }
 
-    @observable public address: TEthereumAddress = '';
+    @observable
+    public address: TEthereumAddress = '';
 
     @action
     public setAddress(address: TEthereumAddress) {
         return (this.address = address);
     }
 
-    @observable.ref public profile: IProfileFull = ProfileDetails.emptyProfile;
+    @observable.ref
+    public profile: IProfileInfo = { ...emptyProfile };
 
     @pending
     @catchErrors({ restart: true })
@@ -80,7 +84,7 @@ export class ProfileDetails extends OnlineStore implements IOrderDetails {
 
     @computed
     get certificates(): IKycCertificate[] {
-        const validators = this.rootStore.marketStore.validators;
+        const validators = this.rootStore.validators.validators;
 
         return this.profile.certificates.map(x => {
             const validator = validators.find(z => z.id === x.address);
@@ -94,20 +98,6 @@ export class ProfileDetails extends OnlineStore implements IOrderDetails {
             };
         });
     }
-
-    public static emptyProfile: IProfileFull = {
-        attributes: [],
-        description: '',
-        certificates: [],
-        sellOrders: 0,
-        buyOrders: 0,
-        deals: 0,
-        country: 'uk',
-        logoUrl: '',
-        name: '',
-        address: '',
-        status: EnumProfileStatus.anon,
-    };
 }
 
 export default ProfileDetails;

@@ -30,9 +30,12 @@ export interface IUserInput {
     sortDesc: boolean;
 }
 
-export interface IFilterStore {
-    readonly filter: any;
+export interface IFilterRead {
     readonly filterAsString: string;
+}
+
+export interface IFilterStore extends IFilterRead {
+    readonly filter: any;
 }
 
 export interface IListStore<T> extends IOnlineStore {
@@ -90,7 +93,6 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
     protected reactionOnFilter = () => {
         const filter = toJS(this.reactiveDeps.filter.filterAsString);
-
         this.updateUserInput({ filter });
     };
 
@@ -107,17 +109,23 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
     protected reactiveDeps: IReactiveDependecies;
 
-    @observable public status: Status = Status.CREATED;
+    @observable
+    public status: Status = Status.CREATED;
 
-    @observable public error = '';
+    @observable
+    public error = '';
 
-    @observable public total = 0;
+    @observable
+    public total = 0;
 
-    @observable public offset = 1;
+    @observable
+    public offset = 1;
 
-    @observable public limit = 20;
+    @observable
+    public limit = 20;
 
-    @observable.ref public records: Array<TItem> = [];
+    @observable.ref
+    public records: Array<TItem> = [];
 
     @observable
     private userInput: IUserInput = {
@@ -184,7 +192,6 @@ export class ListStore<TItem> extends OnlineStore implements IListStore<TItem> {
 
         try {
             const response = yield this.services.api.fetchList(query);
-
             this.offset = offset;
             this.limit = limit;
             this.records = response.records;

@@ -28,6 +28,8 @@ export class OnlineStore implements IOnlineStore {
 
     protected services: IOnlineStoreServices;
 
+    public static AUTO_UPDATE_DELAY = 5000;
+
     @asyncAction
     protected *goOffline() {
         if (this.isOffline) {
@@ -49,11 +51,12 @@ export class OnlineStore implements IOnlineStore {
     }
 
     protected pendingIdx = 0;
-    @observable public pendingSet = new Map(); // mobx doesn't support observable set
+    @observable
+    public pendingSet = new Map(); // mobx doesn't support observable set
 
     @action.bound
-    public startPending(name: string): string {
-        const pendingId = `${name}_${this.pendingIdx++}`;
+    public startPending(name: string, addCounter: boolean = true): string {
+        const pendingId = addCounter ? `${name}_${this.pendingIdx++}` : name;
 
         this.pendingSet.set(pendingId, true);
 
@@ -70,7 +73,12 @@ export class OnlineStore implements IOnlineStore {
         return this.pendingSet.size > 0;
     }
 
-    @observable public isOffline = false;
+    public checkPending(key: string = '') {
+        return this.pendingSet.has(key);
+    }
+
+    @observable
+    public isOffline = false;
 
     @action
     protected handleError(e: WalletApiError, restart: boolean) {

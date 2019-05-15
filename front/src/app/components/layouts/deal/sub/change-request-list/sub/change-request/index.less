@@ -1,0 +1,31 @@
+@import 'guide.less';
+
+.change-request {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &__side {
+        width: 80px;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 24px;
+    }
+
+    &__param {
+        margin: auto 10px;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 24px;
+    }
+
+    &__button {
+        min-width: 105px;
+        margin: auto 10px;
+        text-transform: capitalize;
+
+        &:first-of-type {
+            margin-left: auto;
+        }
+    }
+}
