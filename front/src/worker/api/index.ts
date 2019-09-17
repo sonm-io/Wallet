@@ -320,8 +320,12 @@ class Api {
         }
     };
 
+    private getWalletHash(name: string) {
+        return `sonm_${SHA256(name).toString(Hex)}`;
+    }
+
     private setWalletHash(name: string) {
-        this.hash = `sonm_${SHA256(name).toString(Hex)}`;
+        this.hash = this.getWalletHash(name);
     }
 
     public createWallet = async (
@@ -612,7 +616,6 @@ class Api {
         decrypt: boolean,
     ): Promise<any> => {
         const dataFromStorage = await ipcSend('get', { key });
-
         if (dataFromStorage) {
             try {
                 const data = decrypt
@@ -672,10 +675,7 @@ class Api {
     }
 
     private async processTransactions() {
-        const factory = createSonmFactory(
-            this.storage.settings.nodeUrl,
-            this.storage.settings.chainId,
-        );
+        const factory = this.getFactory();
         const transactions = [];
 
         let needSave = false;
@@ -846,10 +846,7 @@ class Api {
     };
 
     public getGasPrice = async (): Promise<t.IResponse> => {
-        const factory = createSonmFactory(
-            this.storage.settings.nodeUrl,
-            this.storage.settings.chainId,
-        );
+        const factory = this.getFactory();
         const gasPrice = (await factory.gethClient.getGasPrice()).toString();
 
         return {
@@ -1014,10 +1011,7 @@ class Api {
     };
 
     public getSonmTokenAddress = async (): Promise<t.IResponse> => {
-        const factory = createSonmFactory(
-            this.storage.settings.nodeUrl,
-            this.storage.settings.chainId,
-        );
+        const factory = this.getFactory();
 
         return {
             data: await factory.getSonmTokenAddress(),
@@ -1364,7 +1358,8 @@ class Api {
             return this.routes[type](payload);
         } else if (typeof (this as any)[type] === 'function') {
             const result = (this as any)[type].apply(this, payload);
-            return result.then((r: any) => {
+            const promise = Promise.resolve(result); // force result to be a promise in case if it's not.
+            return promise.then((r: any) => {
                 return { data: r };
             });
         } else {
