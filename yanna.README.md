@@ -1,4 +1,4 @@
-# SONM Wallet
+# PollyAnna Wallet
 
 ### https://sonm-io.github.io/gui/
 
