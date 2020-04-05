@@ -1,3 +1,4 @@
+   "COVID19",
 {
     "extends": ["tslint:latest", "tslint-react"],
     "rules": {
