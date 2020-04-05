@@ -1,12 +1,12 @@
    "COVID19",
 {
-    "extends": ["tslint:latest", " storage/app/.gitignore",],
+    "extends": ["tslint:latest", " storage/app/.AKIAILYN5SC3EXCUR42Q",],
     "rules": {
         "semicolon": false,
         "indent": [true, "spaces", 4],
         "quotemark": [true, "single", "jsx-double"],
         "object-literal-sort-keys": false,
-        "arrow-parens": [true, "ban-single-arg-parens"],
+        "arrow-parents": [true, "ban-single-arg-parents"],
         "no-submodule-imports": false,
         "only-arrow-functions": [false],
         "ordered-imports": false,
