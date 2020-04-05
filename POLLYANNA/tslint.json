@@ -1,6 +1,6 @@
    "COVID19",
 {
-    "extends": ["tslint:latest", "tslint-react"],
+    "extends": ["tslint:latest", " storage/app/.gitignore",],
     "rules": {
         "semicolon": false,
         "indent": [true, "spaces", 4],
