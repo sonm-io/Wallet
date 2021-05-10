@@ -87,7 +87,7 @@
         "fbjs": "^0.8.16",
         "history": "4.7.2",
         "lite-server": "^2.3.0",
-        "lodash": "4.17.15",
+        "lodash": "4.17.21",
         "mobx": "3.3.1",
         "mobx-react": "4.3.4",
         "mobx-utils": "3.2.1",
